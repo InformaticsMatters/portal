@@ -2,6 +2,7 @@ package portal.webapp;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.cdi.CdiConfiguration;
+import org.apache.wicket.cdi.ConversationPropagation;
 import org.apache.wicket.protocol.http.WebApplication;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -18,7 +19,7 @@ public class PortalWebApplication extends WebApplication {
     protected void init() {
         super.init();
         BeanManager beanManager = CDI.current().getBeanManager();
-        new CdiConfiguration(beanManager).configure(this);
+        new CdiConfiguration(beanManager).setPropagation(ConversationPropagation.NONE).configure(this);
 
         getSharedResources().add("structureImageResource", new DynamicStructureImageResource());
 

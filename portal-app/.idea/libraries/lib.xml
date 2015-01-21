@@ -16,9 +16,7 @@
       <root url="file://$PROJECT_DIR$/../lib/seam-conversation/3.0" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/../../ELF/lib/jchem/6.2.0_b787" />
-    </SOURCES>
+    <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/../../ELF/lib/jchem/6.2.0_b787" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/cdi-api/1.2.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/el-api/2.2" recursive="false" />
@@ -32,6 +30,5 @@
     <jarDirectory url="file://$PROJECT_DIR$/../lib/weld/2.2.9" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/wicket-select2/2.3" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/wicket/6.18.0" recursive="false" />
-    <jarDirectory url="file://$PROJECT_DIR$/../../ELF/lib/jchem/6.2.0_b787" recursive="false" type="SOURCES" />
   </library>
 </component>
