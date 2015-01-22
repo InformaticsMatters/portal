@@ -1,12 +1,10 @@
 package portal.service.api;
 
-import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 public interface DatasetService {
 
-    DatasetDescriptor importFromStream(DatasetInputStreamFormat format, InputStream inputStream, Map<String, Class> fieldConfig);
+    DatasetDescriptor importFromStream(ImportFromStreamData data);
 
     List<DatasetDescriptor> listDatasetDescriptor(ListDatasetDescriptorFilter filter);
 

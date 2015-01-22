@@ -11,6 +11,7 @@ import portal.service.api.Row;
 
 public class TreeGridVisualizerTreeColumn extends BaseTreeColumn<TreeGridVisualizerModel, TreeGridVisualizerNode, String> {
 
+    private static final int STRUCTURE_PROPERTY_ID = 0;
     private DatasetDescriptor datasetDescriptor;
     private Long propertyId;
 
@@ -18,12 +19,13 @@ public class TreeGridVisualizerTreeColumn extends BaseTreeColumn<TreeGridVisuali
         super(columnId, headerModel);
         this.datasetDescriptor = datasetDescriptor;
         this.propertyId = propertyId;
+        setInitialSize(DynamicStructureImageResource.RECTANGLE.width + 36);
     }
 
     @Override
     protected Component newNodeComponent(String id, IModel<TreeGridVisualizerNode> model) {
         Row row = model.getObject().getUserObject();
-        if (propertyId == 0) {
+        if (propertyId == STRUCTURE_PROPERTY_ID) {
             return new TreeGridVisualizerStructurePanel(id, datasetDescriptor.getId(), row.getId());
         } else {
             Object value = row.getProperty(row.getDescriptor().findPropertyDescriptorById(propertyId));
@@ -35,6 +37,5 @@ public class TreeGridVisualizerTreeColumn extends BaseTreeColumn<TreeGridVisuali
     protected Icon getIcon(IModel<TreeGridVisualizerNode> defaultMutableTreeNodeIModel) {
         return null;
     }
-
 
 }

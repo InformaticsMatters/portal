@@ -1,6 +1,6 @@
 package portal.service.api;
 
-public enum DatasetInputStreamFormat {
+public enum DatasetStreamFormat {
 
     SDF
 

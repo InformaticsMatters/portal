@@ -10,8 +10,9 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.service.api.DatasetInputStreamFormat;
 import portal.service.api.DatasetService;
+import portal.service.api.DatasetStreamFormat;
+import portal.service.api.ImportFromStreamData;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
@@ -71,7 +72,12 @@ public class UploadModalPanel extends SemanticModalPanel {
     private void processSubmission() {
         try {
             for (FileUpload upload : fileUploadField.getFileUploads()) {
-                service.importFromStream(DatasetInputStreamFormat.SDF, upload.getInputStream(), new HashMap<String, Class>());
+                ImportFromStreamData data = new ImportFromStreamData();
+                data.setDescription(form.getModelObject().getDescription());
+                data.setDatasetStreamFormat(DatasetStreamFormat.SDF);
+                data.setInputStream(upload.getInputStream());
+                data.setFieldConfigMap(new HashMap<String, Class>());
+                service.importFromStream(data);
             }
         } catch (Throwable t) {
             throw new RuntimeException(t);

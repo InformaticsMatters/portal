@@ -27,13 +27,16 @@ public class DatasetServiceMock implements DatasetService {
     private Map<Long, DatasetDescriptorMock> datasetDescriptorMap = new HashMap<Long, DatasetDescriptorMock>();
 
     @Override
-    public DatasetDescriptor importFromStream(DatasetInputStreamFormat format, InputStream inputStream, Map<String, Class> fieldConfig) {
+    public DatasetDescriptor importFromStream(ImportFromStreamData data) {
         try {
             DatasetDescriptorMock dd = new DatasetDescriptorMock();
-            dd.setDescription("Mock Dataset Descriptor");
+            dd.setDescription(data.getDescription());
             DatasetDescriptorMock datasetDescriptor = (DatasetDescriptorMock) createDatasetDescriptor(dd);
             datasetDescriptor.setDatasetMockId(1l);
 
+            DatasetStreamFormat format = data.getDatasetStreamFormat();
+            InputStream inputStream = data.getInputStream();
+            Map<String, Class> fieldConfig = data.getFieldConfigMap();
             DatasetMock datasetMock = parseSdf(format, inputStream, fieldConfig, datasetDescriptor.getId());
             datasetMock.setId(getNextId());
             datasetMockMap.put(1l, datasetMock);
@@ -46,7 +49,7 @@ public class DatasetServiceMock implements DatasetService {
         }
     }
 
-    private DatasetMock parseSdf(DatasetInputStreamFormat format, InputStream inputStream, Map<String, Class> fieldConfig, Long datasetMockId)
+    private DatasetMock parseSdf(DatasetStreamFormat format, InputStream inputStream, Map<String, Class> fieldConfig, Long datasetMockId)
             throws Exception {
         MRecordReader recordReader = null;
         DatasetMock datasetMock = new DatasetMock();

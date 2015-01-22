@@ -12,17 +12,25 @@ import portal.service.api.Row;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.ByteArrayOutputStream;
 
 public class DynamicStructureImageResource extends DynamicImageResource {
 
-    private static final Rectangle RECTANGLE = new Rectangle(200, 130);
+    public static final Rectangle RECTANGLE = new Rectangle(200, 130);
     @Inject
     private DatasetService service;
 
     public DynamicStructureImageResource() {
         CdiContainer.get().getNonContextualManager().postConstruct(this);
+    }
+
+    private static BufferedImage imageToBufferedImage(Image image) {
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = bufferedImage.createGraphics();
+        g2.drawImage(image, 0, 0, null);
+        g2.dispose();
+        return bufferedImage;
     }
 
     @Override
@@ -68,7 +76,7 @@ public class DynamicStructureImageResource extends DynamicImageResource {
         MolPrinter molPrinter = new MolPrinter();
         molPrinter.setMol(getMolecule(datasetIdAsString, rowIdAsString));
 
-        BufferedImage image = new BufferedImage(getRectangle().width, getRectangle().height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(getRectangle().width, getRectangle().height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics2D = image.createGraphics();
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -79,9 +87,32 @@ public class DynamicStructureImageResource extends DynamicImageResource {
         molPrinter.setScale(scale);
         molPrinter.paint(graphics2D, getRectangle());
 
+        BufferedImage filteredImage = imageToBufferedImage(makeWhiteTransparent(image));
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", outputStream);
+        ImageIO.write(filteredImage, "png", outputStream);
         return outputStream.toByteArray();
+    }
+
+    public Image makeWhiteTransparent(BufferedImage bufferedImage) {
+        ImageFilter filter = new RGBImageFilter() {
+
+            private int markerRGB = 0xFFFFFFFF;
+
+            @Override
+            public int filterRGB(final int x, final int y, final int rgb) {
+                if ((rgb | 0xFF000000) == markerRGB) {
+                    // mark the alpha bits as zero - transparent
+                    return 0x00FFFFFF & rgb;
+                } else {
+                    // nothing to do
+                    return rgb;
+                }
+            }
+        };
+
+        ImageProducer ip = new FilteredImageSource(bufferedImage.getSource(), filter);
+        return Toolkit.getDefaultToolkit().createImage(ip);
     }
 }
 
