@@ -6,12 +6,12 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import portal.service.api.DatasetDescriptor;
+import portal.service.api.PropertyDescriptor;
 import portal.service.api.Row;
 
 
 public class TreeGridVisualizerTreeColumn extends BaseTreeColumn<TreeGridVisualizerModel, TreeGridVisualizerNode, String> {
 
-    private static final int STRUCTURE_PROPERTY_ID = 0;
     private DatasetDescriptor datasetDescriptor;
     private Long propertyId;
 
@@ -25,7 +25,7 @@ public class TreeGridVisualizerTreeColumn extends BaseTreeColumn<TreeGridVisuali
     @Override
     protected Component newNodeComponent(String id, IModel<TreeGridVisualizerNode> model) {
         Row row = model.getObject().getUserObject();
-        if (propertyId == STRUCTURE_PROPERTY_ID) {
+        if (isStructureProperty(propertyId)) {
             return new TreeGridVisualizerStructurePanel(id, datasetDescriptor.getId(), row.getId());
         } else {
             Object value = row.getProperty(row.getDescriptor().findPropertyDescriptorById(propertyId));
@@ -36,6 +36,10 @@ public class TreeGridVisualizerTreeColumn extends BaseTreeColumn<TreeGridVisuali
     @Override
     protected Icon getIcon(IModel<TreeGridVisualizerNode> defaultMutableTreeNodeIModel) {
         return null;
+    }
+
+    private boolean isStructureProperty(Long propertyId) {
+        return propertyId == PropertyDescriptor.STRUCTURE_PROPERTY_ID;
     }
 
 }

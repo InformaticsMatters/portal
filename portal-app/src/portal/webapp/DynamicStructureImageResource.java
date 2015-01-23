@@ -25,14 +25,6 @@ public class DynamicStructureImageResource extends DynamicImageResource {
         CdiContainer.get().getNonContextualManager().postConstruct(this);
     }
 
-    private static BufferedImage imageToBufferedImage(Image image) {
-        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = bufferedImage.createGraphics();
-        g2.drawImage(image, 0, 0, null);
-        g2.dispose();
-        return bufferedImage;
-    }
-
     @Override
     protected void setResponseHeaders(ResourceResponse data, Attributes attributes) {
         // this disables some unwanted default caching
@@ -113,6 +105,14 @@ public class DynamicStructureImageResource extends DynamicImageResource {
 
         ImageProducer ip = new FilteredImageSource(bufferedImage.getSource(), filter);
         return Toolkit.getDefaultToolkit().createImage(ip);
+    }
+
+    private BufferedImage imageToBufferedImage(Image image) {
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = bufferedImage.createGraphics();
+        g2.drawImage(image, 0, 0, null);
+        g2.dispose();
+        return bufferedImage;
     }
 }
 
