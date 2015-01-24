@@ -55,7 +55,9 @@ public class TreeGridVisualizerPage extends WebPage {
         columns.add(treeColumn);
         for (RowDescriptor rowDescriptor : datasetDescriptor.listAllRowDescriptors()) {
             for (PropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
-                columns.add(new TreeGridVisualizerPropertyColumn(propertyDescriptor.getId().toString(), Model.of(propertyDescriptor.getDescription()), propertyDescriptor.getId()));
+                if (propertyDescriptor.getId() != rowDescriptor.getStructurePropertyDescriptor().getId()) {
+                    columns.add(new TreeGridVisualizerPropertyColumn(propertyDescriptor.getId().toString(), Model.of(propertyDescriptor.getDescription()), propertyDescriptor.getId()));
+                }
             }
         }
 
