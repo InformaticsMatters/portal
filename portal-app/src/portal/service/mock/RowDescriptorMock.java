@@ -13,6 +13,8 @@ class RowDescriptorMock implements RowDescriptor {
     private Long id;
     private String description;
     private Map<Long, PropertyDescriptorMock> propertyDescriptorMap = new HashMap<Long, PropertyDescriptorMock>();
+    private Long hierarchicalPropertyId;
+    private Long structurePropertyId;
 
     @Override
     public Long getId() {
@@ -42,6 +44,16 @@ class RowDescriptorMock implements RowDescriptor {
         return propertyDescriptorMap.get(id);
     }
 
+    @Override
+    public PropertyDescriptor getHierarchicalPropertyDescriptor() {
+        return propertyDescriptorMap.get(hierarchicalPropertyId);
+    }
+
+    @Override
+    public PropertyDescriptor getStructurePropertyDescriptor() {
+        return propertyDescriptorMap.get(structurePropertyId);
+    }
+
     public void addPropertyDescriptor(PropertyDescriptorMock propertyDescriptor) {
         propertyDescriptorMap.put(propertyDescriptor.getId(), propertyDescriptor);
     }
@@ -50,4 +62,19 @@ class RowDescriptorMock implements RowDescriptor {
         propertyDescriptorMap.remove(id);
     }
 
+    public Long getHierarchicalPropertyId() {
+        return hierarchicalPropertyId;
+    }
+
+    public void setHierarchicalPropertyId(Long hierarchicalPropertyId) {
+        this.hierarchicalPropertyId = hierarchicalPropertyId;
+    }
+
+    public Long getStructurePropertyId() {
+        return structurePropertyId;
+    }
+
+    public void setStructurePropertyId(Long structurePropertyId) {
+        this.structurePropertyId = structurePropertyId;
+    }
 }

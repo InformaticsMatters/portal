@@ -20,8 +20,11 @@ import java.util.Map;
 @ApplicationScoped
 public class DatasetServiceMock implements DatasetService {
 
-    public static final String STRUCTURE_FIELD_NAME = "structure_as_text"; // TODO decide how to best handle this
+    private static final String STRUCTURE_FIELD_NAME = "structure_as_text"; // TODO decide how to best handle this
+    private static final Long STRUCTURE_PROPERTY_ID = 0l;
+    private static final Long HIERARCHICAL_PROPERTY_ID = 0l;
     private static final Logger logger = LoggerFactory.getLogger(DatasetServiceMock.class.getName());
+
     private long nextId = 0;
     private Map<Long, DatasetMock> datasetMockMap = new HashMap<Long, DatasetMock>();
     private Map<Long, DatasetDescriptorMock> datasetDescriptorMap = new HashMap<Long, DatasetDescriptorMock>();
@@ -60,6 +63,8 @@ public class DatasetServiceMock implements DatasetService {
 
             RowDescriptorMock rowDescriptorMock = new RowDescriptorMock();
             rowDescriptorMock.setDescription("Level 1");
+            rowDescriptorMock.setHierarchicalPropertyId(0l);
+            rowDescriptorMock.setStructurePropertyId(0l);
             rowDescriptorMock = (RowDescriptorMock) createRowDescriptor(datasetMockId, rowDescriptorMock);
 
             while (true) {

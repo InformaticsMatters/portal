@@ -13,4 +13,8 @@ public interface RowDescriptor extends Serializable {
 
     PropertyDescriptor findPropertyDescriptorById(Long id);
 
+    PropertyDescriptor getHierarchicalPropertyDescriptor();
+
+    PropertyDescriptor getStructurePropertyDescriptor();
+
 }

@@ -47,7 +47,7 @@ public class DynamicStructureImageResource extends DynamicImageResource {
         Long rowId = Long.valueOf(rowIdAsString);
         Row row = service.findRowById(datasetId, rowId);
         if (row != null) {
-            PropertyDescriptor propertyDescriptor = row.getDescriptor().findPropertyDescriptorById(PropertyDescriptor.STRUCTURE_PROPERTY_ID);
+            PropertyDescriptor propertyDescriptor = row.getDescriptor().getStructurePropertyDescriptor();
             structureData = (String) row.getProperty(propertyDescriptor);
         }
         return structureData;

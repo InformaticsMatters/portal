@@ -51,7 +51,7 @@ public class TreeGridVisualizerPage extends WebPage {
         buildNodeHierarchy(rootNode, rowList);
 
         List<IGridColumn<TreeGridVisualizerModel, TreeGridVisualizerNode, String>> columns = new ArrayList<IGridColumn<TreeGridVisualizerModel, TreeGridVisualizerNode, String>>();
-        TreeGridVisualizerTreeColumn treeColumn = new TreeGridVisualizerTreeColumn("id", Model.of("Structure"), datasetDescriptor, 0l);
+        TreeGridVisualizerTreeColumn treeColumn = new TreeGridVisualizerTreeColumn("id", Model.of("Structure"), datasetDescriptor);
         columns.add(treeColumn);
         for (RowDescriptor rowDescriptor : datasetDescriptor.listAllRowDescriptors()) {
             for (PropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
