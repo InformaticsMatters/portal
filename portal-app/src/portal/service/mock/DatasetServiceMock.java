@@ -63,8 +63,8 @@ public class DatasetServiceMock implements DatasetService {
 
             RowDescriptorMock rowDescriptorMock = new RowDescriptorMock();
             rowDescriptorMock.setDescription("Level 1");
-            rowDescriptorMock.setHierarchicalPropertyId(0l);
-            rowDescriptorMock.setStructurePropertyId(0l);
+            rowDescriptorMock.setHierarchicalPropertyId(HIERARCHICAL_PROPERTY_ID);
+            rowDescriptorMock.setStructurePropertyId(STRUCTURE_PROPERTY_ID);
             rowDescriptorMock = (RowDescriptorMock) createRowDescriptor(datasetMockId, rowDescriptorMock);
 
             while (true) {
@@ -78,7 +78,7 @@ public class DatasetServiceMock implements DatasetService {
                     rowMock.setId(count);
                     rowMock.setRowDescriptor(rowDescriptorMock);
                     PropertyDescriptorMock propertyDescriptorMock = new PropertyDescriptorMock();
-                    propertyDescriptorMock.setId(0l);
+                    propertyDescriptorMock.setId(STRUCTURE_PROPERTY_ID);
                     propertyDescriptorMock.setDescription(STRUCTURE_FIELD_NAME);
                     propertyDescriptorMock = (PropertyDescriptorMock) createPropertyDescriptor(datasetMockId, rowDescriptorMock.getId(), propertyDescriptorMock);
                     rowMock.setProperty(propertyDescriptorMock, rec.getString());
