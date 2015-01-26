@@ -56,7 +56,7 @@ public class PortalHomePage extends WebPage {
                 ajaxRequestTarget.add(datasetCardViewPanel);
                 ajaxRequestTarget.add(cardViewLink);
                 ajaxRequestTarget.add(gridViewLink);
-                ajaxRequestTarget.appendJavaScript("makeMenuItemActive('" + gridViewLink.getMarkupId() + "')");
+                ajaxRequestTarget.appendJavaScript("makeMenuButtonActive('" + gridViewLink.getMarkupId() + "')");
             }
         };
         gridViewLink.setOutputMarkupId(true);
@@ -72,7 +72,7 @@ public class PortalHomePage extends WebPage {
                 ajaxRequestTarget.add(datasetGridViewPanel);
                 ajaxRequestTarget.add(cardViewLink);
                 ajaxRequestTarget.add(gridViewLink);
-                ajaxRequestTarget.appendJavaScript("makeMenuItemActive('" + cardViewLink.getMarkupId() + "')");
+                ajaxRequestTarget.appendJavaScript("makeMenuButtonActive('" + cardViewLink.getMarkupId() + "')");
             }
         };
         cardViewLink.setOutputMarkupId(true);
