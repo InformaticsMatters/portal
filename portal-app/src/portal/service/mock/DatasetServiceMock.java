@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author simetrias
+ */
 @ApplicationScoped
 public class DatasetServiceMock implements DatasetService {
 
@@ -28,6 +31,11 @@ public class DatasetServiceMock implements DatasetService {
     private long nextId = 0;
     private Map<Long, DatasetMock> datasetMockMap = new HashMap<Long, DatasetMock>();
     private Map<Long, DatasetDescriptorMock> datasetDescriptorMockMap = new HashMap<Long, DatasetDescriptorMock>();
+
+    @Override
+    public DatasetDescriptor createFromStructureSearch(StructureSearch structureSearch) {
+        return null;
+    }
 
     @Override
     public DatasetDescriptor importFromStream(ImportFromStreamData data) {
