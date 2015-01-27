@@ -24,6 +24,7 @@ public class PortalWebApplication extends WebApplication {
         getSharedResources().add("structureImageResource", new DynamicStructureImageResource());
 
         mountPage("/login", LoginPage.class);
+        mountPage("/userCreated", UserCreatedPage.class);
 
     }
 

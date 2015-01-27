@@ -92,6 +92,10 @@ body {
     padding-right: 0;
 }
 
+.ui.message {
+    padding: 1em 1.5em !important;
+}
+
 .ui.modal > .header {
     padding: 1rem 2rem;
     font-size: 1.4em;
