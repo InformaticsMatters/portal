@@ -10,6 +10,9 @@ public class UserRegistrationData implements Serializable {
     private Integer phoneNumber;
     private String firstName;
     private String lastName;
+    private String password;
+    private String passwordConfirmation;
+    private String captchaText;
 
     public String getUsername() {
         return username;
@@ -50,5 +53,29 @@ public class UserRegistrationData implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPasswordConfirmation() {
+        return passwordConfirmation;
+    }
+
+    public void setPasswordConfirmation(String passwordConfirmation) {
+        this.passwordConfirmation = passwordConfirmation;
+    }
+
+    public String getCaptchaText() {
+        return captchaText;
+    }
+
+    public void setCaptchaText(String captchaText) {
+        this.captchaText = captchaText;
     }
 }
