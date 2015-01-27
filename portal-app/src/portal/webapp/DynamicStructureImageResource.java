@@ -18,6 +18,9 @@ import java.io.ByteArrayOutputStream;
 public class DynamicStructureImageResource extends DynamicImageResource {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
+    public static final String PARAM_DATASET = "dataset";
+    public static final String PARAM_ROW = "row";
+
     @Inject
     private DatasetService service;
 
@@ -32,8 +35,8 @@ public class DynamicStructureImageResource extends DynamicImageResource {
 
     @Override
     protected byte[] getImageData(Attributes attributes) {
-        String datasetIdAsString = attributes.getParameters().get("datasetIdAsString").toString();
-        String rowIdAsString = attributes.getParameters().get("rowIdAsString").toString();
+        String datasetIdAsString = attributes.getParameters().get(PARAM_DATASET).toString();
+        String rowIdAsString = attributes.getParameters().get(PARAM_ROW).toString();
         try {
             return renderStructure(datasetIdAsString, rowIdAsString);
         } catch (Exception e) {
@@ -43,9 +46,9 @@ public class DynamicStructureImageResource extends DynamicImageResource {
 
     protected String loadStructureData(String datasetIdAsString, String rowIdAsString) {
         String structureData = null;
-        Long datasetId = Long.valueOf(datasetIdAsString);
+        Long datasetDescriptorId = Long.valueOf(datasetIdAsString);
         Long rowId = Long.valueOf(rowIdAsString);
-        Row row = service.findRowById(datasetId, rowId);
+        Row row = service.findRowById(datasetDescriptorId, rowId);
         if (row != null) {
             PropertyDescriptor propertyDescriptor = row.getDescriptor().getStructurePropertyDescriptor();
             structureData = (String) row.getProperty(propertyDescriptor);

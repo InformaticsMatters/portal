@@ -50,14 +50,14 @@ public class DescriptorsPage extends WebPage {
     }
 
     private void addDescriptorsTreeTable() {
-        List<IGridColumn<DefaultTreeModel, DefaultMutableTreeNode, String>> columns = new ArrayList<IGridColumn<DefaultTreeModel, DefaultMutableTreeNode, String>>();
+        List<IGridColumn<DefaultTreeModel, DefaultMutableTreeNode, String>> columns = new ArrayList<>();
 
-        PropertyTreeColumn treeColumn = new PropertyTreeColumn(Model.of("Description"), "userObject.description");
+        PropertyTreeColumn<DefaultTreeModel, DefaultMutableTreeNode, String, String> treeColumn = new PropertyTreeColumn<>(Model.of("Description"), "userObject.description");
         treeColumn.setInitialSize(200);
         columns.add(treeColumn);
 
         DefaultTreeModel model = createTreeModel();
-        TreeGrid<DefaultTreeModel, DefaultMutableTreeNode, String> treeGrid = new TreeGrid<DefaultTreeModel, DefaultMutableTreeNode, String>("grid", model, columns);
+        TreeGrid<DefaultTreeModel, DefaultMutableTreeNode, String> treeGrid = new TreeGrid<>("grid", model, columns);
         treeGrid.getTree().setRootLess(true);
 
         add(treeGrid);
@@ -68,21 +68,20 @@ public class DescriptorsPage extends WebPage {
 
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
-        for (DatasetDescriptor dd : datasetDescriptorList) {
-            createDatasetDescriptorNode(rootNode, dd);
+        for (DatasetDescriptor datasetDescriptor : datasetDescriptorList) {
+            createDatasetDescriptorNode(rootNode, datasetDescriptor);
         }
 
-        DefaultTreeModel model = new DefaultTreeModel(rootNode);
-        return model;
+        return new DefaultTreeModel(rootNode);
     }
 
-    private void createDatasetDescriptorNode(DefaultMutableTreeNode rootNode, DatasetDescriptor dd) {
+    private void createDatasetDescriptorNode(DefaultMutableTreeNode rootNode, DatasetDescriptor datasetDescriptor) {
         DefaultMutableTreeNode datasetNode = new DefaultMutableTreeNode();
-        DescriptorNodeData data = new DescriptorNodeData(dd);
+        DescriptorNodeData data = new DescriptorNodeData(datasetDescriptor);
         datasetNode.setUserObject(data);
         rootNode.add(datasetNode);
 
-        List<RowDescriptor> rowDescriptorList = dd.listAllRowDescriptors();
+        List<RowDescriptor> rowDescriptorList = datasetDescriptor.listAllRowDescriptors();
         for (RowDescriptor rowDescriptor : rowDescriptorList) {
             createRowDescriptorNode(datasetNode, rowDescriptor);
         }
@@ -103,7 +102,7 @@ public class DescriptorsPage extends WebPage {
     private void createPropertyDescriptorNode(DefaultMutableTreeNode rowNode, PropertyDescriptor propertyDescriptor) {
         DefaultMutableTreeNode propertyNode = new DefaultMutableTreeNode();
         DescriptorNodeData data = new DescriptorNodeData(propertyDescriptor);
-        rowNode.setUserObject(data);
+        propertyNode.setUserObject(data);
         rowNode.add(propertyNode);
     }
 

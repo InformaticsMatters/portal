@@ -15,7 +15,7 @@ public class DescriptorNodeData implements Serializable {
     }
 
     public String getDescription() {
-        String result = null;
+        String result = "defaultValue";
 
         if (descriptor != null) {
             if (descriptor instanceof DatasetDescriptor) {

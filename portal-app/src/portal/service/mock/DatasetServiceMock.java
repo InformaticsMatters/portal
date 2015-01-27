@@ -27,25 +27,25 @@ public class DatasetServiceMock implements DatasetService {
 
     private long nextId = 0;
     private Map<Long, DatasetMock> datasetMockMap = new HashMap<Long, DatasetMock>();
-    private Map<Long, DatasetDescriptorMock> datasetDescriptorMap = new HashMap<Long, DatasetDescriptorMock>();
+    private Map<Long, DatasetDescriptorMock> datasetDescriptorMockMap = new HashMap<Long, DatasetDescriptorMock>();
 
     @Override
     public DatasetDescriptor importFromStream(ImportFromStreamData data) {
         try {
+            long datasetMockId = getNextId();
+
             DatasetDescriptorMock dd = new DatasetDescriptorMock();
             dd.setDescription(data.getDescription());
             DatasetDescriptorMock datasetDescriptor = (DatasetDescriptorMock) createDatasetDescriptor(dd);
-            datasetDescriptor.setDatasetMockId(1l);
+            datasetDescriptor.setDatasetMockId(datasetMockId);
 
             DatasetStreamFormat format = data.getDatasetStreamFormat();
             InputStream inputStream = data.getInputStream();
             Map<String, Class> fieldConfig = data.getFieldConfigMap();
             DatasetMock datasetMock = parseSdf(format, inputStream, fieldConfig, datasetDescriptor.getId());
-            datasetMock.setId(getNextId());
-            datasetMockMap.put(1l, datasetMock);
+            datasetMock.setId(datasetMockId);
 
-            datasetDescriptor.setDatasetMockId(datasetMock.getId());
-            datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
+            datasetMockMap.put(datasetMockId, datasetMock);
             return datasetDescriptor;
         } catch (Exception ex) {
             throw new RuntimeException("Failed to read file", ex);
@@ -129,12 +129,13 @@ public class DatasetServiceMock implements DatasetService {
 
     @Override
     public List<DatasetDescriptor> listDatasetDescriptor(ListDatasetDescriptorFilter filter) {
-        return new ArrayList<DatasetDescriptor>(datasetDescriptorMap.values());
+        return new ArrayList<DatasetDescriptor>(datasetDescriptorMockMap.values());
     }
 
     @Override
     public List<Row> listRow(ListRowFilter filter) {
-        DatasetMock datasetMock = datasetMockMap.get(filter.getDatasetId());
+        DatasetDescriptorMock datasetDescriptorMock = datasetDescriptorMockMap.get(filter.getDatasetDescriptorId());
+        DatasetMock datasetMock = datasetMockMap.get(datasetDescriptorMock.getDatasetMockId());
         if (datasetMock != null) {
             return datasetMock.getRowList();
         } else {
@@ -144,7 +145,8 @@ public class DatasetServiceMock implements DatasetService {
 
     @Override
     public Row findRowById(Long datasetDescriptorId, Long rowId) {
-        DatasetMock datasetMock = datasetMockMap.get(datasetDescriptorId);
+        DatasetDescriptorMock datasetDescriptorMock = datasetDescriptorMockMap.get(datasetDescriptorId);
+        DatasetMock datasetMock = datasetMockMap.get(datasetDescriptorMock.getDatasetMockId());
         return datasetMock.findRowById(rowId);
     }
 
@@ -152,27 +154,28 @@ public class DatasetServiceMock implements DatasetService {
     public DatasetDescriptor createDatasetDescriptor(DatasetDescriptor datasetDescriptor) {
         DatasetDescriptorMock datasetDescriptorMock = (DatasetDescriptorMock) datasetDescriptor;
         datasetDescriptorMock.setId(getNextId());
-        datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptorMock);
+        datasetDescriptorMockMap.put(datasetDescriptor.getId(), datasetDescriptorMock);
         return datasetDescriptor;
     }
 
     @Override
     public void removeDatasetDescriptor(Long datasetDescriptorId) {
-        datasetDescriptorMap.remove(datasetDescriptorId);
-        datasetMockMap.remove(datasetDescriptorId);
+        DatasetDescriptorMock datasetDescriptorMock = datasetDescriptorMockMap.get(datasetDescriptorId);
+        datasetDescriptorMockMap.remove(datasetDescriptorId);
+        datasetMockMap.remove(datasetDescriptorMock.getDatasetMockId());
     }
 
     @Override
     public RowDescriptor createRowDescriptor(Long datasetDescriptorId, RowDescriptor rowDescriptor) {
         RowDescriptorMock rowDescriptorMock = (RowDescriptorMock) rowDescriptor;
         rowDescriptorMock.setId(getNextId());
-        datasetDescriptorMap.get(datasetDescriptorId).addRowDescriptor(rowDescriptorMock);
+        datasetDescriptorMockMap.get(datasetDescriptorId).addRowDescriptor(rowDescriptorMock);
         return rowDescriptor;
     }
 
     @Override
     public void removeRowDescriptor(Long datasetDescriptorId, Long rowDescriptorId) {
-        DatasetDescriptorMock datasetDescriptor = datasetDescriptorMap.get(datasetDescriptorId);
+        DatasetDescriptorMock datasetDescriptor = datasetDescriptorMockMap.get(datasetDescriptorId);
         datasetDescriptor.removeRowDescriptor(rowDescriptorId);
     }
 
@@ -182,7 +185,7 @@ public class DatasetServiceMock implements DatasetService {
         if (propertyDescriptorMock.getId() == null) {
             propertyDescriptorMock.setId(getNextId());
         }
-        DatasetDescriptorMock datasetDescriptor = datasetDescriptorMap.get(datasetDescriptorId);
+        DatasetDescriptorMock datasetDescriptor = datasetDescriptorMockMap.get(datasetDescriptorId);
         RowDescriptorMock rowDescriptorMock = (RowDescriptorMock) datasetDescriptor.findRowDescriptorById(rowDescriptorId);
         rowDescriptorMock.addPropertyDescriptor(propertyDescriptorMock);
         return propertyDescriptor;
@@ -190,7 +193,7 @@ public class DatasetServiceMock implements DatasetService {
 
     @Override
     public void removePropertyDescriptor(Long datasetDescriptorId, Long rowDescriptorId, Long propertyDescriptorId) {
-        DatasetDescriptorMock datasetDescriptor = datasetDescriptorMap.get(datasetDescriptorId);
+        DatasetDescriptorMock datasetDescriptor = datasetDescriptorMockMap.get(datasetDescriptorId);
         RowDescriptorMock rowDescriptorMock = (RowDescriptorMock) datasetDescriptor.findRowDescriptorById(rowDescriptorId);
         rowDescriptorMock.removePropertyDescriptor(propertyDescriptorId);
     }

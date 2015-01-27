@@ -13,7 +13,4 @@ public interface DatasetDescriptor extends Serializable {
 
     RowDescriptor findRowDescriptorById(Long id);
 
-    default public void doSomeOtherWork() {
-        System.out.println("default method");
-    }
 }

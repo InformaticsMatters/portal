@@ -4,15 +4,15 @@ import java.util.List;
 
 public class ListRowFilter {
 
-    private Long datasetid;
+    private Long datasetDescriptorId;
     private List<Long> rowIdList;
 
-    public Long getDatasetId() {
-        return datasetid;
+    public Long getDatasetDescriptorId() {
+        return datasetDescriptorId;
     }
 
-    public void setDatasetId(Long datasetid) {
-        this.datasetid = datasetid;
+    public void setDatasetDescriptorId(Long datasetid) {
+        this.datasetDescriptorId = datasetid;
     }
 
     public List<Long> getRowIdList() {

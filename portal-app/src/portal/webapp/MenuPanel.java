@@ -11,7 +11,6 @@ public class MenuPanel extends Panel {
 
     private AjaxLink homeLink;
     private AjaxLink descriptorsLink;
-    private AjaxLink uploadPanelLink;
 
     public MenuPanel(String id) {
         super(id);
@@ -19,7 +18,6 @@ public class MenuPanel extends Panel {
     }
 
     private void addActions() {
-
         homeLink = new AjaxLink("home") {
 
             @Override

@@ -25,13 +25,12 @@ public class ExternalStructureImage extends WebComponent {
         super.onComponentTag(tag);
         ResourceReference resource = new SharedResourceReference(resourceName);
         PageParameters pageParameters = new PageParameters();
-        pageParameters.add("rowIdAsString", rowId);
-        pageParameters.add("datasetIdAsString", datasetId);
+        pageParameters.add(DynamicStructureImageResource.PARAM_DATASET, datasetId);
+        pageParameters.add(DynamicStructureImageResource.PARAM_ROW, rowId);
         CharSequence url = RequestCycle.get().urlFor(resource, pageParameters);
         if (rowId != null && rowId.trim().length() > 0) {
             tag.put("src", url);
         }
     }
-
 }
 
