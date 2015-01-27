@@ -4,20 +4,20 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
 public class WebContainer {
 
-    private static final Logger logger = Logger.getLogger(WebContainer.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(WebContainer.class.getName());
     private static final Properties properties;
 
     private static final String WEBCONTAINER_PORT = "webcontainer_port";
@@ -34,17 +34,16 @@ public class WebContainer {
                 properties.load(new FileReader(propFile));
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, null, e);
+            logger.error(null, e);
         }
     }
 
     public static void main(String[] args) {
-        Logger logger = Logger.getLogger(WebContainer.class.getName());
         try {
             WebContainer server = new WebContainer();
             server.start();
         } catch (Throwable t) {
-            logger.log(Level.SEVERE, null, t);
+            logger.error(null, t);
             System.exit(1);
         }
     }

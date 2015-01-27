@@ -2,7 +2,12 @@ package portal.service.api;
 
 import java.util.List;
 
+/**
+ * @author simetrias
+ */
 public interface DatasetService {
+
+    DatasetDescriptor createFromStructureSearch(StructureSearch structureSearch);
 
     DatasetDescriptor importFromStream(ImportFromStreamData data);
 
