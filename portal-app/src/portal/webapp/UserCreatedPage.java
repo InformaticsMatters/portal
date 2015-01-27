@@ -1,7 +1,5 @@
 package portal.webapp;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -13,16 +11,10 @@ import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
 
-public class LoginPage extends WebPage {
+public class UserCreatedPage extends WebPage {
 
     @Inject
     private NotifierProvider notifierProvider;
-    private AjaxLink userRegistrationLink;
-
-    public LoginPage() {
-        notifierProvider.createNotifier(this, "notifier");
-        addActions();
-    }
 
     @Override
     public void renderHead(HtmlHeaderContainer container) {
@@ -33,14 +25,20 @@ public class LoginPage extends WebPage {
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/lac.css")));
     }
 
-    private void addActions() {
-        userRegistrationLink = new AjaxLink("userRegistration") {
+   /* public UserCreatedPage(String afterActionMessage, ApplicationUser user, boolean warningStyle) {
+        Label afterActionMessageLabel = new Label("userRegistered", afterActionMessage);
+        if (warningStyle) {
+            afterActionMessageLabel.add(new AttributeModifier("class", "invalid"));
+        } else {
+            afterActionMessageLabel.add(new AttributeModifier("class", "valid"));
+        }
+        add(afterActionMessageLabel);
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                setResponsePage(UserRegistrationPage.class);
-            }
-        };
-        add(userRegistrationLink);
-    }
+        Label emailMessageLabel = new Label("email", user.getEmail());
+        add(emailMessageLabel);
+
+        Label tokenMessageLabel = new Label("duetime", "Please check your inbox and click the link to confirm your email within " + TokenType.CONFIRM_EMAIL.getHoursValid() + " hs.");
+        add(tokenMessageLabel);
+    } */
+
 }
