@@ -9,16 +9,13 @@ import org.apache.wicket.model.PropertyModel;
 
 public class MenuPanel extends Panel {
 
-    private AjaxLink homeLink;
-    private AjaxLink descriptorsLink;
-
     public MenuPanel(String id) {
         super(id);
         addActions();
     }
 
     private void addActions() {
-        homeLink = new AjaxLink("home") {
+        AjaxLink homeLink = new AjaxLink("home") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -27,14 +24,14 @@ public class MenuPanel extends Panel {
         };
         add(homeLink);
 
-        descriptorsLink = new AjaxLink("descriptors") {
+        AjaxLink metadataLink = new AjaxLink("metadata") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setResponsePage(DescriptorsPage.class);
+                setResponsePage(MetadataPage.class);
             }
         };
-        add(descriptorsLink);
+        add(metadataLink);
 
         add(new Link<String>("logout") {
 

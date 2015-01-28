@@ -23,14 +23,14 @@ import javax.swing.tree.DefaultTreeModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DescriptorsPage extends WebPage {
+public class MetadataPage extends WebPage {
 
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
     private DatasetService service;
 
-    public DescriptorsPage() {
+    public MetadataPage() {
         notifierProvider.createNotifier(this, "notifier");
         add(new MenuPanel("menuPanel"));
         addDescriptorsTreeTable();
@@ -45,8 +45,8 @@ public class DescriptorsPage extends WebPage {
         response.render(CssHeaderItem.forReference(new CssResourceReference(ApplicationSettings.class, "res/select2.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(SemanticResourceReference.class, "resources/semantic-overrides.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(SemanticResourceReference.class, "resources/easygrid-overrides.css")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(DescriptorsPage.class, "resources/lac.js")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(DescriptorsPage.class, "resources/lac.css")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(MetadataPage.class, "resources/lac.js")));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(MetadataPage.class, "resources/lac.css")));
     }
 
     private void addDescriptorsTreeTable() {
