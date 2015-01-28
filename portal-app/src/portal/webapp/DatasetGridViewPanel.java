@@ -68,7 +68,7 @@ public class DatasetGridViewPanel extends Panel {
         descriptorList = service.listDatasetDescriptor(new ListDatasetDescriptorFilter());
         EasyGridBuilder<DatasetDescriptor> easyGridBuilder = new EasyGridBuilder<DatasetDescriptor>("datasetDescriptors");
         easyGridBuilder.getColumnList().add(easyGridBuilder.newPropertyColumn("Id", "id", "id"));
-        easyGridBuilder.getColumnList().add(easyGridBuilder.newPropertyColumn("Description", "description", "description"));
+        easyGridBuilder.getColumnList().add(easyGridBuilder.newPropertyColumn("Description", "description", "description").setInitialSize(400));
         List<String> actionNameList = Arrays.asList(LARGE_ARROW_CIRCLE_OUTLINE_RIGHT_LINK_ICON);
         easyGridBuilder.getColumnList().add(easyGridBuilder.newActionsColumn(actionNameList, new RowActionsCallbackHandler<DatasetDescriptor>() {
 

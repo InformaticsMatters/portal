@@ -3,16 +3,18 @@
         <div class="header">
             Sketcher
         </div>
-        <div>
+        <div class="content">
             <div wicket:id="sketcherContainer">
                 <iframe wicket:id="sketcher" id="sketcherFrame" class="sketcher-frame"></iframe>
             </div>
+        </div>
+        <div class="actions">
             <form wicket:id="sketcherForm">
                 <input type="hidden" wicket:id="sketcherData" id="sketcherData"/>
 
                 <div>
-                    <button class="btn" wicket:id="accept">Ok</button>
-                    <button class="btn" wicket:id="cancel">Cancel</button>
+                    <button style="width: 78px;" class="ui small positive button" wicket:id="accept">Ok</button>
+                    <button style="width: 78px;" class="ui small black button" wicket:id="cancel">Cancel</button>
                 </div>
             </form>
         </div>

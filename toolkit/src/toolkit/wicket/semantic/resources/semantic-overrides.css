@@ -88,12 +88,8 @@ body {
 }
 
 .ui.grid>* {
-    padding-left: 0;
-    padding-right: 0;
-}
-
-.ui.message {
-    padding: 1em 1.5em !important;
+    padding-left: auto !important;
+    padding-right: auto !important;
 }
 
 .ui.modal > .header {
