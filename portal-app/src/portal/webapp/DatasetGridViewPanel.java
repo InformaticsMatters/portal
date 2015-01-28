@@ -10,6 +10,7 @@ import toolkit.wicket.inmethod.EasyGrid;
 import toolkit.wicket.inmethod.EasyGridBuilder;
 import toolkit.wicket.inmethod.EasyListDataSource;
 import toolkit.wicket.inmethod.RowActionsCallbackHandler;
+import toolkit.wicket.marvin4js.MarvinSketcher;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public class DatasetGridViewPanel extends Panel {
     @Inject
     private DatasetService service;
     private UploadModalPanel uploadModalPanel;
+    private MarvinSketcher marvinSketcher;
     private EasyGrid<DatasetDescriptor> grid;
     private List<DatasetDescriptor> descriptorList;
 
@@ -45,6 +47,21 @@ public class DatasetGridViewPanel extends Panel {
             }
         });
         add(uploadModalPanel);
+
+        marvinSketcher = new MarvinSketcher("marvinSketcher", "modalElement");
+        marvinSketcher.setCallbackHandler(new MarvinSketcher.CallbackHandler() {
+
+            @Override
+            public void onAcceptAction(AjaxRequestTarget ajaxRequestTarget) {
+                marvinSketcher.hideModal();
+            }
+
+            @Override
+            public void onCancelAction(AjaxRequestTarget ajaxRequestTarget) {
+                marvinSketcher.hideModal();
+            }
+        });
+        add(marvinSketcher);
     }
 
     private void addDatasetDescriptorGrid() {
@@ -71,7 +88,7 @@ public class DatasetGridViewPanel extends Panel {
             }
         });
         add(grid);
-        addDatasetDescriptorGridActions();
+        addActions();
     }
 
     private void refreshDatasetDescriptorsGrid() {
@@ -80,12 +97,20 @@ public class DatasetGridViewPanel extends Panel {
         getRequestCycle().find(AjaxRequestTarget.class).add(grid);
     }
 
-    private void addDatasetDescriptorGridActions() {
-        add(new AjaxLink("addFromSDF") {
+    private void addActions() {
+        add(new AjaxLink("addFromFile") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 uploadModalPanel.showModal();
+            }
+        });
+
+        add(new AjaxLink("addFromDatamart") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                marvinSketcher.showModal();
             }
         });
     }

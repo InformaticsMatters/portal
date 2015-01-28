@@ -55,8 +55,11 @@ public class TreeGridVisualizerPage extends WebPage {
         columns.add(treeColumn);
         for (RowDescriptor rowDescriptor : datasetDescriptor.listAllRowDescriptors()) {
             for (PropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
-                if (propertyDescriptor.getId() != rowDescriptor.getStructurePropertyDescriptor().getId()) {
-                    columns.add(new TreeGridVisualizerPropertyColumn(propertyDescriptor.getId().toString(), Model.of(propertyDescriptor.getDescription()), propertyDescriptor.getId()));
+                if (!isStructureProperty(rowDescriptor, propertyDescriptor)) {
+                    Long propertyId = propertyDescriptor.getId();
+                    String columnId = propertyId.toString();
+                    Model<String> headerModel = Model.of(propertyDescriptor.getDescription());
+                    columns.add(new TreeGridVisualizerPropertyColumn(columnId, headerModel, propertyId));
                 }
             }
         }
@@ -64,6 +67,10 @@ public class TreeGridVisualizerPage extends WebPage {
         TreeGridVisualizer treeGridVisualizer = new TreeGridVisualizer("treeGrid", new TreeGridVisualizerModel(rootNode), columns);
         treeGridVisualizer.getTree().setRootLess(true);
         add(treeGridVisualizer);
+    }
+
+    private boolean isStructureProperty(RowDescriptor rowDescriptor, PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor.getId().equals(rowDescriptor.getStructurePropertyDescriptor().getId());
     }
 
     private void buildNodeHierarchy(TreeGridVisualizerNode rootNode, List<Row> rowList) {

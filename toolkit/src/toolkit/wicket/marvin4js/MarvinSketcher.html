@@ -1,0 +1,20 @@
+<wicket:panel>
+    <div wicket:id="modalElement" class="modal ui hidden">
+        <div class="header">
+            Sketcher
+        </div>
+        <div>
+            <div wicket:id="sketcherContainer">
+                <iframe wicket:id="sketcher" id="sketcherFrame" class="sketcher-frame"></iframe>
+            </div>
+            <form wicket:id="sketcherForm">
+                <input type="hidden" wicket:id="sketcherData" id="sketcherData"/>
+
+                <div>
+                    <button class="btn" wicket:id="accept">Ok</button>
+                    <button class="btn" wicket:id="cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</wicket:panel>

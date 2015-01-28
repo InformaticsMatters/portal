@@ -1,0 +1,461 @@
+﻿<!DOCTYPE HTML>
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Dóra Barna, Eufrozina Hoffmann">
+    <link rel="stylesheet" type="text/css" href="marvinmanuals.css" title="Style">
+    <title>Toolbars</title>
+    <!--meta name="generator" content="Help &amp; Manual" />
+    <meta name="keywords" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link type="text/css" href="default.css" rel="stylesheet" />
+    <style type="text/css">
+      body { margin: 0px; background: #FFFFFF; }
+    </style>
+    <script type="text/javascript" src="helpman_topicinit.js"></script-->
+    <!-- Redirect browser to frame page if page is not in the content frame. -->
+    <!--script type="text/javascript"-->
+    <!--
+    if (location.search.lastIndexOf("toc=0")<=0) {
+      if (parent.frames.length==0) { parent.location.href="index.html?toolbars.htm"; }
+      else { parent.quicksync('a1.1.2'); }
+    }
+    //-->
+    <!--/script>
+    <script type="text/javascript" src="highlight.js"></script></head>
+    <body onload="highlight();">
+    <div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+
+
+    <table style="width:100%; border:none; border-spacing:0px; padding:5px; background:#E4F1F1">
+      <tr style="vertical-align:middle">
+        <td style="text-align:middle">
+          <p style="text-align: center;"><span class="f_Heading1" style="font-family: 'Times New Roman'; color: #077179;">Toolbars</span></p>
+
+        </td>
+      </tr>
+    </table-->
+
+
+    <h1>Toolbars</h1>
+
+    <p>The toolbars provide buttons for accessing the majority of the features offered by Marvin JS. Hover a cursor over
+        a
+        button to see a tooltip describing the functionality of the button.
+        The button of the currently selected tool has feedback on it to indicate its active status. Buttons for
+        momentarily
+        unavailable features are grayed out, and the <b><a href="#clean">Clean</a></b>
+        and <b><a href="#stereo">Calculate stereo</a></b> buttons do not appear unless server connection is available.
+    </p>
+
+    <h2><a id="general" class="anchor"></a>General Toolbar</h2>
+
+    <p>The <b>General</b> toolbar contains buttons for file management (Import, Export) and for general editing/viewing
+        of
+        the canvas content (Clear, Undo/Redo, Cut/Copy/Paste, Zoom, Clean, Navigate and View Settings).</p>
+
+    <table class="grid">
+        <tr>
+            <td align="center" width="80px"><img src="gui/icons/clear.png"></td>
+            <td align="center" width="180px"><a id="clear" class="anchor"></a>Clear</td>
+            <td align="center" width="1300px">Clear the whole canvas without saving its content.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/open.png"></td>
+            <td align="center"><a id="import" class="anchor"></a>Import</td>
+            <td align="center">Load an already existing file into Marvin JS. The supported file types (available without
+                any
+                webservice) are MDL Molfiles V2000 (.mol) and ChemAxon Marvin Documents (.mrv).
+            </td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/save.png"></td>
+            <td align="center"><a id="export" class="anchor"></a>Export</td>
+            <td align="center">Save your structures in one of the following file formats: MDL Molfiles V2000 (.mol) or
+                ChemAxon Marvin Documents (.mrv) (available without any webservice).
+            </td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/undo.png"></td>
+            <td align="center"><a id="undo" class="anchor"></a>Undo</td>
+            <td align="center">Revert the last commands you applied.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/redo.png"></td>
+            <td align="center"><a id="redo" class="anchor"></a>Redo</td>
+            <td align="center">Revert the effect of the last "Undo" command.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/cut.png"></td>
+            <td align="center"><a id="cut" class="anchor"></a>Cut</td>
+            <td align="center">Place the selection on the clipboard, while removing the original structure from the
+                canvas.
+            </td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/copy.png"></td>
+            <td align="center"><a id="copy" class="anchor"></a>Copy</td>
+            <td align="center">Place the selection on the clipboard, while leaving the original structure unchanged.
+            </td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/paste.png"></td>
+            <td align="center"><a id="paste" class="anchor"></a>Paste</td>
+            <td align="center">Insert the content of the clipboard onto the canvas.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/zoom_in.png"></td>
+            <td align="center"><a id="zoomIn" class="anchor"></a>Zoom in</td>
+            <td align="center">Increase the zoom ratio.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/zoom_out.png"></td>
+            <td align="center"><a id="zoomOut" class="anchor"></a>Zoom out</td>
+            <td align="center">Decrease the zoom ratio.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/zoom_all.png"></td>
+            <td align="center"><a id="zoomAll" class="anchor"></a>Zoom all</td>
+            <td align="center">Change the zoom ratio to the optimal value to view everything on the canvas.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/zoom_selection.png"></td>
+            <td align="center"><a id="zoomSelection" class="anchor"></a>Zoom to selection</td>
+            <td align="center">The selected object will be the center of zooming.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/clean_2d.png"></td>
+            <td align="center"><a id="clean" class="anchor"></a>Clean</td>
+            <td align="center">Clean the structure(s) on the canvas in 2D by recalculating the atomic coordinates.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons//stereo.png"></td>
+            <td align="center"><a id="stereo" class="anchor"></a>Calculate stereo</td>
+            <td align="center">Determine <b><i>R/S</i></b> stereo labels for chiral atoms and <b><i>E/Z</i></b> labels
+                for
+                double bonds.
+            </td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/view_settings.png"></td>
+            <td align="center"><a id="view" class="anchor"></a>View settings</td>
+            <td align="center">Set display properties in the <b>View settings</b> dialog box.</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/help.png"></td>
+            <td align="center"><a id="about" class="anchor"></a>About Marvin JS</td>
+            <td align="center">Displays information about the application (name, version) and a link to the User's
+                Guide.
+            </td>
+        </tr>
+    </table>
+
+    <h2><a id="tools" class="anchor"></a>Tools Toolbar</h2>
+
+    <p>The <b>Tools</b> toolbar offers several options for drawing or editing structures.</p>
+
+    <p>There are "combo" buttons on the <b>Tools</b> toolbar, which have a triangle in their lower right corner. When
+        you
+        click there, you can select a function from a list of options.
+        Once an option is selected, the main "combo" button retains the selection.</p>
+
+    <table class="grid">
+        <tr height="35px" valign="middle">
+            <td align="center" width="80px"><img src="gui/icons/rectangle_selection.png"></td>
+            <td align="center" width="180px"><a id="selection" class="anchor"></a>Selection</td>
+            <td align="center" width="650px">Select whole structures or molecule fragments.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/delete.png"></td>
+            <td align="center"><a id="delete" class="anchor"></a>Delete</td>
+            <td align="center">Erase one or more structures or molecule fragments.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/bonds/single_bond.png"></td>
+            <td align="center"><a id="bonds" class="anchor"></a><a href="#bonds2">Bonds</a></td>
+            <td align="center">Open the complete list of chemical bonds including several query bond types.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/chain.png"></td>
+            <td align="center"><a id="chain" class="anchor"></a>Chain</td>
+            <td align="center">Draw an alkyl chain of arbitrary length.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/abbrevgroup_1.png"></td>
+            <td align="center"><a id="abbrevGroup" class="anchor"></a>Abbreviated Groups</td>
+            <td align="center">Insert abbreviated groups.</td>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/increase_charge.png"></td>
+            <td align="center"><a id="increaseCharge" class="anchor"></a>Increase charge</td>
+            <td align="center">Increase the charge of an atom with one unit (<i>i.e.</i>, adds a positive charge to the
+                atom).
+            </td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/decrease_charge.png"></td>
+            <td align="center"><a id="decreaseCharge" class="anchor"></a>Decrease Charge</td>
+            <td align="center">Decrease the charge of an atom with one unit (<i>i.e.</i>, adds a negative charge to the
+                atom).
+            </td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/r_group.png"></td>
+            <td align="center"><a id="r-groups" class="anchor"></a>R-groups</td>
+            <td align="center">"Combo" button to insert an R-group or create an R-group definition.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/r_attachment.png"></td>
+            <td align="center"><a id="rAttachment" class="anchor"></a>R-group attachment</td>
+            <td align="center">Add an R-group attachment point to an atom.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/arrows/straight_arrow.png"></td>
+            <td align="center"><a id="arrows" class="anchor"></a>Arrows</td>
+            <td align="center">"Combo" button to select between single (straight) or two-headed (resonance) arrows.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/reaction_operator.png"></td>
+            <td align="center"><a id="reactionOperator" class="anchor"></a>Reaction Operator</td>
+            <td align="center">Place a "+" sign between the reactants or products of a reaction.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/arrows/single_eflow.png"></td>
+            <td align="center"><a id="singleEflow" class="anchor"></a>Electron Flow Arrow</td>
+            <td align="center">"Combo" button to select between single or double electron flow arrows.</td>
+        </tr>
+    </table>
+
+    <h3><a id="bonds2" class="anchor"></a>Bonds</h3>
+
+    <p>You can choose any type of bond by clicking on the lower right corner of the Bonds "combo" button in the toolbar.
+        Among these bonds you can find several query types, too.
+        You can also use keyboard shortcuts to choose a bond type to connect two atoms or alter an already existing
+        bond.
+        See the complete list of chemical bonds available in Marvin JS
+        and their respective keyboard shortcuts in the table below.</p>
+
+    <table class="grid">
+        <tr height="35px">
+            <th align="center" width="120px">Bond symbol</th>
+            <th align="center" width="500px">Bond type</th>
+            <th align="center" width="120px">Shortcut</th>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/drawing.png"></td>
+            <td align="center"><a id="drawing" class="anchor"></a>Drawing</td>
+            <td align="center">Ctrl+D</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/single_bond.png"></td>
+            <td align="center">"Single" bond</td>
+            <td align="center">1</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/double_bond.png"></td>
+            <td align="center">"Double" bond</td>
+            <td align="center">2</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/triple_bond.png"></td>
+            <td align="center">"Triple" bond"</td>
+            <td align="center">3</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/aromatic_bond.png"></td>
+            <td align="center">"Aromatic" bond</td>
+            <td align="center">4</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/single_up_bond.png"></td>
+            <td align="center">"Single Up" wedge bond</td>
+            <td align="center">5</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/single_down_bond.png"></td>
+            <td align="center">"Single Down" wedge bond</td>
+            <td align="center">6</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/single_up_down_bond.png"></td>
+            <td align="center">"Single Up or Down" query bond</td>
+            <td align="center">7</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/double_cis_trans_bond.png"></td>
+            <td align="center">"Double Cis or Trans" query bond</td>
+            <td align="center">-</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/unspecified_bond.png"></td>
+            <td align="center">"Double C/T or Unspecified" query bond</td>
+            <td align="center">-</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/single_double_bond.png"></td>
+            <td align="center">"Single or Double" query bond</td>
+            <td align="center">12</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/single_aromatic_bond.png"></td>
+            <td align="center">"Single or Aromatic" query bond</td>
+            <td align="center">14</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/double_aromatic_bond.png"></td>
+            <td align="center">"Double or Aromatic" query bond</td>
+            <td align="center">24</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/any_bond.png"></td>
+            <td align="center">"Any" query bond</td>
+            <td align="center">0</td>
+        </tr>
+        <tr height="30px">
+            <td align="center"><img src="gui/icons/bonds/coordinate_bond.png"></td>
+            <td align="center">"Coordinate" bond</td>
+            <td align="center">-</td>
+        </tr>
+    </table>
+
+    <h2><a id="atomstoolbar" class="anchor"></a>Atoms Toolbar</h2>
+
+    <p>The elements of the <b>Atoms</b> toolbar provide tools for drawing and modifying atoms, including query atom
+        types,
+        too. The chosen atomic symbol appears on the tip of the cursor.
+        After a left-click, this atom is put on the canvas. Note that you can also use <a
+                href="shortcuts.htm">shortcuts</a>
+        (atomic symbols) to choose any atom from the Periodic Table.</p>
+
+    <table class="grid">
+        <tr height="35px" valign="middle">
+            <td align="center" width="300px"><img src="gui/icons/periodic_table2.png"></td>
+            <td align="center" width="180px"><a id="periodictable" class="anchor"></a><a href="#periodictable2">Periodic
+                Table</a></td>
+            <td align="center" width="520px">Open the Periodic Table to select an atom.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/atoms/hydrogen2.png">; <img src="gui/icons/atoms/carbon2.png">; <img
+                    src="gui/icons/atoms/nitrogen2.png">; <img src="gui/icons/atoms/oxygen2.png">;
+                <img src="gui/icons/atoms/sulfur2.png">; <img src="gui/icons/atoms/fluorine2.png">; <img
+                        src="gui/icons/atoms/phosphorus2.png">;
+                <img src="gui/icons/atoms/chlorine2.png">; <img src="gui/icons/atoms/bromine2.png">; <img
+                        src="gui/icons/atoms/iodine2.png"></td>
+            <td align="center"><a id="freqAtoms" class="anchor"></a>Frequently used atoms</td>
+            <td align="center">The most frequently used atoms can be reached directly from the toolbar.</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/star_atom.png"></td>
+            <td align="center"><a id="star" class="anchor"></a><a href="#staratom">Star atom</a></td>
+            <td align="center">Draw a '*' atom (<i>e.g.</i>, for an unspecified end group in a polymer).</td>
+        </tr>
+        <tr height="35px" valign="middle">
+            <td align="center"><img src="gui/icons/atoms/any.png"></td>
+            <td align="center"><a id="queryatoms" class="anchor"></a><a href="#queryatoms2">Query atoms</a></td>
+            <td align="center">"Combo" button to select a query atom type or define a pseudo atom.</td>
+        </tr>
+    </table>
+
+    <h3><a id="periodictable2" class="anchor"></a>Periodic Table</h3>
+
+    <p>This button opens the Periodic Table in a pop-up window. You can choose any atom from the Periodic Table to put
+        it on
+        the canvas with a left-click.
+        You can also define <a href="marvinjs_chem.htm#list">Atom Lists and NOT Lists</a> for query structures.
+        The selected atom or list appears on the tip of the cursor, and you can place it on the canvas one or more
+        times.
+    </p>
+    <img src="gui/periodic_table.png">
+
+    <h3><a id="staratom" class="anchor"></a>Star ('*') atom</h3>
+
+    <p>In most cases, a '*' atom stands for an unspecified end group in a polymer. More generally, it can symbolize any
+        type
+        of unknown or unspecified groups or molecules.
+        Technically, it is an 'AH' type query atom (any elements including hydrogen) with an alias.</p>
+
+    <h3><a id="queryatoms2" class="anchor"></a>Query atoms</h3>
+
+    <p>Marvin JS offers several query atom types, which can be reached by left-clicking on the lower right corner of the
+        <b>Query
+            Atoms</b> "combo" button. See the complete list in the table below.
+        Pseudo atoms are also available from here.</p>
+
+    <table class="grid">
+        <tr>
+            <td align="center" width="80px"><img src="gui/icons/atoms/any.png"></td>
+            <td align="center" width="500px">Any of the elements except hydrogen</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/atoms/hetero.png"></td>
+            <td align="center">Hetero atom (any atom except carbon and hydrogen)</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/atoms/metal.png"></td>
+            <td align="center">Metal atom</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/atoms/halogen.png"></td>
+            <td align="center">Halogen atom</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/atoms/any_or_h.png"></td>
+            <td align="center">Any of the elements including hydrogen</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/atoms/any_except_c.png"></td>
+            <td align="center">Any of the elements except carbon</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/atoms/metal_or_h.png"></td>
+            <td align="center">Metal atom or hydrogen</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/atoms/halogen_or_h.png"></td>
+            <td align="center">Halogen atom or hydrogen</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/pseudo.png"></td>
+            <td align="center">Pseudo atom</td>
+        </tr>
+    </table>
+
+    <h2><a id="templatestoolbar" class="anchor"></a>Templates Toolbar</h2>
+
+    <p>Six generic templates are available from the <b>Templates</b> toolbar. After selecting one of these templates you
+        can
+        place it on the canvas with a left mouse-click.
+        When placing it on the canvas, you can rotate the template around its center by dragging the cursor. Templates
+        can
+        also be connected to already existing structures by
+        <a href="marvinjs_basic.htm#sproutdrawing">sprout drawing</a>.</p>
+
+    <table class="grid">
+        <tr>
+            <td align="center" width="80px"><img src="gui/icons/templates/cyclohexane.png"></td>
+            <td align="center" width="500px">Cyclohexane</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/templates/cyclopentane.png"></td>
+            <td align="center">Cyclopentane</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/templates/pyrrole.png"></td>
+            <td align="center">Pyrrole</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/templates/cyclopentane_house.png"></td>
+            <td align="center">Cyclopentane (house)</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/templates/benzene.png"></td>
+            <td align="center">Benzene</td>
+        </tr>
+        <tr>
+            <td align="center"><img src="gui/icons/templates/naphthalene.png"></td>
+            <td align="center">Naphthalene</td>
+        </tr>
+    </table>
+    </body>
+</html>

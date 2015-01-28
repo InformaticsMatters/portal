@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Dora Barna, Eufrozina Hoffmann">
+    <link rel="stylesheet" type="text/css" href="marvinmanuals.css" title="Style">
+    <title>Electron flow arrows</title>
+</head>
+
+<body>
+
+<h1>Electron Flow Arrows</h1>
+
+<p>Electron flow arrows (or mechanism arrows) are the standard tools for describing the movement of electrons in the
+    elementary reaction steps of a complex mechanism.
+    With their help, we can display the formation and breaking of chemical bonds.<br>
+    In Marvin JS, you can choose between two types of electron flow arrows:
+<table>
+    <tr>
+        <td width="80px"><b>Single:</b></td>
+        <td width="70px" align="center"><img src="gui/icons/arrows/single_eflow.png"></td>
+    </tr>
+    <tr>
+        <td><b>Double:</b></td>
+        <td align="center"><img src="gui/icons/arrows/double_eflow.png"></td>
+    </tr>
+</table>
+The former arrow type is for visualizing single electron movement, while the latter is for displaying the movement of
+electron pairs.<br>
+Accordingly, single electron flow arrows can start from:
+<ul>
+    <li>a radical electron of an atom;</li>
+    <li>a lone pair electron of an atom; or</li>
+    <li>from a bond.</li>
+</ul>
+As for double arrows, they can start from:
+<ul>
+    <li>a lone pair of an atom; or</li>
+    <li>from a bond.</li>
+</ul>
+In both cases, an arrow can end:
+<ul>
+    <li>on an atom;</li>
+    <li>on a bond; or</li>
+    <li>on an incipient bond between two atoms which do not have a common existing bond.</li>
+</ul>
+</p>
+
+<p>Below, you can find a detailed description about the different cases of using electron flow arrows.<br>
+    You can also watch a video tutorial about their usage in mechanism drawing <a
+            href="https://www.youtube.com/watch?v=GNPOi6PIZpU">here</a>.</p>
+
+<h2><a id="atomToAtom" class="anchor"></a>Electron flow arrow between two atoms</h2>
+
+<p>If you want an atom to be the source of an electron flow arrow, the atom has to have a radical electron or a lone
+    pair.
+    Radicals can be added to atoms from the popup menu, in the <a href="marvinjs_basic.htm#atomproperties">Atom
+        properties dialog</a>,
+    while lone pairs can be made visible on every atom in the <a href="marvinjs_basic.htm#structuredisplayoptions">View
+        settings</a> dialog.
+    To draw an electron flow arrow select either the single or the double electron flow arrow button from the
+    <b>Tools</b> toolbar.
+    The arrow should be dragged directly from one of the electrons (dot symbols) on the source atom to the target atom.
+    If you hover over an atom which has free electrons for a mechanism arrow, the atom will be highlighted:</p>
+
+<img src="marvinjs_chem_files/electronflow/electronflow1.png">
+
+<p>You also have the option to click on the source atom in order to enlarge it, and drag the arrow from the enlarged
+    dot:</p>
+
+<img src="marvinjs_chem_files/electronflow/electronflow2.png">
+
+<p>While dragging the electron flow arrow to the target atom symbol, you can see a grey feedback of the arrow:</p>
+
+<img src="marvinjs_chem_files/electronflow/electronflow3.png">
+
+<p>If lone pair visibility is turned on, then lone pair electrons can also be the source of either single or double
+    electron flow arrows, such as on the image below:</p>
+
+<img src="marvinjs_chem_files/electronflow/electronflow4.png">
+
+<p>As a chemically intelligent editor, Marvin JS does not allow drawing more than one single electron flow arrow per
+    electron (<i>i.e.</i>, one single arrow from a radical and no more than two single arrow from a lone pair),
+    as well as no more than one double electron flow arrow per lone pair.</p>
+
+<h2><a id="atomToBond" class="anchor"></a>Electron flow arrow from an atom to a bond</h2>
+
+<p>It should be noted that, in this case, a bond can be target of an electron flow arrow only if it is adjacent ot the
+    source atom. Similarly to the the previous point, the source atom has to have explicitly displayed
+    radical or lone pair electrons from which the arrow can be dragged. The endpoint of the arrow will be the midpoint
+    of the target bond.</p>
+<table>
+    <tr valign="middle">
+        <td width="220px"><img src="marvinjs_chem_files/electronflow/electronflow5.png"></td>
+        <td width="220px" align="center"><img src="marvinjs_chem_files/electronflow/electronflow6.png"></td>
+    </tr>
+</table>
+
+<h2><a id="bondToAtom" class="anchor"></a>Electron flow arrow from a bond to an atom</h2>
+
+<p>Electron flow arrows which start from a bond and target an atom can be used to display the process of blond cleavage.
+    By using single electron flow arrows, homolytic bond cleavage, that is,
+    the splitting of the bonding electron pair can be represented, such as on the image below.</p>
+
+<img src="marvinjs_chem_files/electronflow/electronflow7.png">
+
+<p>While by using double electron flow arrows, you can display heterolytic bond cleavage, where both bonding electrons
+    will belong to the same atom as a result.</p>
+
+<img src="marvinjs_chem_files/electronflow/electronflow8.png">
+
+<h2><a id="bondToBond" class="anchor"></a>Electron flow arrow between two bonds</h2>
+
+<p>Drawing an electron flow arrow from one bond to another is only possible if these two bonds have an atom in
+    common:</p>
+
+<img src="marvinjs_chem_files/electronflow/electronflow9.png">
+
+<p>Similarly, double electron flow arrows can be used to display, for instance, the relocation of &pi;-bonds:</p>
+
+<img src="marvinjs_chem_files/electronflow/electronflow10.png">
+
+<h2><a id="bondFormation" class="anchor"></a>Representing bond formation</h2>
+
+<p>Marvin JS uses incipient bonds to represent bonds in the formation. These incipient bonds appear as blue dashed lines
+    on the canvas connecting the two atoms which will have a new bond between them.
+    There are two cases how an incipient bond can occur: the electrons of the new bond either come from atoms or from
+    bonds. In Marvin JS, these bond formations can be described the following ways:</p>
+
+<h3><a id="atomToIncipient" class="anchor"></a>Electron flow arrow from an atom to an incipient bond</h3>
+
+<p>If you want to represent the formation of a bond between two atoms, you have to draw electron flow arrows which start
+    from the respective atoms and target the incipient bond between them.
+<ol>
+    <li>First, either add a radical to each atom from which you want to start an electron flow arrow or switch on lone
+        pair visibility.<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow11.png"></li>
+    <li>Then draw the first electron flow arrow from an electron of the source atom to the target.<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow12.png"></li>
+    <li>In the next step, if you click on the arrow, its head will jump to the incipient bond between the two atoms. (If
+        you click on the arrow again, its head will jump back to the target atom.)<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow13.png"></li>
+    <li>As for the second electron flow arrow, repeat the last two steps: draw an arrow from the still free radical to
+        the other atom.<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow14.png"></li>
+    <li>Finally, click on this second arrow as well to make its head jump to the midpoint of the incipient bond.<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow15.png"></li>
+</ol>
+</p>
+<p>A mechanism where the electrons come exclusively from one atom can be described by using a double electron flow
+    arrow. In this case, the arrow has to be started from a lone pair of the donor atom and dragged to the
+    acceptor atom. Clicking on this arrow makes the arrow head jump to the incipient bond between the two atoms. A
+    second click on the arrow makes it jump back to its original position (to the target atom).</p>
+
+<img src="marvinjs_chem_files/electronflow/electronflow16.png">
+
+<h3><a id="bondToIncipient" class="anchor"></a>Electron flow arrow from a bond to an incipient bond</h3>
+
+<p>When the electrons required for bond formation come partially (or completely, in the case of double electron flow
+    arrows) from an existing bond, then the bond in formation will connect one of the atoms of the original
+    bond to another atom. For describing such a mechanism, you need an electron flow arrow which starts from this
+    existing bond, and the target of which is the incipient bond between the two atoms. See an example below.
+<ol>
+    <li>Draw a single electron flow arrow from the original bond (a double bond in this case) to the atom which will
+        belong to the newly formed bond.<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow17.png"></li>
+    <li>As a second step, click on the arrow to make its head jump to an incipient bond connecting the target atom with
+        one of the atoms belonging to the original bond.<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow18.png"></li>
+    <li>If you wan the incipient bond to belong to the other atom of the original bond, click on the arrow again. (For a
+        third click, the arrow head jumps back to its original position at the target atom.)<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow19.png"></li>
+    <li>In order to add the other electron flow arrow to your drawing (which comes from the oxygen atom), add a
+        monovalent radical to the oxygen, and draw a single electron flow arrow from this radical to the atom
+        on the other end of the incipient bond (the carbon atom in this case).<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow20.png"></li>
+    <li>And finally, click on this second arrow to make it jump to the midpoint of the incipient bond as well.<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow21.png"></li>
+    <li>There are cases where only one incipient bond is possible (when there is an already existing bond between the
+        target atom and one of the atoms belonging to the original bond).
+        In such cases, the first click on the electron flow arrow will make its head jump to the only possible incipient
+        bond, while the second click will result in the original statet of the arrow:
+        its head being at the target atom:<br>
+        <img src="marvinjs_chem_files/electronflow/electronflow22.png"></li>
+</ol>
+</p>
+<p>When both electrons for the new bond come from the same bond, then we need double electron flow arrows to represent
+    the bond formation process. The steps you have to take for displaying such a mechanism are very
+    similar to the previous case: draw the double electron flow arrows between the appropriate bonds and target atoms,
+    then click once or twice on those arrows you want to end on an incipient bond.
+    The image below summarizes this procedure:</p>
+<img src="marvinjs_chem_files/electronflow/electronflow23.png">
+
+<h2><a id="manipulate" class="anchor"></a>Manipulation of electron flow arrows</h2>
+<ul>
+    <li>Electron flow arrows can be selected either by clicking on them with the <b>Rectangle</b> or the <b>Freehand
+        selection</b> tool being active, or by dragging over them with one of the selection tools. In the latter case,
+        you can only select the electron flow arrow without its source and target atom or bond if you use the Freehand
+        selection tool;
+        while using Rectangle selection, the arrow can only be selected with its source and target.
+    </li>
+    <li>Deleting electron flow arrows can be accomplished in much the same way as with other objects: using either the
+        <b>Delete</b> toolbar button or the the <b>Del</b> key.
+        Please note that an electron flow arrow is automatically deleted if its source or taget atom is deleted or
+        changed, as well as when one of the atoms belonging to its source or target bond is deleted or
+        changed (incipient bonds included as well).
+    </li>
+    <li>The arrows can be resized (their arc angle can be changed) by dragging them while either the electron flow arrow
+        or the selection button is active on the toolbar.
+    </li>
+</ul>
+
+</body>
+</html>
