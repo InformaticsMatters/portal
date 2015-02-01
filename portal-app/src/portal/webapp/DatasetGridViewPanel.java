@@ -18,7 +18,8 @@ import java.util.List;
 
 public class DatasetGridViewPanel extends Panel {
 
-    private static final String LARGE_ARROW_CIRCLE_OUTLINE_RIGHT_LINK_ICON = "large arrow circle outline right link icon";
+    private static final String LARGE_FILE_TEXT_OUTLINE_LINK_ICON = "large file text outline link icon";
+    private static final String LARGE_COUNTERCLOCKWISE_ROTATED_SITEMAP_LINK_ICON = "large counterclockwise rotated sitemap link icon";
     @Inject
     private DatasetService service;
     private UploadModalPanel uploadModalPanel;
@@ -69,14 +70,16 @@ public class DatasetGridViewPanel extends Panel {
         EasyGridBuilder<DatasetDescriptor> easyGridBuilder = new EasyGridBuilder<DatasetDescriptor>("datasetDescriptors");
         easyGridBuilder.getColumnList().add(easyGridBuilder.newPropertyColumn("Id", "id", "id"));
         easyGridBuilder.getColumnList().add(easyGridBuilder.newPropertyColumn("Description", "description", "description").setInitialSize(400));
-        List<String> actionNameList = Arrays.asList(LARGE_ARROW_CIRCLE_OUTLINE_RIGHT_LINK_ICON);
+        List<String> actionNameList = Arrays.asList(LARGE_COUNTERCLOCKWISE_ROTATED_SITEMAP_LINK_ICON, LARGE_FILE_TEXT_OUTLINE_LINK_ICON);
         easyGridBuilder.getColumnList().add(easyGridBuilder.newActionsColumn(actionNameList, new RowActionsCallbackHandler<DatasetDescriptor>() {
 
             @Override
             public void onAction(AjaxRequestTarget target, String name, DatasetDescriptor datasetDescriptor) {
-                if (LARGE_ARROW_CIRCLE_OUTLINE_RIGHT_LINK_ICON.equals(name)) {
+                if (LARGE_COUNTERCLOCKWISE_ROTATED_SITEMAP_LINK_ICON.equals(name)) {
                     TreeGridVisualizerPage page = new TreeGridVisualizerPage(datasetDescriptor);
                     setResponsePage(page);
+                } else if (LARGE_FILE_TEXT_OUTLINE_LINK_ICON.equals(name)) {
+
                 }
             }
         }).setInitialSize(70));
