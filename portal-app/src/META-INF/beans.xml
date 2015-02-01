@@ -1,6 +1,9 @@
 <beans>
     <alternatives>
+        <class>portal.service.mock.PortalIDEAConfig</class>
+        <class>portal.service.mock.DatasetServiceMock</class>
     </alternatives>
     <interceptors>
+        <class>portal.service.mock.ChemcentralTransactionalInterceptor</class>
     </interceptors>
 </beans>

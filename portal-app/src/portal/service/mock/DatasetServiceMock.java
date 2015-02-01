@@ -1,26 +1,29 @@
 package portal.service.mock;
 
 import chemaxon.formats.MFileFormatUtil;
+import chemaxon.jchem.db.JChemSearch;
 import chemaxon.marvin.io.MPropHandler;
 import chemaxon.marvin.io.MRecord;
 import chemaxon.marvin.io.MRecordReader;
+import chemaxon.sss.search.JChemSearchOptions;
 import chemaxon.struc.MProp;
+import chemaxon.util.ConnectionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.service.api.*;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author simetrias
  */
 @ApplicationScoped
+@Alternative
 public class DatasetServiceMock implements DatasetService {
 
     private static final String STRUCTURE_FIELD_NAME = "structure_as_text"; // TODO decide how to best handle this
@@ -32,9 +35,47 @@ public class DatasetServiceMock implements DatasetService {
     private Map<Long, DatasetMock> datasetMockMap = new HashMap<Long, DatasetMock>();
     private Map<Long, DatasetDescriptorMock> datasetDescriptorMockMap = new HashMap<Long, DatasetDescriptorMock>();
 
+    @Inject
+    private PortalConfig portalConfig;
+
     @Override
     public DatasetDescriptor createFromStructureSearch(StructureSearch structureSearch) {
-        return null;
+        try {
+            doCreateFromStructureSearch(structureSearch);
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void doCreateFromStructureSearch(StructureSearch structureSearch) throws Exception {
+        ConnectionHandler connectionHandler = getStandaloneConnectionHandler();
+        connectionHandler.connectToDatabase();
+        try {
+            JChemSearchOptions searchOptions = new JChemSearchOptions(JChemSearch.SUBSTRUCTURE);
+            JChemSearch searcher = new JChemSearch();
+            searcher.setConnectionHandler(connectionHandler);
+            searcher.setSearchOptions(searchOptions);
+            searcher.setQueryStructure(structureSearch.getStructure());
+            searcher.setRunMode(JChemSearch.RUN_MODE_SYNCH_COMPLETE);
+            searcher.setStructureTable("chemcentral_01.structures");
+            searcher.run();
+            int[] hits = searcher.getResults();
+        } finally {
+            connectionHandler.close();
+        }
+    }
+
+    private ConnectionHandler getStandaloneConnectionHandler() throws Exception {
+        ConnectionHandler connectionHandler = new ConnectionHandler();
+        connectionHandler.setPropertyTable("chemcentral_01.jchemproperties");
+        Properties properties = portalConfig.getChemcentralPersistenceProperties();
+        connectionHandler.setDriver(properties.getProperty("javax.persistence.jdbc.driver"));
+        connectionHandler.setUrl(properties.getProperty("javax.persistence.jdbc.url"));
+        connectionHandler.setLoginName(properties.getProperty("javax.persistence.jdbc.user"));
+        connectionHandler.setPassword(properties.getProperty("javax.persistence.jdbc.password"));
+        connectionHandler.connectToDatabase();
+        return connectionHandler;
     }
 
     @Override

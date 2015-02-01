@@ -14,14 +14,18 @@
       <root url="file://$PROJECT_DIR$/../lib/jsp-api/2.1" />
       <root url="file://$PROJECT_DIR$/../lib/el-api/2.2" />
       <root url="file://$PROJECT_DIR$/../lib/seam-conversation/3.0" />
+      <root url="file://$PROJECT_DIR$/../lib/jpa/2.0" />
+      <root url="file://$PROJECT_DIR$/../lib/eclipselink/2.4.1" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/../../ELF/lib/jchem/6.2.0_b787" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/cdi-api/1.2.0" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/eclipselink/2.4.1" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/el-api/2.2" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/inmethod/6.9.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jetty/8.1.15" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/jpa/2.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jsp-api/2.1" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/postgresql/9.2" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/seam-conversation/3.0" recursive="false" />
