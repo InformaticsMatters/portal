@@ -30,6 +30,10 @@ public class ExternalStructureImage extends WebComponent {
         CharSequence url = RequestCycle.get().urlFor(resource, pageParameters);
         if (rowId != null && rowId.trim().length() > 0) {
             tag.put("src", url);
+            String style = "width: :widthpx; height: :heightpx;"
+                    .replace(":width", Integer.toString(DynamicStructureImageResource.RECTANGLE.width))
+                    .replace(":height", Integer.toString(DynamicStructureImageResource.RECTANGLE.height));
+            tag.put("style", style);
         }
     }
 }

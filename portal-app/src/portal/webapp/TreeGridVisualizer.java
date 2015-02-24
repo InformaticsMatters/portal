@@ -2,10 +2,8 @@ package portal.webapp;
 
 import com.inmethod.grid.IGridColumn;
 import com.inmethod.grid.treegrid.TreeGrid;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.cycle.RequestCycle;
 import portal.service.api.*;
 
 import javax.inject.Inject;
@@ -14,7 +12,7 @@ import java.util.List;
 
 public class TreeGridVisualizer extends TreeGrid<TreeGridVisualizerModel, TreeGridVisualizerNode, String> implements IPageable {
 
-    private static final int ROWS_PER_PAGE = 375;
+    private static final int ROWS_PER_PAGE = 50;
     private long currentPage = 0;
     private DatasetDescriptor datasetDescriptor;
     private List<Long> allIds;
@@ -24,6 +22,7 @@ public class TreeGridVisualizer extends TreeGrid<TreeGridVisualizerModel, TreeGr
     public TreeGridVisualizer(String id, DatasetDescriptor datasetDescriptor) {
         super(id, new TreeGridVisualizerModel(new TreeGridVisualizerNode()), buildColumns(datasetDescriptor));
         setOutputMarkupId(true);
+        getTree().setRootLess(true);
         this.datasetDescriptor = datasetDescriptor;
         allIds = datasetService.listAllRowIds(datasetDescriptor.getId());
         setCurrentPage(0);
@@ -83,11 +82,12 @@ public class TreeGridVisualizer extends TreeGrid<TreeGridVisualizerModel, TreeGr
         buildNodeHierarchy(rootNode, rowList);
         TreeGridVisualizerModel treeGridVisualizerModel = new TreeGridVisualizerModel(rootNode);
         getTree().setModelObject(treeGridVisualizerModel);
-        RequestCycle.get().find(AjaxRequestTarget.class).add(this);
     }
 
     @Override
     public long getPageCount() {
         return (allIds.size() / ROWS_PER_PAGE) + 1;
     }
+
+
 }

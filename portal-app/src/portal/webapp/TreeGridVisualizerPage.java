@@ -22,6 +22,7 @@ public class TreeGridVisualizerPage extends WebPage {
     private NotifierProvider notifierProvider;
     @Inject
     private DatasetService service;
+    private AjaxPagingNavigation navigation;
 
     public TreeGridVisualizerPage(DatasetDescriptor datasetDescriptor) {
         notifierProvider.createNotifier(this, "notifier");
@@ -42,11 +43,8 @@ public class TreeGridVisualizerPage extends WebPage {
 
     private void addPageableTreeGrid(DatasetDescriptor datasetDescriptor) {
         TreeGridVisualizer treeGridVisualizer = new TreeGridVisualizer("treeGrid", datasetDescriptor);
-        treeGridVisualizer.getTree().setRootLess(true);
         add(treeGridVisualizer);
 
-        AjaxPagingNavigation navigation = new AjaxPagingNavigation("navigation", treeGridVisualizer);
-        add(navigation);
+        add(new TreeGridNavigationPanel("treeGridNavigation", treeGridVisualizer));
     }
-
 }
