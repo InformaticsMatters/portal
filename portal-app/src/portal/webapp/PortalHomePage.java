@@ -11,25 +11,37 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import portal.service.api.DatasetDescriptor;
+import portal.service.api.DatasetService;
+import portal.service.api.ListDatasetDescriptorFilter;
+import toolkit.wicket.marvin4js.MarvinSketcher;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class PortalHomePage extends WebPage {
 
-    @Inject
-    private NotifierProvider notifierProvider;
     private AjaxLink gridViewLink;
     private AjaxLink cardViewLink;
     private DatasetGridViewPanel datasetGridViewPanel;
     private DatasetCardViewPanel datasetCardViewPanel;
+    private UploadModalPanel uploadModalPanel;
+    private MarvinSketcher marvinSketcher;
+    private List<DatasetDescriptor> datasetDescriptorList;
+
+    @Inject
+    private NotifierProvider notifierProvider;
+    @Inject
+    private DatasetService datasetService;
 
     public PortalHomePage() {
         notifierProvider.createNotifier(this, "notifier");
         add(new MenuPanel("menuPanel"));
         addPanels();
         addActions();
+        addModals();
     }
 
     @Override
@@ -77,6 +89,23 @@ public class PortalHomePage extends WebPage {
         };
         cardViewLink.setOutputMarkupId(true);
         add(cardViewLink);
+
+
+        add(new AjaxLink("addFromFile") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                uploadModalPanel.showModal();
+            }
+        });
+
+        add(new AjaxLink("addFromDatamart") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                marvinSketcher.showModal();
+            }
+        });
     }
 
     private void addPanels() {
@@ -92,4 +121,44 @@ public class PortalHomePage extends WebPage {
         datasetCardViewPanel.setVisible(false);
     }
 
+    private void addModals() {
+        uploadModalPanel = new UploadModalPanel("uploadFilePanel", "modalElement");
+        uploadModalPanel.setCallbacks(new UploadModalPanel.Callbacks() {
+
+            @Override
+            public void onSubmit() {
+                refreshDatasetDescriptors();
+            }
+
+            @Override
+            public void onCancel() {
+                uploadModalPanel.hideModal();
+            }
+        });
+        add(uploadModalPanel);
+
+        marvinSketcher = new MarvinSketcher("marvinSketcher", "modalElement");
+        marvinSketcher.setCallbackHandler(new MarvinSketcher.CallbackHandler() {
+
+            @Override
+            public void onAcceptAction(AjaxRequestTarget ajaxRequestTarget) {
+                marvinSketcher.hideModal();
+            }
+
+            @Override
+            public void onCancelAction(AjaxRequestTarget ajaxRequestTarget) {
+                marvinSketcher.hideModal();
+            }
+        });
+        add(marvinSketcher);
+    }
+
+    private void refreshDatasetDescriptors() {
+        datasetDescriptorList = datasetService.listDatasetDescriptor(new ListDatasetDescriptorFilter());
+        datasetGridViewPanel.setDatasetDescriptorList(datasetDescriptorList);
+        datasetCardViewPanel.setDatasetDescriptorList(datasetDescriptorList);
+        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        target.add(datasetGridViewPanel);
+        target.add(datasetCardViewPanel);
+    }
 }

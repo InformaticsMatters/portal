@@ -8,9 +8,11 @@
 
 <div>
     <div class="ui page grid">
-        <div>
-            <div class="ui left attached small button active" wicket:id="datasetGridView">Grid view</div>
-            <div class="ui right attached small button" wicket:id="datasetCardView">Card view</div>
+        <div class="ui small buttons">
+            <div class="ui blue button" wicket:id="addFromFile">Add from file</div>
+            <div class="ui blue button" wicket:id="addFromDatamart">Add from Datamart</div>
+            <div class="ui button active" wicket:id="datasetGridView">Grid view</div>
+            <div class="ui button" wicket:id="datasetCardView">Card view</div>
         </div>
         <div class="separator15"></div>
 
@@ -19,6 +21,12 @@
 
     </div>
 </div>
+
+<div class="separator20"></div>
+
+
+<div wicket:id="uploadFilePanel"></div>
+<div wicket:id="marvinSketcher"></div>
 
 </body>
 </html>

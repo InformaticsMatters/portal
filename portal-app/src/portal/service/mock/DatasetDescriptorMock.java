@@ -13,7 +13,8 @@ class DatasetDescriptorMock implements DatasetDescriptor {
     private Long id;
     private String description;
     private Long datasetMockId;
-    private Map<Long, RowDescriptorMock> rowDescriptorMap = new HashMap<Long, RowDescriptorMock>();
+    private Map<Long, RowDescriptorMock> rowDescriptorMap = new HashMap<>();
+    private long rowCount;
 
     @Override
     public Long getId() {
@@ -35,7 +36,7 @@ class DatasetDescriptorMock implements DatasetDescriptor {
 
     @Override
     public List<RowDescriptor> getAllRowDescriptors() {
-        return new ArrayList<RowDescriptor>(rowDescriptorMap.values());
+        return new ArrayList<>(rowDescriptorMap.values());
     }
 
     @Override
@@ -45,7 +46,11 @@ class DatasetDescriptorMock implements DatasetDescriptor {
 
     @Override
     public long getRowCount() {
-        return (long) rowDescriptorMap.size();
+        return rowCount;
+    }
+
+    public void setRowCount(long rowCount) {
+        this.rowCount = rowCount;
     }
 
     public Long getDatasetMockId() {

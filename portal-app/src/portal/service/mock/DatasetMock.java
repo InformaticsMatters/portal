@@ -39,4 +39,8 @@ class DatasetMock {
         result.addAll(rowIdList.stream().map(rowMap::get).collect(Collectors.toList()));
         return result;
     }
+
+    public long getRowCount() {
+        return rowMap.size();
+    }
 }

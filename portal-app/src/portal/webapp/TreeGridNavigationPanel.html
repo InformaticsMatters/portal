@@ -1,10 +1,12 @@
 <wicket:panel>
-    <a wicket:id="first">First</a>
+    <div class="ui small buttons">
+        <a wicket:id="first" class="ui button">First</a>
 
-    <div wicket:id="navigation">
-        <a wicket:id="pageLink">
-            <span wicket:id="pageNumber"></span>
-        </a>
+        <div wicket:id="navigation" class="ui button">
+            <a wicket:id="pageLink">
+                <span wicket:id="pageNumber"></span>
+            </a>
+        </div>
+        <a wicket:id="last" class="ui button">Last</a>
     </div>
-    <a wicket:id="last">Last</a>
 </wicket:panel>

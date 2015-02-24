@@ -1,19 +1,30 @@
 <wicket:panel>
-    <div class="thumblist">
-        <ul class="ui five cards">
-            <li class="card">
-                <div class="content">
-                    <a class="header" href="#">Title</a>
-
-                    <div class="meta">
-                        <a class="time">Info</a>
-                    </div>
+    <ul class="ui three cards">
+        <li wicket:id="descriptors" class="card">
+            <div class="content">
+                <table class="ui small table">
+                    <tr>
+                        <td><b>Description</b></td>
+                        <td><span wicket:id="description"></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>Last modified</b></td>
+                        <td><span wicket:id="lastModified"></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>Row count</b></td>
+                        <td><span wicket:id="rowCount"></span></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="extra content">
+                <div wicket:id="open" class="ui mini blue button">
+                    Open
                 </div>
-                <div class="ui bottom attached button">
-                    <i class="add icon"></i>
-                    Button
+                <div wicket:id="metadata" class="ui mini orange button">
+                    Metadata
                 </div>
-            </li>
-        </ul>
-    </div>
+            </div>
+        </li>
+    </ul>
 </wicket:panel>
