@@ -2,10 +2,8 @@ package portal.service.mock;
 
 import portal.service.api.Row;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 class DatasetMock {
 
@@ -20,16 +18,25 @@ class DatasetMock {
         this.id = id;
     }
 
-    public List<Row> getRowList() {
-        return new ArrayList<Row>(rowMap.values());
+    public List<Row> getAllRows() {
+        return new ArrayList<>(rowMap.values());
     }
 
     public void addRow(Long id, RowMock rowMock) {
         rowMap.put(id, rowMock);
     }
 
-    public RowMock findRowById(Long id) {
+    public RowMock getRowById(Long id) {
         return rowMap.get(id);
     }
 
+    public Set<Long> getAllRowIds() {
+        return rowMap.keySet();
+    }
+
+    public List<Row> getRowList(List<Long> rowIdList) {
+        ArrayList<Row> result = new ArrayList<>(rowIdList.size());
+        result.addAll(rowIdList.stream().map(rowMap::get).collect(Collectors.toList()));
+        return result;
+    }
 }

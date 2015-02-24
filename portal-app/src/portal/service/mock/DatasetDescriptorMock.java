@@ -34,13 +34,18 @@ class DatasetDescriptorMock implements DatasetDescriptor {
     }
 
     @Override
-    public List<RowDescriptor> listAllRowDescriptors() {
+    public List<RowDescriptor> getAllRowDescriptors() {
         return new ArrayList<RowDescriptor>(rowDescriptorMap.values());
     }
 
     @Override
-    public RowDescriptor findRowDescriptorById(Long id) {
+    public RowDescriptor getRowDescriptorById(Long id) {
         return rowDescriptorMap.get(id);
+    }
+
+    @Override
+    public long getRowCount() {
+        return (long) rowDescriptorMap.size();
     }
 
     public Long getDatasetMockId() {

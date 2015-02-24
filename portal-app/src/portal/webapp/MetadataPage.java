@@ -81,7 +81,7 @@ public class MetadataPage extends WebPage {
         datasetNode.setUserObject(data);
         rootNode.add(datasetNode);
 
-        List<RowDescriptor> rowDescriptorList = datasetDescriptor.listAllRowDescriptors();
+        List<RowDescriptor> rowDescriptorList = datasetDescriptor.getAllRowDescriptors();
         for (RowDescriptor rowDescriptor : rowDescriptorList) {
             createRowDescriptorNode(datasetNode, rowDescriptor);
         }

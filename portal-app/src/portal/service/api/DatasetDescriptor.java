@@ -9,8 +9,10 @@ public interface DatasetDescriptor extends Serializable {
 
     String getDescription();
 
-    List<RowDescriptor> listAllRowDescriptors();
+    List<RowDescriptor> getAllRowDescriptors();
 
-    RowDescriptor findRowDescriptorById(Long id);
+    RowDescriptor getRowDescriptorById(Long id);
+
+    long getRowCount();
 
 }

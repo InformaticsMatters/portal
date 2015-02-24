@@ -1,22 +1,20 @@
 package portal.webapp;
 
-import com.inmethod.grid.IGridColumn;
 import com.inmethod.grid.common.AbstractGrid;
 import com.vaynberg.wicket.select2.ApplicationSettings;
+import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigation;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
-import portal.service.api.*;
+import portal.service.api.DatasetDescriptor;
+import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TreeGridVisualizerPage extends WebPage {
 
@@ -28,7 +26,7 @@ public class TreeGridVisualizerPage extends WebPage {
     public TreeGridVisualizerPage(DatasetDescriptor datasetDescriptor) {
         notifierProvider.createNotifier(this, "notifier");
         add(new MenuPanel("menuPanel"));
-        addTreeGrid(datasetDescriptor);
+        addPageableTreeGrid(datasetDescriptor);
     }
 
     @Override
@@ -42,45 +40,13 @@ public class TreeGridVisualizerPage extends WebPage {
         response.render(CssHeaderItem.forReference(new CssResourceReference(SemanticResourceReference.class, "resources/easygrid-overrides.css")));
     }
 
-    public void addTreeGrid(DatasetDescriptor datasetDescriptor) {
-        ListRowFilter listRowFilter = new ListRowFilter();
-        listRowFilter.setDatasetDescriptorId(datasetDescriptor.getId());
-        List<Row> rowList = service.listRow(listRowFilter);
-
-        TreeGridVisualizerNode rootNode = new TreeGridVisualizerNode();
-        buildNodeHierarchy(rootNode, rowList);
-
-        List<IGridColumn<TreeGridVisualizerModel, TreeGridVisualizerNode, String>> columns = new ArrayList<IGridColumn<TreeGridVisualizerModel, TreeGridVisualizerNode, String>>();
-        TreeGridVisualizerTreeColumn treeColumn = new TreeGridVisualizerTreeColumn("id", Model.of("Structure"), datasetDescriptor);
-        columns.add(treeColumn);
-        for (RowDescriptor rowDescriptor : datasetDescriptor.listAllRowDescriptors()) {
-            for (PropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
-                if (!isStructureProperty(rowDescriptor, propertyDescriptor)) {
-                    Long propertyId = propertyDescriptor.getId();
-                    String columnId = propertyId.toString();
-                    Model<String> headerModel = Model.of(propertyDescriptor.getDescription());
-                    columns.add(new TreeGridVisualizerPropertyColumn(columnId, headerModel, propertyId));
-                }
-            }
-        }
-
-        TreeGridVisualizer treeGridVisualizer = new TreeGridVisualizer("treeGrid", new TreeGridVisualizerModel(rootNode), columns);
+    private void addPageableTreeGrid(DatasetDescriptor datasetDescriptor) {
+        TreeGridVisualizer treeGridVisualizer = new TreeGridVisualizer("treeGrid", datasetDescriptor);
         treeGridVisualizer.getTree().setRootLess(true);
         add(treeGridVisualizer);
+
+        AjaxPagingNavigation navigation = new AjaxPagingNavigation("navigation", treeGridVisualizer);
+        add(navigation);
     }
 
-    private boolean isStructureProperty(RowDescriptor rowDescriptor, PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getId().equals(rowDescriptor.getStructurePropertyDescriptor().getId());
-    }
-
-    private void buildNodeHierarchy(TreeGridVisualizerNode rootNode, List<Row> rowList) {
-        for (Row row : rowList) {
-            TreeGridVisualizerNode childNode = new TreeGridVisualizerNode();
-            childNode.setUserObject(row);
-            rootNode.add(childNode);
-            if (row.getChildren() != null && row.getChildren().size() > 0) {
-                buildNodeHierarchy(childNode, row.getChildren());
-            }
-        }
-    }
 }

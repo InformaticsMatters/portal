@@ -29,4 +29,5 @@ public interface DatasetService {
 
     void removePropertyDescriptor(Long datasetDescriptorId, Long rowDescriptorId, Long propertyDescriptorId);
 
+    List<Long> listAllRowIds(Long datasetDescriptorId);
 }
