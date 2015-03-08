@@ -35,7 +35,7 @@ public class MarvinSketcher extends SemanticModalPanel {
             "    :javascript" +
             "});";
 
-    private CallbackHandler callbackHandler;
+    private Callbacks callbacks;
     private Form<SketcherFormModel> sketcherForm;
     private WebMarkupContainer sketcherContainer;
 
@@ -82,8 +82,8 @@ public class MarvinSketcher extends SemanticModalPanel {
         getModalRootComponent().add(sketcherForm);
     }
 
-    public void setCallbackHandler(CallbackHandler callbackHandler) {
-        this.callbackHandler = callbackHandler;
+    public void setCallbacks(Callbacks callbacks) {
+        this.callbacks = callbacks;
     }
 
     private void addActions() {
@@ -99,7 +99,7 @@ public class MarvinSketcher extends SemanticModalPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                callbackHandler.onAcceptAction(target);
+                callbacks.onSubmit();
             }
         };
         sketcherForm.add(acceptAction);
@@ -108,7 +108,7 @@ public class MarvinSketcher extends SemanticModalPanel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                callbackHandler.onCancelAction(ajaxRequestTarget);
+                callbacks.onCancel();
             }
         };
         sketcherForm.add(cancelAction);
@@ -130,11 +130,11 @@ public class MarvinSketcher extends SemanticModalPanel {
         return sketcherForm.getModelObject().getSketcherData();
     }
 
-    public interface CallbackHandler extends Serializable {
+    public interface Callbacks extends Serializable {
 
-        void onAcceptAction(AjaxRequestTarget ajaxRequestTarget);
+        void onSubmit();
 
-        void onCancelAction(AjaxRequestTarget ajaxRequestTarget);
+        void onCancel();
     }
 
     private class SketcherFormModel implements Serializable {

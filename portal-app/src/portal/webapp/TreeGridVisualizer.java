@@ -2,15 +2,18 @@ package portal.webapp;
 
 import com.inmethod.grid.IGridColumn;
 import com.inmethod.grid.treegrid.TreeGrid;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.model.Model;
 import portal.service.api.*;
 
 import javax.inject.Inject;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TreeGridVisualizer extends TreeGrid<TreeGridVisualizerModel, TreeGridVisualizerNode, String> implements IPageable {
+public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutableTreeNode, String> implements IPageable {
 
     private static final int ROWS_PER_PAGE = 50;
     private long currentPage = 0;
@@ -20,7 +23,7 @@ public class TreeGridVisualizer extends TreeGrid<TreeGridVisualizerModel, TreeGr
     private DatasetService datasetService;
 
     public TreeGridVisualizer(String id, DatasetDescriptor datasetDescriptor) {
-        super(id, new TreeGridVisualizerModel(new TreeGridVisualizerNode()), buildColumns(datasetDescriptor));
+        super(id, new DefaultTreeModel(new DefaultMutableTreeNode()), buildColumns(datasetDescriptor));
         setOutputMarkupId(true);
         getTree().setRootLess(true);
         this.datasetDescriptor = datasetDescriptor;
@@ -28,13 +31,13 @@ public class TreeGridVisualizer extends TreeGrid<TreeGridVisualizerModel, TreeGr
         setCurrentPage(0);
     }
 
-    private static List<IGridColumn<TreeGridVisualizerModel, TreeGridVisualizerNode, String>> buildColumns(DatasetDescriptor datasetDescriptor) {
-        List<IGridColumn<TreeGridVisualizerModel, TreeGridVisualizerNode, String>> columns = new ArrayList<>();
-        TreeGridVisualizerTreeColumn treeColumn = new TreeGridVisualizerTreeColumn("id", Model.of("Structure"), datasetDescriptor);
+    private static List<IGridColumn<DefaultTreeModel, DefaultMutableTreeNode, String>> buildColumns(DatasetDescriptor datasetDescriptor) {
+        List<IGridColumn<DefaultTreeModel, DefaultMutableTreeNode, String>> columns = new ArrayList<>();
+        TreeGridVisualizerTreeColumn treeColumn = new TreeGridVisualizerTreeColumn("treeColumnId", Model.of("Structure"), datasetDescriptor);
         columns.add(treeColumn);
         for (RowDescriptor rowDescriptor : datasetDescriptor.getAllRowDescriptors()) {
             for (PropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
-                if (!isStructureProperty(rowDescriptor, propertyDescriptor)) {
+                if (!isStructureProperty(rowDescriptor, propertyDescriptor) && !isHierarchicalProperty(rowDescriptor, propertyDescriptor)) {
                     Long propertyId = propertyDescriptor.getId();
                     String columnId = propertyId.toString();
                     Model<String> headerModel = Model.of(propertyDescriptor.getDescription());
@@ -46,18 +49,13 @@ public class TreeGridVisualizer extends TreeGrid<TreeGridVisualizerModel, TreeGr
     }
 
     private static boolean isStructureProperty(RowDescriptor rowDescriptor, PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getId().equals(rowDescriptor.getStructurePropertyDescriptor().getId());
+        PropertyDescriptor structurePropertyDescriptor = rowDescriptor.getStructurePropertyDescriptor();
+        return structurePropertyDescriptor != null && propertyDescriptor.getId().equals(structurePropertyDescriptor.getId());
     }
 
-    private void buildNodeHierarchy(TreeGridVisualizerNode rootNode, List<Row> rowList) {
-        for (Row row : rowList) {
-            TreeGridVisualizerNode childNode = new TreeGridVisualizerNode();
-            childNode.setUserObject(row);
-            rootNode.add(childNode);
-            if (row.getChildren() != null && row.getChildren().size() > 0) {
-                buildNodeHierarchy(childNode, row.getChildren());
-            }
-        }
+    private static boolean isHierarchicalProperty(RowDescriptor rowDescriptor, PropertyDescriptor propertyDescriptor) {
+        PropertyDescriptor hierarchicalPropertyDescriptor = rowDescriptor.getHierarchicalPropertyDescriptor();
+        return hierarchicalPropertyDescriptor != null && propertyDescriptor.getId().equals(hierarchicalPropertyDescriptor.getId());
     }
 
     @Override
@@ -78,10 +76,10 @@ public class TreeGridVisualizer extends TreeGrid<TreeGridVisualizerModel, TreeGr
         listRowFilter.setRowIdList(rowIdList);
         listRowFilter.setDatasetDescriptorId(datasetDescriptor.getId());
         List<Row> rowList = datasetService.listRow(listRowFilter);
-        TreeGridVisualizerNode rootNode = new TreeGridVisualizerNode();
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
         buildNodeHierarchy(rootNode, rowList);
-        TreeGridVisualizerModel treeGridVisualizerModel = new TreeGridVisualizerModel(rootNode);
-        getTree().setModelObject(treeGridVisualizerModel);
+        DefaultTreeModel defaultTreeModel = new DefaultTreeModel(rootNode);
+        setDefaultModelObject(defaultTreeModel);
     }
 
     @Override
@@ -89,5 +87,21 @@ public class TreeGridVisualizer extends TreeGrid<TreeGridVisualizerModel, TreeGr
         return (allIds.size() / ROWS_PER_PAGE) + 1;
     }
 
+    private void buildNodeHierarchy(DefaultMutableTreeNode parentNode, List<Row> rowList) {
+        for (Row row : rowList) {
+            DefaultMutableTreeNode childNode = new DefaultMutableTreeNode();
+            childNode.setUserObject(row);
+            parentNode.add(childNode);
+            if (row.getChildren() != null && row.getChildren().size() > 0) {
+                buildNodeHierarchy(childNode, row.getChildren());
+            }
+        }
+    }
 
+    @Override
+    protected void onJunctionLinkClicked(AjaxRequestTarget target, Object node) {
+        if (getTreeState().isNodeExpanded(node)) {
+            getTree().invalidateAll();
+        }
+    }
 }

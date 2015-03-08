@@ -11,10 +11,13 @@ import chemaxon.util.ConnectionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.service.api.*;
+import toolkit.services.PU;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -37,6 +40,127 @@ public class DatasetServiceMock implements DatasetService {
 
     @Inject
     private PortalConfig portalConfig;
+    @Inject
+    @PU(puName = ChemcentralEntityManagerProducer.CHEMCENTRAL_PU_NAME)
+    private EntityManager entityManager;
+
+    @Override
+    public DatasetDescriptor createForTreeGridTest() {
+        long datasetMockId = getNextId();
+
+        DatasetDescriptorMock ddm = new DatasetDescriptorMock();
+        ddm.setDescription("Test for treegrid");
+        DatasetDescriptorMock datasetDescriptorMock = (DatasetDescriptorMock) createDatasetDescriptor(ddm);
+        datasetDescriptorMock.setDatasetMockId(datasetMockId);
+        DatasetMock datasetMock = new DatasetMock();
+        datasetMock.setId(datasetMockId);
+
+        RowDescriptorMock rdm;
+        rdm = new RowDescriptorMock();
+        rdm.setDescription("Structure Row Descriptor");
+        RowDescriptorMock structureRowDescriptorMock = (RowDescriptorMock) createRowDescriptor(datasetDescriptorMock.getId(), rdm);
+        rdm = new RowDescriptorMock();
+        rdm.setDescription("Batch Row Descriptor");
+        RowDescriptorMock batchRowDescriptorMock = (RowDescriptorMock) createRowDescriptor(datasetDescriptorMock.getId(), rdm);
+
+        PropertyDescriptorMock pdm;
+        pdm = new PropertyDescriptorMock();
+        pdm.setDescription("Batch Id");
+        PropertyDescriptorMock batchPropertyDescriptor = (PropertyDescriptorMock) createPropertyDescriptor(datasetDescriptorMock.getId(), batchRowDescriptorMock.getId(), pdm);
+        pdm = new PropertyDescriptorMock();
+        pdm.setDescription("Structure Id");
+        PropertyDescriptorMock structurePropertyDescriptor = (PropertyDescriptorMock) createPropertyDescriptor(datasetDescriptorMock.getId(), structureRowDescriptorMock.getId(), pdm);
+
+        structureRowDescriptorMock.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
+        batchRowDescriptorMock.setHierarchicalPropertyId(batchPropertyDescriptor.getId());
+
+        RowMock structureRowMock = new RowMock();
+        structureRowMock.setRowDescriptor(structureRowDescriptorMock);
+        long structureRowId = 1l;
+        structureRowMock.setId(structureRowId);
+        structureRowMock.setProperty(structurePropertyDescriptor, "Structure 1");
+        datasetMock.addRow(structureRowId, structureRowMock);
+
+        String batchPropertyValue = "Batch 1";
+        RowMock batchRowMock = structureRowMock.createChild();
+        batchRowMock.setRowDescriptor(batchRowDescriptorMock);
+        batchRowMock.setProperty(batchPropertyDescriptor, batchPropertyValue);
+        long batchRowId = 2l;
+        batchRowMock.setId(batchRowId);
+
+        datasetMockMap.put(datasetMockId, datasetMock);
+        datasetDescriptorMock.setRowCount(datasetMock.getRowCount());
+
+        logger.info("Created Chemcentral dataset, " + datasetMock.getRowCount() + " records.");
+
+        return datasetDescriptorMock;
+    }
+
+    @Override
+    public DatasetDescriptor createFromDatamartSearch(DatamartSearch datamartSearch) {
+        Query query = entityManager.createNativeQuery("select id, source_id, structure_id, batch_id " +
+                "from chemcentral_01.structure_props " +
+                "where source_id = 1 " +
+                "order by structure_id, batch_id");
+        List resultList = query.getResultList();
+
+        long datasetMockId = getNextId();
+
+        DatasetDescriptorMock ddm = new DatasetDescriptorMock();
+        ddm.setDescription(datamartSearch.getDescription());
+        DatasetDescriptorMock datasetDescriptorMock = (DatasetDescriptorMock) createDatasetDescriptor(ddm);
+        datasetDescriptorMock.setDatasetMockId(datasetMockId);
+        DatasetMock datasetMock = new DatasetMock();
+        datasetMock.setId(datasetMockId);
+
+        RowDescriptorMock rdm;
+        rdm = new RowDescriptorMock();
+        rdm.setDescription("Structure Row Descriptor");
+        RowDescriptorMock structureRowDescriptorMock = (RowDescriptorMock) createRowDescriptor(datasetDescriptorMock.getId(), rdm);
+        rdm = new RowDescriptorMock();
+        rdm.setDescription("Batch Row Descriptor");
+        RowDescriptorMock batchRowDescriptorMock = (RowDescriptorMock) createRowDescriptor(datasetDescriptorMock.getId(), rdm);
+
+        PropertyDescriptorMock pdm;
+        pdm = new PropertyDescriptorMock();
+        pdm.setDescription("Batch Id");
+        PropertyDescriptorMock batchPropertyDescriptor = (PropertyDescriptorMock) createPropertyDescriptor(datasetDescriptorMock.getId(), batchRowDescriptorMock.getId(), pdm);
+        pdm = new PropertyDescriptorMock();
+        pdm.setDescription("Structure Id");
+        PropertyDescriptorMock structurePropertyDescriptor = (PropertyDescriptorMock) createPropertyDescriptor(datasetDescriptorMock.getId(), structureRowDescriptorMock.getId(), pdm);
+
+        structureRowDescriptorMock.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
+        batchRowDescriptorMock.setHierarchicalPropertyId(batchPropertyDescriptor.getId());
+
+        Iterator iterator = resultList.iterator();
+        Object[] result = null;
+        if (iterator.hasNext()) {
+            result = (Object[]) iterator.next();
+        }
+        while (result != null) {
+            Integer structurePropertyValue = (Integer) result[2];
+            RowMock structureRowMock = new RowMock();
+            structureRowMock.setRowDescriptor(structureRowDescriptorMock);
+            Integer structureRowId = (Integer) result[0];
+            structureRowMock.setId(structureRowId.longValue());
+            structureRowMock.setProperty(structurePropertyDescriptor, structurePropertyValue);
+            while (result != null && structurePropertyValue.equals(result[2])) {
+                String batchPropertyValue = (String) result[3];
+                RowMock batchRowMock = structureRowMock.createChild();
+                batchRowMock.setRowDescriptor(batchRowDescriptorMock);
+                batchRowMock.setProperty(batchPropertyDescriptor, batchPropertyValue);
+                Integer batchRowId = (Integer) result[0];
+                batchRowMock.setId(batchRowId.longValue());
+
+                result = iterator.hasNext() ? (Object[]) iterator.next() : null;
+            }
+            datasetMock.addRow(structureRowId.longValue(), structureRowMock);
+        }
+
+        datasetMockMap.put(datasetMockId, datasetMock);
+        datasetDescriptorMock.setRowCount(datasetMock.getRowCount());
+        return datasetDescriptorMock;
+    }
 
     @Override
     public DatasetDescriptor createFromStructureSearch(StructureSearch structureSearch) {

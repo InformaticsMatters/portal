@@ -2,6 +2,8 @@ package portal.webapp;
 
 import com.inmethod.grid.common.AbstractGrid;
 import com.vaynberg.wicket.select2.ApplicationSettings;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigation;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -15,6 +17,8 @@ import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 public class TreeGridVisualizerPage extends WebPage {
 
@@ -23,11 +27,23 @@ public class TreeGridVisualizerPage extends WebPage {
     @Inject
     private DatasetService service;
     private AjaxPagingNavigation navigation;
+    private TreeGridVisualizer treeGridVisualizer;
 
     public TreeGridVisualizerPage(DatasetDescriptor datasetDescriptor) {
         notifierProvider.createNotifier(this, "notifier");
         add(new MenuPanel("menuPanel"));
         addPageableTreeGrid(datasetDescriptor);
+        add(new AjaxLink("expand") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                DefaultTreeModel defaultModelObject = (DefaultTreeModel) treeGridVisualizer.getDefaultModelObject();
+                DefaultMutableTreeNode root = (DefaultMutableTreeNode) defaultModelObject.getRoot();
+                treeGridVisualizer.getTreeState().expandNode(root.getFirstChild());
+                treeGridVisualizer.getTree().invalidateAll();
+                treeGridVisualizer.getTree().updateTree(ajaxRequestTarget);
+            }
+        });
     }
 
     @Override
@@ -42,7 +58,7 @@ public class TreeGridVisualizerPage extends WebPage {
     }
 
     private void addPageableTreeGrid(DatasetDescriptor datasetDescriptor) {
-        TreeGridVisualizer treeGridVisualizer = new TreeGridVisualizer("treeGrid", datasetDescriptor);
+        treeGridVisualizer = new TreeGridVisualizer("treeGrid", datasetDescriptor);
         add(treeGridVisualizer);
 
         add(new TreeGridNavigationPanel("treeGridNavigation", treeGridVisualizer));

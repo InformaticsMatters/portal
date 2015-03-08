@@ -7,6 +7,10 @@ import java.util.List;
  */
 public interface DatasetService {
 
+    DatasetDescriptor createForTreeGridTest();
+
+    DatasetDescriptor createFromDatamartSearch(DatamartSearch datamartSearch);
+
     DatasetDescriptor createFromStructureSearch(StructureSearch structureSearch);
 
     DatasetDescriptor importFromStream(ImportFromStreamData data);

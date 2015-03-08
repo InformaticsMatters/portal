@@ -29,6 +29,8 @@ public class MetadataPage extends WebPage {
     private NotifierProvider notifierProvider;
     @Inject
     private DatasetService service;
+    private TreeGrid<DefaultTreeModel, DefaultMutableTreeNode, String> treeGrid;
+    private DatasetDescriptor datasetDescriptor;
 
     public MetadataPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -57,7 +59,7 @@ public class MetadataPage extends WebPage {
         columns.add(treeColumn);
 
         DefaultTreeModel model = createTreeModel();
-        TreeGrid<DefaultTreeModel, DefaultMutableTreeNode, String> treeGrid = new TreeGrid<>("grid", model, columns);
+        treeGrid = new TreeGrid<>("grid", model, columns);
         treeGrid.getTree().setRootLess(true);
 
         add(treeGrid);
@@ -76,6 +78,9 @@ public class MetadataPage extends WebPage {
     }
 
     private void createDatasetDescriptorNode(DefaultMutableTreeNode rootNode, DatasetDescriptor datasetDescriptor) {
+
+        this.datasetDescriptor = datasetDescriptor; // sacar
+
         DefaultMutableTreeNode datasetNode = new DefaultMutableTreeNode();
         DescriptorNodeData data = new DescriptorNodeData(datasetDescriptor);
         datasetNode.setUserObject(data);
@@ -105,5 +110,4 @@ public class MetadataPage extends WebPage {
         propertyNode.setUserObject(data);
         rowNode.add(propertyNode);
     }
-
 }

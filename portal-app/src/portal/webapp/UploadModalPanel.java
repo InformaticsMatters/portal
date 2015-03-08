@@ -35,12 +35,12 @@ public class UploadModalPanel extends SemanticModalPanel {
     }
 
     private void addForm() {
-        form = new Form<UploadModalData>("form");
+        form = new Form<>("form");
         form.setOutputMarkupId(true);
         getModalRootComponent().add(form);
 
-        form.setModel(new CompoundPropertyModel<UploadModalData>(new UploadModalData()));
-        TextField<String> descriptionField = new TextField<String>("description");
+        form.setModel(new CompoundPropertyModel<>(new UploadModalData()));
+        TextField<String> descriptionField = new TextField<>("description");
         form.add(descriptionField);
 
         fileUploadField = new FileUploadField("fileInput");
@@ -54,6 +54,7 @@ public class UploadModalPanel extends SemanticModalPanel {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 processSubmission();
                 callbacks.onSubmit();
+                hideModal();
             }
         };
         submit.setOutputMarkupId(true);
@@ -76,7 +77,7 @@ public class UploadModalPanel extends SemanticModalPanel {
                 data.setDescription(form.getModelObject().getDescription());
                 data.setDatasetStreamFormat(DatasetStreamFormat.SDF);
                 data.setInputStream(upload.getInputStream());
-                data.setFieldConfigMap(new HashMap<String, Class>());
+                data.setFieldConfigMap(new HashMap<>());
                 service.importFromStream(data);
             }
         } catch (Throwable t) {

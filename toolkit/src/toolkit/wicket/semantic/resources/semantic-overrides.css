@@ -119,3 +119,7 @@ body {
 .field input {
     font-family: "Helvetica Neue", "Helvetica", Arial;
 }
+
+.ui.card .content img, .ui.cards>.card .content img {
+    width: auto;
+}

@@ -1,6 +1,7 @@
 package portal.webapp;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.cdi.ConversationPropagation;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -30,5 +31,8 @@ public class PortalWebApplication extends WebApplication {
 
     }
 
-
+    @Override
+    public RuntimeConfigurationType getConfigurationType() {
+        return RuntimeConfigurationType.DEPLOYMENT;
+    }
 }

@@ -8,7 +8,11 @@ import org.apache.wicket.model.IModel;
 import portal.service.api.PropertyDescriptor;
 import portal.service.api.Row;
 
-public class TreeGridVisualizerPropertyColumn extends AbstractColumn<TreeGridVisualizerModel, TreeGridVisualizerNode, String> {
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import java.io.Serializable;
+
+public class TreeGridVisualizerPropertyColumn extends AbstractColumn<DefaultTreeModel, DefaultMutableTreeNode, String> {
 
     private Long propertyId;
 
@@ -18,10 +22,13 @@ public class TreeGridVisualizerPropertyColumn extends AbstractColumn<TreeGridVis
     }
 
     @Override
-    public Component newCell(WebMarkupContainer parent, String componentId, IModel<TreeGridVisualizerNode> rowModel) {
-        Row row = rowModel.getObject().getUserObject();
+    public Component newCell(WebMarkupContainer parent, String componentId, IModel<DefaultMutableTreeNode> rowModel) {
+        Row row = (Row) rowModel.getObject().getUserObject();
         PropertyDescriptor propertyDescriptor = row.getDescriptor().findPropertyDescriptorById(propertyId);
-        String property = row.getProperty(propertyDescriptor).toString();
-        return new Label(componentId, property);
+        Serializable propertyValue = (Serializable) row.getProperty(propertyDescriptor);
+        if (propertyValue == null) {
+            propertyValue = "";
+        }
+        return new Label(componentId, propertyValue);
     }
 }

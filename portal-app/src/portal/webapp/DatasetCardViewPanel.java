@@ -37,7 +37,8 @@ public class DatasetCardViewPanel extends Panel {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-
+                        TreeGridVisualizerPage page = new TreeGridVisualizerPage(datasetDescriptor);
+                        setResponsePage(page);
                     }
                 });
                 listItem.add(new IndicatingAjaxLink("metadata") {

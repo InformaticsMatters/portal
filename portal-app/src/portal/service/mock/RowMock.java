@@ -41,7 +41,7 @@ class RowMock implements Row {
 
     public void setProperty(PropertyDescriptorMock key, Object value) {
         if (properties == null) {
-            properties = new HashMap<PropertyDescriptorMock, Object>();
+            properties = new HashMap<>();
         }
         properties.put(key, value);
     }
@@ -56,7 +56,7 @@ class RowMock implements Row {
 
     public RowMock createChild() {
         if (children == null) {
-            children = new ArrayList<Row>();
+            children = new ArrayList<>();
         }
         RowMock rowMock = new RowMock();
         children.add(rowMock);
@@ -68,5 +68,4 @@ class RowMock implements Row {
             children.remove(child);
         }
     }
-
 }

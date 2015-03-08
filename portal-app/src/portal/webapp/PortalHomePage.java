@@ -27,8 +27,9 @@ public class PortalHomePage extends WebPage {
     private AjaxLink cardViewLink;
     private DatasetGridViewPanel datasetGridViewPanel;
     private DatasetCardViewPanel datasetCardViewPanel;
+    private DatamartSearchPanel datamartSearchPanel;
     private UploadModalPanel uploadModalPanel;
-    private MarvinSketcher marvinSketcher;
+    private MarvinSketcher marvinSketcherPanel;
     private List<DatasetDescriptor> datasetDescriptorList;
 
     @Inject
@@ -99,11 +100,19 @@ public class PortalHomePage extends WebPage {
             }
         });
 
+        add(new AjaxLink("addFromStructureSearch") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                marvinSketcherPanel.showModal();
+            }
+        });
+
         add(new AjaxLink("addFromDatamart") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                marvinSketcher.showModal();
+                datamartSearchPanel.showModal();
             }
         });
     }
@@ -132,25 +141,38 @@ public class PortalHomePage extends WebPage {
 
             @Override
             public void onCancel() {
-                uploadModalPanel.hideModal();
             }
         });
         add(uploadModalPanel);
 
-        marvinSketcher = new MarvinSketcher("marvinSketcher", "modalElement");
-        marvinSketcher.setCallbackHandler(new MarvinSketcher.CallbackHandler() {
+        marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel", "modalElement");
+        marvinSketcherPanel.setCallbacks(new MarvinSketcher.Callbacks() {
 
             @Override
-            public void onAcceptAction(AjaxRequestTarget ajaxRequestTarget) {
-                marvinSketcher.hideModal();
+            public void onSubmit() {
+                marvinSketcherPanel.hideModal();
             }
 
             @Override
-            public void onCancelAction(AjaxRequestTarget ajaxRequestTarget) {
-                marvinSketcher.hideModal();
+            public void onCancel() {
             }
         });
-        add(marvinSketcher);
+        add(marvinSketcherPanel);
+
+        datamartSearchPanel = new DatamartSearchPanel("datamartSearchPanel", "modalElement");
+        datamartSearchPanel.setCallbacks(new DatamartSearchPanel.Callbacks() {
+
+            @Override
+            public void onSubmit() {
+                refreshDatasetDescriptors();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+        add(datamartSearchPanel);
     }
 
     private void refreshDatasetDescriptors() {
