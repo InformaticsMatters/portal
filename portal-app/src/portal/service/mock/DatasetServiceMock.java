@@ -8,6 +8,7 @@ import chemaxon.marvin.io.MRecordReader;
 import chemaxon.sss.search.JChemSearchOptions;
 import chemaxon.struc.MProp;
 import chemaxon.util.ConnectionHandler;
+import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.service.api.*;
@@ -97,17 +98,18 @@ public class DatasetServiceMock implements DatasetService {
     }
 
     @Override
-    public DatasetDescriptor createFromDatamartSearch(DatamartSearch datamartSearch) {
-        Query query = entityManager.createNativeQuery("select id, source_id, structure_id, batch_id " +
+    public DatasetDescriptor createFromChemcentralSearch(ChemcentralSearch chemcentralSearch) {
+        Query query = entityManager.createNativeQuery("select id, source_id, structure_id, batch_id, property_data " +
                 "from chemcentral_01.structure_props " +
                 "where source_id = 1 " +
                 "order by structure_id, batch_id");
+        query.setMaxResults(20);
         List resultList = query.getResultList();
 
         long datasetMockId = getNextId();
 
         DatasetDescriptorMock ddm = new DatasetDescriptorMock();
-        ddm.setDescription(datamartSearch.getDescription());
+        ddm.setDescription(chemcentralSearch.getDescription());
         DatasetDescriptorMock datasetDescriptorMock = (DatasetDescriptorMock) createDatasetDescriptor(ddm);
         datasetDescriptorMock.setDatasetMockId(datasetMockId);
         DatasetMock datasetMock = new DatasetMock();
@@ -117,6 +119,7 @@ public class DatasetServiceMock implements DatasetService {
         rdm = new RowDescriptorMock();
         rdm.setDescription("Structure Row Descriptor");
         RowDescriptorMock structureRowDescriptorMock = (RowDescriptorMock) createRowDescriptor(datasetDescriptorMock.getId(), rdm);
+
         rdm = new RowDescriptorMock();
         rdm.setDescription("Batch Row Descriptor");
         RowDescriptorMock batchRowDescriptorMock = (RowDescriptorMock) createRowDescriptor(datasetDescriptorMock.getId(), rdm);
@@ -125,11 +128,21 @@ public class DatasetServiceMock implements DatasetService {
         pdm = new PropertyDescriptorMock();
         pdm.setDescription("Batch Id");
         PropertyDescriptorMock batchPropertyDescriptor = (PropertyDescriptorMock) createPropertyDescriptor(datasetDescriptorMock.getId(), batchRowDescriptorMock.getId(), pdm);
+
         pdm = new PropertyDescriptorMock();
         pdm.setDescription("Structure Id");
         PropertyDescriptorMock structurePropertyDescriptor = (PropertyDescriptorMock) createPropertyDescriptor(datasetDescriptorMock.getId(), structureRowDescriptorMock.getId(), pdm);
 
-        structureRowDescriptorMock.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
+        pdm = new PropertyDescriptorMock();
+        pdm.setDescription("Properties data");
+        PropertyDescriptorMock propertiesDataPropertyDescriptor = (PropertyDescriptorMock) createPropertyDescriptor(datasetDescriptorMock.getId(), structureRowDescriptorMock.getId(), pdm);
+
+        pdm = new PropertyDescriptorMock();
+        pdm.setDescription("Molecule");
+        PropertyDescriptorMock moleculePropertyDescriptor = (PropertyDescriptorMock) createPropertyDescriptor(datasetDescriptorMock.getId(), structureRowDescriptorMock.getId(), pdm);
+
+        structureRowDescriptorMock.setHierarchicalPropertyId(moleculePropertyDescriptor.getId());
+        structureRowDescriptorMock.setStructurePropertyId(moleculePropertyDescriptor.getId());
         batchRowDescriptorMock.setHierarchicalPropertyId(batchPropertyDescriptor.getId());
 
         Iterator iterator = resultList.iterator();
@@ -144,6 +157,11 @@ public class DatasetServiceMock implements DatasetService {
             Integer structureRowId = (Integer) result[0];
             structureRowMock.setId(structureRowId.longValue());
             structureRowMock.setProperty(structurePropertyDescriptor, structurePropertyValue);
+            PGobject property_data = (PGobject) result[4];
+            String propertiesDataValue = property_data.getValue();
+            structureRowMock.setProperty(propertiesDataPropertyDescriptor, propertiesDataValue);
+            int cdId = findCdIdInPropertiesData(propertiesDataValue);
+            structureRowMock.setProperty(moleculePropertyDescriptor, lookupChemcentralStructureData(cdId));
             while (result != null && structurePropertyValue.equals(result[2])) {
                 String batchPropertyValue = (String) result[3];
                 RowMock batchRowMock = structureRowMock.createChild();
@@ -378,5 +396,17 @@ public class DatasetServiceMock implements DatasetService {
         DatasetMock datasetMock = datasetMockMap.get(datasetDescriptorMock.getDatasetMockId());
         Set<Long> idSet = datasetMock.getAllRowIds();
         return new ArrayList<>(idSet);
+    }
+
+    private String lookupChemcentralStructureData(int cdId) {
+        Query query = entityManager.createNativeQuery("select cd_structure from chemcentral_01.structures where cd_id=?");
+        query.setParameter(1, cdId);
+        Object result = query.getSingleResult();
+        return new String((byte[]) result);
+    }
+
+    private int findCdIdInPropertiesData(String propertiesData) {
+        String cdIdStr = propertiesData.substring(9, propertiesData.indexOf(','));
+        return Integer.valueOf(cdIdStr.trim());
     }
 }

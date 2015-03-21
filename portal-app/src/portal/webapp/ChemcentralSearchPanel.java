@@ -6,7 +6,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.service.api.DatamartSearch;
+import portal.service.api.ChemcentralSearch;
 import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 import toolkit.wicket.semantic.SemanticModalPanel;
@@ -17,14 +17,14 @@ import java.io.Serializable;
 /**
  * @author simetrias
  */
-public class DatamartSearchPanel extends SemanticModalPanel {
+public class ChemcentralSearchPanel extends SemanticModalPanel {
 
     private Callbacks callbacks;
     private Form<DatamartSearchData> form;
     @Inject
     private DatasetService datasetService;
 
-    public DatamartSearchPanel(String id, String modalElement) {
+    public ChemcentralSearchPanel(String id, String modalElement) {
         super(id, modalElement);
         addForm();
     }
@@ -42,9 +42,9 @@ public class DatamartSearchPanel extends SemanticModalPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                DatamartSearch datamartSearch = new DatamartSearch();
-                datamartSearch.setDescription(DatamartSearchPanel.this.form.getModelObject().getDescription());
-                datasetService.createFromDatamartSearch(datamartSearch);
+                ChemcentralSearch chemcentralSearch = new ChemcentralSearch();
+                chemcentralSearch.setDescription(ChemcentralSearchPanel.this.form.getModelObject().getDescription());
+                datasetService.createFromChemcentralSearch(chemcentralSearch);
                 callbacks.onSubmit();
                 hideModal();
             }

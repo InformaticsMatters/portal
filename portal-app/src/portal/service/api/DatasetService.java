@@ -9,7 +9,7 @@ public interface DatasetService {
 
     DatasetDescriptor createForTreeGridTest();
 
-    DatasetDescriptor createFromDatamartSearch(DatamartSearch datamartSearch);
+    DatasetDescriptor createFromChemcentralSearch(ChemcentralSearch chemcentralSearch);
 
     DatasetDescriptor createFromStructureSearch(StructureSearch structureSearch);
 

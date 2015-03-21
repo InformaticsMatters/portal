@@ -27,7 +27,7 @@ public class PortalHomePage extends WebPage {
     private AjaxLink cardViewLink;
     private DatasetGridViewPanel datasetGridViewPanel;
     private DatasetCardViewPanel datasetCardViewPanel;
-    private DatamartSearchPanel datamartSearchPanel;
+    private ChemcentralSearchPanel chemcentralSearchPanel;
     private UploadModalPanel uploadModalPanel;
     private MarvinSketcher marvinSketcherPanel;
     private List<DatasetDescriptor> datasetDescriptorList;
@@ -108,11 +108,11 @@ public class PortalHomePage extends WebPage {
             }
         });
 
-        add(new AjaxLink("addFromDatamart") {
+        add(new AjaxLink("addFromChemcentral") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                datamartSearchPanel.showModal();
+                chemcentralSearchPanel.showModal();
             }
         });
     }
@@ -159,8 +159,8 @@ public class PortalHomePage extends WebPage {
         });
         add(marvinSketcherPanel);
 
-        datamartSearchPanel = new DatamartSearchPanel("datamartSearchPanel", "modalElement");
-        datamartSearchPanel.setCallbacks(new DatamartSearchPanel.Callbacks() {
+        chemcentralSearchPanel = new ChemcentralSearchPanel("chemcentralSearchPanel", "modalElement");
+        chemcentralSearchPanel.setCallbacks(new ChemcentralSearchPanel.Callbacks() {
 
             @Override
             public void onSubmit() {
@@ -172,7 +172,7 @@ public class PortalHomePage extends WebPage {
 
             }
         });
-        add(datamartSearchPanel);
+        add(chemcentralSearchPanel);
     }
 
     private void refreshDatasetDescriptors() {

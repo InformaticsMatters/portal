@@ -3,7 +3,7 @@ package portal.service.api;
 /**
  * @author simetrias
  */
-public class DatamartSearch {
+public class ChemcentralSearch {
 
     private String description;
 
