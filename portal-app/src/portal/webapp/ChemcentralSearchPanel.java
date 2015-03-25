@@ -1,11 +1,13 @@
 package portal.webapp;
 
+import com.vaynberg.wicket.select2.Select2Choice;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import portal.integration.PropertyDefinition;
 import portal.service.api.ChemcentralSearch;
 import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
@@ -37,6 +39,14 @@ public class ChemcentralSearchPanel extends SemanticModalPanel {
         form.setModel(new CompoundPropertyModel<>(new DatamartSearchData()));
         TextField<String> descriptionField = new TextField<>("description");
         form.add(descriptionField);
+
+        PropertyDefinitionProvider propertyDefinitionProvider = new PropertyDefinitionProvider();
+
+        Select2Choice<PropertyDefinition> propertyDefinitionSelect2Choice = new Select2Choice<>("propertyDefinition");
+        propertyDefinitionSelect2Choice.setProvider(propertyDefinitionProvider);
+        propertyDefinitionSelect2Choice.getSettings().setMinimumInputLength(1);
+        propertyDefinitionSelect2Choice.setOutputMarkupId(true);
+        form.add(propertyDefinitionSelect2Choice);
 
         final AjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit") {
 
