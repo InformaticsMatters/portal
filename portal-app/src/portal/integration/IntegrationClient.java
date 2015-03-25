@@ -20,9 +20,6 @@ public class IntegrationClient extends AbstractServiceClient {
         return "http://52.0.104.20:8080/chemcentral";
     }
 
-    /*
-    propertyDefinitions?filter=adenosine&limit=20
-     */
     public List<PropertyDefinition> listPropertyDefinition(String filter, int limit) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.add("filter", filter);
@@ -33,8 +30,8 @@ public class IntegrationClient extends AbstractServiceClient {
         return builder.get(gt);
     }
 
-    public List<Structure> listStructureByHitlist(int hitList) {
-        WebResource.Builder builder = newResourceBuilder("/hitlists/" + Integer.toString(hitList) + "/structures");
+    public List<Structure> listStructure(Long hitListId) {
+        WebResource.Builder builder = newResourceBuilder("/hitlists/" + hitListId.toString() + "/structures");
         GenericType<List<Structure>> gt = new GenericType<List<Structure>>() {
         };
         return builder.get(gt);
@@ -47,4 +44,10 @@ public class IntegrationClient extends AbstractServiceClient {
         return builder.get(gt);
     }
 
+    public List<PropertyData> listPropertyData(Long hitListId, String originalPropertyId) {
+        WebResource.Builder builder = newResourceBuilder("/hitlists/" + hitListId.toString() + "/properties/" + originalPropertyId);
+        GenericType<List<PropertyData>> gt = new GenericType<List<PropertyData>>() {
+        };
+        return builder.get(gt);
+    }
 }

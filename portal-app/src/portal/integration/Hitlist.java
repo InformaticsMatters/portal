@@ -12,17 +12,11 @@ import java.util.Date;
 public class Hitlist {
 
     private Long id;
-
     private String status;
-
     private Date created;
-
     private String name;
-
     private String resource;
-
     private String owner;
-
     private int size;
 
     public Long getId() {

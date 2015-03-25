@@ -2,25 +2,22 @@ package portal.integration;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * @author simetrias
  */
-@XmlRootElement
 public class PropertyDefinition {
 
-    private Integer id;
+    private Long id;
     private String originalId;
     private String propertyDescription;
     private Integer estSize;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
     @JsonProperty("property_id")
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -30,7 +30,7 @@ public class IntegrationTests extends AbstractTestCase {
 
     // @TestMethod
     public void testListStructuresByHitlist() {
-        List<Structure> result = client.listStructureByHitlist(2);
+        List<Structure> result = client.listStructure(2l);
         for (Structure structure : result) {
             System.out.println(structure.getCdFormula());
         }
@@ -41,6 +41,14 @@ public class IntegrationTests extends AbstractTestCase {
         List<Hitlist> result = client.listHitlist();
         for (Hitlist hitlist : result) {
             System.out.println(hitlist.getName() + " - " + hitlist.getCreated());
+        }
+    }
+
+    @TestMethod
+    public void testListPropertyData() {
+        List<PropertyData> result = client.listPropertyData(2l, "CHEMBL1614027");
+        for (PropertyData propertyData : result) {
+            System.out.println(propertyData.getData());
         }
     }
 }
