@@ -20,11 +20,27 @@ public class IntegrationTests extends AbstractTestCase {
         runTestCase(IntegrationTests.class);
     }
 
-    @TestMethod
+    // @TestMethod
     public void testListPropertyDefinitions() {
-        List<PropertyDefinition> result = client.propertyDefinitions("adenosine", 20);
+        List<PropertyDefinition> result = client.listPropertyDefinition("adenosine", 20);
         for (PropertyDefinition propertyDefinition : result) {
-            System.out.println(propertyDefinition.getPropertyDescription());
+            System.out.println(propertyDefinition.getId());
+        }
+    }
+
+    // @TestMethod
+    public void testListStructuresByHitlist() {
+        List<Structure> result = client.listStructureByHitlist(2);
+        for (Structure structure : result) {
+            System.out.println(structure.getCdFormula());
+        }
+    }
+
+    @TestMethod
+    public void testListHitlist() {
+        List<Hitlist> result = client.listHitlist();
+        for (Hitlist hitlist : result) {
+            System.out.println(hitlist.getName() + " - " + hitlist.getCreated());
         }
     }
 }

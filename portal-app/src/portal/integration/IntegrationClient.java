@@ -17,13 +17,13 @@ public class IntegrationClient extends AbstractServiceClient {
 
     @Override
     protected String getServiceBaseUri() {
-        return "http://demos.informaticsmatters.com:8080/chemcentral";
+        return "http://52.0.104.20:8080/chemcentral";
     }
 
     /*
     propertyDefinitions?filter=adenosine&limit=20
      */
-    public List<PropertyDefinition> propertyDefinitions(String filter, int limit) {
+    public List<PropertyDefinition> listPropertyDefinition(String filter, int limit) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.add("filter", filter);
         queryParams.add("limit", Integer.toString(limit));
@@ -32,4 +32,19 @@ public class IntegrationClient extends AbstractServiceClient {
         };
         return builder.get(gt);
     }
+
+    public List<Structure> listStructureByHitlist(int hitList) {
+        WebResource.Builder builder = newResourceBuilder("/hitlists/" + Integer.toString(hitList) + "/structures");
+        GenericType<List<Structure>> gt = new GenericType<List<Structure>>() {
+        };
+        return builder.get(gt);
+    }
+
+    public List<Hitlist> listHitlist() {
+        WebResource.Builder builder = newResourceBuilder("/hitlists");
+        GenericType<List<Hitlist>> gt = new GenericType<List<Hitlist>>() {
+        };
+        return builder.get(gt);
+    }
+
 }

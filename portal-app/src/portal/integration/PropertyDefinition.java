@@ -10,17 +10,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class PropertyDefinition {
 
-    private Integer propertyId;
+    private Integer id;
+    private String originalId;
     private String propertyDescription;
     private Integer estSize;
 
-    public Integer getPropertyId() {
-        return propertyId;
+    public Integer getId() {
+        return id;
     }
 
     @JsonProperty("property_id")
-    public void setPropertyId(Integer propertyId) {
-        this.propertyId = propertyId;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getOriginalId() {
+        return originalId;
+    }
+
+    @JsonProperty("original_id")
+    public void setOriginalId(String originalId) {
+        this.originalId = originalId;
     }
 
     public String getPropertyDescription() {
