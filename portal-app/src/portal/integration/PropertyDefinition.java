@@ -2,10 +2,12 @@ package portal.integration;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * @author simetrias
  */
-public class PropertyDefinition {
+public class PropertyDefinition implements Serializable {
 
     private Long id;
     private String originalId;

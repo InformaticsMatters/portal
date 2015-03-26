@@ -3,13 +3,14 @@ package portal.integration;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author simetrias
  */
 @JsonIgnoreProperties("items")
-public class Hitlist {
+public class Hitlist implements Serializable {
 
     private Long id;
     private String status;

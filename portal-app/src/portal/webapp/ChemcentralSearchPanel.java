@@ -4,6 +4,7 @@ import com.vaynberg.wicket.select2.Select2Choice;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -33,20 +34,21 @@ public class ChemcentralSearchPanel extends SemanticModalPanel {
 
     private void addForm() {
         form = new Form<>("form");
+        form.setModel(new CompoundPropertyModel<>(new DatamartSearchData()));
         form.setOutputMarkupId(true);
         getModalRootComponent().add(form);
 
-        form.setModel(new CompoundPropertyModel<>(new DatamartSearchData()));
+        PropertyDefinitionProvider propertyDefinitionProvider = new PropertyDefinitionProvider();
+        CdiContainer.get().getNonContextualManager().postConstruct(propertyDefinitionProvider);
+
+        Select2Choice<PropertyDefinition> propertyDefinition = new Select2Choice<>("propertyDefinition");
+        propertyDefinition.setProvider(propertyDefinitionProvider);
+        propertyDefinition.getSettings().setMinimumInputLength(4);
+        propertyDefinition.setOutputMarkupId(true);
+        form.add(propertyDefinition);
+
         TextField<String> descriptionField = new TextField<>("description");
         form.add(descriptionField);
-
-        PropertyDefinitionProvider propertyDefinitionProvider = new PropertyDefinitionProvider();
-
-        Select2Choice<PropertyDefinition> propertyDefinitionSelect2Choice = new Select2Choice<>("propertyDefinition");
-        propertyDefinitionSelect2Choice.setProvider(propertyDefinitionProvider);
-        propertyDefinitionSelect2Choice.getSettings().setMinimumInputLength(1);
-        propertyDefinitionSelect2Choice.setOutputMarkupId(true);
-        form.add(propertyDefinitionSelect2Choice);
 
         final AjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit") {
 
@@ -87,6 +89,7 @@ public class ChemcentralSearchPanel extends SemanticModalPanel {
     private class DatamartSearchData implements Serializable {
 
         private String description;
+        private PropertyDefinition propertyDefinition;
 
         public String getDescription() {
             return description;
@@ -94,6 +97,14 @@ public class ChemcentralSearchPanel extends SemanticModalPanel {
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        public PropertyDefinition getPropertyDefinition() {
+            return propertyDefinition;
+        }
+
+        public void setPropertyDefinition(PropertyDefinition propertyDefinition) {
+            this.propertyDefinition = propertyDefinition;
         }
     }
 }

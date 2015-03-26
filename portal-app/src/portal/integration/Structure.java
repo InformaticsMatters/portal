@@ -2,10 +2,12 @@ package portal.integration;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * @author simetrias
  */
-public class Structure {
+public class Structure implements Serializable {
 
     private String cdId;
     private String cdFormula;
