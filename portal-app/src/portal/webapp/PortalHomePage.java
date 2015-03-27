@@ -1,16 +1,10 @@
 package portal.webapp;
 
-import com.inmethod.grid.common.AbstractGrid;
-import com.vaynberg.wicket.select2.ApplicationSettings;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.service.api.DatasetDescriptor;
 import portal.service.api.DatasetService;
 import portal.service.api.ListDatasetDescriptorFilter;
@@ -46,16 +40,9 @@ public class PortalHomePage extends WebPage {
     }
 
     @Override
-    public void renderHead(HtmlHeaderContainer container) {
-        super.renderHead(container);
-        IHeaderResponse response = container.getHeaderResponse();
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(AbstractGrid.class, "res/style.css")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(ApplicationSettings.class, "res/select2.css")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(SemanticResourceReference.class, "resources/semantic-overrides.css")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(SemanticResourceReference.class, "resources/easygrid-overrides.css")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/lac.js")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/lac.css")));
     }
 
     private void addActions() {

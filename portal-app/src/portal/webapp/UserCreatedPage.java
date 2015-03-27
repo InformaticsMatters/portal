@@ -1,11 +1,8 @@
 package portal.webapp;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.request.resource.CssResourceReference;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -17,12 +14,9 @@ public class UserCreatedPage extends WebPage {
     private NotifierProvider notifierProvider;
 
     @Override
-    public void renderHead(HtmlHeaderContainer container) {
-        IHeaderResponse response = container.getHeaderResponse();
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(SemanticResourceReference.class, "resources/semantic-overrides.css")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(SemanticResourceReference.class, "resources/easygrid-overrides.css")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/lac.css")));
     }
 
    /* public UserCreatedPage(String afterActionMessage, ApplicationUser user, boolean warningStyle) {
