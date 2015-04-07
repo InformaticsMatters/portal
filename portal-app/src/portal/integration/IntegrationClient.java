@@ -1,5 +1,6 @@
 package portal.integration;
 
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
@@ -17,7 +18,7 @@ public class IntegrationClient extends AbstractServiceClient {
 
     @Override
     protected String getServiceBaseUri() {
-        return "http://52.0.104.20:8080/chemcentral";
+        return "http://52.0.43.130:8080/chemcentral";
     }
 
     public List<PropertyDefinition> listPropertyDefinition(String filter, int limit) {
@@ -37,6 +38,17 @@ public class IntegrationClient extends AbstractServiceClient {
         return builder.get(gt);
     }
 
+    public List<Structure> listStructure(List<Long> structureIdList) {
+        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+        for (Long structureId : structureIdList) {
+            queryParams.add("id", structureId.toString());
+        }
+        WebResource.Builder builder = newResourceBuilder("/structures", queryParams);
+        GenericType<List<Structure>> gt = new GenericType<List<Structure>>() {
+        };
+        return builder.get(gt);
+    }
+
     public List<Hitlist> listHitlist() {
         WebResource.Builder builder = newResourceBuilder("/hitlists");
         GenericType<List<Hitlist>> gt = new GenericType<List<Hitlist>>() {
@@ -49,5 +61,25 @@ public class IntegrationClient extends AbstractServiceClient {
         GenericType<List<PropertyData>> gt = new GenericType<List<PropertyData>>() {
         };
         return builder.get(gt);
+    }
+
+    public String createHitListWithDataFor(int sourceId, List<String> originalPropertyIdList) {
+        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+        queryParams.add("sourceId", Integer.toString(sourceId));
+        for (String propertyDefinitionId : originalPropertyIdList) {
+            queryParams.add("propertyId", propertyDefinitionId);
+        }
+        WebResource.Builder builder = newResourceBuilder("/hitlists/structures/data", queryParams);
+        ClientResponse response = builder.post(ClientResponse.class);
+        String resultUri = null;
+        if (response.getStatus() == 201) {
+            resultUri = response.getHeaders().getFirst("Location");
+        }
+        return resultUri;
+    }
+
+    public Hitlist loadHitlist(Long hitlistId) {
+        WebResource.Builder builder = newResourceBuilder("/hitlists/" + hitlistId.toString());
+        return builder.get(Hitlist.class);
     }
 }

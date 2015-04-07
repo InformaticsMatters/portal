@@ -5,9 +5,9 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
+import portal.integration.DatamartSession;
 import portal.service.api.DatasetDescriptor;
 import portal.service.api.DatasetService;
-import portal.service.api.ListDatasetDescriptorFilter;
 import toolkit.wicket.marvin4js.MarvinSketcher;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -24,12 +24,13 @@ public class PortalHomePage extends WebPage {
     private ChemcentralSearchPanel chemcentralSearchPanel;
     private UploadModalPanel uploadModalPanel;
     private MarvinSketcher marvinSketcherPanel;
-    private List<DatasetDescriptor> datasetDescriptorList;
 
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
     private DatasetService datasetService;
+    @Inject
+    private DatamartSession datamartSession;
 
     public PortalHomePage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -37,6 +38,8 @@ public class PortalHomePage extends WebPage {
         addPanels();
         addActions();
         addModals();
+        datamartSession.loadDatamartDatasetList();
+        refreshDatasetDescriptors();
     }
 
     @Override
@@ -163,11 +166,14 @@ public class PortalHomePage extends WebPage {
     }
 
     private void refreshDatasetDescriptors() {
-        datasetDescriptorList = datasetService.listDatasetDescriptor(new ListDatasetDescriptorFilter());
+        // List<DatasetDescriptor> datasetDescriptorList = datasetService.listDatasetDescriptor(new ListDatasetDescriptorFilter());
+        List<DatasetDescriptor> datasetDescriptorList = datamartSession.getDatasetDescriptorList();
         datasetGridViewPanel.setDatasetDescriptorList(datasetDescriptorList);
         datasetCardViewPanel.setDatasetDescriptorList(datasetDescriptorList);
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        target.add(datasetGridViewPanel);
-        target.add(datasetCardViewPanel);
+        if (target != null) {
+            target.add(datasetGridViewPanel);
+            target.add(datasetCardViewPanel);
+        }
     }
 }

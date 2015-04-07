@@ -5,6 +5,7 @@ import toolkit.test.TestCase;
 import toolkit.test.TestMethod;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,15 +37,21 @@ public class IntegrationTests extends AbstractTestCase {
         }
     }
 
+    // @TestMethod
+    public void testCreateHitListWithDataFor() {
+        String uri = client.createHitListWithDataFor(2, Arrays.asList("CHEMBL1613886"));
+        System.out.println(uri);
+    }
+
     @TestMethod
     public void testListHitlist() {
         List<Hitlist> result = client.listHitlist();
         for (Hitlist hitlist : result) {
-            System.out.println(hitlist.getName() + " - " + hitlist.getCreated());
+            System.out.println(hitlist.getName() + " - " + hitlist.getCreated() + " - " + hitlist.getStatus());
         }
     }
 
-    @TestMethod
+    // @TestMethod
     public void testListPropertyData() {
         List<PropertyData> result = client.listPropertyData(2l, "CHEMBL1614027");
         for (PropertyData propertyData : result) {

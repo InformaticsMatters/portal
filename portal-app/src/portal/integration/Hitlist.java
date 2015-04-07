@@ -1,6 +1,5 @@
 package portal.integration;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.io.Serializable;
@@ -9,7 +8,6 @@ import java.util.Date;
 /**
  * @author simetrias
  */
-@JsonIgnoreProperties("items")
 public class Hitlist implements Serializable {
 
     private Long id;
@@ -18,6 +16,7 @@ public class Hitlist implements Serializable {
     private String name;
     private String resource;
     private String owner;
+    private Long[] items;
     private int size;
 
     public Long getId() {
@@ -81,6 +80,15 @@ public class Hitlist implements Serializable {
     @JsonProperty("size")
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public Long[] getItems() {
+        return items;
+    }
+
+    @JsonProperty("items")
+    public void setItems(Long[] items) {
+        this.items = items;
     }
 }
 

@@ -1,0 +1,74 @@
+package portal.integration;
+
+import portal.service.api.DatasetDescriptor;
+import portal.service.api.Row;
+
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.*;
+
+/**
+ * @author simetrias
+ */
+@SessionScoped
+public class DatamartSession implements Serializable {
+
+    @Inject
+    private IntegrationClient client;
+    private Map<Long, DatasetDescriptor> datasetDescriptors;
+
+    public void loadDatamartDatasetList() {
+        datasetDescriptors = new HashMap<>();
+        List<Hitlist> result = client.listHitlist();
+        for (Hitlist hitlist : result) {
+            DatasetDescriptor datasetDescriptor = newDatasetDescriptorFromHitlist(hitlist);
+            datasetDescriptors.put(datasetDescriptor.getId(), datasetDescriptor);
+        }
+    }
+
+    private DatasetDescriptor newDatasetDescriptorFromHitlist(Hitlist hitlist) {
+        DatamartDatasetDescriptor ddd = new DatamartDatasetDescriptor(hitlist);
+
+        DatamartPropertyDescriptor dpd = new DatamartPropertyDescriptor();
+        dpd.setId(1l);
+        dpd.setDescription("Structure");
+
+        DatamartRowDescriptor drd = new DatamartRowDescriptor();
+        drd.setId(1l);
+        drd.setStructurePropertyId(dpd.getId());
+        drd.setHierarchicalPropertyId(dpd.getId());
+        drd.addPropertyDescriptor(dpd);
+
+        ddd.addRowDescriptor(drd);
+        return ddd;
+    }
+
+    public List<DatasetDescriptor> getDatasetDescriptorList() {
+        return new ArrayList<>(datasetDescriptors.values());
+    }
+
+    public List<Long> listAllRowIds(Long datasetDescriptorId) {
+        Hitlist hitlist = client.loadHitlist(datasetDescriptorId);
+        return Arrays.asList(hitlist.getItems());
+    }
+
+    public List<Row> listRow(Long datasetDescriptorId, List<Long> structureIdList) {
+        DatasetDescriptor datasetDescriptor = datasetDescriptors.get(datasetDescriptorId);
+
+        // Discuss: I'm forced to match each Row to the only known metadata
+        DatamartRowDescriptor drd = (DatamartRowDescriptor) datasetDescriptor.getAllRowDescriptors().get(0);
+        DatamartPropertyDescriptor dpd = (DatamartPropertyDescriptor) drd.getStructurePropertyDescriptor();
+
+        ArrayList<Row> rows = new ArrayList<>(structureIdList.size());
+        List<Structure> structures = client.listStructure(structureIdList);
+        for (Structure structure : structures) {
+            DatamartRow datamartRow = new DatamartRow();
+            datamartRow.setId(Long.valueOf(structure.getCdId()));
+            datamartRow.setDescriptor(drd);
+            datamartRow.setProperty(dpd, structure.getCdStructure());
+            rows.add(datamartRow);
+        }
+        return rows;
+    }
+}

@@ -5,6 +5,7 @@ import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
 import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.request.resource.DynamicImageResource;
+import portal.integration.DatamartSession;
 import portal.service.api.DatasetService;
 import portal.service.api.PropertyDescriptor;
 import portal.service.api.Row;
@@ -14,6 +15,8 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 public class DynamicStructureImageResource extends DynamicImageResource {
 
@@ -23,6 +26,8 @@ public class DynamicStructureImageResource extends DynamicImageResource {
 
     @Inject
     private DatasetService service;
+    @Inject
+    private DatamartSession datamartSession;
 
     public DynamicStructureImageResource() {
         CdiContainer.get().getNonContextualManager().postConstruct(this);
@@ -48,7 +53,11 @@ public class DynamicStructureImageResource extends DynamicImageResource {
         String structureData = null;
         Long datasetDescriptorId = Long.valueOf(datasetIdAsString);
         Long rowId = Long.valueOf(rowIdAsString);
-        Row row = service.findRowById(datasetDescriptorId, rowId);
+
+        // Row row = service.findRowById(datasetDescriptorId, rowId);
+        List<Row> rows = datamartSession.listRow(datasetDescriptorId, Arrays.asList(rowId));
+        Row row = rows.get(0);
+
         if (row != null) {
             PropertyDescriptor propertyDescriptor = row.getDescriptor().getStructurePropertyDescriptor();
             structureData = (String) row.getProperty(propertyDescriptor);

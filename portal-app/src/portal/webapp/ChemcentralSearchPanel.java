@@ -8,8 +8,8 @@ import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import portal.integration.IntegrationClient;
 import portal.integration.PropertyDefinition;
-import portal.service.api.ChemcentralSearch;
 import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 import toolkit.wicket.semantic.SemanticModalPanel;
@@ -26,6 +26,8 @@ public class ChemcentralSearchPanel extends SemanticModalPanel {
     private Form<DatamartSearchData> form;
     @Inject
     private DatasetService datasetService;
+    @Inject
+    private IntegrationClient integrationClient;
 
     public ChemcentralSearchPanel(String id, String modalElement) {
         super(id, modalElement);
@@ -54,9 +56,14 @@ public class ChemcentralSearchPanel extends SemanticModalPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                /*
                 ChemcentralSearch chemcentralSearch = new ChemcentralSearch();
                 chemcentralSearch.setDescription(ChemcentralSearchPanel.this.form.getModelObject().getDescription());
                 datasetService.createFromChemcentralSearch(chemcentralSearch);
+                */
+
+
+
                 callbacks.onSubmit();
                 hideModal();
             }
