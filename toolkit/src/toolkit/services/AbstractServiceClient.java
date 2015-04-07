@@ -29,7 +29,9 @@ public abstract class AbstractServiceClient {
         UriBuilder builder = UriBuilder.fromUri(uriString);
         if (queryParams != null) {
             for (Map.Entry<String, List<String>> entry : queryParams.entrySet()) {
-                builder = UriBuilder.fromUri(builder.queryParam(entry.getKey(), "{value}").build(entry.getValue().get(0)));
+                for (String value : entry.getValue()) {
+                    builder = UriBuilder.fromUri(builder.queryParam(entry.getKey(), "{value}").build(value));
+                }
             }
         }
 
