@@ -18,7 +18,7 @@ public class IntegrationClient extends AbstractServiceClient {
 
     @Override
     protected String getServiceBaseUri() {
-        return "http://52.0.43.130:8080/chemcentral";
+        return "http://52.5.246.115:8080/chemcentral";
     }
 
     public List<PropertyDefinition> listPropertyDefinition(String filter, int limit) {

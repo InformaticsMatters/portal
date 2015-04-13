@@ -3,24 +3,72 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <style>
+        @media only screen and (max-width: @computerBreakpoint) {
+        html.ios {
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        }
+        }
+    </style>
 </head>
 <body>
+
+<div class="ui left sidebar" style="background: white; padding: 10px;top:37px;">
+    <form class="ui form">
+        <div class="field">
+            <label>Property</label>
+            <input type="text">
+        </div>
+        <div class="ui divided list">
+            <div class="field"><label>Select column</label></div>
+            <div class="item">
+                <a class="right floated"><i class="icon link right arrow"></i></a>
+
+                <div class="content">
+                    <div>Column 1</div>
+                </div>
+            </div>
+            <div class="item">
+                <a class="right floated"><i class="icon link right arrow"></i></a>
+
+                <div class="content">
+                    <div>Column 2</div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="ui right sidebar" style="background: white;">
+    Filters
+</div>
+
 
 <div wicket:id="notifier"></div>
 
 <div wicket:id="menuPanel"></div>
 
-<div class="separator20"></div>
+<div class="ui grid page pusher">
+    <div class="separator20"></div>
 
-<div class="ui page grid">
-    <div wicket:id="treeGridNavigation"></div>
-    <div class="separator10"></div>
+    <div class="ui button" wicket:id="leftSidebar">Add columns</div>
+    <div class="ui button" wicket:id="rightSidebar">Add filters</div>
+
+    <div class="separator20"></div>
+
     <div>
-        <div wicket:id="treeGrid"></div>
-    </div>
-</div>
+        <div wicket:id="treeGridNavigation"></div>
+        <div class="separator10"></div>
+        <div>
+            <div wicket:id="treeGrid"></div>
+        </div>
 
-<a wicket:id="expand">Expand</a>
+        <a wicket:id="expand">Expand</a>
+    </div>
+
+</div>
 
 </body>
 </html>

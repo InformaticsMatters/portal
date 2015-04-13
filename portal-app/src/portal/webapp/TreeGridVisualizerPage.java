@@ -6,6 +6,7 @@ import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigation
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.service.api.DatasetDescriptor;
 import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.NotifierProvider;
@@ -16,6 +17,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 public class TreeGridVisualizerPage extends WebPage {
+
+    private AjaxLink leftSidebar;
+    private AjaxLink rightSidebar;
 
     @Inject
     private NotifierProvider notifierProvider;
@@ -39,11 +43,13 @@ public class TreeGridVisualizerPage extends WebPage {
                 treeGridVisualizer.getTree().updateTree(ajaxRequestTarget);
             }
         });
+        addActions();
     }
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/lac.js")));
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
     }
 
@@ -52,5 +58,25 @@ public class TreeGridVisualizerPage extends WebPage {
         add(treeGridVisualizer);
 
         add(new TreeGridNavigationPanel("treeGridNavigation", treeGridVisualizer));
+    }
+
+    private void addActions() {
+        leftSidebar = new AjaxLink("leftSidebar") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                ajaxRequestTarget.appendJavaScript("leftSideBarToggle()");
+            }
+        };
+        add(leftSidebar);
+
+        rightSidebar = new AjaxLink("rightSidebar") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                ajaxRequestTarget.appendJavaScript("rightSideBarToggle()");
+            }
+        };
+        add(rightSidebar);
     }
 }
