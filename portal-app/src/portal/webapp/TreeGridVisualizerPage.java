@@ -40,7 +40,6 @@ public class TreeGridVisualizerPage extends WebPage {
     private DatasetService service;
     private AjaxPagingNavigation navigation;
     private TreeGridVisualizer treeGridVisualizer;
-    private ListView<String> columnListView;
 
     public TreeGridVisualizerPage(DatasetDescriptor datasetDescriptor) {
         notifierProvider.createNotifier(this, "notifier");
@@ -113,13 +112,13 @@ public class TreeGridVisualizerPage extends WebPage {
     }
 
     private void addColumnsListView() {
-        List columnList = Arrays.asList(new String[]{"a", "b", "c"});
-        columnListView = new ListView("columnList", columnList) {
+        List list = Arrays.asList(new String[]{"Column 1", "Column 2", "Column 3"});
+        ListView listItem = new ListView("listItem", list) {
             protected void populateItem(ListItem item) {
-                item.add(new Label("columnName", item.getModel()));
+                item.add(new Label("label", item.getModel()));
             }
         };
-        add(columnListView);
+        add(listItem);
     }
 
     private class ColumnsData implements Serializable {
