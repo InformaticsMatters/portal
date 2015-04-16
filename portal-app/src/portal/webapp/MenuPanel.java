@@ -33,6 +33,15 @@ public class MenuPanel extends Panel {
         };
         add(metadataLink);
 
+        AjaxLink workbenchLink = new AjaxLink("workbench") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                setResponsePage(DrugWorkbenchPage.class);
+            }
+        };
+        add(workbenchLink);
+
         add(new Link<String>("logout") {
 
             @Override
