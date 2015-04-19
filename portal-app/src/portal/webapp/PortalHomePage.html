@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
-<body>
+<body class="pushable">
 <div wicket:id="notifier"></div>
 
-<div wicket:id="menuPanel"></div>
-<div class="separator20"></div>
 
-<div>
-    <div class="ui page grid">
+<div class="pusher" style="  display: flex;overflow: visible;flex-direction: column;">
+
+    <div wicket:id="menuPanel"></div>
+    <div class="separator20"></div>
+
+    <div class="ui page grid" style="flex:1;">
         <div class="ui small buttons">
             <div class="ui blue button" wicket:id="addFromFile">From file</div>
             <div class="ui blue button" wicket:id="addFromStructureSearch">From Structure</div>
@@ -19,11 +21,43 @@
 
         <div wicket:id="datasetGridViewPanel"></div>
         <div wicket:id="datasetCardViewPanel"></div>
+        <div class="separator20"></div>
+    </div>
+    <div class="ui inverted black footer vertical segment">
+        <div style="margin: 0em;border-radius: 0em;padding-top: 2em; padding-bottom: 3em; padding-left: 8%;
+  padding-right: 8%;">
+            <div class="ui inverted divided grid">
+                <div class="column">
+                    <h5 class="ui inverted teal header">Title</h5>
 
+                    <div class="ui inverted link list">
+                        <a class="item">link1</a>
+                        <a class="item">link2</a>
+                        <a class="item">link3</a>
+                    </div>
+                </div>
+                <div class="column">
+                    <h5 class="ui inverted teal header">Title</h5>
+
+                    <div class="ui inverted link list">
+                        <a class="item">link1</a>
+                        <a class="item">link2</a>
+                        <a class="item">link3</a>
+                    </div>
+                </div>
+                <div class="column">
+                    <h5 class="ui inverted teal header">Title</h5>
+
+                    <div class="ui inverted link list">
+                        <a class="item">link1</a>
+                        <a class="item">link2</a>
+                        <a class="item">link3</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
-<div class="separator20"></div>
 
 <div wicket:id="uploadFilePanel"></div>
 <div wicket:id="marvinSketcherPanel"></div>

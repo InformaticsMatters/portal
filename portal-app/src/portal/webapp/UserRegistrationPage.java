@@ -30,6 +30,7 @@ public class UserRegistrationPage extends WebPage {
 
     public UserRegistrationPage() {
         notifierProvider.createNotifier(this, "notifier");
+        add(new MenuPanel("menuPanel"));
         addForm();
     }
 
