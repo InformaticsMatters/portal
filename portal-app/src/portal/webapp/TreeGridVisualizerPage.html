@@ -12,9 +12,10 @@
         }
     </style>
 </head>
-<body>
+<body style="background-color: #f7f7f7!important;">
 
-<div class="ui left sidebar" style="background: white; padding: 10px;top:37px;">
+<div class="ui left sidebar"
+     style="background: white; padding: 10px; top:104px; border-top-right-radius: 5px!important;">
     <form class="ui form" wicket:id="form">
         <div class="field">
             <label>Property</label>
@@ -33,7 +34,8 @@
 </div>
 
 
-<div class="ui right sidebar" style="background: white;">
+<div class="ui right sidebar"
+     style="background: white; padding: 10px; top:104px; border-top-left-radius: 5px!important;">
     Filters
 </div>
 
@@ -42,11 +44,15 @@
 
 <div wicket:id="menuPanel"></div>
 
+<div class="ui black big button attached right"
+     style="position: fixed; top: 47px; left: -1px; z-index: 10; padding-left: 18px; padding-right: 10px;"
+     wicket:id="leftSidebar"><i class="content icon"></i></div>
+<div class="ui black big button attached left"
+     style="position: fixed; top: 47px; right: -1px; z-index: 10; padding-left: 18px; padding-right: 10px;"
+     wicket:id="rightSidebar"><i class="content icon"></i></div>
+
 <div class="ui grid page pusher">
     <div class="separator20"></div>
-
-    <div class="ui button" wicket:id="leftSidebar">Add columns</div>
-    <div class="ui button" wicket:id="rightSidebar">Add filters</div>
 
     <div class="separator20"></div>
 
