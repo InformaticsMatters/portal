@@ -42,6 +42,15 @@ public class MenuPanel extends Panel {
         };
         add(workbenchLink);
 
+        AjaxLink workflowLink = new AjaxLink("workflow") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                setResponsePage(WorkflowPage.class);
+            }
+        };
+        add(workflowLink);
+
         add(new Link<String>("logout") {
 
             @Override
