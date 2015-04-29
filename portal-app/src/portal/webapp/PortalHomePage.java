@@ -5,6 +5,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.integration.DatamartSession;
 import portal.service.api.DatasetDescriptor;
 import portal.service.api.DatasetService;
@@ -17,10 +18,11 @@ import java.util.List;
 
 public class PortalHomePage extends WebPage {
 
+    //private DatasetCardViewPanel datasetCardViewPanel;
+    protected DatasetCardView2Panel datasetCardView2Panel;
     private AjaxLink gridViewLink;
     private AjaxLink cardViewLink;
     private DatasetGridViewPanel datasetGridViewPanel;
-    private DatasetCardViewPanel datasetCardViewPanel;
     private ChemcentralSearchPanel chemcentralSearchPanel;
     private UploadModalPanel uploadModalPanel;
     private MarvinSketcher marvinSketcherPanel;
@@ -46,6 +48,7 @@ public class PortalHomePage extends WebPage {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/lac.js")));
     }
 
     private void addActions() {
@@ -54,9 +57,11 @@ public class PortalHomePage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 datasetGridViewPanel.setVisible(true);
-                datasetCardViewPanel.setVisible(false);
+                //datasetCardViewPanel.setVisible(false);
+                datasetCardView2Panel.setVisible(false);
                 ajaxRequestTarget.add(datasetGridViewPanel);
-                ajaxRequestTarget.add(datasetCardViewPanel);
+                //ajaxRequestTarget.add(datasetCardViewPanel);
+                ajaxRequestTarget.add(datasetCardView2Panel);
                 ajaxRequestTarget.add(cardViewLink);
                 ajaxRequestTarget.add(gridViewLink);
                 ajaxRequestTarget.appendJavaScript("makeMenuButtonActive('" + gridViewLink.getMarkupId() + "')");
@@ -69,13 +74,16 @@ public class PortalHomePage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                datasetCardViewPanel.setVisible(true);
+                //datasetCardViewPanel.setVisible(true);
+                datasetCardView2Panel.setVisible(true);
                 datasetGridViewPanel.setVisible(false);
-                ajaxRequestTarget.add(datasetCardViewPanel);
+                //ajaxRequestTarget.add(datasetCardViewPanel);
+                ajaxRequestTarget.add(datasetCardView2Panel);
                 ajaxRequestTarget.add(datasetGridViewPanel);
                 ajaxRequestTarget.add(cardViewLink);
                 ajaxRequestTarget.add(gridViewLink);
                 ajaxRequestTarget.appendJavaScript("makeMenuButtonActive('" + cardViewLink.getMarkupId() + "')");
+                ajaxRequestTarget.appendJavaScript("cardPopup()");
             }
         };
         cardViewLink.setOutputMarkupId(true);
@@ -113,11 +121,17 @@ public class PortalHomePage extends WebPage {
         datasetGridViewPanel.setOutputMarkupPlaceholderTag(true);
         add(datasetGridViewPanel);
 
-        datasetCardViewPanel = new DatasetCardViewPanel("datasetCardViewPanel");
+        /*datasetCardViewPanel = new DatasetCardViewPanel("datasetCardViewPanel");
         datasetCardViewPanel.setOutputMarkupId(true);
         datasetCardViewPanel.setOutputMarkupPlaceholderTag(true);
         add(datasetCardViewPanel);
-        datasetCardViewPanel.setVisible(false);
+        datasetCardViewPanel.setVisible(false);*/
+
+        datasetCardView2Panel = new DatasetCardView2Panel("datasetCardViewPanel");
+        datasetCardView2Panel.setOutputMarkupId(true);
+        datasetCardView2Panel.setOutputMarkupPlaceholderTag(true);
+        add(datasetCardView2Panel);
+        datasetCardView2Panel.setVisible(false);
     }
 
     private void addModals() {
@@ -169,11 +183,13 @@ public class PortalHomePage extends WebPage {
         // List<DatasetDescriptor> datasetDescriptorList = datasetService.listDatasetDescriptor(new ListDatasetDescriptorFilter());
         List<DatasetDescriptor> datasetDescriptorList = datamartSession.getDatasetDescriptorList();
         datasetGridViewPanel.setDatasetDescriptorList(datasetDescriptorList);
-        datasetCardViewPanel.setDatasetDescriptorList(datasetDescriptorList);
+        //datasetCardViewPanel.setDatasetDescriptorList(datasetDescriptorList);
+        datasetCardView2Panel.setDatasetDescriptorList(datasetDescriptorList);
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
             target.add(datasetGridViewPanel);
-            target.add(datasetCardViewPanel);
+            //target.add(datasetCardViewPanel);
+            target.add(datasetCardView2Panel);
         }
     }
 }
