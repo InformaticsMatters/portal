@@ -2,6 +2,7 @@ package portal.integration;
 
 import portal.service.api.DatasetDescriptor;
 import portal.service.api.Row;
+import portal.service.api.RowDescriptor;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -56,7 +57,7 @@ public class DatamartSession implements Serializable {
     public List<Row> listRow(Long datasetDescriptorId, List<Long> structureIdList) {
         DatasetDescriptor datasetDescriptor = datasetDescriptors.get(datasetDescriptorId);
 
-        // Discuss: I'm forced to match each Row to the only known metadata
+        // Discuss: I'm forced to match each Row to the only known metadata!
         DatamartRowDescriptor drd = (DatamartRowDescriptor) datasetDescriptor.getAllRowDescriptors().get(0);
         DatamartPropertyDescriptor dpd = (DatamartPropertyDescriptor) drd.getStructurePropertyDescriptor();
 
@@ -70,5 +71,21 @@ public class DatamartSession implements Serializable {
             rows.add(datamartRow);
         }
         return rows;
+    }
+
+    public List<PropertyData> listPropertyData(DatasetDescriptor datasetDescriptor, PropertyDefinition propertyDefinition) {
+        return client.listPropertyData(datasetDescriptor.getId(), propertyDefinition.getOriginalId());
+    }
+
+    public void addPropertyToDataset(DatasetDescriptor datasetDescriptor, String jsonParameterName) {
+        List<RowDescriptor> allRowDescriptors = datasetDescriptor.getAllRowDescriptors();
+        for (RowDescriptor rowDescriptor : allRowDescriptors) {
+            Long id = (long) rowDescriptor.listAllPropertyDescriptors().size();
+            DatamartPropertyDescriptor datamartPropertyDescriptor = new DatamartPropertyDescriptor();
+            datamartPropertyDescriptor.setDescription(jsonParameterName);
+            datamartPropertyDescriptor.setId(id + 1);
+            DatamartRowDescriptor datamartRowDescriptor = (DatamartRowDescriptor) rowDescriptor;
+            datamartRowDescriptor.addPropertyDescriptor(datamartPropertyDescriptor);
+        }
     }
 }

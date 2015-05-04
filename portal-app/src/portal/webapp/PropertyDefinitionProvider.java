@@ -36,7 +36,7 @@ public class PropertyDefinitionProvider extends TextChoiceProvider<PropertyDefin
     @Override
     public Collection<PropertyDefinition> toChoices(Collection<String> collection) {
         PropertyDefinition result = null;
-        String first = collection.iterator().next();
+        Long first = Long.valueOf(collection.iterator().next());
         for (PropertyDefinition propertyDefinition : data) {
             if (propertyDefinition.getId().equals(first)) {
                 result = propertyDefinition;

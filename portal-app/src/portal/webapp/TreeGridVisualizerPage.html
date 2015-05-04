@@ -22,15 +22,17 @@
             <input wicket:id="propertyDefinition" type="hidden">
         </div>
     </form>
-    <h5 class="field"><label>Select column</label></h5>
-    <table class="ui very basic table">
-        <tr class="item" wicket:id="listItem">
-            <td>
-                <span wicket:id="label">Column 1</span>
-            </td>
-            <td class="right aligned"><a><i class="icon link right arrow"></i></a></td>
-        </tr>
-    </table>
+    <div wicket:id="columnsContainer">
+        <h5 class="field"><label>Select column</label></h5>
+        <table class="ui very basic table">
+            <tr class="item" wicket:id="columnList">
+                <td>
+                    <span wicket:id="label">Column 1</span>
+                </td>
+                <td class="right aligned"><a wicket:id="add"><i class="icon link right arrow"></i></a></td>
+            </tr>
+        </table>
+    </div>
 </div>
 
 
@@ -62,8 +64,6 @@
         <div>
             <div wicket:id="treeGrid"></div>
         </div>
-
-        <a wicket:id="expand">Expand</a>
     </div>
 
 </div>
