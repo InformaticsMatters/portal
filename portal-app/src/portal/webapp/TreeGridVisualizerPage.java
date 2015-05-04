@@ -79,15 +79,6 @@ public class TreeGridVisualizerPage extends WebPage {
             }
         };
         add(leftSidebar);
-
-        AjaxLink rightSidebar = new AjaxLink("rightSidebar") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                ajaxRequestTarget.appendJavaScript("rightSideBarToggle()");
-            }
-        };
-        add(rightSidebar);
     }
 
     private void addColumnsForm() {
