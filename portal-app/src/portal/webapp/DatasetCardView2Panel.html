@@ -1,17 +1,19 @@
 <wicket:panel>
     <ul class="ui eight cards">
         <li wicket:id="descriptors" class="card">
-            <div><span class="ui top left attached label" wicket:id="rowCount"></span></div>
-            <div class="right floated" style="margin-top: 5px!important;">
-                <div wicket:id="open">
-                    <i class="icon link large setting"></i>
-                </div>
-            </div>
-            <div style="clear:both;"></div>
             <div class="content" style="height: 40px;">
                 <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span
                         wicket:id="description"></span>
                 </div>
+            </div>
+            <div class="extra content">
+                <div class="left floated"><span style="font-size: 13px;" wicket:id="rowCount"></span></div>
+                <div class="right floated">
+                    <div wicket:id="open">
+                        <i class="icon link large setting"></i>
+                    </div>
+                </div>
+
             </div>
         </li>
         <div class="ui hoverCardPopup popup">
