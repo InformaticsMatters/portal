@@ -83,7 +83,8 @@ public class PortalHomePage extends WebPage {
                 ajaxRequestTarget.add(cardViewLink);
                 ajaxRequestTarget.add(gridViewLink);
                 ajaxRequestTarget.appendJavaScript("makeMenuButtonActive('" + cardViewLink.getMarkupId() + "')");
-                ajaxRequestTarget.appendJavaScript("cardPopup()");
+                ajaxRequestTarget.appendJavaScript("onClickCardPopup()");
+                ajaxRequestTarget.appendJavaScript("onHoverCardPopup()");
             }
         };
         cardViewLink.setOutputMarkupId(true);

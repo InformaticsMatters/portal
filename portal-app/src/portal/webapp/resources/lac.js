@@ -23,12 +23,22 @@ function rightSideBarToggle(){
     ;
 }
 
-function cardPopup() {
+function onClickCardPopup() {
     $('.card')
       .popup({
-        popup: '.cardPopup.popup',
+        popup: '.clickCardPopup.popup',
         on    : 'click',
-        exclusive: 'true'
+        position: 'right center'
+      })
+    ;
+}
+
+function onHoverCardPopup() {
+    $('.card .content')
+      .popup({
+        popup: '.hoverCardPopup.popup',
+        on    : 'hover',
+        position: 'left center'
       })
     ;
 }
