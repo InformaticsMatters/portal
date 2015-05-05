@@ -1,0 +1,55 @@
+.portalThumbnails {
+    padding: 0;
+    list-style: none;
+    text-align: center;
+    margin: 30px auto;
+    width: 1000px;
+}
+
+.portalThumbnails li {
+    display: inline-block;
+    width: 200px;
+    margin: 20px;
+    vertical-align: top;
+}
+
+.portalThumbnails li span {
+    opacity: 0.8;
+}
+
+
+.portalThumbnails li .ui.icon .icon {
+    opacity: 0.75;
+    -webkit-transition:
+        all 0.2s ease-out
+      ;
+      -moz-transition:
+        all 0.2s ease-out
+      ;
+      -o-transition:
+        all 0.2s ease-out
+      ;
+      -ms-transition:
+        all 0.2s ease-out
+      ;
+      transition:
+        all 0.2s ease-out
+      ;
+}
+
+.portalThumbnails li:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+.portalThumbnails li:hover #thumbIcon {
+    color: #000;
+      -webkit-transform: scale(1.2);
+      -moz-transform: scale(1.2);
+      -o-transform: scale(1.2);
+      -ms-transform: scale(1.2);
+      transform: scale(1.2);
+}
+
+.portalThumbnails .appName {
+    height: 45px;
+}

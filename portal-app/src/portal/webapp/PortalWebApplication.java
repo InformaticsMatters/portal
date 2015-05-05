@@ -28,6 +28,7 @@ public class PortalWebApplication extends WebApplication {
         mountPage("/userCreated", UserCreatedPage.class);
         mountPage("/emailConfirmation", ConfirmationEmailPage.class);
         mountPage("/forgotPassword", ForgotPasswordPage.class);
+        mountPage("/portal", DashboardPage.class);
 
     }
 
