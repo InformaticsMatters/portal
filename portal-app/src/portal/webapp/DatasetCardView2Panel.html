@@ -9,18 +9,52 @@
             <div class="extra content">
                 <div class="left floated"><span style="font-size: 13px;" wicket:id="rowCount"></span></div>
                 <div class="right floated">
-                    <div wicket:id="open">
-                        <i class="icon link large setting"></i>
+                    <div class="ui top right pointing dropdown icon">
+                        <i class="setting large icon"></i>
+
+                        <div class="menu">
+                            <div wicket:id="open" class="item">
+                                <i class="icon link">Open</i>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
             </div>
         </li>
-        <div class="ui hoverCardPopup popup">
-            <span>HOVER</span>
-        </div>
         <div class="ui clickCardPopup popup">
-            <span>On click popup</span>
+            <div class="content">
+                <table class="ui small table">
+                    <tr>
+                        <td><b>Description</b></td>
+                        <td><span></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>Last modified</b></td>
+                        <td><span></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>Row count</b></td>
+                        <td><span></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>Owner</b></td>
+                        <td><span></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>Created</b></td>
+                        <td><span></span></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="extra content">
+                <div class="ui mini blue button">
+                    Open
+                </div>
+                <div class="ui mini orange button">
+                    Metadata
+                </div>
+            </div>
         </div>
 
     </ul>

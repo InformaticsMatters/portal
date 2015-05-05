@@ -33,12 +33,8 @@ function onClickCardPopup() {
     ;
 }
 
-function onHoverCardPopup() {
-    $('.card .content')
-      .popup({
-        popup: '.hoverCardPopup.popup',
-        on    : 'hover',
-        position: 'left center'
-      })
+function settingsDropdown() {
+    $('.ui.dropdown')
+      .dropdown()
     ;
 }
