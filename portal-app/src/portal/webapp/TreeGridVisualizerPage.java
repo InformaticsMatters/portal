@@ -45,11 +45,12 @@ public class TreeGridVisualizerPage extends WebPage {
     private TreeGridVisualizer treeGridVisualizer;
     private ListView<String> columnsListView;
     private WebMarkupContainer columnsContainer;
+    private MenuPanel menuPanel;
 
     public TreeGridVisualizerPage(DatasetDescriptor datasetDescriptor) {
         this.datasetDescriptor = datasetDescriptor;
         notifierProvider.createNotifier(this, "notifier");
-        add(new MenuPanel("menuPanel"));
+        addMenuPanel();
         addOrReplaceTreeGridVisualizer(datasetDescriptor);
         addColumnsForm();
         addColumnsListView();
@@ -60,6 +61,12 @@ public class TreeGridVisualizerPage extends WebPage {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/lac.js")));
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
+    }
+
+    private void addMenuPanel() {
+        menuPanel = new MenuPanel("menuPanel");
+        menuPanel.setLeftSideItemVisible(true);
+        add(menuPanel);
     }
 
     private void addOrReplaceTreeGridVisualizer(DatasetDescriptor datasetDescriptor) {
