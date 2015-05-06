@@ -61,6 +61,7 @@ public class MenuPanel extends Panel {
             }
         };
         add(leftSidebarLink);
+        leftSidebarLink.setVisible(false);
 
         add(new Link<String>("logout") {
 
