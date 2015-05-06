@@ -9,7 +9,7 @@ import org.apache.wicket.model.PropertyModel;
 
 public class MenuPanel extends Panel {
 
-    private AjaxLink leftSideBarLink;
+    private AjaxLink leftSidebarLink;
 
     public MenuPanel(String id) {
         super(id);
@@ -53,7 +53,7 @@ public class MenuPanel extends Panel {
         };
         add(workflowLink);
 
-        AjaxLink leftSidebarLink = new AjaxLink("leftSidebarLink") {
+        leftSidebarLink = new AjaxLink("leftSidebarLink") {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
@@ -77,7 +77,7 @@ public class MenuPanel extends Panel {
     }
 
     public void setLeftSideItemVisible(boolean value) {
-        leftSideBarLink.setVisible(value);
+        leftSidebarLink.setVisible(value);
     }
 
 }
