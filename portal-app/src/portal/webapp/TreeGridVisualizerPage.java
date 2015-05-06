@@ -51,7 +51,6 @@ public class TreeGridVisualizerPage extends WebPage {
         notifierProvider.createNotifier(this, "notifier");
         add(new MenuPanel("menuPanel"));
         addOrReplaceTreeGridVisualizer(datasetDescriptor);
-        addActions();
         addColumnsForm();
         addColumnsListView();
     }
@@ -68,17 +67,6 @@ public class TreeGridVisualizerPage extends WebPage {
         addOrReplace(treeGridVisualizer);
         TreeGridNavigationPanel treeGridNavigation = new TreeGridNavigationPanel("treeGridNavigation", treeGridVisualizer);
         addOrReplace(treeGridNavigation);
-    }
-
-    private void addActions() {
-        AjaxLink leftSidebar = new AjaxLink("leftSidebar") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                ajaxRequestTarget.appendJavaScript("leftSideBarToggle()");
-            }
-        };
-        add(leftSidebar);
     }
 
     private void addColumnsForm() {

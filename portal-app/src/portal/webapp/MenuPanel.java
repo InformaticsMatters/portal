@@ -51,6 +51,15 @@ public class MenuPanel extends Panel {
         };
         add(workflowLink);
 
+        AjaxLink leftSidebarLink = new AjaxLink("leftSidebarLink") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                ajaxRequestTarget.appendJavaScript("leftSideBarToggle()");
+            }
+        };
+        add(leftSidebarLink);
+
         add(new Link<String>("logout") {
 
             @Override
