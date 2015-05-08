@@ -5,16 +5,16 @@
     <title></title>
 </head>
 
-<body class="pushable">
+<body>
 <div wicket:id="notifier"></div>
 
 
-<div class="pusher" style="  display: flex;overflow: visible;flex-direction: column;">
+<div class="pusher">
 
     <div wicket:id="menuPanel"></div>
     <div class="separator20"></div>
 
-    <div class="ui page grid" style="flex:1;">
+    <div class="ui page grid">
         <ul class="ui three cards">
             <li wicket:id="descriptors" class="card">
                 <div class="content">
@@ -46,8 +46,15 @@
     </div>
 
 
-    <div style="height: 100px; width: 100px; border: 1px solid black;"></div>
-    <div style="height: 150px; width: 300px; border: 1px solid red;"></div>
+    <div wicket:id="datasets"></div>
+
+    <div class="canvas" style="border: 1px solid red; height: 200px;">
+        <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
+            <div wicket:id="canvasItem" class="canvas-item">
+                <div wicket:id="item"></div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
