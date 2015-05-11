@@ -39,13 +39,13 @@ public class WorkflowPage extends WebPage {
     private static final String CANVASITEM_INDEX_PARAM_NAME = "index";
     private static final String CANVASITEM_REPEATER_WICKETID = "canvasItem";
 
-    private List<AbstractCanvasItemModel> canvasItemModelList = new ArrayList<AbstractCanvasItemModel>();
-
-    private List<DatasetDescriptor> datasetDescriptorList;
-    private ListView<DatasetDescriptor> listView;
+    private List<AbstractCanvasItemModel> canvasItemModelList = new ArrayList<>();
 
     private WebMarkupContainer plumbContainer;
     private ListView<AbstractCanvasItemModel> canvasItemRepeater;
+
+    private List<DatasetDescriptor> datasetDescriptorList;
+    private ListView<DatasetDescriptor> listView;
 
     @Inject
     private NotifierProvider notifierProvider;
@@ -73,7 +73,7 @@ public class WorkflowPage extends WebPage {
         response.render(CssHeaderItem.forReference(new CssResourceReference(WorkflowPage.class, "resources/flow.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(WorkflowPage.class, "resources/lac.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/dom.jsPlumb-1.6.2.js")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/lac.js")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/Canvas.js")));
         response.render(OnDomReadyHeaderItem.forScript("init();"));
     }
 
