@@ -3,6 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 </head>
 
 <body>
@@ -14,41 +15,10 @@
     <div wicket:id="menuPanel"></div>
     <div class="separator20"></div>
 
-    <div class="ui page grid">
-        <ul class="ui three cards">
-            <li wicket:id="descriptors" class="card">
-                <div class="content">
-                    <table class="ui small table">
-                        <tr>
-                            <td><b>Description</b></td>
-                            <td><span wicket:id="description"></span></td>
-                        </tr>
-                        <tr>
-                            <td><b>Last modified</b></td>
-                            <td><span wicket:id="lastModified"></span></td>
-                        </tr>
-                        <tr>
-                            <td><b>Row count</b></td>
-                            <td><span wicket:id="rowCount"></span></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="extra content">
-                    <div wicket:id="open" class="ui mini blue button">
-                        Open
-                    </div>
-                    <div wicket:id="metadata" class="ui mini orange button">
-                        Metadata
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-
 
     <div wicket:id="datasets"></div>
 
-    <div class="canvas" style="border: 1px solid red; height: 200px;">
+    <div class="canvas">
         <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
             <div wicket:id="canvasItem" class="canvas-item">
                 <div wicket:id="item"></div>

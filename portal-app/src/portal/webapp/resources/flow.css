@@ -67,3 +67,12 @@ li {
     height: 50px;
     margin: 4px;
 }
+
+.canvas {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 300px;
+    width: 150px;
+    float: right;
+    margin-right: 10px;
+}
