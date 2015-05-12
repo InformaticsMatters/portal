@@ -65,7 +65,6 @@ public class WorkflowPage extends WebPage {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(JQueryResourceReference.get()));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(WorkflowPage.class, "resources/flow.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(WorkflowPage.class, "resources/lac.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/dom.jsPlumb-1.6.2.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/Canvas.js")));

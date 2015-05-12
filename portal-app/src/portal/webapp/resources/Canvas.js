@@ -2,7 +2,7 @@ var onCanvasDrop;
 var onCanvasItemDragStop;
 
 function setupPalette() {
-    $('.palette-item').draggable({
+    $('.card').draggable({
         cursor: 'move',
         helper: 'clone',
         scroll: false,
@@ -16,7 +16,7 @@ function setupCanvas() {
     jsPlumb.setContainer($('#plumbContainer'));
 
     $('#plumbContainer').droppable({
-        accept: '.palette-item',
+        accept: '.card',
         drop: function(event, ui) {
             onCanvasDrop(ui.position.left, ui.position.top);
         }

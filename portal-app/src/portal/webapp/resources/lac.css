@@ -53,3 +53,121 @@
 .portalThumbnails .appName {
     height: 45px;
 }
+
+/* FLOW */
+
+.plumbContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.plumbContainer .canvas-item { border:1px solid #346789;
+    box-shadow: 2px 2px 19px #aaa;
+   -o-box-shadow: 2px 2px 19px #aaa;
+   -webkit-box-shadow: 2px 2px 19px #aaa;
+   -moz-box-shadow: 2px 2px 19px #aaa;
+    -moz-border-radius:0.5em;
+    border-radius:0.5em;
+    opacity:0.8;
+    filter:alpha(opacity=80);
+    text-align:center;
+    z-index:20;
+    position:absolute;
+    background-color:#eeeeef;
+    color:black;
+    font-family:helvetica;padding:0.5em;
+    font-size:0.9em;
+    width: 100px;
+    height: 100px;
+    margin: 4px;
+}
+
+.plumbContainer .canvas-item:hover {
+	box-shadow: 2px 2px 19px #444;
+   -o-box-shadow: 2px 2px 19px #444;
+   -webkit-box-shadow: 2px 2px 19px #444;
+   -moz-box-shadow: 2px 2px 19px #444;
+    opacity:0.6;
+	filter:alpha(opacity=60);
+}
+
+.plumbContainer .active {
+	border:1px dotted green;
+}
+
+.plumbContainer .hover {
+	border:1px dotted red;
+}
+
+.palette-item {
+    display: inline-block;
+      width: 150px!important;
+      background: #ffffff;
+      border: none;
+      border-radius: 0.2857rem;
+      box-shadow: 0px 0.2em 0px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
+      -webkit-transition: box-shadow 0.2s ease;
+      transition: box-shadow 0.2s ease;
+      z-index: '';
+}
+
+.palette-item > .content {
+  background: none;
+  margin: 0em;
+  padding: 1em 1em;
+  box-shadow: none;
+  font-size: 1em;
+  border: none;
+  border-radius: 0em;
+}
+
+.palette-item > .content:after {
+  display: block;
+  content: ' ';
+  height: 0px;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+.palette-item > .extra {
+  max-width: 100%;
+  min-height: 0em !important;
+  position: static;
+  background: none;
+  width: auto;
+  margin: 0em 0em;
+  padding: 0.75em 1em;
+  top: 0em;
+  left: 0em;
+  color: rgba(0, 0, 0, 0.4);
+  box-shadow: none;
+  -webkit-transition: color 0.2s ease;
+  transition: color 0.2s ease;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.palette-item > .extra a {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.palette-item > .extra a:hover {
+  color: #00b2f3;
+}
+
+.palette-item [class*="left floated"] {
+  float: left;
+}
+
+.palette-item [class*="right floated"] {
+  float: right;
+}
+
+.canvas {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 300px;
+    width: 150px;
+    float: right;
+    margin-right: 10px;
+}

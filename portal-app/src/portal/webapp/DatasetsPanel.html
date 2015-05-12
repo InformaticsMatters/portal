@@ -1,25 +1,21 @@
 <wicket:panel>
-
-    <ul class="ui eight cards">
-        <li wicket:id="descriptors" class="card">
-            <div class="palette">
-                <div class="palette-item">
-                    <div class="content" style="height: 40px;">
-                        <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span
-                                wicket:id="description"></span>
-                        </div>
+    <div class="dataSets">
+        <ul class="ui cards">
+            <li wicket:id="descriptors" class="card palette-item">
+                <div class="content" style="height: 40px;">
+                    <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span
+                            wicket:id="description"></span>
                 </div>
-                    <div class="extra content">
-                        <div class="left floated"><span style="font-size: 13px;" wicket:id="rowCount"></span></div>
-                        <div class="right floated">
-                            <div class="ui top right pointing dropdown icon">
-                                <i class="setting large icon"></i>
+                </div>
+                <div class="extra content">
+                    <div class="left floated"><span style="font-size: 13px;" wicket:id="rowCount"></span></div>
+                    <div class="right floated">
+                        <div class="ui top right pointing dropdown icon">
+                            <i class="setting large icon"></i>
 
-                                <div class="menu">
-                                    <div wicket:id="open" class="item">
-                                        <i class="icon link">Open</i>
-                                    </div>
-                                </div>
+                            <div class="menu">
+                                <div wicket:id="open" class="item">
+                                    <i class="icon link">Open</i>
                             </div>
                         </div>
                     </div>
@@ -27,16 +23,5 @@
             </div>
         </li>
     </ul>
-
-    <!--ul>
-        <li wicket:id="datasets">
-            <div>
-                <div class="palette">
-                    <div wicket:id="dataset" class="palette-item">DS</div>
-                </div>
-            </div>
-        </li>
-    </ul-->
-
-
+    </div>
 </wicket:panel>
