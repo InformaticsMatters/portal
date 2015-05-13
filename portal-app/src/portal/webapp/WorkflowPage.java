@@ -16,7 +16,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
-import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
@@ -35,17 +34,14 @@ public class WorkflowPage extends WebPage {
     private ListView<AbstractCanvasItemModel> canvasItemRepeater;
     private WebMarkupContainer plumbContainer;
 
-
     @Inject
     private NotifierProvider notifierProvider;
-    @Inject
-    private DatasetService datasetService;
 
     public WorkflowPage() {
         notifierProvider.createNotifier(this, "notifier");
         add(new MenuPanel("menuPanel"));
-        addCanvas();
         addDatasetsPanel();
+        addCanvas();
         addCanvasDropBehavior();
         addCanvasItemDragStopBehavior();
     }
@@ -58,6 +54,10 @@ public class WorkflowPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/dom.jsPlumb-1.6.2.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/Canvas.js")));
         response.render(OnDomReadyHeaderItem.forScript("init();"));
+    }
+
+    private void addDatasetsPanel() {
+        add(new DatasetsPanel("datasets"));
     }
 
     private void addCanvas() {
@@ -87,15 +87,13 @@ public class WorkflowPage extends WebPage {
         String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y_PARAM_NAME).toString();
         System.out.println("Drop data " + dropData + " at " + POSITION_X_PARAM_NAME + ": " + x + " " + POSITION_Y_PARAM_NAME + ": " + y);
 
-        int index = canvasItemModelList.size();
-
         DatasetCanvasItemModel newItemModel = new DatasetCanvasItemModel();
-        newItemModel.setId(Integer.toString(index));
+        newItemModel.setId(dropData);
         newItemModel.setPositionX(x);
         newItemModel.setPositionY(y);
         canvasItemModelList.add(newItemModel);
 
-        ListItem listItem = new ListItem("canvasItem" + index, index);
+        ListItem listItem = new ListItem("canvasItem" + dropData, canvasItemModelList.size());
         listItem.setOutputMarkupId(true);
         listItem.add(new AttributeModifier("style", "top:" + newItemModel.getPositionY() + "px; left:" + newItemModel.getPositionX() + "px;"));
         canvasItemRepeater.add(listItem);
@@ -156,19 +154,14 @@ public class WorkflowPage extends WebPage {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
-                String callBackScript = getCallbackFunction(
+                CharSequence callBackScript = getCallbackFunction(
                         CallbackParameter.explicit(CANVASITEM_INDEX_PARAM_NAME),
                         CallbackParameter.explicit(POSITION_X_PARAM_NAME),
-                        CallbackParameter.explicit(POSITION_Y_PARAM_NAME)).toString();
+                        CallbackParameter.explicit(POSITION_Y_PARAM_NAME));
                 callBackScript = "onCanvasItemDragStop=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
         };
         add(onCanvasItemDragStopBehavior);
     }
-
-    private void addDatasetsPanel() {
-        add(new DatasetsPanel("datasets"));
-    }
-
 }
