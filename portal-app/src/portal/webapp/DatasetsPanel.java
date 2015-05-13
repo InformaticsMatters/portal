@@ -1,5 +1,6 @@
 package portal.webapp;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -43,6 +44,8 @@ public class DatasetsPanel extends Panel {
                         setResponsePage(page);
                     }
                 });
+
+                listItem.add(new AttributeModifier("drop-data", datasetDescriptor.getId().toString()));
             }
         };
         add(listView);

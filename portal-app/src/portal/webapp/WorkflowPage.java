@@ -16,8 +16,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
-import portal.integration.DatamartSession;
-import portal.service.api.DatasetDescriptor;
 import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.NotifierProvider;
 
@@ -25,36 +23,27 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by mariapaz on 4/28/15.
- */
 public class WorkflowPage extends WebPage {
 
+    private static final String DROP_DATA_PARAM_NAME = "dropData";
     private static final String POSITION_X_PARAM_NAME = "positionX";
     private static final String POSITION_Y_PARAM_NAME = "positionY";
     private static final String CANVASITEM_INDEX_PARAM_NAME = "index";
     private static final String CANVASITEM_REPEATER_WICKETID = "canvasItem";
 
     private List<AbstractCanvasItemModel> canvasItemModelList = new ArrayList<>();
-
-    private WebMarkupContainer plumbContainer;
     private ListView<AbstractCanvasItemModel> canvasItemRepeater;
+    private WebMarkupContainer plumbContainer;
 
-    private List<DatasetDescriptor> datasetDescriptorList;
-    private ListView<DatasetDescriptor> listView;
 
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
     private DatasetService datasetService;
-    @Inject
-    private DatamartSession datamartSession;
 
     public WorkflowPage() {
         notifierProvider.createNotifier(this, "notifier");
         add(new MenuPanel("menuPanel"));
-        datasetDescriptorList = new ArrayList<>();
-        datamartSession.loadDatamartDatasetList();
         addCanvas();
         addDatasetsPanel();
         addCanvasDropBehavior();
@@ -93,9 +82,10 @@ public class WorkflowPage extends WebPage {
     }
 
     private void addCanvasItem(AjaxRequestTarget target) {
+        String dropData = getRequest().getRequestParameters().getParameterValue(DROP_DATA_PARAM_NAME).toString();
         String x = getRequest().getRequestParameters().getParameterValue(POSITION_X_PARAM_NAME).toString();
         String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y_PARAM_NAME).toString();
-        System.out.println("Added at: " + POSITION_X_PARAM_NAME + ": " + x + " " + POSITION_Y_PARAM_NAME + ": " + y);
+        System.out.println("Drop data " + dropData + " at " + POSITION_X_PARAM_NAME + ": " + x + " " + POSITION_Y_PARAM_NAME + ": " + y);
 
         int index = canvasItemModelList.size();
 
@@ -136,7 +126,10 @@ public class WorkflowPage extends WebPage {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
-                String callBackScript = getCallbackFunction(CallbackParameter.explicit(POSITION_X_PARAM_NAME), CallbackParameter.explicit(POSITION_Y_PARAM_NAME)).toString();
+                CharSequence callBackScript = getCallbackFunction(
+                        CallbackParameter.explicit(DROP_DATA_PARAM_NAME),
+                        CallbackParameter.explicit(POSITION_X_PARAM_NAME),
+                        CallbackParameter.explicit(POSITION_Y_PARAM_NAME));
                 callBackScript = "onCanvasDrop=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
