@@ -45,6 +45,7 @@ public class DatasetsPanel extends Panel {
                     }
                 });
 
+                listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier("drop-data", datasetDescriptor.getId().toString()));
             }
         };

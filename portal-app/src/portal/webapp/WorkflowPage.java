@@ -25,6 +25,7 @@ import java.util.List;
 public class WorkflowPage extends WebPage {
 
     private static final String DROP_DATA_PARAM_NAME = "dropData";
+    private static final String DRAGGABLE_MARKUP_ID = "draggableMarkupId";
     private static final String POSITION_X_PARAM_NAME = "positionX";
     private static final String POSITION_Y_PARAM_NAME = "positionY";
     private static final String CANVASITEM_INDEX_PARAM_NAME = "index";
@@ -85,6 +86,7 @@ public class WorkflowPage extends WebPage {
         String dropData = getRequest().getRequestParameters().getParameterValue(DROP_DATA_PARAM_NAME).toString();
         String x = getRequest().getRequestParameters().getParameterValue(POSITION_X_PARAM_NAME).toString();
         String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y_PARAM_NAME).toString();
+        String dropItemMarkup = getRequest().getRequestParameters().getParameterValue(DRAGGABLE_MARKUP_ID).toString();
         System.out.println("Drop data " + dropData + " at " + POSITION_X_PARAM_NAME + ": " + x + " " + POSITION_Y_PARAM_NAME + ": " + y);
 
         DatasetCanvasItemModel newItemModel = new DatasetCanvasItemModel();
@@ -101,11 +103,11 @@ public class WorkflowPage extends WebPage {
         DatasetCanvasItemPanel datasetCanvasItemPanel = new DatasetCanvasItemPanel("item", newItemModel);
         listItem.add(datasetCanvasItemPanel);
 
-        String script = "$('#:plumbContainer').append(\"<div class=':class' id=':itemId'></div>\")";
+        String script = "addCanvasItem(':plumbContainerId', ':itemId', ':dropItemMarkup')";
         target.prependJavaScript(script
-                .replaceAll(":plumbContainer", plumbContainer.getMarkupId())
-                .replaceAll(":class", "canvas-item")
-                .replaceAll(":itemId", listItem.getMarkupId()));
+                .replaceAll(":plumbContainerId", plumbContainer.getMarkupId())
+                .replaceAll(":itemId", listItem.getMarkupId())
+                .replaceAll(":dropItemMarkup", dropItemMarkup));
         target.add(listItem);
 
         target.appendJavaScript("makeCanvasItemsDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
@@ -127,7 +129,8 @@ public class WorkflowPage extends WebPage {
                 CharSequence callBackScript = getCallbackFunction(
                         CallbackParameter.explicit(DROP_DATA_PARAM_NAME),
                         CallbackParameter.explicit(POSITION_X_PARAM_NAME),
-                        CallbackParameter.explicit(POSITION_Y_PARAM_NAME));
+                        CallbackParameter.explicit(POSITION_Y_PARAM_NAME),
+                        CallbackParameter.explicit(DRAGGABLE_MARKUP_ID));
                 callBackScript = "onCanvasDrop=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }

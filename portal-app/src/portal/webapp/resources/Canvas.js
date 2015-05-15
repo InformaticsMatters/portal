@@ -19,7 +19,8 @@ function setupCanvas() {
         accept: '.card',
         drop: function(event, ui) {
             var dropData = ui.draggable[0].getAttribute("drop-data");
-            onCanvasDrop(dropData, ui.position.left, ui.position.top);
+            var draggableMarkupId = ui.draggable[0].id;
+            onCanvasDrop(dropData, ui.position.left, ui.position.top, draggableMarkupId);
         }
     });
 }
@@ -32,6 +33,11 @@ function makeCanvasItemsDraggable(selector) {
             onCanvasItemDragStop(index, params.pos[0], params.pos[1]);
         }
     });
+}
+
+function addCanvasItem(plumbContainerId, itemId, markupId) {
+    var markupToAppend = $('#' + markupId).innerHTML;
+    $('#' + plumbContainerId).append("<div class='canvas-item' id='" + itemId + "'>" + markupToAppend + "</div>");
 }
 
 function addSourceEndpoint(itemId) {
