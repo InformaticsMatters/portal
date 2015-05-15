@@ -18,12 +18,14 @@
     <div class="ui page grid">
         <div class="one column row">
             <div class="column">
-                <div class="canvas ui segment">
+                <div class="ui segment">
                     <h4 class="ui header">Workflow</h4>
 
-                    <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
-                        <div wicket:id="canvasItem" class="canvas-item">
-                            <div wicket:id="item"></div>
+                    <div class="canvas">
+                        <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
+                            <div wicket:id="canvasItem" class="canvas-item">
+                                <div wicket:id="item"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -41,6 +43,17 @@
             <div class="column">
                 <div class="ui segment">
                     <h4 class="ui header">Services</h4>
+
+                    <div class="dataSets">
+                        <ul class="ui cards">
+                            <li class="card palette-item">
+                                <div class="content" style="height: 40px;">
+                                    <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span>Service</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
