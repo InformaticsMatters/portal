@@ -187,3 +187,26 @@
 .canvas {
     height: 230px;
 }
+
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+    height: 100%;
+	margin: 0 auto -200px;
+}
+.footer {
+	height: 200px!important;
+}
+
+.push {
+    height: 230px!important;
+}
+
+.footer .content {
+    margin: 0em;
+    border-radius: 0em;
+    padding-top: 2em;
+    padding-bottom: 3em;
+    padding-left: 8%;
+    padding-right: 8%;
+}
