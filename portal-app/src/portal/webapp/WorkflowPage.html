@@ -10,12 +10,15 @@
 <div wicket:id="notifier"></div>
 
 
-<div class="pusher">
+<div class="pusher" style="min-height: 100%;
+     height: auto !important;
+     height: 100%;
+     margin: 0 auto -200px;">
 
     <div wicket:id="menuPanel"></div>
     <div class="separator20"></div>
 
-    <div class="ui page grid">
+    <div class="ui page grid" style="margin-bottom: 200px;">
         <div class="one column row">
             <div class="column">
                 <div class="ui segment">
@@ -51,6 +54,20 @@
                                     <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span>Service</span>
                                     </div>
                                 </div>
+                                <div class="extra content">
+                                    <div class="left floated"><span style="font-size: 13px;">333</span></div>
+                                    <div class="right floated">
+                                        <div class="ui top right pointing dropdown icon">
+                                            <i class="setting large icon"></i>
+
+                                            <div class="menu">
+                                                <div class="item">
+                                                    <i class="icon link">Open</i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -59,6 +76,41 @@
         </div>
     </div>
 
+</div>
+
+<div class="ui inverted black footer vertical segment" style="height: 200px;">
+    <div style="margin: 0em;border-radius: 0em;padding-top: 2em; padding-bottom: 3em; padding-left: 8%;
+  padding-right: 8%;">
+        <div class="ui inverted divided grid">
+            <div class="column">
+                <h5 class="ui inverted teal header">Title</h5>
+
+                <div class="ui inverted link list">
+                    <a class="item">link1</a>
+                    <a class="item">link2</a>
+                    <a class="item">link3</a>
+                </div>
+            </div>
+            <div class="column">
+                <h5 class="ui inverted teal header">Title</h5>
+
+                <div class="ui inverted link list">
+                    <a class="item">link1</a>
+                    <a class="item">link2</a>
+                    <a class="item">link3</a>
+                </div>
+            </div>
+            <div class="column">
+                <h5 class="ui inverted teal header">Title</h5>
+
+                <div class="ui inverted link list">
+                    <a class="item">link1</a>
+                    <a class="item">link2</a>
+                    <a class="item">link3</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
