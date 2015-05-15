@@ -100,8 +100,7 @@
 	border:1px dotted red;
 }
 
-.palette-item,
-.canvas-item {
+.palette-item{
     display: inline-block;
       width: 150px!important;
       background: #ffffff;
@@ -111,6 +110,20 @@
       -webkit-transition: box-shadow 0.2s ease;
       transition: box-shadow 0.2s ease;
       z-index: '';
+}
+
+.canvas-item {
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+    background: #ffffff;
+    border: none;
+    border-radius: 0.2857rem;
+    box-shadow: 0px 0.2em 0px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
+    -webkit-transition: box-shadow 0.2s ease;
+    transition: box-shadow 0.2s ease;
+    z-index:20;
+    position:absolute;
 }
 
 .palette-item > .content,
@@ -172,8 +185,7 @@
 }
 
 .canvas {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    height: 150px;
+    height: 170px;
     margin-bottom: 20px;
+    padding-bottom: 10px;
 }

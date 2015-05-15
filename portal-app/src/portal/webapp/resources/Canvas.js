@@ -36,6 +36,7 @@ function makeCanvasItemsDraggable(selector) {
 
 function addSourceEndpoint(itemId) {
     var sourceEndpointOptions = {
+        anchor: 'RightMiddle',
         isSource:true,
         paintStyle : {
             fillStyle:'green'
@@ -51,7 +52,7 @@ function addSourceEndpoint(itemId) {
 function addTargetEndpoint(itemId) {
     var targetEndpointOptions = {
         endpoint: 'Rectangle',
-        anchor: 'TopCenter',
+        anchor: 'LeftMiddle',
         isTarget:true,
         paintStyle : {
             fillStyle:'red'
