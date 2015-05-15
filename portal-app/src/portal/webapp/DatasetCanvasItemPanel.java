@@ -15,5 +15,11 @@ public class DatasetCanvasItemPanel extends Panel {
         this.model = model;
         setOutputMarkupId(true);
         add(new Label("id", model.getId()));
+        // addDatasets();
     }
+
+    /*private void addDatasets() {
+        add(new Label("description", datasetDescriptor.getDescription()));
+        add(new Label("rowCount", datasetDescriptor.getRowCount()));
+    } */
 }
