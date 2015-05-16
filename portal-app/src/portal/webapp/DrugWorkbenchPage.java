@@ -2,9 +2,11 @@ package portal.webapp;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.NotifierProvider;
@@ -32,6 +34,7 @@ public class DrugWorkbenchPage extends WebPage {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/lac.js")));
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(WorkflowPage.class, "resources/lac.css")));
     }
 
     private void addActions() {

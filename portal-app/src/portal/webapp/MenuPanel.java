@@ -26,6 +26,15 @@ public class MenuPanel extends Panel {
         };
         add(homeLink);
 
+        AjaxLink datasetsLink = new AjaxLink("datasets") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                setResponsePage(DatasetsPage.class);
+            }
+        };
+        add(datasetsLink);
+
         AjaxLink metadataLink = new AjaxLink("metadata") {
 
             @Override

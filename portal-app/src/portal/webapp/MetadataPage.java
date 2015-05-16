@@ -3,10 +3,12 @@ package portal.webapp;
 import com.inmethod.grid.IGridColumn;
 import com.inmethod.grid.column.tree.PropertyTreeColumn;
 import com.inmethod.grid.treegrid.TreeGrid;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.CssResourceReference;
 import portal.service.api.*;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -36,6 +38,7 @@ public class MetadataPage extends WebPage {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(WorkflowPage.class, "resources/lac.css")));
     }
 
     private void addDescriptorsTreeTable() {
