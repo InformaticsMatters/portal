@@ -43,12 +43,15 @@ function addSourceEndpoint(itemId) {
     var sourceEndpointOptions = {
         anchor: 'RightMiddle',
         isSource:true,
-        paintStyle : {
-            fillStyle:'green'
+        paintStyle: {
+            strokeStyle: "#7AB02C",
+            radius: 9,
+            lineWidth: 3
         },
         connectorStyle : {
-            strokeStyle:'green',
-            lineWidth:8
+            lineWidth: 4,
+            strokeStyle: "#61B7CF",
+            joinstyle: "round"
         }
     };
     var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions);
@@ -56,11 +59,12 @@ function addSourceEndpoint(itemId) {
 
 function addTargetEndpoint(itemId) {
     var targetEndpointOptions = {
-        endpoint: 'Rectangle',
+        endpoint: 'Dot',
         anchor: 'LeftMiddle',
         isTarget:true,
         paintStyle : {
-            fillStyle:'red'
+            fillStyle: "#7AB02C",
+            radius: 9
         },
     };
     var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions);
