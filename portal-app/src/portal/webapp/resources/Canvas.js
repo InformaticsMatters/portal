@@ -44,9 +44,8 @@ function addSourceEndpoint(itemId) {
         anchor: 'RightMiddle',
         isSource:true,
         paintStyle: {
-            strokeStyle: "#7AB02C",
-            radius: 9,
-            lineWidth: 3
+            fillStyle: "#7AB02C",
+            radius: 10
         },
         connectorStyle : {
             lineWidth: 4,
@@ -63,8 +62,9 @@ function addTargetEndpoint(itemId) {
         anchor: 'LeftMiddle',
         isTarget:true,
         paintStyle : {
-            fillStyle: "#7AB02C",
-            radius: 9
+            strokeStyle: "#7AB02C",
+            radius: 9,
+            lineWidth: 3
         },
     };
     var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions);
