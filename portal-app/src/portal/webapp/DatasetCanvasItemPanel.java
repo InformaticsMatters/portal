@@ -25,8 +25,8 @@ public class DatasetCanvasItemPanel extends Panel {
 
     private void addItem() {
 
-        Label descriptionLabel = new Label("description", datasetDescriptor.getDescription());
-        add(descriptionLabel);
+        //Label descriptionLabel = new Label("description", datasetDescriptor.getDescription());
+        // add(descriptionLabel);
 
     }
 
