@@ -1,10 +1,9 @@
 package portal.webapp;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import portal.integration.DatamartSession;
-
-import javax.inject.Inject;
 
 /**
  * @author simetrias
@@ -12,22 +11,23 @@ import javax.inject.Inject;
 public class DatasetCanvasItemPanel extends Panel {
 
     private final DatasetCanvasItemModel model;
-    @Inject
-    private DatamartSession datamartSession;
 
     public DatasetCanvasItemPanel(String id, DatasetCanvasItemModel model) {
         super(id);
         this.model = model;
         setOutputMarkupId(true);
-        add(new Label("id", model.getId()));
-        addItem();
+
+        add(new Label("id", model.getDatasetDescriptor().getId()));
+        add(new Label("description", model.getDatasetDescriptor().getDescription()));
+        add(new Label("rowCount", model.getDatasetDescriptor().getRowCount()));
+        add(new IndicatingAjaxLink("open") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                TreeGridVisualizerPage page = new TreeGridVisualizerPage(model.getDatasetDescriptor());
+                setResponsePage(page);
+            }
+        });
+
     }
-
-    private void addItem() {
-
-        //Label descriptionLabel = new Label("description", datasetDescriptor.getDescription());
-        // add(descriptionLabel);
-
-    }
-
 }

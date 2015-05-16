@@ -35,9 +35,8 @@ function makeCanvasItemsDraggable(selector) {
     });
 }
 
-function addCanvasItem(plumbContainerId, itemId, markupId) {
-    var markupToAppend = $('#' + markupId).html();
-    $('#' + plumbContainerId).append("<div class='canvas-item' id='" + itemId + "'>" + markupToAppend + "</div>");
+function addCanvasItem(plumbContainerId, itemId) {
+    $('#' + plumbContainerId).append("<div class='canvas-item' id='" + itemId + "'></div>");
 }
 
 function addSourceEndpoint(itemId) {

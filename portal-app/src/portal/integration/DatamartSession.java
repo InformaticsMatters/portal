@@ -88,4 +88,8 @@ public class DatamartSession implements Serializable {
             datamartRowDescriptor.addPropertyDescriptor(datamartPropertyDescriptor);
         }
     }
+
+    public DatasetDescriptor findDatasetDescriptorById(Long id) {
+        return datasetDescriptors.get(id);
+    }
 }

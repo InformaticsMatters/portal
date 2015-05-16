@@ -16,6 +16,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
+import portal.integration.DatamartSession;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
@@ -25,7 +26,6 @@ import java.util.List;
 public class WorkflowPage extends WebPage {
 
     private static final String DROP_DATA_PARAM_NAME = "dropData";
-    private static final String DRAGGABLE_MARKUP_ID = "draggableMarkupId";
     private static final String POSITION_X_PARAM_NAME = "positionX";
     private static final String POSITION_Y_PARAM_NAME = "positionY";
     private static final String CANVASITEM_INDEX_PARAM_NAME = "index";
@@ -37,6 +37,8 @@ public class WorkflowPage extends WebPage {
 
     @Inject
     private NotifierProvider notifierProvider;
+    @Inject
+    private DatamartSession datamartSession;
 
     public WorkflowPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -86,28 +88,27 @@ public class WorkflowPage extends WebPage {
         String dropData = getRequest().getRequestParameters().getParameterValue(DROP_DATA_PARAM_NAME).toString();
         String x = getRequest().getRequestParameters().getParameterValue(POSITION_X_PARAM_NAME).toString();
         String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y_PARAM_NAME).toString();
-        String dropItemMarkup = getRequest().getRequestParameters().getParameterValue(DRAGGABLE_MARKUP_ID).toString();
         System.out.println("Drop data " + dropData + " at " + POSITION_X_PARAM_NAME + ": " + x + " " + POSITION_Y_PARAM_NAME + ": " + y);
 
-        DatasetCanvasItemModel newItemModel = new DatasetCanvasItemModel();
-        newItemModel.setId(dropData);
-        newItemModel.setPositionX(x);
-        newItemModel.setPositionY(y);
-        canvasItemModelList.add(newItemModel);
+        // additional drop-data should tell us which kind of canvas item we need to instantiate
+        DatasetCanvasItemModel datasetCanvasItemModel = new DatasetCanvasItemModel();
+        datasetCanvasItemModel.setDatasetDescriptor(datamartSession.findDatasetDescriptorById(Long.parseLong(dropData)));
+        datasetCanvasItemModel.setPositionX(x);
+        datasetCanvasItemModel.setPositionY(y);
+        DatasetCanvasItemPanel datasetCanvasItemPanel = new DatasetCanvasItemPanel("item", datasetCanvasItemModel);
+        canvasItemModelList.add(datasetCanvasItemModel);
 
         ListItem listItem = new ListItem("canvasItem" + dropData, canvasItemModelList.size());
         listItem.setOutputMarkupId(true);
-        listItem.add(new AttributeModifier("style", "top:" + newItemModel.getPositionY() + "px; left:" + newItemModel.getPositionX() + "px;"));
+        listItem.add(new AttributeModifier("style", "top:" + datasetCanvasItemModel.getPositionY() + "px; left:" + datasetCanvasItemModel.getPositionX() + "px;"));
+        listItem.add(datasetCanvasItemPanel);
         canvasItemRepeater.add(listItem);
 
-        DatasetCanvasItemPanel datasetCanvasItemPanel = new DatasetCanvasItemPanel("item", newItemModel);
-        listItem.add(datasetCanvasItemPanel);
-
-        String script = "addCanvasItem(':plumbContainerId', ':itemId', ':dropItemMarkup')";
+        String script = "addCanvasItem(':plumbContainerId', ':itemId')";
         target.prependJavaScript(script
                 .replaceAll(":plumbContainerId", plumbContainer.getMarkupId())
-                .replaceAll(":itemId", listItem.getMarkupId())
-                .replaceAll(":dropItemMarkup", dropItemMarkup));
+                .replaceAll(":itemId", listItem.getMarkupId()));
+
         target.add(listItem);
 
         target.appendJavaScript("makeCanvasItemsDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
@@ -129,8 +130,7 @@ public class WorkflowPage extends WebPage {
                 CharSequence callBackScript = getCallbackFunction(
                         CallbackParameter.explicit(DROP_DATA_PARAM_NAME),
                         CallbackParameter.explicit(POSITION_X_PARAM_NAME),
-                        CallbackParameter.explicit(POSITION_Y_PARAM_NAME),
-                        CallbackParameter.explicit(DRAGGABLE_MARKUP_ID));
+                        CallbackParameter.explicit(POSITION_Y_PARAM_NAME));
                 callBackScript = "onCanvasDrop=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
