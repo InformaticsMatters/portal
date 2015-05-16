@@ -37,7 +37,6 @@ function makeCanvasItemsDraggable(selector) {
 
 function addCanvasItem(plumbContainerId, itemId, markupId) {
     var markupToAppend = $('#' + markupId).html();
-    debugger;
     $('#' + plumbContainerId).append("<div class='canvas-item' id='" + itemId + "'>" + markupToAppend + "</div>");
 }
 
