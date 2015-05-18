@@ -44,3 +44,7 @@ function settingsDropdown(){
           .dropdown()
         ;
 }
+
+function tabularMenu() {
+    $('.tabular.menu .item').tab();
+}

@@ -16,7 +16,7 @@
     <div class="separator20"></div>
 
     <div class="ui page grid">
-        <div class="one column row">
+        <div class="row">
             <div class="column">
                 <div class="ui segment">
                     <h4 class="ui header">Workflow</h4>
@@ -31,19 +31,17 @@
                 </div>
             </div>
         </div>
-        <div class="two column row">
+        <div class="row">
             <div class="column">
-                <div class="ui segment">
-                    <h4 class="ui header">Datasets</h4>
-
+                <div class="ui top attached tabular menu">
+                    <a class="active item" data-tab="datasets">Datasets</a>
+                    <a class="item" data-tab="services">Services</a>
+                    <a class="item" data-tab="third">Third</a>
+                </div>
+                <div class="ui bottom attached active tab segment" data-tab="datasets">
                     <div wicket:id="datasets"></div>
                 </div>
-
-            </div>
-            <div class="column">
-                <div class="ui segment">
-                    <h4 class="ui header">Services</h4>
-
+                <div class="ui bottom attached tab segment" data-tab="services">
                     <div class="dataSets">
                         <ul class="ui cards">
                             <li class="card palette-item">
@@ -69,6 +67,9 @@
                         </ul>
                     </div>
                 </div>
+                <div class="ui bottom attached tab segment" data-tab="third">
+                    Third
+                </div>
             </div>
         </div>
     </div>
@@ -77,7 +78,7 @@
 </div>
 
 <div class="ui inverted black footer vertical segment">
-    <div style="content">
+    <div class="content">
         <div class="ui inverted divided grid">
             <div class="column">
                 <h5 class="ui inverted teal header">Title</h5>

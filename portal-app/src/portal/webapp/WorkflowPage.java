@@ -18,6 +18,7 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
 import portal.integration.DatamartSession;
 import toolkit.wicket.semantic.NotifierProvider;
+import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -52,11 +53,14 @@ public class WorkflowPage extends WebPage {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
+        response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
         response.render(JavaScriptHeaderItem.forReference(JQueryResourceReference.get()));
         response.render(CssHeaderItem.forReference(new CssResourceReference(WorkflowPage.class, "resources/lac.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/dom.jsPlumb-1.6.2.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/Canvas.js")));
-        response.render(OnDomReadyHeaderItem.forScript("init();"));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/lac.js")));
+        response.render(OnDomReadyHeaderItem.forScript("init(); tabularMenu()"));
+        // response.render(OnDomReadyHeaderItem.forScript("tabularMenu();"));
     }
 
     private void addDatasetsPanel() {
