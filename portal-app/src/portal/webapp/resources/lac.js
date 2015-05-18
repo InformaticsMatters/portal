@@ -39,12 +39,6 @@ $( document ).ready(function() {
     ;
 });
 
-function settingsDropdown(){
-    $('.ui.dropdown')
-          .dropdown()
-        ;
-}
-
 function tabularMenu() {
     $('.tabular.menu .item').tab();
 }

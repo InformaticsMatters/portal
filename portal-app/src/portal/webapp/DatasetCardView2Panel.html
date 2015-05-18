@@ -1,60 +1,51 @@
 <wicket:panel>
     <ul class="ui eight cards" style="padding-left: 0.2em;">
         <li wicket:id="descriptors" class="card">
+            <div class="attached top left ui tiny label">
+                <span wicket:id="rowCount" class="attached top left ui tiny label"></span>
+            </div>
             <div class="content" style="height: 40px;">
                 <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span
                         wicket:id="description"></span>
                 </div>
             </div>
-            <div class="extra content">
-                <div class="left floated"><span style="font-size: 13px;" wicket:id="rowCount"></span></div>
-                <div class="right floated">
-                    <div class="ui top right pointing dropdown icon">
-                        <i class="setting large icon"></i>
-
-                        <div class="menu">
-                            <div wicket:id="open" class="item">
-                                <i class="icon link">Open</i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
         </li>
         <div class="ui clickCardPopup popup">
-            <div class="content">
-                <table class="ui small table">
-                    <tr>
-                        <td><b>Description</b></td>
-                        <td><span></span></td>
-                    </tr>
-                    <tr>
-                        <td><b>Last modified</b></td>
-                        <td><span></span></td>
-                    </tr>
-                    <tr>
-                        <td><b>Row count</b></td>
-                        <td><span></span></td>
-                    </tr>
-                    <tr>
-                        <td><b>Owner</b></td>
-                        <td><span></span></td>
-                    </tr>
-                    <tr>
-                        <td><b>Created</b></td>
-                        <td><span></span></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="extra content">
-                <div class="ui mini blue button">
-                    Open
+            <div class="ui one column grid">
+                <div class="column">
+                    <table class="ui small table">
+                        <tr>
+                            <td><b>Description</b></td>
+                            <td><span></span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Last modified</b></td>
+                            <td><span></span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Row count</b></td>
+                            <td><span></span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Owner</b></td>
+                            <td><span></span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Created</b></td>
+                            <td><span></span></td>
+                        </tr>
+                    </table>
                 </div>
-                <div class="ui mini orange button">
-                    Metadata
+                <div class="column">
+                    <div class="ui mini blue button">
+                        Open
+                    </div>
+                    <div class="ui mini orange button">
+                        Metadata
+                    </div>
                 </div>
             </div>
+
         </div>
     </ul>
 </wicket:panel>

@@ -87,7 +87,6 @@ public class DatasetsPage extends WebPage {
                 ajaxRequestTarget.add(gridViewLink);
                 ajaxRequestTarget.appendJavaScript("makeMenuButtonActive('" + cardViewLink.getMarkupId() + "')");
                 ajaxRequestTarget.appendJavaScript("onClickCardPopup()");
-                ajaxRequestTarget.appendJavaScript("settingsDropdown()");
             }
         };
         cardViewLink.setOutputMarkupId(true);
