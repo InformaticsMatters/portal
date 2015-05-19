@@ -15,11 +15,13 @@ public class DatasetCardView2Panel extends Panel {
 
     private List<DatasetDescriptor> datasetDescriptorList;
     private ListView<DatasetDescriptor> listView;
+    private ClickCardPopupPanel clickCardPopup;
 
     public DatasetCardView2Panel(String id) {
         super(id);
         datasetDescriptorList = new ArrayList<>();
         addCards();
+        addClickCardPopup();
     }
 
     private void addCards() {
@@ -35,12 +37,19 @@ public class DatasetCardView2Panel extends Panel {
 
                     @Override
                     protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
-                        System.out.println("hey");
+                        clickCardPopup.setVisible(true);
+                        ajaxRequestTarget.add(clickCardPopup);
                     }
                 });
             }
         };
         add(listView);
+    }
+
+    private void addClickCardPopup() {
+        clickCardPopup = new ClickCardPopupPanel("clickCardPopup");
+        clickCardPopup.setVisible(false);
+        add(clickCardPopup);
     }
 
     public void setDatasetDescriptorList(List<DatasetDescriptor> datasetDescriptorList) {
