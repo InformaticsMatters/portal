@@ -39,8 +39,8 @@ public class DatasetCardView2Panel extends Panel {
                     protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
                         clickCardPopup.setVisible(true);
                         ajaxRequestTarget.add(clickCardPopup);
-                        String popupJavaScript = "$('.clickCardPopup').popup({transition: 'Scale'}).popup('toggle')";
-                        ajaxRequestTarget.appendJavaScript(popupJavaScript);
+                        String js = "$('#" + listItem.getMarkupId() + "').popup({popup: '.ui.clickCardPopup.popup'}).popup('toggle')";
+                        ajaxRequestTarget.appendJavaScript(js);
                     }
                 });
             }

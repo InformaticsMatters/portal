@@ -86,7 +86,6 @@ public class ChemcentralPage extends WebPage {
                 ajaxRequestTarget.add(cardViewLink);
                 ajaxRequestTarget.add(gridViewLink);
                 ajaxRequestTarget.appendJavaScript("makeMenuButtonActive('" + cardViewLink.getMarkupId() + "')");
-                ajaxRequestTarget.appendJavaScript("onClickCardPopup()");
             }
         };
         cardViewLink.setOutputMarkupId(true);
