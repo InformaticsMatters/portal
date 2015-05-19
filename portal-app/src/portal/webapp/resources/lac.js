@@ -23,16 +23,6 @@ function rightSideBarToggle(){
     ;
 }
 
-function onClickCardPopup() {
-    $('.card')
-      .popup({
-        popup: '.clickCardPopup.popup',
-        on    : 'click',
-        position: 'right center'
-      })
-    ;
-}
-
 $( document ).ready(function() {
     $('.ui.dropdown')
       .dropdown()
