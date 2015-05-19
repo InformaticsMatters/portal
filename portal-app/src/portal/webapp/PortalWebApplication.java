@@ -8,8 +8,12 @@ import org.apache.wicket.protocol.http.WebApplication;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
+import javax.inject.Inject;
 
 public class PortalWebApplication extends WebApplication {
+
+    @Inject
+    private ComponentInstantiationListener componentInstantiationListener;
 
     @Override
     public Class<? extends Page> getHomePage() {
@@ -29,10 +33,15 @@ public class PortalWebApplication extends WebApplication {
         mountPage("/emailConfirmation", ConfirmationEmailPage.class);
         mountPage("/forgotPassword", ForgotPasswordPage.class);
 
+        configureSecurity();
     }
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
         return RuntimeConfigurationType.DEVELOPMENT;
+    }
+
+    protected void configureSecurity() {
+        getComponentInstantiationListeners().add(componentInstantiationListener);
     }
 }

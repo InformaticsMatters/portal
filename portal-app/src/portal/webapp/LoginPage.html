@@ -12,7 +12,7 @@
         <div class="column"></div>
         <div class="column">
             <div>
-                <form class="ui form segment">
+                <form wicket:id="loginForm" class="ui form segment">
 
                     <h3 class="ui header">Header</h3>
 
@@ -34,8 +34,7 @@
                         </div>
                     </div>
 
-
-                    <button type="submit" class="ui blue submit button">Submit</button>
+                    <button wicket:id="submit" type="submit" class="ui blue submit button">Submit</button>
                     <a wicket:id="userRegistration">
                         <i class="link"></i> Register
                     </a>

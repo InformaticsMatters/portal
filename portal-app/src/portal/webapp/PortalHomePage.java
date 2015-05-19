@@ -12,7 +12,7 @@ import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
 
-public class PortalHomePage extends WebPage {
+public class PortalHomePage extends WebPage implements SecuredComponent {
 
     @Inject
     private NotifierProvider notifierProvider;
@@ -40,5 +40,4 @@ public class PortalHomePage extends WebPage {
         };
         add(datasetsLink);
     }
-
 }
