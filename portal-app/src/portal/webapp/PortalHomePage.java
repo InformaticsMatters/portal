@@ -31,11 +31,11 @@ public class PortalHomePage extends WebPage implements SecuredComponent {
     }
 
     private void addActions() {
-        AjaxLink datasetsLink = new AjaxLink("datasets") {
+        AjaxLink datasetsLink = new AjaxLink("chemcentral") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setResponsePage(DatasetsPage.class);
+                setResponsePage(ChemcentralPage.class);
             }
         };
         add(datasetsLink);

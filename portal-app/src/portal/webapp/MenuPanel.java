@@ -26,23 +26,14 @@ public class MenuPanel extends Panel {
         };
         add(homeLink);
 
-        AjaxLink datasetsLink = new AjaxLink("datasets") {
+        AjaxLink datasetsLink = new AjaxLink("chemcentral") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setResponsePage(DatasetsPage.class);
+                setResponsePage(ChemcentralPage.class);
             }
         };
         add(datasetsLink);
-
-        AjaxLink metadataLink = new AjaxLink("metadata") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                setResponsePage(MetadataPage.class);
-            }
-        };
-        add(metadataLink);
 
         AjaxLink workbenchLink = new AjaxLink("workbench") {
 

@@ -3,16 +3,35 @@
 <body>
 <div wicket:id="notifier"></div>
 
+
 <div class="wrapper">
 
     <div wicket:id="menuPanel"></div>
-
     <div class="separator20"></div>
 
     <div class="ui page grid">
-        <div>
-            <div wicket:id="grid"></div>
+
+        <div class="ui teal small buttons">
+            <div class="ui button">New</div>
+            <div class="ui floating dropdown icon button">
+                <i class="dropdown icon"></i>
+
+                <div class="menu">
+                    <div class="item" wicket:id="addFromFile">From File Upload</div>
+                    <div class="item" wicket:id="addFromStructureSearch">From Structure Search</div>
+                    <div class="item" wicket:id="addFromChemcentral">From Datamart Query</div>
+                </div>
+            </div>
         </div>
+
+        <div class="ui small buttons right floated">
+            <div class="ui button active" wicket:id="datasetGridView">Grid view</div>
+            <div class="ui button" wicket:id="datasetCardView">Card view</div>
+        </div>
+        <div class="separator15"></div>
+
+        <div wicket:id="datasetGridViewPanel"></div>
+        <div wicket:id="datasetCardViewPanel"></div>
     </div>
 
     <div class="push"></div>
@@ -52,6 +71,9 @@
     </div>
 </div>
 
+<div wicket:id="uploadFilePanel"></div>
+<div wicket:id="marvinSketcherPanel"></div>
+<div wicket:id="chemcentralSearchPanel"></div>
 
 </body>
 </html>

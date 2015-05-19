@@ -18,7 +18,7 @@ import toolkit.wicket.semantic.SemanticResourceReference;
 import javax.inject.Inject;
 import java.util.List;
 
-public class DatasetsPage extends WebPage {
+public class ChemcentralPage extends WebPage {
 
     //private DatasetCardViewPanel datasetCardViewPanel;
     protected DatasetCardView2Panel datasetCardView2Panel;
@@ -36,7 +36,7 @@ public class DatasetsPage extends WebPage {
     @Inject
     private DatamartSession datamartSession;
 
-    public DatasetsPage() {
+    public ChemcentralPage() {
         notifierProvider.createNotifier(this, "notifier");
         add(new MenuPanel("menuPanel"));
         addPanels();
