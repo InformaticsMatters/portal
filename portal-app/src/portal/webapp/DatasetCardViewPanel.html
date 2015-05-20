@@ -1,30 +1,15 @@
 <wicket:panel>
-    <ul class="ui three cards">
+    <ul class="ui eight cards" style="padding-left: 0.2em;">
         <li wicket:id="descriptors" class="card">
-            <div class="content">
-                <table class="ui small table">
-                    <tr>
-                        <td><b>Description</b></td>
-                        <td><span wicket:id="description"></span></td>
-                    </tr>
-                    <tr>
-                        <td><b>Last modified</b></td>
-                        <td><span wicket:id="lastModified"></span></td>
-                    </tr>
-                    <tr>
-                        <td><b>Row count</b></td>
-                        <td><span wicket:id="rowCount"></span></td>
-                    </tr>
-                </table>
+            <div class="attached top left ui tiny label">
+                <span wicket:id="rowCount" class="attached top left ui tiny label"></span>
             </div>
-            <div class="extra content">
-                <div wicket:id="open" class="ui mini blue button">
-                    Open
-                </div>
-                <div wicket:id="metadata" class="ui mini orange button">
-                    Metadata
+            <div class="content" style="height: 40px;">
+                <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span
+                        wicket:id="description"></span>
                 </div>
             </div>
         </li>
+        <div wicket:id="clickCardPopup"></div>
     </ul>
 </wicket:panel>
