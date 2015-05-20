@@ -37,6 +37,7 @@ public class DatasetCardView2Panel extends Panel {
 
                     @Override
                     protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
+                        clickCardPopup.setDefaultModelObject(datasetDescriptor);
                         clickCardPopup.setVisible(true);
                         ajaxRequestTarget.add(clickCardPopup);
                         String js = "$('#" + listItem.getMarkupId() + "').popup({popup: '.ui.clickCardPopup.popup', on : 'click'}).popup('toggle')";
@@ -49,7 +50,7 @@ public class DatasetCardView2Panel extends Panel {
     }
 
     private void addClickCardPopup() {
-        clickCardPopup = new ClickCardPopupPanel("clickCardPopup");
+        clickCardPopup = new ClickCardPopupPanel("clickCardPopup", null);
         clickCardPopup.setVisible(false);
         add(clickCardPopup);
     }
