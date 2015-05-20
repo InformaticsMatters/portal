@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.CompoundPropertyModel;
 import portal.service.api.DatasetDescriptor;
 
 import java.util.ArrayList;
@@ -50,7 +51,8 @@ public class DatasetCardView2Panel extends Panel {
     }
 
     private void addClickCardPopup() {
-        clickCardPopup = new ClickCardPopupPanel("clickCardPopup", null);
+        clickCardPopup = new ClickCardPopupPanel("clickCardPopup");
+        clickCardPopup.setDefaultModel(new CompoundPropertyModel<>(null));
         clickCardPopup.setVisible(false);
         add(clickCardPopup);
     }
