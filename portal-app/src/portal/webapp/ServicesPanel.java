@@ -23,10 +23,10 @@ public class ServicesPanel extends Panel {
 
     public ServicesPanel(String id) {
         super(id);
-        addDatasets();
+        addServices();
     }
 
-    private void addDatasets() {
+    private void addServices() {
         datamartSession.loadDatamartDatasetList();
         listView = new ListView<DatasetDescriptor>("descriptors", datamartSession.getDatasetDescriptorList()) {
 
