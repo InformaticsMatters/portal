@@ -2,6 +2,9 @@ package portal.service.api;
 
 import java.util.List;
 
+/**
+ * @author simetrias
+ */
 public class ListRowFilter {
 
     private Long datasetDescriptorId;

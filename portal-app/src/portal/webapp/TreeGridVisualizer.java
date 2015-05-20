@@ -21,8 +21,6 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
     private DatasetDescriptor datasetDescriptor;
     private List<Long> allIds;
     @Inject
-    private DatasetService datasetService;
-    @Inject
     private DatamartSession datamartSession;
 
     public TreeGridVisualizer(String id, DatasetDescriptor datasetDescriptor) {

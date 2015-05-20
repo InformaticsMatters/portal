@@ -3,6 +3,9 @@ package portal.service.api;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * @author simetrias
+ */
 public interface DatasetDescriptor extends Serializable {
 
     Long getId();

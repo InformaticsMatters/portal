@@ -26,11 +26,12 @@ import java.util.List;
 
 public class WorkflowPage extends WebPage {
 
-    private static final String DROP_DATA_PARAM_NAME = "dropData";
-    private static final String POSITION_X_PARAM_NAME = "positionX";
-    private static final String POSITION_Y_PARAM_NAME = "positionY";
-    private static final String CANVASITEM_INDEX_PARAM_NAME = "index";
-    private static final String CANVASITEM_REPEATER_WICKETID = "canvasItem";
+    private static final String DROP_DATA_TYPE = "dropDataType";
+    private static final String DROP_DATA_ID = "dropDataId";
+    private static final String POSITION_X = "positionX";
+    private static final String POSITION_Y = "positionY";
+    private static final String CANVASITEM_INDEX = "index";
+    private static final String CANVASITEM_WICKETID = "canvasItem";
 
     private List<AbstractCanvasItemModel> canvasItemModelList = new ArrayList<>();
     private ListView<AbstractCanvasItemModel> canvasItemRepeater;
@@ -60,11 +61,14 @@ public class WorkflowPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/Canvas.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/lac.js")));
         response.render(OnDomReadyHeaderItem.forScript("init(); tabularMenu()"));
-        // response.render(OnDomReadyHeaderItem.forScript("tabularMenu();"));
     }
 
     private void addDatasetsPanel() {
         add(new DatasetsPanel("datasets"));
+    }
+
+    private void addServicesPanel() {
+        add(new ServicesPanel("services"));
     }
 
     private void addCanvas() {
@@ -72,7 +76,7 @@ public class WorkflowPage extends WebPage {
         plumbContainer.setOutputMarkupId(true);
         add(plumbContainer);
 
-        canvasItemRepeater = new ListView<AbstractCanvasItemModel>(CANVASITEM_REPEATER_WICKETID, canvasItemModelList) {
+        canvasItemRepeater = new ListView<AbstractCanvasItemModel>(CANVASITEM_WICKETID, canvasItemModelList) {
 
             @Override
             protected void populateItem(ListItem<AbstractCanvasItemModel> components) {
@@ -89,10 +93,10 @@ public class WorkflowPage extends WebPage {
     }
 
     private void addCanvasItem(AjaxRequestTarget target) {
-        String dropData = getRequest().getRequestParameters().getParameterValue(DROP_DATA_PARAM_NAME).toString();
-        String x = getRequest().getRequestParameters().getParameterValue(POSITION_X_PARAM_NAME).toString();
-        String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y_PARAM_NAME).toString();
-        System.out.println("Drop data " + dropData + " at " + POSITION_X_PARAM_NAME + ": " + x + " " + POSITION_Y_PARAM_NAME + ": " + y);
+        String dropData = getRequest().getRequestParameters().getParameterValue(DROP_DATA_ID).toString();
+        String x = getRequest().getRequestParameters().getParameterValue(POSITION_X).toString();
+        String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y).toString();
+        System.out.println("Drop data " + dropData + " at " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
 
         // additional drop-data should tell us which kind of canvas item we need to instantiate
         DatasetCanvasItemModel datasetCanvasItemModel = new DatasetCanvasItemModel();
@@ -132,9 +136,9 @@ public class WorkflowPage extends WebPage {
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
                 CharSequence callBackScript = getCallbackFunction(
-                        CallbackParameter.explicit(DROP_DATA_PARAM_NAME),
-                        CallbackParameter.explicit(POSITION_X_PARAM_NAME),
-                        CallbackParameter.explicit(POSITION_Y_PARAM_NAME));
+                        CallbackParameter.explicit(DROP_DATA_ID),
+                        CallbackParameter.explicit(POSITION_X),
+                        CallbackParameter.explicit(POSITION_Y));
                 callBackScript = "onCanvasDrop=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
@@ -147,10 +151,10 @@ public class WorkflowPage extends WebPage {
 
             @Override
             protected void respond(AjaxRequestTarget target) {
-                String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX_PARAM_NAME).toString();
-                String x = getRequest().getRequestParameters().getParameterValue(POSITION_X_PARAM_NAME).toString();
-                String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y_PARAM_NAME).toString();
-                System.out.println("Item index " + index + " Dragged to: " + POSITION_X_PARAM_NAME + ": " + x + " " + POSITION_Y_PARAM_NAME + ": " + y);
+                String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
+                String x = getRequest().getRequestParameters().getParameterValue(POSITION_X).toString();
+                String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y).toString();
+                System.out.println("Item index " + index + " Dragged to: " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
 
                 int i = Integer.parseInt(index);
                 AbstractCanvasItemModel model = canvasItemModelList.get(i);
@@ -162,9 +166,9 @@ public class WorkflowPage extends WebPage {
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
                 CharSequence callBackScript = getCallbackFunction(
-                        CallbackParameter.explicit(CANVASITEM_INDEX_PARAM_NAME),
-                        CallbackParameter.explicit(POSITION_X_PARAM_NAME),
-                        CallbackParameter.explicit(POSITION_Y_PARAM_NAME));
+                        CallbackParameter.explicit(CANVASITEM_INDEX),
+                        CallbackParameter.explicit(POSITION_X),
+                        CallbackParameter.explicit(POSITION_Y));
                 callBackScript = "onCanvasItemDragStop=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }

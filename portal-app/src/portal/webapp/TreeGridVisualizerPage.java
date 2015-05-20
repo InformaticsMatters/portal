@@ -19,7 +19,6 @@ import portal.integration.DatamartSession;
 import portal.integration.PropertyData;
 import portal.integration.PropertyDefinition;
 import portal.service.api.DatasetDescriptor;
-import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -38,8 +37,6 @@ public class TreeGridVisualizerPage extends WebPage {
 
     @Inject
     private NotifierProvider notifierProvider;
-    @Inject
-    private DatasetService service;
     @Inject
     private DatamartSession datamartSession;
     private TreeGridVisualizer treeGridVisualizer;

@@ -10,7 +10,6 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.integration.DatamartSession;
 import portal.service.api.DatasetDescriptor;
-import portal.service.api.DatasetService;
 import toolkit.wicket.marvin4js.MarvinSketcher;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -30,8 +29,6 @@ public class ChemcentralPage extends WebPage {
 
     @Inject
     private NotifierProvider notifierProvider;
-    @Inject
-    private DatasetService datasetService;
     @Inject
     private DatamartSession datamartSession;
 

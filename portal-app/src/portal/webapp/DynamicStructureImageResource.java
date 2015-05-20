@@ -6,7 +6,6 @@ import chemaxon.struc.Molecule;
 import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import portal.integration.DatamartSession;
-import portal.service.api.DatasetService;
 import portal.service.api.PropertyDescriptor;
 import portal.service.api.Row;
 
@@ -24,8 +23,6 @@ public class DynamicStructureImageResource extends DynamicImageResource {
     public static final String PARAM_DATASET = "dataset";
     public static final String PARAM_ROW = "row";
 
-    @Inject
-    private DatasetService service;
     @Inject
     private DatamartSession datamartSession;
 

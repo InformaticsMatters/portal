@@ -8,7 +8,6 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import portal.service.api.DatasetService;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -20,8 +19,6 @@ public class DrugWorkbenchPage extends WebPage {
 
     @Inject
     private NotifierProvider notifierProvider;
-    @Inject
-    private DatasetService service;
 
     public DrugWorkbenchPage() {
         notifierProvider.createNotifier(this, "notifier");
