@@ -15,7 +15,7 @@ public class ServiceDiscoverySession implements Serializable {
 
     private Map<Long, ServiceDescriptor> serviceDescriptorMap;
 
-    public void loadServiceList() {
+    public void loadServices() {
         serviceDescriptorMap = new HashMap<Long, ServiceDescriptor>();
         ServiceDescriptor serviceDescriptor;
         serviceDescriptor = new ServiceDescriptor();
