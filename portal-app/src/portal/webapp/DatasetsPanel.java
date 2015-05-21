@@ -17,7 +17,7 @@ import javax.inject.Inject;
  */
 public class DatasetsPanel extends Panel {
 
-    public static final String DROP_DATA_TYPE_VALUE = "service";
+    public static final String DROP_DATA_TYPE_VALUE = "dataset";
 
     private ListView<DatasetDescriptor> listView;
     @Inject
@@ -48,7 +48,7 @@ public class DatasetsPanel extends Panel {
 
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
-                listItem.add(new AttributeModifier("drop-data", datasetDescriptor.getId().toString()));
+                listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_ID, datasetDescriptor.getId().toString()));
             }
         };
         add(listView);

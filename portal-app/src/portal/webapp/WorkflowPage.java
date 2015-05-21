@@ -127,7 +127,7 @@ public class WorkflowPage extends WebPage {
         }
 
         if (data != null) {
-            ListItem listItem = new ListItem("canvasItem" + dropDataId, canvasItemModelList.size());
+            ListItem listItem = new ListItem(dropDataType + dropDataId, canvasItemModelList.size());
             listItem.setOutputMarkupId(true);
             listItem.add(new AttributeModifier("style", "top:" + data.getPositionY() + "px; left:" + data.getPositionX() + "px;"));
             listItem.add(canvasItemPanel);
