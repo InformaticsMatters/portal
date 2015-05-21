@@ -37,7 +37,6 @@ public class DatasetsPanel extends Panel {
                 listItem.add(new Label("rowCount", datasetDescriptor.getRowCount()));
                 listItem.add(new IndicatingAjaxLink("open") {
 
-
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         TreeGridVisualizerPage page = new TreeGridVisualizerPage(datasetDescriptor);
