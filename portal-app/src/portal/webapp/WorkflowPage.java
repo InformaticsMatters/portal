@@ -47,9 +47,7 @@ public class WorkflowPage extends WebPage {
 
     public WorkflowPage() {
         notifierProvider.createNotifier(this, "notifier");
-        add(new MenuPanel("menuPanel"));
-        addDatasetsPanel();
-        addServicesPanel();
+        addPanels();
         addCanvas();
         addCanvasDropBehavior();
         addCanvasItemDragStopBehavior();
@@ -67,11 +65,13 @@ public class WorkflowPage extends WebPage {
         response.render(OnDomReadyHeaderItem.forScript("init(); tabularMenu()"));
     }
 
-    private void addDatasetsPanel() {
-        add(new DatasetsPanel("datasets"));
-    }
+    private void addPanels() {
+        add(new MenuPanel("menuPanel"));
 
-    private void addServicesPanel() {
+        add(new FooterPanel("footerPanel"));
+
+        add(new DatasetsPanel("datasets"));
+
         add(new ServicesPanel("services"));
     }
 
