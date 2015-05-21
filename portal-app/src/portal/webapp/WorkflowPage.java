@@ -146,25 +146,6 @@ public class WorkflowPage extends WebPage {
         }
     }
 
-    private AbstractCanvasItemData createDatasetCanvasItemData(String dropDataType, String dropDataId, String x, String y) {
-        AbstractCanvasItemData result = null;
-
-        if (ServicesPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
-            ServiceCanvasItemData data = new ServiceCanvasItemData();
-            data.setPositionX(x);
-            data.setPositionY(y);
-            result = data;
-        } else if (DatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
-            DatasetCanvasItemData data = new DatasetCanvasItemData();
-            data.setDatasetDescriptor(datamartSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
-            data.setPositionX(x);
-            data.setPositionY(y);
-            result = data;
-        }
-
-        return result;
-    }
-
     private void addCanvasDropBehavior() {
         AbstractDefaultAjaxBehavior onCanvasDropBehavior = new AbstractDefaultAjaxBehavior() {
 
