@@ -42,6 +42,8 @@ public class WorkflowPage extends WebPage {
     private NotifierProvider notifierProvider;
     @Inject
     private DatamartSession datamartSession;
+    @Inject
+    private ServiceDiscoverySession serviceDiscoverySession;
 
     public WorkflowPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -106,6 +108,7 @@ public class WorkflowPage extends WebPage {
 
         if (ServicesPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
             ServiceCanvasItemData serviceCanvasItemData = new ServiceCanvasItemData();
+            serviceCanvasItemData.setServiceDescriptor(serviceDiscoverySession.findServiceDescriptorById(Long.parseLong(dropDataId)));
             serviceCanvasItemData.setPositionX(x);
             serviceCanvasItemData.setPositionY(y);
             ServiceCanvasItemPanel serviceCanvasItemPanel = new ServiceCanvasItemPanel("item", serviceCanvasItemData);
@@ -123,23 +126,24 @@ public class WorkflowPage extends WebPage {
             canvasItemPanel = datasetCanvasItemPanel;
         }
 
+        if (data != null) {
+            ListItem listItem = new ListItem("canvasItem" + dropDataId, canvasItemModelList.size());
+            listItem.setOutputMarkupId(true);
+            listItem.add(new AttributeModifier("style", "top:" + data.getPositionY() + "px; left:" + data.getPositionX() + "px;"));
+            listItem.add(canvasItemPanel);
+            canvasItemRepeater.add(listItem);
 
-        ListItem listItem = new ListItem("canvasItem" + dropDataId, canvasItemModelList.size());
-        listItem.setOutputMarkupId(true);
-        listItem.add(new AttributeModifier("style", "top:" + data.getPositionY() + "px; left:" + data.getPositionX() + "px;"));
-        listItem.add(canvasItemPanel);
-        canvasItemRepeater.add(listItem);
+            String script = "addCanvasItem(':plumbContainerId', ':itemId')";
+            target.prependJavaScript(script
+                    .replaceAll(":plumbContainerId", plumbContainer.getMarkupId())
+                    .replaceAll(":itemId", listItem.getMarkupId()));
 
-        String script = "addCanvasItem(':plumbContainerId', ':itemId')";
-        target.prependJavaScript(script
-                .replaceAll(":plumbContainerId", plumbContainer.getMarkupId())
-                .replaceAll(":itemId", listItem.getMarkupId()));
+            target.add(listItem);
 
-        target.add(listItem);
-
-        target.appendJavaScript("makeCanvasItemsDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
-        target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
-        target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
+            target.appendJavaScript("makeCanvasItemsDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
+            target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
+            target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
+        }
     }
 
     private AbstractCanvasItemData createDatasetCanvasItemData(String dropDataType, String dropDataId, String x, String y) {

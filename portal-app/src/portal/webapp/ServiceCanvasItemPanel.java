@@ -12,7 +12,7 @@ public class ServiceCanvasItemPanel extends Panel {
         super(id);
         setOutputMarkupId(true);
 
+        add(new Label("id", model.getServiceDescriptor().getId()));
         add(new Label("name", model.getServiceDescriptor().getName()));
-
     }
 }

@@ -16,7 +16,6 @@ public class ServicesPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "service";
 
-    private ListView<ServiceDescriptor> listView;
     @Inject
     private ServiceDiscoverySession serviceDiscoverySession;
 
@@ -27,7 +26,7 @@ public class ServicesPanel extends Panel {
 
     private void addServices() {
         serviceDiscoverySession.loadServices();
-        listView = new ListView<ServiceDescriptor>("descriptors", serviceDiscoverySession.getServiceDescriptorList()) {
+        ListView<ServiceDescriptor> listView = new ListView<ServiceDescriptor>("descriptors", serviceDiscoverySession.getServiceDescriptorList()) {
 
             @Override
             protected void populateItem(ListItem<ServiceDescriptor> listItem) {

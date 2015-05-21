@@ -18,7 +18,7 @@ function setupCanvas() {
     $('#plumbContainer').droppable({
         accept: '.card',
         drop: function(event, ui) {
-            var dropDataId = ui.draggable[0].getAttribute("dropDataType");
+            var dropDataType = ui.draggable[0].getAttribute("dropDataType");
             var dropDataId = ui.draggable[0].getAttribute("dropDataId");
             var draggableMarkupId = ui.draggable[0].id;
             onCanvasDrop(dropDataType, dropDataId, ui.position.left, ui.position.top, draggableMarkupId);
