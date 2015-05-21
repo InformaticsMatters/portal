@@ -22,7 +22,7 @@ public class DrugWorkbenchPage extends WebPage {
 
     public DrugWorkbenchPage() {
         notifierProvider.createNotifier(this, "notifier");
-        add(new MenuPanel("menuPanel"));
+        addPanels();
         addActions();
     }
 
@@ -44,6 +44,12 @@ public class DrugWorkbenchPage extends WebPage {
             }
         };
         add(rightSidebar);
+    }
+
+    private void addPanels() {
+        add(new MenuPanel("menuPanel"));
+
+        add(new FooterPanel("footerPanel"));
     }
 
 }

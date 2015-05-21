@@ -34,7 +34,7 @@ public class ChemcentralPage extends WebPage {
 
     public ChemcentralPage() {
         notifierProvider.createNotifier(this, "notifier");
-        add(new MenuPanel("menuPanel"));
+
         addPanels();
         addActions();
         addModals();
@@ -110,6 +110,10 @@ public class ChemcentralPage extends WebPage {
     }
 
     private void addPanels() {
+        add(new MenuPanel("menuPanel"));
+
+        add(new FooterPanel("footerPanel"));
+
         datasetGridViewPanel = new DatasetGridViewPanel("datasetGridViewPanel");
         datasetGridViewPanel.setOutputMarkupId(true);
         datasetGridViewPanel.setOutputMarkupPlaceholderTag(true);

@@ -12,7 +12,7 @@
         }
     </style>
 </head>
-<body>
+<body style="background-color: #f7f7f7!important;">
 
 <div class="ui right sidebar" style="background: white; padding: 10px;top:37px;">
     tables
@@ -20,95 +20,68 @@
 
 <div wicket:id="notifier"></div>
 
-<div wicket:id="menuPanel"></div>
+<div class="pusher">
 
-<div class="wrapper">
-    <div class="ui page grid pusher">
-        <div class="separator20"></div>
-        <div class="row">
-            <div class="column">
-                <div class="ui segment">
-                    <h4 class="ui header">History</h4>
+    <div class="wrapper">
 
-                    <div class="ui breadcrumb">
-                        <a class="section"><img class="ui bordered image" src=""></a>
-                        <i class="right chevron icon divider"></i>
-                        <a class="section">molec</a>
-                        <i class="right chevron icon divider"></i>
+        <div wicket:id="menuPanel"></div>
 
-                        <div class="active section">molec</div>
+        <div class="ui page grid">
+            <div class="separator20"></div>
+            <div class="row">
+                <div class="column">
+                    <div class="ui segment">
+                        <h4 class="ui header">History</h4>
+
+                        <div class="ui breadcrumb">
+                            <a class="section"><img class="ui bordered image" src=""></a>
+                            <i class="right chevron icon divider"></i>
+                            <a class="section">molec</a>
+                            <i class="right chevron icon divider"></i>
+
+                            <div class="active section">molec</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="three wide column">
-                <div class="ui segment">
-                    <h4 class="ui header">Suggestions</h4>
-                </div>
+            <div class="row">
+                <div class="three wide column">
+                    <div class="ui segment">
+                        <h4 class="ui header">Suggestions</h4>
+                    </div>
 
-            </div>
-            <div class="eight wide column">
-                <div class="ui segment">
-                    <h4 class="ui header">Scketcher</h4>
+                </div>
+                <div class="eight wide column">
+                    <div class="ui segment">
+                        <h4 class="ui header">Scketcher</h4>
+                    </div>
+                </div>
+                <div class="five wide column">
+                    <div class="ui button" wicket:id="rightSidebar">Add tables</div>
+
+                    <table class="ui celled table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>No Name</td>
+                            <td>Unknown</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="five wide column">
-                <div class="ui button" wicket:id="rightSidebar">Add tables</div>
-
-                <table class="ui celled table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>No Name</td>
-                        <td>Unknown</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
+
+        <div class="push"></div>
     </div>
 
-    <div class="push"></div>
-</div>
+    <div wicket:id="footerPanel"></div>
 
-<div class="ui inverted black footer vertical segment">
-    <div class="content">
-        <div class="ui inverted divided grid">
-            <div class="column">
-                <h5 class="ui inverted teal header">Title</h5>
-
-                <div class="ui inverted link list">
-                    <a class="item">link1</a>
-                    <a class="item">link2</a>
-                    <a class="item">link3</a>
-                </div>
-            </div>
-            <div class="column">
-                <h5 class="ui inverted teal header">Title</h5>
-
-                <div class="ui inverted link list">
-                    <a class="item">link1</a>
-                    <a class="item">link2</a>
-                    <a class="item">link3</a>
-                </div>
-            </div>
-            <div class="column">
-                <h5 class="ui inverted teal header">Title</h5>
-
-                <div class="ui inverted link list">
-                    <a class="item">link1</a>
-                    <a class="item">link2</a>
-                    <a class="item">link3</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 </body>

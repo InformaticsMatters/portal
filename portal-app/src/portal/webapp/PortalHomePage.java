@@ -19,7 +19,7 @@ public class PortalHomePage extends WebPage implements SecuredComponent {
 
     public PortalHomePage() {
         notifierProvider.createNotifier(this, "notifier");
-        add(new MenuPanel("menuPanel"));
+        addPanels();
         addActions();
     }
 
@@ -28,6 +28,12 @@ public class PortalHomePage extends WebPage implements SecuredComponent {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/lac.css")));
+    }
+
+    private void addPanels() {
+        add(new MenuPanel("menuPanel"));
+
+        add(new FooterPanel("footerPanel"));
     }
 
     private void addActions() {
