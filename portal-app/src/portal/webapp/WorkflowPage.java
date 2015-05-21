@@ -46,6 +46,7 @@ public class WorkflowPage extends WebPage {
         notifierProvider.createNotifier(this, "notifier");
         add(new MenuPanel("menuPanel"));
         addDatasetsPanel();
+        addServicesPanel();
         addCanvas();
         addCanvasDropBehavior();
         addCanvasItemDragStopBehavior();
