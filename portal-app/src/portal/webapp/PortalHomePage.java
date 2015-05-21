@@ -39,5 +39,14 @@ public class PortalHomePage extends WebPage implements SecuredComponent {
             }
         };
         add(datasetsLink);
+
+        AjaxLink workflowLink = new AjaxLink("workflow") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                setResponsePage(ChemcentralPage.class);
+            }
+        };
+        add(workflowLink);
     }
 }
