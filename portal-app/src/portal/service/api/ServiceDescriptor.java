@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 public class ServiceDescriptor implements Serializable {
 
+    private Long id;
     private String name;
 
     public String getName() {
@@ -15,5 +16,13 @@ public class ServiceDescriptor implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author simetrias
  */
-public abstract class AbstractCanvasItemModel implements Serializable {
+public abstract class AbstractCanvasItemData implements Serializable {
 
     private String positionX;
     private String positionY;

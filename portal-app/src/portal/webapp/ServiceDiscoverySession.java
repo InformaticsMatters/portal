@@ -19,6 +19,7 @@ public class ServiceDiscoverySession implements Serializable {
         serviceDescriptorMap = new HashMap<Long, ServiceDescriptor>();
         ServiceDescriptor serviceDescriptor;
         serviceDescriptor = new ServiceDescriptor();
+        serviceDescriptor.setId(1l);
         serviceDescriptor.setName("Service 1");
         serviceDescriptorMap.put(1l, serviceDescriptor);
     }

@@ -18,9 +18,10 @@ function setupCanvas() {
     $('#plumbContainer').droppable({
         accept: '.card',
         drop: function(event, ui) {
-            var dropData = ui.draggable[0].getAttribute("drop-data");
+            var dropDataId = ui.draggable[0].getAttribute("dropDataType");
+            var dropDataId = ui.draggable[0].getAttribute("dropDataId");
             var draggableMarkupId = ui.draggable[0].id;
-            onCanvasDrop(dropData, ui.position.left, ui.position.top, draggableMarkupId);
+            onCanvasDrop(dropDataType, dropDataId, ui.position.left, ui.position.top, draggableMarkupId);
         }
     });
 }

@@ -10,9 +10,9 @@ import org.apache.wicket.markup.html.panel.Panel;
  */
 public class DatasetCanvasItemPanel extends Panel {
 
-    private final DatasetCanvasItemModel model;
+    private final DatasetCanvasItemData model;
 
-    public DatasetCanvasItemPanel(String id, DatasetCanvasItemModel model) {
+    public DatasetCanvasItemPanel(String id, DatasetCanvasItemData model) {
         super(id);
         this.model = model;
         setOutputMarkupId(true);

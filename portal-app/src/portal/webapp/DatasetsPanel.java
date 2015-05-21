@@ -17,6 +17,8 @@ import javax.inject.Inject;
  */
 public class DatasetsPanel extends Panel {
 
+    public static final String DROP_DATA_TYPE_VALUE = "service";
+
     private ListView<DatasetDescriptor> listView;
     @Inject
     private DatamartSession datamartSession;
@@ -45,6 +47,7 @@ public class DatasetsPanel extends Panel {
                 });
 
                 listItem.setOutputMarkupId(true);
+                listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
                 listItem.add(new AttributeModifier("drop-data", datasetDescriptor.getId().toString()));
             }
         };

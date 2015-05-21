@@ -5,7 +5,7 @@ import portal.service.api.DatasetDescriptor;
 /**
  * @author simetrias
  */
-public class DatasetCanvasItemModel extends AbstractCanvasItemModel {
+public class DatasetCanvasItemData extends AbstractCanvasItemData {
 
     private DatasetDescriptor datasetDescriptor;
 

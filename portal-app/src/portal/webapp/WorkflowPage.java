@@ -13,6 +13,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
@@ -26,15 +27,15 @@ import java.util.List;
 
 public class WorkflowPage extends WebPage {
 
-    private static final String DROP_DATA_TYPE = "dropDataType";
-    private static final String DROP_DATA_ID = "dropDataId";
-    private static final String POSITION_X = "positionX";
-    private static final String POSITION_Y = "positionY";
-    private static final String CANVASITEM_INDEX = "index";
-    private static final String CANVASITEM_WICKETID = "canvasItem";
+    public static final String DROP_DATA_TYPE = "dropDataType";
+    public static final String DROP_DATA_ID = "dropDataId";
+    public static final String POSITION_X = "positionX";
+    public static final String POSITION_Y = "positionY";
+    public static final String CANVASITEM_INDEX = "index";
+    public static final String CANVASITEM_WICKETID = "canvasItem";
 
-    private List<AbstractCanvasItemModel> canvasItemModelList = new ArrayList<>();
-    private ListView<AbstractCanvasItemModel> canvasItemRepeater;
+    private List<AbstractCanvasItemData> canvasItemModelList = new ArrayList<>();
+    private ListView<AbstractCanvasItemData> canvasItemRepeater;
     private WebMarkupContainer plumbContainer;
 
     @Inject
@@ -77,16 +78,16 @@ public class WorkflowPage extends WebPage {
         plumbContainer.setOutputMarkupId(true);
         add(plumbContainer);
 
-        canvasItemRepeater = new ListView<AbstractCanvasItemModel>(CANVASITEM_WICKETID, canvasItemModelList) {
+        canvasItemRepeater = new ListView<AbstractCanvasItemData>(CANVASITEM_WICKETID, canvasItemModelList) {
 
             @Override
-            protected void populateItem(ListItem<AbstractCanvasItemModel> components) {
+            protected void populateItem(ListItem<AbstractCanvasItemData> components) {
                 components.setOutputMarkupId(true);
-                AbstractCanvasItemModel model = components.getModelObject();
+                AbstractCanvasItemData model = components.getModelObject();
                 components.add(new AttributeModifier("style", "top:" + model.getPositionY() + "px; left:" + model.getPositionX() + "px;"));
-                if (model instanceof DatasetCanvasItemModel) {
-                    DatasetCanvasItemModel datasetCanvasItemModel = (DatasetCanvasItemModel) model;
-                    components.add(new DatasetCanvasItemPanel("item", datasetCanvasItemModel));
+                if (model instanceof DatasetCanvasItemData) {
+                    DatasetCanvasItemData datasetCanvasItemData = (DatasetCanvasItemData) model;
+                    components.add(new DatasetCanvasItemPanel("item", datasetCanvasItemData));
                 }
             }
         };
@@ -94,23 +95,39 @@ public class WorkflowPage extends WebPage {
     }
 
     private void addCanvasItem(AjaxRequestTarget target) {
-        String dropData = getRequest().getRequestParameters().getParameterValue(DROP_DATA_ID).toString();
+        String dropDataType = getRequest().getRequestParameters().getParameterValue(DROP_DATA_TYPE).toString();
+        String dropDataId = getRequest().getRequestParameters().getParameterValue(DROP_DATA_ID).toString();
         String x = getRequest().getRequestParameters().getParameterValue(POSITION_X).toString();
         String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y).toString();
-        System.out.println("Drop data " + dropData + " at " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
+        System.out.println("Drop data " + dropDataId + " at " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
 
-        // additional drop-data should tell us which kind of canvas item we need to instantiate
-        DatasetCanvasItemModel datasetCanvasItemModel = new DatasetCanvasItemModel();
-        datasetCanvasItemModel.setDatasetDescriptor(datamartSession.findDatasetDescriptorById(Long.parseLong(dropData)));
-        datasetCanvasItemModel.setPositionX(x);
-        datasetCanvasItemModel.setPositionY(y);
-        DatasetCanvasItemPanel datasetCanvasItemPanel = new DatasetCanvasItemPanel("item", datasetCanvasItemModel);
-        canvasItemModelList.add(datasetCanvasItemModel);
+        AbstractCanvasItemData data = null;
+        Panel canvasItemPanel = null;
 
-        ListItem listItem = new ListItem("canvasItem" + dropData, canvasItemModelList.size());
+        if (ServicesPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
+            ServiceCanvasItemData serviceCanvasItemData = new ServiceCanvasItemData();
+            serviceCanvasItemData.setPositionX(x);
+            serviceCanvasItemData.setPositionY(y);
+            ServiceCanvasItemPanel serviceCanvasItemPanel = new ServiceCanvasItemPanel("item", serviceCanvasItemData);
+            canvasItemModelList.add(serviceCanvasItemData);
+            data = serviceCanvasItemData;
+            canvasItemPanel = serviceCanvasItemPanel;
+        } else if (DatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
+            DatasetCanvasItemData datasetCanvasItemData = new DatasetCanvasItemData();
+            datasetCanvasItemData.setDatasetDescriptor(datamartSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
+            datasetCanvasItemData.setPositionX(x);
+            datasetCanvasItemData.setPositionY(y);
+            DatasetCanvasItemPanel datasetCanvasItemPanel = new DatasetCanvasItemPanel("item", datasetCanvasItemData);
+            canvasItemModelList.add(datasetCanvasItemData);
+            data = datasetCanvasItemData;
+            canvasItemPanel = datasetCanvasItemPanel;
+        }
+
+
+        ListItem listItem = new ListItem("canvasItem" + dropDataId, canvasItemModelList.size());
         listItem.setOutputMarkupId(true);
-        listItem.add(new AttributeModifier("style", "top:" + datasetCanvasItemModel.getPositionY() + "px; left:" + datasetCanvasItemModel.getPositionX() + "px;"));
-        listItem.add(datasetCanvasItemPanel);
+        listItem.add(new AttributeModifier("style", "top:" + data.getPositionY() + "px; left:" + data.getPositionX() + "px;"));
+        listItem.add(canvasItemPanel);
         canvasItemRepeater.add(listItem);
 
         String script = "addCanvasItem(':plumbContainerId', ':itemId')";
@@ -125,6 +142,25 @@ public class WorkflowPage extends WebPage {
         target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
     }
 
+    private AbstractCanvasItemData createDatasetCanvasItemData(String dropDataType, String dropDataId, String x, String y) {
+        AbstractCanvasItemData result = null;
+
+        if (ServicesPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
+            ServiceCanvasItemData data = new ServiceCanvasItemData();
+            data.setPositionX(x);
+            data.setPositionY(y);
+            result = data;
+        } else if (DatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
+            DatasetCanvasItemData data = new DatasetCanvasItemData();
+            data.setDatasetDescriptor(datamartSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
+            data.setPositionX(x);
+            data.setPositionY(y);
+            result = data;
+        }
+
+        return result;
+    }
+
     private void addCanvasDropBehavior() {
         AbstractDefaultAjaxBehavior onCanvasDropBehavior = new AbstractDefaultAjaxBehavior() {
 
@@ -137,6 +173,7 @@ public class WorkflowPage extends WebPage {
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
                 CharSequence callBackScript = getCallbackFunction(
+                        CallbackParameter.explicit(DROP_DATA_TYPE),
                         CallbackParameter.explicit(DROP_DATA_ID),
                         CallbackParameter.explicit(POSITION_X),
                         CallbackParameter.explicit(POSITION_Y));
@@ -158,7 +195,7 @@ public class WorkflowPage extends WebPage {
                 System.out.println("Item index " + index + " Dragged to: " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
 
                 int i = Integer.parseInt(index);
-                AbstractCanvasItemModel model = canvasItemModelList.get(i);
+                AbstractCanvasItemData model = canvasItemModelList.get(i);
                 model.setPositionX(x);
                 model.setPositionY(y);
             }
