@@ -5,6 +5,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
+import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -51,6 +52,7 @@ public class WorkflowPage extends WebPage {
         addCanvas();
         addCanvasDropBehavior();
         addCanvasItemDragStopBehavior();
+        addActions();
     }
 
     @Override
@@ -70,6 +72,16 @@ public class WorkflowPage extends WebPage {
         add(new FooterPanel("footerPanel"));
         add(new DatasetsPanel("datasets"));
         add(new ServicesPanel("services"));
+    }
+
+    private void addActions() {
+        add(new IndicatingAjaxLink("serialize") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                serializeWorkflow();
+            }
+        });
     }
 
     private void addCanvas() {
@@ -194,5 +206,17 @@ public class WorkflowPage extends WebPage {
             }
         };
         add(onCanvasItemDragStopBehavior);
+    }
+
+    private void serializeWorkflow() {
+        for (AbstractCanvasItemData data : canvasItemModelList) {
+            if (data instanceof ServiceCanvasItemData) {
+                ServiceCanvasItemData serviceData = (ServiceCanvasItemData) data;
+                System.out.println(serviceData.getServiceDescriptor().getName());
+            } else if (data instanceof DatasetCanvasItemData) {
+                DatasetCanvasItemData datasetData = (DatasetCanvasItemData) data;
+                System.out.println(datasetData.getDatasetDescriptor().getDescription());
+            }
+        }
     }
 }

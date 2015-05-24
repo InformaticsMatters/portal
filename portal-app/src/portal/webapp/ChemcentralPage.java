@@ -51,7 +51,7 @@ public class ChemcentralPage extends WebPage {
     }
 
     private void addActions() {
-        gridViewLink = new AjaxLink("datasetGridView") {
+        gridViewLink = new AjaxLink("datasetListView") {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
@@ -113,7 +113,7 @@ public class ChemcentralPage extends WebPage {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-        datasetListViewPanel = new DatasetListViewPanel("datasetGridViewPanel");
+        datasetListViewPanel = new DatasetListViewPanel("datasetListViewPanel");
         datasetListViewPanel.setOutputMarkupId(true);
         datasetListViewPanel.setOutputMarkupPlaceholderTag(true);
         add(datasetListViewPanel);
