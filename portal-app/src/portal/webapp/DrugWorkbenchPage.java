@@ -48,8 +48,6 @@ public class DrugWorkbenchPage extends WebPage {
 
     private void addPanels() {
         add(new MenuPanel("menuPanel"));
-
         add(new FooterPanel("footerPanel"));
     }
-
 }

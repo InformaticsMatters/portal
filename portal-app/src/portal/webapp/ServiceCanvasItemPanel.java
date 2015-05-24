@@ -12,15 +12,16 @@ public class ServiceCanvasItemPanel extends Panel {
 
     private ServiceCanvasItemPopupPanel serviceCanvasItemPopup;
 
-    public ServiceCanvasItemPanel(String id, ServiceCanvasItemData model) {
+    public ServiceCanvasItemPanel(String id, ServiceCanvasItemData serviceCanvasItemData) {
         super(id);
         setOutputMarkupId(true);
         addServiceCanvasItemPopup();
 
-        add(new Label("id", model.getServiceDescriptor().getId()));
-        add(new Label("name", model.getServiceDescriptor().getName()));
+        add(new Label("id", serviceCanvasItemData.getServiceDescriptor().getId()));
+        add(new Label("name", serviceCanvasItemData.getServiceDescriptor().getName()));
 
         add(new AjaxEventBehavior("click") {
+
             @Override
             protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
                 // serviceCanvasItemPopup.setDefaultModelObject(serviceDescriptor);

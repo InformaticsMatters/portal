@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DatasetGridViewPanel extends Panel {
+public class DatasetListViewPanel extends Panel {
 
     private static final String LARGE_FILE_TEXT_OUTLINE_LINK_ICON = "large file text outline link icon";
     private static final String LARGE_COUNTERCLOCKWISE_ROTATED_SITEMAP_LINK_ICON = "large counterclockwise rotated sitemap link icon";
     private EasyGrid<DatasetDescriptor> grid;
     private List<DatasetDescriptor> datasetDescriptorList;
 
-    public DatasetGridViewPanel(String id) {
+    public DatasetListViewPanel(String id) {
         super(id);
         datasetDescriptorList = new ArrayList<>();
         addDatasetDescriptorGrid();

@@ -22,7 +22,7 @@ public class ChemcentralPage extends WebPage {
     protected DatasetCardViewPanel datasetCardViewPanel;
     private AjaxLink gridViewLink;
     private AjaxLink cardViewLink;
-    private DatasetGridViewPanel datasetGridViewPanel;
+    private DatasetListViewPanel datasetListViewPanel;
     private ChemcentralSearchPanel chemcentralSearchPanel;
     private UploadModalPanel uploadModalPanel;
     private MarvinSketcher marvinSketcherPanel;
@@ -55,9 +55,9 @@ public class ChemcentralPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                datasetGridViewPanel.setVisible(true);
+                datasetListViewPanel.setVisible(true);
                 datasetCardViewPanel.setVisible(false);
-                ajaxRequestTarget.add(datasetGridViewPanel);
+                ajaxRequestTarget.add(datasetListViewPanel);
                 ajaxRequestTarget.add(datasetCardViewPanel);
                 ajaxRequestTarget.add(cardViewLink);
                 ajaxRequestTarget.add(gridViewLink);
@@ -72,9 +72,9 @@ public class ChemcentralPage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 datasetCardViewPanel.setVisible(true);
-                datasetGridViewPanel.setVisible(false);
+                datasetListViewPanel.setVisible(false);
                 ajaxRequestTarget.add(datasetCardViewPanel);
-                ajaxRequestTarget.add(datasetGridViewPanel);
+                ajaxRequestTarget.add(datasetListViewPanel);
                 ajaxRequestTarget.add(cardViewLink);
                 ajaxRequestTarget.add(gridViewLink);
                 ajaxRequestTarget.appendJavaScript("makeMenuButtonActive('" + cardViewLink.getMarkupId() + "')");
@@ -111,19 +111,18 @@ public class ChemcentralPage extends WebPage {
 
     private void addPanels() {
         add(new MenuPanel("menuPanel"));
-
         add(new FooterPanel("footerPanel"));
 
-        datasetGridViewPanel = new DatasetGridViewPanel("datasetGridViewPanel");
-        datasetGridViewPanel.setOutputMarkupId(true);
-        datasetGridViewPanel.setOutputMarkupPlaceholderTag(true);
-        add(datasetGridViewPanel);
+        datasetListViewPanel = new DatasetListViewPanel("datasetGridViewPanel");
+        datasetListViewPanel.setOutputMarkupId(true);
+        datasetListViewPanel.setOutputMarkupPlaceholderTag(true);
+        add(datasetListViewPanel);
+        datasetListViewPanel.setVisible(false);
 
         datasetCardViewPanel = new DatasetCardViewPanel("datasetCardViewPanel");
         datasetCardViewPanel.setOutputMarkupId(true);
         datasetCardViewPanel.setOutputMarkupPlaceholderTag(true);
         add(datasetCardViewPanel);
-        datasetCardViewPanel.setVisible(false);
     }
 
     private void addModals() {
@@ -172,13 +171,12 @@ public class ChemcentralPage extends WebPage {
     }
 
     private void refreshDatasetDescriptors() {
-        // List<DatasetDescriptor> datasetDescriptorList = datasetService.listDatasetDescriptor(new ListDatasetDescriptorFilter());
         List<DatasetDescriptor> datasetDescriptorList = datamartSession.getDatasetDescriptorList();
-        datasetGridViewPanel.setDatasetDescriptorList(datasetDescriptorList);
+        datasetListViewPanel.setDatasetDescriptorList(datasetDescriptorList);
         datasetCardViewPanel.setDatasetDescriptorList(datasetDescriptorList);
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
-            target.add(datasetGridViewPanel);
+            target.add(datasetListViewPanel);
             target.add(datasetCardViewPanel);
         }
     }

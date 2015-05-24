@@ -14,13 +14,11 @@ import java.util.List;
 
 public class DatasetCardViewPanel extends Panel {
 
-    private List<DatasetDescriptor> datasetDescriptorList;
     private ListView<DatasetDescriptor> listView;
     private ClickCardPopupPanel clickCardPopup;
 
     public DatasetCardViewPanel(String id) {
         super(id);
-        datasetDescriptorList = new ArrayList<>();
         addCards();
         addClickCardPopup();
     }
@@ -58,7 +56,6 @@ public class DatasetCardViewPanel extends Panel {
     }
 
     public void setDatasetDescriptorList(List<DatasetDescriptor> datasetDescriptorList) {
-        this.datasetDescriptorList = datasetDescriptorList;
         listView.setList(datasetDescriptorList);
     }
 }

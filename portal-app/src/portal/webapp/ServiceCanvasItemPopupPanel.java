@@ -3,7 +3,7 @@ package portal.webapp;
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
- * Created by mariapaz on 5/22/15.
+ * @author simetrias
  */
 public class ServiceCanvasItemPopupPanel extends Panel {
 

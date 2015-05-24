@@ -67,11 +67,8 @@ public class WorkflowPage extends WebPage {
 
     private void addPanels() {
         add(new MenuPanel("menuPanel"));
-
         add(new FooterPanel("footerPanel"));
-
         add(new DatasetsPanel("datasets"));
-
         add(new ServicesPanel("services"));
     }
 

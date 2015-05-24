@@ -32,7 +32,6 @@ public class PortalHomePage extends WebPage implements SecuredComponent {
 
     private void addPanels() {
         add(new MenuPanel("menuPanel"));
-
         add(new FooterPanel("footerPanel"));
     }
 
