@@ -27,7 +27,7 @@ public class ServiceCanvasItemPanel extends Panel {
                 // serviceCanvasItemPopup.setDefaultModelObject(serviceDescriptor);
                 serviceCanvasItemPopup.setVisible(true);
                 ajaxRequestTarget.add(serviceCanvasItemPopup);
-                String js = "$('.canvas-item-content').popup({popup: '.ui.serviceCanvasItemPopup.popup', on : 'click'}).popup('toggle')";
+                String js = "$('#" + getMarkupId() + "').popup({popup: '.ui.serviceCanvasItemPopup.popup', on : 'click'}).popup('toggle')";
                 ajaxRequestTarget.appendJavaScript(js);
             }
         });

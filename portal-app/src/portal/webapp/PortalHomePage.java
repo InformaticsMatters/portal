@@ -49,7 +49,7 @@ public class PortalHomePage extends WebPage implements SecuredComponent {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setResponsePage(ChemcentralPage.class);
+                setResponsePage(WorkflowPage.class);
             }
         };
         add(workflowLink);

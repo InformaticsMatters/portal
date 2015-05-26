@@ -34,6 +34,12 @@ function makeCanvasItemsDraggable(selector) {
             onCanvasItemDragStop(index, params.pos[0], params.pos[1]);
         }
     });
+   /* $('.canvas-item').dblclick(function(e) {
+          jsPlumb.detachAllConnections($(this));
+          jsPlumb.removeAllEndpoints($(this))
+          $(this).remove();
+          e.stopPropagation();
+        });*/
 }
 
 function addCanvasItem(plumbContainerId, itemId) {
