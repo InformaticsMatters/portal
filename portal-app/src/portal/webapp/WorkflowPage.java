@@ -123,7 +123,7 @@ public class WorkflowPage extends WebPage {
             serviceCanvasItemData.setServiceDescriptor(serviceDiscoverySession.findServiceDescriptorById(Long.parseLong(dropDataId)));
             serviceCanvasItemData.setPositionX(x);
             serviceCanvasItemData.setPositionY(y);
-            ServiceCanvasItemPanel serviceCanvasItemPanel = new ServiceCanvasItemPanel("item", serviceCanvasItemData);
+            ServiceCanvasItemPanel serviceCanvasItemPanel = new ServiceCanvasItemPanel("item", serviceCanvasItemData, () -> System.out.println("Deleting " + serviceCanvasItemData.getServiceDescriptor().getName()));
             canvasItemModelList.add(serviceCanvasItemData);
             data = serviceCanvasItemData;
             canvasItemPanel = serviceCanvasItemPanel;
