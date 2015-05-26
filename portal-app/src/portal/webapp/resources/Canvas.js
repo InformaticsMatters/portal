@@ -1,5 +1,6 @@
 var onCanvasDrop;
 var onCanvasItemDragStop;
+var onCanvasNewConnection;
 
 function setupPalette() {
     $('.card').draggable({
@@ -23,6 +24,13 @@ function setupCanvas() {
             var draggableMarkupId = ui.draggable[0].id;
             onCanvasDrop(dropDataType, dropDataId, ui.position.left, ui.position.top, draggableMarkupId);
         }
+    });
+
+    jsPlumb.bind("connection", function (i, c) {
+        var sourceId = i.connection.sourceId;
+        var targetId = i.connection.targetId;
+        console.log(sourceId + " --> " + targetId);
+        onCanvasNewConnection(sourceId, targetId);
     });
 }
 
@@ -76,6 +84,7 @@ function addTargetEndpoint(itemId) {
     };
     var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions);
 }
+
 
 function init () {
     setupPalette();
