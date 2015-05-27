@@ -65,7 +65,7 @@ function init () {
 
             var position = $('#plumbContainer').offset();
             var left = Math.floor(params.pos[0] - position.left);
-            var top = Math.floor(params.pos[1] - position.left);
+            var top = Math.floor(params.pos[1] - position.top);
             onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
         }
     });
