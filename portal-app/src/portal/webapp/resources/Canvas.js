@@ -2,38 +2,6 @@ var onCanvasDrop;
 var onCanvasItemDragStop;
 var onCanvasNewConnection;
 
-function setupPalette() {
-    $('.card').draggable({
-        cursor: 'move',
-        helper: 'clone',
-        scroll: false,
-        appendTo: '#plumbContainer',
-        start: function () {},
-        stop: function (event, ui) {}
-    });
-}
-
-function setupCanvas() {
-    jsPlumb.setContainer($('#plumbContainer'));
-
-    $('#plumbContainer').droppable({
-        accept: '.card',
-        drop: function(event, ui) {
-            var dropDataType = ui.draggable[0].getAttribute("dropDataType");
-            var dropDataId = ui.draggable[0].getAttribute("dropDataId");
-            var draggableMarkupId = ui.draggable[0].id;
-            onCanvasDrop(dropDataType, dropDataId, ui.position.left, ui.position.top, draggableMarkupId);
-        }
-    });
-
-    jsPlumb.bind("connection", function (i, c) {
-        var sourceId = i.connection.sourceId;
-        var targetId = i.connection.targetId;
-        console.log(sourceId + " --> " + targetId);
-        onCanvasNewConnection(sourceId, targetId);
-    });
-}
-
 function makeCanvasItemsDraggable(selector) {
     jsPlumb.draggable($(selector), {
         containment: 'parent',
@@ -42,12 +10,6 @@ function makeCanvasItemsDraggable(selector) {
             onCanvasItemDragStop(index, params.pos[0], params.pos[1]);
         }
     });
-   /* $('.canvas-item').dblclick(function(e) {
-          jsPlumb.detachAllConnections($(this));
-          jsPlumb.removeAllEndpoints($(this))
-          $(this).remove();
-          e.stopPropagation();
-        });*/
 }
 
 function addCanvasItem(plumbContainerId, itemId) {
@@ -85,10 +47,33 @@ function addTargetEndpoint(itemId) {
     var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions);
 }
 
-
 function init () {
-    setupPalette();
-    setupCanvas();
+    jsPlumb.setContainer($('#plumbContainer'));
+
+    jsPlumb.draggable($('.card'), {
+        clone: true,
+        start:function(params) {
+
+        },
+        drag:function(params) {
+        },
+        stop:function(params) {
+            console.log(params);
+            var dropDataType = params.el.getAttribute("dropDataType");
+            var dropDataId = params.el.getAttribute("dropDataId");
+            var draggableMarkupId = params.el.id;
+            var top = params.el.top;
+            var left = params.el.left;
+            onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
+        }
+    });
+
+    jsPlumb.bind("connection", function (i, c) {
+        var sourceId = i.connection.sourceId;
+        var targetId = i.connection.targetId;
+        console.log(sourceId + " --> " + targetId);
+        onCanvasNewConnection(sourceId, targetId);
+    });
 }
 
 
