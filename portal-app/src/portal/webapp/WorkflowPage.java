@@ -123,7 +123,7 @@ public class WorkflowPage extends WebPage {
             serviceCanvasItemData.setServiceDescriptor(serviceDiscoverySession.findServiceDescriptorById(Long.parseLong(dropDataId)));
             serviceCanvasItemData.setPositionX(x);
             serviceCanvasItemData.setPositionY(y);
-            ServiceCanvasItemPanel serviceCanvasItemPanel = new ServiceCanvasItemPanel("item", serviceCanvasItemData, () -> System.out.println("Deleting " + serviceCanvasItemData.getServiceDescriptor().getName()));
+            ServiceCanvasItemPanel serviceCanvasItemPanel = new ServiceCanvasItemPanel("item", serviceCanvasItemData, () -> removeCanvasItem(serviceCanvasItemData));
             canvasItemModelList.add(serviceCanvasItemData);
             data = serviceCanvasItemData;
             canvasItemPanel = serviceCanvasItemPanel;
@@ -156,6 +156,21 @@ public class WorkflowPage extends WebPage {
             target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
             target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
         }
+    }
+
+    private void removeCanvasItem(AbstractCanvasItemData abstractCanvasItemData) {
+        AbstractCanvasItemData itemToRemove = null;
+        for (AbstractCanvasItemData data : canvasItemModelList) {
+            if (data.equals(abstractCanvasItemData)) {
+                itemToRemove = data;
+                break;
+            }
+        }
+        if (itemToRemove != null) {
+            canvasItemModelList.remove(itemToRemove);
+        }
+        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        target.add(plumbContainer);
     }
 
     private void addCanvasDropBehavior() {
