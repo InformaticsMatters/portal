@@ -162,7 +162,6 @@ public class WorkflowPage extends WebPage {
     private void removeCanvasItem(AbstractCanvasItemData abstractCanvasItemData) {
         int indexToRemove = -1;
         for (int i = 0; i < canvasItemModelList.size(); i++) {
-            i++;
             AbstractCanvasItemData data = canvasItemModelList.get(i);
             if (data.equals(abstractCanvasItemData)) {
                 indexToRemove = i;
