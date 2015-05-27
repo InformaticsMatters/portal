@@ -62,8 +62,8 @@ function init () {
             var dropDataType = params.el.getAttribute("dropDataType");
             var dropDataId = params.el.getAttribute("dropDataId");
             var draggableMarkupId = params.el.id;
-            var top = params.el.top;
-            var left = params.el.left;
+            var left = params.pos[0];
+            var top = params.pos[1];
             onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
         }
     });
