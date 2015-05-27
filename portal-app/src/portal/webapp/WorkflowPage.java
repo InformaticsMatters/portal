@@ -105,6 +105,7 @@ public class WorkflowPage extends WebPage {
                 }
             }
         };
+        canvasItemRepeater.setOutputMarkupId(true);
         plumbContainer.add(canvasItemRepeater);
     }
 
@@ -159,18 +160,21 @@ public class WorkflowPage extends WebPage {
     }
 
     private void removeCanvasItem(AbstractCanvasItemData abstractCanvasItemData) {
-        AbstractCanvasItemData itemToRemove = null;
-        for (AbstractCanvasItemData data : canvasItemModelList) {
+        int indexToRemove = -1;
+        for (int i = 0; i < canvasItemModelList.size(); i++) {
+            i++;
+            AbstractCanvasItemData data = canvasItemModelList.get(i);
             if (data.equals(abstractCanvasItemData)) {
-                itemToRemove = data;
-                break;
+                indexToRemove = i;
             }
         }
-        if (itemToRemove != null) {
-            canvasItemModelList.remove(itemToRemove);
+        if (indexToRemove != -1) {
+            Component listItemToRemove = canvasItemRepeater.get(indexToRemove);
+            canvasItemRepeater.remove(listItemToRemove);
+            canvasItemModelList.remove(indexToRemove);
+            AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+            target.appendJavaScript("removeCanvasItem(':itemId')".replaceAll(":itemId", listItemToRemove.getMarkupId()));
         }
-        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        target.add(plumbContainer);
     }
 
     private void addCanvasDropBehavior() {
