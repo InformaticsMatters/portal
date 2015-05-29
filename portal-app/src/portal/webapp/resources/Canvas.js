@@ -60,24 +60,25 @@ function init () {
     jsPlumb.bind("connection", function (i, c) {
         var sourceId = i.connection.sourceId;
         var targetId = i.connection.targetId;
-        console.log(sourceId + " --> " + targetId);
         onCanvasNewConnection(sourceId, targetId);
     });
 
     jsPlumb.draggable($('.card'), {
-        clone: true,
-        start:function(params) {
-         },
-        drag:function(params) {
-        },
-        stop:function(params) {
-            var dropDataType = params.el.getAttribute("dropDataType");
-            var dropDataId = params.el.getAttribute("dropDataId");
-            var draggableMarkupId = params.el.id;
+        clone: true
+    });
+
+    jsPlumb._katavorio.droppable($('#plumbContainer'), {
+        canDrop: function(params) {return $(params.el).hasClass("card") },
+        drop: function(params) {
+            var el = params.drag.el;
+            var dropDataType = el.getAttribute("dropDataType");
+            var dropDataId = el.getAttribute("dropDataId");
+            var draggableMarkupId = el.id;
 
             var position = $('#plumbContainer').offset();
-            var left = Math.floor(params.pos[0] - position.left);
-            var top = Math.floor(params.pos[1] - position.top);
+            var left = Math.floor(params.e.x - position.left - params.drag.size[0]/2);
+            var top = Math.floor(params.e.y - position.top - params.drag.size[1]/2);
+
             onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
         }
     });
