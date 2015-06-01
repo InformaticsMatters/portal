@@ -179,3 +179,12 @@
     padding-left: 8%;
     padding-right: 8%;
 }
+
+.sketcher-thumb {
+    width: 210px;
+    border: 1px solid #ddd;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 140px;
+}

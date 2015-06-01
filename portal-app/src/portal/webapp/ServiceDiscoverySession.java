@@ -24,6 +24,16 @@ public class ServiceDiscoverySession implements Serializable {
         serviceDescriptor.setId(1l);
         serviceDescriptor.setName("Service 1");
         serviceDescriptorMap.put(1l, serviceDescriptor);
+
+        serviceDescriptor = new ServiceDescriptor();
+        serviceDescriptor.setId(2l);
+        serviceDescriptor.setName("Service 2");
+        serviceDescriptorMap.put(2l, serviceDescriptor);
+
+        serviceDescriptor = new ServiceDescriptor();
+        serviceDescriptor.setId(3l);
+        serviceDescriptor.setName("Service 3");
+        serviceDescriptorMap.put(3l, serviceDescriptor);
     }
 
     public List<ServiceDescriptor> getServiceDescriptorList() {

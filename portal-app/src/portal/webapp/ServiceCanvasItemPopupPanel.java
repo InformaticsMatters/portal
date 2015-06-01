@@ -3,6 +3,8 @@ package portal.webapp;
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.image.NonCachingImage;
@@ -39,14 +41,6 @@ public class ServiceCanvasItemPopupPanel extends Panel {
             }
         });
 
-        add(new AjaxLink("sketcher") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                marvinSketcherPanel.showModal();
-            }
-        });
-
         marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel", "modalElement");
         marvinSketcherPanel.setCallbacks(new MarvinSketcher.Callbacks() {
 
@@ -73,7 +67,16 @@ public class ServiceCanvasItemPopupPanel extends Panel {
         };
 
         sketchThumbnail = new NonCachingImage("sketch", renderedDynamicImageResource);
+        sketchThumbnail.add(AttributeModifier.append("style", "width: " + getRectangle().width + "px; height: " + getRectangle().height + "px;"));
         sketchThumbnail.setOutputMarkupId(true);
+
+        sketchThumbnail.add(new AjaxEventBehavior("onclick") {
+            @Override
+            protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
+                marvinSketcherPanel.showModal();
+            }
+        });
+
         add(sketchThumbnail);
     }
 
