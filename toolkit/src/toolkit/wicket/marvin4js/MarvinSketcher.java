@@ -76,8 +76,8 @@ public class MarvinSketcher extends SemanticModalPanel {
     }
 
     private void addForm() {
-        sketcherForm = new Form<SketcherFormModel>("sketcherForm");
-        sketcherForm.setModel(new CompoundPropertyModel<SketcherFormModel>(new SketcherFormModel()));
+        sketcherForm = new Form<>("sketcherForm");
+        sketcherForm.setModel(new CompoundPropertyModel<>(new SketcherFormModel()));
         sketcherForm.add(new HiddenField<String>("sketcherData"));
         getModalRootComponent().add(sketcherForm);
     }

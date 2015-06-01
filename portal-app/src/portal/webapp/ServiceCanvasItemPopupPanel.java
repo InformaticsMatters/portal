@@ -18,7 +18,6 @@ import java.awt.*;
 public class ServiceCanvasItemPopupPanel extends Panel {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
-    private RenderedDynamicImageResource renderedDynamicImageResource;
     private ServiceCanvasItemPanel.Callbacks callbacks;
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
@@ -53,8 +52,8 @@ public class ServiceCanvasItemPopupPanel extends Panel {
 
             @Override
             public void onSubmit() {
-                getRequestCycle().find(AjaxRequestTarget.class).add(sketchThumbnail);
                 marvinSketcherPanel.hideModal();
+                getRequestCycle().find(AjaxRequestTarget.class).add(sketchThumbnail);
             }
 
             @Override
@@ -65,7 +64,7 @@ public class ServiceCanvasItemPopupPanel extends Panel {
     }
 
     private void addSketchThumbnail() {
-        renderedDynamicImageResource = new RenderedDynamicImageResource(getRectangle().width, getRectangle().height) {
+        RenderedDynamicImageResource renderedDynamicImageResource = new RenderedDynamicImageResource(getRectangle().width, getRectangle().height) {
 
             @Override
             protected boolean render(Graphics2D graphics2D, Attributes attributes) {
@@ -81,7 +80,11 @@ public class ServiceCanvasItemPopupPanel extends Panel {
     private boolean renderThumbnail(Graphics2D graphics2D) {
         try {
             MolPrinter molPrinter = new MolPrinter();
-            Molecule molecule = MolImporter.importMol(marvinSketcherPanel.getSketchData());
+            String sketchData = marvinSketcherPanel.getSketchData();
+            if (sketchData == null) {
+                sketchData = "<cml><MDocument></MDocument></cml>";
+            }
+            Molecule molecule = MolImporter.importMol(sketchData);
             molecule.dearomatize();
             molPrinter.setMol(molecule);
             graphics2D.setColor(Color.white);
