@@ -126,7 +126,7 @@ public class MarvinSketcher extends SemanticModalPanel {
         return ASYNC_JAVASCRIPT.replace(":sketcherFrameId", SKETCHER_FRAME_ID).replace(":javascript", javascript);
     }
 
-    public String getSketcherData() {
+    public String getSketchData() {
         return sketcherForm.getModelObject().getSketcherData();
     }
 
