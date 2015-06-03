@@ -188,3 +188,8 @@
     cursor: pointer;
     height: 140px;
 }
+
+.dataSets,
+.services {
+    margin-top: 20px;
+}
