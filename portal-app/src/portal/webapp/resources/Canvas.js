@@ -1,3 +1,4 @@
+var dragging = false;
 var onCanvasDrop;
 var onCanvasItemDragStop;
 var onCanvasNewConnection;
@@ -67,7 +68,7 @@ function init () {
         clone: true
     });
 
-    jsPlumb._katavorio.droppable($('#plumbContainer'), {
+    jsPlumb._katavorio_main.droppable($('#plumbContainer'), {
         canDrop: function(params) {return $(params.el).hasClass("card") },
         drop: function(params) {
             var el = params.drag.el;
