@@ -3,10 +3,14 @@ package portal.webapp;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.CompoundPropertyModel;
 import portal.integration.DatamartSession;
 import portal.service.api.DatasetDescriptor;
 
@@ -19,6 +23,9 @@ public class DatasetsPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "dataset";
 
+    private Form<BusquedaDatasetsData> form;
+    private WebMarkupContainer datasetsContainer;
+
     private ListView<DatasetDescriptor> listView;
     @Inject
     private DatamartSession datamartSession;
@@ -26,9 +33,25 @@ public class DatasetsPanel extends Panel {
     public DatasetsPanel(String id) {
         super(id);
         addDatasets();
+        addForm();
+    }
+
+    private void addForm() {
+        form = new Form<>("form");
+        form.setModel(new CompoundPropertyModel<>(new BusquedaDatasetsData()));
+        form.setOutputMarkupId(true);
+        add(form);
+
+        TextField<String> nameField = new TextField<>("name");
+        form.add(nameField);
+
     }
 
     private void addDatasets() {
+
+        datasetsContainer = new WebMarkupContainer("datasetsContainer");
+        datasetsContainer.setOutputMarkupId(true);
+
         datamartSession.loadDatamartDatasetList();
         listView = new ListView<DatasetDescriptor>("descriptors", datamartSession.getDatasetDescriptorList()) {
 
@@ -51,6 +74,8 @@ public class DatasetsPanel extends Panel {
                 listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_ID, datasetDescriptor.getId().toString()));
             }
         };
-        add(listView);
+        datasetsContainer.add(listView);
+
+        add(datasetsContainer);
     }
 }

@@ -193,3 +193,8 @@
 .services {
     margin-top: 20px;
 }
+
+.dataSets ul,
+.services ul {
+    -webkit-padding-start: 0;
+}

@@ -1,6 +1,21 @@
 <wicket:panel>
+
+    <form class="ui form" wicket:id="form">
+        <div class="fields">
+            <div class="field">
+                <div class="ui action input">
+                    <input type="text" wicket:id="name">
+
+                    <div class="ui icon button">
+                        <i class="search icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
     <div class="dataSets">
-        <ul class="ui cards">
+        <ul class="ui cards" wicket:id="datasetsContainer">
             <li wicket:id="descriptors" class="card palette-item">
                 <div class="content" style="height: 40px;">
                     <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span
