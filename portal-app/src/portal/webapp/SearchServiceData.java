@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by mariapaz on 6/3/15.
  */
-public class BusquedaServicesData implements Serializable {
+public class SearchServiceData implements Serializable {
 
     private String pattern;
     private Boolean freeOnly;

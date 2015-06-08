@@ -48,7 +48,6 @@ public class DatasetsPanel extends Panel {
     }
 
     private void addDatasets() {
-
         datasetsContainer = new WebMarkupContainer("datasetsContainer");
         datasetsContainer.setOutputMarkupId(true);
 

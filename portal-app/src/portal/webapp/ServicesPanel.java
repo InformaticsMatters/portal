@@ -23,15 +23,11 @@ import javax.inject.Inject;
 public class ServicesPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "service";
-
-    private Form<BusquedaServicesData> form;
     private WebMarkupContainer servicesContainer;
-
-
+    private ListView<ServiceDescriptor> listView;
+    private Form<SearchServiceData> searchServiceForm;
     @Inject
     private ServiceDiscoverySession serviceDiscoverySession;
-    private ListView<ServiceDescriptor> listView;
-    private Form<BusquedaServicesData> busquedaServicesDataForm;
 
     public ServicesPanel(String id) {
         super(id);
@@ -39,14 +35,12 @@ public class ServicesPanel extends Panel {
         addForm();
     }
 
-
     private void addServices() {
-
         servicesContainer = new WebMarkupContainer("servicesContainer");
         servicesContainer.setOutputMarkupId(true);
 
         serviceDiscoverySession.loadServices();
-        listView = new ListView<ServiceDescriptor>("descriptors", serviceDiscoverySession.getServiceDescriptorList()) {
+        listView = new ListView<ServiceDescriptor>("descriptors", serviceDiscoverySession.listServices(null)) {
 
             @Override
             protected void populateItem(ListItem<ServiceDescriptor> listItem) {
@@ -61,37 +55,32 @@ public class ServicesPanel extends Panel {
         servicesContainer.add(listView);
 
         add(servicesContainer);
-
     }
 
-
     private void addForm() {
-        busquedaServicesDataForm = new Form<>("form");
-        form = busquedaServicesDataForm;
-        form.setModel(new CompoundPropertyModel<>(new BusquedaServicesData()));
-        form.setOutputMarkupId(true);
+        searchServiceForm = new Form<>("form");
+        searchServiceForm.setModel(new CompoundPropertyModel<>(new SearchServiceData()));
+        searchServiceForm.setOutputMarkupId(true);
 
-        TextField<String> nameField = new TextField<>("name");
-        form.add(nameField);
+        TextField<String> nameField = new TextField<>("pattern");
+        searchServiceForm.add(nameField);
 
-        form.add(new CheckBox("freeOnly"));
+        searchServiceForm.add(new CheckBox("freeOnly"));
 
         AjaxSubmitLink searchAction = new IndicatingAjaxSubmitLink("search") {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 ServicesFilterData servicesFilterData = new ServicesFilterData();
-                BusquedaServicesData busquedaServicesData = busquedaServicesDataForm.getModelObject();
-                servicesFilterData.setPattern(busquedaServicesData.getPattern());
-                servicesFilterData.setFreeOnly(busquedaServicesData.getFreeOnly());
-                return serviceDiscoverySession.listServices(servicesFilterData);
-
+                SearchServiceData searchServiceData = searchServiceForm.getModelObject();
+                servicesFilterData.setPattern(searchServiceData.getPattern());
+                servicesFilterData.setFreeOnly(searchServiceData.getFreeOnly());
+                listView.setList(serviceDiscoverySession.listServices(servicesFilterData));
                 getRequestCycle().find(AjaxRequestTarget.class).add(servicesContainer);
             }
         };
-        form.add(searchAction);
+        searchServiceForm.add(searchAction);
 
-        add(form);
+        add(searchServiceForm);
     }
-
 }

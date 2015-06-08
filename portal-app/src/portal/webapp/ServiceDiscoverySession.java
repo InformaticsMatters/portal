@@ -36,11 +36,11 @@ public class ServiceDiscoverySession implements Serializable {
         serviceDescriptorMap.put(3l, serviceDescriptor);
     }
 
-    public List<ServiceDescriptor> getServiceDescriptorList() {
-        return new ArrayList<>(serviceDescriptorMap.values());
-    }
-
     public ServiceDescriptor findServiceDescriptorById(long id) {
         return serviceDescriptorMap.get(id);
+    }
+
+    public List<? extends ServiceDescriptor> listServices(ServicesFilterData servicesFilterData) {
+        return new ArrayList<>(serviceDescriptorMap.values());
     }
 }
