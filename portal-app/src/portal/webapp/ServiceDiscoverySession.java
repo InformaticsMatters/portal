@@ -41,6 +41,10 @@ public class ServiceDiscoverySession implements Serializable {
     }
 
     public List<? extends ServiceDescriptor> listServices(ServicesFilterData servicesFilterData) {
+        if (servicesFilterData != null) {
+            System.out.println("Searching " + servicesFilterData.getPattern() + " - " + servicesFilterData.getFreeOnly());
+        }
+
         return new ArrayList<>(serviceDescriptorMap.values());
     }
 }

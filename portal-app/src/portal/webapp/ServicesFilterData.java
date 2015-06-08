@@ -3,7 +3,7 @@ package portal.webapp;
 import java.io.Serializable;
 
 /**
- * Created by mariapaz on 6/8/15.
+ * @author simetrias
  */
 public class ServicesFilterData implements Serializable {
 
