@@ -3,9 +3,9 @@ package portal.webapp;
 import java.io.Serializable;
 
 /**
- * Created by mariapaz on 6/3/15.
+ * Created by mariapaz on 6/8/15.
  */
-public class BusquedaServicesData implements Serializable {
+public class ServicesFilterData implements Serializable {
 
     private String pattern;
     private Boolean freeOnly;

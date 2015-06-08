@@ -30,6 +30,8 @@ public class ServicesPanel extends Panel {
 
     @Inject
     private ServiceDiscoverySession serviceDiscoverySession;
+    private ListView<ServiceDescriptor> listView;
+    private Form<BusquedaServicesData> busquedaServicesDataForm;
 
     public ServicesPanel(String id) {
         super(id);
@@ -43,9 +45,8 @@ public class ServicesPanel extends Panel {
         servicesContainer = new WebMarkupContainer("servicesContainer");
         servicesContainer.setOutputMarkupId(true);
 
-
         serviceDiscoverySession.loadServices();
-        ListView<ServiceDescriptor> listView = new ListView<ServiceDescriptor>("descriptors", serviceDiscoverySession.getServiceDescriptorList()) {
+        listView = new ListView<ServiceDescriptor>("descriptors", serviceDiscoverySession.getServiceDescriptorList()) {
 
             @Override
             protected void populateItem(ListItem<ServiceDescriptor> listItem) {
@@ -65,7 +66,8 @@ public class ServicesPanel extends Panel {
 
 
     private void addForm() {
-        form = new Form<>("form");
+        busquedaServicesDataForm = new Form<>("form");
+        form = busquedaServicesDataForm;
         form.setModel(new CompoundPropertyModel<>(new BusquedaServicesData()));
         form.setOutputMarkupId(true);
 
@@ -78,12 +80,13 @@ public class ServicesPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
+                ServicesFilterData servicesFilterData = new ServicesFilterData();
+                BusquedaServicesData busquedaServicesData = busquedaServicesDataForm.getModelObject();
+                servicesFilterData.setPattern(busquedaServicesData.getPattern());
+                servicesFilterData.setFreeOnly(busquedaServicesData.getFreeOnly());
+                return serviceDiscoverySession.listServices(servicesFilterData);
 
-              /*  servicesList.resetData();
-                if (ServiceDiscoverySession.getDataSource().getDelegate().getTotalCount() == 0) {
-                    notifierProvider.getNotifier(getPage()).notify("Búsqueda", "No se han encontrado resultados");
-                }
-                getRequestCycle().find(AjaxRequestTarget.class).add(servicesContainer);   */
+                getRequestCycle().find(AjaxRequestTarget.class).add(servicesContainer);
             }
         };
         form.add(searchAction);
