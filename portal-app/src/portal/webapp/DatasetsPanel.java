@@ -2,6 +2,7 @@ package portal.webapp;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -13,6 +14,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.integration.DatamartSession;
 import portal.service.api.DatasetDescriptor;
+import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 
@@ -23,7 +25,7 @@ public class DatasetsPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "dataset";
 
-    private Form<BusquedaDatasetsData> form;
+    private Form<SearchDatasetData> searchDatasetForm;
     private WebMarkupContainer datasetsContainer;
 
     private ListView<DatasetDescriptor> listView;
@@ -37,13 +39,26 @@ public class DatasetsPanel extends Panel {
     }
 
     private void addForm() {
-        form = new Form<>("form");
-        form.setModel(new CompoundPropertyModel<>(new BusquedaDatasetsData()));
-        form.setOutputMarkupId(true);
-        add(form);
+        searchDatasetForm = new Form<>("form");
+        searchDatasetForm.setModel(new CompoundPropertyModel<>(new SearchDatasetData()));
+        searchDatasetForm.setOutputMarkupId(true);
+        add(searchDatasetForm);
 
-        TextField<String> nameField = new TextField<>("name");
-        form.add(nameField);
+        TextField<String> patternField = new TextField<>("pattern");
+        searchDatasetForm.add(patternField);
+
+        AjaxSubmitLink searchAction = new IndicatingAjaxSubmitLink("search") {
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
+                DatasetsFilterData datasetsFilterData = new DatasetsFilterData();
+                SearchDatasetData searchDatasetData = searchDatasetForm.getModelObject();
+                datasetsFilterData.setPattern(searchDatasetData.getPattern());
+                listView.setList(datamartSession.listDatasets(datasetsFilterData));
+                getRequestCycle().find(AjaxRequestTarget.class).add(datasetsContainer);
+            }
+        };
+        searchDatasetForm.add(searchAction);
 
     }
 

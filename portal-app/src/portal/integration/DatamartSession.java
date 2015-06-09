@@ -3,6 +3,7 @@ package portal.integration;
 import portal.service.api.DatasetDescriptor;
 import portal.service.api.Row;
 import portal.service.api.RowDescriptor;
+import portal.webapp.DatasetsFilterData;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -91,5 +92,13 @@ public class DatamartSession implements Serializable {
 
     public DatasetDescriptor findDatasetDescriptorById(Long id) {
         return datasetDescriptors.get(id);
+    }
+
+    public List<? extends DatasetDescriptor> listDatasets(DatasetsFilterData datasetsFilterData) {
+        if (datasetsFilterData != null) {
+            System.out.println("Searching " + datasetsFilterData.getPattern());
+        }
+
+        return new ArrayList<>(datasetDescriptors.values());
     }
 }
