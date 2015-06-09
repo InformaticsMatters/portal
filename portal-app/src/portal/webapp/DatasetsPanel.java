@@ -17,7 +17,6 @@ import portal.service.api.DatasetDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 
 /**
  * @author simetrias
@@ -67,7 +66,7 @@ public class DatasetsPanel extends Panel {
         datasetsContainer = new WebMarkupContainer("datasetsContainer");
         datasetsContainer.setOutputMarkupId(true);
 
-        listView = new ListView<DatasetDescriptor>("descriptors", new ArrayList<>()) {
+        listView = new ListView<DatasetDescriptor>("descriptors", datasetSession.listDatasets(null)) {
 
             @Override
             protected void populateItem(ListItem<DatasetDescriptor> listItem) {

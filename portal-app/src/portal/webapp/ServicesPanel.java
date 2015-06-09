@@ -16,6 +16,7 @@ import portal.service.api.ServiceDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 /**
  * @author simetrias
@@ -39,8 +40,7 @@ public class ServicesPanel extends Panel {
         servicesContainer = new WebMarkupContainer("servicesContainer");
         servicesContainer.setOutputMarkupId(true);
 
-        serviceDiscoverySession.loadServices();
-        listView = new ListView<ServiceDescriptor>("descriptors", serviceDiscoverySession.listServices(null)) {
+        listView = new ListView<ServiceDescriptor>("descriptors", new ArrayList<>()) {
 
             @Override
             protected void populateItem(ListItem<ServiceDescriptor> listItem) {

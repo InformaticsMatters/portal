@@ -17,7 +17,7 @@ public class ServiceDiscoverySession implements Serializable {
 
     private Map<Long, ServiceDescriptor> serviceDescriptorMap;
 
-    public void loadServices() {
+    private void loadServices() {
         serviceDescriptorMap = new HashMap<>();
         ServiceDescriptor serviceDescriptor;
         serviceDescriptor = new ServiceDescriptor();
@@ -40,9 +40,13 @@ public class ServiceDiscoverySession implements Serializable {
         return serviceDescriptorMap.get(id);
     }
 
-    public List<? extends ServiceDescriptor> listServices(ServiceFilterData serviceFilterData) {
+    public List<ServiceDescriptor> listServices(ServiceFilterData serviceFilterData) {
         if (serviceFilterData != null) {
             System.out.println("Searching " + serviceFilterData.getPattern() + " - " + serviceFilterData.getFreeOnly());
+        }
+
+        if (serviceDescriptorMap == null) {
+            loadServices();
         }
 
         return new ArrayList<>(serviceDescriptorMap.values());

@@ -18,14 +18,14 @@ public class DatasetSession implements Serializable {
 
     @Inject
     private IntegrationClient client;
-    private Map<Long, DatasetDescriptor> datasetDescriptors;
+    private Map<Long, DatasetDescriptor> datasetDescriptorMap;
 
     private void loadDatamartDatasetList() {
-        datasetDescriptors = new HashMap<>();
+        datasetDescriptorMap = new HashMap<>();
         List<Hitlist> result = client.listHitlist();
         for (Hitlist hitlist : result) {
             DatasetDescriptor datasetDescriptor = newDatasetDescriptorFromHitlist(hitlist);
-            datasetDescriptors.put(datasetDescriptor.getId(), datasetDescriptor);
+            datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
         }
     }
 
@@ -52,7 +52,7 @@ public class DatasetSession implements Serializable {
     }
 
     public List<Row> listRow(Long datasetDescriptorId, List<Long> structureIdList) {
-        DatasetDescriptor datasetDescriptor = datasetDescriptors.get(datasetDescriptorId);
+        DatasetDescriptor datasetDescriptor = datasetDescriptorMap.get(datasetDescriptorId);
 
         // Discuss: I'm forced to match each Row to the only known metadata!
         DatamartRowDescriptor drd = (DatamartRowDescriptor) datasetDescriptor.getAllRowDescriptors().get(0);
@@ -87,7 +87,7 @@ public class DatasetSession implements Serializable {
     }
 
     public DatasetDescriptor findDatasetDescriptorById(Long id) {
-        return datasetDescriptors.get(id);
+        return datasetDescriptorMap.get(id);
     }
 
     public List<DatasetDescriptor> listDatasets(DatasetFilterData datasetFilterData) {
@@ -95,10 +95,10 @@ public class DatasetSession implements Serializable {
             System.out.println("Searching " + datasetFilterData.getPattern());
         }
 
-        if (datasetDescriptors == null) {
+        if (datasetDescriptorMap == null) {
             loadDatamartDatasetList();
         }
 
-        return new ArrayList<>(datasetDescriptors.values());
+        return new ArrayList<>(datasetDescriptorMap.values());
     }
 }
