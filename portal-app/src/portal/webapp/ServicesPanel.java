@@ -71,16 +71,22 @@ public class ServicesPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                ServiceFilterData serviceFilterData = new ServiceFilterData();
-                SearchServiceData searchServiceData = searchServiceForm.getModelObject();
-                serviceFilterData.setPattern(searchServiceData.getPattern());
-                serviceFilterData.setFreeOnly(searchServiceData.getFreeOnly());
-                listView.setList(serviceDiscoverySession.listServices(serviceFilterData));
-                getRequestCycle().find(AjaxRequestTarget.class).add(servicesContainer);
+                refreshServiceList();
             }
         };
         searchServiceForm.add(searchAction);
 
         add(searchServiceForm);
+    }
+
+    private void refreshServiceList() {
+        ServiceFilterData serviceFilterData = new ServiceFilterData();
+        SearchServiceData searchServiceData = searchServiceForm.getModelObject();
+        serviceFilterData.setPattern(searchServiceData.getPattern());
+        serviceFilterData.setFreeOnly(searchServiceData.getFreeOnly());
+        listView.setList(serviceDiscoverySession.listServices(serviceFilterData));
+        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        target.add(servicesContainer);
+        target.appendJavaScript("makeCardsDraggable()");
     }
 }

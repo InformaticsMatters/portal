@@ -17,6 +17,7 @@ import portal.service.api.DatasetDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 /**
  * @author simetrias
@@ -51,22 +52,17 @@ public class DatasetsPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                DatasetFilterData datasetFilterData = new DatasetFilterData();
-                SearchDatasetData searchDatasetData = searchDatasetForm.getModelObject();
-                datasetFilterData.setPattern(searchDatasetData.getPattern());
-                listView.setList(datasetSession.listDatasets(datasetFilterData));
-                getRequestCycle().find(AjaxRequestTarget.class).add(datasetsContainer);
+                refreshDatasetList();
             }
         };
         searchDatasetForm.add(searchAction);
-
     }
 
     private void addDatasets() {
         datasetsContainer = new WebMarkupContainer("datasetsContainer");
         datasetsContainer.setOutputMarkupId(true);
 
-        listView = new ListView<DatasetDescriptor>("descriptors", datasetSession.listDatasets(null)) {
+        listView = new ListView<DatasetDescriptor>("descriptors", new ArrayList<>()) {
 
             @Override
             protected void populateItem(ListItem<DatasetDescriptor> listItem) {
@@ -90,5 +86,15 @@ public class DatasetsPanel extends Panel {
         datasetsContainer.add(listView);
 
         add(datasetsContainer);
+    }
+
+    private void refreshDatasetList() {
+        DatasetFilterData datasetFilterData = new DatasetFilterData();
+        SearchDatasetData searchDatasetData = searchDatasetForm.getModelObject();
+        datasetFilterData.setPattern(searchDatasetData.getPattern());
+        listView.setList(datasetSession.listDatasets(datasetFilterData));
+        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        target.add(datasetsContainer);
+        target.appendJavaScript("makeCardsDraggable()");
     }
 }
