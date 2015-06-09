@@ -71,11 +71,11 @@ public class ServicesPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                ServicesFilterData servicesFilterData = new ServicesFilterData();
+                ServiceFilterData serviceFilterData = new ServiceFilterData();
                 SearchServiceData searchServiceData = searchServiceForm.getModelObject();
-                servicesFilterData.setPattern(searchServiceData.getPattern());
-                servicesFilterData.setFreeOnly(searchServiceData.getFreeOnly());
-                listView.setList(serviceDiscoverySession.listServices(servicesFilterData));
+                serviceFilterData.setPattern(searchServiceData.getPattern());
+                serviceFilterData.setFreeOnly(searchServiceData.getFreeOnly());
+                listView.setList(serviceDiscoverySession.listServices(serviceFilterData));
                 getRequestCycle().find(AjaxRequestTarget.class).add(servicesContainer);
             }
         };

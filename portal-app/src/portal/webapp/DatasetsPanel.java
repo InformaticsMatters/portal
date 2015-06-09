@@ -12,11 +12,12 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.integration.DatamartSession;
+import portal.integration.DatasetSession;
 import portal.service.api.DatasetDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 /**
  * @author simetrias
@@ -30,7 +31,7 @@ public class DatasetsPanel extends Panel {
 
     private ListView<DatasetDescriptor> listView;
     @Inject
-    private DatamartSession datamartSession;
+    private DatasetSession datasetSession;
 
     public DatasetsPanel(String id) {
         super(id);
@@ -51,10 +52,10 @@ public class DatasetsPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                DatasetsFilterData datasetsFilterData = new DatasetsFilterData();
+                DatasetFilterData datasetFilterData = new DatasetFilterData();
                 SearchDatasetData searchDatasetData = searchDatasetForm.getModelObject();
-                datasetsFilterData.setPattern(searchDatasetData.getPattern());
-                listView.setList(datamartSession.listDatasets(datasetsFilterData));
+                datasetFilterData.setPattern(searchDatasetData.getPattern());
+                listView.setList(datasetSession.listDatasets(datasetFilterData));
                 getRequestCycle().find(AjaxRequestTarget.class).add(datasetsContainer);
             }
         };
@@ -66,8 +67,7 @@ public class DatasetsPanel extends Panel {
         datasetsContainer = new WebMarkupContainer("datasetsContainer");
         datasetsContainer.setOutputMarkupId(true);
 
-        datamartSession.loadDatamartDatasetList();
-        listView = new ListView<DatasetDescriptor>("descriptors", datamartSession.getDatasetDescriptorList()) {
+        listView = new ListView<DatasetDescriptor>("descriptors", new ArrayList<>()) {
 
             @Override
             protected void populateItem(ListItem<DatasetDescriptor> listItem) {

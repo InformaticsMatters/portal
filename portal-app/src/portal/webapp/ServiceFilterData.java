@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author simetrias
  */
-public class ServicesFilterData implements Serializable {
+public class ServiceFilterData implements Serializable {
 
     private String pattern;
     private Boolean freeOnly;

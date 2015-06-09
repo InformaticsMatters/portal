@@ -3,9 +3,9 @@ package portal.webapp;
 import java.io.Serializable;
 
 /**
- * Created by mariapaz on 6/9/15.
+ * @author simetrias
  */
-public class DatasetsFilterData implements Serializable {
+public class DatasetFilterData implements Serializable {
 
     private String pattern;
 

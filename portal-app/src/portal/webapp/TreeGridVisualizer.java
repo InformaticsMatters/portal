@@ -5,7 +5,7 @@ import com.inmethod.grid.treegrid.TreeGrid;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.model.Model;
-import portal.integration.DatamartSession;
+import portal.integration.DatasetSession;
 import portal.service.api.*;
 
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
     private DatasetDescriptor datasetDescriptor;
     private List<Long> allIds;
     @Inject
-    private DatamartSession datamartSession;
+    private DatasetSession datasetSession;
 
     public TreeGridVisualizer(String id, DatasetDescriptor datasetDescriptor) {
         super(id, new DefaultTreeModel(new DefaultMutableTreeNode()), buildColumns(datasetDescriptor));
@@ -29,7 +29,7 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
         getTree().setRootLess(true);
         this.datasetDescriptor = datasetDescriptor;
         // allIds = datasetService.listAllRowIds(datasetDescriptor.getId());
-        allIds = datamartSession.listAllRowIds(datasetDescriptor.getId());
+        allIds = datasetSession.listAllRowIds(datasetDescriptor.getId());
         setCurrentPage(0);
     }
 
@@ -79,7 +79,7 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
         listRowFilter.setDatasetDescriptorId(datasetDescriptor.getId());
 
         // List<Row> rowList = datasetService.listRow(listRowFilter);
-        List<Row> rowList = datamartSession.listRow(datasetDescriptor.getId(), rowIdList);
+        List<Row> rowList = datasetSession.listRow(datasetDescriptor.getId(), rowIdList);
 
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
         buildNodeHierarchy(rootNode, rowList);

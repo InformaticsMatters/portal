@@ -5,7 +5,7 @@ import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
 import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.request.resource.DynamicImageResource;
-import portal.integration.DatamartSession;
+import portal.integration.DatasetSession;
 import portal.service.api.PropertyDescriptor;
 import portal.service.api.Row;
 
@@ -24,7 +24,7 @@ public class DynamicStructureImageResource extends DynamicImageResource {
     public static final String PARAM_ROW = "row";
 
     @Inject
-    private DatamartSession datamartSession;
+    private DatasetSession datasetSession;
 
     public DynamicStructureImageResource() {
         CdiContainer.get().getNonContextualManager().postConstruct(this);
@@ -52,7 +52,7 @@ public class DynamicStructureImageResource extends DynamicImageResource {
         Long rowId = Long.valueOf(rowIdAsString);
 
         // Row row = service.findRowById(datasetDescriptorId, rowId);
-        List<Row> rows = datamartSession.listRow(datasetDescriptorId, Arrays.asList(rowId));
+        List<Row> rows = datasetSession.listRow(datasetDescriptorId, Arrays.asList(rowId));
         Row row = rows.get(0);
 
         if (row != null) {

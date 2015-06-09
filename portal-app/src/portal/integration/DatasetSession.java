@@ -3,7 +3,7 @@ package portal.integration;
 import portal.service.api.DatasetDescriptor;
 import portal.service.api.Row;
 import portal.service.api.RowDescriptor;
-import portal.webapp.DatasetsFilterData;
+import portal.webapp.DatasetFilterData;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -14,13 +14,13 @@ import java.util.*;
  * @author simetrias
  */
 @SessionScoped
-public class DatamartSession implements Serializable {
+public class DatasetSession implements Serializable {
 
     @Inject
     private IntegrationClient client;
     private Map<Long, DatasetDescriptor> datasetDescriptors;
 
-    public void loadDatamartDatasetList() {
+    private void loadDatamartDatasetList() {
         datasetDescriptors = new HashMap<>();
         List<Hitlist> result = client.listHitlist();
         for (Hitlist hitlist : result) {
@@ -44,10 +44,6 @@ public class DatamartSession implements Serializable {
 
         ddd.addRowDescriptor(drd);
         return ddd;
-    }
-
-    public List<DatasetDescriptor> getDatasetDescriptorList() {
-        return new ArrayList<>(datasetDescriptors.values());
     }
 
     public List<Long> listAllRowIds(Long datasetDescriptorId) {
@@ -94,9 +90,13 @@ public class DatamartSession implements Serializable {
         return datasetDescriptors.get(id);
     }
 
-    public List<? extends DatasetDescriptor> listDatasets(DatasetsFilterData datasetsFilterData) {
-        if (datasetsFilterData != null) {
-            System.out.println("Searching " + datasetsFilterData.getPattern());
+    public List<DatasetDescriptor> listDatasets(DatasetFilterData datasetFilterData) {
+        if (datasetFilterData != null) {
+            System.out.println("Searching " + datasetFilterData.getPattern());
+        }
+
+        if (datasetDescriptors == null) {
+            loadDatamartDatasetList();
         }
 
         return new ArrayList<>(datasetDescriptors.values());

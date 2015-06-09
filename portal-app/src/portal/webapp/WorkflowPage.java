@@ -18,7 +18,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
-import portal.integration.DatamartSession;
+import portal.integration.DatasetSession;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -44,7 +44,7 @@ public class WorkflowPage extends WebPage {
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
-    private DatamartSession datamartSession;
+    private DatasetSession datasetSession;
     @Inject
     private ServiceDiscoverySession serviceDiscoverySession;
 
@@ -130,7 +130,7 @@ public class WorkflowPage extends WebPage {
             canvasItemPanel = serviceCanvasItemPanel;
         } else if (DatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
             DatasetCanvasItemData datasetCanvasItemData = new DatasetCanvasItemData();
-            datasetCanvasItemData.setDatasetDescriptor(datamartSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
+            datasetCanvasItemData.setDatasetDescriptor(datasetSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
             datasetCanvasItemData.setPositionX(x);
             datasetCanvasItemData.setPositionY(y);
             DatasetCanvasItemPanel datasetCanvasItemPanel = new DatasetCanvasItemPanel("item", datasetCanvasItemData);
