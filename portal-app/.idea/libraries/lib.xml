@@ -18,12 +18,14 @@
       <root url="file://$PROJECT_DIR$/../lib/jackson/1.6.9" />
       <root url="file://$PROJECT_DIR$/../lib/eclipselink/2.5.2" />
       <root url="file://$PROJECT_DIR$/../lib/jchem/6.2.0_b787" />
+      <root url="file://$PROJECT_DIR$/../lib/groovy-all/2.2.2" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/cdi-api/1.2.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/eclipselink/2.5.2" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/el-api/2.2" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/groovy-all/2.2.2" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/inmethod/6.9.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jackson/1.6.9" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jchem/6.2.0_b787" recursive="false" />

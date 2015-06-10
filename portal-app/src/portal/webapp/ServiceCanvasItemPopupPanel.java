@@ -71,6 +71,7 @@ public class ServiceCanvasItemPopupPanel extends Panel {
         sketchThumbnail.setOutputMarkupId(true);
 
         sketchThumbnail.add(new AjaxEventBehavior("onclick") {
+
             @Override
             protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
                 marvinSketcherPanel.showModal();

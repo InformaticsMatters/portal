@@ -1,8 +1,12 @@
 package portal.webapp;
 
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyCodeSource;
+import org.apache.wicket.cdi.CdiContainer;
 import portal.service.api.ServiceDescriptor;
 
 import javax.enterprise.context.SessionScoped;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,20 +24,15 @@ public class ServiceDiscoverySession implements Serializable {
     private void loadServices() {
         serviceDescriptorMap = new HashMap<>();
         ServiceDescriptor serviceDescriptor;
-        serviceDescriptor = new ServiceDescriptor();
-        serviceDescriptor.setId(1l);
-        serviceDescriptor.setName("Service 1");
-        serviceDescriptorMap.put(1l, serviceDescriptor);
 
-        serviceDescriptor = new ServiceDescriptor();
-        serviceDescriptor.setId(2l);
-        serviceDescriptor.setName("Service 2");
-        serviceDescriptorMap.put(2l, serviceDescriptor);
-
-        serviceDescriptor = new ServiceDescriptor();
-        serviceDescriptor.setId(3l);
-        serviceDescriptor.setName("Service 3");
-        serviceDescriptorMap.put(3l, serviceDescriptor);
+        File sdiFolder = new File(PortalWebApplication.get().getServletContext().getRealPath("sdi"));
+        File[] files = sdiFolder.listFiles();
+        for (File scriptFile : files) {
+            if (scriptFile.getName().endsWith("groovy")) {
+                serviceDescriptor = instantiateServiceInterface(scriptFile).getServiceDescriptor();
+                serviceDescriptorMap.put(serviceDescriptor.getId(), serviceDescriptor);
+            }
+        }
     }
 
     public ServiceDescriptor findServiceDescriptorById(long id) {
@@ -50,5 +49,16 @@ public class ServiceDiscoverySession implements Serializable {
         }
 
         return new ArrayList<>(serviceDescriptorMap.values());
+    }
+
+    private ServiceDiscoveryInterface instantiateServiceInterface(File scriptFile) {
+        try {
+            Class interfaceClass = new GroovyClassLoader().parseClass(new GroovyCodeSource(scriptFile));
+            ServiceDiscoveryInterface serviceDiscoveryInterface = (ServiceDiscoveryInterface) interfaceClass.newInstance();
+            CdiContainer.get().getNonContextualManager().postConstruct(serviceDiscoveryInterface);
+            return serviceDiscoveryInterface;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
