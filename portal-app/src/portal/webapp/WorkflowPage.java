@@ -75,6 +75,7 @@ public class WorkflowPage extends WebPage {
         add(new FooterPanel("footerPanel"));
         add(new DatasetsPanel("datasets"));
         add(new ServicesPanel("services"));
+        add(new JobsPanel("jobs"));
     }
 
     private void addActions() {

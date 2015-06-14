@@ -11,6 +11,7 @@
     width: 200px;
     margin: 20px;
     vertical-align: top;
+    font-size: 14px;
 }
 
 .portalThumbnails li span {
@@ -163,6 +164,11 @@
     height: 100%;
 	margin: 0 auto -200px;
 }
+
+.wrapper .page.grid {
+    padding: 0 1rem 0 1rem;
+}
+
 .footer {
 	height: 200px!important;
 }
@@ -197,4 +203,14 @@
 .dataSets ul,
 .services ul {
     -webkit-padding-start: 0;
+}
+
+.ui.grid {
+    margin-top:0;
+    font-size: 0;
+}
+
+.ui.grid>* {
+    padding-left: auto !important;
+    padding-right: auto !important;
 }

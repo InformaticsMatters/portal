@@ -16,39 +16,30 @@
     <div class="separator20"></div>
 
     <div class="ui page grid">
-        <div class="row">
-            <div class="column">
-                <div class="ui segment">
-                    <div class="canvas">
-                        <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
-                            <div wicket:id="canvasItem" class="canvas-item">
-                                <div wicket:id="item"></div>
-                            </div>
-                            <div class="ui popup canvasItemPopup"></div>
+        <div class="four wide column" wicket:id="jobs"></div>
+        <div class="twelve wide column">
+            <div class="ui segment">
+                <div class="canvas">
+                    <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
+                        <div wicket:id="canvasItem" class="canvas-item">
+                            <div wicket:id="item"></div>
                         </div>
+                        <div class="ui popup canvasItemPopup"></div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="column">
-                <div class="ui top attached tabular menu">
-                    <a class="active item" data-tab="datasets">Datasets</a>
-                    <a class="item" data-tab="services">Services</a>
-                    <a class="item" data-tab="third">Visualizers</a>
-                </div>
-                <div class="ui bottom attached active tab segment" data-tab="datasets">
+
+            <div class="ui two column grid">
+                <div class="column">
                     <div wicket:id="datasets"></div>
                 </div>
-                <div class="ui bottom attached tab segment" data-tab="services">
+                <div class="column">
                     <div wicket:id="services"></div>
-                </div>
-                <div class="ui bottom attached tab segment" data-tab="third">
-                    <a wicket:id="serialize">Serialize</a>
                 </div>
             </div>
         </div>
     </div>
+    <a wicket:id="serialize">Serialize</a>
 
     <div class="push"></div>
 </div>
