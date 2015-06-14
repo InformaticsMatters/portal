@@ -1,6 +1,9 @@
 package portal.service.api;
 
+import portal.webapp.ServicePropertyDescriptor;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author simetrias
@@ -9,6 +12,7 @@ public class ServiceDescriptor implements Serializable {
 
     private Long id;
     private String name;
+    private List<ServicePropertyDescriptor> servicePropertyDescriptorList;
 
     public String getName() {
         return name;
@@ -24,5 +28,13 @@ public class ServiceDescriptor implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<ServicePropertyDescriptor> getServicePropertyDescriptorList() {
+        return servicePropertyDescriptorList;
+    }
+
+    public void setServicePropertyDescriptorList(List<ServicePropertyDescriptor> servicePropertyDescriptorList) {
+        this.servicePropertyDescriptorList = servicePropertyDescriptorList;
     }
 }

@@ -19,7 +19,7 @@ public class ServiceCanvasItemPanel extends Panel {
         super(id);
         setOutputMarkupId(true);
         this.callbacks = callbacks;
-        addServiceCanvasItemPopup();
+        addServiceCanvasItemPopup(serviceCanvasItemData);
 
         add(new Label("id", serviceCanvasItemData.getServiceDescriptor().getId()));
         add(new Label("name", serviceCanvasItemData.getServiceDescriptor().getName()));
@@ -36,8 +36,8 @@ public class ServiceCanvasItemPanel extends Panel {
         });
     }
 
-    private void addServiceCanvasItemPopup() {
-        serviceCanvasItemPopup = new ServiceCanvasItemPopupPanel("serviceCanvasItemPopup", callbacks);
+    private void addServiceCanvasItemPopup(ServiceCanvasItemData serviceCanvasItemData) {
+        serviceCanvasItemPopup = new ServiceCanvasItemPopupPanel("serviceCanvasItemPopup", serviceCanvasItemData, callbacks);
         serviceCanvasItemPopup.setVisible(false);
         add(serviceCanvasItemPopup);
     }
