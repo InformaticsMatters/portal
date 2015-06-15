@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 public class ServicePropertyDescriptor implements Serializable {
 
+    private Type type = Type.STRING;
     private String label;
 
     public String getLabel() {
@@ -15,5 +16,21 @@ public class ServicePropertyDescriptor implements Serializable {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public enum Type {
+
+        STRING,
+        INTEGER,
+        STRUCTURE
+
     }
 }

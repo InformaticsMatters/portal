@@ -18,11 +18,18 @@ class ServiceInterface1 implements ServiceDiscoveryInterface {
         ServicePropertyDescriptor propertyDescriptor;
 
         propertyDescriptor = new ServicePropertyDescriptor();
-        propertyDescriptor.setLabel("Caption 1");
+        propertyDescriptor.setType(ServicePropertyDescriptor.Type.STRING);
+        propertyDescriptor.setLabel("Label 1");
         servicePropertyDescriptorList.add(propertyDescriptor);
 
         propertyDescriptor = new ServicePropertyDescriptor();
-        propertyDescriptor.setLabel("Caption 2");
+        propertyDescriptor.setType(ServicePropertyDescriptor.Type.STRING);
+        propertyDescriptor.setLabel("Label 2");
+        servicePropertyDescriptorList.add(propertyDescriptor);
+
+        propertyDescriptor = new ServicePropertyDescriptor();
+        propertyDescriptor.setType(ServicePropertyDescriptor.Type.STRUCTURE);
+        propertyDescriptor.setLabel("Label 3");
         servicePropertyDescriptorList.add(propertyDescriptor);
 
         serviceDescriptor.setServicePropertyDescriptorList(servicePropertyDescriptorList);

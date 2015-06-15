@@ -2,20 +2,13 @@
     <div class="ui serviceCanvasItemPopup popup">
         <div class="ui one column grid">
             <div class="column">
-                <table class="ui small table">
-                    <tr wicket:id="property">
-                        <td><b><span wicket:id="label">Name</span></b></td>
-                        <td><span wicket:id="value">Value</span></td>
-                    </tr>
-                </table>
-                <div class="sketcher-thumb">
-                    <img wicket:id="sketch">
-                </div>
-
+                <ul>
+                    <li wicket:id="property">
+                        <div wicket:id="editor"></div>
+                    </li>
+                </ul>
                 <a wicket:id="delete">Delete</a>
             </div>
         </div>
     </div>
-
-    <div wicket:id="marvinSketcherPanel"></div>
 </wicket:panel>
