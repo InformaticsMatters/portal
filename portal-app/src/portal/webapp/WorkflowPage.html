@@ -15,9 +15,11 @@
     <div wicket:id="menuPanel"></div>
     <div class="separator20"></div>
 
+    <input name="jobs" type="checkbox" wicket:id="jobsCheckBox"/>Jobs
+
     <div class="ui page grid">
-        <div class="four wide column" wicket:id="jobs"></div>
-        <div class="twelve wide column">
+        <div class="three wide column" id="jobsColumn" wicket:id="jobs"></div>
+        <div class="ten wide column" id="centralColumn">
             <div class="ui segment">
                 <div class="canvas">
                     <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
@@ -38,8 +40,11 @@
                 </div>
             </div>
         </div>
+        <div class="three wide" id="visualizersColumn">
+            <div class="ui segment"><a wicket:id="serialize">Serialize</a></div>
+        </div>
     </div>
-    <a wicket:id="serialize">Serialize</a>
+
 
     <div class="push"></div>
 </div>

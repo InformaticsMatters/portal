@@ -5,6 +5,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -15,6 +16,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
@@ -36,10 +38,12 @@ public class WorkflowPage extends WebPage {
     public static final String POSITION_Y = "positionY";
     public static final String CANVASITEM_INDEX = "index";
     public static final String CANVASITEM_WICKETID = "canvasItem";
-
+    boolean jobsCheckBoxValue = true;
     private List<AbstractCanvasItemData> canvasItemModelList = new ArrayList<>();
     private ListView<AbstractCanvasItemData> canvasItemRepeater;
     private WebMarkupContainer plumbContainer;
+    private JobsPanel jobsPanel;
+    private AjaxCheckBox jobsCheckBox;
 
     @Inject
     private NotifierProvider notifierProvider;
@@ -75,10 +79,22 @@ public class WorkflowPage extends WebPage {
         add(new FooterPanel("footerPanel"));
         add(new DatasetsPanel("datasets"));
         add(new ServicesPanel("services"));
-        add(new JobsPanel("jobs"));
+
+        jobsPanel = new JobsPanel("jobs");
+        add(jobsPanel);
+        jobsPanel.setOutputMarkupPlaceholderTag(true);
     }
 
     private void addActions() {
+        jobsCheckBox = new AjaxCheckBox("jobsCheckBox", new PropertyModel(this, "jobsCheckBoxValue")) {
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                jobsPanel.setVisible(jobsCheckBoxValue);
+                target.add(jobsPanel);
+            }
+        };
+        add(jobsCheckBox);
+
         add(new IndicatingAjaxLink("serialize") {
 
             @Override

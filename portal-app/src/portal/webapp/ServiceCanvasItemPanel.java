@@ -1,7 +1,7 @@
 package portal.webapp;
 
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -24,13 +24,13 @@ public class ServiceCanvasItemPanel extends Panel {
         add(new Label("id", serviceCanvasItemData.getServiceDescriptor().getId()));
         add(new Label("name", serviceCanvasItemData.getServiceDescriptor().getName()));
 
-        add(new AjaxEventBehavior("click") {
+        add(new AjaxLink("openPopup") {
 
             @Override
-            protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 serviceCanvasItemPopup.setVisible(true);
                 ajaxRequestTarget.add(serviceCanvasItemPopup);
-                String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
+                String js = "$('#" + ServiceCanvasItemPanel.this.getMarkupId() + "').popup({popup: $('#" + ServiceCanvasItemPanel.this.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
                 ajaxRequestTarget.appendJavaScript(js);
             }
         });
