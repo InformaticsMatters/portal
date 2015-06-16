@@ -32,3 +32,9 @@ $( document ).ready(function() {
 function tabularMenu() {
     $('.tabular.menu .item').tab();
 }
+
+function applyWorkflowPageLayout(jobsVisible, jobsCheckBoxValue) {
+   if(jobsVisible) {
+       $('#centralColumn').removeClass('sixteen wide column').addClass('thirteen wide column');
+   }else {$('#centralColumn').removeClass('thirteen wide column').removeClass('sixteen wide column');}
+}

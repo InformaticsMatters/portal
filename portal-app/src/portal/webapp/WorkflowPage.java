@@ -91,6 +91,7 @@ public class WorkflowPage extends WebPage {
             protected void onUpdate(AjaxRequestTarget target) {
                 jobsPanel.setVisible(jobsCheckBoxValue);
                 target.add(jobsPanel);
+                target.appendJavaScript("applyWorkflowPageLayout(" + jobsCheckBoxValue + ")");
             }
         };
         add(jobsCheckBox);
