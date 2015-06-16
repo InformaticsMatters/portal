@@ -16,10 +16,11 @@
     <div class="separator20"></div>
 
     <input name="jobs" type="checkbox" wicket:id="jobsCheckBox"/>Jobs
+    <input name="visualizers" type="checkbox" wicket:id="visualizersCheckBox"/>Visualizers
 
     <div class="ui page grid">
         <div class="three wide column" id="jobsColumn" wicket:id="jobs"></div>
-        <div class="thirteen wide column" id="centralColumn">
+        <div class="ten wide column" id="centralColumn">
             <div class="ui segment">
                 <div class="canvas">
                     <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
@@ -40,9 +41,11 @@
                 </div>
             </div>
         </div>
-        <div class="three wide" id="visualizersColumn">
-            <div><a wicket:id="serialize">Serialize</a></div>
+        <div class="three wide column" id="visualizersColumn">
+            <div wicket:id="visualizers"></div>
         </div>
+        <a wicket:id="serialize">Serialize</a>
+
     </div>
 
 

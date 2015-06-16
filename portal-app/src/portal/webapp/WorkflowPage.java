@@ -39,12 +39,14 @@ public class WorkflowPage extends WebPage {
     public static final String CANVASITEM_INDEX = "index";
     public static final String CANVASITEM_WICKETID = "canvasItem";
     boolean jobsCheckBoxValue = true;
+    boolean visualizersCheckBoxValue = true;
     private List<AbstractCanvasItemData> canvasItemModelList = new ArrayList<>();
     private ListView<AbstractCanvasItemData> canvasItemRepeater;
     private WebMarkupContainer plumbContainer;
     private JobsPanel jobsPanel;
     private AjaxCheckBox jobsCheckBox;
-
+    private VisualizersPanel visualizersPanel;
+    private AjaxCheckBox visualizersCheckBox;
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
@@ -83,6 +85,10 @@ public class WorkflowPage extends WebPage {
         jobsPanel = new JobsPanel("jobs");
         add(jobsPanel);
         jobsPanel.setOutputMarkupPlaceholderTag(true);
+
+        visualizersPanel = new VisualizersPanel("visualizers");
+        add(visualizersPanel);
+        visualizersPanel.setOutputMarkupPlaceholderTag(true);
     }
 
     private void addActions() {
@@ -91,10 +97,20 @@ public class WorkflowPage extends WebPage {
             protected void onUpdate(AjaxRequestTarget target) {
                 jobsPanel.setVisible(jobsCheckBoxValue);
                 target.add(jobsPanel);
-                target.appendJavaScript("applyWorkflowPageLayout(" + jobsCheckBoxValue + ")");
+                target.appendJavaScript("applyWorkflowPageLayout(" + jobsCheckBoxValue + ", " + visualizersCheckBoxValue + ")");
             }
         };
         add(jobsCheckBox);
+
+        visualizersCheckBox = new AjaxCheckBox("visualizersCheckBox", new PropertyModel(this, "visualizersCheckBoxValue")) {
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                visualizersPanel.setVisible(visualizersCheckBoxValue);
+                target.add(visualizersPanel);
+                target.appendJavaScript("applyWorkflowPageLayout(" + visualizersCheckBoxValue + ", " + jobsCheckBoxValue + ")");
+            }
+        };
+        add(visualizersCheckBox);
 
         add(new IndicatingAjaxLink("serialize") {
 

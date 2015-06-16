@@ -33,8 +33,14 @@ function tabularMenu() {
     $('.tabular.menu .item').tab();
 }
 
-function applyWorkflowPageLayout(jobsVisible, jobsCheckBoxValue) {
-   if(jobsVisible) {
-       $('#centralColumn').removeClass('sixteen wide column').addClass('thirteen wide column');
-   }else {$('#centralColumn').removeClass('thirteen wide column').removeClass('sixteen wide column');}
+function applyWorkflowPageLayout(jobsCheckBoxValue, visualizersCheckBoxValue) {
+ if(jobsCheckBoxValue && visualizersCheckBoxValue) {
+            $('#centralColumn').attr('class','ten wide column');
+        }else if(!jobsCheckBoxValue && !visualizersCheckBoxValue) {
+                $('#centralColumn').attr('class','sixteen wide column');
+            } else if(jobsCheckBoxValue && !visualizersCheckBoxValue) {
+                    $('#centralColumn').attr('class','thirteen wide column');
+                }else if(!jobsCheckBoxValue && visualizersCheckBoxValue) {
+                        $('#centralColumn').attr('class','thirteen wide column');
+                    }
 }
