@@ -6,7 +6,9 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author simetrias
@@ -15,18 +17,21 @@ public class ServiceCanvasItemPopupPanel extends Panel {
 
     private final ServiceCanvasItemData serviceCanvasItemData;
     private ServiceCanvasItemPanel.Callbacks callbacks;
+    private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
 
     public ServiceCanvasItemPopupPanel(String id, ServiceCanvasItemData serviceCanvasItemData, ServiceCanvasItemPanel.Callbacks callbacks) {
         super(id);
+        this.callbacks = callbacks;
         this.serviceCanvasItemData = serviceCanvasItemData;
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
-        addProperties();
-        addActions(callbacks);
+        addServiceProperties();
+        addActions();
     }
 
-    private void addProperties() {
+    private void addServiceProperties() {
         List<ServicePropertyDescriptor> servicePropertyDescriptorList = serviceCanvasItemData.getServiceDescriptor().getServicePropertyDescriptorList();
+        createServicePropertyValueMap(servicePropertyDescriptorList);
         ListView<ServicePropertyDescriptor> listView = new ListView<ServicePropertyDescriptor>("property", servicePropertyDescriptorList) {
 
             @Override
@@ -37,16 +42,30 @@ public class ServiceCanvasItemPopupPanel extends Panel {
         add(listView);
     }
 
-    private void addServiceProperty(ListItem<ServicePropertyDescriptor> listItem) {
-        ServicePropertyDescriptor object = listItem.getModelObject();
-        if (ServicePropertyDescriptor.Type.STRING == object.getType()) {
-            listItem.add(new StringPropertyEditorPanel("editor", object));
-        } else if (ServicePropertyDescriptor.Type.STRUCTURE == object.getType()) {
-            listItem.add(new StructurePropertyEditorPanel("editor", object));
+    private void createServicePropertyValueMap(List<ServicePropertyDescriptor> servicePropertyDescriptorList) {
+        servicePropertyValueMap = new HashMap<>(servicePropertyDescriptorList.size());
+        for (ServicePropertyDescriptor descriptor : servicePropertyDescriptorList) {
+            servicePropertyValueMap.put(descriptor, null);
         }
     }
 
-    private void addActions(final ServiceCanvasItemPanel.Callbacks callbacks) {
+    private void addServiceProperty(ListItem<ServicePropertyDescriptor> listItem) {
+        ServicePropertyDescriptor servicePropertyDescriptor = listItem.getModelObject();
+        if (ServicePropertyDescriptor.Type.STRING == servicePropertyDescriptor.getType()) {
+            listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor));
+        } else if (ServicePropertyDescriptor.Type.STRUCTURE == servicePropertyDescriptor.getType()) {
+            listItem.add(new StructurePropertyEditorPanel("editor", servicePropertyDescriptor));
+        }
+    }
+
+    private void addActions() {
+        add(new AjaxLink("save") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                callbacks.onSave();
+            }
+        });
         add(new AjaxLink("delete") {
 
             @Override

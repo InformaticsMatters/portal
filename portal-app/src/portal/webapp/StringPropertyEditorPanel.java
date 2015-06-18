@@ -11,7 +11,6 @@ import org.apache.wicket.model.PropertyModel;
 public class StringPropertyEditorPanel extends Panel {
 
     private final ServicePropertyDescriptor servicePropertyDescriptor;
-    private TextField<String> stringTextField;
     private String value;
 
     public StringPropertyEditorPanel(String id, ServicePropertyDescriptor servicePropertyDescriptor) {
@@ -22,7 +21,7 @@ public class StringPropertyEditorPanel extends Panel {
 
     private void addComponents() {
         add(new Label("label", servicePropertyDescriptor.getLabel()));
-        stringTextField = new TextField<>("value", new PropertyModel<>(this, "value"));
+        TextField<String> stringTextField = new TextField<>("value", new PropertyModel<>(this, "value"));
         add(stringTextField);
     }
 

@@ -30,7 +30,7 @@ public class ServiceCanvasItemPanel extends Panel {
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 serviceCanvasItemPopup.setVisible(true);
                 ajaxRequestTarget.add(serviceCanvasItemPopup);
-                String js = "$('#" + ServiceCanvasItemPanel.this.getMarkupId() + "').popup({popup: $('#" + ServiceCanvasItemPanel.this.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
+                String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + ServiceCanvasItemPanel.this.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
                 ajaxRequestTarget.appendJavaScript(js);
             }
         });
@@ -45,6 +45,8 @@ public class ServiceCanvasItemPanel extends Panel {
     public interface Callbacks extends Serializable {
 
         void onDelete();
+
+        void onSave();
 
     }
 }

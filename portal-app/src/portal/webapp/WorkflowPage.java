@@ -92,7 +92,8 @@ public class WorkflowPage extends WebPage {
     }
 
     private void addActions() {
-        jobsCheckBox = new AjaxCheckBox("jobsCheckBox", new PropertyModel(this, "jobsCheckBoxValue")) {
+        jobsCheckBox = new AjaxCheckBox("jobsCheckBox", new PropertyModel<>(this, "jobsCheckBoxValue")) {
+
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 jobsPanel.setVisible(jobsCheckBoxValue);
@@ -158,7 +159,7 @@ public class WorkflowPage extends WebPage {
             serviceCanvasItemData.setServiceDescriptor(serviceDiscoverySession.findServiceDescriptorById(Long.parseLong(dropDataId)));
             serviceCanvasItemData.setPositionX(x);
             serviceCanvasItemData.setPositionY(y);
-            ServiceCanvasItemPanel serviceCanvasItemPanel = new ServiceCanvasItemPanel("item", serviceCanvasItemData, () -> removeCanvasItem(serviceCanvasItemData));
+            ServiceCanvasItemPanel serviceCanvasItemPanel = createServiceCanvasItemPanel(serviceCanvasItemData);
             canvasItemModelList.add(serviceCanvasItemData);
             data = serviceCanvasItemData;
             canvasItemPanel = serviceCanvasItemPanel;
@@ -167,7 +168,7 @@ public class WorkflowPage extends WebPage {
             datasetCanvasItemData.setDatasetDescriptor(datasetSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
             datasetCanvasItemData.setPositionX(x);
             datasetCanvasItemData.setPositionY(y);
-            DatasetCanvasItemPanel datasetCanvasItemPanel = new DatasetCanvasItemPanel("item", datasetCanvasItemData);
+            DatasetCanvasItemPanel datasetCanvasItemPanel = createDatasetCanvasItemPanel(datasetCanvasItemData);
             canvasItemModelList.add(datasetCanvasItemData);
             data = datasetCanvasItemData;
             canvasItemPanel = datasetCanvasItemPanel;
@@ -191,6 +192,24 @@ public class WorkflowPage extends WebPage {
             target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
             target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
         }
+    }
+
+    private DatasetCanvasItemPanel createDatasetCanvasItemPanel(DatasetCanvasItemData datasetCanvasItemData) {
+        return new DatasetCanvasItemPanel("item", datasetCanvasItemData);
+    }
+
+    private ServiceCanvasItemPanel createServiceCanvasItemPanel(final ServiceCanvasItemData serviceCanvasItemData) {
+        return new ServiceCanvasItemPanel("item", serviceCanvasItemData, new ServiceCanvasItemPanel.Callbacks() {
+
+            @Override
+            public void onDelete() {
+                removeCanvasItem(serviceCanvasItemData);
+            }
+
+            @Override
+            public void onSave() {
+            }
+        });
     }
 
     private void removeCanvasItem(AbstractCanvasItemData abstractCanvasItemData) {
