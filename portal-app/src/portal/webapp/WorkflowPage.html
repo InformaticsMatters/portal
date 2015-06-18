@@ -10,18 +10,25 @@
 <div wicket:id="notifier"></div>
 
 
-<div class="wrapper">
+<div class="wrapper" style="display: -webkit-flex; -webkit-flex-direction: column;">
 
     <div wicket:id="menuPanel"></div>
     <div class="separator20"></div>
+    <a wicket:id="datasetsToggle">Datasets</a>
+    <a wicket:id="servicesToggle">Services</a>
+    <a wicket:id="jobsToggle">Jobs</a>
+    <a wicket:id="visualizersToggle">Visualizers</a>
 
-    <input name="jobs" type="checkbox" wicket:id="jobsCheckBox"/>Jobs
-    <input name="visualizers" type="checkbox" wicket:id="visualizersCheckBox"/>Visualizers
 
-    <div class="ui page grid">
-        <div class="three wide column" id="jobsColumn" wicket:id="jobs"></div>
-        <div class="ten wide column" id="centralColumn">
-            <div class="ui segment">
+    <div class="ui page two column grid" style="display: -webkit-flex; -webkit-flex:1;">
+        <div class="column" style="display: -webkit-flex; -webkit-flex:1; -webkit-flex-direction: column;">
+
+            <div wicket:id="datasets" class="ui segment" style="-webkit-flex:1;"></div>
+            <div wicket:id="services" class="ui segment" style="-webkit-flex:1;"></div>
+        </div>
+
+        <div class="column" style="display: -webkit-flex; -webkit-flex:1; -webkit-flex-direction: column;">
+            <div class="ui segment" style="-webkit-flex:1;">
                 <div class="canvas">
                     <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
                         <div wicket:id="canvasItem" class="canvas-item">
@@ -32,18 +39,13 @@
                 </div>
             </div>
 
-            <div class="ui two column grid">
-                <div class="column">
-                    <div wicket:id="datasets"></div>
-                </div>
-                <div class="column">
-                    <div wicket:id="services"></div>
-                </div>
-            </div>
+
+            <div wicket:id="jobs" style="-webkit-flex:1;"></div>
+
+
+            <div wicket:id="visualizers" style="-webkit-flex:1;"></div>
         </div>
-        <div class="three wide column" id="visualizersColumn">
-            <div wicket:id="visualizers"></div>
-        </div>
+
         <a wicket:id="serialize">Serialize</a>
 
     </div>

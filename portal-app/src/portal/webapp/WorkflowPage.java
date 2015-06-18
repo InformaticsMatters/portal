@@ -5,7 +5,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
-import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -16,7 +16,6 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
@@ -44,9 +43,14 @@ public class WorkflowPage extends WebPage {
     private ListView<AbstractCanvasItemData> canvasItemRepeater;
     private WebMarkupContainer plumbContainer;
     private JobsPanel jobsPanel;
-    private AjaxCheckBox jobsCheckBox;
+    private AjaxLink jobsToggle;
     private VisualizersPanel visualizersPanel;
-    private AjaxCheckBox visualizersCheckBox;
+    private AjaxLink visualizersToggle;
+    private AjaxLink datasetsToggle;
+    private DatasetsPanel datasetsPanel;
+    private AjaxLink servicesToggle;
+    private ServicesPanel servicesPanel;
+
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
@@ -79,8 +83,14 @@ public class WorkflowPage extends WebPage {
     private void addPanels() {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
-        add(new DatasetsPanel("datasets"));
-        add(new ServicesPanel("services"));
+
+        datasetsPanel = new DatasetsPanel("datasets");
+        add(datasetsPanel);
+        datasetsPanel.setOutputMarkupPlaceholderTag(true);
+
+        servicesPanel = new ServicesPanel("services");
+        add(servicesPanel);
+        servicesPanel.setOutputMarkupPlaceholderTag(true);
 
         jobsPanel = new JobsPanel("jobs");
         add(jobsPanel);
@@ -92,26 +102,46 @@ public class WorkflowPage extends WebPage {
     }
 
     private void addActions() {
-        jobsCheckBox = new AjaxCheckBox("jobsCheckBox", new PropertyModel<>(this, "jobsCheckBoxValue")) {
+        datasetsToggle = new AjaxLink("datasetsToggle") {
 
             @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                jobsPanel.setVisible(jobsCheckBoxValue);
+            public void onClick(AjaxRequestTarget target) {
+                datasetsPanel.setVisible(!datasetsPanel.isVisible());
+                target.add(datasetsPanel);
+            }
+        };
+        add(datasetsToggle);
+
+        servicesToggle = new AjaxLink("servicesToggle") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                servicesPanel.setVisible(!servicesPanel.isVisible());
+                target.add(servicesPanel);
+            }
+        };
+        add(servicesToggle);
+
+        jobsToggle = new AjaxLink("jobsToggle") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                jobsPanel.setVisible(!jobsPanel.isVisible());
                 target.add(jobsPanel);
-                target.appendJavaScript("applyWorkflowPageLayout(" + jobsCheckBoxValue + ", " + visualizersCheckBoxValue + ")");
+                //target.appendJavaScript("applyWorkflowPageLayout(" + jobsCheckBoxValue + ", " + visualizersCheckBoxValue + ")");
             }
         };
-        add(jobsCheckBox);
+        add(jobsToggle);
 
-        visualizersCheckBox = new AjaxCheckBox("visualizersCheckBox", new PropertyModel(this, "visualizersCheckBoxValue")) {
+        visualizersToggle = new AjaxLink("visualizersToggle") {
             @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                visualizersPanel.setVisible(visualizersCheckBoxValue);
+            public void onClick(AjaxRequestTarget target) {
+                visualizersPanel.setVisible(!visualizersPanel.isVisible());
                 target.add(visualizersPanel);
-                target.appendJavaScript("applyWorkflowPageLayout(" + visualizersCheckBoxValue + ", " + jobsCheckBoxValue + ")");
+                // target.appendJavaScript("applyWorkflowPageLayout(" + visualizersCheckBoxValue + ", " + jobsCheckBoxValue + ")");
             }
         };
-        add(visualizersCheckBox);
+        add(visualizersToggle);
 
         add(new IndicatingAjaxLink("serialize") {
 
