@@ -1,3 +1,4 @@
+
 package portal.webapp;
 
 import chemaxon.formats.MolImporter;
@@ -10,6 +11,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import toolkit.wicket.marvin4js.MarvinSketcher;
 
 import java.awt.*;
@@ -20,17 +22,15 @@ import java.awt.*;
 public class StructurePropertyEditorPanel extends Panel {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
-    private final ServicePropertyDescriptor servicePropertyDescriptor;
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
 
-    public StructurePropertyEditorPanel(String id, ServicePropertyDescriptor servicePropertyDescriptor) {
+    public StructurePropertyEditorPanel(String id, ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         super(id);
-        this.servicePropertyDescriptor = servicePropertyDescriptor;
-        addComponents();
+        addComponents(servicePropertyDescriptor, servicePropertyModel);
     }
 
-    private void addComponents() {
+    private void addComponents(ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         add(new Label("label", servicePropertyDescriptor.getLabel()));
 
 

@@ -3,33 +3,21 @@ package portal.webapp;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.IModel;
 
 /**
  * @author simetrias
  */
 public class StringPropertyEditorPanel extends Panel {
 
-    private final ServicePropertyDescriptor servicePropertyDescriptor;
-    private String value;
-
-    public StringPropertyEditorPanel(String id, ServicePropertyDescriptor servicePropertyDescriptor) {
+    public StringPropertyEditorPanel(String id, ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         super(id);
-        this.servicePropertyDescriptor = servicePropertyDescriptor;
-        addComponents();
+        addComponents(servicePropertyDescriptor, servicePropertyModel);
     }
 
-    private void addComponents() {
+    private void addComponents(ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         add(new Label("label", servicePropertyDescriptor.getLabel()));
-        TextField<String> stringTextField = new TextField<>("value", new PropertyModel<>(this, "value"));
+        TextField<String> stringTextField = new TextField<>("value", servicePropertyModel);
         add(stringTextField);
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 }
