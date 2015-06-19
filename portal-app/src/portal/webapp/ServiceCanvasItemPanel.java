@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author simetrias
@@ -37,16 +38,31 @@ public class ServiceCanvasItemPanel extends Panel {
     }
 
     private void addServiceCanvasItemPopup(ServiceCanvasItemData serviceCanvasItemData) {
-        serviceCanvasItemPopup = new ServiceCanvasItemPopupPanel("serviceCanvasItemPopup", serviceCanvasItemData, callbacks);
+        serviceCanvasItemPopup = new ServiceCanvasItemPopupPanel("serviceCanvasItemPopup", serviceCanvasItemData, new ServiceCanvasItemPopupPanel.Callbacks() {
+
+            @Override
+            public void onDelete() {
+                callbacks.onServiceCanvasItemDelete();
+            }
+
+            @Override
+            public void onSave() {
+                callbacks.onServiceCanvasItemSave();
+            }
+        });
         serviceCanvasItemPopup.setVisible(false);
         add(serviceCanvasItemPopup);
     }
 
+    public Map<ServicePropertyDescriptor, String> getServicePropertyValueMap() {
+        return serviceCanvasItemPopup.getServicePropertyValueMap();
+    }
+
     public interface Callbacks extends Serializable {
 
-        void onDelete();
+        void onServiceCanvasItemDelete();
 
-        void onSave();
+        void onServiceCanvasItemSave();
 
     }
 }

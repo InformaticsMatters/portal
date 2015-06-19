@@ -232,12 +232,12 @@ public class WorkflowPage extends WebPage {
         return new ServiceCanvasItemPanel("item", serviceCanvasItemData, new ServiceCanvasItemPanel.Callbacks() {
 
             @Override
-            public void onDelete() {
+            public void onServiceCanvasItemDelete() {
                 removeCanvasItem(serviceCanvasItemData);
             }
 
             @Override
-            public void onSave() {
+            public void onServiceCanvasItemSave() {
             }
         });
     }

@@ -19,11 +19,11 @@ import java.util.Map;
 public class ServiceCanvasItemPopupPanel extends Panel {
 
     private final ServiceCanvasItemData serviceCanvasItemData;
-    private ServiceCanvasItemPanel.Callbacks callbacks;
     private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
     private Form form;
+    private Callbacks callbacks;
 
-    public ServiceCanvasItemPopupPanel(String id, ServiceCanvasItemData serviceCanvasItemData, ServiceCanvasItemPanel.Callbacks callbacks) {
+    public ServiceCanvasItemPopupPanel(String id, ServiceCanvasItemData serviceCanvasItemData, Callbacks callbacks) {
         super(id);
         this.callbacks = callbacks;
         this.serviceCanvasItemData = serviceCanvasItemData;
@@ -88,6 +88,18 @@ public class ServiceCanvasItemPopupPanel extends Panel {
                 callbacks.onDelete();
             }
         });
+    }
+
+    public Map<ServicePropertyDescriptor, String> getServicePropertyValueMap() {
+        return servicePropertyValueMap;
+    }
+
+    public interface Callbacks {
+
+        void onDelete();
+
+        void onSave();
+
     }
 
     private class ServicePropertyModel implements IModel<String> {
