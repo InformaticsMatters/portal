@@ -10,40 +10,38 @@
 <div wicket:id="notifier"></div>
 
 
-<div class="wrapper" style="display: -webkit-flex; -webkit-flex-direction: column;">
+<div class="wrapper flex-column">
 
     <div wicket:id="menuPanel"></div>
     <div class="separator20"></div>
-    <a wicket:id="datasetsToggle">Datasets</a>
-    <a wicket:id="servicesToggle">Services</a>
-    <a wicket:id="jobsToggle">Jobs</a>
-    <a wicket:id="visualizersToggle">Visualizers</a>
 
+    <div class="ui grid flex-1">
+        <div class="column flex-column-2">
+            <a wicket:id="datasetsToggle">Datasets</a>
 
-    <div class="ui page two column grid" style="display: -webkit-flex; -webkit-flex:1;">
-        <div class="column" style="display: -webkit-flex; -webkit-flex:1; -webkit-flex-direction: column;">
+            <div wicket:id="datasets" class="ui segment child-1"></div>
+            <a wicket:id="servicesToggle">Services</a>
 
-            <div wicket:id="datasets" class="ui segment" style="-webkit-flex:1;"></div>
-            <div wicket:id="services" class="ui segment" style="-webkit-flex:1;"></div>
+            <div wicket:id="services" class="ui segment child-1"></div>
         </div>
 
-        <div class="column" style="display: -webkit-flex; -webkit-flex:1; -webkit-flex-direction: column;">
-            <div class="ui segment" style="-webkit-flex:1;">
-                <div class="canvas">
-                    <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
-                        <div wicket:id="canvasItem" class="canvas-item">
-                            <div wicket:id="item"></div>
-                        </div>
-                        <div class="ui popup canvasItemPopup"></div>
-                    </div>
+        <div class="column flex-column-1">
+            <a wicket:id="canvasToggle" style="text-align: right;">Canvas</a>
+
+            <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer ui segment child-1 ">
+                <div wicket:id="canvasItem" class="canvas-item">
+                    <div wicket:id="item"></div>
                 </div>
+                <div class="ui popup canvasItemPopup"></div>
             </div>
 
+            <a wicket:id="jobsToggle" style="text-align: right;">Jobs</a>
 
-            <div wicket:id="jobs" style="-webkit-flex:1;"></div>
+            <div wicket:id="jobs" class="ui basic segment child-1"></div>
 
+            <a wicket:id="visualizersToggle" style="text-align: right;">Visualizers</a>
 
-            <div wicket:id="visualizers" style="-webkit-flex:1;"></div>
+            <div wicket:id="visualizers" class="ui segment child-1"></div>
         </div>
 
         <a wicket:id="serialize">Serialize</a>

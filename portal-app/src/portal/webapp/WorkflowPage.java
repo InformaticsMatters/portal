@@ -42,6 +42,7 @@ public class WorkflowPage extends WebPage {
     private List<AbstractCanvasItemData> canvasItemModelList = new ArrayList<>();
     private ListView<AbstractCanvasItemData> canvasItemRepeater;
     private WebMarkupContainer plumbContainer;
+    private AjaxLink canvasToggle;
     private JobsPanel jobsPanel;
     private AjaxLink jobsToggle;
     private VisualizersPanel visualizersPanel;
@@ -122,6 +123,16 @@ public class WorkflowPage extends WebPage {
         };
         add(servicesToggle);
 
+        canvasToggle = new AjaxLink("canvasToggle") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                plumbContainer.setVisible(!plumbContainer.isVisible());
+                target.add(plumbContainer);
+            }
+        };
+        add(canvasToggle);
+
         jobsToggle = new AjaxLink("jobsToggle") {
 
             @Override
@@ -155,6 +166,7 @@ public class WorkflowPage extends WebPage {
     private void addCanvas() {
         plumbContainer = new WebMarkupContainer("plumbContainer");
         plumbContainer.setOutputMarkupId(true);
+        plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
 
         canvasItemRepeater = new ListView<AbstractCanvasItemData>(CANVASITEM_WICKETID, canvasItemModelList) {

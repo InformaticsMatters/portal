@@ -165,10 +165,6 @@
 	margin: 0 auto -200px;
 }
 
-.wrapper .page.grid {
-    padding: 0 1rem 0 1rem;
-}
-
 .footer {
 	height: 200px!important;
 }
@@ -213,4 +209,30 @@
 .ui.grid>* {
     padding-left: auto !important;
     padding-right: auto !important;
+}
+
+.flex-column {
+    display: -webkit-flex!important;
+    -webkit-flex-direction: column!important;
+}
+
+.flex-1 {
+    display: -webkit-flex!important;
+    -webkit-flex:1!important;
+}
+
+.flex-column-1 {
+    display: -webkit-flex!important;
+    -webkit-flex:1!important;
+    -webkit-flex-direction: column!important;
+}
+
+.flex-column-2 {
+    display: -webkit-flex!important;
+    -webkit-flex:2;
+    -webkit-flex-direction: column!important;
+}
+
+.child-1 {
+    -webkit-flex:1!important;
 }
