@@ -238,11 +238,11 @@
 }
 
 .margin0 {
-    margin:0;
+    margin:0!important;
 }
 
 .padding0 {
-    padding: 0;
+    padding: 0!important;
 }
 
 .datasetsToggle {
@@ -263,12 +263,12 @@
     display: block;
 }
 
-.vertical-menu {
+.vertical-left-menu {
   text-align:center;
-  -moz-transform: rotate(-90deg) translateX(-85px) translateY(-80px);
-  -webkit-transform: rotate(-90deg) translateX(-85px) translateY(-80px);
-  -o-transform: rotate(-90deg) translateX(-85px) translateY(-80px);
-  transform: rotate(-90deg) translateX(-85px) translateY(-80px);
+  -moz-transform: rotate(-90deg) translateX(-85px) translateY(-85px);
+  -webkit-transform: rotate(-90deg) translateX(-85px) translateY(-85px);
+  -o-transform: rotate(-90deg) translateX(-85px) translateY(-85px);
+  transform: rotate(-90deg) translateX(-85px) translateY(-85px);
   width: 200px;
   height: 30px;
   margin: 0;
@@ -276,13 +276,27 @@
   position: absolute;
 }
 
-.nav-item {
+.vertical-right-menu {
+  text-align:center;
+  -moz-transform: rotate(90deg) translateX(135px) translateY(-135px);
+  -webkit-transform: rotate(90deg) translateX(135px) translateY(-135px);
+  -o-transform: rotate(90deg) translateX(135px) translateY(-135px);
+  transform: rotate(90deg) translateX(135px) translateY(-135px);
+  width: 300px;
+  height: 30px;
+  margin: 0;
+  padding: 0!important;
+  position: absolute;
+  right: 0;
+}
+
+.left-nav-item {
     background-color: #eee;
     height: 30px;
     line-height: 30px;
     vertical-align: middle;
     margin: 0;
-    padding: 4px 10px;
+    padding: 0px 10px;
     display: inline-block;
     width: 100px;
     font-size: 14px;
@@ -290,7 +304,26 @@
     color: rgba(0,0,0,.8);
 }
 
-.nav-item:hover {
+.left-nav-item:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.right-nav-item {
+    background-color: #eee;
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0px 10px;
+    display: inline-block;
+    width: 100px;
+    font-size: 14px;
+    border-left: 1px solid #ddd;
+    color: rgba(0,0,0,.8);
+}
+
+.right-nav-item:hover {
     background-color: #ddd;
     color: black;
 }
