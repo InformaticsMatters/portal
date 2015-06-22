@@ -13,19 +13,19 @@
 <div class="wrapper flex-column">
 
     <div wicket:id="menuPanel"></div>
-    <div class="separator20"></div>
 
-    <div class="ui grid flex-1">
-        <div class="column flex-column-2">
-            <a wicket:id="datasetsToggle">Datasets</a>
+    <div class="ui grid flex-1 margin0">
+        <div class="vertical-menu">
+            <a class="nav-item" wicket:id="datasetsToggle">Datasets</a>
+            <a class="nav-item" wicket:id="servicesToggle">Services</a>
+        </div>
 
+        <div class="column flex-column-2 padding0" style="margin-left: 35px; border-left: 1px solid #ddd;">
             <div wicket:id="datasets" class="ui segment child-1"></div>
-            <a wicket:id="servicesToggle">Services</a>
-
             <div wicket:id="services" class="ui segment child-1"></div>
         </div>
 
-        <div class="column flex-column-1">
+        <div class="column flex-column-1 padding0">
             <a wicket:id="canvasToggle" style="text-align: right;">Canvas</a>
 
             <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer ui segment child-1 ">
@@ -44,10 +44,8 @@
             <div wicket:id="visualizers" class="ui segment child-1"></div>
         </div>
 
-        <a wicket:id="serialize">Serialize</a>
-
     </div>
-
+    <a wicket:id="serialize">Serialize</a>
 
     <div class="push"></div>
 </div>
