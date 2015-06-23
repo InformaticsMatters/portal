@@ -9,66 +9,7 @@
 
 <div wicket:id="menuPanel"></div>
 
-<div class="ui page grid">
-    <div>
-        <h3 class="header">User Registration</h3>
+<div wicket:id="userRegistrationPanel"></div>
 
-        <form class="ui form" wicket:id="form">
-            <div class="three fields">
-                <div class="field">
-                    <label>Username</label>
-                    <input type="text" wicket:id="username">
-                </div>
-                <div class="field">
-                    <label>Email</label>
-                    <input type="text" wicket:id="email">
-                </div>
-                <div class="field">
-                    <label>Phone number</label>
-                    <input type="text" wicket:id="phoneNumber">
-                </div>
-            </div>
-            <div class="three fields">
-                <div class="field">
-                    <label>Title</label>
-                    <input type="text">
-                </div>
-                <div class="field">
-                    <label>First name</label>
-                    <input type="text" wicket:id="firstName">
-                </div>
-                <div class="field">
-                    <label>Last name</label>
-                    <input type="text" wicket:id="lastName">
-                </div>
-            </div>
-            <div class="three fields">
-                <div class="field">
-                    <label>Password</label>
-                    <input type="password" wicket:id="password">
-                </div>
-                <div class="field">
-                    <label>Password confirmation</label>
-                    <input type="password" wicket:id="passwordConfirmation">
-                </div>
-                <div class="field">
-                </div>
-            </div>
-
-            <div>
-                <a wicket:id="refreshCaptcha" class="refresh-captcha-button">Refresh</a>
-            </div>
-            <div>
-                <img class="captcha-image" wicket:id="captchaImage"/>
-            </div>
-            <div class="four wide field">
-                <label>Replicate the text you see above</label>
-                <input class="" wicket:id="captchaText" type="text" size="30"/>
-            </div>
-
-            <div class="ui submit button" wicket:id="save">Register</div>
-        </form>
-    </div>
-</div>
 </body>
 </html>
