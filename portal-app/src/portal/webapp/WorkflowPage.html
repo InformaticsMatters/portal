@@ -16,16 +16,16 @@
 
     <div class="ui grid flex-1 margin0">
         <div class="vertical-left-menu">
-            <a class="left-nav-item" wicket:id="datasetsToggle">Datasets</a>
-            <a class="left-nav-item" wicket:id="servicesToggle">Services</a>
+            <a class="left-nav-item verticalItem active" wicket:id="servicesToggle">Services</a>
+            <a class="left-nav-item verticalItem active" wicket:id="datasetsToggle">Datasets</a>
         </div>
 
-        <div class="column flex-column-2" style="margin-left: 30px; border-left: 1px solid #ddd;">
+        <div class="column flex-column-2" style="margin-left: 20px; border-left: 1px solid #ddd;">
             <div wicket:id="datasets" class="ui segment child-1"></div>
             <div wicket:id="services" class="ui segment child-1"></div>
         </div>
 
-        <div class="column flex-column-1" style="margin-right: 30px; border-right: 1px solid #ddd;">
+        <div class="column flex-column-1" style="margin-right: 20px; border-right: 1px solid #ddd;">
             <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer ui segment child-1 ">
                 <div wicket:id="canvasItem" class="canvas-item">
                     <div wicket:id="item"></div>
@@ -39,14 +39,12 @@
         </div>
 
         <div class="vertical-right-menu">
-            <a class="right-nav-item" wicket:id="canvasToggle">Canvas</a>
-            <a class="right-nav-item" wicket:id="jobsToggle">Jobs</a>
-            <a class="right-nav-item" wicket:id="visualizersToggle">Visualizers</a>
+            <a class="right-nav-item verticalItem active" wicket:id="canvasToggle">Canvas</a>
+            <a class="right-nav-item verticalItem active" wicket:id="jobsToggle">Jobs</a>
+            <a class="right-nav-item verticalItem active" wicket:id="visualizersToggle">Visualizers</a>
         </div>
 
     </div>
-    <a wicket:id="serialize">Serialize</a>
-
     <div class="push"></div>
 </div>
 

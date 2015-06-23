@@ -6,7 +6,7 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -103,12 +103,15 @@ public class WorkflowPage extends WebPage {
     }
 
     private void addActions() {
+        final AttributeAppender attributeAppender = AttributeModifier.append("class", "active");
+
         datasetsToggle = new AjaxLink("datasetsToggle") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 datasetsPanel.setVisible(!datasetsPanel.isVisible());
                 target.add(datasetsPanel);
+                target.appendJavaScript("makeVerticalItemActive('" + datasetsToggle.getMarkupId() + "')");
             }
         };
         add(datasetsToggle);
@@ -119,6 +122,7 @@ public class WorkflowPage extends WebPage {
             public void onClick(AjaxRequestTarget target) {
                 servicesPanel.setVisible(!servicesPanel.isVisible());
                 target.add(servicesPanel);
+                target.appendJavaScript("makeVerticalItemActive('" + servicesToggle.getMarkupId() + "')");
             }
         };
         add(servicesToggle);
@@ -129,6 +133,7 @@ public class WorkflowPage extends WebPage {
             public void onClick(AjaxRequestTarget target) {
                 plumbContainer.setVisible(!plumbContainer.isVisible());
                 target.add(plumbContainer);
+                target.appendJavaScript("makeVerticalItemActive('" + canvasToggle.getMarkupId() + "')");
             }
         };
         add(canvasToggle);
@@ -139,7 +144,7 @@ public class WorkflowPage extends WebPage {
             public void onClick(AjaxRequestTarget target) {
                 jobsPanel.setVisible(!jobsPanel.isVisible());
                 target.add(jobsPanel);
-                //target.appendJavaScript("applyWorkflowPageLayout(" + jobsCheckBoxValue + ", " + visualizersCheckBoxValue + ")");
+                target.appendJavaScript("makeVerticalItemActive('" + jobsToggle.getMarkupId() + "')");
             }
         };
         add(jobsToggle);
@@ -149,18 +154,10 @@ public class WorkflowPage extends WebPage {
             public void onClick(AjaxRequestTarget target) {
                 visualizersPanel.setVisible(!visualizersPanel.isVisible());
                 target.add(visualizersPanel);
-                // target.appendJavaScript("applyWorkflowPageLayout(" + visualizersCheckBoxValue + ", " + jobsCheckBoxValue + ")");
+                target.appendJavaScript("makeVerticalItemActive('" + visualizersToggle.getMarkupId() + "')");
             }
         };
         add(visualizersToggle);
-
-        add(new IndicatingAjaxLink("serialize") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                serializeWorkflow();
-            }
-        });
     }
 
     private void addCanvas() {
@@ -345,17 +342,5 @@ public class WorkflowPage extends WebPage {
             }
         };
         add(onCanvasNewConnectionBehavior);
-    }
-
-    private void serializeWorkflow() {
-        for (AbstractCanvasItemData data : canvasItemModelList) {
-            if (data instanceof ServiceCanvasItemData) {
-                ServiceCanvasItemData serviceData = (ServiceCanvasItemData) data;
-                System.out.println(serviceData.getServiceDescriptor().getName());
-            } else if (data instanceof DatasetCanvasItemData) {
-                DatasetCanvasItemData datasetData = (DatasetCanvasItemData) data;
-                System.out.println(datasetData.getDatasetDescriptor().getDescription());
-            }
-        }
     }
 }

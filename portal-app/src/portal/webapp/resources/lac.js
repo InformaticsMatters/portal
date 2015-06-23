@@ -8,6 +8,11 @@ function makeMenuItemActive(itemId) {
     $('#' + itemId).addClass("active");
 }
 
+function makeVerticalItemActive(itemId) {
+  //  $('.verticalItem').removeClass("active");
+    $('#' + itemId).toggleClass("active");
+}
+
 
 function leftSideBarToggle(){
     $('.ui.left.sidebar')
