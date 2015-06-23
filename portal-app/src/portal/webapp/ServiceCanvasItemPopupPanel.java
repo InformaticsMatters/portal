@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +95,7 @@ public class ServiceCanvasItemPopupPanel extends Panel {
         return servicePropertyValueMap;
     }
 
-    public interface Callbacks {
+    public interface Callbacks extends Serializable {
 
         void onDelete();
 
