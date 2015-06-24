@@ -245,6 +245,18 @@
     padding: 0!important;
 }
 
+.workflow {
+    margin:0!important;
+}
+
+.workflow > div > .segment,
+.workflow > div > .segment:first-child,
+.workflow > div > .segment:last-child {
+    margin: 8px 0!important;
+}
+
+
+
 .vertical-left-menu {
   text-align:center;
   -moz-transform: rotate(-90deg) translateX(-90px) translateY(-90px);

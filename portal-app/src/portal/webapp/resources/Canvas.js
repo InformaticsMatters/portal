@@ -26,7 +26,7 @@ function removeCanvasItem(itemId) {
 
 function addSourceEndpoint(itemId) {
     var sourceEndpointOptions = {
-        anchor: 'RightMiddle',
+        anchor: 'BottomCenter',
         isSource:true,
         paintStyle: {
             fillStyle: "#7AB02C",
@@ -44,7 +44,7 @@ function addSourceEndpoint(itemId) {
 function addTargetEndpoint(itemId) {
     var targetEndpointOptions = {
         endpoint: 'Dot',
-        anchor: 'LeftMiddle',
+        anchor: 'TopCenter',
         isTarget:true,
         paintStyle : {
             strokeStyle: "#7AB02C",

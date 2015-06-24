@@ -2,7 +2,13 @@
     <form class="ui form" wicket:id="form">
         <div class="fields">
             <div class="field">
-                <input type="text" wicket:id="pattern">
+                <div class="ui action small input">
+                    <input type="text" wicket:id="pattern">
+
+                    <div class="ui small icon button" wicket:id="search">
+                        <i class="search icon"></i>
+                    </div>
+                </div>
             </div>
             <div class="field">
                 <div class="ui checkbox" style="margin-top: 10px;">
@@ -12,11 +18,6 @@
             </div>
             <div class="field">
                 <input type="hidden">
-            </div>
-            <div class="field">
-                <div class="ui button" wicket:id="search">
-                    Search
-                </div>
             </div>
         </div>
     </form>
