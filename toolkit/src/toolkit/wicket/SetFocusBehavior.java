@@ -1,4 +1,4 @@
-package portal.toolkit.wicket;
+package toolkit.wicket;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;

@@ -12,7 +12,7 @@ import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.service.Title;
-import portal.toolkit.wicket.SetFocusBehavior;
+import toolkit.wicket.SetFocusBehavior;
 
 import java.util.Arrays;
 
