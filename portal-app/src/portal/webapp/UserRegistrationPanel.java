@@ -4,12 +4,17 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.extensions.markup.html.captcha.CaptchaImageResource;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import portal.service.Title;
+import portal.toolkit.wicket.SetFocusBehavior;
+
+import java.util.Arrays;
 
 public class UserRegistrationPanel extends Panel {
 
@@ -32,20 +37,10 @@ public class UserRegistrationPanel extends Panel {
         form.setModel(new CompoundPropertyModel<UserRegistrationData>(new UserRegistrationData()));
         add(form);
 
-        TextField<String> usernameField = new TextField<String>("username");
-        form.add(usernameField);
-
-        TextField<String> emailField = new TextField<String>("email");
-        form.add(emailField);
-
-        TextField<Integer> phoneNumberField = new TextField<Integer>("phoneNumber");
-        form.add(phoneNumberField);
-
-        TextField<String> firstNameField = new TextField<String>("firstName");
-        form.add(firstNameField);
-
-        TextField<String> lastNameField = new TextField<String>("lastName");
-        form.add(lastNameField);
+        TextField<String> userName = new TextField<String>("userName");
+        userName.setOutputMarkupId(true);
+        userName.add(new SetFocusBehavior());
+        form.add(userName);
 
         PasswordTextField password = new PasswordTextField("password");
         password.setOutputMarkupId(true);
@@ -58,6 +53,25 @@ public class UserRegistrationPanel extends Panel {
         passwordConfirmation.setRequired(false);
         passwordConfirmation.setResetPassword(false);
         form.add(passwordConfirmation);
+
+        TextField<String> email = new TextField<String>("email");
+        email.setOutputMarkupId(true);
+        form.add(email);
+
+        DropDownChoice<Title> title = new DropDownChoice<Title>("title", Arrays.asList(Title.values()));
+        form.add(title);
+
+        TextField<String> firstName = new TextField<String>("firstName");
+        firstName.setOutputMarkupId(true);
+        form.add(firstName);
+
+        TextField<String> lastName = new TextField<String>("lastName");
+        lastName.setOutputMarkupId(true);
+        form.add(lastName);
+
+        TextField<String> telephoneNumber = new TextField<String>("phoneNumber");
+        telephoneNumber.setOutputMarkupId(true);
+        form.add(telephoneNumber);
 
         addOrReplaceCaptcha();
         form.add(new AjaxLink("refreshCaptcha") {

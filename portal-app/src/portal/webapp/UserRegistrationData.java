@@ -1,5 +1,6 @@
 package portal.webapp;
 
+import portal.service.Title;
 
 import java.io.Serializable;
 
@@ -8,6 +9,7 @@ public class UserRegistrationData implements Serializable {
     private String username;
     private String email;
     private Integer phoneNumber;
+    private Title title;
     private String firstName;
     private String lastName;
     private String password;
@@ -37,6 +39,14 @@ public class UserRegistrationData implements Serializable {
 
     public void setPhoneNumber(Integer phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Title getTitle() {
+        return title;
+    }
+
+    public void setTitle(Title title) {
+        this.title = title;
     }
 
     public String getFirstName() {
