@@ -24,7 +24,6 @@ public class UserRegistrationData implements Serializable {
         this.username = username;
     }
 
-
     public String getEmail() {
         return email;
     }

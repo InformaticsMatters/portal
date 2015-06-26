@@ -37,7 +37,7 @@ public class UserRegistrationPanel extends Panel {
         form.setModel(new CompoundPropertyModel<UserRegistrationData>(new UserRegistrationData()));
         add(form);
 
-        TextField<String> userName = new TextField<String>("userName");
+        TextField<String> userName = new TextField<String>("username");
         userName.setOutputMarkupId(true);
         userName.add(new SetFocusBehavior());
         form.add(userName);
