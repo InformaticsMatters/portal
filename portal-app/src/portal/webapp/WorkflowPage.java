@@ -6,7 +6,6 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -95,16 +94,16 @@ public class WorkflowPage extends WebPage {
 
         jobsPanel = new JobsPanel("jobs");
         add(jobsPanel);
+        jobsPanel.setVisible(false);
         jobsPanel.setOutputMarkupPlaceholderTag(true);
 
         visualizersPanel = new VisualizersPanel("visualizers");
         add(visualizersPanel);
+        visualizersPanel.setVisible(false);
         visualizersPanel.setOutputMarkupPlaceholderTag(true);
     }
 
     private void addActions() {
-        final AttributeAppender attributeAppender = AttributeModifier.append("class", "active");
-
         datasetsToggle = new AjaxLink("datasetsToggle") {
 
             @Override
