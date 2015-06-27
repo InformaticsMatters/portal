@@ -325,3 +325,12 @@
     background-color: #efefef;
     color: black;
 }
+
+.serviceCanvasItemPopup ul {
+    list-style: none;
+    padding: 0;
+}
+
+.serviceCanvasItemPopup form {
+    width: 200px;
+}
