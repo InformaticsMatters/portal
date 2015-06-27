@@ -334,3 +334,13 @@
 .serviceCanvasItemPopup form {
     width: 200px;
 }
+
+.left-column {
+    margin-left: 20px;
+    border-left: 1px solid #ddd;
+}
+
+.right-column {
+    margin-right: 20px;
+    border-right: 1px solid #ddd;
+}
