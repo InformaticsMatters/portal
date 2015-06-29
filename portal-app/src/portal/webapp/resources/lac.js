@@ -39,8 +39,9 @@ function tabularMenu() {
 }
 
 
-function applyWorkflowPageLayout(datasetsVisibility) {
- if(!datasetsVisibility) {
+function applyWorkflowPageLayout(datasetsVisibility, servicesVisibility) {
+
+ if(!datasetsVisibility && !servicesVisibility) {
         $('.left-column').attr('style','display: none!important;');
     }
 }

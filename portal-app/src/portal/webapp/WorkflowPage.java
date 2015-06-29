@@ -111,6 +111,7 @@ public class WorkflowPage extends WebPage {
                 datasetsPanel.setVisible(!datasetsPanel.isVisible());
                 target.add(datasetsPanel);
                 target.appendJavaScript("makeVerticalItemActive('" + datasetsToggle.getMarkupId() + "')");
+                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "')");
             }
         };
         add(datasetsToggle);
