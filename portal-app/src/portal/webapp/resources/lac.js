@@ -40,21 +40,25 @@ function tabularMenu() {
 
 
 
-function applyWorkflowPageLayout(datasetsVisibility, servicesVisibility) {
+function applyWorkflowPageLayout(datasetsVisibility, servicesVisibility, canvasVisibility, jobsVisibility, visualizersVisibility) {
+
 var datasetsVisible = (datasetsVisibility === 'true');
 var servicesVisible = (servicesVisibility === 'true');
-
- if(!datasetsVisible && !servicesVisible) {
-        $('.left-column').attr('style','display: none!important;');
-        $('.right-column').attr('style','margin-left: 20px!important; border-left: 1px solid #ddd;');
-    } else if (datasetsVisible && servicesVisible) {
+var canvasVisible = (canvasVisibility === 'true');
+var jobsVisible = (jobsVisibility === 'true');
+var visualizersVisible = (visualizersVisibility === 'true');
+ if(!datasetsVisible && !servicesVisible && !canvasVisible && !jobsVisible && !visualizersVisible) {
+        $('.left-column').attr('style','display: flex!important;');
+        $('.right-column').attr('style','display:flex!important;');
+    } else if ((datasetsVisible || servicesVisible) && (canvasVisible || jobsVisible || visualizersVisible)) {
             $('.left-column').attr('style','display: flex!important;');
-            $('.right-column').attr('style','border: 0; margin-left: 0px!important;');
-        } else if (!datasetsVisible && servicesVisible) {
-                  $('.left-column').attr('style','display: flex!important;');
-                  $('.right-column').attr('style','border: 0; margin-left: 0px!important;');
-              } else if (datasetsVisible && !servicesVisible) {
-                        $('.left-column').attr('style','display: flex!important;');
-                        $('.right-column').attr('style','border: 0; margin-left: 0px!important;');
-                   }
+            $('.right-column').attr('style','display: flex!important;');
+        } else if ((datasetsVisible || servicesVisible) && (!canvasVisible && !jobsVisible && !visualizersVisible)) {
+                $('.left-column').attr('style','margin-right: 20px!important; border-right: 1px solid #ddd;');
+                $('.right-column').attr('style','display:none!important;');
+           } else if ((!datasetsVisible && !servicesVisible) && (canvasVisible || jobsVisible || visualizersVisible)) {
+                     $('.left-column').attr('style','display:none!important;');
+                     $('.right-column').attr('style','margin-left: 20px!important; border-left: 1px solid #ddd;');
+                }
+
 }

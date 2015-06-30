@@ -111,7 +111,7 @@ public class WorkflowPage extends WebPage {
                 datasetsPanel.setVisible(!datasetsPanel.isVisible());
                 target.add(datasetsPanel);
                 target.appendJavaScript("makeVerticalItemActive('" + datasetsToggle.getMarkupId() + "')");
-                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "')");
+                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
             }
         };
         add(datasetsToggle);
@@ -123,7 +123,7 @@ public class WorkflowPage extends WebPage {
                 servicesPanel.setVisible(!servicesPanel.isVisible());
                 target.add(servicesPanel);
                 target.appendJavaScript("makeVerticalItemActive('" + servicesToggle.getMarkupId() + "')");
-                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "')");
+                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
             }
         };
         add(servicesToggle);
@@ -135,6 +135,7 @@ public class WorkflowPage extends WebPage {
                 plumbContainer.setVisible(!plumbContainer.isVisible());
                 target.add(plumbContainer);
                 target.appendJavaScript("makeVerticalItemActive('" + canvasToggle.getMarkupId() + "')");
+                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
             }
         };
         add(canvasToggle);
@@ -146,6 +147,7 @@ public class WorkflowPage extends WebPage {
                 jobsPanel.setVisible(!jobsPanel.isVisible());
                 target.add(jobsPanel);
                 target.appendJavaScript("makeVerticalItemActive('" + jobsToggle.getMarkupId() + "')");
+                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
             }
         };
         add(jobsToggle);
@@ -156,6 +158,7 @@ public class WorkflowPage extends WebPage {
                 visualizersPanel.setVisible(!visualizersPanel.isVisible());
                 target.add(visualizersPanel);
                 target.appendJavaScript("makeVerticalItemActive('" + visualizersToggle.getMarkupId() + "')");
+                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
             }
         };
         add(visualizersToggle);
