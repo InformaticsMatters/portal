@@ -47,6 +47,33 @@ var servicesVisible = (servicesVisibility === 'true');
 var canvasVisible = (canvasVisibility === 'true');
 var jobsVisible = (jobsVisibility === 'true');
 var visualizersVisible = (visualizersVisibility === 'true');
+
+if(datasetsVisible) {
+        $('.datasetsPanel').show();
+    } else if (!datasetsVisible) {
+            $('.datasetsPanel').hide();
+        }
+if(servicesVisible) {
+    $('.servicesPanel').show();
+        } else if (!servicesVisible) {
+            $('.servicesPanel').hide();
+            }
+if(jobsVisible) {
+      $('.jobsPanel').show();
+  } else if (!jobsVisible) {
+          $('.jobsPanel').hide();
+      }
+if(canvasVisible) {
+      $('.plumbContainer').show();
+  } else if (!canvasVisible) {
+          $('.plumbContainer').hide();
+      }
+if(visualizersVisible) {
+     $('.visualizersPanel').show();
+ } else if (!visualizersVisible) {
+         $('.visualizersPanel').hide();
+     }
+
  if(!datasetsVisible && !servicesVisible && !canvasVisible && !jobsVisible && !visualizersVisible) {
         $('.left-column').attr('style','display: flex!important;');
         $('.right-column').attr('style','display:flex!important;');
@@ -60,5 +87,4 @@ var visualizersVisible = (visualizersVisibility === 'true');
                      $('.left-column').attr('style','display:none!important;');
                      $('.right-column').attr('style','margin-left: 20px!important; border-left: 1px solid #ddd;');
                 }
-
 }

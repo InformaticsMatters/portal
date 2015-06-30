@@ -21,8 +21,8 @@
         </div>
 
         <div class="column flex-column-2 left-column">
-            <div wicket:id="datasets" class="ui segment child-1" style="overflow-y: auto;"></div>
-            <div wicket:id="services" class="ui segment child-1" style="overflow-y: auto;"></div>
+            <div wicket:id="datasets" class="ui segment child-1 datasetsPanel" style="overflow-y: auto;"></div>
+            <div wicket:id="services" class="ui segment child-1 servicesPanel" style="overflow-y: auto;"></div>
         </div>
 
         <div class="column flex-column-1 right-column">
@@ -33,15 +33,15 @@
                 <div class="ui popup canvasItemPopup"></div>
             </div>
 
-            <div wicket:id="jobs" class="ui segment child-1"></div>
+            <div wicket:id="jobs" class="ui segment child-1 jobsPanel"></div>
 
-            <div wicket:id="visualizers" class="ui segment child-1"></div>
+            <div wicket:id="visualizers" class="ui segment child-1 visualizersPanel"></div>
         </div>
 
         <div class="vertical-right-menu">
             <a class="right-nav-item verticalItem active" wicket:id="canvasToggle">Canvas</a>
-            <a class="right-nav-item verticalItem" wicket:id="jobsToggle">Jobs</a>
-            <a class="right-nav-item verticalItem" wicket:id="visualizersToggle">Visualizers</a>
+            <a class="right-nav-item verticalItem active" wicket:id="jobsToggle">Jobs</a>
+            <a class="right-nav-item verticalItem active" wicket:id="visualizersToggle">Visualizers</a>
         </div>
 
     </div>

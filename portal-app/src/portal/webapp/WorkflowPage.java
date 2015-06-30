@@ -36,8 +36,11 @@ public class WorkflowPage extends WebPage {
     public static final String POSITION_Y = "positionY";
     public static final String CANVASITEM_INDEX = "index";
     public static final String CANVASITEM_WICKETID = "canvasItem";
-    boolean jobsCheckBoxValue = true;
-    boolean visualizersCheckBoxValue = true;
+    boolean datasetsVisibility = true;
+    boolean servicesVisibility = true;
+    boolean jobsVisibility = true;
+    boolean canvasVisibility = true;
+    boolean visualizersVisibility = true;
     private List<AbstractCanvasItemData> canvasItemModelList = new ArrayList<>();
     private ListView<AbstractCanvasItemData> canvasItemRepeater;
     private WebMarkupContainer plumbContainer;
@@ -94,13 +97,15 @@ public class WorkflowPage extends WebPage {
 
         jobsPanel = new JobsPanel("jobs");
         add(jobsPanel);
-        jobsPanel.setVisible(false);
         jobsPanel.setOutputMarkupPlaceholderTag(true);
 
         visualizersPanel = new VisualizersPanel("visualizers");
         add(visualizersPanel);
-        visualizersPanel.setVisible(false);
         visualizersPanel.setOutputMarkupPlaceholderTag(true);
+    }
+
+    private void refreshPanelsVisibility(AjaxRequestTarget target) {
+        target.appendJavaScript("applyWorkflowPageLayout('" + datasetsVisibility + "', '" + servicesVisibility + "', '" + canvasVisibility + "', '" + jobsVisibility + "', '" + visualizersVisibility + "')");
     }
 
     private void addActions() {
@@ -108,10 +113,9 @@ public class WorkflowPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                datasetsPanel.setVisible(!datasetsPanel.isVisible());
-                target.add(datasetsPanel);
+                datasetsVisibility = !datasetsVisibility;
                 target.appendJavaScript("makeVerticalItemActive('" + datasetsToggle.getMarkupId() + "')");
-                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
+                refreshPanelsVisibility(target);
             }
         };
         add(datasetsToggle);
@@ -120,10 +124,9 @@ public class WorkflowPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                servicesPanel.setVisible(!servicesPanel.isVisible());
-                target.add(servicesPanel);
+                servicesVisibility = !servicesVisibility;
                 target.appendJavaScript("makeVerticalItemActive('" + servicesToggle.getMarkupId() + "')");
-                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
+                refreshPanelsVisibility(target);
             }
         };
         add(servicesToggle);
@@ -132,10 +135,9 @@ public class WorkflowPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                plumbContainer.setVisible(!plumbContainer.isVisible());
-                target.add(plumbContainer);
+                canvasVisibility = !canvasVisibility;
                 target.appendJavaScript("makeVerticalItemActive('" + canvasToggle.getMarkupId() + "')");
-                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
+                refreshPanelsVisibility(target);
             }
         };
         add(canvasToggle);
@@ -144,10 +146,9 @@ public class WorkflowPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                jobsPanel.setVisible(!jobsPanel.isVisible());
-                target.add(jobsPanel);
+                jobsVisibility = !jobsVisibility;
                 target.appendJavaScript("makeVerticalItemActive('" + jobsToggle.getMarkupId() + "')");
-                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
+                refreshPanelsVisibility(target);
             }
         };
         add(jobsToggle);
@@ -155,14 +156,14 @@ public class WorkflowPage extends WebPage {
         visualizersToggle = new AjaxLink("visualizersToggle") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                visualizersPanel.setVisible(!visualizersPanel.isVisible());
-                target.add(visualizersPanel);
+                visualizersVisibility = !visualizersVisibility;
                 target.appendJavaScript("makeVerticalItemActive('" + visualizersToggle.getMarkupId() + "')");
-                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "', '" + plumbContainer.isVisible() + "', '" + jobsPanel.isVisible() + "', '" + visualizersPanel.isVisible() + "')");
+                refreshPanelsVisibility(target);
             }
         };
         add(visualizersToggle);
     }
+
 
     private void addCanvas() {
         plumbContainer = new WebMarkupContainer("plumbContainer");
