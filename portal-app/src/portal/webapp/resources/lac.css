@@ -162,22 +162,22 @@
 	min-height: 100%;
 	height: auto !important;
     height: 100%;
-	margin: 0 auto -200px;
+	margin: 0 auto -180px;
 }
 
 .footer {
-	height: 200px!important;
+	height: 180px!important;
 }
 
 .push {
-    height: 200px!important;
+    height: 180px!important;
 }
 
 .footer .content {
     margin: 0em;
     border-radius: 0em;
     padding-top: 2em;
-    padding-bottom: 3em;
+    padding-bottom: 2em;
     padding-left: 8%;
     padding-right: 8%;
 }

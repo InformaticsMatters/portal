@@ -39,9 +39,22 @@ function tabularMenu() {
 }
 
 
-function applyWorkflowPageLayout(datasetsVisibility, servicesVisibility) {
 
- if(!datasetsVisibility && !servicesVisibility) {
+function applyWorkflowPageLayout(datasetsVisibility, servicesVisibility) {
+var datasetsVisible = (datasetsVisibility === 'true');
+var servicesVisible = (servicesVisibility === 'true');
+
+ if(!datasetsVisible && !servicesVisible) {
         $('.left-column').attr('style','display: none!important;');
-    }
+        $('.right-column').attr('style','margin-left: 20px!important; border-left: 1px solid #ddd;');
+    } else if (datasetsVisible && servicesVisible) {
+            $('.left-column').attr('style','display: flex!important;');
+            $('.right-column').attr('style','border: 0; margin-left: 0px!important;');
+        } else if (!datasetsVisible && servicesVisible) {
+                  $('.left-column').attr('style','display: flex!important;');
+                  $('.right-column').attr('style','border: 0; margin-left: 0px!important;');
+              } else if (datasetsVisible && !servicesVisible) {
+                        $('.left-column').attr('style','display: flex!important;');
+                        $('.right-column').attr('style','border: 0; margin-left: 0px!important;');
+                   }
 }

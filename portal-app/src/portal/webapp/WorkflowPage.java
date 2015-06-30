@@ -123,6 +123,7 @@ public class WorkflowPage extends WebPage {
                 servicesPanel.setVisible(!servicesPanel.isVisible());
                 target.add(servicesPanel);
                 target.appendJavaScript("makeVerticalItemActive('" + servicesToggle.getMarkupId() + "')");
+                target.appendJavaScript("applyWorkflowPageLayout('" + datasetsPanel.isVisible() + "', '" + servicesPanel.isVisible() + "')");
             }
         };
         add(servicesToggle);
