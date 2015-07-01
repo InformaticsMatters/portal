@@ -1,4 +1,4 @@
-package portal.service;
+package portal.domain;
 
 import javax.enterprise.context.SessionScoped;
 import javax.persistence.*;

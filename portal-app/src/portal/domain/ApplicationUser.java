@@ -1,4 +1,4 @@
-package portal.service;
+package portal.domain;
 
 import javax.persistence.*;
 import java.util.Date;

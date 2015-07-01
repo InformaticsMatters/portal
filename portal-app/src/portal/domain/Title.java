@@ -1,4 +1,4 @@
-package portal.service;
+package portal.domain;
 
 public enum Title {
 

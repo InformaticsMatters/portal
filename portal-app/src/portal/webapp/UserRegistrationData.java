@@ -1,6 +1,6 @@
 package portal.webapp;
 
-import portal.service.Title;
+import portal.domain.Title;
 
 import java.io.Serializable;
 

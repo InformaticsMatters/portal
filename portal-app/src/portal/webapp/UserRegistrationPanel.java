@@ -11,7 +11,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.service.Title;
+import portal.domain.Title;
 import toolkit.wicket.SetFocusBehavior;
 
 import java.util.Arrays;
@@ -29,6 +29,18 @@ public class UserRegistrationPanel extends Panel {
     public UserRegistrationPanel(String id) {
         super(id);
         addForm();
+    }
+
+    private static String generateRandomCaptchaString(int minLength, int maxLength) {
+        int length = randomInt(minLength, maxLength);
+        byte b[] = new byte[length];
+        for (int index = 0; index < length; index++)
+            b[index] = (byte) randomInt('a', 'z');
+        return new String(b);
+    }
+
+    private static int randomInt(int min, int max) {
+        return (int) (Math.random() * (max - min) + min);
     }
 
     private void addForm() {
@@ -103,18 +115,6 @@ public class UserRegistrationPanel extends Panel {
         captchaImage = new NonCachingImage("captchaImage", captchaImageResource);
         captchaImage.setOutputMarkupId(true);
         form.addOrReplace(captchaImage);
-    }
-
-    private static String generateRandomCaptchaString(int minLength, int maxLength) {
-        int length = randomInt(minLength, maxLength);
-        byte b[] = new byte[length];
-        for (int index = 0; index < length; index++)
-            b[index] = (byte) randomInt('a', 'z');
-        return new String(b);
-    }
-
-    private static int randomInt(int min, int max) {
-        return (int) (Math.random() * (max - min) + min);
     }
 
 }
