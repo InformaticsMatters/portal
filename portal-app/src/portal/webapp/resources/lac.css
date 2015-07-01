@@ -61,6 +61,7 @@
     position: relative;
     width: 100%;
     -webkit-flex: 3!important;
+    flex: 3!important;
 }
 
 .plumbContainer .active {
@@ -213,28 +214,39 @@
 
 .flex-column {
     display: -webkit-flex!important;
+    display: flex!important;
     -webkit-flex-direction: column!important;
+    flex-direction: column!important;
 }
 
 .flex-1 {
     display: -webkit-flex!important;
+    display: flex!important;
     -webkit-flex:1!important;
+    flex:1!important;
 }
 
 .flex-column-1 {
     display: -webkit-flex!important;
+    display: flex!important;
     -webkit-flex:1!important;
+    flex:1!important;
     -webkit-flex-direction: column!important;
+    flex-direction: column!important;
 }
 
 .flex-column-2 {
     display: -webkit-flex!important;
+    display: flex!important;
     -webkit-flex:2;
+    flex:2;
     -webkit-flex-direction: column!important;
+    flex-direction: column!important;
 }
 
 .child-1 {
     -webkit-flex:1!important;
+    flex:1!important;
 }
 
 .margin0 {
