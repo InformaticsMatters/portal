@@ -1,4 +1,4 @@
-package portal.integration;
+package portal.datamart;
 
 import portal.service.api.DatasetDescriptor;
 import portal.service.api.Row;
@@ -14,10 +14,10 @@ import java.util.*;
  * @author simetrias
  */
 @SessionScoped
-public class DatasetSession implements Serializable {
+public class DatamartSession implements Serializable {
 
     @Inject
-    private IntegrationClient client;
+    private DatamartClient client;
     private Map<Long, DatasetDescriptor> datasetDescriptorMap;
 
     private void loadDatamartDatasetList() {

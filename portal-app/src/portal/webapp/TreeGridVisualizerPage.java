@@ -17,9 +17,9 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import portal.integration.DatasetSession;
-import portal.integration.PropertyData;
-import portal.integration.PropertyDefinition;
+import portal.datamart.DatamartSession;
+import portal.datamart.PropertyData;
+import portal.datamart.PropertyDefinition;
 import portal.service.api.DatasetDescriptor;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -40,7 +40,7 @@ public class TreeGridVisualizerPage extends WebPage {
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
-    private DatasetSession datasetSession;
+    private DatamartSession datamartSession;
     private TreeGridVisualizer treeGridVisualizer;
     private ListView<String> columnsListView;
     private WebMarkupContainer columnsContainer;
@@ -115,7 +115,7 @@ public class TreeGridVisualizerPage extends WebPage {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        datasetSession.addPropertyToDataset(datasetDescriptor, item.getModelObject());
+                        datamartSession.addPropertyToDataset(datasetDescriptor, item.getModelObject());
                         addOrReplaceTreeGridVisualizer(datasetDescriptor);
                         ajaxRequestTarget.add(treeGridVisualizer);
 
@@ -134,7 +134,7 @@ public class TreeGridVisualizerPage extends WebPage {
         ArrayList<String> columnList = new ArrayList<>();
         PropertyDefinition propertyDefinition = form.getModelObject().getPropertyDefinition();
         if (propertyDefinition != null) {
-            List<PropertyData> propertyDataList = datasetSession.listPropertyData(datasetDescriptor, propertyDefinition);
+            List<PropertyData> propertyDataList = datamartSession.listPropertyData(datasetDescriptor, propertyDefinition);
             if (propertyDataList != null && propertyDataList.size() > 0) {
                 PropertyData propertyData = propertyDataList.get(0);
                 Set<String> keyset = propertyData.getData().keySet();

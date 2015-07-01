@@ -1,4 +1,4 @@
-package portal.integration;
+package portal.datamart;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 

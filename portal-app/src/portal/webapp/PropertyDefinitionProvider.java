@@ -2,8 +2,8 @@ package portal.webapp;
 
 import com.vaynberg.wicket.select2.Response;
 import com.vaynberg.wicket.select2.TextChoiceProvider;
-import portal.integration.IntegrationClient;
-import portal.integration.PropertyDefinition;
+import portal.datamart.DatamartClient;
+import portal.datamart.PropertyDefinition;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class PropertyDefinitionProvider extends TextChoiceProvider<PropertyDefin
 
     private List<PropertyDefinition> data;
     @Inject
-    private IntegrationClient integrationClient;
+    private DatamartClient datamartClient;
 
 
     @Override
@@ -29,7 +29,7 @@ public class PropertyDefinitionProvider extends TextChoiceProvider<PropertyDefin
 
     @Override
     public void query(String s, int i, Response<PropertyDefinition> response) {
-        data = integrationClient.listPropertyDefinition(s, 20);
+        data = datamartClient.listPropertyDefinition(s, 20);
         response.addAll(data);
     }
 

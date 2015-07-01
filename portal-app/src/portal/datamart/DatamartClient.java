@@ -1,4 +1,4 @@
-package portal.integration;
+package portal.datamart;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author simetrias
  */
 @ApplicationScoped
-public class IntegrationClient extends AbstractServiceClient {
+public class DatamartClient extends AbstractServiceClient {
 
     @Override
     protected String getServiceBaseUri() {

@@ -12,7 +12,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.integration.DatasetSession;
+import portal.datamart.DatamartSession;
 import portal.service.api.DatasetDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -31,7 +31,7 @@ public class DatasetsPanel extends Panel {
 
     private ListView<DatasetDescriptor> listView;
     @Inject
-    private DatasetSession datasetSession;
+    private DatamartSession datamartSession;
 
     public DatasetsPanel(String id) {
         super(id);
@@ -92,7 +92,7 @@ public class DatasetsPanel extends Panel {
         DatasetFilterData datasetFilterData = new DatasetFilterData();
         SearchDatasetData searchDatasetData = searchDatasetForm.getModelObject();
         datasetFilterData.setPattern(searchDatasetData.getPattern());
-        listView.setList(datasetSession.listDatasets(datasetFilterData));
+        listView.setList(datamartSession.listDatasets(datasetFilterData));
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         target.add(datasetsContainer);
         target.appendJavaScript("makeCardsDraggable()");

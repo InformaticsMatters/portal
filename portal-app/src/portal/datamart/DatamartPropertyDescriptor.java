@@ -1,4 +1,4 @@
-package portal.integration;
+package portal.datamart;
 
 import portal.service.api.PropertyDescriptor;
 
