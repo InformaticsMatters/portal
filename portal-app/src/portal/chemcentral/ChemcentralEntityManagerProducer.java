@@ -1,6 +1,5 @@
-package portal.service;
+package portal.chemcentral;
 
-import portal.service.api.PortalConfig;
 import toolkit.services.PU;
 
 import javax.enterprise.context.RequestScoped;
@@ -20,11 +19,11 @@ public class ChemcentralEntityManagerProducer {
     public static final String CHEMCENTRAL_PU_NAME = "chemcentral";
     private static EntityManagerFactory chemcentralEMF;
     @Inject
-    private PortalConfig portalConfig;
+    private ChemcentralConfig chemcentralConfig;
 
     private void checkEMF() {
         if (chemcentralEMF == null) {
-            Properties properties = portalConfig.getChemcentralPersistenceProperties();
+            Properties properties = chemcentralConfig.getChemcentralPersistenceProperties();
             if (properties == null) {
                 chemcentralEMF = Persistence.createEntityManagerFactory(CHEMCENTRAL_PU_NAME);
             } else {

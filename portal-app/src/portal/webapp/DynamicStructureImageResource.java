@@ -6,8 +6,8 @@ import chemaxon.struc.Molecule;
 import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import portal.chemcentral.ChemcentralSession;
+import portal.dataset.PropertyDescriptor;
 import portal.dataset.Row;
-import portal.service.api.PropertyDescriptor;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;

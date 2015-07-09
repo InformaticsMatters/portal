@@ -1,7 +1,7 @@
 package portal.legacy;
 
+import portal.dataset.PropertyDescriptor;
 import portal.dataset.RowDescriptor;
-import portal.service.api.PropertyDescriptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;

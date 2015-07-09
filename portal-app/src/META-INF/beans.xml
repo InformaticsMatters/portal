@@ -1,9 +1,9 @@
 <beans>
     <alternatives>
-        <class>portal.service.PortalIDEAConfig</class>
+        <class>portal.chemcentral.ChemcentralIDEAConfig</class>
         <class>portal.legacy.DatasetServiceMock</class>
     </alternatives>
     <interceptors>
-        <class>portal.service.ChemcentralTransactionalInterceptor</class>
+        <class>portal.chemcentral.ChemcentralTransactionalInterceptor</class>
     </interceptors>
 </beans>

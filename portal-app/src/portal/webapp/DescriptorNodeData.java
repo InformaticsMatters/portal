@@ -1,8 +1,8 @@
 package portal.webapp;
 
 import portal.dataset.DatasetDescriptor;
+import portal.dataset.PropertyDescriptor;
 import portal.dataset.RowDescriptor;
-import portal.service.api.PropertyDescriptor;
 
 import java.io.Serializable;
 

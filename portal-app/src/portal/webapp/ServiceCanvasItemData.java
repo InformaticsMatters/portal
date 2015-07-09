@@ -1,6 +1,6 @@
 package portal.webapp;
 
-import portal.service.api.ServiceDescriptor;
+import portal.service.ServiceDescriptor;
 
 /**
  * @author simetrias

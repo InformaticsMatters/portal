@@ -1,6 +1,6 @@
 package portal.legacy;
 
-import portal.service.api.PropertyDescriptor;
+import portal.dataset.PropertyDescriptor;
 
 class PropertyDescriptorMock implements PropertyDescriptor {
 

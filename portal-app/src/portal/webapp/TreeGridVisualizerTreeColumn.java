@@ -6,9 +6,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import portal.dataset.DatasetDescriptor;
+import portal.dataset.PropertyDescriptor;
 import portal.dataset.Row;
 import portal.dataset.RowDescriptor;
-import portal.service.api.PropertyDescriptor;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;

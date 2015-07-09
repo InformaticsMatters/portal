@@ -1,6 +1,4 @@
-package portal.service;
-
-import portal.service.api.PortalConfig;
+package portal.chemcentral;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
@@ -8,7 +6,7 @@ import java.util.Properties;
 
 @Alternative
 @ApplicationScoped
-public class PortalIDEAConfig implements PortalConfig {
+public class ChemcentralIDEAConfig implements ChemcentralConfig {
 
     @Override
     public Properties getChemcentralPersistenceProperties() {

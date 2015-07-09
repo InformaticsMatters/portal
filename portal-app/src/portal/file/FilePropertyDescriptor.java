@@ -1,6 +1,6 @@
 package portal.file;
 
-import portal.service.api.PropertyDescriptor;
+import portal.dataset.PropertyDescriptor;
 
 class FilePropertyDescriptor implements PropertyDescriptor {
 

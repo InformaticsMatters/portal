@@ -1,6 +1,10 @@
 package portal.dataset;
 
-import portal.service.api.*;
+import portal.chemcentral.ChemcentralSearch;
+import portal.chemcentral.StructureSearch;
+import portal.service.api.ImportFromStreamData;
+import portal.service.api.ListDatasetDescriptorFilter;
+import portal.service.api.ListRowFilter;
 
 import java.util.List;
 

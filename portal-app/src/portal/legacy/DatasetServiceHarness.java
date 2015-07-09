@@ -1,8 +1,8 @@
 package portal.legacy;
 
+import portal.chemcentral.StructureSearch;
 import portal.dataset.DatasetDescriptor;
 import portal.dataset.DatasetService;
-import portal.service.api.StructureSearch;
 import toolkit.test.AbstractTestCase;
 import toolkit.test.TestCase;
 import toolkit.test.TestMethod;

@@ -1,4 +1,4 @@
-package portal.service.api;
+package portal.service;
 
 import portal.webapp.ServicePropertyDescriptor;
 

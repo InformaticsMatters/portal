@@ -3,7 +3,7 @@ package portal.webapp;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyCodeSource;
 import org.apache.wicket.cdi.CdiContainer;
-import portal.service.api.ServiceDescriptor;
+import portal.service.ServiceDescriptor;
 
 import javax.enterprise.context.SessionScoped;
 import java.io.File;

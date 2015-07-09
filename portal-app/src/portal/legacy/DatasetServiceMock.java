@@ -11,12 +11,14 @@ import chemaxon.util.ConnectionHandler;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import portal.dataset.DatasetDescriptor;
-import portal.dataset.DatasetService;
-import portal.dataset.Row;
-import portal.dataset.RowDescriptor;
-import portal.service.ChemcentralEntityManagerProducer;
-import portal.service.api.*;
+import portal.chemcentral.ChemcentralConfig;
+import portal.chemcentral.ChemcentralEntityManagerProducer;
+import portal.chemcentral.ChemcentralSearch;
+import portal.chemcentral.StructureSearch;
+import portal.dataset.*;
+import portal.service.api.ImportFromStreamData;
+import portal.service.api.ListDatasetDescriptorFilter;
+import portal.service.api.ListRowFilter;
 import toolkit.services.PU;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -45,7 +47,7 @@ public class DatasetServiceMock implements DatasetService {
     private Map<Long, DatasetDescriptorMock> datasetDescriptorMockMap = new HashMap<Long, DatasetDescriptorMock>();
 
     @Inject
-    private PortalConfig portalConfig;
+    private ChemcentralConfig chemcentralConfig;
     @Inject
     @PU(puName = ChemcentralEntityManagerProducer.CHEMCENTRAL_PU_NAME)
     private EntityManager entityManager;
@@ -216,7 +218,7 @@ public class DatasetServiceMock implements DatasetService {
     private ConnectionHandler getStandaloneConnectionHandler() throws Exception {
         ConnectionHandler connectionHandler = new ConnectionHandler();
         connectionHandler.setPropertyTable("chemcentral_01.jchemproperties");
-        Properties properties = portalConfig.getChemcentralPersistenceProperties();
+        Properties properties = chemcentralConfig.getChemcentralPersistenceProperties();
         connectionHandler.setDriver(properties.getProperty("javax.persistence.jdbc.driver"));
         connectionHandler.setUrl(properties.getProperty("javax.persistence.jdbc.url"));
         connectionHandler.setLoginName(properties.getProperty("javax.persistence.jdbc.user"));

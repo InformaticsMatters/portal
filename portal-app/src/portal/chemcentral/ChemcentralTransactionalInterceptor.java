@@ -1,4 +1,4 @@
-package portal.service;
+package portal.chemcentral;
 
 import toolkit.services.NamedTransactional;
 import toolkit.services.PU;

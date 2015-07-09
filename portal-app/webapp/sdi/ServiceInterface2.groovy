@@ -1,4 +1,4 @@
-import portal.service.api.ServiceDescriptor
+import portal.service.ServiceDescriptor
 import portal.webapp.ServiceDiscoveryInterface
 import portal.webapp.ServicePropertyDescriptor
 

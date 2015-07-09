@@ -1,11 +1,11 @@
-package portal.service.api;
+package portal.chemcentral;
 
 import java.util.Properties;
 
 /**
  * @author simetrias
  */
-public interface PortalConfig {
+public interface ChemcentralConfig {
 
     Properties getChemcentralPersistenceProperties();
 

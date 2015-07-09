@@ -1,6 +1,6 @@
 package portal.chemcentral;
 
-import portal.service.api.PropertyDescriptor;
+import portal.dataset.PropertyDescriptor;
 
 class ChemcentralPropertyDescriptor implements PropertyDescriptor {
 
