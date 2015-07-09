@@ -1,6 +1,5 @@
-package portal.service.mock;
+package portal.dataset;
 
-import portal.service.api.DatasetDescriptor;
 import portal.service.api.DatasetService;
 import portal.service.api.StructureSearch;
 import toolkit.test.AbstractTestCase;

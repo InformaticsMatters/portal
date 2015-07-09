@@ -1,5 +1,9 @@
 package portal.service.api;
 
+import portal.dataset.DatasetDescriptor;
+import portal.dataset.Row;
+import portal.dataset.RowDescriptor;
+
 import java.util.List;
 
 /**

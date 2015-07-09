@@ -1,5 +1,7 @@
 package portal.service.api;
 
+import portal.dataset.DatasetStreamFormat;
+
 import java.io.InputStream;
 import java.util.Map;
 

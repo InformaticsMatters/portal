@@ -10,8 +10,8 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.CompoundPropertyModel;
+import portal.dataset.DatasetStreamFormat;
 import portal.service.api.DatasetService;
-import portal.service.api.DatasetStreamFormat;
 import portal.service.api.ImportFromStreamData;
 import toolkit.wicket.semantic.SemanticModalPanel;
 

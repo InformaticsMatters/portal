@@ -1,4 +1,4 @@
-package portal.datamart;
+package portal.file;
 
 import portal.dataset.Row;
 import portal.dataset.RowDescriptor;
@@ -9,11 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class DatamartRow implements Row {
+class FileRow implements Row {
 
     private Long id;
-    private DatamartRowDescriptor rowDescriptor;
-    private Map<DatamartPropertyDescriptor, Object> properties;
+    private FileRowDescriptor rowDescriptor;
+    private Map<FilePropertyDescriptor, Object> properties;
     private List<Row> children;
 
     @Override
@@ -30,16 +30,16 @@ class DatamartRow implements Row {
         return rowDescriptor;
     }
 
-    public void setDescriptor(DatamartRowDescriptor rowDescriptor) {
-        this.rowDescriptor = rowDescriptor;
-    }
-
     @Override
     public List<Row> getChildren() {
         return children;
     }
 
-    public void setProperty(DatamartPropertyDescriptor key, Object value) {
+    public void setRowDescriptor(FileRowDescriptor rowDescriptor) {
+        this.rowDescriptor = rowDescriptor;
+    }
+
+    public void setProperty(FilePropertyDescriptor key, Object value) {
         if (properties == null) {
             properties = new HashMap<>();
         }
@@ -54,16 +54,16 @@ class DatamartRow implements Row {
         return value;
     }
 
-    public DatamartRow createChild() {
+    public FileRow createChild() {
         if (children == null) {
             children = new ArrayList<>();
         }
-        DatamartRow rowMock = new DatamartRow();
-        children.add(rowMock);
-        return rowMock;
+        FileRow fileRow = new FileRow();
+        children.add(fileRow);
+        return fileRow;
     }
 
-    public void removeChild(DatamartRow child) {
+    public void removeChild(FileRow child) {
         if (children != null) {
             children.remove(child);
         }

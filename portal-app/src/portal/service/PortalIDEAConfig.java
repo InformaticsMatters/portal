@@ -1,4 +1,4 @@
-package portal.service.mock;
+package portal.service;
 
 import portal.service.api.PortalConfig;
 

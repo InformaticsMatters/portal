@@ -1,8 +1,6 @@
-package portal.service.mock;
+package portal.dataset;
 
 import portal.service.api.PropertyDescriptor;
-import portal.service.api.Row;
-import portal.service.api.RowDescriptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;

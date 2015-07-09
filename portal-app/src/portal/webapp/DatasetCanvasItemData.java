@@ -1,6 +1,6 @@
 package portal.webapp;
 
-import portal.service.api.DatasetDescriptor;
+import portal.dataset.DatasetDescriptor;
 
 /**
  * @author simetrias

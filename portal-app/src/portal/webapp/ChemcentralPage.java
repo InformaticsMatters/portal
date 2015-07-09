@@ -9,7 +9,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.datamart.DatamartSession;
-import portal.service.api.DatasetDescriptor;
+import portal.dataset.DatasetDescriptor;
 import toolkit.wicket.marvin4js.MarvinSketcher;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;

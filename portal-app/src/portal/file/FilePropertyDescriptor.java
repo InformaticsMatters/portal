@@ -1,8 +1,8 @@
-package portal.service.mock;
+package portal.file;
 
 import portal.service.api.PropertyDescriptor;
 
-class PropertyDescriptorMock implements PropertyDescriptor {
+class FilePropertyDescriptor implements PropertyDescriptor {
 
     private Long id;
     private String description;
@@ -28,7 +28,7 @@ class PropertyDescriptorMock implements PropertyDescriptor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PropertyDescriptorMock that = (PropertyDescriptorMock) o;
+        FilePropertyDescriptor that = (FilePropertyDescriptor) o;
 
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;

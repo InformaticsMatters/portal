@@ -1,7 +1,7 @@
 package portal.datamart;
 
-import portal.service.api.DatasetDescriptor;
-import portal.service.api.RowDescriptor;
+import portal.dataset.DatasetDescriptor;
+import portal.dataset.RowDescriptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;

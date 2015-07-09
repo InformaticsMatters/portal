@@ -2,7 +2,7 @@ package portal.webapp;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
-import portal.service.api.DatasetDescriptor;
+import portal.dataset.DatasetDescriptor;
 import toolkit.wicket.inmethod.EasyGrid;
 import toolkit.wicket.inmethod.EasyGridBuilder;
 import toolkit.wicket.inmethod.EasyListDataSource;

@@ -1,4 +1,4 @@
-package portal.service.mock;
+package portal.dataset;
 
 import chemaxon.formats.MFileFormatUtil;
 import chemaxon.jchem.db.JChemSearch;
@@ -11,6 +11,7 @@ import chemaxon.util.ConnectionHandler;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.service.ChemcentralEntityManagerProducer;
 import portal.service.api.*;
 import toolkit.services.PU;
 

@@ -1,4 +1,4 @@
-package portal.service.mock;
+package portal.service;
 
 import portal.service.api.PortalConfig;
 import toolkit.services.PU;
@@ -17,7 +17,7 @@ import java.util.Properties;
  */
 public class ChemcentralEntityManagerProducer {
 
-    static final String CHEMCENTRAL_PU_NAME = "chemcentral";
+    public static final String CHEMCENTRAL_PU_NAME = "chemcentral";
     private static EntityManagerFactory chemcentralEMF;
     @Inject
     private PortalConfig portalConfig;

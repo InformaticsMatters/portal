@@ -20,7 +20,7 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.datamart.DatamartSession;
 import portal.datamart.PropertyData;
 import portal.datamart.PropertyDefinition;
-import portal.service.api.DatasetDescriptor;
+import portal.dataset.DatasetDescriptor;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

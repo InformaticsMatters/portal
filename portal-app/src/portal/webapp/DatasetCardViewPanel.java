@@ -7,7 +7,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.service.api.DatasetDescriptor;
+import portal.dataset.DatasetDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;

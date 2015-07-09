@@ -1,4 +1,6 @@
-package portal.service.api;
+package portal.dataset;
+
+import portal.service.api.PropertyDescriptor;
 
 import java.io.Serializable;
 import java.util.List;
