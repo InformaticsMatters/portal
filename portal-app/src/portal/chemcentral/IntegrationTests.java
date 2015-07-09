@@ -1,4 +1,4 @@
-package portal.datamart;
+package portal.chemcentral;
 
 import toolkit.test.AbstractTestCase;
 import toolkit.test.TestCase;
@@ -15,7 +15,7 @@ import java.util.List;
 public class IntegrationTests extends AbstractTestCase {
 
     @Inject
-    private DatamartClient client;
+    private ChemcentralClient client;
 
     public static void main(String[] args) throws Exception {
         runTestCase(IntegrationTests.class);

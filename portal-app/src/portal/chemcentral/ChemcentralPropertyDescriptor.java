@@ -1,8 +1,8 @@
-package portal.datamart;
+package portal.chemcentral;
 
 import portal.service.api.PropertyDescriptor;
 
-class DatamartPropertyDescriptor implements PropertyDescriptor {
+class ChemcentralPropertyDescriptor implements PropertyDescriptor {
 
     private Long id;
     private String description;
@@ -28,7 +28,7 @@ class DatamartPropertyDescriptor implements PropertyDescriptor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DatamartPropertyDescriptor that = (DatamartPropertyDescriptor) o;
+        ChemcentralPropertyDescriptor that = (ChemcentralPropertyDescriptor) o;
 
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;

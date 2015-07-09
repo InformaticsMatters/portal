@@ -1,4 +1,4 @@
-package portal.datamart;
+package portal.chemcentral;
 
 import portal.dataset.RowDescriptor;
 import portal.service.api.PropertyDescriptor;
@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class DatamartRowDescriptor implements RowDescriptor {
+class ChemcentralRowDescriptor implements RowDescriptor {
 
     private Long id;
     private String description;
-    private Map<Long, DatamartPropertyDescriptor> propertyDescriptorMap = new HashMap<>();
+    private Map<Long, ChemcentralPropertyDescriptor> propertyDescriptorMap = new HashMap<>();
     private Long hierarchicalPropertyId;
     private Long structurePropertyId;
 
@@ -54,7 +54,7 @@ class DatamartRowDescriptor implements RowDescriptor {
         return propertyDescriptorMap.get(structurePropertyId);
     }
 
-    public void addPropertyDescriptor(DatamartPropertyDescriptor propertyDescriptor) {
+    public void addPropertyDescriptor(ChemcentralPropertyDescriptor propertyDescriptor) {
         propertyDescriptorMap.put(propertyDescriptor.getId(), propertyDescriptor);
     }
 

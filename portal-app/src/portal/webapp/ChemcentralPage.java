@@ -8,7 +8,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import portal.datamart.DatamartSession;
+import portal.chemcentral.ChemcentralSession;
 import portal.dataset.DatasetDescriptor;
 import toolkit.wicket.marvin4js.MarvinSketcher;
 import toolkit.wicket.semantic.NotifierProvider;
@@ -30,7 +30,7 @@ public class ChemcentralPage extends WebPage {
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
-    private DatamartSession datamartSession;
+    private ChemcentralSession chemcentralSession;
 
     public ChemcentralPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -169,7 +169,7 @@ public class ChemcentralPage extends WebPage {
     }
 
     private void refreshDatasetDescriptors() {
-        List<DatasetDescriptor> datasetDescriptorList = datamartSession.listDatasets(null);
+        List<DatasetDescriptor> datasetDescriptorList = chemcentralSession.listDatasets(null);
         datasetListViewPanel.setDatasetDescriptorList(datasetDescriptorList);
         datasetCardViewPanel.setDatasetDescriptorList(datasetDescriptorList);
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);

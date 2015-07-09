@@ -2,8 +2,8 @@ package portal.webapp;
 
 import com.vaynberg.wicket.select2.Response;
 import com.vaynberg.wicket.select2.TextChoiceProvider;
-import portal.datamart.DatamartClient;
-import portal.datamart.PropertyDefinition;
+import portal.chemcentral.ChemcentralClient;
+import portal.chemcentral.PropertyDefinition;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class PropertyDefinitionProvider extends TextChoiceProvider<PropertyDefin
 
     private List<PropertyDefinition> data;
     @Inject
-    private DatamartClient datamartClient;
+    private ChemcentralClient chemcentralClient;
 
 
     @Override
@@ -29,7 +29,7 @@ public class PropertyDefinitionProvider extends TextChoiceProvider<PropertyDefin
 
     @Override
     public void query(String s, int i, Response<PropertyDefinition> response) {
-        data = datamartClient.listPropertyDefinition(s, 20);
+        data = chemcentralClient.listPropertyDefinition(s, 20);
         response.addAll(data);
     }
 

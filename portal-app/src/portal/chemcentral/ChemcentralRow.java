@@ -1,4 +1,4 @@
-package portal.datamart;
+package portal.chemcentral;
 
 import portal.dataset.Row;
 import portal.dataset.RowDescriptor;
@@ -9,11 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class DatamartRow implements Row {
+class ChemcentralRow implements Row {
 
     private Long id;
-    private DatamartRowDescriptor rowDescriptor;
-    private Map<DatamartPropertyDescriptor, Object> properties;
+    private ChemcentralRowDescriptor rowDescriptor;
+    private Map<ChemcentralPropertyDescriptor, Object> properties;
     private List<Row> children;
 
     @Override
@@ -30,7 +30,7 @@ class DatamartRow implements Row {
         return rowDescriptor;
     }
 
-    public void setDescriptor(DatamartRowDescriptor rowDescriptor) {
+    public void setDescriptor(ChemcentralRowDescriptor rowDescriptor) {
         this.rowDescriptor = rowDescriptor;
     }
 
@@ -39,7 +39,7 @@ class DatamartRow implements Row {
         return children;
     }
 
-    public void setProperty(DatamartPropertyDescriptor key, Object value) {
+    public void setProperty(ChemcentralPropertyDescriptor key, Object value) {
         if (properties == null) {
             properties = new HashMap<>();
         }
@@ -54,16 +54,16 @@ class DatamartRow implements Row {
         return value;
     }
 
-    public DatamartRow createChild() {
+    public ChemcentralRow createChild() {
         if (children == null) {
             children = new ArrayList<>();
         }
-        DatamartRow rowMock = new DatamartRow();
+        ChemcentralRow rowMock = new ChemcentralRow();
         children.add(rowMock);
         return rowMock;
     }
 
-    public void removeChild(DatamartRow child) {
+    public void removeChild(ChemcentralRow child) {
         if (children != null) {
             children.remove(child);
         }

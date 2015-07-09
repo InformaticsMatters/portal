@@ -1,4 +1,4 @@
-package portal.datamart;
+package portal.chemcentral;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author simetrias
  */
 @ApplicationScoped
-public class DatamartClient extends AbstractServiceClient {
+public class ChemcentralClient extends AbstractServiceClient {
 
     @Override
     protected String getServiceBaseUri() {

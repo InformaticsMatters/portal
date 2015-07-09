@@ -1,4 +1,4 @@
-package portal.datamart;
+package portal.chemcentral;
 
 import portal.dataset.DatasetDescriptor;
 import portal.dataset.Row;
@@ -14,10 +14,10 @@ import java.util.*;
  * @author simetrias
  */
 @SessionScoped
-public class DatamartSession implements Serializable {
+public class ChemcentralSession implements Serializable {
 
     @Inject
-    private DatamartClient client;
+    private ChemcentralClient client;
     private Map<Long, DatasetDescriptor> datasetDescriptorMap;
 
     private void loadDatamartDatasetList() {
@@ -30,13 +30,13 @@ public class DatamartSession implements Serializable {
     }
 
     private DatasetDescriptor newDatasetDescriptorFromHitlist(Hitlist hitlist) {
-        DatamartDatasetDescriptor ddd = new DatamartDatasetDescriptor(hitlist);
+        ChemcentralDatasetDescriptor ddd = new ChemcentralDatasetDescriptor(hitlist);
 
-        DatamartPropertyDescriptor dpd = new DatamartPropertyDescriptor();
+        ChemcentralPropertyDescriptor dpd = new ChemcentralPropertyDescriptor();
         dpd.setId(1l);
         dpd.setDescription("Structure");
 
-        DatamartRowDescriptor drd = new DatamartRowDescriptor();
+        ChemcentralRowDescriptor drd = new ChemcentralRowDescriptor();
         drd.setId(1l);
         drd.setStructurePropertyId(dpd.getId());
         drd.setHierarchicalPropertyId(dpd.getId());
@@ -55,17 +55,17 @@ public class DatamartSession implements Serializable {
         DatasetDescriptor datasetDescriptor = datasetDescriptorMap.get(datasetDescriptorId);
 
         // Discuss: I'm forced to match each Row to the only known metadata!
-        DatamartRowDescriptor drd = (DatamartRowDescriptor) datasetDescriptor.getAllRowDescriptors().get(0);
-        DatamartPropertyDescriptor dpd = (DatamartPropertyDescriptor) drd.getStructurePropertyDescriptor();
+        ChemcentralRowDescriptor drd = (ChemcentralRowDescriptor) datasetDescriptor.getAllRowDescriptors().get(0);
+        ChemcentralPropertyDescriptor dpd = (ChemcentralPropertyDescriptor) drd.getStructurePropertyDescriptor();
 
         ArrayList<Row> rows = new ArrayList<>(structureIdList.size());
         List<Structure> structures = client.listStructure(structureIdList);
         for (Structure structure : structures) {
-            DatamartRow datamartRow = new DatamartRow();
-            datamartRow.setId(Long.valueOf(structure.getCdId()));
-            datamartRow.setDescriptor(drd);
-            datamartRow.setProperty(dpd, structure.getCdStructure());
-            rows.add(datamartRow);
+            ChemcentralRow chemcentralRow = new ChemcentralRow();
+            chemcentralRow.setId(Long.valueOf(structure.getCdId()));
+            chemcentralRow.setDescriptor(drd);
+            chemcentralRow.setProperty(dpd, structure.getCdStructure());
+            rows.add(chemcentralRow);
         }
         return rows;
     }
@@ -78,11 +78,11 @@ public class DatamartSession implements Serializable {
         List<RowDescriptor> allRowDescriptors = datasetDescriptor.getAllRowDescriptors();
         for (RowDescriptor rowDescriptor : allRowDescriptors) {
             Long id = (long) rowDescriptor.listAllPropertyDescriptors().size();
-            DatamartPropertyDescriptor datamartPropertyDescriptor = new DatamartPropertyDescriptor();
-            datamartPropertyDescriptor.setDescription(jsonParameterName);
-            datamartPropertyDescriptor.setId(id + 1);
-            DatamartRowDescriptor datamartRowDescriptor = (DatamartRowDescriptor) rowDescriptor;
-            datamartRowDescriptor.addPropertyDescriptor(datamartPropertyDescriptor);
+            ChemcentralPropertyDescriptor chemcentralPropertyDescriptor = new ChemcentralPropertyDescriptor();
+            chemcentralPropertyDescriptor.setDescription(jsonParameterName);
+            chemcentralPropertyDescriptor.setId(id + 1);
+            ChemcentralRowDescriptor chemcentralRowDescriptor = (ChemcentralRowDescriptor) rowDescriptor;
+            chemcentralRowDescriptor.addPropertyDescriptor(chemcentralPropertyDescriptor);
         }
     }
 

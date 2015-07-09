@@ -1,4 +1,4 @@
-package portal.datamart;
+package portal.chemcentral;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 

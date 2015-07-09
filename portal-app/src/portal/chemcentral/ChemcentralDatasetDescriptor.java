@@ -1,4 +1,4 @@
-package portal.datamart;
+package portal.chemcentral;
 
 import portal.dataset.DatasetDescriptor;
 import portal.dataset.RowDescriptor;
@@ -11,12 +11,12 @@ import java.util.Map;
 /**
  * @author simetrias
  */
-public class DatamartDatasetDescriptor implements DatasetDescriptor {
+public class ChemcentralDatasetDescriptor implements DatasetDescriptor {
 
     private Hitlist hitlist;
-    private Map<Long, DatamartRowDescriptor> rowDescriptorMap = new HashMap<>();
+    private Map<Long, ChemcentralRowDescriptor> rowDescriptorMap = new HashMap<>();
 
-    public DatamartDatasetDescriptor(Hitlist hitlist) {
+    public ChemcentralDatasetDescriptor(Hitlist hitlist) {
         this.hitlist = hitlist;
     }
 
@@ -45,7 +45,7 @@ public class DatamartDatasetDescriptor implements DatasetDescriptor {
         return hitlist.getSize();
     }
 
-    public void addRowDescriptor(DatamartRowDescriptor datamartRowDescriptor) {
-        rowDescriptorMap.put(datamartRowDescriptor.getId(), datamartRowDescriptor);
+    public void addRowDescriptor(ChemcentralRowDescriptor chemcentralRowDescriptor) {
+        rowDescriptorMap.put(chemcentralRowDescriptor.getId(), chemcentralRowDescriptor);
     }
 }
