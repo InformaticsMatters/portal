@@ -12,13 +12,13 @@ import java.util.List;
  * @author simetrias
  */
 @TestCase
-public class IntegrationTests extends AbstractTestCase {
+public class IntegrationHarness extends AbstractTestCase {
 
     @Inject
     private ChemcentralClient client;
 
     public static void main(String[] args) throws Exception {
-        runTestCase(IntegrationTests.class);
+        runTestCase(IntegrationHarness.class);
     }
 
     // @TestMethod

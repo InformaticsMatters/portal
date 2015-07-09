@@ -1,4 +1,6 @@
-package portal.dataset;
+package portal.legacy;
+
+import portal.dataset.Row;
 
 import java.util.*;
 import java.util.stream.Collectors;

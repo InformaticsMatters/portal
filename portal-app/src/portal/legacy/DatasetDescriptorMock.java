@@ -1,4 +1,7 @@
-package portal.dataset;
+package portal.legacy;
+
+import portal.dataset.DatasetDescriptor;
+import portal.dataset.RowDescriptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;

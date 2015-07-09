@@ -1,4 +1,4 @@
-package portal.dataset;
+package portal.legacy;
 
 import portal.service.api.PropertyDescriptor;
 

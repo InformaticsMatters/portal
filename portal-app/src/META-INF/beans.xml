@@ -1,7 +1,7 @@
 <beans>
     <alternatives>
         <class>portal.service.PortalIDEAConfig</class>
-        <class>portal.dataset.DatasetServiceMock</class>
+        <class>portal.legacy.DatasetServiceMock</class>
     </alternatives>
     <interceptors>
         <class>portal.service.ChemcentralTransactionalInterceptor</class>

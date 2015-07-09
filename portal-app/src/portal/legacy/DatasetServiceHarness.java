@@ -1,6 +1,7 @@
-package portal.dataset;
+package portal.legacy;
 
-import portal.service.api.DatasetService;
+import portal.dataset.DatasetDescriptor;
+import portal.dataset.DatasetService;
 import portal.service.api.StructureSearch;
 import toolkit.test.AbstractTestCase;
 import toolkit.test.TestCase;
@@ -12,13 +13,13 @@ import javax.inject.Inject;
  * @author simetrias
  */
 @TestCase
-public class DatasetServiceTest extends AbstractTestCase {
+public class DatasetServiceHarness extends AbstractTestCase {
 
     @Inject
     private DatasetService service;
 
     public static void main(String[] args) throws Exception {
-        runTestCase(DatasetServiceTest.class);
+        runTestCase(DatasetServiceHarness.class);
     }
 
     // @TestMethod

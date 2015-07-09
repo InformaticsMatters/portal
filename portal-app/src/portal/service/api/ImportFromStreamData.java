@@ -1,7 +1,5 @@
 package portal.service.api;
 
-import portal.dataset.DatasetStreamFormat;
-
 import java.io.InputStream;
 import java.util.Map;
 
@@ -11,7 +9,6 @@ import java.util.Map;
 public class ImportFromStreamData {
 
     private String description;
-    private DatasetStreamFormat datasetStreamFormat;
     private InputStream inputStream;
     private Map<String, Class> fieldConfigMap;
 
@@ -23,13 +20,6 @@ public class ImportFromStreamData {
         this.description = description;
     }
 
-    public DatasetStreamFormat getDatasetStreamFormat() {
-        return datasetStreamFormat;
-    }
-
-    public void setDatasetStreamFormat(DatasetStreamFormat datasetStreamFormat) {
-        this.datasetStreamFormat = datasetStreamFormat;
-    }
 
     public InputStream getInputStream() {
         return inputStream;
