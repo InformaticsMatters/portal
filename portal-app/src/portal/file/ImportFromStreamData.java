@@ -1,4 +1,4 @@
-package portal.service.api;
+package portal.file;
 
 import java.io.InputStream;
 import java.util.Map;

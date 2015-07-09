@@ -1,4 +1,4 @@
-package portal.service.api;
+package portal.chemcentral;
 
 import java.util.List;
 

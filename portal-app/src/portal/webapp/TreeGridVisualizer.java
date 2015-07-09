@@ -6,11 +6,11 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.model.Model;
 import portal.chemcentral.ChemcentralSession;
+import portal.chemcentral.ListRowFilter;
 import portal.dataset.DatasetDescriptor;
 import portal.dataset.PropertyDescriptor;
 import portal.dataset.Row;
 import portal.dataset.RowDescriptor;
-import portal.service.api.ListRowFilter;
 
 import javax.inject.Inject;
 import javax.swing.tree.DefaultMutableTreeNode;

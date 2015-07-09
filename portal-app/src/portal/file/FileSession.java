@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import portal.dataset.DatasetDescriptor;
 import portal.dataset.PropertyDescriptor;
 import portal.dataset.RowDescriptor;
-import portal.service.api.ImportFromStreamData;
 
 import javax.enterprise.context.SessionScoped;
 import java.io.IOException;
