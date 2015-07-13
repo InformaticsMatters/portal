@@ -2,11 +2,14 @@ package portal.webapp;
 
 import com.im.lac.dataset.DataItem;
 import com.im.lac.dataset.client.DatasetClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import portal.dataset.DatasetDescriptor;
 import portal.dataset.IDatasetDescriptor;
 
 import javax.enterprise.context.SessionScoped;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +22,8 @@ import java.util.stream.Stream;
  */
 @SessionScoped
 public class DatasetsSession implements Serializable {
+
+    private static final Logger logger = LoggerFactory.getLogger(DatasetsSession.class.getName());
 
     private DatasetClient datasetClient;
     private Map<Long, IDatasetDescriptor> datasetDescriptorMap;
@@ -36,13 +41,12 @@ public class DatasetsSession implements Serializable {
                 datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(null, e);
         }
     }
 
     private IDatasetDescriptor newDatasetDescriptorFromDataItem(DataItem dataItem) {
-        DatasetDescriptor datasetDescriptor = new DatasetDescriptor(dataItem);
-        return datasetDescriptor;
+        return new DatasetDescriptor(dataItem);
     }
 
     public List<IDatasetDescriptor> listDatasets(DatasetFilterData datasetFilterData) {
@@ -55,5 +59,13 @@ public class DatasetsSession implements Serializable {
         }
 
         return new ArrayList<>(datasetDescriptorMap.values());
+    }
+
+    public void createDataset(String name, InputStream content) {
+        try {
+            datasetClient.create(name, content);
+        } catch (IOException e) {
+            logger.error(null, e);
+        }
     }
 }

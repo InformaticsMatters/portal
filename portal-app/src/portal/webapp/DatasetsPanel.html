@@ -13,6 +13,17 @@
         </div>
     </form>
 
+    <div class="ui teal small buttons">
+        <div class="ui button">New</div>
+        <div class="ui floating dropdown icon button">
+            <i class="dropdown icon"></i>
+
+            <div class="menu">
+                <div class="item" wicket:id="addFromFile">Upload</div>
+            </div>
+        </div>
+    </div>
+
     <div class="dataSets">
         <ul class="ui cards" wicket:id="datasetsContainer">
             <li wicket:id="descriptors" class="card palette-item">
@@ -32,4 +43,6 @@
             </li>
         </ul>
     </div>
+
+    <div wicket:id="uploadFilePanel"></div>
 </wicket:panel>

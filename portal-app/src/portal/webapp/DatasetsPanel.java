@@ -2,6 +2,7 @@ package portal.webapp;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -16,6 +17,7 @@ import portal.dataset.IDatasetDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -31,11 +33,13 @@ public class DatasetsPanel extends Panel {
     private ListView<IDatasetDescriptor> listView;
     @Inject
     private DatasetsSession datasetsSession;
+    private UploadModalPanel uploadModalPanel;
 
     public DatasetsPanel(String id) {
         super(id);
         addDatasets();
         addForm();
+        addUploadSupport();
     }
 
     private void addForm() {
@@ -85,6 +89,31 @@ public class DatasetsPanel extends Panel {
         datasetsContainer.add(listView);
 
         add(datasetsContainer);
+    }
+
+    private void addUploadSupport() {
+        uploadModalPanel = new UploadModalPanel("uploadFilePanel", "modalElement");
+        uploadModalPanel.setCallbacks(new UploadModalPanel.Callbacks() {
+
+            @Override
+            public void onSubmit(String name, InputStream inputStream) {
+                datasetsSession.createDataset(name, inputStream);
+                refreshDatasetList();
+            }
+
+            @Override
+            public void onCancel() {
+            }
+        });
+        add(uploadModalPanel);
+
+        add(new AjaxLink("addFromFile") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                uploadModalPanel.showModal();
+            }
+        });
     }
 
     private void refreshDatasetList() {

@@ -24,7 +24,6 @@ public class ChemcentralPage extends WebPage {
     private AjaxLink cardViewLink;
     private DatasetListViewPanel datasetListViewPanel;
     private ChemcentralSearchPanel chemcentralSearchPanel;
-    private UploadModalPanel uploadModalPanel;
     private MarvinSketcher marvinSketcherPanel;
 
     @Inject
@@ -82,14 +81,6 @@ public class ChemcentralPage extends WebPage {
         add(cardViewLink);
 
 
-        add(new AjaxLink("addFromFile") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                uploadModalPanel.showModal();
-            }
-        });
-
         add(new AjaxLink("addFromStructureSearch") {
 
             @Override
@@ -124,20 +115,6 @@ public class ChemcentralPage extends WebPage {
     }
 
     private void addModals() {
-        uploadModalPanel = new UploadModalPanel("uploadFilePanel", "modalElement");
-        uploadModalPanel.setCallbacks(new UploadModalPanel.Callbacks() {
-
-            @Override
-            public void onSubmit() {
-                refreshDatasetDescriptors();
-            }
-
-            @Override
-            public void onCancel() {
-            }
-        });
-        add(uploadModalPanel);
-
         marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel", "modalElement");
         marvinSketcherPanel.setCallbacks(new MarvinSketcher.Callbacks() {
 

@@ -10,22 +10,21 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.file.ImportFromStreamData;
-import portal.legacy.DatasetService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
-import javax.inject.Inject;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class UploadModalPanel extends SemanticModalPanel {
 
-    @Inject
-    private DatasetService service;
+    private static final Logger logger = LoggerFactory.getLogger(UploadModalPanel.class.getName());
+
     private Callbacks callbacks;
-    private Form<UploadModalData> form;
+    private Form<UploadModalData> uploadForm;
     private FileUploadField fileUploadField;
 
     public UploadModalPanel(String id, String modalElementWicketId) {
@@ -34,30 +33,35 @@ public class UploadModalPanel extends SemanticModalPanel {
     }
 
     private void addForm() {
-        form = new Form<>("form");
-        form.setOutputMarkupId(true);
-        getModalRootComponent().add(form);
+        uploadForm = new Form<>("form");
+        uploadForm.setOutputMarkupId(true);
+        getModalRootComponent().add(uploadForm);
 
-        form.setModel(new CompoundPropertyModel<>(new UploadModalData()));
+        uploadForm.setModel(new CompoundPropertyModel<>(new UploadModalData()));
         TextField<String> descriptionField = new TextField<>("description");
-        form.add(descriptionField);
+        uploadForm.add(descriptionField);
 
         fileUploadField = new FileUploadField("fileInput");
-        form.add(fileUploadField);
+        uploadForm.add(fileUploadField);
 
-        form.add(new Image("appender", AbstractDefaultAjaxBehavior.INDICATOR));
+        uploadForm.add(new Image("appender", AbstractDefaultAjaxBehavior.INDICATOR));
 
         final AjaxSubmitLink submit = new AjaxSubmitLink("submit") {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                processSubmission();
-                callbacks.onSubmit();
-                hideModal();
+                try {
+                    for (FileUpload upload : fileUploadField.getFileUploads()) {
+                        callbacks.onSubmit(uploadForm.getModelObject().getDescription(), upload.getInputStream());
+                    }
+                    hideModal();
+                } catch (Throwable t) {
+                    logger.error(null, t);
+                }
             }
         };
         submit.setOutputMarkupId(true);
-        form.add(submit);
+        uploadForm.add(submit);
 
         AjaxLink cancelAction = new AjaxLink("cancel") {
 
@@ -66,21 +70,7 @@ public class UploadModalPanel extends SemanticModalPanel {
                 callbacks.onCancel();
             }
         };
-        form.add(cancelAction);
-    }
-
-    private void processSubmission() {
-        try {
-            for (FileUpload upload : fileUploadField.getFileUploads()) {
-                ImportFromStreamData data = new ImportFromStreamData();
-                data.setDescription(form.getModelObject().getDescription());
-                data.setInputStream(upload.getInputStream());
-                data.setFieldConfigMap(new HashMap<>());
-                service.importFromStream(data);
-            }
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+        uploadForm.add(cancelAction);
     }
 
     public void setCallbacks(Callbacks callbacks) {
@@ -89,7 +79,7 @@ public class UploadModalPanel extends SemanticModalPanel {
 
     public interface Callbacks extends Serializable {
 
-        void onSubmit();
+        void onSubmit(String name, InputStream inputStream);
 
         void onCancel();
 
