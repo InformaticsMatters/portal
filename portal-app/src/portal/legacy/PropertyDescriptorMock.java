@@ -1,8 +1,8 @@
 package portal.legacy;
 
-import portal.dataset.PropertyDescriptor;
+import portal.dataset.IPropertyDescriptor;
 
-class PropertyDescriptorMock implements PropertyDescriptor {
+class PropertyDescriptorMock implements IPropertyDescriptor {
 
     private Long id;
     private String description;

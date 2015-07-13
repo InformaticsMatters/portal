@@ -20,7 +20,7 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.chemcentral.ChemcentralSession;
 import portal.chemcentral.PropertyData;
 import portal.chemcentral.PropertyDefinition;
-import portal.dataset.DatasetDescriptor;
+import portal.dataset.IDatasetDescriptor;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -33,7 +33,7 @@ import java.util.Set;
 
 public class TreeGridVisualizerPage extends WebPage {
 
-    private final DatasetDescriptor datasetDescriptor;
+    private final IDatasetDescriptor datasetDescriptor;
 
     private Form<PropertyDefinitionData> form;
 
@@ -46,7 +46,7 @@ public class TreeGridVisualizerPage extends WebPage {
     private WebMarkupContainer columnsContainer;
     private MenuPanel menuPanel;
 
-    public TreeGridVisualizerPage(DatasetDescriptor datasetDescriptor) {
+    public TreeGridVisualizerPage(IDatasetDescriptor datasetDescriptor) {
         this.datasetDescriptor = datasetDescriptor;
         notifierProvider.createNotifier(this, "notifier");
         addPanels();
@@ -71,7 +71,7 @@ public class TreeGridVisualizerPage extends WebPage {
         add(new FooterPanel("footerPanel"));
     }
 
-    private void addOrReplaceTreeGridVisualizer(DatasetDescriptor datasetDescriptor) {
+    private void addOrReplaceTreeGridVisualizer(IDatasetDescriptor datasetDescriptor) {
         treeGridVisualizer = new TreeGridVisualizer("treeGrid", datasetDescriptor);
         addOrReplace(treeGridVisualizer);
         TreeGridNavigationPanel treeGridNavigation = new TreeGridNavigationPanel("treeGridNavigation", treeGridVisualizer);

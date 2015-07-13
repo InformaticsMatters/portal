@@ -6,8 +6,8 @@ import chemaxon.struc.Molecule;
 import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import portal.chemcentral.ChemcentralSession;
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.Row;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRow;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -52,11 +52,11 @@ public class DynamicStructureImageResource extends DynamicImageResource {
         Long rowId = Long.valueOf(rowIdAsString);
 
         // Row row = service.findRowById(datasetDescriptorId, rowId);
-        List<Row> rows = chemcentralSession.listRow(datasetDescriptorId, Arrays.asList(rowId));
-        Row row = rows.get(0);
+        List<IRow> rows = chemcentralSession.listRow(datasetDescriptorId, Arrays.asList(rowId));
+        IRow row = rows.get(0);
 
         if (row != null) {
-            PropertyDescriptor propertyDescriptor = row.getDescriptor().getStructurePropertyDescriptor();
+            IPropertyDescriptor propertyDescriptor = row.getDescriptor().getStructurePropertyDescriptor();
             structureData = (String) row.getProperty(propertyDescriptor);
         }
         return structureData;

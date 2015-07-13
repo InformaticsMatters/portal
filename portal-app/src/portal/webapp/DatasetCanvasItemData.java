@@ -1,19 +1,19 @@
 package portal.webapp;
 
-import portal.dataset.DatasetDescriptor;
+import portal.dataset.IDatasetDescriptor;
 
 /**
  * @author simetrias
  */
 public class DatasetCanvasItemData extends AbstractCanvasItemData {
 
-    private DatasetDescriptor datasetDescriptor;
+    private IDatasetDescriptor datasetDescriptor;
 
-    public DatasetDescriptor getDatasetDescriptor() {
+    public IDatasetDescriptor getDatasetDescriptor() {
         return datasetDescriptor;
     }
 
-    public void setDatasetDescriptor(DatasetDescriptor datasetDescriptor) {
+    public void setDatasetDescriptor(IDatasetDescriptor datasetDescriptor) {
         this.datasetDescriptor = datasetDescriptor;
     }
 }

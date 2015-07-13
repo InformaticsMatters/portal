@@ -1,7 +1,7 @@
 package portal.legacy;
 
 import portal.chemcentral.StructureSearch;
-import portal.dataset.DatasetDescriptor;
+import portal.dataset.IDatasetDescriptor;
 import toolkit.test.AbstractTestCase;
 import toolkit.test.TestCase;
 import toolkit.test.TestMethod;
@@ -32,6 +32,6 @@ public class DatasetServiceHarness extends AbstractTestCase {
     public void testDatasetService() {
         DatasetDescriptorMock datasetDescriptorMock = new DatasetDescriptorMock();
         datasetDescriptorMock.setDescription("Test dataset descriptor");
-        DatasetDescriptor result = service.createDatasetDescriptor(datasetDescriptorMock);
+        IDatasetDescriptor result = service.createDatasetDescriptor(datasetDescriptorMock);
     }
 }

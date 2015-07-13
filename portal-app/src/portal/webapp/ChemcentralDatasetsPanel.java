@@ -22,7 +22,7 @@ import java.util.ArrayList;
 /**
  * @author simetrias
  */
-public class DatasetsPanel extends Panel {
+public class ChemcentralDatasetsPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "dataset";
 
@@ -32,12 +32,9 @@ public class DatasetsPanel extends Panel {
     private ListView<IDatasetDescriptor> listView;
     @Inject
     private ChemcentralSession chemcentralSession;
-    @Inject
-    private DatasetsSession datasetsSession;
 
-    public DatasetsPanel(String id) {
+    public ChemcentralDatasetsPanel(String id) {
         super(id);
-        datasetsSession.testGetAll();
         addDatasets();
         addForm();
     }

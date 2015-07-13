@@ -1,6 +1,6 @@
 package portal.legacy;
 
-import portal.dataset.Row;
+import portal.dataset.IRow;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,7 +18,7 @@ class DatasetMock {
         this.id = id;
     }
 
-    public List<Row> getAllRows() {
+    public List<IRow> getAllRows() {
         return new ArrayList<>(rowMap.values());
     }
 
@@ -34,8 +34,8 @@ class DatasetMock {
         return rowMap.keySet();
     }
 
-    public List<Row> getRowList(List<Long> rowIdList) {
-        ArrayList<Row> result = new ArrayList<>(rowIdList.size());
+    public List<IRow> getRowList(List<Long> rowIdList) {
+        ArrayList<IRow> result = new ArrayList<>(rowIdList.size());
         result.addAll(rowIdList.stream().map(rowMap::get).collect(Collectors.toList()));
         return result;
     }

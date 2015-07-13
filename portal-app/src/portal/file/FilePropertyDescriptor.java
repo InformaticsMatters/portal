@@ -1,8 +1,8 @@
 package portal.file;
 
-import portal.dataset.PropertyDescriptor;
+import portal.dataset.IPropertyDescriptor;
 
-class FilePropertyDescriptor implements PropertyDescriptor {
+class FilePropertyDescriptor implements IPropertyDescriptor {
 
     private Long id;
     private String description;

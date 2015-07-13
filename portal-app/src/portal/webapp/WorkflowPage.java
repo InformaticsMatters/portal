@@ -207,7 +207,7 @@ public class WorkflowPage extends WebPage {
             canvasItemModelList.add(serviceCanvasItemData);
             data = serviceCanvasItemData;
             canvasItemPanel = serviceCanvasItemPanel;
-        } else if (DatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
+        } else if (ChemcentralDatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
             DatasetCanvasItemData datasetCanvasItemData = new DatasetCanvasItemData();
             datasetCanvasItemData.setDatasetDescriptor(chemcentralSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
             datasetCanvasItemData.setPositionX(x);

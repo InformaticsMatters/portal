@@ -5,10 +5,10 @@ import com.inmethod.icon.Icon;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import portal.dataset.DatasetDescriptor;
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.Row;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IDatasetDescriptor;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRow;
+import portal.dataset.IRowDescriptor;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -16,9 +16,9 @@ import javax.swing.tree.DefaultTreeModel;
 
 public class TreeGridVisualizerTreeColumn extends BaseTreeColumn<DefaultTreeModel, DefaultMutableTreeNode, String> {
 
-    private DatasetDescriptor datasetDescriptor;
+    private IDatasetDescriptor datasetDescriptor;
 
-    public TreeGridVisualizerTreeColumn(String columnId, IModel<String> headerModel, DatasetDescriptor datasetDescriptor) {
+    public TreeGridVisualizerTreeColumn(String columnId, IModel<String> headerModel, IDatasetDescriptor datasetDescriptor) {
         super(columnId, headerModel);
         this.datasetDescriptor = datasetDescriptor;
         setInitialSize(DynamicStructureImageResource.RECTANGLE.width + 36);
@@ -26,10 +26,10 @@ public class TreeGridVisualizerTreeColumn extends BaseTreeColumn<DefaultTreeMode
 
     @Override
     protected Component newNodeComponent(String id, IModel<DefaultMutableTreeNode> model) {
-        Row row = (Row) model.getObject().getUserObject();
-        RowDescriptor rowDescriptor = row.getDescriptor();
-        PropertyDescriptor hierarchicalPropertyDescriptor = rowDescriptor.getHierarchicalPropertyDescriptor();
-        PropertyDescriptor structurePropertyDescriptor = rowDescriptor.getStructurePropertyDescriptor();
+        IRow row = (IRow) model.getObject().getUserObject();
+        IRowDescriptor rowDescriptor = row.getDescriptor();
+        IPropertyDescriptor hierarchicalPropertyDescriptor = rowDescriptor.getHierarchicalPropertyDescriptor();
+        IPropertyDescriptor structurePropertyDescriptor = rowDescriptor.getStructurePropertyDescriptor();
         if (hierarchicalPropertyDescriptor == null) {
             throw new RuntimeException("No hierarchical property found. Can't render a TreeColumn.");
         }

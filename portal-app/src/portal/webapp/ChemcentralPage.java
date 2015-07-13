@@ -9,7 +9,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.chemcentral.ChemcentralSession;
-import portal.dataset.DatasetDescriptor;
+import portal.dataset.IDatasetDescriptor;
 import toolkit.wicket.marvin4js.MarvinSketcher;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -169,7 +169,7 @@ public class ChemcentralPage extends WebPage {
     }
 
     private void refreshDatasetDescriptors() {
-        List<DatasetDescriptor> datasetDescriptorList = chemcentralSession.listDatasets(null);
+        List<IDatasetDescriptor> datasetDescriptorList = chemcentralSession.listDatasets(null);
         datasetListViewPanel.setDatasetDescriptorList(datasetDescriptorList);
         datasetCardViewPanel.setDatasetDescriptorList(datasetDescriptorList);
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);

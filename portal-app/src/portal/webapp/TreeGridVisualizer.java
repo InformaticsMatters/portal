@@ -7,10 +7,10 @@ import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.model.Model;
 import portal.chemcentral.ChemcentralSession;
 import portal.chemcentral.ListRowFilter;
-import portal.dataset.DatasetDescriptor;
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.Row;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IDatasetDescriptor;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRow;
+import portal.dataset.IRowDescriptor;
 
 import javax.inject.Inject;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -22,12 +22,12 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
 
     private static final int ROWS_PER_PAGE = 50;
     private long currentPage = 0;
-    private DatasetDescriptor datasetDescriptor;
+    private IDatasetDescriptor datasetDescriptor;
     private List<Long> allIds;
     @Inject
     private ChemcentralSession chemcentralSession;
 
-    public TreeGridVisualizer(String id, DatasetDescriptor datasetDescriptor) {
+    public TreeGridVisualizer(String id, IDatasetDescriptor datasetDescriptor) {
         super(id, new DefaultTreeModel(new DefaultMutableTreeNode()), buildColumns(datasetDescriptor));
         setOutputMarkupId(true);
         getTree().setRootLess(true);
@@ -37,12 +37,12 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
         setCurrentPage(0);
     }
 
-    private static List<IGridColumn<DefaultTreeModel, DefaultMutableTreeNode, String>> buildColumns(DatasetDescriptor datasetDescriptor) {
+    private static List<IGridColumn<DefaultTreeModel, DefaultMutableTreeNode, String>> buildColumns(IDatasetDescriptor datasetDescriptor) {
         List<IGridColumn<DefaultTreeModel, DefaultMutableTreeNode, String>> columns = new ArrayList<>();
         TreeGridVisualizerTreeColumn treeColumn = new TreeGridVisualizerTreeColumn("treeColumnId", Model.of("Structure"), datasetDescriptor);
         columns.add(treeColumn);
-        for (RowDescriptor rowDescriptor : datasetDescriptor.getAllRowDescriptors()) {
-            for (PropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
+        for (IRowDescriptor rowDescriptor : datasetDescriptor.getAllRowDescriptors()) {
+            for (IPropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
                 if (!isStructureProperty(rowDescriptor, propertyDescriptor) && !isHierarchicalProperty(rowDescriptor, propertyDescriptor)) {
                     Long propertyId = propertyDescriptor.getId();
                     String columnId = propertyId.toString();
@@ -54,13 +54,13 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
         return columns;
     }
 
-    private static boolean isStructureProperty(RowDescriptor rowDescriptor, PropertyDescriptor propertyDescriptor) {
-        PropertyDescriptor structurePropertyDescriptor = rowDescriptor.getStructurePropertyDescriptor();
+    private static boolean isStructureProperty(IRowDescriptor rowDescriptor, IPropertyDescriptor propertyDescriptor) {
+        IPropertyDescriptor structurePropertyDescriptor = rowDescriptor.getStructurePropertyDescriptor();
         return structurePropertyDescriptor != null && propertyDescriptor.getId().equals(structurePropertyDescriptor.getId());
     }
 
-    private static boolean isHierarchicalProperty(RowDescriptor rowDescriptor, PropertyDescriptor propertyDescriptor) {
-        PropertyDescriptor hierarchicalPropertyDescriptor = rowDescriptor.getHierarchicalPropertyDescriptor();
+    private static boolean isHierarchicalProperty(IRowDescriptor rowDescriptor, IPropertyDescriptor propertyDescriptor) {
+        IPropertyDescriptor hierarchicalPropertyDescriptor = rowDescriptor.getHierarchicalPropertyDescriptor();
         return hierarchicalPropertyDescriptor != null && propertyDescriptor.getId().equals(hierarchicalPropertyDescriptor.getId());
     }
 
@@ -83,7 +83,7 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
         listRowFilter.setDatasetDescriptorId(datasetDescriptor.getId());
 
         // List<Row> rowList = datasetService.listRow(listRowFilter);
-        List<Row> rowList = chemcentralSession.listRow(datasetDescriptor.getId(), rowIdList);
+        List<IRow> rowList = chemcentralSession.listRow(datasetDescriptor.getId(), rowIdList);
 
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
         buildNodeHierarchy(rootNode, rowList);
@@ -96,8 +96,8 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
         return (allIds.size() / ROWS_PER_PAGE) + 1;
     }
 
-    private void buildNodeHierarchy(DefaultMutableTreeNode parentNode, List<Row> rowList) {
-        for (Row row : rowList) {
+    private void buildNodeHierarchy(DefaultMutableTreeNode parentNode, List<IRow> rowList) {
+        for (IRow row : rowList) {
             DefaultMutableTreeNode childNode = new DefaultMutableTreeNode();
             childNode.setUserObject(row);
             parentNode.add(childNode);

@@ -6,15 +6,15 @@ import java.util.List;
 /**
  * @author simetrias
  */
-public interface DatasetDescriptor extends Serializable {
+public interface IDatasetDescriptor extends Serializable {
 
     Long getId();
 
     String getDescription();
 
-    List<RowDescriptor> getAllRowDescriptors();
+    List<IRowDescriptor> getAllRowDescriptors();
 
-    RowDescriptor getRowDescriptorById(Long id);
+    IRowDescriptor getRowDescriptorById(Long id);
 
     long getRowCount();
 

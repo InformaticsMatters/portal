@@ -1,20 +1,20 @@
 package portal.chemcentral;
 
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.Row;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRow;
+import portal.dataset.IRowDescriptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class ChemcentralRow implements Row {
+class ChemcentralRow implements IRow {
 
     private Long id;
     private ChemcentralRowDescriptor rowDescriptor;
     private Map<ChemcentralPropertyDescriptor, Object> properties;
-    private List<Row> children;
+    private List<IRow> children;
 
     @Override
     public Long getId() {
@@ -26,7 +26,7 @@ class ChemcentralRow implements Row {
     }
 
     @Override
-    public RowDescriptor getDescriptor() {
+    public IRowDescriptor getDescriptor() {
         return rowDescriptor;
     }
 
@@ -35,7 +35,7 @@ class ChemcentralRow implements Row {
     }
 
     @Override
-    public List<Row> getChildren() {
+    public List<IRow> getChildren() {
         return children;
     }
 
@@ -46,7 +46,7 @@ class ChemcentralRow implements Row {
         properties.put(key, value);
     }
 
-    public Object getProperty(PropertyDescriptor propertyDescriptor) {
+    public Object getProperty(IPropertyDescriptor propertyDescriptor) {
         Object value = null;
         if (properties != null) {
             value = properties.get(propertyDescriptor);

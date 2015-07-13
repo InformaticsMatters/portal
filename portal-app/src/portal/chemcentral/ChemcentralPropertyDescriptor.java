@@ -1,8 +1,8 @@
 package portal.chemcentral;
 
-import portal.dataset.PropertyDescriptor;
+import portal.dataset.IPropertyDescriptor;
 
-class ChemcentralPropertyDescriptor implements PropertyDescriptor {
+class ChemcentralPropertyDescriptor implements IPropertyDescriptor {
 
     private Long id;
     private String description;

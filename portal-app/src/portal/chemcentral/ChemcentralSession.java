@@ -1,8 +1,8 @@
 package portal.chemcentral;
 
-import portal.dataset.DatasetDescriptor;
-import portal.dataset.Row;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IDatasetDescriptor;
+import portal.dataset.IRow;
+import portal.dataset.IRowDescriptor;
 import portal.webapp.DatasetFilterData;
 
 import javax.enterprise.context.SessionScoped;
@@ -18,18 +18,18 @@ public class ChemcentralSession implements Serializable {
 
     @Inject
     private ChemcentralClient client;
-    private Map<Long, DatasetDescriptor> datasetDescriptorMap;
+    private Map<Long, IDatasetDescriptor> datasetDescriptorMap;
 
     private void loadDatamartDatasetList() {
         datasetDescriptorMap = new HashMap<>();
         List<Hitlist> result = client.listHitlist();
         for (Hitlist hitlist : result) {
-            DatasetDescriptor datasetDescriptor = newDatasetDescriptorFromHitlist(hitlist);
+            IDatasetDescriptor datasetDescriptor = newDatasetDescriptorFromHitlist(hitlist);
             datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
         }
     }
 
-    private DatasetDescriptor newDatasetDescriptorFromHitlist(Hitlist hitlist) {
+    private IDatasetDescriptor newDatasetDescriptorFromHitlist(Hitlist hitlist) {
         ChemcentralDatasetDescriptor ddd = new ChemcentralDatasetDescriptor(hitlist);
 
         ChemcentralPropertyDescriptor dpd = new ChemcentralPropertyDescriptor();
@@ -51,14 +51,14 @@ public class ChemcentralSession implements Serializable {
         return Arrays.asList(hitlist.getItems());
     }
 
-    public List<Row> listRow(Long datasetDescriptorId, List<Long> structureIdList) {
-        DatasetDescriptor datasetDescriptor = datasetDescriptorMap.get(datasetDescriptorId);
+    public List<IRow> listRow(Long datasetDescriptorId, List<Long> structureIdList) {
+        IDatasetDescriptor datasetDescriptor = datasetDescriptorMap.get(datasetDescriptorId);
 
         // Discuss: I'm forced to match each Row to the only known metadata!
         ChemcentralRowDescriptor drd = (ChemcentralRowDescriptor) datasetDescriptor.getAllRowDescriptors().get(0);
         ChemcentralPropertyDescriptor dpd = (ChemcentralPropertyDescriptor) drd.getStructurePropertyDescriptor();
 
-        ArrayList<Row> rows = new ArrayList<>(structureIdList.size());
+        ArrayList<IRow> rows = new ArrayList<>(structureIdList.size());
         List<Structure> structures = client.listStructure(structureIdList);
         for (Structure structure : structures) {
             ChemcentralRow chemcentralRow = new ChemcentralRow();
@@ -70,13 +70,13 @@ public class ChemcentralSession implements Serializable {
         return rows;
     }
 
-    public List<PropertyData> listPropertyData(DatasetDescriptor datasetDescriptor, PropertyDefinition propertyDefinition) {
+    public List<PropertyData> listPropertyData(IDatasetDescriptor datasetDescriptor, PropertyDefinition propertyDefinition) {
         return client.listPropertyData(datasetDescriptor.getId(), propertyDefinition.getOriginalId());
     }
 
-    public void addPropertyToDataset(DatasetDescriptor datasetDescriptor, String jsonParameterName) {
-        List<RowDescriptor> allRowDescriptors = datasetDescriptor.getAllRowDescriptors();
-        for (RowDescriptor rowDescriptor : allRowDescriptors) {
+    public void addPropertyToDataset(IDatasetDescriptor datasetDescriptor, String jsonParameterName) {
+        List<IRowDescriptor> allRowDescriptors = datasetDescriptor.getAllRowDescriptors();
+        for (IRowDescriptor rowDescriptor : allRowDescriptors) {
             Long id = (long) rowDescriptor.listAllPropertyDescriptors().size();
             ChemcentralPropertyDescriptor chemcentralPropertyDescriptor = new ChemcentralPropertyDescriptor();
             chemcentralPropertyDescriptor.setDescription(jsonParameterName);
@@ -86,11 +86,11 @@ public class ChemcentralSession implements Serializable {
         }
     }
 
-    public DatasetDescriptor findDatasetDescriptorById(Long id) {
+    public IDatasetDescriptor findDatasetDescriptorById(Long id) {
         return datasetDescriptorMap.get(id);
     }
 
-    public List<DatasetDescriptor> listDatasets(DatasetFilterData datasetFilterData) {
+    public List<IDatasetDescriptor> listDatasets(DatasetFilterData datasetFilterData) {
         if (datasetFilterData != null) {
             System.out.println("Searching " + datasetFilterData.getPattern());
         }

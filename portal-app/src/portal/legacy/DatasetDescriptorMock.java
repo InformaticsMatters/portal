@@ -1,14 +1,14 @@
 package portal.legacy;
 
-import portal.dataset.DatasetDescriptor;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IDatasetDescriptor;
+import portal.dataset.IRowDescriptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class DatasetDescriptorMock implements DatasetDescriptor {
+class DatasetDescriptorMock implements IDatasetDescriptor {
 
     private Long id;
     private String description;
@@ -35,12 +35,12 @@ class DatasetDescriptorMock implements DatasetDescriptor {
     }
 
     @Override
-    public List<RowDescriptor> getAllRowDescriptors() {
+    public List<IRowDescriptor> getAllRowDescriptors() {
         return new ArrayList<>(rowDescriptorMap.values());
     }
 
     @Override
-    public RowDescriptor getRowDescriptorById(Long id) {
+    public IRowDescriptor getRowDescriptorById(Long id) {
         return rowDescriptorMap.get(id);
     }
 

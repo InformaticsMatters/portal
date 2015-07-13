@@ -12,10 +12,10 @@ import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.chemcentral.*;
-import portal.dataset.DatasetDescriptor;
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.Row;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IDatasetDescriptor;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRow;
+import portal.dataset.IRowDescriptor;
 import portal.file.ImportFromStreamData;
 import toolkit.services.PU;
 
@@ -48,7 +48,7 @@ public class DatasetService {
     @PU(puName = ChemcentralEntityManagerProducer.CHEMCENTRAL_PU_NAME)
     private EntityManager entityManager;
 
-    public DatasetDescriptor createForTreeGridTest() {
+    public IDatasetDescriptor createForTreeGridTest() {
         long datasetMockId = getNextId();
 
         DatasetDescriptorMock ddm = new DatasetDescriptorMock();
@@ -99,7 +99,7 @@ public class DatasetService {
         return datasetDescriptorMock;
     }
 
-    public DatasetDescriptor createFromChemcentralSearch(ChemcentralSearch chemcentralSearch) {
+    public IDatasetDescriptor createFromChemcentralSearch(ChemcentralSearch chemcentralSearch) {
         Query query = entityManager.createNativeQuery("select id, source_id, structure_id, batch_id, property_data " +
                 "from chemcentral_01.structure_props " +
                 "where source_id = 1 " +
@@ -181,7 +181,7 @@ public class DatasetService {
         return datasetDescriptorMock;
     }
 
-    public DatasetDescriptor createFromStructureSearch(StructureSearch structureSearch) {
+    public IDatasetDescriptor createFromStructureSearch(StructureSearch structureSearch) {
         try {
             doCreateFromStructureSearch(structureSearch);
             return null;
@@ -220,7 +220,7 @@ public class DatasetService {
         return connectionHandler;
     }
 
-    public DatasetDescriptor importFromStream(ImportFromStreamData data) {
+    public IDatasetDescriptor importFromStream(ImportFromStreamData data) {
         try {
             long datasetMockId = getNextId();
 
@@ -318,11 +318,11 @@ public class DatasetService {
         return ++nextId;
     }
 
-    public List<DatasetDescriptor> listDatasetDescriptor(ListDatasetDescriptorFilter filter) {
+    public List<IDatasetDescriptor> listDatasetDescriptor(ListDatasetDescriptorFilter filter) {
         return new ArrayList<>(datasetDescriptorMockMap.values());
     }
 
-    public List<Row> listRow(ListRowFilter filter) {
+    public List<IRow> listRow(ListRowFilter filter) {
         DatasetDescriptorMock datasetDescriptorMock = datasetDescriptorMockMap.get(filter.getDatasetDescriptorId());
         DatasetMock datasetMock = datasetMockMap.get(datasetDescriptorMock.getDatasetMockId());
         if (filter.getRowIdList() == null || filter.getRowIdList().size() == 0) {
@@ -332,13 +332,13 @@ public class DatasetService {
         }
     }
 
-    public Row findRowById(Long datasetDescriptorId, Long rowId) {
+    public IRow findRowById(Long datasetDescriptorId, Long rowId) {
         DatasetDescriptorMock datasetDescriptorMock = datasetDescriptorMockMap.get(datasetDescriptorId);
         DatasetMock datasetMock = datasetMockMap.get(datasetDescriptorMock.getDatasetMockId());
         return datasetMock.getRowById(rowId);
     }
 
-    public DatasetDescriptor createDatasetDescriptor(DatasetDescriptor datasetDescriptor) {
+    public IDatasetDescriptor createDatasetDescriptor(IDatasetDescriptor datasetDescriptor) {
         DatasetDescriptorMock datasetDescriptorMock = (DatasetDescriptorMock) datasetDescriptor;
         datasetDescriptorMock.setId(getNextId());
         datasetDescriptorMockMap.put(datasetDescriptor.getId(), datasetDescriptorMock);
@@ -351,7 +351,7 @@ public class DatasetService {
         datasetMockMap.remove(datasetDescriptorMock.getDatasetMockId());
     }
 
-    public RowDescriptor createRowDescriptor(Long datasetDescriptorId, RowDescriptor rowDescriptor) {
+    public IRowDescriptor createRowDescriptor(Long datasetDescriptorId, IRowDescriptor rowDescriptor) {
         RowDescriptorMock rowDescriptorMock = (RowDescriptorMock) rowDescriptor;
         rowDescriptorMock.setId(getNextId());
         datasetDescriptorMockMap.get(datasetDescriptorId).addRowDescriptor(rowDescriptorMock);
@@ -363,7 +363,7 @@ public class DatasetService {
         datasetDescriptorMock.removeRowDescriptor(rowDescriptorId);
     }
 
-    public PropertyDescriptor createPropertyDescriptor(Long datasetDescriptorId, Long rowDescriptorId, PropertyDescriptor propertyDescriptor) {
+    public IPropertyDescriptor createPropertyDescriptor(Long datasetDescriptorId, Long rowDescriptorId, IPropertyDescriptor propertyDescriptor) {
         PropertyDescriptorMock propertyDescriptorMock = (PropertyDescriptorMock) propertyDescriptor;
         if (propertyDescriptorMock.getId() == null) {
             propertyDescriptorMock.setId(getNextId());

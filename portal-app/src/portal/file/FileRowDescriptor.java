@@ -1,14 +1,14 @@
 package portal.file;
 
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRowDescriptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class FileRowDescriptor implements RowDescriptor {
+class FileRowDescriptor implements IRowDescriptor {
 
     private Long id;
     private String description;
@@ -35,22 +35,22 @@ class FileRowDescriptor implements RowDescriptor {
     }
 
     @Override
-    public List<PropertyDescriptor> listAllPropertyDescriptors() {
-        return new ArrayList<PropertyDescriptor>(propertyDescriptorMap.values());
+    public List<IPropertyDescriptor> listAllPropertyDescriptors() {
+        return new ArrayList<IPropertyDescriptor>(propertyDescriptorMap.values());
     }
 
     @Override
-    public PropertyDescriptor findPropertyDescriptorById(Long id) {
+    public IPropertyDescriptor findPropertyDescriptorById(Long id) {
         return propertyDescriptorMap.get(id);
     }
 
     @Override
-    public PropertyDescriptor getHierarchicalPropertyDescriptor() {
+    public IPropertyDescriptor getHierarchicalPropertyDescriptor() {
         return propertyDescriptorMap.get(hierarchicalPropertyId);
     }
 
     @Override
-    public PropertyDescriptor getStructurePropertyDescriptor() {
+    public IPropertyDescriptor getStructurePropertyDescriptor() {
         return propertyDescriptorMap.get(structurePropertyId);
     }
 

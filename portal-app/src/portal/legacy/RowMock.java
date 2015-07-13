@@ -1,20 +1,20 @@
 package portal.legacy;
 
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.Row;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRow;
+import portal.dataset.IRowDescriptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class RowMock implements Row {
+class RowMock implements IRow {
 
     private Long id;
     private RowDescriptorMock rowDescriptor;
     private Map<PropertyDescriptorMock, Object> properties;
-    private List<Row> children;
+    private List<IRow> children;
 
     @Override
     public Long getId() {
@@ -26,12 +26,12 @@ class RowMock implements Row {
     }
 
     @Override
-    public RowDescriptor getDescriptor() {
+    public IRowDescriptor getDescriptor() {
         return rowDescriptor;
     }
 
     @Override
-    public List<Row> getChildren() {
+    public List<IRow> getChildren() {
         return children;
     }
 
@@ -46,7 +46,7 @@ class RowMock implements Row {
         properties.put(key, value);
     }
 
-    public Object getProperty(PropertyDescriptor propertyDescriptor) {
+    public Object getProperty(IPropertyDescriptor propertyDescriptor) {
         Object value = null;
         if (properties != null) {
             value = properties.get(propertyDescriptor);

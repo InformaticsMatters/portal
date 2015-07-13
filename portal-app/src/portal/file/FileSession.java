@@ -7,9 +7,9 @@ import chemaxon.marvin.io.MRecordReader;
 import chemaxon.struc.MProp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import portal.dataset.DatasetDescriptor;
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IDatasetDescriptor;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRowDescriptor;
 
 import javax.enterprise.context.SessionScoped;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class FileSession implements Serializable {
     private Map<Long, FileDataset> fileDatasetMap = new HashMap<>();
     private Map<Long, FileDatasetDescriptor> fileDatasetDescriptorMap = new HashMap<>();
 
-    public DatasetDescriptor importFromStream(ImportFromStreamData data) {
+    public IDatasetDescriptor importFromStream(ImportFromStreamData data) {
         try {
             long fileDatasetId = getNextId();
 
@@ -128,14 +128,14 @@ public class FileSession implements Serializable {
         }
     }
 
-    public DatasetDescriptor createDatasetDescriptor(DatasetDescriptor datasetDescriptor) {
+    public IDatasetDescriptor createDatasetDescriptor(IDatasetDescriptor datasetDescriptor) {
         FileDatasetDescriptor fileDatasetDescriptor = (FileDatasetDescriptor) datasetDescriptor;
         fileDatasetDescriptor.setId(getNextId());
         fileDatasetDescriptorMap.put(datasetDescriptor.getId(), fileDatasetDescriptor);
         return datasetDescriptor;
     }
 
-    public PropertyDescriptor createPropertyDescriptor(Long datasetDescriptorId, Long rowDescriptorId, PropertyDescriptor propertyDescriptor) {
+    public IPropertyDescriptor createPropertyDescriptor(Long datasetDescriptorId, Long rowDescriptorId, IPropertyDescriptor propertyDescriptor) {
         FilePropertyDescriptor filePropertyDescriptor = (FilePropertyDescriptor) propertyDescriptor;
         if (filePropertyDescriptor.getId() == null) {
             filePropertyDescriptor.setId(getNextId());
@@ -146,7 +146,7 @@ public class FileSession implements Serializable {
         return propertyDescriptor;
     }
 
-    public RowDescriptor createRowDescriptor(Long datasetDescriptorId, RowDescriptor rowDescriptor) {
+    public IRowDescriptor createRowDescriptor(Long datasetDescriptorId, IRowDescriptor rowDescriptor) {
         FileRowDescriptor fileRowDescriptor = (FileRowDescriptor) rowDescriptor;
         fileRowDescriptor.setId(getNextId());
         fileDatasetDescriptorMap.get(datasetDescriptorId).addRowDescriptor(fileRowDescriptor);

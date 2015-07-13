@@ -5,8 +5,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.Row;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRow;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -23,8 +23,8 @@ public class TreeGridVisualizerPropertyColumn extends AbstractColumn<DefaultTree
 
     @Override
     public Component newCell(WebMarkupContainer parent, String componentId, IModel<DefaultMutableTreeNode> rowModel) {
-        Row row = (Row) rowModel.getObject().getUserObject();
-        PropertyDescriptor propertyDescriptor = row.getDescriptor().findPropertyDescriptorById(propertyId);
+        IRow row = (IRow) rowModel.getObject().getUserObject();
+        IPropertyDescriptor propertyDescriptor = row.getDescriptor().findPropertyDescriptorById(propertyId);
         Serializable propertyValue = (Serializable) row.getProperty(propertyDescriptor);
         if (propertyValue == null) {
             propertyValue = "";

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author simetrias
  */
-public interface PropertyDescriptor extends Serializable {
+public interface IPropertyDescriptor extends Serializable {
 
     Long getId();
 

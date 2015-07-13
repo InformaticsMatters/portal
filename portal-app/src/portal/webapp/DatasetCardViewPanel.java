@@ -7,14 +7,14 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.dataset.DatasetDescriptor;
+import portal.dataset.IDatasetDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatasetCardViewPanel extends Panel {
 
-    private ListView<DatasetDescriptor> listView;
+    private ListView<IDatasetDescriptor> listView;
     private ClickCardPopupPanel clickCardPopup;
 
     public DatasetCardViewPanel(String id) {
@@ -24,11 +24,11 @@ public class DatasetCardViewPanel extends Panel {
     }
 
     private void addCards() {
-        listView = new ListView<DatasetDescriptor>("descriptors", new ArrayList<>()) {
+        listView = new ListView<IDatasetDescriptor>("descriptors", new ArrayList<>()) {
 
             @Override
-            protected void populateItem(ListItem<DatasetDescriptor> listItem) {
-                DatasetDescriptor datasetDescriptor = listItem.getModelObject();
+            protected void populateItem(ListItem<IDatasetDescriptor> listItem) {
+                IDatasetDescriptor datasetDescriptor = listItem.getModelObject();
                 listItem.add(new Label("description", datasetDescriptor.getDescription()));
                 listItem.add(new Label("rowCount", datasetDescriptor.getRowCount()));
 
@@ -55,7 +55,7 @@ public class DatasetCardViewPanel extends Panel {
         add(clickCardPopup);
     }
 
-    public void setDatasetDescriptorList(List<DatasetDescriptor> datasetDescriptorList) {
+    public void setDatasetDescriptorList(List<IDatasetDescriptor> datasetDescriptorList) {
         listView.setList(datasetDescriptorList);
     }
 }

@@ -1,8 +1,8 @@
 package portal.webapp;
 
-import portal.dataset.DatasetDescriptor;
-import portal.dataset.PropertyDescriptor;
-import portal.dataset.RowDescriptor;
+import portal.dataset.IDatasetDescriptor;
+import portal.dataset.IPropertyDescriptor;
+import portal.dataset.IRowDescriptor;
 
 import java.io.Serializable;
 
@@ -18,12 +18,12 @@ public class DescriptorNodeData implements Serializable {
         String result = "defaultValue";
 
         if (descriptor != null) {
-            if (descriptor instanceof DatasetDescriptor) {
-                result = ((DatasetDescriptor) descriptor).getDescription();
-            } else if (descriptor instanceof RowDescriptor) {
-                result = ((RowDescriptor) descriptor).getDescription();
-            } else if (descriptor instanceof PropertyDescriptor) {
-                result = ((PropertyDescriptor) descriptor).getDescription();
+            if (descriptor instanceof IDatasetDescriptor) {
+                result = ((IDatasetDescriptor) descriptor).getDescription();
+            } else if (descriptor instanceof IRowDescriptor) {
+                result = ((IRowDescriptor) descriptor).getDescription();
+            } else if (descriptor instanceof IPropertyDescriptor) {
+                result = ((IPropertyDescriptor) descriptor).getDescription();
             }
         }
         return result;
