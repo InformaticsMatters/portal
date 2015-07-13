@@ -12,7 +12,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.chemcentral.ChemcentralSession;
 import portal.dataset.IDatasetDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -31,13 +30,10 @@ public class DatasetsPanel extends Panel {
 
     private ListView<IDatasetDescriptor> listView;
     @Inject
-    private ChemcentralSession chemcentralSession;
-    @Inject
     private DatasetsSession datasetsSession;
 
     public DatasetsPanel(String id) {
         super(id);
-        datasetsSession.testGetAll();
         addDatasets();
         addForm();
     }
@@ -95,7 +91,7 @@ public class DatasetsPanel extends Panel {
         DatasetFilterData datasetFilterData = new DatasetFilterData();
         SearchDatasetData searchDatasetData = searchDatasetForm.getModelObject();
         datasetFilterData.setPattern(searchDatasetData.getPattern());
-        listView.setList(chemcentralSession.listDatasets(datasetFilterData));
+        listView.setList(datasetsSession.listDatasets(datasetFilterData));
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         target.add(datasetsContainer);
         target.appendJavaScript("makeCardsDraggable()");
