@@ -113,7 +113,7 @@ if (window.FileReader) {
             e = e || window.event; // get window.event if e argument missing (in IE)
             if (e.preventDefault) {
                 e.preventDefault();
-            } // stops the browser from redirecting off to the image.
+            }
 
             var dt = e.dataTransfer;
             var files = dt.files;
