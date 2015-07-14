@@ -2,7 +2,6 @@ package portal.webapp;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -17,7 +16,6 @@ import portal.dataset.IDatasetDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +37,7 @@ public class DatasetsPanel extends Panel {
         super(id);
         addDatasets();
         addForm();
-        addUploadSupport();
+        //addUploadSupport();
     }
 
     private void addForm() {
@@ -91,7 +89,7 @@ public class DatasetsPanel extends Panel {
         add(datasetsContainer);
     }
 
-    private void addUploadSupport() {
+  /*  private void addUploadSupport() {
         uploadModalPanel = new UploadModalPanel("uploadFilePanel", "modalElement");
         uploadModalPanel.setCallbacks(new UploadModalPanel.Callbacks() {
 
@@ -114,7 +112,7 @@ public class DatasetsPanel extends Panel {
                 uploadModalPanel.showModal();
             }
         });
-    }
+    }  */
 
     private void refreshDatasetList() {
         DatasetFilterData datasetFilterData = new DatasetFilterData();

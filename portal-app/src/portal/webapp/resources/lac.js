@@ -119,6 +119,7 @@ if (window.FileReader) {
                 var file = files[i];
                  console.log(file);
             }
+            $('.modal').modal('show');
             return false;
         });
 
