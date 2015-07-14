@@ -94,9 +94,7 @@ if(visualizersVisible) {
 if (window.FileReader) {
     var drop;
     addEventHandler(window, 'load', function () {
-        var status = document.getElementById('status');
         drop = document.getElementById('drop');
-        var list = document.getElementById('list');
 
         function cancel(e) {
             if (e.preventDefault) {
@@ -119,37 +117,12 @@ if (window.FileReader) {
             var files = dt.files;
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
-                var reader = new FileReader();
-
-                //attach event handlers here...
-
-                reader.readAsDataURL(file);
-                addEventHandler(reader, 'loadend', function (e, file) {
-                    var bin = this.result;
-
-                    var newFile = document.createElement('div');
-                    newFile.innerHTML = file.name;
-                    newFile.className = "card palette-item";
-                    drop.appendChild(newFile);
-
-
-                }.bindToEventHandler(file));
+                 console.log(file);
             }
             return false;
         });
-        Function.prototype.bindToEventHandler = function bindToEventHandler() {
-            var handler = this;
-            var boundParameters = Array.prototype.slice.call(arguments);
-            //create closure
-            return function (e) {
-                e = e || window.event; // get window.event if e argument missing (in IE)
-                boundParameters.unshift(e);
-                handler.apply(this, boundParameters);
-            }
-        };
+
     });
-} else {
-    document.getElementById('status').innerHTML = 'Your browser does not support the HTML5 FileReader.';
 }
 
 
