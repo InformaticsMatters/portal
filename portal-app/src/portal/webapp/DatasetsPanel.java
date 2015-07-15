@@ -25,7 +25,7 @@ public class DatasetsPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "dataset";
 
-    private Form<SearchDatasetData> searchDatasetForm;
+    private Form<SearchDatasetData> searchForm;
     private WebMarkupContainer datasetsContainer;
 
     private ListView<IDatasetDescriptor> listView;
@@ -35,28 +35,29 @@ public class DatasetsPanel extends Panel {
 
     public DatasetsPanel(String id) {
         super(id);
+        addSearchForm();
         addDatasets();
-        addForm();
         //addUploadSupport();
+        refreshDatasets();
     }
 
-    private void addForm() {
-        searchDatasetForm = new Form<>("form");
-        searchDatasetForm.setModel(new CompoundPropertyModel<>(new SearchDatasetData()));
-        searchDatasetForm.setOutputMarkupId(true);
-        add(searchDatasetForm);
+    private void addSearchForm() {
+        searchForm = new Form<>("form");
+        searchForm.setModel(new CompoundPropertyModel<>(new SearchDatasetData()));
+        searchForm.setOutputMarkupId(true);
+        add(searchForm);
 
         TextField<String> patternField = new TextField<>("pattern");
-        searchDatasetForm.add(patternField);
+        searchForm.add(patternField);
 
         AjaxSubmitLink searchAction = new IndicatingAjaxSubmitLink("search") {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                refreshDatasetList();
+                refreshDatasets();
             }
         };
-        searchDatasetForm.add(searchAction);
+        searchForm.add(searchAction);
     }
 
     private void addDatasets() {
@@ -114,13 +115,15 @@ public class DatasetsPanel extends Panel {
         });
     }  */
 
-    private void refreshDatasetList() {
+    private void refreshDatasets() {
         DatasetFilterData datasetFilterData = new DatasetFilterData();
-        SearchDatasetData searchDatasetData = searchDatasetForm.getModelObject();
+        SearchDatasetData searchDatasetData = searchForm.getModelObject();
         datasetFilterData.setPattern(searchDatasetData.getPattern());
-        listView.setList(datasetsSession.listDatasets(datasetFilterData));
+        listView.setList(datasetsSession.listDatasetDescriptors(datasetFilterData));
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        target.add(datasetsContainer);
-        target.appendJavaScript("makeCardsDraggable()");
+        if (target != null) {
+            target.add(datasetsContainer);
+            target.appendJavaScript("makeCardsDraggable()");
+        }
     }
 }

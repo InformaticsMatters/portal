@@ -32,8 +32,9 @@ public class ServicesPanel extends Panel {
 
     public ServicesPanel(String id) {
         super(id);
+        addSearchForm();
         addServices();
-        addForm();
+        refreshServiceList();
     }
 
     private void addServices() {
@@ -57,7 +58,7 @@ public class ServicesPanel extends Panel {
         add(servicesContainer);
     }
 
-    private void addForm() {
+    private void addSearchForm() {
         searchServiceForm = new Form<>("form");
         searchServiceForm.setModel(new CompoundPropertyModel<>(new SearchServiceData()));
         searchServiceForm.setOutputMarkupId(true);
@@ -86,7 +87,9 @@ public class ServicesPanel extends Panel {
         serviceFilterData.setFreeOnly(searchServiceData.getFreeOnly());
         listView.setList(serviceDiscoverySession.listServices(serviceFilterData));
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        target.add(servicesContainer);
-        target.appendJavaScript("makeCardsDraggable()");
+        if (target != null) {
+            target.add(servicesContainer);
+            target.appendJavaScript("makeCardsDraggable()");
+        }
     }
 }

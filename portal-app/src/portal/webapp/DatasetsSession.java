@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -26,39 +24,22 @@ public class DatasetsSession implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(DatasetsSession.class.getName());
 
     private DatasetClient datasetClient;
-    private Map<Long, IDatasetDescriptor> datasetDescriptorMap;
 
     public DatasetsSession() {
         this.datasetClient = new DatasetClient();
     }
 
-    private void loadDatasetList() {
+    public List<IDatasetDescriptor> listDatasetDescriptors(DatasetFilterData datasetFilterData) {
+        List<IDatasetDescriptor> result = new ArrayList<>();
         try {
             Stream<DataItem> all = datasetClient.getAll();
-            datasetDescriptorMap = new HashMap<>();
             all.forEach(dataItem -> {
-                IDatasetDescriptor datasetDescriptor = newDatasetDescriptorFromDataItem(dataItem);
-                datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
+                result.add(new DatasetDescriptor(dataItem));
             });
         } catch (IOException e) {
             logger.error(null, e);
         }
-    }
-
-    private IDatasetDescriptor newDatasetDescriptorFromDataItem(DataItem dataItem) {
-        return new DatasetDescriptor(dataItem);
-    }
-
-    public List<IDatasetDescriptor> listDatasets(DatasetFilterData datasetFilterData) {
-        if (datasetFilterData != null) {
-            System.out.println("Searching " + datasetFilterData.getPattern());
-        }
-
-        if (datasetDescriptorMap == null) {
-            loadDatasetList();
-        }
-
-        return new ArrayList<>(datasetDescriptorMap.values());
+        return result;
     }
 
     public void createDataset(String name, InputStream content) {
