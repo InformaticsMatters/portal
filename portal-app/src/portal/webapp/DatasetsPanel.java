@@ -40,7 +40,7 @@ public class DatasetsPanel extends Panel {
         addSearchForm();
         addDatasets();
         addDatasetPopupPanel();
-        //addUploadSupport();
+        addUploadSupport();
         refreshDatasets();
     }
 
