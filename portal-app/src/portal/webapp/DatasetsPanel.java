@@ -81,7 +81,7 @@ public class DatasetsPanel extends Panel {
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         datasetPopupPanel.setVisible(true);
                         ajaxRequestTarget.add(datasetPopupPanel);
-                        String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + DatasetsPanel.this.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
+                        String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + DatasetsPanel.this.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";
                         ajaxRequestTarget.appendJavaScript(js);
                     }
                 });
