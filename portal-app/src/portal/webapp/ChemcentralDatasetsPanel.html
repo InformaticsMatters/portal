@@ -1,35 +1,15 @@
 <wicket:panel>
-    <form class="ui form" wicket:id="form">
-        <div class="fields">
-            <div class="field">
-                <div class="ui action small input">
-                    <input type="text" wicket:id="pattern">
-
-                    <div class="ui small icon button" wicket:id="search">
-                        <i class="search icon"></i>
-                    </div>
+    <ul class="ui eight cards" style="padding-left: 0.2em;">
+        <li wicket:id="descriptors" class="card">
+            <div class="attached top left ui tiny label">
+                <span wicket:id="rowCount" class="attached top left ui tiny label"></span>
+            </div>
+            <div class="content" style="height: 40px;">
+                <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span
+                        wicket:id="description"></span>
                 </div>
             </div>
-        </div>
-    </form>
-
-    <div class="dataSets">
-        <ul class="ui cards" wicket:id="datasetsContainer">
-            <li wicket:id="descriptors" class="card palette-item">
-                <div class="content" style="height: 40px;">
-                    <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span
-                            wicket:id="description"></span>
-                    </div>
-                </div>
-                <div class="extra content">
-                    <div class="left floated"><span style="font-size: 13px;" wicket:id="rowCount"></span></div>
-                    <div class="right floated">
-                        <div class="ui mini blue button" wicket:id="open">
-                            View
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
+        </li>
+        <div wicket:id="clickCardPopup"></div>
+    </ul>
 </wicket:panel>

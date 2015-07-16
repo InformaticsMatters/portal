@@ -1,67 +1,29 @@
 package portal.webapp;
 
-import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.chemcentral.ChemcentralSession;
 import portal.dataset.IDatasetDescriptor;
-import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * @author simetrias
- */
 public class ChemcentralDatasetsPanel extends Panel {
 
-    public static final String DROP_DATA_TYPE_VALUE = "dataset";
-
-    private Form<SearchDatasetData> searchDatasetForm;
-    private WebMarkupContainer datasetsContainer;
-
     private ListView<IDatasetDescriptor> listView;
-    @Inject
-    private ChemcentralSession chemcentralSession;
+    private ChemcentralDatasetPopupPanel clickCardPopup;
 
     public ChemcentralDatasetsPanel(String id) {
         super(id);
-        addDatasets();
-        addForm();
+        addCards();
+        addClickCardPopup();
     }
 
-    private void addForm() {
-        searchDatasetForm = new Form<>("form");
-        searchDatasetForm.setModel(new CompoundPropertyModel<>(new SearchDatasetData()));
-        searchDatasetForm.setOutputMarkupId(true);
-        add(searchDatasetForm);
-
-        TextField<String> patternField = new TextField<>("pattern");
-        searchDatasetForm.add(patternField);
-
-        AjaxSubmitLink searchAction = new IndicatingAjaxSubmitLink("search") {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
-                refreshDatasetList();
-            }
-        };
-        searchDatasetForm.add(searchAction);
-    }
-
-    private void addDatasets() {
-        datasetsContainer = new WebMarkupContainer("datasetsContainer");
-        datasetsContainer.setOutputMarkupId(true);
-
+    private void addCards() {
         listView = new ListView<IDatasetDescriptor>("descriptors", new ArrayList<>()) {
 
             @Override
@@ -69,32 +31,32 @@ public class ChemcentralDatasetsPanel extends Panel {
                 IDatasetDescriptor datasetDescriptor = listItem.getModelObject();
                 listItem.add(new Label("description", datasetDescriptor.getDescription()));
                 listItem.add(new Label("rowCount", datasetDescriptor.getRowCount()));
-                listItem.add(new IndicatingAjaxLink("open") {
+
+                listItem.add(new AjaxEventBehavior("click") {
 
                     @Override
-                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        TreeGridVisualizerPage page = new TreeGridVisualizerPage(datasetDescriptor);
-                        setResponsePage(page);
+                    protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
+                        clickCardPopup.setDefaultModelObject(datasetDescriptor);
+                        clickCardPopup.setVisible(true);
+                        ajaxRequestTarget.add(clickCardPopup);
+                        String js = "$('#" + listItem.getMarkupId() + "').popup({popup: '.ui.clickCardPopup.popup', on : 'click'}).popup('toggle')";
+                        ajaxRequestTarget.appendJavaScript(js);
                     }
                 });
-
-                listItem.setOutputMarkupId(true);
-                listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
-                listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_ID, datasetDescriptor.getId().toString()));
             }
         };
-        datasetsContainer.add(listView);
-
-        add(datasetsContainer);
+        add(listView);
     }
 
-    private void refreshDatasetList() {
-        DatasetFilterData datasetFilterData = new DatasetFilterData();
-        SearchDatasetData searchDatasetData = searchDatasetForm.getModelObject();
-        datasetFilterData.setPattern(searchDatasetData.getPattern());
-        listView.setList(chemcentralSession.listDatasets(datasetFilterData));
-        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        target.add(datasetsContainer);
-        target.appendJavaScript("makeCardsDraggable()");
+    private void addClickCardPopup() {
+        clickCardPopup = new ChemcentralDatasetPopupPanel("clickCardPopup");
+        clickCardPopup.setDefaultModel(new CompoundPropertyModel<>(null));
+        clickCardPopup.setVisible(false);
+        add(clickCardPopup);
+    }
+
+    public void setDatasetDescriptorList(List<IDatasetDescriptor> datasetDescriptorList) {
+        listView.setList(datasetDescriptorList);
     }
 }
+

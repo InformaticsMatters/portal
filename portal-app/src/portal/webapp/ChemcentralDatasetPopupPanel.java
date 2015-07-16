@@ -9,9 +9,9 @@ import portal.dataset.IDatasetDescriptor;
 /**
  * @author simetrias
  */
-public class ClickCardPopupPanel extends Panel {
+public class ChemcentralDatasetPopupPanel extends Panel {
 
-    public ClickCardPopupPanel(String id) {
+    public ChemcentralDatasetPopupPanel(String id) {
         super(id);
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
@@ -22,7 +22,7 @@ public class ClickCardPopupPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                IDatasetDescriptor datasetDescriptor = (IDatasetDescriptor) ClickCardPopupPanel.this.getDefaultModelObject();
+                IDatasetDescriptor datasetDescriptor = (IDatasetDescriptor) ChemcentralDatasetPopupPanel.this.getDefaultModelObject();
                 TreeGridVisualizerPage page = new TreeGridVisualizerPage(datasetDescriptor);
                 setResponsePage(page);
             }
