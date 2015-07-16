@@ -13,7 +13,7 @@
         </div>
     </form>
 
-    <!--div class="ui teal small buttons">
+    <div class="ui teal small buttons">
         <div class="ui button">New</div>
         <div class="ui floating dropdown icon button">
             <i class="dropdown icon"></i>
@@ -22,7 +22,7 @@
                 <div class="item" wicket:id="addFromFile">Upload</div>
             </div>
         </div>
-    </div-->
+    </div>
 
     <div class="dataSets">
         <ul class="ui cards" wicket:id="datasetsContainer" style="height: 100px;" id="drop">
@@ -35,7 +35,7 @@
                 <div class="extra content">
                     <div class="left floated"><span style="font-size: 13px;" wicket:id="rowCount"></span></div>
                     <div class="right floated">
-                        <div class="ui mini blue button" wicket:id="open">
+                        <div class="ui mini blue button" wicket:id="openPopup">
                             View
                         </div>
                     </div>
@@ -68,5 +68,5 @@
         </form>
     </div>
 
-
+    <div wicket:id="popupPanel"></div>
 </wicket:panel>

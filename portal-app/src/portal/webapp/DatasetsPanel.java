@@ -2,8 +2,8 @@ package portal.webapp;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -16,6 +16,7 @@ import portal.dataset.IDatasetDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -32,11 +33,13 @@ public class DatasetsPanel extends Panel {
     @Inject
     private DatasetsSession datasetsSession;
     private UploadModalPanel uploadModalPanel;
+    private DatasetPopupPanel datasetPopupPanel;
 
     public DatasetsPanel(String id) {
         super(id);
         addSearchForm();
         addDatasets();
+        addDatasetPopupPanel();
         //addUploadSupport();
         refreshDatasets();
     }
@@ -71,12 +74,15 @@ public class DatasetsPanel extends Panel {
                 IDatasetDescriptor datasetDescriptor = listItem.getModelObject();
                 listItem.add(new Label("description", datasetDescriptor.getDescription()));
                 listItem.add(new Label("rowCount", datasetDescriptor.getRowCount()));
-                listItem.add(new IndicatingAjaxLink("open") {
+
+                listItem.add(new AjaxLink("openPopup") {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        TreeGridVisualizerPage page = new TreeGridVisualizerPage(datasetDescriptor);
-                        setResponsePage(page);
+                        datasetPopupPanel.setVisible(true);
+                        ajaxRequestTarget.add(datasetPopupPanel);
+                        String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + DatasetsPanel.this.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
+                        ajaxRequestTarget.appendJavaScript(js);
                     }
                 });
 
@@ -90,14 +96,14 @@ public class DatasetsPanel extends Panel {
         add(datasetsContainer);
     }
 
-  /*  private void addUploadSupport() {
+    private void addUploadSupport() {
         uploadModalPanel = new UploadModalPanel("uploadFilePanel", "modalElement");
         uploadModalPanel.setCallbacks(new UploadModalPanel.Callbacks() {
 
             @Override
             public void onSubmit(String name, InputStream inputStream) {
                 datasetsSession.createDataset(name, inputStream);
-                refreshDatasetList();
+                refreshDatasets();
             }
 
             @Override
@@ -113,7 +119,7 @@ public class DatasetsPanel extends Panel {
                 uploadModalPanel.showModal();
             }
         });
-    }  */
+    }
 
     private void refreshDatasets() {
         DatasetFilterData datasetFilterData = new DatasetFilterData();
@@ -125,5 +131,11 @@ public class DatasetsPanel extends Panel {
             target.add(datasetsContainer);
             target.appendJavaScript("makeCardsDraggable()");
         }
+    }
+
+    private void addDatasetPopupPanel() {
+        datasetPopupPanel = new DatasetPopupPanel("popupPanel");
+        datasetPopupPanel.setVisible(false);
+        add(datasetPopupPanel);
     }
 }
