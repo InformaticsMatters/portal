@@ -79,6 +79,7 @@ public class DatasetsPanel extends Panel {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                        System.out.println("Click");
                         datasetPopupPanel.setVisible(true);
                         ajaxRequestTarget.add(datasetPopupPanel);
                         String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + DatasetsPanel.this.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";

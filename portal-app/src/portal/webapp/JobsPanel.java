@@ -46,7 +46,7 @@ public class JobsPanel extends Panel {
 
     private void refreshJobStatusList() {
         List<JobStatus> jobStatusList = jobsSession.listJobStatuses();
-        jobListView.setList(jobStatusList);
+        // jobListView.setList(jobStatusList);
     }
 
     private void testJobSubmission() {
