@@ -27,19 +27,7 @@
     <div class="dataSets">
         <ul class="ui cards" wicket:id="datasetsContainer" style="height: 100px;" id="drop">
             <li wicket:id="descriptors" class="card palette-item">
-                <div class="content" style="height: 40px;">
-                    <div class="name" style="height: 18px; overflow: hidden; font-size: 13px;"><span
-                            wicket:id="description"></span>
-                    </div>
-                </div>
-                <div class="extra content">
-                    <div class="left floated"><span style="font-size: 13px;" wicket:id="rowCount"></span></div>
-                    <div class="right floated">
-                        <div class="ui mini blue button" wicket:id="openPopup">
-                            View
-                        </div>
-                    </div>
-                </div>
+                <div wicket:id="dataset"></div>
             </li>
         </ul>
     </div>
@@ -69,5 +57,4 @@
     </div>
 
     <div wicket:id="uploadFilePanel"></div>
-    <div wicket:id="popupPanel"></div>
 </wicket:panel>

@@ -5,7 +5,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -39,7 +38,6 @@ public class DatasetsPanel extends Panel {
         super(id);
         addSearchForm();
         addDatasets();
-        addDatasetPopupPanel();
         addUploadSupport();
         refreshDatasets();
     }
@@ -72,21 +70,7 @@ public class DatasetsPanel extends Panel {
             @Override
             protected void populateItem(ListItem<IDatasetDescriptor> listItem) {
                 IDatasetDescriptor datasetDescriptor = listItem.getModelObject();
-                listItem.add(new Label("description", datasetDescriptor.getDescription()));
-                listItem.add(new Label("rowCount", datasetDescriptor.getRowCount()));
-
-                listItem.add(new AjaxLink("openPopup") {
-
-                    @Override
-                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        System.out.println("Click");
-                        datasetPopupPanel.setVisible(true);
-                        ajaxRequestTarget.add(datasetPopupPanel);
-                        String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + DatasetsPanel.this.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";
-                        ajaxRequestTarget.appendJavaScript(js);
-                    }
-                });
-
+                listItem.add(new DatasetPanel("dataset", datasetDescriptor));
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
                 listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_ID, datasetDescriptor.getId().toString()));
@@ -132,11 +116,5 @@ public class DatasetsPanel extends Panel {
             target.add(datasetsContainer);
             target.appendJavaScript("makeCardsDraggable()");
         }
-    }
-
-    private void addDatasetPopupPanel() {
-        datasetPopupPanel = new DatasetPopupPanel("popupPanel");
-        datasetPopupPanel.setVisible(false);
-        add(datasetPopupPanel);
     }
 }
