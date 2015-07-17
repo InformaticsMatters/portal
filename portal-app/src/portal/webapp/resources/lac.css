@@ -72,29 +72,41 @@
 	border:1px dotted red;
 }
 
-.palette-item{
-    display: inline-block;
-      width: 150px!important;
-      background: #ffffff;
-      border: none;
-      border-radius: 0.2857rem;
-      box-shadow: 0px 0.2em 0px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
-      -webkit-transition: box-shadow 0.2s ease;
-      transition: box-shadow 0.2s ease;
-      z-index: 10;
+.card{
+    display: inline-block!important;
+      width: 120px!important;
+      background: #ffffff!important;
+      border-radius: 0.2857rem!important;
+      z-index: 10!important;
+      border: 1px solid #ddd!important;
+      box-shadow: none!important;
+}
+
+.card:hover {
+    box-shadow: 0px 0px 5px #999!important;
+    -o-box-shadow: 0px 0px 5px #999!important;
+    -webkit-box-shadow: 0px 0px 5px #999!important;
+    -moz-box-shadow: 0px 0px 5px #999!important;
+    border: 1px solid #aaa!important;
 }
 
 .canvas-item {
     margin: 10px;
     width: 100px;
     background: #ffffff;
-    border: none;
+    border: 1px solid #ddd;
     border-radius: 0.2857rem;
-    box-shadow: 0px 0.2em 0px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
-    -webkit-transition: box-shadow 0.2s ease;
     transition: box-shadow 0.2s ease;
     position:absolute;
     z-index: 100;
+}
+
+.canvas-item:hover {
+    box-shadow: 0px 0px 5px #999!important;
+    -o-box-shadow: 0px 0px 5px #999!important;
+    -webkit-box-shadow: 0px 0px 5px #999!important;
+    -moz-box-shadow: 0px 0px 5px #999!important;
+    border: 1px solid #aaa!important;
 }
 
 .palette-item > .content,
@@ -153,6 +165,16 @@
 .palette-item [class*="right floated"],
 .canvas-item-content [class*="right floated"]{
   float: right;
+}
+
+.jsPlumb-drag {
+
+background: red;
+
+}
+
+._jsPlumb_connected {
+    border: 2px solid green;
 }
 
 .canvas {
