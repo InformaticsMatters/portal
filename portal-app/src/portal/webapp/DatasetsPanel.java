@@ -70,7 +70,7 @@ public class DatasetsPanel extends Panel {
             @Override
             protected void populateItem(ListItem<IDatasetDescriptor> listItem) {
                 IDatasetDescriptor datasetDescriptor = listItem.getModelObject();
-                listItem.add(new DatasetPanel("dataset", datasetDescriptor));
+                listItem.add(new DatasetPanel("dataset", datasetDescriptor, DatasetsPanel.this::refreshDatasets));
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
                 listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_ID, datasetDescriptor.getId().toString()));

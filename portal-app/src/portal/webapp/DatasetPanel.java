@@ -6,16 +6,20 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.dataset.IDatasetDescriptor;
 
+import java.io.Serializable;
+
 /**
  * @author simetrias
  */
 public class DatasetPanel extends Panel {
 
     private final IDatasetDescriptor datasetDescriptor;
+    private final Callbacks callbacks;
     private DatasetPopupPanel datasetPopupPanel;
 
-    public DatasetPanel(String id, IDatasetDescriptor datasetDescriptor) {
+    public DatasetPanel(String id, IDatasetDescriptor datasetDescriptor, Callbacks callbacks) {
         super(id);
+        this.callbacks = callbacks;
         this.datasetDescriptor = datasetDescriptor;
         setOutputMarkupId(true);
         addComponents();
@@ -30,7 +34,7 @@ public class DatasetPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                System.out.println("Click");
+                datasetPopupPanel.setDatasetDescriptor(datasetDescriptor);
                 datasetPopupPanel.setVisible(true);
                 ajaxRequestTarget.add(datasetPopupPanel);
                 String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + DatasetPanel.this.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";
@@ -40,8 +44,14 @@ public class DatasetPanel extends Panel {
     }
 
     private void addDatasetPopupPanel() {
-        datasetPopupPanel = new DatasetPopupPanel("popupPanel");
+        datasetPopupPanel = new DatasetPopupPanel("popupPanel", callbacks::onDelete);
         datasetPopupPanel.setVisible(false);
         add(datasetPopupPanel);
+    }
+
+    public interface Callbacks extends Serializable {
+
+        void onDelete();
+
     }
 }

@@ -49,4 +49,13 @@ public class DatasetsSession implements Serializable {
             logger.error(null, e);
         }
     }
+
+    public void deleteDataset(IDatasetDescriptor datasetDescriptor) {
+        try {
+            DatasetDescriptor dataset = (DatasetDescriptor) datasetDescriptor;
+            datasetClient.delete(dataset.getDataItem().getId());
+        } catch (IOException e) {
+            logger.error(null, e);
+        }
+    }
 }

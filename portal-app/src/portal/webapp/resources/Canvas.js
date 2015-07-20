@@ -94,5 +94,5 @@ function init () {
         onCanvasNewConnection(sourceId, targetId);
     });
 
-    makeCardsDraggable();
+    // makeCardsDraggable();
 }

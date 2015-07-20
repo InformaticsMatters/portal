@@ -47,4 +47,8 @@ public class DatasetDescriptor implements IDatasetDescriptor {
     public void addRowDescriptor(RowDescriptor rowDescriptor) {
         rowDescriptorMap.put(rowDescriptor.getId(), rowDescriptor);
     }
+
+    public DataItem getDataItem() {
+        return dataItem;
+    }
 }
