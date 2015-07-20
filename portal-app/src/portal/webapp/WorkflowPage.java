@@ -18,7 +18,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
-import portal.chemcentral.ChemcentralSession;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -57,7 +56,7 @@ public class WorkflowPage extends WebPage {
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
-    private ChemcentralSession chemcentralSession;
+    private DatasetsSession datasetsSession;
     @Inject
     private ServiceDiscoverySession serviceDiscoverySession;
 
@@ -164,7 +163,6 @@ public class WorkflowPage extends WebPage {
         add(visualizersToggle);
     }
 
-
     private void addCanvas() {
         plumbContainer = new WebMarkupContainer("plumbContainer");
         plumbContainer.setOutputMarkupId(true);
@@ -209,7 +207,7 @@ public class WorkflowPage extends WebPage {
             canvasItemPanel = serviceCanvasItemPanel;
         } else if (LegacyDatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
             DatasetCanvasItemData datasetCanvasItemData = new DatasetCanvasItemData();
-            datasetCanvasItemData.setDatasetDescriptor(chemcentralSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
+            datasetCanvasItemData.setDatasetDescriptor(datasetsSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
             datasetCanvasItemData.setPositionX(x);
             datasetCanvasItemData.setPositionY(y);
             DatasetCanvasItemPanel datasetCanvasItemPanel = createDatasetCanvasItemPanel(datasetCanvasItemData);

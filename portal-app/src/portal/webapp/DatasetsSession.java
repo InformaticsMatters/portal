@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -24,22 +26,24 @@ public class DatasetsSession implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(DatasetsSession.class.getName());
 
     private DatasetClient datasetClient;
+    private Map<Long, DatasetDescriptor> datasetMap;
 
     public DatasetsSession() {
         this.datasetClient = new DatasetClient();
     }
 
     public List<IDatasetDescriptor> listDatasetDescriptors(DatasetFilterData datasetFilterData) {
-        List<IDatasetDescriptor> result = new ArrayList<>();
+        datasetMap = new HashMap<>();
         try {
             Stream<DataItem> all = datasetClient.getAll();
             all.forEach(dataItem -> {
-                result.add(new DatasetDescriptor(dataItem));
+                DatasetDescriptor datasetDescriptor = new DatasetDescriptor(dataItem);
+                datasetMap.put(datasetDescriptor.getId(), datasetDescriptor);
             });
         } catch (IOException e) {
             logger.error(null, e);
         }
-        return result;
+        return new ArrayList<>(datasetMap.values());
     }
 
     public void createDataset(String name, InputStream content) {
@@ -57,5 +61,9 @@ public class DatasetsSession implements Serializable {
         } catch (IOException e) {
             logger.error(null, e);
         }
+    }
+
+    public IDatasetDescriptor findDatasetDescriptorById(Long id) {
+        return datasetMap.get(id);
     }
 }
