@@ -4,25 +4,16 @@
             <div class="field">
                 <div class="ui action small input">
                     <input type="text" wicket:id="pattern">
-
                     <div class="ui small icon button" wicket:id="search">
                         <i class="search icon"></i>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
-
-    <div class="ui teal small buttons">
-        <div class="ui button">New</div>
-        <div class="ui floating dropdown icon button">
-            <i class="dropdown icon"></i>
-
-            <div class="menu">
-                <div class="item" wicket:id="addFromFile">Upload</div>
+            <div class="ui small icon button" wicket:id="addFromFile">
+                <i class="upload icon"></i>
             </div>
         </div>
-    </div>
+    </form>
 
     <div class="dataSets">
         <ul class="ui cards" wicket:id="datasetsContainer" style="height: 100px;" id="drop">

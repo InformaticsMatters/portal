@@ -59,6 +59,15 @@ public class DatasetsPanel extends Panel {
             }
         };
         searchForm.add(searchAction);
+
+        AjaxLink uploadAction = new AjaxLink("addFromFile") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                uploadModalPanel.showModal();
+            }
+        };
+        searchForm.add(uploadAction);
     }
 
     private void addDatasets() {
@@ -97,13 +106,7 @@ public class DatasetsPanel extends Panel {
         });
         add(uploadModalPanel);
 
-        add(new AjaxLink("addFromFile") {
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                uploadModalPanel.showModal();
-            }
-        });
     }
 
     private void refreshDatasets() {
