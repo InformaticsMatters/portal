@@ -173,10 +173,6 @@ background: red;
 
 }
 
-._jsPlumb_connected {
-    border: 2px solid green;
-}
-
 .canvas {
     height: 230px;
 }
