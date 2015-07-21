@@ -55,8 +55,11 @@ function addTargetEndpoint(itemId) {
     var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions);
 }
 
+
+
 function makeCardsDraggable() {
-    if (typeof jsPlumb._katavorio_main != 'undefined') {
+
+   /* if (typeof jsPlumb._katavorio_main != 'undefined') {
         jsPlumb._katavorio_main._dropsByScope['cards'] = [];
     }
 
@@ -82,7 +85,7 @@ function makeCardsDraggable() {
                 onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
             }
         });
-    }
+    }  */
 }
 
 function init () {
@@ -94,5 +97,5 @@ function init () {
         onCanvasNewConnection(sourceId, targetId);
     });
 
-    // makeCardsDraggable();
+    makeCardsDraggable();
 }

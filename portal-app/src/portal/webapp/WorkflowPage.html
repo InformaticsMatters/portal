@@ -7,6 +7,8 @@
 </head>
 
 <body>
+
+
 <div wicket:id="notifier"></div>
 
 
@@ -49,6 +51,56 @@
 </div>
 
 <div wicket:id="footerPanel"></div>
+
+<script>
+        var draggable = document.getElementById("dataSets");
+
+         draggable.addEventListener('dragstart', dragStart, false);
+         draggable.addEventListener('dragend'  , dragEnd  , false);
+
+         var droptarget = document.getElementById("plumbContainer");
+
+         droptarget.addEventListener('dragenter', dragEnter  , false);
+         droptarget.addEventListener('dragover' , dragOver   , false);
+         droptarget.addEventListener('dragleave', dragLeave  , false);
+         droptarget.addEventListener('drop'     , drop       , false);
+
+
+         /* Draggable event handlers */
+         function dragStart(event) {
+            event.dataTransfer.setData('draggableMarkupId', event.target.id);
+             event.dataTransfer.dropEffect = "copy";
+         }
+
+         function dragEnd(event) {
+         }
+
+         /* Drop target event handlers */
+         function dragEnter(event) {
+         }
+
+         function dragOver(event) {
+             event.preventDefault();
+             return false;
+         }
+
+         function dragLeave(event) {
+         }
+
+         function drop(event) {
+             var draggableMarkupId = event.dataTransfer.getData(draggableMarkupId);
+             var left = event.offsetX;
+             var top = event.offsetY;
+
+              console.log(draggableMarkupId);
+             console.log(left, top);
+              console.log(event);
+             event.preventDefault();
+             return false;
+
+         }
+
+</script>
 
 </body>
 </html>
