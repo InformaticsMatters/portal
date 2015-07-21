@@ -65,10 +65,9 @@
          droptarget.addEventListener('dragleave', dragLeave  , false);
          droptarget.addEventListener('drop'     , drop       , false);
 
-
-         /* Draggable event handlers */
          function dragStart(event) {
-            event.dataTransfer.setData('draggableMarkupId', event.target.id);
+            console.log(event);
+             event.dataTransfer.setData('draggableMarkupId', event.target.id);
              event.dataTransfer.dropEffect = "copy";
          }
 
@@ -88,16 +87,16 @@
          }
 
          function drop(event) {
-             var draggableMarkupId = event.dataTransfer.getData(draggableMarkupId);
+             var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
+             var el = document.getElementById(draggableMarkupId);
+             var dropDataType = el.getAttribute("dropDataType");
+             var dropDataId = el.getAttribute("dropDataId");
              var left = event.offsetX;
              var top = event.offsetY;
-
-              console.log(draggableMarkupId);
-             console.log(left, top);
-              console.log(event);
+             console.log(event);
              event.preventDefault();
+             onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
              return false;
-
          }
 
 </script>
