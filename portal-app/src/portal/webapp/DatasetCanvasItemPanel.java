@@ -10,24 +10,28 @@ import org.apache.wicket.markup.html.panel.Panel;
  */
 public class DatasetCanvasItemPanel extends Panel {
 
-    private final DatasetCanvasItemData model;
+    private final DatasetCanvasItemData data;
 
-    public DatasetCanvasItemPanel(String id, DatasetCanvasItemData model) {
+    public DatasetCanvasItemPanel(String id, DatasetCanvasItemData data) {
         super(id);
-        this.model = model;
+        this.data = data;
         setOutputMarkupId(true);
 
-        add(new Label("id", model.getDatasetDescriptor().getId()));
-        add(new Label("description", model.getDatasetDescriptor().getDescription()));
-        add(new Label("rowCount", model.getDatasetDescriptor().getRowCount()));
+        add(new Label("id", data.getDatasetDescriptor().getId()));
+        add(new Label("description", data.getDatasetDescriptor().getDescription()));
+        add(new Label("rowCount", data.getDatasetDescriptor().getRowCount()));
         add(new IndicatingAjaxLink("open") {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                TreeGridVisualizerPage page = new TreeGridVisualizerPage(model.getDatasetDescriptor());
+                TreeGridVisualizerPage page = new TreeGridVisualizerPage(data.getDatasetDescriptor());
                 setResponsePage(page);
             }
         });
 
+    }
+
+    public DatasetCanvasItemData getData() {
+        return data;
     }
 }
