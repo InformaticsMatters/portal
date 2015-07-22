@@ -6,24 +6,25 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * @author simetrias
  */
 public class ServiceCanvasItemPanel extends Panel {
 
+    private final ServiceCanvasItemData data;
     private ServiceCanvasItemPopupPanel serviceCanvasItemPopup;
     private Callbacks callbacks;
 
-    public ServiceCanvasItemPanel(String id, ServiceCanvasItemData serviceCanvasItemData, Callbacks callbacks) {
+    public ServiceCanvasItemPanel(String id, ServiceCanvasItemData data, Callbacks callbacks) {
         super(id);
-        setOutputMarkupId(true);
         this.callbacks = callbacks;
-        addServiceCanvasItemPopup(serviceCanvasItemData);
+        this.data = data;
+        setOutputMarkupId(true);
+        addServiceCanvasItemPopup(data);
 
-        add(new Label("id", serviceCanvasItemData.getServiceDescriptor().getId()));
-        add(new Label("name", serviceCanvasItemData.getServiceDescriptor().getName()));
+        add(new Label("id", data.getServiceDescriptor().getId()));
+        add(new Label("name", data.getServiceDescriptor().getName()));
 
         add(new AjaxLink("openPopup") {
 
@@ -54,8 +55,8 @@ public class ServiceCanvasItemPanel extends Panel {
         add(serviceCanvasItemPopup);
     }
 
-    public Map<ServicePropertyDescriptor, String> getServicePropertyValueMap() {
-        return serviceCanvasItemPopup.getServicePropertyValueMap();
+    public ServiceCanvasItemData getData() {
+        return data;
     }
 
     public interface Callbacks extends Serializable {

@@ -61,6 +61,4 @@ public class JobsPanel extends Panel {
 
         jobsSession.submitJob(jobDefinition);
     }
-
-
 }

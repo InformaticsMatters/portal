@@ -1,5 +1,8 @@
 package portal.webapp;
 
+import com.im.lac.job.jobdef.AsyncLocalProcessDatasetJobDefinition;
+import com.im.lac.job.jobdef.DatasetJobDefinition;
+import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -18,6 +21,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -35,12 +40,13 @@ public class WorkflowPage extends WebPage {
     public static final String POSITION_Y = "positionY";
     public static final String CANVASITEM_INDEX = "index";
     public static final String CANVASITEM_WICKETID = "canvasItem";
+    private static final Logger logger = LoggerFactory.getLogger(WorkflowPage.class);
     boolean datasetsVisibility = true;
     boolean servicesVisibility = true;
     boolean jobsVisibility = true;
     boolean canvasVisibility = true;
     boolean visualizersVisibility = true;
-    private List<AbstractCanvasItemData> canvasItemModelList = new ArrayList<>();
+    private List<AbstractCanvasItemData> canvasItemDataList = new ArrayList<>();
     private ListView<AbstractCanvasItemData> canvasItemRepeater;
     private WebMarkupContainer plumbContainer;
     private AjaxLink canvasToggle;
@@ -59,6 +65,8 @@ public class WorkflowPage extends WebPage {
     private DatasetsSession datasetsSession;
     @Inject
     private ServiceDiscoverySession serviceDiscoverySession;
+    @Inject
+    private JobsSession jobsSession;
 
     public WorkflowPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -169,7 +177,7 @@ public class WorkflowPage extends WebPage {
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
 
-        canvasItemRepeater = new ListView<AbstractCanvasItemData>(CANVASITEM_WICKETID, canvasItemModelList) {
+        canvasItemRepeater = new ListView<AbstractCanvasItemData>(CANVASITEM_WICKETID, canvasItemDataList) {
 
             @Override
             protected void populateItem(ListItem<AbstractCanvasItemData> components) {
@@ -191,7 +199,8 @@ public class WorkflowPage extends WebPage {
         String dropDataId = getRequest().getRequestParameters().getParameterValue(DROP_DATA_ID).toString();
         String x = getRequest().getRequestParameters().getParameterValue(POSITION_X).toString();
         String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y).toString();
-        System.out.println("Drop data " + dropDataId + " at " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
+
+        logger.debug("Drop data " + dropDataId + " at " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
 
         AbstractCanvasItemData data = null;
         Panel canvasItemPanel = null;
@@ -202,7 +211,7 @@ public class WorkflowPage extends WebPage {
             serviceCanvasItemData.setPositionX(x);
             serviceCanvasItemData.setPositionY(y);
             ServiceCanvasItemPanel serviceCanvasItemPanel = createServiceCanvasItemPanel(serviceCanvasItemData);
-            canvasItemModelList.add(serviceCanvasItemData);
+            canvasItemDataList.add(serviceCanvasItemData);
             data = serviceCanvasItemData;
             canvasItemPanel = serviceCanvasItemPanel;
         } else if (LegacyDatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
@@ -211,13 +220,13 @@ public class WorkflowPage extends WebPage {
             datasetCanvasItemData.setPositionX(x);
             datasetCanvasItemData.setPositionY(y);
             DatasetCanvasItemPanel datasetCanvasItemPanel = createDatasetCanvasItemPanel(datasetCanvasItemData);
-            canvasItemModelList.add(datasetCanvasItemData);
+            canvasItemDataList.add(datasetCanvasItemData);
             data = datasetCanvasItemData;
             canvasItemPanel = datasetCanvasItemPanel;
         }
 
         if (data != null) {
-            ListItem listItem = new ListItem(dropDataType + dropDataId, canvasItemModelList.size());
+            ListItem listItem = new ListItem(dropDataType + dropDataId, canvasItemDataList.size());
             listItem.setOutputMarkupId(true);
             listItem.add(new AttributeModifier("style", "top:" + data.getPositionY() + "px; left:" + data.getPositionX() + "px;"));
             listItem.add(canvasItemPanel);
@@ -256,8 +265,8 @@ public class WorkflowPage extends WebPage {
 
     private void removeCanvasItem(AbstractCanvasItemData abstractCanvasItemData) {
         int indexToRemove = -1;
-        for (int i = 0; i < canvasItemModelList.size(); i++) {
-            AbstractCanvasItemData data = canvasItemModelList.get(i);
+        for (int i = 0; i < canvasItemDataList.size(); i++) {
+            AbstractCanvasItemData data = canvasItemDataList.get(i);
             if (data.equals(abstractCanvasItemData)) {
                 indexToRemove = i;
             }
@@ -265,7 +274,7 @@ public class WorkflowPage extends WebPage {
         if (indexToRemove != -1) {
             Component listItemToRemove = canvasItemRepeater.get(indexToRemove);
             canvasItemRepeater.remove(listItemToRemove);
-            canvasItemModelList.remove(indexToRemove);
+            canvasItemDataList.remove(indexToRemove);
             AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
             target.appendJavaScript("removeCanvasItem(':itemId')".replaceAll(":itemId", listItemToRemove.getMarkupId()));
         }
@@ -302,10 +311,11 @@ public class WorkflowPage extends WebPage {
                 String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
                 String x = getRequest().getRequestParameters().getParameterValue(POSITION_X).toString();
                 String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y).toString();
-                System.out.println("Item index " + index + " Dragged to: " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
+
+                logger.info("Item index " + index + " Dragged to: " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
 
                 int i = Integer.parseInt(index);
-                AbstractCanvasItemData model = canvasItemModelList.get(i);
+                AbstractCanvasItemData model = canvasItemDataList.get(i);
                 model.setPositionX(x);
                 model.setPositionY(y);
             }
@@ -331,7 +341,34 @@ public class WorkflowPage extends WebPage {
             protected void respond(AjaxRequestTarget target) {
                 String sourceId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
                 String targetId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
-                System.out.println("New connection " + sourceId + " --> " + targetId);
+
+                DatasetCanvasItemData sourceData = null;
+                ServiceCanvasItemData targetData = null;
+                for (Component li : canvasItemRepeater) {
+                    ListItem item = (ListItem) li;
+                    Component panel = item.get(0);
+
+                    if (item.getMarkupId().equals(sourceId)) {
+                        if (panel instanceof DatasetCanvasItemPanel) {
+                            DatasetCanvasItemPanel datasetCanvasItemPanel = (DatasetCanvasItemPanel) panel;
+                            sourceData = datasetCanvasItemPanel.getData();
+                        }
+                    }
+
+                    if (item.getMarkupId().equals(targetId)) {
+                        if (panel instanceof ServiceCanvasItemPanel) {
+                            ServiceCanvasItemPanel datasetCanvasItemPanel = (ServiceCanvasItemPanel) panel;
+                            targetData = datasetCanvasItemPanel.getData();
+                        }
+                    }
+                }
+
+                if (sourceData != null && targetData != null) {
+
+                    logger.info("New connection: " + sourceData.getDatasetDescriptor().getDescription() + " --> " + targetData.getServiceDescriptor().getName());
+
+                    postSimpleJob(sourceData, targetData);
+                }
             }
 
             @Override
@@ -345,5 +382,18 @@ public class WorkflowPage extends WebPage {
             }
         };
         add(onCanvasNewConnectionBehavior);
+    }
+
+    private void postSimpleJob(DatasetCanvasItemData sourceData, ServiceCanvasItemData targetData) {
+        String endpoint = targetData.getServiceDescriptor().getEndpoint();
+        if ("direct:simpleroute".equals(endpoint)) {
+            AsyncLocalProcessDatasetJobDefinition jobDefinition = new AsyncLocalProcessDatasetJobDefinition(
+                    sourceData.getDatasetDescriptor().getId(),
+                    endpoint,
+                    DatasetJobDefinition.DatasetMode.CREATE,
+                    MoleculeObject.class,
+                    "Gustavo 1");
+            jobsSession.submitJob(jobDefinition);
+        }
     }
 }
