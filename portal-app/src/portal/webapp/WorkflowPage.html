@@ -53,20 +53,22 @@
 <div wicket:id="footerPanel"></div>
 
 <script>
-        var draggable = document.getElementById("dataSets");
+         var draggable = document.getElementById("datasetsDraggablesContainer");
+         draggable.addEventListener('dragstart', dragStart, false);
+         draggable.addEventListener('dragend'  , dragEnd  , false);
 
+         draggable = document.getElementById("servicesDraggablesContainer");
          draggable.addEventListener('dragstart', dragStart, false);
          draggable.addEventListener('dragend'  , dragEnd  , false);
 
          var droptarget = document.getElementById("plumbContainer");
-
-         droptarget.addEventListener('dragenter', dragEnter  , false);
-         droptarget.addEventListener('dragover' , dragOver   , false);
-         droptarget.addEventListener('dragleave', dragLeave  , false);
-         droptarget.addEventListener('drop'     , drop       , false);
+         droptarget.addEventListener('dragenter', dragEnter, false);
+         droptarget.addEventListener('dragover', dragOver, false);
+         droptarget.addEventListener('dragleave', dragLeave, false);
+         droptarget.addEventListener('drop', drop, false);
 
          function dragStart(event) {
-            console.log(event);
+             console.log(event);
              event.dataTransfer.setData('draggableMarkupId', event.target.id);
              event.dataTransfer.dropEffect = "copy";
          }
@@ -74,7 +76,6 @@
          function dragEnd(event) {
          }
 
-         /* Drop target event handlers */
          function dragEnter(event) {
          }
 
@@ -98,7 +99,6 @@
              onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
              return false;
          }
-
 </script>
 
 </body>
