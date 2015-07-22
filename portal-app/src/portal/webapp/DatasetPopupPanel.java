@@ -24,8 +24,8 @@ public class DatasetPopupPanel extends Panel {
         this.callbacks = callbacks;
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
-        add(new Label("description"));
-        add(new Label("rowCount"));
+        add(new Label("description", datasetDescriptor.getDescription()));
+        add(new Label("rowCount", datasetDescriptor.getRowCount()));
 
         add(new IndicatingAjaxLink("open") {
 

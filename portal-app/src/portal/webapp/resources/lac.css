@@ -166,10 +166,8 @@
   float: right;
 }
 
-.jsPlumb-drag {
-
-background: red;
-
+.datasetPopup {
+    width: 300px;
 }
 
 .canvas {
