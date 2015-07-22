@@ -34,7 +34,6 @@ public class DatasetPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                datasetPopupPanel.setDatasetDescriptor(datasetDescriptor);
                 datasetPopupPanel.setVisible(true);
                 ajaxRequestTarget.add(datasetPopupPanel);
                 String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + DatasetPanel.this.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";
@@ -44,7 +43,7 @@ public class DatasetPanel extends Panel {
     }
 
     private void addDatasetPopupPanel() {
-        datasetPopupPanel = new DatasetPopupPanel("popupPanel", callbacks::onDelete);
+        datasetPopupPanel = new DatasetPopupPanel("popupPanel", datasetDescriptor, callbacks::onDelete);
         datasetPopupPanel.setVisible(false);
         add(datasetPopupPanel);
     }

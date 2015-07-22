@@ -1,14 +1,11 @@
 package portal.webapp;
 
-import com.im.lac.job.jobdef.AsyncLocalProcessDatasetJobDefinition;
-import com.im.lac.job.jobdef.DatasetJobDefinition;
 import com.im.lac.job.jobdef.JobStatus;
-import com.im.lac.types.MoleculeObject;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import portal.dataset.IDatasetDescriptor;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -49,16 +46,8 @@ public class JobsPanel extends Panel {
         jobListView.setList(jobStatusList);
     }
 
-    private void testJobSubmission() {
-        List<IDatasetDescriptor> datasetList = datasetsSession.listDatasetDescriptors(new DatasetFilterData());
-
-        AsyncLocalProcessDatasetJobDefinition jobDefinition = new AsyncLocalProcessDatasetJobDefinition(
-                datasetList.get(0).getId(),
-                "direct:simpleroute",
-                DatasetJobDefinition.DatasetMode.CREATE,
-                MoleculeObject.class,
-                "Gustavo 1");
-
-        jobsSession.submitJob(jobDefinition);
+    public void refresh() {
+        jobListView.setList(jobsSession.listJobStatuses());
+        getRequestCycle().find(AjaxRequestTarget.class).add(this);
     }
 }

@@ -19,13 +19,14 @@ public class DatasetPopupPanel extends Panel {
     @Inject
     private DatasetsSession datasetsSession;
 
-    public DatasetPopupPanel(String id, Callbacks callbacks) {
+    public DatasetPopupPanel(String id, IDatasetDescriptor datasetDescriptor, Callbacks callbacks) {
         super(id);
         this.callbacks = callbacks;
+        this.datasetDescriptor = datasetDescriptor;
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
-        add(new Label("description", datasetDescriptor.getDescription()));
-        add(new Label("rowCount", datasetDescriptor.getRowCount()));
+        add(new Label("description", this.datasetDescriptor.getDescription()));
+        add(new Label("rowCount", this.datasetDescriptor.getRowCount()));
 
         add(new IndicatingAjaxLink("open") {
 
@@ -38,14 +39,10 @@ public class DatasetPopupPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                datasetsSession.deleteDataset(datasetDescriptor);
+                datasetsSession.deleteDataset(DatasetPopupPanel.this.datasetDescriptor);
                 callbacks.onDelete();
             }
         });
-    }
-
-    public void setDatasetDescriptor(IDatasetDescriptor datasetDescriptor) {
-        this.datasetDescriptor = datasetDescriptor;
     }
 
     public interface Callbacks extends Serializable {

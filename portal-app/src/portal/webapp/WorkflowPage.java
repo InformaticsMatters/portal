@@ -41,6 +41,7 @@ public class WorkflowPage extends WebPage {
     public static final String CANVASITEM_INDEX = "index";
     public static final String CANVASITEM_WICKETID = "canvasItem";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowPage.class);
+    private static final String DIRECT_SIMPLEROUTE = "direct:simpleroute";
     boolean datasetsVisibility = true;
     boolean servicesVisibility = true;
     boolean jobsVisibility = true;
@@ -367,7 +368,9 @@ public class WorkflowPage extends WebPage {
 
                     logger.info("New connection: " + sourceData.getDatasetDescriptor().getDescription() + " --> " + targetData.getServiceDescriptor().getName());
 
-                    postSimpleJob(sourceData, targetData);
+                    if (DIRECT_SIMPLEROUTE.equals(targetData.getServiceDescriptor().getEndpoint())) {
+                        postDirectSimpleRouteJob(sourceData, targetData);
+                    }
                 }
             }
 
@@ -384,16 +387,14 @@ public class WorkflowPage extends WebPage {
         add(onCanvasNewConnectionBehavior);
     }
 
-    private void postSimpleJob(DatasetCanvasItemData sourceData, ServiceCanvasItemData targetData) {
-        String endpoint = targetData.getServiceDescriptor().getEndpoint();
-        if ("direct:simpleroute".equals(endpoint)) {
-            AsyncLocalProcessDatasetJobDefinition jobDefinition = new AsyncLocalProcessDatasetJobDefinition(
-                    sourceData.getDatasetDescriptor().getId(),
-                    endpoint,
-                    DatasetJobDefinition.DatasetMode.CREATE,
-                    MoleculeObject.class,
-                    "Gustavo 1");
-            jobsSession.submitJob(jobDefinition);
-        }
+    private void postDirectSimpleRouteJob(DatasetCanvasItemData sourceData, ServiceCanvasItemData targetData) {
+        AsyncLocalProcessDatasetJobDefinition jobDefinition = new AsyncLocalProcessDatasetJobDefinition(
+                sourceData.getDatasetDescriptor().getId(),
+                targetData.getServiceDescriptor().getEndpoint(),
+                DatasetJobDefinition.DatasetMode.CREATE,
+                MoleculeObject.class,
+                "Gustavo 1");
+        jobsSession.submitJob(jobDefinition);
+        jobsPanel.refresh();
     }
 }
