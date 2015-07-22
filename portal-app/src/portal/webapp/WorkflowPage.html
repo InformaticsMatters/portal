@@ -3,7 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <!--script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script-->
 </head>
 
 <body>
@@ -70,7 +70,10 @@
          function dragStart(event) {
              console.log(event);
              event.dataTransfer.setData('draggableMarkupId', event.target.id);
+             event.dataTransfer.setData('mouseOffsetX', event.layerX);
+             event.dataTransfer.setData('mouseOffsetY', event.layerY)
              event.dataTransfer.dropEffect = "copy";
+             console.log(event);
          }
 
          function dragEnd(event) {
@@ -89,12 +92,20 @@
 
          function drop(event) {
              var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
+             var mouseOffsetX = event.dataTransfer.getData('mouseOffsetX');
+             var mouseOffsetY = event.dataTransfer.getData('mouseOffsetY');
              var el = document.getElementById(draggableMarkupId);
              var dropDataType = el.getAttribute("dropDataType");
              var dropDataId = el.getAttribute("dropDataId");
-             var left = event.offsetX;
-             var top = event.offsetY;
-             console.log(event);
+
+            var $el = $(el);
+            var width = $el.width();
+            var height = $el.height();
+
+            var left = event.offsetX - mouseOffsetX;
+            var top = event.offsetY - mouseOffsetY;
+            console.log(event);
+            console.log(mouseOffsetX);
              event.preventDefault();
              onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
              return false;
