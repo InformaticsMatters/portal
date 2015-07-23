@@ -59,9 +59,11 @@ public class ServiceCanvasItemPopupPanel extends Panel {
     }
 
     private void createServicePropertyValueMap(ServicePropertyDescriptor[] descriptors) {
-        servicePropertyValueMap = new HashMap<>(descriptors.length);
-        for (ServicePropertyDescriptor descriptor : descriptors) {
-            servicePropertyValueMap.put(descriptor, null);
+        servicePropertyValueMap = new HashMap<>();
+        if (descriptors != null && descriptors.length > 0) {
+            for (ServicePropertyDescriptor descriptor : descriptors) {
+                servicePropertyValueMap.put(descriptor, null);
+            }
         }
     }
 
