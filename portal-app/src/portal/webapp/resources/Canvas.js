@@ -55,39 +55,6 @@ function addTargetEndpoint(itemId) {
     var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions);
 }
 
-
-
-function makeCardsDraggable() {
-
-   /* if (typeof jsPlumb._katavorio_main != 'undefined') {
-        jsPlumb._katavorio_main._dropsByScope['cards'] = [];
-    }
-
-    jsPlumb.draggable($('.card'), {
-        clone: true,
-        scope: "cards"
-    });
-
-    if (typeof jsPlumb._katavorio_main != 'undefined') {  // some cards found
-        jsPlumb._katavorio_main.droppable($('#plumbContainer'), {
-            scope: 'cards',
-            canDrop: function(params) {return $(params.el).hasClass("card") },
-            drop: function(params) {
-                var el = params.drag.el;
-                var dropDataType = el.getAttribute("dropDataType");
-                var dropDataId = el.getAttribute("dropDataId");
-                var draggableMarkupId = el.id;
-
-                var position = $('#plumbContainer').offset();
-                var left = Math.floor(params.e.x - position.left - params.drag.size[0]/2);
-                var top = Math.floor(params.e.y - position.top - params.drag.size[1]/2);
-
-                onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
-            }
-        });
-    }  */
-}
-
 function init () {
     jsPlumb.setContainer($('#plumbContainer'));
 
@@ -96,6 +63,4 @@ function init () {
         var targetId = i.connection.targetId;
         onCanvasNewConnection(sourceId, targetId);
     });
-
-    makeCardsDraggable();
 }

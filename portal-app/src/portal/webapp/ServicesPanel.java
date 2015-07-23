@@ -1,5 +1,6 @@
 package portal.webapp;
 
+import com.im.lac.services.ServiceDescriptor;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -12,7 +13,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.service.ServiceDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -28,7 +28,7 @@ public class ServicesPanel extends Panel {
     private ListView<ServiceDescriptor> listView;
     private Form<SearchServiceData> searchServiceForm;
     @Inject
-    private ServiceDiscoverySession serviceDiscoverySession;
+    private ServicesSession servicesSession;
 
     public ServicesPanel(String id) {
         super(id);
@@ -50,7 +50,8 @@ public class ServicesPanel extends Panel {
 
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
-                listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_ID, serviceDescriptor.getId().toString()));
+                String serviceDescriptorId = servicesSession.getServiceDescriptorId(serviceDescriptor).toString();
+                listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_ID, serviceDescriptorId));
             }
         };
         servicesContainer.add(listView);
@@ -85,11 +86,10 @@ public class ServicesPanel extends Panel {
         SearchServiceData searchServiceData = searchServiceForm.getModelObject();
         serviceFilterData.setPattern(searchServiceData.getPattern());
         serviceFilterData.setFreeOnly(searchServiceData.getFreeOnly());
-        listView.setList(serviceDiscoverySession.listServices(serviceFilterData));
+        listView.setList(servicesSession.listServiceDescriptors());
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
             target.add(servicesContainer);
-            target.appendJavaScript("makeCardsDraggable()");
         }
     }
 }

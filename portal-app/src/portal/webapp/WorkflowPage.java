@@ -41,7 +41,6 @@ public class WorkflowPage extends WebPage {
     public static final String CANVASITEM_INDEX = "index";
     public static final String CANVASITEM_WICKETID = "canvasItem";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowPage.class);
-    private static final String DIRECT_SIMPLEROUTE = "direct:simpleroute";
     boolean datasetsVisibility = true;
     boolean servicesVisibility = true;
     boolean jobsVisibility = true;
@@ -65,9 +64,9 @@ public class WorkflowPage extends WebPage {
     @Inject
     private DatasetsSession datasetsSession;
     @Inject
-    private ServiceDiscoverySession serviceDiscoverySession;
-    @Inject
     private JobsSession jobsSession;
+    @Inject
+    private ServicesSession servicesSession;
 
     public WorkflowPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -208,7 +207,7 @@ public class WorkflowPage extends WebPage {
 
         if (ServicesPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
             ServiceCanvasItemData serviceCanvasItemData = new ServiceCanvasItemData();
-            serviceCanvasItemData.setServiceDescriptor(serviceDiscoverySession.findServiceDescriptorById(Long.parseLong(dropDataId)));
+            serviceCanvasItemData.setServiceDescriptor(servicesSession.findServiceDescriptorById(Long.parseLong(dropDataId)));
             serviceCanvasItemData.setPositionX(x);
             serviceCanvasItemData.setPositionY(y);
             ServiceCanvasItemPanel serviceCanvasItemPanel = createServiceCanvasItemPanel(serviceCanvasItemData);
@@ -368,9 +367,7 @@ public class WorkflowPage extends WebPage {
 
                     logger.info("New connection: " + sourceData.getDatasetDescriptor().getDescription() + " --> " + targetData.getServiceDescriptor().getName());
 
-                    if (DIRECT_SIMPLEROUTE.equals(targetData.getServiceDescriptor().getEndpoint())) {
-                        postDirectSimpleRouteJob(sourceData, targetData);
-                    }
+                    postDirectSimpleRouteJob(sourceData, targetData);
                 }
             }
 
@@ -390,7 +387,7 @@ public class WorkflowPage extends WebPage {
     private void postDirectSimpleRouteJob(DatasetCanvasItemData sourceData, ServiceCanvasItemData targetData) {
         AsyncLocalProcessDatasetJobDefinition jobDefinition = new AsyncLocalProcessDatasetJobDefinition(
                 sourceData.getDatasetDescriptor().getId(),
-                targetData.getServiceDescriptor().getEndpoint(),
+                servicesSession.getServiceDescriptorEndpoint(targetData.getServiceDescriptor()),
                 DatasetJobDefinition.DatasetMode.CREATE,
                 MoleculeObject.class,
                 "Gustavo 1");

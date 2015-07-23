@@ -105,8 +105,6 @@ public class DatasetsPanel extends Panel {
             }
         });
         add(uploadModalPanel);
-
-
     }
 
     private void refreshDatasets() {
@@ -117,7 +115,6 @@ public class DatasetsPanel extends Panel {
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
             target.add(datasetsContainer);
-            target.appendJavaScript("makeCardsDraggable()");
         }
     }
 }

@@ -23,7 +23,6 @@ public class ServiceCanvasItemPanel extends Panel {
         setOutputMarkupId(true);
         addServiceCanvasItemPopup(data);
 
-        add(new Label("id", data.getServiceDescriptor().getId()));
         add(new Label("name", data.getServiceDescriptor().getName()));
 
         add(new AjaxLink("openPopup") {

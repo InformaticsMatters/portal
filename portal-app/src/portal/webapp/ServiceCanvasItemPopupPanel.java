@@ -1,5 +1,7 @@
 package portal.webapp;
 
+import com.im.lac.services.ServiceDescriptor;
+import com.im.lac.services.ServicePropertyDescriptor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Form;
@@ -10,8 +12,8 @@ import org.apache.wicket.model.IModel;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,8 +43,11 @@ public class ServiceCanvasItemPopupPanel extends Panel {
     }
 
     private void addServiceProperties() {
-        List<ServicePropertyDescriptor> servicePropertyDescriptorList = serviceCanvasItemData.getServiceDescriptor().getServicePropertyDescriptorList();
-        createServicePropertyValueMap(servicePropertyDescriptorList);
+        ServiceDescriptor serviceDescriptor = serviceCanvasItemData.getServiceDescriptor();
+        ServicePropertyDescriptor[] parameters = serviceDescriptor.getAccessModes()[0].getParameters();
+        createServicePropertyValueMap(parameters);
+        ArrayList<ServicePropertyDescriptor> servicePropertyDescriptorList = new ArrayList<>(servicePropertyValueMap.keySet());
+
         ListView<ServicePropertyDescriptor> listView = new ListView<ServicePropertyDescriptor>("property", servicePropertyDescriptorList) {
 
             @Override
@@ -53,9 +58,9 @@ public class ServiceCanvasItemPopupPanel extends Panel {
         form.add(listView);
     }
 
-    private void createServicePropertyValueMap(List<ServicePropertyDescriptor> servicePropertyDescriptorList) {
-        servicePropertyValueMap = new HashMap<>(servicePropertyDescriptorList.size());
-        for (ServicePropertyDescriptor descriptor : servicePropertyDescriptorList) {
+    private void createServicePropertyValueMap(ServicePropertyDescriptor[] descriptors) {
+        servicePropertyValueMap = new HashMap<>(descriptors.length);
+        for (ServicePropertyDescriptor descriptor : descriptors) {
             servicePropertyValueMap.put(descriptor, null);
         }
     }
@@ -89,10 +94,6 @@ public class ServiceCanvasItemPopupPanel extends Panel {
                 callbacks.onDelete();
             }
         });
-    }
-
-    public Map<ServicePropertyDescriptor, String> getServicePropertyValueMap() {
-        return servicePropertyValueMap;
     }
 
     public interface Callbacks extends Serializable {

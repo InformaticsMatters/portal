@@ -1,6 +1,6 @@
 package portal.webapp;
 
-import portal.service.ServiceDescriptor;
+import com.im.lac.services.ServiceDescriptor;
 
 /**
  * @author simetrias
@@ -17,6 +17,7 @@ public class ServiceCanvasItemData extends AbstractCanvasItemData {
         this.serviceDescriptor = serviceDescriptor;
     }
 
+    /*
     @Override
     public boolean equals(Object obj) {
         boolean result = false;
@@ -26,4 +27,5 @@ public class ServiceCanvasItemData extends AbstractCanvasItemData {
         }
         return result;
     }
+    */
 }

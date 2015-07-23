@@ -95,6 +95,5 @@ public class LegacyDatasetsPanel extends Panel {
         listView.setList(chemcentralSession.listDatasets(datasetFilterData));
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         target.add(datasetsContainer);
-        target.appendJavaScript("makeCardsDraggable()");
     }
 }
