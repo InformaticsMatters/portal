@@ -387,7 +387,7 @@ public class WorkflowPage extends WebPage {
     private void postDirectSimpleRouteJob(DatasetCanvasItemData sourceData, ServiceCanvasItemData targetData) {
         AsyncLocalProcessDatasetJobDefinition jobDefinition = new AsyncLocalProcessDatasetJobDefinition(
                 sourceData.getDatasetDescriptor().getId(),
-                servicesSession.getServiceDescriptorEndpoint(targetData.getServiceDescriptor()),
+                targetData.getServiceDescriptor().getResourceUrl(),
                 DatasetJobDefinition.DatasetMode.CREATE,
                 MoleculeObject.class,
                 "Gustavo 1");
