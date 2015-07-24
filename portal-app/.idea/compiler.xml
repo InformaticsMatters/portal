@@ -17,6 +17,7 @@
       <entry name="?*.svg" />
       <entry name="?*.woff" />
       <entry name="?*.ttf" />
+      <entry name="?*.gif" />
     </wildcardResourcePatterns>
     <annotationProcessing>
       <profile default="true" name="Default" enabled="false">

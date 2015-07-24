@@ -384,4 +384,5 @@
     background-image: url('../resources/indicator.gif');
     width: 16px;
     height: 16px;
+    display: block;
 }
