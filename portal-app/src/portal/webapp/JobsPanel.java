@@ -37,13 +37,17 @@ public class JobsPanel extends Panel {
             protected void populateItem(ListItem<JobStatus> listItem) {
                 JobStatus jobStatus = listItem.getModelObject();
                 listItem.add(new Label("id", jobStatus.getJobId()));
-                WebMarkupContainer status = new WebMarkupContainer("status");
                 String iconClass = "icon checkmark green";
-                if (JobStatus.Status.PENDING.equals(status)) {
+                if (JobStatus.Status.PENDING.equals(jobStatus.getStatus())) {
                     iconClass = "waiting";
-                } else if (JobStatus.Status.ERROR.equals(status)) {
+                } else if (JobStatus.Status.RUNNING.equals(jobStatus.getStatus())) {
+                    iconClass = "waiting";
+                } else if (JobStatus.Status.CANCELLED.equals(jobStatus.getStatus())) {
+                    iconClass = "icon remove red";
+                } else if (JobStatus.Status.ERROR.equals(jobStatus.getStatus())) {
                     iconClass = "icon remove red";
                 }
+                WebMarkupContainer status = new WebMarkupContainer("status");
                 status.add(new AttributeModifier("class", iconClass));
                 listItem.add(status);
             }
