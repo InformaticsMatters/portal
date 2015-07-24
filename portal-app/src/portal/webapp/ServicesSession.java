@@ -35,8 +35,14 @@ public class ServicesSession implements Serializable {
         return serviceDescriptors;
     }
 
-    public ServiceDescriptor findServiceDescriptorById(Long id) {
-        return serviceDescriptors.get(id.intValue());
+    public ServiceDescriptor findServiceDescriptorById(String id) {
+        ServiceDescriptor result = null;
+        for (ServiceDescriptor sd : serviceDescriptors) {
+            if (id.equals(sd.getId().replace('/', '_'))) {
+                result = sd;
+                break;
+            }
+        }
+        return result;
     }
-
 }

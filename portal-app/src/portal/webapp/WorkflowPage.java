@@ -207,7 +207,7 @@ public class WorkflowPage extends WebPage {
 
         if (ServicesPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
             ServiceCanvasItemData serviceCanvasItemData = new ServiceCanvasItemData();
-            serviceCanvasItemData.setServiceDescriptor(servicesSession.findServiceDescriptorById(Long.parseLong(dropDataId)));
+            serviceCanvasItemData.setServiceDescriptor(servicesSession.findServiceDescriptorById(dropDataId));
             serviceCanvasItemData.setPositionX(x);
             serviceCanvasItemData.setPositionY(y);
             ServiceCanvasItemPanel serviceCanvasItemPanel = createServiceCanvasItemPanel(serviceCanvasItemData);

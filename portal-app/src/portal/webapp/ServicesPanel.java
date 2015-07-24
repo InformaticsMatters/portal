@@ -50,7 +50,7 @@ public class ServicesPanel extends Panel {
 
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
-                listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_ID, serviceDescriptor.getId()));
+                listItem.add(new AttributeModifier(WorkflowPage.DROP_DATA_ID, serviceDescriptor.getId().replace('/', '_')));
             }
         };
         servicesContainer.add(listView);
