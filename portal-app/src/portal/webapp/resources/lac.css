@@ -388,5 +388,10 @@
 }
 
 .over {
-    background-color: #dfdfdf!important;
+    border-color: #aaa!important;
+    border-style: dashed!important;
+}
+
+.palette-item * {
+pointer-events: none;
 }
