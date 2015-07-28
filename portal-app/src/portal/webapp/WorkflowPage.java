@@ -60,6 +60,8 @@ public class WorkflowPage extends WebPage {
     private ServicesPanel servicesPanel;
 
     @Inject
+    private PopupContainerProvider popupContainerProvider;
+    @Inject
     private NotifierProvider notifierProvider;
     @Inject
     private DatasetsSession datasetsSession;
@@ -70,6 +72,7 @@ public class WorkflowPage extends WebPage {
 
     public WorkflowPage() {
         notifierProvider.createNotifier(this, "notifier");
+        popupContainerProvider.createPopupContainerForPage(this, "popupContainer");
         addPanels();
         addCanvas();
         addCanvasDropBehavior();

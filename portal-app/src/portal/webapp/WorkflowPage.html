@@ -3,14 +3,14 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <!--script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script-->
 </head>
 
 <body>
 
-
 <div wicket:id="notifier"></div>
-
+<div wicket:id="popupContainer">
+    <div wicket:id="content"></div>
+</div>
 
 <div class="wrapper flex-column">
 
@@ -107,7 +107,6 @@
              return false;
          }
 
-
         var $allCards = $('.card');
         $allCards.each(function(){
             this.addEventListener("dragenter", handleDataItemsBoxDragEnter, false);
@@ -142,7 +141,6 @@
                     this.classList.remove('over');
                     return false;
                    }
-
 </script>
 
 </body>
