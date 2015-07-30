@@ -115,22 +115,32 @@
             this.addEventListener("drop", dropOntoDataItem, false);
         });
 
+        var dragging = 0;
+
         function handleDataItemsBoxDragEnter(event) {
+                    dragging++;
+                    this.classList.add('over');
+                    console.log(dragging, 'dragging-enter');
                     event.stopPropagation();
                     event.preventDefault();
-                    this.classList.add('over');
                     return false;
                 }
 
         function preventDefaultEventHandling(event) {
-            event.stopPropagation();
-             event.preventDefault() ;
+                this.classList.add('over');
+                event.stopPropagation();
+                event.preventDefault() ;
+                return false;
          }
 
         function handleDragLeave(event) {
+                    dragging--;
+                    if (dragging === 0) {
+                        this.classList.remove('over');
+                    }
+                    console.log(dragging, 'dragging-leave');
                     event.stopPropagation();
                     event.preventDefault();
-                    this.classList.remove('over');
                     return false;
                 }
 
