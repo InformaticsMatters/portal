@@ -233,6 +233,7 @@
 .jobsPanel,
 .visualizersPanel {
     overflow-y: auto;
+    height: 0px;
 }
 
 .flex-column {
