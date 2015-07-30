@@ -5,6 +5,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import javax.inject.Inject;
 import java.io.Serializable;
 
 /**
@@ -13,35 +14,40 @@ import java.io.Serializable;
 public class ServiceCanvasItemPanel extends Panel {
 
     private final ServiceCanvasItemData data;
-    private ServiceCanvasItemPopupPanel serviceCanvasItemPopup;
+    private final AjaxLink openPopupLink;
+    private ServiceCanvasItemPopupPanel popupPanel;
     private Callbacks callbacks;
+    @Inject
+    private PopupContainerProvider popupContainerProvider;
 
     public ServiceCanvasItemPanel(String id, ServiceCanvasItemData data, Callbacks callbacks) {
         super(id);
         this.callbacks = callbacks;
         this.data = data;
         setOutputMarkupId(true);
-        addServiceCanvasItemPopup(data);
+        createPopupPanel();
 
         add(new Label("name", data.getServiceDescriptor().getName()));
 
-        add(new AjaxLink("openPopup") {
+        openPopupLink = new AjaxLink("openPopup") {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                serviceCanvasItemPopup.setVisible(true);
-                ajaxRequestTarget.add(serviceCanvasItemPopup);
-                String js = "$('#" + getMarkupId() + "').popup({popup: $('#" + ServiceCanvasItemPanel.this.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
+                popupContainerProvider.setPopupContentForPage(getPage(), popupPanel);
+                popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
+                String js = "$('#" + openPopupLink.getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + popupPanel.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
                 ajaxRequestTarget.appendJavaScript(js);
             }
-        });
+        };
+        add(openPopupLink);
     }
 
-    private void addServiceCanvasItemPopup(ServiceCanvasItemData serviceCanvasItemData) {
-        serviceCanvasItemPopup = new ServiceCanvasItemPopupPanel("serviceCanvasItemPopup", serviceCanvasItemData, new ServiceCanvasItemPopupPanel.Callbacks() {
+    private void createPopupPanel() {
+        popupPanel = new ServiceCanvasItemPopupPanel("content", data, new ServiceCanvasItemPopupPanel.Callbacks() {
 
             @Override
             public void onDelete() {
+                popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
                 callbacks.onServiceCanvasItemDelete();
             }
 
@@ -50,8 +56,6 @@ public class ServiceCanvasItemPanel extends Panel {
                 callbacks.onServiceCanvasItemSave();
             }
         });
-        serviceCanvasItemPopup.setVisible(false);
-        add(serviceCanvasItemPopup);
     }
 
     public ServiceCanvasItemData getData() {

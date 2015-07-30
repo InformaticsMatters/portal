@@ -17,10 +17,12 @@ public class DatasetPanel extends Panel {
     private final IDatasetDescriptor datasetDescriptor;
     private final Callbacks callbacks;
     private DatasetPopupPanel datasetPopupPanel;
+    private AjaxLink openPopupLink;
 
     @Inject
     private PopupContainerProvider popupContainerProvider;
-    private AjaxLink openPopupLink;
+    @Inject
+    private DatasetsSession datasetsSession;
 
     public DatasetPanel(String id, IDatasetDescriptor datasetDescriptor, Callbacks callbacks) {
         super(id);
@@ -50,6 +52,7 @@ public class DatasetPanel extends Panel {
 
     private void createDatasetPopupPanel() {
         datasetPopupPanel = new DatasetPopupPanel("content", datasetDescriptor, () -> {
+            datasetsSession.deleteDataset(datasetDescriptor);
             popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
             callbacks.onDelete();
         });

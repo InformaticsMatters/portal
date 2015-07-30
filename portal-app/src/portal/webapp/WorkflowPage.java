@@ -184,13 +184,7 @@ public class WorkflowPage extends WebPage {
 
             @Override
             protected void populateItem(ListItem<AbstractCanvasItemData> components) {
-                components.setOutputMarkupId(true);
-                AbstractCanvasItemData model = components.getModelObject();
-                components.add(new AttributeModifier("style", "top:" + model.getPositionY() + "px; left:" + model.getPositionX() + "px;"));
-                if (model instanceof DatasetCanvasItemData) {
-                    DatasetCanvasItemData datasetCanvasItemData = (DatasetCanvasItemData) model;
-                    components.add(new DatasetCanvasItemPanel("item", datasetCanvasItemData));
-                }
+                // we manage items manually when dropping or removing them from the Canvas
             }
         };
         canvasItemRepeater.setOutputMarkupId(true);
@@ -249,7 +243,8 @@ public class WorkflowPage extends WebPage {
     }
 
     private DatasetCanvasItemPanel createDatasetCanvasItemPanel(DatasetCanvasItemData datasetCanvasItemData) {
-        return new DatasetCanvasItemPanel("item", datasetCanvasItemData);
+        return new DatasetCanvasItemPanel("item", datasetCanvasItemData, () -> {
+        });
     }
 
     private ServiceCanvasItemPanel createServiceCanvasItemPanel(final ServiceCanvasItemData serviceCanvasItemData) {

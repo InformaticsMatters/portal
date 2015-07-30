@@ -15,7 +15,7 @@ public class DatasetCanvasItemPanel extends Panel {
 
     private final DatasetCanvasItemData data;
     private final Callbacks callbacks;
-    private DatasetCanvasItemPopupPanel datasetCanvasItemPopupPanel;
+    private DatasetPopupPanel popupPanel;
 
     @Inject
     private PopupContainerProvider popupContainerProvider;
@@ -27,9 +27,8 @@ public class DatasetCanvasItemPanel extends Panel {
         this.callbacks = callbacks;
         setOutputMarkupId(true);
 
-        createDatasetCanvasItemPopupPanel();
+        createPopupPanel();
 
-        add(new Label("id", data.getDatasetDescriptor().getId()));
         add(new Label("description", data.getDatasetDescriptor().getDescription()));
         add(new Label("rowCount", data.getDatasetDescriptor().getRowCount()));
 
@@ -37,19 +36,17 @@ public class DatasetCanvasItemPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                popupContainerProvider.setPopupContentForPage(getPage(), datasetCanvasItemPopupPanel);
+                popupContainerProvider.setPopupContentForPage(getPage(), popupPanel);
                 popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
-                String js = "$('#" + getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + datasetCanvasItemPopupPanel.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";
+                String js = "$('#" + openPopupLink.getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + popupPanel.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";
                 ajaxRequestTarget.appendJavaScript(js);
             }
         };
         add(openPopupLink);
     }
 
-    private void createDatasetCanvasItemPopupPanel() {
-        datasetCanvasItemPopupPanel = new DatasetCanvasItemPopupPanel("content", datasetDescriptor, () -> {
-            popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
-            callbacks.onDelete();
+    private void createPopupPanel() {
+        popupPanel = new DatasetPopupPanel("content", data.getDatasetDescriptor(), () -> {
         });
     }
 
