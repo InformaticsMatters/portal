@@ -1,7 +1,7 @@
 package portal.webapp;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.dataset.IDatasetDescriptor;
@@ -20,7 +20,7 @@ public class DatasetPanel extends Panel {
 
     @Inject
     private PopupContainerProvider popupContainerProvider;
-    private IndicatingAjaxLink openPopupLink;
+    private AjaxLink openPopupLink;
 
     public DatasetPanel(String id, IDatasetDescriptor datasetDescriptor, Callbacks callbacks) {
         super(id);
@@ -35,13 +35,13 @@ public class DatasetPanel extends Panel {
         add(new Label("description", datasetDescriptor.getDescription()));
         add(new Label("rowCount", datasetDescriptor.getRowCount()));
 
-        openPopupLink = new IndicatingAjaxLink("openPopup") {
+        openPopupLink = new AjaxLink("openPopup") {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 popupContainerProvider.setPopupContentForPage(getPage(), datasetPopupPanel);
                 popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
-                String js = "$('#" + getMarkupId() + "').popup({target: $('#" + openPopupLink.getMarkupId() + "'), popup: $('#" + datasetPopupPanel.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";
+                String js = "$('#" + getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + datasetPopupPanel.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";
                 ajaxRequestTarget.appendJavaScript(js);
             }
         };
