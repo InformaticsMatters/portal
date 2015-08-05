@@ -32,6 +32,62 @@ $( document ).ready(function() {
     $('.ui.dropdown')
       .dropdown()
     ;
+
+
+     var draggable = document.getElementById("datasetsDraggablesContainer");
+     draggable.addEventListener('dragstart', dragStart, false);
+     draggable.addEventListener('dragend'  , dragEnd  , false);
+
+     draggable = document.getElementById("servicesDraggablesContainer");
+     draggable.addEventListener('dragstart', dragStart, false);
+     draggable.addEventListener('dragend'  , dragEnd  , false);
+
+     var droptarget = document.getElementById("plumbContainer");
+     droptarget.addEventListener('dragenter', dragEnter, false);
+     droptarget.addEventListener('dragover', dragOver, false);
+     droptarget.addEventListener('dragleave', dragLeave, false);
+     droptarget.addEventListener('drop', drop, false);
+
+     function dragStart(event) {
+         event.dataTransfer.setData('draggableMarkupId', event.target.id);
+         event.dataTransfer.setData('mouseOffsetX', event.layerX);
+         event.dataTransfer.setData('mouseOffsetY', event.layerY)
+         event.dataTransfer.dropEffect = "copy";
+     }
+
+     function dragEnd(event) {
+     }
+
+     function dragEnter(event) {
+     }
+
+     function dragOver(event) {
+         event.preventDefault();
+         return false;
+     }
+
+     function dragLeave(event) {
+     }
+
+     function drop(event) {
+         var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
+         var mouseOffsetX = event.dataTransfer.getData('mouseOffsetX');
+         var mouseOffsetY = event.dataTransfer.getData('mouseOffsetY');
+         var el = document.getElementById(draggableMarkupId);
+         var dropDataType = el.getAttribute("dropDataType");
+         var dropDataId = el.getAttribute("dropDataId");
+
+        var $el = $(el);
+        var width = $el.width();
+        var height = $el.height();
+
+        var left = event.offsetX - mouseOffsetX;
+        var top = event.offsetY - mouseOffsetY;
+         event.preventDefault();
+         onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
+         return false;
+     }
+
 });
 
 function tabularMenu() {
