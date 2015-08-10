@@ -1,8 +1,9 @@
 package portal.webapp;
 
-import com.im.lac.job.jobdef.AsyncLocalProcessDatasetJobDefinition;
-import com.im.lac.job.jobdef.DatasetJobDefinition;
-import com.im.lac.types.MoleculeObject;
+import com.im.lac.job.jobdef.AbstractAsyncProcessDatasetJobDefintion;
+import com.im.lac.job.jobdef.JobDefinition;
+import com.im.lac.job.jobdef.ProcessDatasetJobDefinition;
+import com.im.lac.services.ServiceDescriptor;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -23,11 +24,13 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.dataset.IDatasetDescriptor;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class WorkflowPage extends WebPage {
@@ -383,13 +386,20 @@ public class WorkflowPage extends WebPage {
     }
 
     private void postDirectSimpleRouteJob(DatasetCanvasItemData sourceData, ServiceCanvasItemData targetData) {
-        AsyncLocalProcessDatasetJobDefinition jobDefinition = new AsyncLocalProcessDatasetJobDefinition(
-                sourceData.getDatasetDescriptor().getId(),
-                targetData.getServiceDescriptor().getResourceUrl(),
-                DatasetJobDefinition.DatasetMode.CREATE,
-                MoleculeObject.class,
-                "Gustavo 1");
-        jobsSession.submitJob(jobDefinition);
-        jobsPanel.refresh();
+        ServiceDescriptor service = targetData.getServiceDescriptor();
+        IDatasetDescriptor dataset = sourceData.getDatasetDescriptor();
+        Class<? extends JobDefinition> jobDefinitionClass = service.getAccessModes()[0].getJobType();
+        try {
+            JobDefinition jobDefinition = jobDefinitionClass.newInstance();
+            if (jobDefinition instanceof AbstractAsyncProcessDatasetJobDefintion) {
+                AbstractAsyncProcessDatasetJobDefintion definition = (AbstractAsyncProcessDatasetJobDefintion) jobDefinition;
+                definition.configureDataset(dataset.getId(), ProcessDatasetJobDefinition.DatasetMode.CREATE, "Gustavo 2");
+                definition.configureService(service, service.getAccessModes()[0], new HashMap<>());
+            }
+            jobsSession.submitJob(jobDefinition);
+            jobsPanel.refresh();
+        } catch (Exception e) {
+            logger.error(null, e);
+        }
     }
 }
