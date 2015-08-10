@@ -48,14 +48,20 @@ public class DatasetPanel extends Panel {
             }
         };
         add(openPopupLink);
+
+        add(new AjaxLink("delete") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                datasetsSession.deleteDataset(datasetDescriptor);
+                popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
+                callbacks.onDelete();
+            }
+        });
     }
 
     private void createDatasetPopupPanel() {
-        datasetPopupPanel = new DatasetPopupPanel("content", datasetDescriptor, () -> {
-            datasetsSession.deleteDataset(datasetDescriptor);
-            popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
-            callbacks.onDelete();
-        });
+        datasetPopupPanel = new DatasetPopupPanel("content", datasetDescriptor);
     }
 
     public interface Callbacks extends Serializable {

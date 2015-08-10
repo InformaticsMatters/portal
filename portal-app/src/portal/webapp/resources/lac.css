@@ -112,11 +112,12 @@
 .canvas-item-content > .content {
   background: none;
   margin: 0em;
-  padding: 1em 1em;
+  padding: 1.3em 1em 0.5em 1em;
   box-shadow: none;
   font-size: 1em;
   border: none;
   border-radius: 0em;
+  height: 40px;
 }
 
 .palette-item > .content:after,
@@ -128,6 +129,21 @@
   overflow: hidden;
   visibility: hidden;
 }
+
+.palette-item > .content > .name {
+    height: 18px;
+    overflow: hidden;
+    font-size: 13px;
+}
+
+.palette-item .icon.remove {
+    visibility: hidden;
+}
+
+.palette-item:hover .icon.remove {
+    visibility: visible;
+}
+
 .palette-item > .extra,
 .canvas-item-content > .extra {
   max-width: 100%;
@@ -392,4 +408,7 @@
     border-color: #aaa!important;
     border-style: dashed!important;
 }
+
+
+
 

@@ -46,8 +46,7 @@ public class DatasetCanvasItemPanel extends Panel {
     }
 
     private void createPopupPanel() {
-        popupPanel = new DatasetPopupPanel("content", data.getDatasetDescriptor(), () -> {
-        });
+        popupPanel = new DatasetPopupPanel("content", data.getDatasetDescriptor());
     }
 
     public DatasetCanvasItemData getData() {

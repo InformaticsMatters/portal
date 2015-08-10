@@ -6,19 +6,15 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.dataset.IDatasetDescriptor;
 
-import java.io.Serializable;
-
 /**
  * @author simetrias
  */
 public class DatasetPopupPanel extends Panel {
 
-    private final Callbacks callbacks;
     private IDatasetDescriptor datasetDescriptor;
 
-    public DatasetPopupPanel(String id, IDatasetDescriptor datasetDescriptor, Callbacks callbacks) {
+    public DatasetPopupPanel(String id, IDatasetDescriptor datasetDescriptor) {
         super(id);
-        this.callbacks = callbacks;
         this.datasetDescriptor = datasetDescriptor;
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
@@ -32,18 +28,6 @@ public class DatasetPopupPanel extends Panel {
             }
         });
 
-        add(new IndicatingAjaxLink("delete") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                callbacks.onDelete();
-            }
-        });
-    }
-
-    public interface Callbacks extends Serializable {
-
-        void onDelete();
 
     }
 }
