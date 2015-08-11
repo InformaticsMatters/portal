@@ -133,9 +133,16 @@ $( document ).ready(function() {
 
       function dropOntoDataItem(event) {
                  dragging--;
+                 var dropType = this.getAttribute("dropdatatype");
+                 this.classList.remove('over');
+                  if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
+                      return;
+                  } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
+                      return;
+                  }
                  event.stopPropagation();
                  event.preventDefault();
-                 this.classList.remove('over');
+                 console.log('drop');
                  return false;
 
                 }
