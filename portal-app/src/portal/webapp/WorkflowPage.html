@@ -52,52 +52,5 @@
 
 <div wicket:id="footerPanel"></div>
 
-<script>
-var $allCards = $('.card');
-            $allCards.each(function(){
-                this.addEventListener("dragenter", handleDataItemsBoxDragEnter, false);
-                this.addEventListener("dragleave", handleDragLeave, false);
-                this.addEventListener("dragover", preventDefaultEventHandling, false);
-                this.addEventListener("drop", dropOntoDataItem, false);
-            });
-
-            var dragging = 0;
-
-            function handleDataItemsBoxDragEnter(event) {
-                        dragging++;
-                        this.classList.add('over');
-                        event.stopPropagation();
-                        event.preventDefault();
-                        return false;
-                    }
-
-            function preventDefaultEventHandling(event) {
-                    this.classList.add('over');
-                    event.stopPropagation();
-                    event.preventDefault() ;
-                    return false;
-             }
-
-            function handleDragLeave(event) {
-                        dragging--;
-                        console.log(dragging);
-                        if (dragging === 0) {
-                            this.classList.remove('over');
-                        }
-                        event.stopPropagation();
-                        event.preventDefault();
-                        return false;
-                    }
-
-             function dropOntoDataItem(event) {
-                        dragging--;
-                        event.stopPropagation();
-                        console.log('drop');
-                        event.preventDefault();
-                        this.classList.remove('over');
-                        return false;
-                       }
-</script>
-
 </body>
 </html>

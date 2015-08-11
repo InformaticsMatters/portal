@@ -42,6 +42,7 @@ $( document ).ready(function() {
      draggable.addEventListener('dragstart', dragStart, false);
      draggable.addEventListener('dragend'  , dragEnd  , false);
 
+
      var droptarget = document.getElementById("plumbContainer");
      droptarget.addEventListener('dragenter', dragEnter, false);
      droptarget.addEventListener('dragover', dragOver, false);
@@ -51,8 +52,9 @@ $( document ).ready(function() {
      function dragStart(event) {
          event.dataTransfer.setData('draggableMarkupId', event.target.id);
          event.dataTransfer.setData('mouseOffsetX', event.layerX);
-         event.dataTransfer.setData('mouseOffsetY', event.layerY)
+         event.dataTransfer.setData('mouseOffsetY', event.layerY);
          event.dataTransfer.dropEffect = "copy";
+         event.dataTransfer.setData(event.target.getAttribute("dropdatatype"), "");
      }
 
      function dragEnd(event) {
@@ -87,6 +89,57 @@ $( document ).ready(function() {
          onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
          return false;
      }
+
+
+
+     var $allCards = $('.card');
+     $allCards.each(function(){
+         this.addEventListener("dragenter", handleDataItemsBoxDragEnter, false);
+         this.addEventListener("dragleave", handleDragLeave, false);
+         this.addEventListener("dragover", preventDefaultEventHandling, false);
+         this.addEventListener("drop", dropOntoDataItem, false);
+     });
+
+     var dragging = 0;
+
+     function handleDataItemsBoxDragEnter(event) {
+                 dragging++;
+                 var dropType = this.getAttribute("dropdatatype");
+                 if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "service")  {
+                     this.classList.add('over');
+                 } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "dataset")  {
+                     this.classList.add('over');
+                 }
+                 event.stopPropagation();
+                 event.preventDefault();
+                 return false;
+             }
+
+     function preventDefaultEventHandling(event) {
+             event.stopPropagation();
+             event.preventDefault() ;
+             return false;
+      }
+
+     function handleDragLeave(event) {
+                 dragging--;
+                 if (dragging === 0) {
+                     this.classList.remove('over');
+                 }
+                 event.stopPropagation();
+                 event.preventDefault();
+                 return false;
+             }
+
+      function dropOntoDataItem(event) {
+                 dragging--;
+                 event.stopPropagation();
+                 event.preventDefault();
+                 this.classList.remove('over');
+                 return false;
+
+                }
+
 
 });
 
