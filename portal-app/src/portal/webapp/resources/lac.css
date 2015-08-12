@@ -130,10 +130,11 @@
   visibility: hidden;
 }
 
-.palette-item > .content > .name {
+.palette-item > .content > .name,
+.canvas-item-content > .content > .name {
     height: 18px;
     overflow: hidden;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .palette-item .icon.remove {
