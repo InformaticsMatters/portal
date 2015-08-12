@@ -13,7 +13,7 @@ import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import toolkit.wicket.marvin4js.MarvinSketcher;
+import toolkit.wicket.marvinjs.MarvinSketcher;
 
 import java.awt.*;
 

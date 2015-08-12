@@ -10,7 +10,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.chemcentral.ChemcentralSession;
 import portal.dataset.IDatasetDescriptor;
-import toolkit.wicket.marvin4js.MarvinSketcher;
+import toolkit.wicket.marvinjs.MarvinSketcher;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

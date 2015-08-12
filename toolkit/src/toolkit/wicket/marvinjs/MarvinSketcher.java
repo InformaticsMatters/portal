@@ -53,7 +53,7 @@ public class MarvinSketcher extends SemanticModalPanel {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(CssHeaderItem.forReference(new CssResourceReference(MarvinSketcher.class, "resources/css/doc.css")));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(MarvinSketcher.class, "resources/css/doc-simetrias.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(MarvinSketcher.class, "resources/js/marvinjslauncher.js")));
     }
 
