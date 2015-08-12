@@ -123,3 +123,7 @@ body {
 .ui.card .content img, .ui.cards>.card .content img {
     width: auto;
 }
+
+i.grey.icon {
+  color: #bbbbbb !important;
+}

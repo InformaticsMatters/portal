@@ -1,3 +1,9 @@
 <wicket:panel>
-    <div>Visualizers</div>
+    <div class="visualizers">
+        <ul class="ui cards" wicket:id="visualizersContainer" style="min-height: 50px;" id="drop">
+            <li wicket:id="descriptors" class="card" draggable="true">
+                <div wicket:id="visualizer"></div>
+            </li>
+        </ul>
+    </div>
 </wicket:panel>
