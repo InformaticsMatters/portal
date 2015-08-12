@@ -1,15 +1,24 @@
 package portal.webapp;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
- * Created by mariapaz on 8/12/15.
+ * @author simetrias
  */
 public class VisualizerPanel extends Panel {
 
-    public VisualizerPanel(String id) {
+    private final VisualizerDescriptor visualizerDescriptor;
+
+    public VisualizerPanel(String id, VisualizerDescriptor visualizerDescriptor) {
         super(id);
         setOutputMarkupId(true);
+        this.visualizerDescriptor = visualizerDescriptor;
+        addComponents();
+    }
+
+    private void addComponents() {
+        add(new Label("description", visualizerDescriptor.getDescription()));
     }
 
 }

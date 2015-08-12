@@ -1,7 +1,19 @@
 package portal.webapp;
 
+import java.io.Serializable;
+
 /**
- * Created by mariapaz on 8/12/15.
+ * @author simetrias
  */
-public class VisualizerDescriptor {
+public class VisualizerDescriptor implements Serializable {
+
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

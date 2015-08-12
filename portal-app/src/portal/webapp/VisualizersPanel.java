@@ -13,7 +13,6 @@ import java.util.ArrayList;
 public class VisualizersPanel extends Panel {
 
     private WebMarkupContainer visualizersContainer;
-
     private ListView<VisualizerDescriptor> listView;
 
     public VisualizersPanel(String id) {
@@ -25,12 +24,17 @@ public class VisualizersPanel extends Panel {
         visualizersContainer = new WebMarkupContainer("visualizersContainer");
         visualizersContainer.setOutputMarkupId(true);
 
-        listView = new ListView<VisualizerDescriptor>("descriptors", new ArrayList<>()) {
+        ArrayList<VisualizerDescriptor> descriptorList = new ArrayList<>();
+        VisualizerDescriptor descriptor = new VisualizerDescriptor();
+        descriptor.setDescription("Hierarchical table");
+        descriptorList.add(descriptor);
+
+        listView = new ListView<VisualizerDescriptor>("descriptors", descriptorList) {
 
             @Override
             protected void populateItem(ListItem<VisualizerDescriptor> listItem) {
                 VisualizerDescriptor visualizerDescriptor = listItem.getModelObject();
-                listItem.add(new VisualizerPanel("visualizer"));
+                listItem.add(new VisualizerPanel("visualizer", visualizerDescriptor));
                 listItem.setOutputMarkupId(true);
 
             }
@@ -39,7 +43,4 @@ public class VisualizersPanel extends Panel {
 
         add(visualizersContainer);
     }
-
-
-
 }
