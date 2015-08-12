@@ -109,6 +109,8 @@ $( document ).ready(function() {
                      this.classList.add('over');
                  } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "dataset")  {
                      this.classList.add('over');
+                 } else if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "visualizer")  {
+                     this.classList.add('over');
                  }
                  event.stopPropagation();
                  event.preventDefault();
@@ -138,6 +140,8 @@ $( document ).ready(function() {
                   if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
                       return;
                   } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
+                      return;
+                  } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
                       return;
                   }
                  event.stopPropagation();
