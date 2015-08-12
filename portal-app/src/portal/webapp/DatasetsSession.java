@@ -8,6 +8,7 @@ import portal.dataset.DatasetDescriptor;
 import portal.dataset.IDatasetDescriptor;
 
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -25,6 +26,9 @@ public class DatasetsSession implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(DatasetsSession.class.getName());
 
+    @Inject
+    private SessionContext sessionContext;
+
     private DatasetClient datasetClient;
     private Map<Long, DatasetDescriptor> datasetMap;
 
@@ -35,7 +39,7 @@ public class DatasetsSession implements Serializable {
     public List<IDatasetDescriptor> listDatasetDescriptors(DatasetFilterData datasetFilterData) {
         datasetMap = new HashMap<>();
         try {
-            Stream<DataItem> all = datasetClient.getAll();
+            Stream<DataItem> all = datasetClient.getAll(sessionContext.getLoggedInUser());
             all.forEach(dataItem -> {
                 DatasetDescriptor datasetDescriptor = new DatasetDescriptor(dataItem);
                 datasetMap.put(datasetDescriptor.getId(), datasetDescriptor);
@@ -48,7 +52,7 @@ public class DatasetsSession implements Serializable {
 
     public void createDataset(String name, InputStream content) {
         try {
-            datasetClient.create(name, content);
+            datasetClient.create(sessionContext.getLoggedInUser(), name, content);
         } catch (IOException e) {
             logger.error(null, e);
         }
@@ -57,7 +61,7 @@ public class DatasetsSession implements Serializable {
     public void deleteDataset(IDatasetDescriptor datasetDescriptor) {
         try {
             DatasetDescriptor dataset = (DatasetDescriptor) datasetDescriptor;
-            datasetClient.delete(dataset.getDataItem().getId());
+            datasetClient.delete(sessionContext.getLoggedInUser(), dataset.getDataItem().getId());
         } catch (IOException e) {
             logger.error(null, e);
         }

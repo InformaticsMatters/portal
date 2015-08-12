@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,13 +22,16 @@ public class ServicesSession implements Serializable {
     private final ServicesClient servicesClient;
     private List<ServiceDescriptor> serviceDescriptors;
 
+    @Inject
+    private SessionContext sessionContext;
+
     public ServicesSession() {
         servicesClient = new ServicesClient();
     }
 
     public List<ServiceDescriptor> listServiceDescriptors() {
         try {
-            serviceDescriptors = servicesClient.getServiceDefinitions();
+            serviceDescriptors = servicesClient.getServiceDefinitions(sessionContext.getLoggedInUser());
         } catch (IOException e) {
             serviceDescriptors = new ArrayList<>();
             logger.error(null, e);

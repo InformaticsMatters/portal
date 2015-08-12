@@ -1,6 +1,6 @@
 package portal.webapp;
 
-import com.im.lac.job.jobdef.AbstractAsyncProcessDatasetJobDefintion;
+import com.im.lac.job.jobdef.AbstractAsyncProcessDatasetJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.job.jobdef.ProcessDatasetJobDefinition;
 import com.im.lac.services.ServiceDescriptor;
@@ -391,8 +391,8 @@ public class WorkflowPage extends WebPage {
         Class<? extends JobDefinition> jobDefinitionClass = service.getAccessModes()[0].getJobType();
         try {
             JobDefinition jobDefinition = jobDefinitionClass.newInstance();
-            if (jobDefinition instanceof AbstractAsyncProcessDatasetJobDefintion) {
-                AbstractAsyncProcessDatasetJobDefintion definition = (AbstractAsyncProcessDatasetJobDefintion) jobDefinition;
+            if (jobDefinition instanceof AbstractAsyncProcessDatasetJobDefinition) {
+                AbstractAsyncProcessDatasetJobDefinition definition = (AbstractAsyncProcessDatasetJobDefinition) jobDefinition;
                 definition.configureDataset(dataset.getId(), ProcessDatasetJobDefinition.DatasetMode.CREATE, "Gustavo 2");
                 definition.configureService(service, service.getAccessModes()[0], new HashMap<>());
             }

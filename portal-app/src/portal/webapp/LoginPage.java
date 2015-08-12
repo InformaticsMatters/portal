@@ -38,7 +38,7 @@ public class LoginPage extends WebPage {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                sessionContext.setLoggedInUser("loggedIn");
+                sessionContext.setLoggedInUser("testuser");
                 continueToOriginalDestination();
             }
         };
