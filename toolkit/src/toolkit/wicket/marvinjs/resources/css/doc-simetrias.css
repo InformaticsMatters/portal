@@ -144,3 +144,7 @@ div#serviceForm input {
 .bordered {
 	    box-shadow: 2px 2px 8px #444;
 }
+
+.content {
+    padding: 1rem!important;
+}
