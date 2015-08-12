@@ -1,0 +1,20 @@
+.mjs-tutorial-smartRGroup{
+	width: 180px;
+	height: 180px;
+	background: url("../tutorial/rgroup_small.gif");
+}
+.mjs-tutorial-smartReaction{
+	width: 180px;	
+	height: 180px;
+	background: url("../tutorial/reaction_small.gif");
+}
+.mjs-tutorial-smartHapticBond{
+	width: 180px;
+	height: 180px;
+	background: url("../tutorial/coordinate_small.gif");
+}
+.mjs-tutorial-positionVariationBond{
+	width: 180px;
+	height: 180px;
+	background: url("../tutorial/positionvariation_small.gif");
+}
