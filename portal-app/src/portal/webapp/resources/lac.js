@@ -138,7 +138,7 @@ $( document ).ready(function() {
                  dragging--;
                  var dropType = this.getAttribute("dropdatatype");
                  var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
-                 var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdatatype");
+                 var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
                  this.classList.remove('over');
                   if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
                       return;

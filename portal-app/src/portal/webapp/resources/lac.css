@@ -135,6 +135,8 @@
     height: 18px;
     overflow: hidden;
     font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .palette-item .icon.remove {
@@ -195,15 +197,15 @@
 	min-height: 100%;
 	height: auto !important;
     height: 100%;
-	margin: 0 auto -180px;
+	margin: 0 auto -37px;
 }
 
 .footer {
-	height: 180px!important;
+	height: 37px!important;
 }
 
 .push {
-    height: 180px!important;
+    height: 37px!important;
 }
 
 .footer .content {
