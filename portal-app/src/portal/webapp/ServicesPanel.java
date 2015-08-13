@@ -49,7 +49,7 @@ public class ServicesPanel extends Panel {
                 ServiceItemData listItemData = listItem.getModelObject();
                 listItem.setOutputMarkupId(true);
                 if (listItemData.isFolder()) {
-                    listItem.add(new FolderPanel("item"));
+                    listItem.add(new FolderPanel("item", listItemData.getFolderName()));
                 } else {
                     ServiceDescriptor serviceDescriptor = listItemData.getServiceDescriptor();
                     listItem.add(new ServicePanel("item", serviceDescriptor));

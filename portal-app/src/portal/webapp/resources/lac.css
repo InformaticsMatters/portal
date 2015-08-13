@@ -413,10 +413,19 @@
     border-style: dashed!important;
 }
 
-.visualizer-icon,
-.folder-icon {
+.visualizer-icon{
     text-align: center;
     margin: 10px 0;
+}
+
+.folder-name {
+    text-align: center;
+    padding-top: 0.9rem!important;
+}
+
+.folder-icon {
+    text-align: center;
+    height: 35px;
 }
 
 

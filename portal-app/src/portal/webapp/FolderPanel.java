@@ -8,15 +8,17 @@ import org.apache.wicket.markup.html.panel.Panel;
  */
 public class FolderPanel extends Panel {
 
+    private final String folderDescription;
 
-    public FolderPanel(String id) {
+    public FolderPanel(String id, String folderDescription) {
         super(id);
+        this.folderDescription = folderDescription;
         setOutputMarkupId(true);
         addComponents();
     }
 
     private void addComponents() {
-        add(new Label("description"));
+        add(new Label("description", folderDescription));
     }
 
 }
