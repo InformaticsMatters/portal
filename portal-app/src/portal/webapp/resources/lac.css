@@ -413,7 +413,8 @@
     border-style: dashed!important;
 }
 
-.visualizer-icon {
+.visualizer-icon,
+.folder-icon {
     text-align: center;
     margin: 10px 0;
 }
