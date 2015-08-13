@@ -33,6 +33,13 @@ $( document ).ready(function() {
       .dropdown()
     ;
 
+    $('.palette-item')
+      .popup({
+        inline: true,
+        hoverable: true,
+        position : 'top right'
+      })
+    ;
 
      var draggable = document.getElementById("datasetsDraggablesContainer");
      draggable.addEventListener('dragstart', dragStart, false);
