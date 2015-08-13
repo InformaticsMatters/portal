@@ -211,8 +211,8 @@
 .footer .content {
     margin: 0em;
     border-radius: 0em;
-    padding-top: 2em;
-    padding-bottom: 2em;
+    padding-top: 0;
+    padding-bottom: 0;
     padding-left: 8%;
     padding-right: 8%;
 }
@@ -232,7 +232,8 @@
 }
 
 .dataSets ul,
-.services ul {
+.services ul,
+.visualizers ul {
     -webkit-padding-start: 0;
 }
 
@@ -410,6 +411,11 @@
 .over {
     border-color: #aaa!important;
     border-style: dashed!important;
+}
+
+.visualizer-icon {
+    text-align: center;
+    margin: 10px 0;
 }
 
 
