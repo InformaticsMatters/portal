@@ -60,8 +60,9 @@ public class StructurePropertyEditorPanel extends Panel {
 
             @Override
             public void onSubmit() {
-                marvinSketcherPanel.hideModal();
+                System.out.println(marvinSketcherPanel.getSketchData());
                 getRequestCycle().find(AjaxRequestTarget.class).add(sketchThumbnail);
+                marvinSketcherPanel.hideModal();
             }
 
             @Override

@@ -34,17 +34,19 @@ import java.util.Set;
 public class TreeGridVisualizerPage extends WebPage {
 
     private final IDatasetDescriptor datasetDescriptor;
-
     private Form<PropertyDefinitionData> form;
+
+    private TreeGridVisualizer treeGridVisualizer;
+    private ListView<String> columnsListView;
+    private WebMarkupContainer columnsContainer;
+    private MenuPanel menuPanel;
 
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
     private ChemcentralSession chemcentralSession;
-    private TreeGridVisualizer treeGridVisualizer;
-    private ListView<String> columnsListView;
-    private WebMarkupContainer columnsContainer;
-    private MenuPanel menuPanel;
+    @Inject
+    private DatasetsSession datasetsSession;
 
     public TreeGridVisualizerPage(IDatasetDescriptor datasetDescriptor) {
         this.datasetDescriptor = datasetDescriptor;
