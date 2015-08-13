@@ -55,6 +55,7 @@ $( document ).ready(function() {
          event.dataTransfer.setData('mouseOffsetY', event.layerY);
          event.dataTransfer.dropEffect = "copy";
          event.dataTransfer.setData(event.target.getAttribute("dropdatatype"), "");
+         event.dataTransfer.setData(event.target.getAttribute("dropdataid"), "");
      }
 
      function dragEnd(event) {
@@ -136,6 +137,8 @@ $( document ).ready(function() {
       function dropOntoDataItem(event) {
                  dragging--;
                  var dropType = this.getAttribute("dropdatatype");
+                 var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
+                 var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdatatype");
                  this.classList.remove('over');
                   if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
                       return;
@@ -146,7 +149,7 @@ $( document ).ready(function() {
                   }
                  event.stopPropagation();
                  event.preventDefault();
-                 console.log('drop');
+                 console.log(dragdataid);
                  return false;
 
                 }

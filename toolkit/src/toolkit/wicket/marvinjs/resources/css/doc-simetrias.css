@@ -145,6 +145,6 @@ div#serviceForm input {
 	    box-shadow: 2px 2px 8px #444;
 }
 
-.content {
+.scketcher > .content {
     padding: 1rem!important;
 }
