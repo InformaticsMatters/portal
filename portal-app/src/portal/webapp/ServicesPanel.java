@@ -131,10 +131,13 @@ public class ServicesPanel extends Panel {
             result.add(data);
         }
 
-        ServiceItemData folder = new ServiceItemData();
-        folder.setIsFolder(true);
-        folder.setFolderName("Services folder");
-        result.add(folder);
+        String filter = searchServiceForm.getModelObject().getPattern();
+        if (filter == null || filter.length() == 0) {
+            ServiceItemData folder = new ServiceItemData();
+            folder.setIsFolder(true);
+            folder.setFolderName("Services folder");
+            result.add(folder);
+        }
 
         return result;
     }
