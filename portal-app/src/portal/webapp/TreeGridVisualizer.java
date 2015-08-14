@@ -5,7 +5,6 @@ import com.inmethod.grid.treegrid.TreeGrid;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.model.Model;
-import portal.chemcentral.ChemcentralSession;
 import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IPropertyDescriptor;
 import portal.dataset.IRow;
@@ -23,11 +22,8 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
     private static final int ROWS_PER_PAGE = 50;
     private long currentPage = 0;
     private IDatasetDescriptor datasetDescriptor;
-    // private List<Long> allIds;
     private List<UUID> allUuids;
 
-    @Inject
-    private ChemcentralSession chemcentralSession;
     @Inject
     private DatasetsSession datasetsSession;
 
@@ -36,7 +32,6 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
         setOutputMarkupId(true);
         getTree().setRootLess(true);
         this.datasetDescriptor = datasetDescriptor;
-        // allIds = chemcentralSession.listAllRowIds(datasetDescriptor.getId());
         datasetsSession.loadDatasetContents(datasetDescriptor);
         allUuids = datasetsSession.listAllDatasetIds(datasetDescriptor);
         setCurrentPage(0);
@@ -79,19 +74,9 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
         this.currentPage = currentPage;
         int start = (int) (currentPage * ROWS_PER_PAGE);
         int end = start + ROWS_PER_PAGE;
-
-        /*
-        if (end > allIds.size()) {
-            end = allIds.size();
-        }
-        */
-
         if (end > allUuids.size()) {
             end = allUuids.size();
         }
-
-        // List<Long> rowIdList = allIds.subList(start, end);
-        // List<IRow> rowList = chemcentralSession.listRow(datasetDescriptor.getId(), rowIdList);
 
         List<UUID> uuidList = allUuids.subList(start, end);
         List<IRow> rowList = datasetsSession.listRow(datasetDescriptor, uuidList);
@@ -104,8 +89,12 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
 
     @Override
     public long getPageCount() {
-        // return (allIds.size() / ROWS_PER_PAGE) + 1;
-        return (allUuids.size() / ROWS_PER_PAGE) + 1;
+        int size = allUuids.size();
+        long result = allUuids.size() / ROWS_PER_PAGE;
+        if ((size % ROWS_PER_PAGE) > 0) {
+            result++;
+        }
+        return result;
     }
 
     private void buildNodeHierarchy(DefaultMutableTreeNode parentNode, List<IRow> rowList) {

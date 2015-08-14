@@ -5,7 +5,7 @@ import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
 import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.request.resource.DynamicImageResource;
-import portal.chemcentral.ChemcentralSession;
+import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IPropertyDescriptor;
 import portal.dataset.IRow;
 
@@ -14,8 +14,9 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class DynamicStructureImageResource extends DynamicImageResource {
 
@@ -24,7 +25,7 @@ public class DynamicStructureImageResource extends DynamicImageResource {
     public static final String PARAM_ROW = "row";
 
     @Inject
-    private ChemcentralSession chemcentralSession;
+    private DatasetsSession datasetsSession;
 
     public DynamicStructureImageResource() {
         CdiContainer.get().getNonContextualManager().postConstruct(this);
@@ -49,10 +50,10 @@ public class DynamicStructureImageResource extends DynamicImageResource {
     protected String loadStructureData(String datasetIdAsString, String rowIdAsString) {
         String structureData = null;
         Long datasetDescriptorId = Long.valueOf(datasetIdAsString);
-        Long rowId = Long.valueOf(rowIdAsString);
+        UUID rowId = UUID.fromString(rowIdAsString);
 
-        // Row row = service.findRowById(datasetDescriptorId, rowId);
-        List<IRow> rows = chemcentralSession.listRow(datasetDescriptorId, Arrays.asList(rowId));
+        IDatasetDescriptor dataset = datasetsSession.findDatasetDescriptorById(datasetDescriptorId);
+        List<IRow> rows = datasetsSession.listRow(dataset, Collections.singletonList(rowId));
         IRow row = rows.get(0);
 
         if (row != null) {

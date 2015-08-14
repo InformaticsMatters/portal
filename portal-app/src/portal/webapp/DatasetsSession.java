@@ -42,14 +42,26 @@ public class DatasetsSession implements Serializable {
                 DatasetDescriptor datasetDescriptor = new DatasetDescriptor(dataItem);
 
                 // configure metadata
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor();
-                propertyDescriptor.setDescription("Structure property");
-                propertyDescriptor.setId(1l);
                 RowDescriptor rowDescriptor = new RowDescriptor();
-                rowDescriptor.addPropertyDescriptor(propertyDescriptor);
-                rowDescriptor.setStructurePropertyId(propertyDescriptor.getId());
-                rowDescriptor.setHierarchicalPropertyId(propertyDescriptor.getId());
                 datasetDescriptor.addRowDescriptor(rowDescriptor);
+                long propertyCount = 0;
+                // structure property
+                propertyCount++;
+                PropertyDescriptor structurePropertyDescriptor = new PropertyDescriptor();
+                structurePropertyDescriptor.setDescription("Structure property");
+                structurePropertyDescriptor.setId(propertyCount);
+                rowDescriptor.addPropertyDescriptor(structurePropertyDescriptor);
+                rowDescriptor.setStructurePropertyId(structurePropertyDescriptor.getId());
+                rowDescriptor.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
+                // all other properties
+                Map<String, Class> propertyTypes = dataItem.getMetadata().getPropertyTypes();
+                for (String key : propertyTypes.keySet()) {
+                    propertyCount++;
+                    PropertyDescriptor plainPropertyDescriptor = new PropertyDescriptor();
+                    plainPropertyDescriptor.setDescription(key);
+                    plainPropertyDescriptor.setId(propertyCount);
+                    rowDescriptor.addPropertyDescriptor(plainPropertyDescriptor);
+                }
 
                 datasetMap.put(datasetDescriptor.getId(), datasetDescriptor);
             });
@@ -104,7 +116,7 @@ public class DatasetsSession implements Serializable {
 
         // Discuss: I'm forced to match each Row to the only known metadata!
         RowDescriptor rowDescriptor = (RowDescriptor) datasetDescriptor.getAllRowDescriptors().get(0);
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) rowDescriptor.getStructurePropertyDescriptor();
+        PropertyDescriptor structurePropertyDescriptor = (PropertyDescriptor) rowDescriptor.getStructurePropertyDescriptor();
 
         List<IRow> result = new ArrayList<>();
         for (UUID uuid : uuidList) {
@@ -112,7 +124,14 @@ public class DatasetsSession implements Serializable {
             Row row = new Row();
             row.setUuid(molecule.getUUID());
             row.setDescriptor(rowDescriptor);
-            row.setProperty(propertyDescriptor, molecule.getSource());
+            row.setProperty(structurePropertyDescriptor, molecule.getSource());
+
+            for (IPropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
+                if (!propertyDescriptor.getId().equals(structurePropertyDescriptor.getId())) {
+                    row.setProperty((PropertyDescriptor) propertyDescriptor, molecule.getValue(propertyDescriptor.getDescription()));
+                }
+            }
+
             result.add(row);
         }
         return result;

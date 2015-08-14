@@ -37,7 +37,7 @@ public class TreeGridVisualizerTreeColumn extends BaseTreeColumn<DefaultTreeMode
         boolean rowHasStructureProperty = structurePropertyDescriptor != null;
 
         if (rowHasStructureProperty && hierarchicalPropertyDescriptor.getId().equals(structurePropertyDescriptor.getId())) {
-            return new TreeGridVisualizerStructurePanel(id, datasetDescriptor.getId(), row.getId());
+            return new TreeGridVisualizerStructurePanel(id, datasetDescriptor.getId(), row.getUuid());
         } else {
             Object value = row.getProperty(hierarchicalPropertyDescriptor);
             return new Label(id, value.toString());
