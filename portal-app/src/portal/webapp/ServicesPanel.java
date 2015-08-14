@@ -3,6 +3,9 @@ package portal.webapp;
 import com.im.lac.services.ServiceDescriptor;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
+import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -12,6 +15,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.util.time.Duration;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -35,7 +39,7 @@ public class ServicesPanel extends Panel {
         super(id);
         addSearchForm();
         addServices();
-        refreshServiceList();
+        refreshServiceList("");
     }
 
     private void addServices() {
@@ -68,8 +72,22 @@ public class ServicesPanel extends Panel {
         searchServiceForm.setModel(new CompoundPropertyModel<>(new SearchServiceData()));
         searchServiceForm.setOutputMarkupId(true);
 
-        TextField<String> nameField = new TextField<>("pattern");
-        searchServiceForm.add(nameField);
+        TextField<String> patternField = new TextField<>("pattern");
+        patternField.add(new AjaxFormSubmitBehavior(searchServiceForm, "keyup") {
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                refreshServiceList(searchServiceForm.getModelObject().getPattern());
+            }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setThrottlingSettings(new ThrottlingSettings(patternField.getMarkupId(), Duration.milliseconds(500), true));
+            }
+        });
+
+        searchServiceForm.add(patternField);
 
         searchServiceForm.add(new CheckBox("freeOnly"));
 
@@ -77,7 +95,7 @@ public class ServicesPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                refreshServiceList();
+                refreshServiceList(searchServiceForm.getModelObject().getPattern());
             }
         };
         searchServiceForm.add(searchAction);
@@ -85,12 +103,17 @@ public class ServicesPanel extends Panel {
         add(searchServiceForm);
     }
 
-    private void refreshServiceList() {
+    private void refreshServiceList(String filter) {
         ServiceFilterData serviceFilterData = new ServiceFilterData();
         SearchServiceData searchServiceData = searchServiceForm.getModelObject();
         serviceFilterData.setPattern(searchServiceData.getPattern());
         serviceFilterData.setFreeOnly(searchServiceData.getFreeOnly());
-        List<ServiceDescriptor> serviceDescriptors = servicesSession.listServiceDescriptors();
+        List<ServiceDescriptor> serviceDescriptors;
+        if (filter == null || filter.length() == 0) {
+            serviceDescriptors = servicesSession.listServiceDescriptors();
+        } else {
+            serviceDescriptors = servicesSession.listServiceDescriptors(filter);
+        }
         List<ServiceItemData> dataList = buildServiceItemDataList(serviceDescriptors);
         listView.setList(dataList);
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
@@ -110,7 +133,7 @@ public class ServicesPanel extends Panel {
 
         ServiceItemData folder = new ServiceItemData();
         folder.setIsFolder(true);
-        folder.setFolderName("Folder name");
+        folder.setFolderName("Services folder");
         result.add(folder);
 
         return result;

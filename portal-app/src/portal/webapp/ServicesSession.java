@@ -39,6 +39,21 @@ public class ServicesSession implements Serializable {
         return serviceDescriptors;
     }
 
+    public List<ServiceDescriptor> listServiceDescriptors(String filterPattern) {
+        List<ServiceDescriptor> descriptorList = listServiceDescriptors();
+        List<ServiceDescriptor> result = new ArrayList<>();
+        for (ServiceDescriptor serviceDescriptor : descriptorList) {
+            String[] tags = serviceDescriptor.getTags();
+            for (String tag : tags) {
+                if (tag.startsWith(filterPattern)) {
+                    result.add(serviceDescriptor);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
     public ServiceDescriptor findServiceDescriptorById(String id) {
         ServiceDescriptor result = null;
         for (ServiceDescriptor sd : serviceDescriptors) {
