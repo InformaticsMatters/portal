@@ -2,330 +2,279 @@
 <project name="portal-app" default="all">
 
 
-    <property file="portal.properties"/>
-    <!-- Uncomment the following property if no tests compilation is needed -->
-    <!--
-    <property name="skip.tests" value="true"/>
-     -->
+  <property file="portal.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
 
-    <!-- Compiler options -->
+  <!-- Compiler options -->
 
-    <property name="compiler.debug" value="on"/>
-    <property name="compiler.generate.no.warnings" value="off"/>
-    <property name="compiler.args" value=""/>
-    <property name="compiler.max.memory" value="700m"/>
-    <patternset id="ignored.files">
-        <exclude name="**/*.hprof/**"/>
-        <exclude name="**/*.pyc/**"/>
-        <exclude name="**/*.pyo/**"/>
-        <exclude name="**/*.rbc/**"/>
-        <exclude name="**/*~/**"/>
-        <exclude name="**/.DS_Store/**"/>
-        <exclude name="**/.bundle/**"/>
-        <exclude name="**/.git/**"/>
-        <exclude name="**/.hg/**"/>
-        <exclude name="**/.svn/**"/>
-        <exclude name="**/CVS/**"/>
-        <exclude name="**/RCS/**"/>
-        <exclude name="**/SCCS/**"/>
-        <exclude name="**/__pycache__/**"/>
-        <exclude name="**/_svn/**"/>
-        <exclude name="**/rcs/**"/>
-        <exclude name="**/vssver.scc/**"/>
-        <exclude name="**/vssver2.scc/**"/>
-    </patternset>
-    <patternset id="library.patterns">
-        <include name="*.zip"/>
-        <include name="*.apk"/>
-        <include name="*.war"/>
-        <include name="*.egg"/>
-        <include name="*.ear"/>
-        <include name="*.ane"/>
-        <include name="*.swc"/>
-        <include name="*.jar"/>
-    </patternset>
-    <patternset id="compiler.resources">
-        <exclude name="**/?*.java"/>
-        <exclude name="**/?*.form"/>
-        <exclude name="**/?*.class"/>
-        <exclude name="**/?*.groovy"/>
-        <exclude name="**/?*.scala"/>
-        <exclude name="**/?*.flex"/>
-        <exclude name="**/?*.kt"/>
-        <exclude name="**/?*.clj"/>
-        <include name="**/?*.css"/>
-        <include name="**/?*.js"/>
-        <include name="**/?*.html"/>
-        <include name="**/?*.svg"/>
-        <include name="**/?*.woff"/>
-        <include name="**/?*.ttf"/>
-        <include name="**/?*.gif"/>
-    </patternset>
-
-    <!-- JDK definitions -->
-
-    <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
-    <path id="jdk.classpath.1.8">
-        <fileset dir="${jdk.home.1.8}">
-            <include name="lib/ant-javafx.jar"/>
-            <include name="lib/dt.jar"/>
-            <include name="lib/javafx-mx.jar"/>
-            <include name="lib/jconsole.jar"/>
-            <include name="lib/sa-jdi.jar"/>
-            <include name="lib/tools.jar"/>
-            <include name="jre/lib/charsets.jar"/>
-            <include name="jre/lib/deploy.jar"/>
-            <include name="jre/lib/javaws.jar"/>
-            <include name="jre/lib/jce.jar"/>
-            <include name="jre/lib/jfr.jar"/>
-            <include name="jre/lib/jfxswt.jar"/>
-            <include name="jre/lib/jsse.jar"/>
-            <include name="jre/lib/management-agent.jar"/>
-            <include name="jre/lib/plugin.jar"/>
-            <include name="jre/lib/resources.jar"/>
-            <include name="jre/lib/rt.jar"/>
-            <include name="jre/lib/ext/cldrdata.jar"/>
-            <include name="jre/lib/ext/dnsns.jar"/>
-            <include name="jre/lib/ext/jfxrt.jar"/>
-            <include name="jre/lib/ext/localedata.jar"/>
-            <include name="jre/lib/ext/nashorn.jar"/>
-            <include name="jre/lib/ext/sunec.jar"/>
-            <include name="jre/lib/ext/sunjce_provider.jar"/>
-            <include name="jre/lib/ext/sunpkcs11.jar"/>
-            <include name="jre/lib/ext/zipfs.jar"/>
-        </fileset>
-    </path>
-
-    <property name="project.jdk.home" value="${jdk.home.1.8}"/>
-    <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
-    <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.bundle/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.zip"/>
+    <include name="*.apk"/>
+    <include name="*.war"/>
+    <include name="*.egg"/>
+    <include name="*.ear"/>
+    <include name="*.ane"/>
+    <include name="*.swc"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <include name="**/?*.css"/>
+    <include name="**/?*.js"/>
+    <include name="**/?*.svg"/>
+    <include name="**/?*.woff"/>
+    <include name="**/?*.ttf"/>
+    <include name="**/?*.gif"/>
+  </patternset>
 
 
-    <!-- Project Libraries -->
+  <!-- Project Libraries -->
 
-    <path id="library.lib.classpath">
-        <fileset dir="${basedir}/../lib/cdi-api/1.2.0">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/core-services-client">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/eclipselink/2.5.2">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/el-api/2.2">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/groovy-all/2.2.2">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/inmethod/6.9.0">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/jackson/2.5.3">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/jchem/6.2.0_b787">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/jersey/1.5">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/jetty/8.1.15">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/jpa/2.0">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/jsp-api/2.1">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/postgresql/9.2">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/seam-conversation/3.0">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/servlet-api/3.0">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/slf4j/1.7.10">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/weld/2.2.9">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/wicket-select2/2.3">
-            <patternset refid="library.patterns"/>
-        </fileset>
-        <fileset dir="${basedir}/../lib/wicket/6.18.0">
-            <patternset refid="library.patterns"/>
-        </fileset>
-    </path>
-
-
-    <!-- Global Libraries -->
-
-    <!-- Modules -->
+  <path id="library.lib.classpath">
+    <fileset dir="${basedir}/../lib/cdi-api/1.2.0">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/core-services-client">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/eclipselink/2.5.2">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/el-api/2.2">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/groovy-all/2.2.2">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/inmethod/6.9.0">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/jackson/2.5.3">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/jchem/6.2.0_b787">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/jersey/1.5">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/jetty/8.1.15">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/jpa/2.0">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/jsp-api/2.1">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/postgresql/9.2">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/seam-conversation/3.0">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/servlet-api/3.0">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/slf4j/1.7.10">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/weld/2.2.9">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/wicket-select2/2.3">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../lib/wicket/6.18.0">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
 
 
-    <!-- Module toolkit -->
+  <!-- Global Libraries -->
 
-    <dirname property="module.toolkit.basedir" file="${ant.file}"/>
-
-
-    <property name="module.jdk.home.toolkit" value="${project.jdk.home}"/>
-    <property name="module.jdk.bin.toolkit" value="${project.jdk.bin}"/>
-    <property name="module.jdk.classpath.toolkit" value="${project.jdk.classpath}"/>
-
-    <property name="compiler.args.toolkit" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
-
-    <property name="toolkit.output.dir" value="${module.toolkit.basedir}/out/production/toolkit"/>
-    <property name="toolkit.testoutput.dir" value="${module.toolkit.basedir}/out/test/toolkit"/>
-
-    <path id="toolkit.module.bootclasspath">
-        <!-- Paths to be included in compilation bootclasspath -->
-    </path>
-
-    <path id="toolkit.module.production.classpath">
-        <path refid="${module.jdk.classpath.toolkit}"/>
-        <path refid="library.lib.classpath"/>
-    </path>
-
-    <path id="toolkit.runtime.production.module.classpath">
-        <pathelement location="${toolkit.output.dir}"/>
-        <path refid="library.lib.classpath"/>
-    </path>
-
-    <path id="toolkit.module.classpath">
-        <path refid="${module.jdk.classpath.toolkit}"/>
-        <pathelement location="${toolkit.output.dir}"/>
-        <path refid="library.lib.classpath"/>
-    </path>
-
-    <path id="toolkit.runtime.module.classpath">
-        <pathelement location="${toolkit.testoutput.dir}"/>
-        <pathelement location="${toolkit.output.dir}"/>
-        <path refid="library.lib.classpath"/>
-    </path>
+  <!-- Modules -->
 
 
-    <patternset id="excluded.from.module.toolkit">
-        <patternset refid="ignored.files"/>
-    </patternset>
+  <!-- Module toolkit -->
 
-    <patternset id="excluded.from.compilation.toolkit">
-        <patternset refid="excluded.from.module.toolkit"/>
-    </patternset>
-
-    <path id="toolkit.module.sourcepath">
-        <dirset dir="${module.toolkit.basedir}/../toolkit">
-            <include name="src"/>
-        </dirset>
-    </path>
+  <dirname property="module.toolkit.basedir" file="${ant.file}"/>
 
 
-    <target name="compile.module.toolkit" depends="compile.module.toolkit.production,compile.module.toolkit.tests"
-            description="Compile module toolkit"/>
+  <property name="compiler.args.toolkit" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
 
-    <target name="compile.module.toolkit.production" description="Compile module toolkit; production classes">
-        <mkdir dir="${toolkit.output.dir}"/>
-        <javac destdir="${toolkit.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
-               memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.toolkit}/javac">
-            <compilerarg line="${compiler.args.toolkit}"/>
-            <bootclasspath refid="toolkit.module.bootclasspath"/>
-            <classpath refid="toolkit.module.production.classpath"/>
-            <src refid="toolkit.module.sourcepath"/>
-            <patternset refid="excluded.from.compilation.toolkit"/>
-        </javac>
+  <property name="toolkit.output.dir" value="${module.toolkit.basedir}/out/production/toolkit"/>
+  <property name="toolkit.testoutput.dir" value="${module.toolkit.basedir}/out/test/toolkit"/>
 
-        <copy todir="${toolkit.output.dir}">
-            <fileset dir="${module.toolkit.basedir}/../toolkit/src">
-                <patternset refid="compiler.resources"/>
-                <type type="file"/>
-            </fileset>
-        </copy>
-    </target>
+  <path id="toolkit.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
 
-    <target name="compile.module.toolkit.tests" depends="compile.module.toolkit.production"
-            description="compile module toolkit; test classes" unless="skip.tests"/>
+  <path id="toolkit.module.production.classpath">
+    <path refid="library.lib.classpath"/>
+  </path>
 
-    <target name="clean.module.toolkit" description="cleanup module">
-        <delete dir="${toolkit.output.dir}"/>
-        <delete dir="${toolkit.testoutput.dir}"/>
-    </target>
+  <path id="toolkit.runtime.production.module.classpath">
+    <pathelement location="${toolkit.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
 
+  <path id="toolkit.module.classpath">
+    <pathelement location="${toolkit.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
 
-    <!-- Module portal-app -->
-
-    <dirname property="module.portal-app.basedir" file="${ant.file}"/>
+  <path id="toolkit.runtime.module.classpath">
+    <pathelement location="${toolkit.testoutput.dir}"/>
+    <pathelement location="${toolkit.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
 
 
-    <property name="module.jdk.home.portal-app" value="${project.jdk.home}"/>
-    <property name="module.jdk.bin.portal-app" value="${project.jdk.bin}"/>
-    <property name="module.jdk.classpath.portal-app" value="${project.jdk.classpath}"/>
+  <patternset id="excluded.from.module.toolkit">
+    <patternset refid="ignored.files"/>
+  </patternset>
 
-    <property name="compiler.args.portal-app" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+  <patternset id="excluded.from.compilation.toolkit">
+    <patternset refid="excluded.from.module.toolkit"/>
+  </patternset>
 
-    <property name="portal-app.output.dir" value="${module.portal-app.basedir}/out/production/portal-app"/>
-    <property name="portal-app.testoutput.dir" value="${module.portal-app.basedir}/out/test/portal-app"/>
-
-    <path id="portal-app.module.bootclasspath">
-        <!-- Paths to be included in compilation bootclasspath -->
-    </path>
-
-    <path id="portal-app.module.production.classpath">
-        <path refid="${module.jdk.classpath.portal-app}"/>
-        <path refid="library.lib.classpath"/>
-        <pathelement location="${toolkit.output.dir}"/>
-    </path>
-
-    <path id="portal-app.runtime.production.module.classpath">
-        <pathelement location="${portal-app.output.dir}"/>
-        <path refid="library.lib.classpath"/>
-        <path refid="toolkit.runtime.production.module.classpath"/>
-    </path>
-
-    <path id="portal-app.module.classpath">
-        <path refid="${module.jdk.classpath.portal-app}"/>
-        <pathelement location="${portal-app.output.dir}"/>
-        <path refid="library.lib.classpath"/>
-        <pathelement location="${toolkit.testoutput.dir}"/>
-        <pathelement location="${toolkit.output.dir}"/>
-    </path>
-
-    <path id="portal-app.runtime.module.classpath">
-        <pathelement location="${portal-app.testoutput.dir}"/>
-        <pathelement location="${portal-app.output.dir}"/>
-        <path refid="library.lib.classpath"/>
-        <path refid="toolkit.runtime.module.classpath"/>
-    </path>
+  <path id="toolkit.module.sourcepath">
+    <dirset dir="${module.toolkit.basedir}/../toolkit">
+      <include name="src"/>
+    </dirset>
+  </path>
 
 
-    <patternset id="excluded.from.module.portal-app">
-        <patternset refid="ignored.files"/>
-    </patternset>
+  <target name="compile.module.toolkit" depends="compile.module.toolkit.production,compile.module.toolkit.tests"
+          description="Compile module toolkit"/>
 
-    <patternset id="excluded.from.compilation.portal-app">
-        <patternset refid="excluded.from.module.portal-app"/>
-    </patternset>
+  <target name="compile.module.toolkit.production" description="Compile module toolkit; production classes">
+    <mkdir dir="${toolkit.output.dir}"/>
+    <javac destdir="${toolkit.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+           memorymaximumsize="${compiler.max.memory}" fork="true">
+      <compilerarg line="${compiler.args.toolkit}"/>
+      <bootclasspath refid="toolkit.module.bootclasspath"/>
+      <classpath refid="toolkit.module.production.classpath"/>
+      <src refid="toolkit.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.toolkit"/>
+    </javac>
 
-    <path id="portal-app.module.sourcepath">
-        <dirset dir="${module.portal-app.basedir}">
-            <include name="src"/>
-        </dirset>
-    </path>
+    <copy todir="${toolkit.output.dir}">
+      <fileset dir="${module.toolkit.basedir}/../toolkit/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="compile.module.toolkit.tests" depends="compile.module.toolkit.production"
+          description="compile module toolkit; test classes" unless="skip.tests"/>
+
+  <target name="clean.module.toolkit" description="cleanup module">
+    <delete dir="${toolkit.output.dir}"/>
+    <delete dir="${toolkit.testoutput.dir}"/>
+  </target>
 
 
-    <target name="compile.module.portal-app"
-            depends="compile.module.portal-app.production,compile.module.portal-app.tests"
-            description="Compile module portal-app"/>
+  <!-- Module portal-app -->
 
-    <target name="compile.module.portal-app.production" depends="compile.module.toolkit"
-            description="Compile module portal-app; production classes">
+  <dirname property="module.portal-app.basedir" file="${ant.file}"/>
+
+
+  <property name="compiler.args.portal-app" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+
+  <property name="portal-app.output.dir" value="${module.portal-app.basedir}/out/production/portal-app"/>
+  <property name="portal-app.testoutput.dir" value="${module.portal-app.basedir}/out/test/portal-app"/>
+
+  <path id="portal-app.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+
+  <path id="portal-app.module.production.classpath">
+    <path refid="library.lib.classpath"/>
+    <pathelement location="${toolkit.output.dir}"/>
+  </path>
+
+  <path id="portal-app.runtime.production.module.classpath">
+    <pathelement location="${portal-app.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="toolkit.runtime.production.module.classpath"/>
+  </path>
+
+  <path id="portal-app.module.classpath">
+    <pathelement location="${portal-app.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <pathelement location="${toolkit.testoutput.dir}"/>
+    <pathelement location="${toolkit.output.dir}"/>
+  </path>
+
+  <path id="portal-app.runtime.module.classpath">
+    <pathelement location="${portal-app.testoutput.dir}"/>
+    <pathelement location="${portal-app.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="toolkit.runtime.module.classpath"/>
+  </path>
+
+
+  <patternset id="excluded.from.module.portal-app">
+    <patternset refid="ignored.files"/>
+  </patternset>
+
+  <patternset id="excluded.from.compilation.portal-app">
+    <patternset refid="excluded.from.module.portal-app"/>
+  </patternset>
+
+  <path id="portal-app.module.sourcepath">
+    <dirset dir="${module.portal-app.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+
+
+  <target name="compile.module.portal-app"
+          depends="compile.module.portal-app.production,compile.module.portal-app.tests"
+          description="Compile module portal-app"/>
+
+  <target name="compile.module.portal-app.production" depends="compile.module.toolkit"
+          description="Compile module portal-app; production classes">
         <mkdir dir="${portal-app.output.dir}"/>
-        <javac destdir="${portal-app.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
-               memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.portal-app}/javac">
+    <javac destdir="${portal-app.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+           memorymaximumsize="${compiler.max.memory}" fork="true">
             <compilerarg line="${compiler.args.portal-app}"/>
             <bootclasspath refid="portal-app.module.bootclasspath"/>
             <classpath refid="portal-app.module.production.classpath"/>
@@ -341,8 +290,8 @@
         </copy>
     </target>
 
-    <target name="compile.module.portal-app.tests" depends="compile.module.portal-app.production"
-            description="compile module portal-app; test classes" unless="skip.tests"/>
+  <target name="compile.module.portal-app.tests" depends="compile.module.portal-app.production"
+          description="compile module portal-app; test classes" unless="skip.tests"/>
 
     <target name="clean.module.portal-app" description="cleanup module">
         <delete dir="${portal-app.output.dir}"/>
@@ -355,8 +304,8 @@
 
     <target name="clean" depends="clean.module.toolkit, clean.module.portal-app" description="cleanup all"/>
 
-    <target name="build.modules" depends="init, clean, compile.module.toolkit, compile.module.portal-app"
-            description="build all modules"/>
+  <target name="build.modules" depends="init, clean, compile.module.toolkit, compile.module.portal-app"
+          description="build all modules"/>
 
     <target name="all" depends="build.modules" description="build all"/>
 
@@ -386,5 +335,4 @@
         <delete dir="build">
         </delete>
     </target>
-
 </project>
