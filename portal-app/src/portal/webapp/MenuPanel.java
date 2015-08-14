@@ -9,8 +9,12 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 
+import javax.inject.Inject;
+
 public class MenuPanel extends Panel {
 
+    @Inject
+    private SessionContext sessionContext;
     private AjaxLink leftSidebarLink;
 
     public MenuPanel(String id) {
@@ -35,7 +39,6 @@ public class MenuPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-
                 setResponsePage(ChemcentralPage.class);
                 add(attributeAppender);
             }
@@ -76,6 +79,8 @@ public class MenuPanel extends Panel {
 
             @Override
             public void onClick() {
+                sessionContext.setLoggedInUser(null);
+                setResponsePage(getApplication().getHomePage());
             }
         });
 
@@ -83,7 +88,7 @@ public class MenuPanel extends Panel {
     }
 
     public String getUserName() {
-        return "User Name";
+        return sessionContext.getLoggedInUser();
     }
 
     public void setLeftSideItemVisible(boolean value) {
