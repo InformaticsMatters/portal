@@ -25,6 +25,8 @@ public class DatasetPopupPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                TreeGridVisualizerPage page = new TreeGridVisualizerPage(datasetDescriptor);
+                setResponsePage(page);
             }
         });
 

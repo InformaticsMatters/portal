@@ -4,10 +4,7 @@ import portal.dataset.IPropertyDescriptor;
 import portal.dataset.IRow;
 import portal.dataset.IRowDescriptor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class ChemcentralRow implements IRow {
 
@@ -15,6 +12,11 @@ class ChemcentralRow implements IRow {
     private ChemcentralRowDescriptor rowDescriptor;
     private Map<ChemcentralPropertyDescriptor, Object> properties;
     private List<IRow> children;
+
+    @Override
+    public UUID getUuid() {
+        return null;
+    }
 
     @Override
     public Long getId() {

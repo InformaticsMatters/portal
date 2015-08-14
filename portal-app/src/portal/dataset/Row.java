@@ -1,16 +1,23 @@
 package portal.dataset;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-class Row implements IRow {
+public class Row implements IRow {
 
+    private UUID uuid;
     private Long id;
     private RowDescriptor rowDescriptor;
     private Map<PropertyDescriptor, Object> properties;
     private List<IRow> children;
+
+    @Override
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
 
     @Override
     public Long getId() {
