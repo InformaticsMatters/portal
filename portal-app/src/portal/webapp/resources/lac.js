@@ -29,9 +29,10 @@ function rightSideBarToggle(){
 }
 
 $( document ).ready(function() {
-    $('.ui.dropdown')
-      .dropdown()
-    ;
+    $('.ui.dropdown').dropdown();
+});
+
+function workflowDragAndDrop() {
 
      var draggable = document.getElementById("datasetsDraggablesContainer");
      draggable.addEventListener('dragstart', dragStart, false);
@@ -90,8 +91,6 @@ $( document ).ready(function() {
          return false;
      }
 
-
-
      var $allCards = $('.card');
      $allCards.each(function(){
          this.addEventListener("dragenter", handleDataItemsBoxDragEnter, false);
@@ -115,13 +114,13 @@ $( document ).ready(function() {
                  event.stopPropagation();
                  event.preventDefault();
                  return false;
-             }
+     }
 
      function preventDefaultEventHandling(event) {
              event.stopPropagation();
              event.preventDefault() ;
              return false;
-      }
+     }
 
      function handleDragLeave(event) {
                  dragging--;
@@ -131,9 +130,9 @@ $( document ).ready(function() {
                  event.stopPropagation();
                  event.preventDefault();
                  return false;
-             }
+     }
 
-      function dropOntoDataItem(event) {
+     function dropOntoDataItem(event) {
                  dragging--;
                  var dropType = this.getAttribute("dropdatatype");
                  var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
@@ -151,15 +150,12 @@ $( document ).ready(function() {
                  console.log(dragdataid);
                  return false;
 
-                }
-
-
-});
+     }
+}
 
 function tabularMenu() {
     $('.tabular.menu .item').tab();
 }
-
 
 
 function applyWorkflowPageLayout(datasetsVisibility, servicesVisibility, canvasVisibility, jobsVisibility, visualizersVisibility) {
