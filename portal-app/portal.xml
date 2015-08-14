@@ -328,7 +328,7 @@
         <jar destfile="build/lib/portal-app.jar"
              basedir="${portal-app.output.dir}"/>
 
-        <war destfile="dist/portal-app.zip" webxml="webapp/WEB-INF/web.xml">
+      <war destfile="dist/portal-app.war" webxml="webapp/WEB-INF/web.xml">
             <lib dir="build/lib">
             </lib>
         </war>
