@@ -55,6 +55,7 @@
     <exclude name="**/?*.clj"/>
     <include name="**/?*.css"/>
     <include name="**/?*.js"/>
+    <include name="**/?*.html"/>
     <include name="**/?*.svg"/>
     <include name="**/?*.woff"/>
     <include name="**/?*.ttf"/>
