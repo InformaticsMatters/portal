@@ -6,6 +6,7 @@ import com.im.lac.job.jobdef.ProcessDatasetJobDefinition;
 import com.im.lac.services.ServiceDescriptor;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
@@ -22,6 +23,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
+import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.dataset.IDatasetDescriptor;
@@ -82,6 +84,7 @@ public class WorkflowPage extends WebPage {
         addCanvasItemDragStopBehavior();
         addCanvasNewConnectionBehavior();
         addActions();
+        addRefreshTimer();
     }
 
     @Override
@@ -397,9 +400,22 @@ public class WorkflowPage extends WebPage {
                 definition.configureService(service, service.getAccessModes()[0], new HashMap<>());
             }
             jobsSession.submitJob(jobDefinition);
-            jobsPanel.refresh();
+            jobsPanel.refreshJobs();
         } catch (Exception e) {
             logger.error(null, e);
         }
     }
+
+    private void addRefreshTimer() {
+        add(new AbstractAjaxTimerBehavior(Duration.seconds(10L)) {
+
+            @Override
+            protected void onTimer(AjaxRequestTarget target) {
+                datasetsPanel.refreshDatasets();
+                jobsPanel.refreshJobs();
+            }
+
+        });
+    }
+
 }

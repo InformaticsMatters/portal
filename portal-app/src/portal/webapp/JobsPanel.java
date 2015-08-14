@@ -60,7 +60,7 @@ public class JobsPanel extends Panel {
         jobListView.setList(jobStatusList);
     }
 
-    public void refresh() {
+    public void refreshJobs() {
         jobListView.setList(jobsSession.listJobStatuses());
         getRequestCycle().find(AjaxRequestTarget.class).add(this);
     }

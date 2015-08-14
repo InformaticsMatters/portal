@@ -107,7 +107,7 @@ public class DatasetsPanel extends Panel {
         add(uploadModalPanel);
     }
 
-    private void refreshDatasets() {
+    public void refreshDatasets() {
         DatasetFilterData datasetFilterData = new DatasetFilterData();
         SearchDatasetData searchDatasetData = searchForm.getModelObject();
         datasetFilterData.setPattern(searchDatasetData.getPattern());
