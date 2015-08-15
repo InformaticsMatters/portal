@@ -18,6 +18,6 @@ public class ServicePanel extends Panel {
     }
 
     private void addComponents() {
-        add(new Label("name", serviceDescriptor.getDescription()));
+        add(new Label("name", serviceDescriptor.getName()));
     }
 }

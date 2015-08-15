@@ -80,12 +80,12 @@ function workflowDragAndDrop() {
          var dropDataType = el.getAttribute("dropDataType");
          var dropDataId = el.getAttribute("dropDataId");
 
-        var $el = $(el);
-        var width = $el.width();
-        var height = $el.height();
+         var $el = $(el);
+         var width = $el.width();
+         var height = $el.height();
 
-        var left = event.offsetX - mouseOffsetX;
-        var top = event.offsetY - mouseOffsetY;
+         var left = event.offsetX - mouseOffsetX;
+         var top = event.offsetY - mouseOffsetY;
          event.preventDefault();
          onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
          return false;
@@ -102,54 +102,53 @@ function workflowDragAndDrop() {
      var dragging = 0;
 
      function handleDataItemsBoxDragEnter(event) {
-                 dragging++;
-                 var dropType = this.getAttribute("dropdatatype");
-                 if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "service")  {
-                     this.classList.add('over');
-                 } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "dataset")  {
-                     this.classList.add('over');
-                 } else if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "visualizer")  {
-                     this.classList.add('over');
-                 }
-                 event.stopPropagation();
-                 event.preventDefault();
-                 return false;
+         dragging++;
+         var dropType = this.getAttribute("dropdatatype");
+         if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "service")  {
+             this.classList.add('over');
+         } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "dataset")  {
+             this.classList.add('over');
+         } else if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "visualizer")  {
+             this.classList.add('over');
+         }
+         event.stopPropagation();
+         event.preventDefault();
+         return false;
      }
 
      function preventDefaultEventHandling(event) {
-             event.stopPropagation();
-             event.preventDefault() ;
-             return false;
+         event.stopPropagation();
+         event.preventDefault() ;
+         return false;
      }
 
      function handleDragLeave(event) {
-                 dragging--;
-                 if (dragging === 0) {
-                     this.classList.remove('over');
-                 }
-                 event.stopPropagation();
-                 event.preventDefault();
-                 return false;
+         dragging--;
+         if (dragging === 0) {
+             this.classList.remove('over');
+         }
+         event.stopPropagation();
+         event.preventDefault();
+         return false;
      }
 
      function dropOntoDataItem(event) {
-                 dragging--;
-                 var dropType = this.getAttribute("dropdatatype");
-                 var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
-                 var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
-                 this.classList.remove('over');
-                  if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
-                      return;
-                  } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
-                      return;
-                  } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
-                      return;
-                  }
-                 event.stopPropagation();
-                 event.preventDefault();
-                 console.log(dragdataid);
-                 return false;
-
+         dragging--;
+         var dropType = this.getAttribute("dropdatatype");
+         var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
+         var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
+         this.classList.remove('over');
+          if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
+              return;
+          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
+              return;
+          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
+              return;
+          }
+         event.stopPropagation();
+         event.preventDefault();
+         console.log(dragdataid);
+         return false;
      }
 }
 

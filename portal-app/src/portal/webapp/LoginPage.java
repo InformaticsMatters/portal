@@ -71,7 +71,6 @@ public class LoginPage extends WebPage {
     private void initUserSession(LoginData loginData) {
         UserClient userClient = new UserClient();
         try {
-            System.out.println("looking up " + loginData.getUserName());
             User user = userClient.getUserObject(loginData.getUserName());
             sessionContext.setLoggedInUser(user.getUsername());
         } catch (IOException e) {
