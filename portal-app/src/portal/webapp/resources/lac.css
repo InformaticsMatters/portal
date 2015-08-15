@@ -189,6 +189,14 @@
     width: 300px;
 }
 
+.datasetPopup .table {
+	font-size: 12px!important;
+}
+
+.serviceCanvasItemPopup .form .field {
+    font-size: 12px!important;
+}
+
 .canvas {
     height: 230px;
 }
@@ -428,6 +436,12 @@
     height: 40px;
     padding-top: 15px;
 }
+
+.popup .actions {
+    text-align: right;
+}
+
+
 
 
 
