@@ -96,7 +96,7 @@ function workflowDragAndDrop() {
                    this.addEventListener("dragenter", datasetcardDragEnter, false);
                    this.addEventListener("dragleave", datasetcardDragLeave, false);
                    this.addEventListener("dragover", preventDefaultEventHandling, false);
-                   this.addEventListener("drop", datasetdropOntoItem, false);
+                   this.addEventListener("drop", dropOntoDataset, false);
                });
 
      var dragging = 0;
@@ -113,6 +113,7 @@ function workflowDragAndDrop() {
               }
               event.stopPropagation();
               event.preventDefault();
+              console.log('this en enter sobre dataset', this);
               return false;
           }
 
@@ -132,7 +133,7 @@ function workflowDragAndDrop() {
               return false;
           }
 
-     function datasetdropOntoItem(event) {
+     function dropOntoDataset(event) {
               dragging--;
               var dropType = this.getAttribute("dropdatatype");
               var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
@@ -140,14 +141,14 @@ function workflowDragAndDrop() {
               this.classList.remove('over');
                if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
                    return;
-               } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
+               }else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
                    return;
                } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
                    return;
                }
               event.stopPropagation();
               event.preventDefault();
-              console.log(dragdataid);
+              console.log('drop on dataset');
               return false;
           }
 
@@ -155,12 +156,21 @@ function workflowDragAndDrop() {
 
 function servicesDragAndDrop() {
 
+    function dragStart(event) {
+         event.dataTransfer.setData('draggableMarkupId', event.target.id);
+         event.dataTransfer.setData('mouseOffsetX', event.layerX);
+         event.dataTransfer.setData('mouseOffsetY', event.layerY);
+         event.dataTransfer.dropEffect = "copy";
+         event.dataTransfer.setData(event.target.getAttribute("dropdatatype"), "");
+         event.dataTransfer.setData(event.target.getAttribute("dropdataid"), "");
+     }
+
     var $allServiceCards = $('.card.serviceCard');
      $allServiceCards.each(function(){
          this.addEventListener("dragenter", servicecardDragEnter, false);
          this.addEventListener("dragleave", servicecardDragLeave, false);
          this.addEventListener("dragover", servicepreventDefault, false);
-         this.addEventListener("drop", servicedropOntoItem, false);
+         this.addEventListener("drop", dropOntoService, false);
      });
 
       var dragging = 0;
@@ -177,6 +187,8 @@ function servicesDragAndDrop() {
          }
          event.stopPropagation();
          event.preventDefault();
+         console.log('this en enter sobre service', this);
+
          return false;
      }
 
@@ -196,13 +208,13 @@ function servicesDragAndDrop() {
          return false;
      }
 
-     function servicedropOntoItem(event) {
+     function dropOntoService(event) {
          dragging--;
          var dropType = this.getAttribute("dropdatatype");
          var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
          var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
          this.classList.remove('over');
-          if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
+         if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
               return;
           } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
               return;
@@ -211,7 +223,8 @@ function servicesDragAndDrop() {
           }
          event.stopPropagation();
          event.preventDefault();
-         console.log(dragdataid);
+         //console.log(dragdataid);
+         console.log('drop on service');
          return false;
      }
 }

@@ -119,6 +119,7 @@ public class ServicesPanel extends Panel {
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
             target.add(servicesContainer);
+            target.appendJavaScript("servicesDragAndDrop();");
         }
     }
 

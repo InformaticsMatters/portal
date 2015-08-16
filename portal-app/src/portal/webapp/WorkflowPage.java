@@ -411,7 +411,7 @@ public class WorkflowPage extends WebPage {
 
             @Override
             protected void onTimer(AjaxRequestTarget target) {
-                datasetsPanel.refreshDatasets();
+                //datasetsPanel.refreshDatasets();
                 jobsPanel.refreshJobs();
             }
 
