@@ -38,11 +38,6 @@ function workflowDragAndDrop() {
      draggable.addEventListener('dragstart', dragStart, false);
      draggable.addEventListener('dragend'  , dragEnd  , false);
 
-     draggable = document.getElementById("servicesDraggablesContainer");
-     draggable.addEventListener('dragstart', dragStart, false);
-     draggable.addEventListener('dragend'  , dragEnd  , false);
-
-
      var droptarget = document.getElementById("plumbContainer");
      droptarget.addEventListener('dragenter', dragEnter, false);
      droptarget.addEventListener('dragover', dragOver, false);
@@ -113,7 +108,6 @@ function workflowDragAndDrop() {
               }
               event.stopPropagation();
               event.preventDefault();
-              console.log('this en enter sobre dataset', this);
               return false;
           }
 
@@ -148,13 +142,17 @@ function workflowDragAndDrop() {
                }
               event.stopPropagation();
               event.preventDefault();
-              console.log('drop on dataset');
+              console.log(dragdataid);
               return false;
           }
 
 }
 
 function servicesDragAndDrop() {
+
+    draggable = document.getElementById("servicesDraggablesContainer");
+         draggable.addEventListener('dragstart', dragStart, false);
+         draggable.addEventListener('dragend'  , dragEnd  , false);
 
     function dragStart(event) {
          event.dataTransfer.setData('draggableMarkupId', event.target.id);
@@ -187,8 +185,6 @@ function servicesDragAndDrop() {
          }
          event.stopPropagation();
          event.preventDefault();
-         console.log('this en enter sobre service', this);
-
          return false;
      }
 
@@ -197,6 +193,9 @@ function servicesDragAndDrop() {
          event.preventDefault() ;
          return false;
      }
+
+     function dragEnd(event) {
+          }
 
      function servicecardDragLeave(event) {
          dragging--;
@@ -223,8 +222,7 @@ function servicesDragAndDrop() {
           }
          event.stopPropagation();
          event.preventDefault();
-         //console.log(dragdataid);
-         console.log('drop on service');
+         console.log(dragdataid);
          return false;
      }
 }
