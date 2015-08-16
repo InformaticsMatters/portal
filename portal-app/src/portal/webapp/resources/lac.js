@@ -91,14 +91,6 @@ function workflowDragAndDrop() {
          return false;
      }
 
-    var $allServiceCards = $('.card.serviceCard');
-     $allServiceCards.each(function(){
-         this.addEventListener("dragenter", servicecardDragEnter, false);
-         this.addEventListener("dragleave", servicecardDragLeave, false);
-         this.addEventListener("dragover", preventDefaultEventHandling, false);
-         this.addEventListener("drop", servicedropOntoItem, false);
-     });
-
       var $allDatasetsCards = $('.card.datasetCard');
                $allDatasetsCards.each(function(){
                    this.addEventListener("dragenter", datasetcardDragEnter, false);
@@ -108,21 +100,6 @@ function workflowDragAndDrop() {
                });
 
      var dragging = 0;
-
-     function servicecardDragEnter(event) {
-         dragging++;
-         var dropType = this.getAttribute("dropdatatype");
-         if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "service")  {
-             this.classList.add('over');
-         } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "dataset")  {
-             this.classList.add('over');
-         } else if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "visualizer")  {
-             this.classList.add('over');
-         }
-         event.stopPropagation();
-         event.preventDefault();
-         return false;
-     }
 
      function datasetcardDragEnter(event) {
               dragging++;
@@ -145,16 +122,6 @@ function workflowDragAndDrop() {
          return false;
      }
 
-     function servicecardDragLeave(event) {
-         dragging--;
-         if (dragging === 0) {
-             this.classList.remove('over');
-         }
-         event.stopPropagation();
-         event.preventDefault();
-         return false;
-     }
-
      function datasetcardDragLeave(event) {
               dragging--;
               if (dragging === 0) {
@@ -164,25 +131,6 @@ function workflowDragAndDrop() {
               event.preventDefault();
               return false;
           }
-
-     function servicedropOntoItem(event) {
-         dragging--;
-         var dropType = this.getAttribute("dropdatatype");
-         var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
-         var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
-         this.classList.remove('over');
-          if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
-              return;
-          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
-              return;
-          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
-              return;
-          }
-         event.stopPropagation();
-         event.preventDefault();
-         console.log(dragdataid);
-         return false;
-     }
 
      function datasetdropOntoItem(event) {
               dragging--;
@@ -203,10 +151,69 @@ function workflowDragAndDrop() {
               return false;
           }
 
+}
 
+function servicesDragAndDrop() {
 
+    var $allServiceCards = $('.card.serviceCard');
+     $allServiceCards.each(function(){
+         this.addEventListener("dragenter", servicecardDragEnter, false);
+         this.addEventListener("dragleave", servicecardDragLeave, false);
+         this.addEventListener("dragover", servicepreventDefault, false);
+         this.addEventListener("drop", servicedropOntoItem, false);
+     });
 
+      var dragging = 0;
 
+     function servicecardDragEnter(event) {
+         dragging++;
+         var dropType = this.getAttribute("dropdatatype");
+         if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "service")  {
+             this.classList.add('over');
+         } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "dataset")  {
+             this.classList.add('over');
+         } else if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "visualizer")  {
+             this.classList.add('over');
+         }
+         event.stopPropagation();
+         event.preventDefault();
+         return false;
+     }
+
+    function servicepreventDefault(event) {
+         event.stopPropagation();
+         event.preventDefault() ;
+         return false;
+     }
+
+     function servicecardDragLeave(event) {
+         dragging--;
+         if (dragging === 0) {
+             this.classList.remove('over');
+         }
+         event.stopPropagation();
+         event.preventDefault();
+         return false;
+     }
+
+     function servicedropOntoItem(event) {
+         dragging--;
+         var dropType = this.getAttribute("dropdatatype");
+         var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
+         var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
+         this.classList.remove('over');
+          if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
+              return;
+          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
+              return;
+          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
+              return;
+          }
+         event.stopPropagation();
+         event.preventDefault();
+         console.log(dragdataid);
+         return false;
+     }
 }
 
 function tabularMenu() {
