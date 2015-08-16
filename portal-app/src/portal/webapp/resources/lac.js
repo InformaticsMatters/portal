@@ -34,27 +34,12 @@ $( document ).ready(function() {
 
 function workflowDragAndDrop() {
 
-     var draggable = document.getElementById("datasetsDraggablesContainer");
-     draggable.addEventListener('dragstart', dragStart, false);
-     draggable.addEventListener('dragend'  , dragEnd  , false);
-
-     var droptarget = document.getElementById("plumbContainer");
+    var droptarget = document.getElementById("plumbContainer");
      droptarget.addEventListener('dragenter', dragEnter, false);
      droptarget.addEventListener('dragover', dragOver, false);
      droptarget.addEventListener('dragleave', dragLeave, false);
      droptarget.addEventListener('drop', drop, false);
 
-     function dragStart(event) {
-         event.dataTransfer.setData('draggableMarkupId', event.target.id);
-         event.dataTransfer.setData('mouseOffsetX', event.layerX);
-         event.dataTransfer.setData('mouseOffsetY', event.layerY);
-         event.dataTransfer.dropEffect = "copy";
-         event.dataTransfer.setData(event.target.getAttribute("dropdatatype"), "");
-         event.dataTransfer.setData(event.target.getAttribute("dropdataid"), "");
-     }
-
-     function dragEnd(event) {
-     }
 
      function dragEnter(event) {
      }
@@ -85,14 +70,33 @@ function workflowDragAndDrop() {
          onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
          return false;
      }
+}
 
-      var $allDatasetsCards = $('.card.datasetCard');
-               $allDatasetsCards.each(function(){
-                   this.addEventListener("dragenter", datasetcardDragEnter, false);
-                   this.addEventListener("dragleave", datasetcardDragLeave, false);
-                   this.addEventListener("dragover", preventDefaultEventHandling, false);
-                   this.addEventListener("drop", dropOntoDataset, false);
-               });
+function datasetsDragAndDrop() {
+
+     var draggable = document.getElementById("datasetsDraggablesContainer");
+     draggable.addEventListener('dragstart', dragStart, false);
+     draggable.addEventListener('dragend'  , dragEnd  , false);
+
+     var $allDatasetsCards = $('.card.datasetCard');
+    $allDatasetsCards.each(function(){
+        this.addEventListener("dragenter", datasetcardDragEnter, false);
+        this.addEventListener("dragleave", datasetcardDragLeave, false);
+        this.addEventListener("dragover", preventDefaultEventHandling, false);
+        this.addEventListener("drop", dropOntoDataset, false);
+    });
+
+     function dragStart(event) {
+         event.dataTransfer.setData('draggableMarkupId', event.target.id);
+         event.dataTransfer.setData('mouseOffsetX', event.layerX);
+         event.dataTransfer.setData('mouseOffsetY', event.layerY);
+         event.dataTransfer.dropEffect = "copy";
+         event.dataTransfer.setData(event.target.getAttribute("dropdatatype"), "");
+         event.dataTransfer.setData(event.target.getAttribute("dropdataid"), "");
+     }
+
+     function dragEnd(event) {
+     }
 
      var dragging = 0;
 
@@ -151,8 +155,8 @@ function workflowDragAndDrop() {
 function servicesDragAndDrop() {
 
     draggable = document.getElementById("servicesDraggablesContainer");
-         draggable.addEventListener('dragstart', dragStart, false);
-         draggable.addEventListener('dragend'  , dragEnd  , false);
+     draggable.addEventListener('dragstart', dragStart, false);
+     draggable.addEventListener('dragend'  , dragEnd  , false);
 
     function dragStart(event) {
          event.dataTransfer.setData('draggableMarkupId', event.target.id);

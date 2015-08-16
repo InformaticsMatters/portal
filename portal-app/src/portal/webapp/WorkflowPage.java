@@ -96,7 +96,7 @@ public class WorkflowPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/dom.jsPlumb-1.7.5.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/Canvas.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkflowPage.class, "resources/lac.js")));
-        response.render(OnDomReadyHeaderItem.forScript("init(); tabularMenu(); workflowDragAndDrop(); servicesDragAndDrop();"));
+        response.render(OnDomReadyHeaderItem.forScript("init(); tabularMenu(); workflowDragAndDrop(); datasetsDragAndDrop(); servicesDragAndDrop();"));
     }
 
     private void addPanels() {
@@ -411,8 +411,9 @@ public class WorkflowPage extends WebPage {
 
             @Override
             protected void onTimer(AjaxRequestTarget target) {
-                //datasetsPanel.refreshDatasets();
+                datasetsPanel.refreshDatasets();
                 jobsPanel.refreshJobs();
+                target.appendJavaScript("datasetsDragAndDrop();");
             }
 
         });
