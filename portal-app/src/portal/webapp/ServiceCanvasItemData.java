@@ -1,6 +1,9 @@
 package portal.webapp;
 
 import com.im.lac.services.ServiceDescriptor;
+import com.im.lac.services.ServicePropertyDescriptor;
+
+import java.util.Map;
 
 /**
  * @author simetrias
@@ -8,6 +11,7 @@ import com.im.lac.services.ServiceDescriptor;
 public class ServiceCanvasItemData extends AbstractCanvasItemData {
 
     private ServiceDescriptor serviceDescriptor;
+    private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
 
     public ServiceDescriptor getServiceDescriptor() {
         return serviceDescriptor;
@@ -15,6 +19,14 @@ public class ServiceCanvasItemData extends AbstractCanvasItemData {
 
     public void setServiceDescriptor(ServiceDescriptor serviceDescriptor) {
         this.serviceDescriptor = serviceDescriptor;
+    }
+
+    public Map<ServicePropertyDescriptor, String> getServicePropertyValueMap() {
+        return servicePropertyValueMap;
+    }
+
+    public void setServicePropertyValueMap(Map<ServicePropertyDescriptor, String> servicePropertyValueMap) {
+        this.servicePropertyValueMap = servicePropertyValueMap;
     }
 
     /*

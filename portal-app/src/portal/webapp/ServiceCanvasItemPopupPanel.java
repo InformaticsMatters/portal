@@ -87,6 +87,7 @@ public class ServiceCanvasItemPopupPanel extends Panel {
                 for (ServicePropertyDescriptor servicePropertyDescriptor : servicePropertyValueMap.keySet()) {
                     System.out.println(servicePropertyDescriptor.getLabel() + ": " + servicePropertyValueMap.get(servicePropertyDescriptor));
                 }
+                serviceCanvasItemData.setServicePropertyValueMap(servicePropertyValueMap);
                 callbacks.onSave();
             }
         });
@@ -99,6 +100,7 @@ public class ServiceCanvasItemPopupPanel extends Panel {
             }
         });
     }
+
 
     public interface Callbacks extends Serializable {
 

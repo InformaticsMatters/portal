@@ -4,6 +4,7 @@ import com.im.lac.job.jobdef.AbstractAsyncProcessDatasetJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.job.jobdef.ProcessDatasetJobDefinition;
 import com.im.lac.services.ServiceDescriptor;
+import com.im.lac.services.ServicePropertyDescriptor;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
@@ -34,6 +35,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WorkflowPage extends WebPage {
 
@@ -371,7 +373,7 @@ public class WorkflowPage extends WebPage {
 
                     logger.info("New connection: " + sourceData.getDatasetDescriptor().getDescription() + " --> " + targetData.getServiceDescriptor().getName());
 
-                    postDirectSimpleRouteJob(sourceData, targetData);
+                    postJob(sourceData, targetData);
                 }
             }
 
@@ -388,7 +390,7 @@ public class WorkflowPage extends WebPage {
         add(onCanvasNewConnectionBehavior);
     }
 
-    private void postDirectSimpleRouteJob(DatasetCanvasItemData sourceData, ServiceCanvasItemData targetData) {
+    private void postJob(DatasetCanvasItemData sourceData, ServiceCanvasItemData targetData) {
         ServiceDescriptor service = targetData.getServiceDescriptor();
         IDatasetDescriptor dataset = sourceData.getDatasetDescriptor();
         Class<? extends JobDefinition> jobDefinitionClass = service.getAccessModes()[0].getJobType();
@@ -396,8 +398,14 @@ public class WorkflowPage extends WebPage {
             JobDefinition jobDefinition = jobDefinitionClass.newInstance();
             if (jobDefinition instanceof AbstractAsyncProcessDatasetJobDefinition) {
                 AbstractAsyncProcessDatasetJobDefinition definition = (AbstractAsyncProcessDatasetJobDefinition) jobDefinition;
-                definition.configureDataset(dataset.getId(), ProcessDatasetJobDefinition.DatasetMode.CREATE, "Gustavo 2");
+                definition.configureDataset(dataset.getId(), ProcessDatasetJobDefinition.DatasetMode.CREATE, "Output");
                 definition.configureService(service, service.getAccessModes()[0], new HashMap<>());
+
+                Map<String, Object> parameters = definition.getParameters();
+                Map<ServicePropertyDescriptor, String> propertyDescriptorMap = targetData.getServicePropertyValueMap();
+                for (ServicePropertyDescriptor servicePropertyDescriptor : propertyDescriptorMap.keySet()) {
+                    parameters.put(servicePropertyDescriptor.getkey(), propertyDescriptorMap.get(servicePropertyDescriptor));
+                }
             }
             jobsSession.submitJob(jobDefinition);
             jobsPanel.refreshJobs();
