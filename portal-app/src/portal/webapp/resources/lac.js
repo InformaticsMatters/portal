@@ -231,6 +231,59 @@ function servicesDragAndDrop() {
      }
 }
 
+function onVisualizerDrop() {
+var $allVisualizerCards = $('.card.visualizerCard');
+     $allVisualizerCards.each(function(){
+         this.addEventListener("dragenter", visualizerCardDragEnter, false);
+         this.addEventListener("dragleave", visualizerCardDragLeave, false);
+         this.addEventListener("dragover", visualizerPreventDefault, false);
+         this.addEventListener("drop", dropOntoVisualizer, false);
+     });
+
+      var dragging = 0;
+
+     function visualizerCardDragEnter(event) {
+         dragging++;
+         var dropType = this.getAttribute("dropdatatype");
+         if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "visualizer")  {
+             this.classList.add('over');
+         }
+         event.stopPropagation();
+         event.preventDefault();
+         return false;
+     }
+
+    function visualizerPreventDefault(event) {
+         event.stopPropagation();
+         event.preventDefault() ;
+         return false;
+     }
+
+     function visualizerCardDragLeave(event) {
+         dragging--;
+         if (dragging === 0) {
+             this.classList.remove('over');
+         }
+         event.stopPropagation();
+         event.preventDefault();
+         return false;
+     }
+
+     function dropOntoVisualizer(event) {
+         dragging--;
+         var dropType = this.getAttribute("dropdatatype");
+         var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
+         var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
+         this.classList.remove('over');
+         if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
+              return;
+          }
+         event.stopPropagation();
+         event.preventDefault();
+         return false;
+     }
+}
+
 function tabularMenu() {
     $('.tabular.menu .item').tab();
 }

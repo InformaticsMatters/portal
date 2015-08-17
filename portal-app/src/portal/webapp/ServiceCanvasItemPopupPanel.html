@@ -8,6 +8,19 @@
                             <div wicket:id="editor"></div>
                         </li>
                     </ul>
+                    <div class="field">
+                        <label>Output name</label>
+
+                        <div class="ui small input">
+                            <input type="text" wicket:id="outputFileName">
+                        </div>
+                    </div>
+                    <div class="inline field">
+                        <div class="ui checkbox">
+                            <input type="checkbox" wicket:id="createOutputFile" id="createOutputFile">
+                            <label for="createOutputFile">Check</label>
+                        </div>
+                    </div>
                     <div class="actions">
                         <div wicket:id="delete" class="ui mini button">Delete</div>
                         <div wicket:id="save" class="ui mini green button">Save</div>

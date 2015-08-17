@@ -4,11 +4,14 @@ import com.im.lac.services.ServiceDescriptor;
 import com.im.lac.services.ServicePropertyDescriptor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import java.io.Serializable;
@@ -25,6 +28,8 @@ public class ServiceCanvasItemPopupPanel extends Panel {
     private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
     private Form form;
     private Callbacks callbacks;
+    private String outputFileName;
+    private Boolean createOutputFile;
 
     public ServiceCanvasItemPopupPanel(String id, ServiceCanvasItemData serviceCanvasItemData, Callbacks callbacks) {
         super(id);
@@ -39,7 +44,30 @@ public class ServiceCanvasItemPopupPanel extends Panel {
 
     private void addForm() {
         form = new Form("form");
+
+        TextField<String> outputFileNameField = new TextField<>("outputFileName", new PropertyModel(this, "outputFileName"));
+        form.add(outputFileNameField);
+
+        CheckBox outputFileNameCheck = new CheckBox("createOutputFile", new PropertyModel<>(this, "createOutputFile"));
+        form.add(outputFileNameCheck);
+
         add(form);
+    }
+
+    public String getOutputFileName() {
+        return outputFileName;
+    }
+
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
+    }
+
+    public Boolean getCreateOutputFile() {
+        return createOutputFile;
+    }
+
+    public void setCreateOutputFile(Boolean createOutputFile) {
+        this.createOutputFile = createOutputFile;
     }
 
     private void addServiceProperties() {

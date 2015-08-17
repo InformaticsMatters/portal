@@ -197,6 +197,10 @@
     font-size: 12px!important;
 }
 
+.serviceCanvasItemPopup .ui.checkbox label {
+    font-size: 12px!important;
+}
+
 .canvas {
     height: 230px;
 }
