@@ -57,7 +57,7 @@ public class ServicesSession implements Serializable {
     public ServiceDescriptor findServiceDescriptorById(String id) {
         ServiceDescriptor result = null;
         for (ServiceDescriptor sd : serviceDescriptors) {
-            if (id.equals(sd.getId().replace('/', '_'))) {
+            if (id.equals(sd.getId())) {
                 result = sd;
                 break;
             }

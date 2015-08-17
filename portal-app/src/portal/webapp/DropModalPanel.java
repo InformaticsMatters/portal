@@ -11,30 +11,26 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
-import java.io.InputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by mariapaz on 8/16/15.
+ * @author simetrias
  */
 public class DropModalPanel extends SemanticModalPanel {
 
-    private final ServiceCanvasItemData serviceCanvasItemData;
+    private final ServiceDescriptor serviceDescriptor;
     private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
     private Form form;
-    private Callbacks callbacks;
     private String outputFileName;
     private Boolean createOutputFile = true;
 
-    public DropModalPanel(String id, String modalElementWicketId, ServiceCanvasItemData serviceCanvasItemData, Callbacks callbacks) {
+    public DropModalPanel(String id, String modalElementWicketId, ServiceDescriptor serviceDescriptor) {
         super(id, modalElementWicketId);
-        this.callbacks = callbacks;
-        this.serviceCanvasItemData = serviceCanvasItemData;
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
+        this.serviceDescriptor = serviceDescriptor;
         addForm();
         addServiceProperties();
     }
@@ -48,11 +44,10 @@ public class DropModalPanel extends SemanticModalPanel {
         CheckBox outputFileNameCheck = new CheckBox("createOutputFile", new PropertyModel<>(this, "createOutputFile"));
         form.add(outputFileNameCheck);
 
-        add(form);
+        getModalRootComponent().add(form);
     }
 
     private void addServiceProperties() {
-        ServiceDescriptor serviceDescriptor = serviceCanvasItemData.getServiceDescriptor();
         ServicePropertyDescriptor[] parameters = serviceDescriptor.getAccessModes()[0].getParameters();
         createServicePropertyValueMap(parameters);
         ArrayList<ServicePropertyDescriptor> servicePropertyDescriptorList = new ArrayList<>(servicePropertyValueMap.keySet());
@@ -86,18 +81,6 @@ public class DropModalPanel extends SemanticModalPanel {
         } else {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         }
-    }
-
-    public void setCallbacks(Callbacks callbacks) {
-        this.callbacks = callbacks;
-    }
-
-    public interface Callbacks extends Serializable {
-
-        void onSubmit(String name, InputStream inputStream);
-
-        void onCancel();
-
     }
 
     private class ServicePropertyModel implements IModel<String> {

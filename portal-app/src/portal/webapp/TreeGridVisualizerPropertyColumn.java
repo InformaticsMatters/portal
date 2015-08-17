@@ -12,6 +12,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.io.Serializable;
 
+/**
+ * @author simetrias
+ */
 public class TreeGridVisualizerPropertyColumn extends AbstractColumn<DefaultTreeModel, DefaultMutableTreeNode, String> {
 
     private Long propertyId;

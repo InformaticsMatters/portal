@@ -37,6 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author simetrias
+ */
 public class WorkflowPage extends WebPage {
 
     public static final String DROP_DATA_TYPE = "dropDataType";
@@ -67,6 +70,7 @@ public class WorkflowPage extends WebPage {
     private DatasetsPanel datasetsPanel;
     private AjaxLink servicesToggle;
     private ServicesPanel servicesPanel;
+    private DropModalPanel dropModalPanel;
 
     @Inject
     private PopupContainerProvider popupContainerProvider;
@@ -88,6 +92,7 @@ public class WorkflowPage extends WebPage {
         addCanvasItemDragStopBehavior();
         addCanvasNewConnectionBehavior();
         addCardDropBehavior();
+        addCardDropModalPanel();
         addActions();
         addRefreshTimer();
     }
@@ -351,6 +356,7 @@ public class WorkflowPage extends WebPage {
                 String datasetId = getRequest().getRequestParameters().getParameterValue(CARD_DROP_DATASET).toString();
                 String serviceId = getRequest().getRequestParameters().getParameterValue(CARD_DROP_SERVICE).toString();
                 System.out.println("dataset " + datasetId + " dropped onto service " + serviceId);
+                dropModalPanel.showModal();
             }
 
             @Override
@@ -455,6 +461,12 @@ public class WorkflowPage extends WebPage {
             }
 
         });
+    }
+
+    private void addCardDropModalPanel() {
+        ServiceDescriptor service = servicesSession.findServiceDescriptorById("chemaxon.screening.ecpf4");
+        dropModalPanel = new DropModalPanel("cardDropModalPanel", "modalElement", service);
+        add(dropModalPanel);
     }
 
 }
