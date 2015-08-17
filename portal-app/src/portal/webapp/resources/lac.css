@@ -450,6 +450,20 @@
     background-color: #1b1c1d;
 }
 
+.dropModal {
+    width: 44.4%;
+    margin: 0 0 0 -22.2%;
+}
+
+.dropModal .sketcher-thumb {
+    width: auto!important;
+}
+
+.dropModal ul {
+    padding: 0!important;
+    margin: 0!important;
+}
+
 
 
 

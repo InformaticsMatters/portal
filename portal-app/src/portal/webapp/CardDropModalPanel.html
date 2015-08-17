@@ -2,26 +2,28 @@
     <div wicket:id="modalElement" class="modal dropModal ui hidden">
 
         <div class="header">
-            Title
+            Process dataset
         </div>
 
         <form wicket:id="form" class="ui form">
-            <ul>
-                <li wicket:id="property" class="field">
-                    <div wicket:id="editor"></div>
-                </li>
-            </ul>
-            <div class="field">
-                <label>Output file name</label>
+            <div class="content">
+                <ul>
+                    <li wicket:id="property" class="field">
+                        <div wicket:id="editor"></div>
+                    </li>
+                </ul>
+                <div class="field" style="margin-top: 1em!important;">
+                    <label>Output file name</label>
 
-                <div class="ui small input">
-                    <input type="text" wicket:id="outputFileName">
+                    <div class="ui small input">
+                        <input type="text" wicket:id="outputFileName">
+                    </div>
                 </div>
-            </div>
-            <div class="inline field">
-                <div class="ui checkbox">
-                    <input type="checkbox" wicket:id="createOutputFile" id="createOutputFile">
-                    <label for="createOutputFile">New dataset</label>
+                <div class="inline field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" wicket:id="createOutputFile" id="createOutputFile">
+                        <label for="createOutputFile">New dataset</label>
+                    </div>
                 </div>
             </div>
             <div class="actions">
