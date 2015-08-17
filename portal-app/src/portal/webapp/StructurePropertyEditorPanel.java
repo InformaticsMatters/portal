@@ -14,6 +14,7 @@ import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import toolkit.wicket.marvinjs.MarvinSketcher;
+import toolkit.wicket.semantic.SemanticModalPanel;
 
 import java.awt.*;
 
@@ -25,10 +26,19 @@ public class StructurePropertyEditorPanel extends Panel {
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
+    private SemanticModalPanel sketcherParentModalPanel;
 
     public StructurePropertyEditorPanel(String id, ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         super(id);
         addComponents(servicePropertyDescriptor, servicePropertyModel);
+    }
+
+    public SemanticModalPanel getSketcherParentModalPanel() {
+        return sketcherParentModalPanel;
+    }
+
+    public void setSketcherParentModalPanel(SemanticModalPanel sketcherParentModalPanel) {
+        this.sketcherParentModalPanel = sketcherParentModalPanel;
     }
 
     private void addComponents(ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
@@ -61,11 +71,11 @@ public class StructurePropertyEditorPanel extends Panel {
         add(sketchThumbnail);
 
         marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel", "modalElement");
+        marvinSketcherPanel.setParentModalPanel(sketcherParentModalPanel);
         marvinSketcherPanel.setCallbacks(new MarvinSketcher.Callbacks() {
 
             @Override
             public void onSubmit() {
-                System.out.println(marvinSketcherPanel.getSketchData());
                 refreshThumbnail();
                 marvinSketcherPanel.hideModal();
             }
