@@ -1,3 +1,5 @@
+var onCardDrop;
+
 function makeMenuButtonActive(itemId) {
     $('.button').removeClass("active");
     $('#' + itemId).addClass("active");
@@ -73,18 +75,17 @@ function workflowDragAndDrop() {
 }
 
 function datasetsDragAndDrop() {
-
      var draggable = document.getElementById("datasetsDraggablesContainer");
      draggable.addEventListener('dragstart', dragStart, false);
      draggable.addEventListener('dragend'  , dragEnd  , false);
 
      var $allDatasetsCards = $('.card.datasetCard');
-    $allDatasetsCards.each(function(){
-        this.addEventListener("dragenter", datasetcardDragEnter, false);
-        this.addEventListener("dragleave", datasetcardDragLeave, false);
-        this.addEventListener("dragover", preventDefaultEventHandling, false);
-        this.addEventListener("drop", dropOntoDataset, false);
-    });
+     $allDatasetsCards.each(function() {
+         this.addEventListener("dragenter", datasetcardDragEnter, false);
+         this.addEventListener("dragleave", datasetcardDragLeave, false);
+         this.addEventListener("dragover", preventDefaultEventHandling, false);
+         this.addEventListener("drop", dropOntoDataset, false);
+     });
 
      function dragStart(event) {
          event.dataTransfer.setData('draggableMarkupId', event.target.id);
@@ -153,10 +154,9 @@ function datasetsDragAndDrop() {
 }
 
 function servicesDragAndDrop() {
-
     draggable = document.getElementById("servicesDraggablesContainer");
-     draggable.addEventListener('dragstart', dragStart, false);
-     draggable.addEventListener('dragend'  , dragEnd  , false);
+    draggable.addEventListener('dragstart', dragStart, false);
+    draggable.addEventListener('dragend'  , dragEnd  , false);
 
     function dragStart(event) {
          event.dataTransfer.setData('draggableMarkupId', event.target.id);
@@ -214,8 +214,9 @@ function servicesDragAndDrop() {
      function dropOntoService(event) {
          dragging--;
          var dropType = this.getAttribute("dropdatatype");
+         var serviceId = this.getAttribute("dropdataid");
          var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
-         var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
+         var datasetId = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
          this.classList.remove('over');
          if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
               return;
@@ -226,7 +227,12 @@ function servicesDragAndDrop() {
           }
          event.stopPropagation();
          event.preventDefault();
-         console.log(dragdataid);
+
+         console.log(datasetId);
+         console.log(serviceId);
+
+         onCardDrop(datasetId, serviceId);
+
          return false;
      }
 }

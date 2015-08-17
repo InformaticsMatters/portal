@@ -1,4 +1,3 @@
-var dragging = false;
 var onCanvasDrop;
 var onCanvasItemDragStop;
 var onCanvasNewConnection;

@@ -48,6 +48,8 @@ public class WorkflowPage extends WebPage {
     public static final String CANVASITEM_INDEX = "index";
     public static final String CANVASITEM_WICKETID = "canvasItem";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowPage.class);
+    private static final String CARD_DROP_DATASET = "dataset";
+    private static final String CARD_DROP_SERVICE = "service";
     boolean datasetsVisibility = true;
     boolean servicesVisibility = true;
     boolean jobsVisibility = true;
@@ -85,6 +87,7 @@ public class WorkflowPage extends WebPage {
         addCanvasDropBehavior();
         addCanvasItemDragStopBehavior();
         addCanvasNewConnectionBehavior();
+        addCardDropBehavior();
         addActions();
         addRefreshTimer();
     }
@@ -338,6 +341,29 @@ public class WorkflowPage extends WebPage {
             }
         };
         add(onCanvasItemDragStopBehavior);
+    }
+
+    private void addCardDropBehavior() {
+        AbstractDefaultAjaxBehavior onCardDropBehavior = new AbstractDefaultAjaxBehavior() {
+
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                String datasetId = getRequest().getRequestParameters().getParameterValue(CARD_DROP_DATASET).toString();
+                String serviceId = getRequest().getRequestParameters().getParameterValue(CARD_DROP_SERVICE).toString();
+                System.out.println("dataset " + datasetId + " dropped onto service " + serviceId);
+            }
+
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                super.renderHead(component, response);
+                CharSequence callBackScript = getCallbackFunction(
+                        CallbackParameter.explicit(CARD_DROP_DATASET),
+                        CallbackParameter.explicit(CARD_DROP_SERVICE));
+                callBackScript = "onCardDrop=" + callBackScript + ";";
+                response.render(OnDomReadyHeaderItem.forScript(callBackScript));
+            }
+        };
+        add(onCardDropBehavior);
     }
 
     private void addCanvasNewConnectionBehavior() {
