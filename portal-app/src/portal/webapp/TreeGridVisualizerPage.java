@@ -66,10 +66,6 @@ public class TreeGridVisualizerPage extends WebPage {
     }
 
     private void addPanels() {
-        menuPanel = new MenuPanel("menuPanel");
-        menuPanel.setLeftSideItemVisible(true);
-        add(menuPanel);
-
         add(new FooterPanel("footerPanel"));
     }
 
