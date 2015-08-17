@@ -29,7 +29,7 @@ public class ServiceCanvasItemPopupPanel extends Panel {
     private Form form;
     private Callbacks callbacks;
     private String outputFileName;
-    private Boolean createOutputFile;
+    private Boolean createOutputFile = true;
 
     public ServiceCanvasItemPopupPanel(String id, ServiceCanvasItemData serviceCanvasItemData, Callbacks callbacks) {
         super(id);
