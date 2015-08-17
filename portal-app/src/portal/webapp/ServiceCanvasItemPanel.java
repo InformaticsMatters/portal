@@ -52,19 +52,10 @@ public class ServiceCanvasItemPanel extends Panel {
     }
 
     private void createPopupPanel() {
-        popupPanel = new ServiceCanvasItemPopupPanel("content", data, new ServiceCanvasItemPopupPanel.Callbacks() {
-
-            @Override
-            public void onDelete() {
-
-            }
-
-            @Override
-            public void onSave() {
-                callbacks.onServiceCanvasItemSave();
-                String js = "$('#" + openPopupLink.getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + popupPanel.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
-                getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(js);
-            }
+        popupPanel = new ServiceCanvasItemPopupPanel("content", data, () -> {
+            callbacks.onServiceCanvasItemSave();
+            String js = "$('#" + openPopupLink.getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + popupPanel.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
+            getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(js);
         });
     }
 

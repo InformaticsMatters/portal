@@ -3,7 +3,6 @@ package portal.webapp;
 import com.im.lac.services.ServiceDescriptor;
 import com.im.lac.services.ServicePropertyDescriptor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -118,20 +117,10 @@ public class ServiceCanvasItemPopupPanel extends Panel {
                 callbacks.onSave();
             }
         });
-
-        form.add(new AjaxLink("delete") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                callbacks.onDelete();
-            }
-        });
     }
 
 
     public interface Callbacks extends Serializable {
-
-        void onDelete();
 
         void onSave();
 
