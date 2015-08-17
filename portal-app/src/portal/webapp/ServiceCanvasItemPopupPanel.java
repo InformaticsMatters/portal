@@ -112,9 +112,6 @@ public class ServiceCanvasItemPopupPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                for (ServicePropertyDescriptor servicePropertyDescriptor : servicePropertyValueMap.keySet()) {
-                    System.out.println(servicePropertyDescriptor.getLabel() + ": " + servicePropertyValueMap.get(servicePropertyDescriptor));
-                }
                 serviceCanvasItemData.setServicePropertyValueMap(servicePropertyValueMap);
                 serviceCanvasItemData.setCreateOutputFile(createOutputFile);
                 serviceCanvasItemData.setOutputFileName(outputFileName);

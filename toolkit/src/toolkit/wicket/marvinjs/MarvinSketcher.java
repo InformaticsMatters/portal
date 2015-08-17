@@ -118,12 +118,12 @@ public class MarvinSketcher extends SemanticModalPanel {
         }
     }
 
-    private String promiseMarvinCall(String javascript) {
-        return PROMISE_MARVIN_CALL.replace(":sketcherFrameId", SKETCHER_FRAME_ID).replace(":javascript", javascript);
-    }
-
     public String getSketchData() {
         return sketcherForm.getModelObject().getSketcherData();
+    }
+
+    private String promiseMarvinCall(String javascript) {
+        return PROMISE_MARVIN_CALL.replace(":sketcherFrameId", SKETCHER_FRAME_ID).replace(":javascript", javascript);
     }
 
     public interface Callbacks extends Serializable {
