@@ -256,8 +256,13 @@ public class WorkflowPage extends WebPage {
         }
     }
 
-    private DatasetCanvasItemPanel createDatasetCanvasItemPanel(DatasetCanvasItemData datasetCanvasItemData) {
-        return new DatasetCanvasItemPanel("item", datasetCanvasItemData, () -> {
+    private DatasetCanvasItemPanel createDatasetCanvasItemPanel(final DatasetCanvasItemData datasetCanvasItemData) {
+        return new DatasetCanvasItemPanel("item", datasetCanvasItemData, new DatasetCanvasItemPanel.Callbacks() {
+
+            @Override
+            public void onDatasetCanvasItemDelete() {
+                removeCanvasItem(datasetCanvasItemData);
+            }
         });
     }
 

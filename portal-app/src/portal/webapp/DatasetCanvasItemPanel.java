@@ -43,6 +43,15 @@ public class DatasetCanvasItemPanel extends Panel {
             }
         };
         add(openPopupLink);
+
+        add(new AjaxLink("delete") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
+                callbacks.onDatasetCanvasItemDelete();
+            }
+        });
     }
 
     private void createPopupPanel() {
@@ -55,7 +64,7 @@ public class DatasetCanvasItemPanel extends Panel {
 
     public interface Callbacks extends Serializable {
 
-        void onDelete();
+        void onDatasetCanvasItemDelete();
 
     }
 }
