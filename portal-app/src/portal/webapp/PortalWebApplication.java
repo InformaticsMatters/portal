@@ -38,7 +38,7 @@ public class PortalWebApplication extends WebApplication {
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
-        return RuntimeConfigurationType.DEVELOPMENT;
+        return RuntimeConfigurationType.DEPLOYMENT;
     }
 
     protected void configureSecurity() {

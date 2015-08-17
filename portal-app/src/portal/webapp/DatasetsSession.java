@@ -106,7 +106,7 @@ public class DatasetsSession implements Serializable {
         }
     }
 
-    public List<UUID> listAllDatasetIds(IDatasetDescriptor datasetDescriptor) {
+    public List<UUID> listAllUuids(IDatasetDescriptor datasetDescriptor) {
         Map<UUID, MoleculeObject> datasetContents = datasetsContentsMap.get(datasetDescriptor.getId());
         return new ArrayList<>(datasetContents.keySet());
     }

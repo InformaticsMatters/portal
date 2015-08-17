@@ -1,6 +1,7 @@
 
 package portal.webapp;
 
+import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
@@ -23,11 +24,13 @@ import java.awt.*;
 public class StructurePropertyEditorPanel extends Panel {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
+    private final IModel<String> servicePropertyModel;
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
 
     public StructurePropertyEditorPanel(String id, ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         super(id);
+        this.servicePropertyModel = servicePropertyModel;
         addComponents(servicePropertyDescriptor, servicePropertyModel);
     }
 
@@ -66,6 +69,7 @@ public class StructurePropertyEditorPanel extends Panel {
             @Override
             public void onSubmit() {
                 refreshThumbnail();
+                temporarilyConvertToSmiles();
                 marvinSketcherPanel.hideModal();
             }
 
@@ -74,6 +78,21 @@ public class StructurePropertyEditorPanel extends Panel {
             }
         });
         add(marvinSketcherPanel);
+    }
+
+    private void temporarilyConvertToSmiles() {
+        try {
+            String sketchData = marvinSketcherPanel.getSketchData();
+            if (sketchData == null) {
+                sketchData = "<cml><MDocument></MDocument></cml>";
+            }
+            Molecule molecule = MolImporter.importMol(sketchData);
+            String smiles = MolExporter.exportToFormat(molecule, "smiles");
+            servicePropertyModel.setObject(smiles);
+            System.out.println(smiles);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
 
     private void refreshThumbnail() {

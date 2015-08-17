@@ -33,7 +33,7 @@ public class TreeGridVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutabl
         getTree().setRootLess(true);
         this.datasetDescriptor = datasetDescriptor;
         datasetsSession.loadDatasetContents(datasetDescriptor);
-        allUuids = datasetsSession.listAllDatasetIds(datasetDescriptor);
+        allUuids = datasetsSession.listAllUuids(datasetDescriptor);
         setCurrentPage(0);
     }
 
