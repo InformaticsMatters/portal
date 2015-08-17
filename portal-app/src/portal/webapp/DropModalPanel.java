@@ -2,6 +2,8 @@ package portal.webapp;
 
 import com.im.lac.services.ServiceDescriptor;
 import com.im.lac.services.ServicePropertyDescriptor;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -11,6 +13,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +24,7 @@ import java.util.Map;
 public class DropModalPanel extends SemanticModalPanel {
 
     private final ServiceDescriptor serviceDescriptor;
+    private Callbacks callbacks;
     private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
     private Form form;
     private String outputFileName;
@@ -45,6 +49,19 @@ public class DropModalPanel extends SemanticModalPanel {
         form.add(outputFileNameCheck);
 
         getModalRootComponent().add(form);
+
+        AjaxLink cancelAction = new AjaxLink("cancel") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                callbacks.onCancel();
+            }
+        };
+        form.add(cancelAction);
+    }
+
+    public void setCallbacks(Callbacks callbacks) {
+        this.callbacks = callbacks;
     }
 
     private void addServiceProperties() {
@@ -81,6 +98,12 @@ public class DropModalPanel extends SemanticModalPanel {
         } else {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         }
+    }
+
+    public interface Callbacks extends Serializable {
+
+        void onCancel();
+
     }
 
     private class ServicePropertyModel implements IModel<String> {
