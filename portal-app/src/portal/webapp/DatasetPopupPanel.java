@@ -3,6 +3,7 @@ package portal.webapp;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.dataset.DatasetDescriptor;
 import portal.dataset.IDatasetDescriptor;
 
 /**
@@ -10,11 +11,11 @@ import portal.dataset.IDatasetDescriptor;
  */
 public class DatasetPopupPanel extends Panel {
 
-    private IDatasetDescriptor datasetDescriptor;
+    private DatasetDescriptor datasetDescriptor;
 
-    public DatasetPopupPanel(String id, IDatasetDescriptor datasetDescriptor) {
+    public DatasetPopupPanel(String id, IDatasetDescriptor descriptor) {
         super(id);
-        this.datasetDescriptor = datasetDescriptor;
+        this.datasetDescriptor = (DatasetDescriptor) descriptor;
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
         add(new Label("description", this.datasetDescriptor.getDescription()));
@@ -24,7 +25,7 @@ public class DatasetPopupPanel extends Panel {
 
             @Override
             public void onClick() {
-                TreeGridVisualizerPage page = new TreeGridVisualizerPage(datasetDescriptor);
+                TreeGridVisualizerPage page = new TreeGridVisualizerPage(descriptor);
                 setResponsePage(page);
             }
         });
