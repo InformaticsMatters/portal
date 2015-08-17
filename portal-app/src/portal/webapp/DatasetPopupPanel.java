@@ -20,6 +20,9 @@ public class DatasetPopupPanel extends Panel {
         setOutputMarkupPlaceholderTag(true);
         add(new Label("description", this.datasetDescriptor.getDescription()));
         add(new Label("rowCount", this.datasetDescriptor.getRowCount()));
+        add(new Label("owner", this.datasetDescriptor.getDataItem().getOwnerUsername()));
+        add(new Label("created", this.datasetDescriptor.getDataItem().getCreated()));
+        add(new Label("updated", this.datasetDescriptor.getDataItem().getUpdated()));
 
         add(new Link("open") {
 
