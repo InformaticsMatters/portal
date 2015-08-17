@@ -70,7 +70,7 @@ public class WorkflowPage extends WebPage {
     private DatasetsPanel datasetsPanel;
     private AjaxLink servicesToggle;
     private ServicesPanel servicesPanel;
-    private DropModalPanel dropModalPanel;
+    private CardDropModalPanel cardDropModalPanel;
 
     @Inject
     private PopupContainerProvider popupContainerProvider;
@@ -356,7 +356,7 @@ public class WorkflowPage extends WebPage {
                 String datasetId = getRequest().getRequestParameters().getParameterValue(CARD_DROP_DATASET).toString();
                 String serviceId = getRequest().getRequestParameters().getParameterValue(CARD_DROP_SERVICE).toString();
                 System.out.println("dataset " + datasetId + " dropped onto service " + serviceId);
-                dropModalPanel.showModal();
+                cardDropModalPanel.showModal();
             }
 
             @Override
@@ -465,8 +465,15 @@ public class WorkflowPage extends WebPage {
 
     private void addCardDropModalPanel() {
         ServiceDescriptor service = servicesSession.findServiceDescriptorById("chemaxon.screening.ecpf4");
-        dropModalPanel = new DropModalPanel("cardDropModalPanel", "modalElement", service);
-        add(dropModalPanel);
+        cardDropModalPanel = new CardDropModalPanel("cardDropModalPanel", "modalElement", service);
+        cardDropModalPanel.setCallbacks(new CardDropModalPanel.Callbacks() {
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+        add(cardDropModalPanel);
     }
 
 }

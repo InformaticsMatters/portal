@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * @author simetrias
  */
-public class DropModalPanel extends SemanticModalPanel {
+public class CardDropModalPanel extends SemanticModalPanel {
 
     private final ServiceDescriptor serviceDescriptor;
     private Callbacks callbacks;
@@ -30,7 +30,7 @@ public class DropModalPanel extends SemanticModalPanel {
     private String outputFileName;
     private Boolean createOutputFile = true;
 
-    public DropModalPanel(String id, String modalElementWicketId, ServiceDescriptor serviceDescriptor) {
+    public CardDropModalPanel(String id, String modalElementWicketId, ServiceDescriptor serviceDescriptor) {
         super(id, modalElementWicketId);
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);

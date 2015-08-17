@@ -110,7 +110,7 @@ public class StructurePropertyEditorPanel extends Panel {
         }
     }
 
-    protected Rectangle getRectangle() {
+    private Rectangle getRectangle() {
         return RECTANGLE;
     }
 }
