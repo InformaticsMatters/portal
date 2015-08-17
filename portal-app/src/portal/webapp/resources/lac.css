@@ -139,11 +139,13 @@
     white-space: nowrap;
 }
 
-.palette-item .icon.remove {
+.palette-item .icon.remove,
+.canvas-item-content .icon.remove {
     visibility: hidden;
 }
 
-.palette-item:hover .icon.remove {
+.palette-item:hover .icon.remove,
+.canvas-item-content:hover .icon.remove {
     visibility: visible;
 }
 

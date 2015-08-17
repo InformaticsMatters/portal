@@ -40,6 +40,15 @@ public class ServiceCanvasItemPanel extends Panel {
             }
         };
         add(openPopupLink);
+
+        add(new AjaxLink("delete") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
+                callbacks.onServiceCanvasItemDelete();
+            }
+        });
     }
 
     private void createPopupPanel() {
@@ -47,8 +56,7 @@ public class ServiceCanvasItemPanel extends Panel {
 
             @Override
             public void onDelete() {
-                popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
-                callbacks.onServiceCanvasItemDelete();
+
             }
 
             @Override
