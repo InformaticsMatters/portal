@@ -12,6 +12,8 @@ public class ServiceCanvasItemData extends AbstractCanvasItemData {
 
     private ServiceDescriptor serviceDescriptor;
     private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
+    private Boolean createOutputFile;
+    private String outputFileName;
 
     public ServiceDescriptor getServiceDescriptor() {
         return serviceDescriptor;
@@ -27,6 +29,22 @@ public class ServiceCanvasItemData extends AbstractCanvasItemData {
 
     public void setServicePropertyValueMap(Map<ServicePropertyDescriptor, String> servicePropertyValueMap) {
         this.servicePropertyValueMap = servicePropertyValueMap;
+    }
+
+    public Boolean getCreateOutputFile() {
+        return createOutputFile;
+    }
+
+    public void setCreateOutputFile(Boolean createOutputFile) {
+        this.createOutputFile = createOutputFile;
+    }
+
+    public String getOutputFileName() {
+        return outputFileName;
+    }
+
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
     }
 
     /*

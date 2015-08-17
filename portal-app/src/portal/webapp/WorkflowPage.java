@@ -398,8 +398,12 @@ public class WorkflowPage extends WebPage {
             JobDefinition jobDefinition = jobDefinitionClass.newInstance();
             if (jobDefinition instanceof AbstractAsyncProcessDatasetJobDefinition) {
                 AbstractAsyncProcessDatasetJobDefinition definition = (AbstractAsyncProcessDatasetJobDefinition) jobDefinition;
-                definition.configureDataset(dataset.getId(), ProcessDatasetJobDefinition.DatasetMode.CREATE, "Output");
-                definition.configureService(service, service.getAccessModes()[0], new HashMap<>());
+                definition.configureDataset(dataset.getId(),
+                        targetData.getCreateOutputFile() ? ProcessDatasetJobDefinition.DatasetMode.CREATE : ProcessDatasetJobDefinition.DatasetMode.UPDATE,
+                        targetData.getOutputFileName());
+                definition.configureService(service,
+                        service.getAccessModes()[0],
+                        new HashMap<>());
 
                 Map<String, Object> parameters = definition.getParameters();
                 Map<ServicePropertyDescriptor, String> propertyDescriptorMap = targetData.getServicePropertyValueMap();

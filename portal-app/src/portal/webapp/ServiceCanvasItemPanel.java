@@ -54,6 +54,8 @@ public class ServiceCanvasItemPanel extends Panel {
             @Override
             public void onSave() {
                 callbacks.onServiceCanvasItemSave();
+                String js = "$('#" + openPopupLink.getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + popupPanel.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
+                getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(js);
             }
         });
     }

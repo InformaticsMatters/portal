@@ -45,7 +45,7 @@ public class ServiceCanvasItemPopupPanel extends Panel {
     private void addForm() {
         form = new Form("form");
 
-        TextField<String> outputFileNameField = new TextField<>("outputFileName", new PropertyModel(this, "outputFileName"));
+        TextField<String> outputFileNameField = new TextField<>("outputFileName", new PropertyModel<>(this, "outputFileName"));
         form.add(outputFileNameField);
 
         CheckBox outputFileNameCheck = new CheckBox("createOutputFile", new PropertyModel<>(this, "createOutputFile"));
@@ -116,6 +116,8 @@ public class ServiceCanvasItemPopupPanel extends Panel {
                     System.out.println(servicePropertyDescriptor.getLabel() + ": " + servicePropertyValueMap.get(servicePropertyDescriptor));
                 }
                 serviceCanvasItemData.setServicePropertyValueMap(servicePropertyValueMap);
+                serviceCanvasItemData.setCreateOutputFile(createOutputFile);
+                serviceCanvasItemData.setOutputFileName(outputFileName);
                 callbacks.onSave();
             }
         });
