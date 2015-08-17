@@ -110,7 +110,7 @@ public class MarvinSketcher extends SemanticModalPanel {
         sketcherForm.add(cancelAction);
     }
 
-    public void setData(AjaxRequestTarget ajaxRequestTarget, String data, String format) {
+    public void setSketchData(AjaxRequestTarget ajaxRequestTarget, String data, String format) {
         if ("mol".equals(format)) {
             ajaxRequestTarget.appendJavaScript(promiseMarvinCall("instance.importAsMol('" + convertForJavaScript(data) + "');"));
         } else if ("mrv".equals(format)) {

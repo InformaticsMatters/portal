@@ -50,6 +50,11 @@ public class StructurePropertyEditorPanel extends Panel {
 
             @Override
             protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
+                String currentSketchData = marvinSketcherPanel.getSketchData();
+                if (currentSketchData == null) {
+                    currentSketchData = "<cml><MDocument></MDocument></cml>";
+                }
+                marvinSketcherPanel.setSketchData(ajaxRequestTarget, currentSketchData, "mrv");
                 marvinSketcherPanel.showModal();
             }
         });
@@ -61,7 +66,7 @@ public class StructurePropertyEditorPanel extends Panel {
             @Override
             public void onSubmit() {
                 System.out.println(marvinSketcherPanel.getSketchData());
-                getRequestCycle().find(AjaxRequestTarget.class).add(sketchThumbnail);
+                refreshThumbnail();
                 marvinSketcherPanel.hideModal();
             }
 
@@ -70,6 +75,18 @@ public class StructurePropertyEditorPanel extends Panel {
             }
         });
         add(marvinSketcherPanel);
+    }
+
+    private void refreshThumbnail() {
+        RenderedDynamicImageResource renderedDynamicImageResource = new RenderedDynamicImageResource(getRectangle().width, getRectangle().height) {
+
+            @Override
+            protected boolean render(Graphics2D graphics2D, Attributes attributes) {
+                return renderThumbnail(graphics2D);
+            }
+        };
+        sketchThumbnail.setImageResource(renderedDynamicImageResource);
+        getRequestCycle().find(AjaxRequestTarget.class).add(sketchThumbnail);
     }
 
     private boolean renderThumbnail(Graphics2D graphics2D) {
