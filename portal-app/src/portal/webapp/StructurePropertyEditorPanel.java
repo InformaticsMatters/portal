@@ -63,7 +63,7 @@ public class StructurePropertyEditorPanel extends Panel {
         });
         add(sketchThumbnail);
 
-        marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel");
+        marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel", "marvinSketcher");
         marvinSketcherPanel.setCallbacks(new MarvinSketcher.Callbacks() {
 
             @Override

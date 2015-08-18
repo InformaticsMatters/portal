@@ -24,14 +24,15 @@ public class MarvinSketcher extends SemanticModalPanel {
 
     private static final int defaultHeight = 600;
     private static final int defaultWidth = 1000;
-    private static final String UNIQUE_NAME = "sketcherFrame";
     private static final String PROMISE_MARVIN_CALL = "MarvinJSUtil.getEditor(':sketcherFrameId').then(function(instance){:javascript})";
+    private static String uniqueName;
     private Callbacks callbacks;
     private Form<SketcherFormModel> sketcherForm;
     private WebMarkupContainer sketcherContainer;
 
-    public MarvinSketcher(String id) {
+    public MarvinSketcher(String id, String uniqueName) {
         super(id, "modalElement");
+        this.uniqueName = uniqueName;
         sketcherContainer = new WebMarkupContainer("sketcherContainer");
         getModalRootComponent().add(sketcherContainer);
         addIframe();
@@ -60,7 +61,7 @@ public class MarvinSketcher extends SemanticModalPanel {
     @Override
     public void showModal() {
         super.showModal();
-        getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(promiseMarvinCall("window." + UNIQUE_NAME + " = instance;"));
+        getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(promiseMarvinCall("window." + uniqueName + " = instance;"));
     }
 
     private void addIframe() {
@@ -68,7 +69,7 @@ public class MarvinSketcher extends SemanticModalPanel {
         String src = urlFor(ref, null).toString();
         WebMarkupContainer sketcherFrame = new WebMarkupContainer("sketcher");
         sketcherFrame.setOutputMarkupId(true);
-        sketcherFrame.setMarkupId(UNIQUE_NAME);
+        sketcherFrame.setMarkupId(uniqueName);
         sketcherFrame.add(new AttributeModifier("src", src));
         sketcherContainer.add(sketcherFrame);
     }
@@ -91,7 +92,7 @@ public class MarvinSketcher extends SemanticModalPanel {
             protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
                 super.updateAjaxAttributes(attributes);
                 AjaxCallListener acl = new AjaxCallListener();
-                acl.onBefore("$('#sketcherData').val(window." + UNIQUE_NAME + ".exportAsMrv())");
+                acl.onBefore("$('#sketcherData').val(window." + uniqueName + ".exportAsMrv())");
                 attributes.getAjaxCallListeners().add(acl);
             }
 
@@ -125,7 +126,7 @@ public class MarvinSketcher extends SemanticModalPanel {
     }
 
     private String promiseMarvinCall(String javascript) {
-        return PROMISE_MARVIN_CALL.replace(":sketcherFrameId", UNIQUE_NAME).replace(":javascript", javascript);
+        return PROMISE_MARVIN_CALL.replace(":sketcherFrameId", uniqueName).replace(":javascript", javascript);
     }
 
     public interface Callbacks extends Serializable {

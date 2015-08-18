@@ -115,7 +115,7 @@ public class ChemcentralPage extends WebPage {
     }
 
     private void addModals() {
-        marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel");
+        marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel", "marvinSketcher");
         marvinSketcherPanel.setCallbacks(new MarvinSketcher.Callbacks() {
 
             @Override
