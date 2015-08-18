@@ -30,8 +30,8 @@ public class CardDropModalPanel extends SemanticModalPanel {
     private String outputFileName;
     private Boolean createOutputFile = true;
 
-    public CardDropModalPanel(String id, String modalElementWicketId, ServiceDescriptor serviceDescriptor) {
-        super(id, modalElementWicketId);
+    public CardDropModalPanel(String id, ServiceDescriptor serviceDescriptor) {
+        super(id, "modalElement");
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
         this.serviceDescriptor = serviceDescriptor;
@@ -58,6 +58,7 @@ public class CardDropModalPanel extends SemanticModalPanel {
             }
         };
         form.add(cancelAction);
+        getModalRootComponent().add(form);
     }
 
     public void setCallbacks(Callbacks callbacks) {
