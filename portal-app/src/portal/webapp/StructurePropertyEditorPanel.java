@@ -25,11 +25,13 @@ public class StructurePropertyEditorPanel extends Panel {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
     private final IModel<String> servicePropertyModel;
+    private final String uniqueMarvinName;
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
 
-    public StructurePropertyEditorPanel(String id, ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
+    public StructurePropertyEditorPanel(String id, String uniqueMarvinName, ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         super(id);
+        this.uniqueMarvinName = uniqueMarvinName;
         this.servicePropertyModel = servicePropertyModel;
         addComponents(servicePropertyDescriptor, servicePropertyModel);
     }
@@ -63,7 +65,7 @@ public class StructurePropertyEditorPanel extends Panel {
         });
         add(sketchThumbnail);
 
-        marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel", "marvinSketcher");
+        marvinSketcherPanel = new MarvinSketcher("marvinSketcherPanel", uniqueMarvinName);
         marvinSketcherPanel.setCallbacks(new MarvinSketcher.Callbacks() {
 
             @Override

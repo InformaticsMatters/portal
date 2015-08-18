@@ -48,8 +48,6 @@ public class CardDropModalPanel extends SemanticModalPanel {
         CheckBox outputFileNameCheck = new CheckBox("createOutputFile", new PropertyModel<>(this, "createOutputFile"));
         form.add(outputFileNameCheck);
 
-        getModalRootComponent().add(form);
-
         AjaxLink cancelAction = new AjaxLink("cancel") {
 
             @Override
@@ -95,7 +93,7 @@ public class CardDropModalPanel extends SemanticModalPanel {
         if (ServicePropertyDescriptor.Type.STRING == servicePropertyDescriptor.getType()) {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         } else if (ServicePropertyDescriptor.Type.STRUCTURE == servicePropertyDescriptor.getType()) {
-            listItem.add(new StructurePropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
+            listItem.add(new StructurePropertyEditorPanel("editor", "cardDropMarvinEditor", servicePropertyDescriptor, servicePropertyModel));
         } else {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         }

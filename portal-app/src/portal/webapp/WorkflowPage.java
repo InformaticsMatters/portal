@@ -465,6 +465,7 @@ public class WorkflowPage extends WebPage {
     private void addCardDropModalPanel() {
         ServiceDescriptor service = servicesSession.findServiceDescriptorById("chemaxon.screening.ecpf4");
         cardDropModalPanel = new CardDropModalPanel("cardDropModalPanel", service);
+        cardDropModalPanel.setCallbacks(cardDropModalPanel::hideModal);
         add(cardDropModalPanel);
     }
 }
