@@ -94,7 +94,7 @@ public class WorkflowPage extends WebPage {
         addCardDropBehavior();
         addActions();
         addRefreshTimer();
-        addCardDropModalPanel();
+        // addCardDropModalPanel();
     }
 
     @Override
