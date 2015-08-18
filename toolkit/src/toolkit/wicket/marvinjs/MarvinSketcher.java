@@ -25,7 +25,7 @@ public class MarvinSketcher extends SemanticModalPanel {
     private static final int defaultHeight = 600;
     private static final int defaultWidth = 1000;
     private static final String PROMISE_MARVIN_CALL = "MarvinJSUtil.getEditor(':sketcherFrameId').then(function(instance){:javascript})";
-    private static String uniqueName;
+    private final String uniqueName;
     private Callbacks callbacks;
     private Form<SketcherFormModel> sketcherForm;
     private WebMarkupContainer sketcherContainer;
