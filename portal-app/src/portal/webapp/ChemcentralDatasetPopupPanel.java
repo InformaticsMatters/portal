@@ -1,11 +1,10 @@
-package portal.webapp.chemcentral;
+package portal.webapp;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.dataset.IDatasetDescriptor;
-import portal.webapp.TreeGridVisualizerPage;
 
 /**
  * @author simetrias

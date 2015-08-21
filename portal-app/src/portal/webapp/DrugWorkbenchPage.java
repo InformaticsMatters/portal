@@ -1,4 +1,4 @@
-package portal.webapp.workbench;
+package portal.webapp;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -8,10 +8,6 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import portal.webapp.FooterPanel;
-import portal.webapp.MenuPanel;
-import portal.webapp.PortalWebApplication;
-import portal.webapp.WorkflowPage;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

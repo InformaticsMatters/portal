@@ -8,8 +8,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
-import portal.webapp.chemcentral.ChemcentralPage;
-import portal.webapp.workbench.DrugWorkbenchPage;
 
 import javax.inject.Inject;
 

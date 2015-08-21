@@ -1,4 +1,4 @@
-package portal.webapp.chemcentral;
+package portal.webapp;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;

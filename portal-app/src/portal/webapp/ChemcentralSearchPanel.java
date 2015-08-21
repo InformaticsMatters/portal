@@ -1,4 +1,4 @@
-package portal.webapp.chemcentral;
+package portal.webapp;
 
 import com.vaynberg.wicket.select2.Select2Choice;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -10,7 +10,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.chemcentral.ChemcentralClient;
 import portal.chemcentral.PropertyDefinition;
-import portal.webapp.PropertyDefinitionProvider;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
