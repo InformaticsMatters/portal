@@ -66,10 +66,11 @@ function workflowDragAndDrop() {
          var width = $el.width();
          var height = $el.height();
 
-         var left = event.offsetX - mouseOffsetX;
-         var top = event.offsetY - mouseOffsetY;
+         var left = event.layerX - mouseOffsetX;
+         var top = event.layerY - mouseOffsetY;
          event.preventDefault();
          onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
+         console.log(event);
          return false;
      }
 }
@@ -104,11 +105,11 @@ function datasetsDragAndDrop() {
      function datasetcardDragEnter(event) {
               dragging++;
               var dropType = this.getAttribute("dropdatatype");
-              if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "service")  {
+              if (indexOf(event.dataTransfer.types, 'dataset') > -1 && dropType == "service")  {
                   this.classList.add('over');
-              } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "dataset")  {
+              } else if (indexOf(event.dataTransfer.types, 'service') > -1 && dropType == "dataset")  {
                   this.classList.add('over');
-              } else if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "visualizer")  {
+              } else if (indexOf(event.dataTransfer.types, 'dataset') > -1 && dropType == "visualizer")  {
                   this.classList.add('over');
               }
               event.stopPropagation();
@@ -138,11 +139,11 @@ function datasetsDragAndDrop() {
               var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
               var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
               this.classList.remove('over');
-               if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
+               if (indexOf(event.dataTransfer.types, 'dataset') > -1 && dropType == "dataset")  {
                    return;
-               }else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
+               }else if (indexOf(event.dataTransfer.types, 'service') > -1 && dropType == "service")  {
                    return;
-               } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
+               } else if (indexOf(event.dataTransfer.types, 'service') > -1 && dropType == "visualizer")  {
                    return;
                }
               event.stopPropagation();
@@ -180,11 +181,11 @@ function servicesDragAndDrop() {
      function servicecardDragEnter(event) {
          dragging++;
          var dropType = this.getAttribute("dropdatatype");
-         if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "service")  {
+         if (indexOf(event.dataTransfer.types, 'dataset') > -1 && dropType == "service")  {
              this.classList.add('over');
-         } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "dataset")  {
+         } else if (indexOf(event.dataTransfer.types, 'service') > -1 && dropType == "dataset")  {
              this.classList.add('over');
-         } else if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "visualizer")  {
+         } else if (indexOf(event.dataTransfer.types, 'dataset') > -1 && dropType == "visualizer")  {
              this.classList.add('over');
          }
          event.stopPropagation();
@@ -218,11 +219,11 @@ function servicesDragAndDrop() {
          var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
          var datasetId = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
          this.classList.remove('over');
-         if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
+         if (indexOf(event.dataTransfer.types, 'dataset') > -1 && dropType == "dataset")  {
               return;
-          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
+          } else if (indexOf(event.dataTransfer.types, 'service') > -1 && dropType == "service")  {
               return;
-          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
+          } else if (indexOf(event.dataTransfer.types, 'service') > -1 && dropType == "visualizer")  {
               return;
           }
          event.stopPropagation();
