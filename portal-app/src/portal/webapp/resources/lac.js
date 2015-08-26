@@ -138,17 +138,18 @@ function datasetsDragAndDrop() {
               var dropType = this.getAttribute("dropdatatype");
               var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
               var dragdataid = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
+              var dragType = document.getElementById(draggableMarkupId).getAttribute("dropdatatype");
               this.classList.remove('over');
-               if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
+               if (dragType == "dataset" && dropType == "dataset")  {
                    return;
-               }else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
+               }else if (dragType == "service" && dropType == "service")  {
                    return;
-               } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
+               } else if (dragType == "service" && dropType == "visualizer")  {
                    return;
                }
               event.stopPropagation();
               event.preventDefault();
-              console.log(dragdataid);
+              console.log(dragType);
               return false;
           }
 
@@ -218,19 +219,19 @@ function servicesDragAndDrop() {
          var serviceId = this.getAttribute("dropdataid");
          var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
          var datasetId = document.getElementById(draggableMarkupId).getAttribute("dropdataid");
+         var dragType = document.getElementById(draggableMarkupId).getAttribute("dropdatatype");
          this.classList.remove('over');
-         if (event.dataTransfer.types.indexOf('dataset') > -1 && dropType == "dataset")  {
+         if (dragType == "dataset" && dropType == "dataset")  {
               return;
-          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "service")  {
+          } else if (dragType == "service" && dropType == "service")  {
               return;
-          } else if (event.dataTransfer.types.indexOf('service') > -1 && dropType == "visualizer")  {
+          } else if (dragType == "service" && dropType == "visualizer")  {
               return;
           }
          event.stopPropagation();
          event.preventDefault();
 
-         console.log(datasetId);
-         console.log(serviceId);
+         console.log(dragType);
 
          onCardDrop(datasetId, serviceId);
 
