@@ -355,7 +355,7 @@ public class WorkflowPage extends WebPage {
                 String datasetId = getRequest().getRequestParameters().getParameterValue(CARD_DROP_DATASET).toString();
                 String serviceId = getRequest().getRequestParameters().getParameterValue(CARD_DROP_SERVICE).toString();
                 System.out.println("dataset " + datasetId + " dropped onto service " + serviceId);
-                cardDropModalPanel.showModal();
+                //  cardDropModalPanel.showModal();
             }
 
             @Override
