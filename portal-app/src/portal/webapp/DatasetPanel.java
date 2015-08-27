@@ -43,7 +43,10 @@ public class DatasetPanel extends Panel {
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 popupContainerProvider.setPopupContentForPage(getPage(), datasetPopupPanel);
                 popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
-                String js = "$('#" + getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + datasetPopupPanel.getMarkupId() + "').find('.ui.datasetPopup.popup'), on : 'click'}).popup('toggle')";
+                String js = "$('#:link')" +
+                        ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.datasetPopup.popup'), on : 'click'})" +
+                        ".popup('toggle').popup('destroy')";
+                js = js.replace(":link", openPopupLink.getMarkupId()).replace(":content", datasetPopupPanel.getMarkupId());
                 ajaxRequestTarget.appendJavaScript(js);
             }
         };
