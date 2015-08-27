@@ -93,7 +93,7 @@ public class WorkflowPage extends WebPage {
         addCanvasNewConnectionBehavior();
         addCardDropBehavior();
         addActions();
-        addRefreshTimer();
+        // addRefreshTimer();
         // addCardDropModalPanel();
     }
 

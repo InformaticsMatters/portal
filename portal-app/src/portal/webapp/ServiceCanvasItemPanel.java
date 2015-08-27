@@ -35,7 +35,11 @@ public class ServiceCanvasItemPanel extends Panel {
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 popupContainerProvider.setPopupContentForPage(getPage(), popupPanel);
                 popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
-                String js = "$('#" + openPopupLink.getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + popupPanel.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
+                String js = "$('#:link')" +
+                        ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'})" +
+                        ".popup('toggle').popup('destroy')";
+                js = js.replace(":link", openPopupLink.getMarkupId()).replace(":content", popupPanel.getMarkupId());
+                System.out.println(js);
                 ajaxRequestTarget.appendJavaScript(js);
             }
         };
