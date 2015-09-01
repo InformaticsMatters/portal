@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.chemcentral;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -10,6 +10,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.chemcentral.ChemcentralSession;
 import portal.dataset.IDatasetDescriptor;
+import portal.webapp.*;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
