@@ -249,6 +249,7 @@
 .services ul,
 .visualizers ul {
     -webkit-padding-start: 0;
+    padding-left: 0;
 }
 
 .ui.grid {
@@ -304,7 +305,7 @@
 
 .child-1 {
     -webkit-flex:1!important;
-    flex:1!important;
+    flex:1 1 0!important;
 }
 
 .margin0 {
