@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.registration;
 
 import portal.domain.Title;
 

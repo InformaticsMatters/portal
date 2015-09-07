@@ -1,8 +1,9 @@
-package portal.webapp;
+package portal.webapp.registration;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
+import portal.webapp.MenuPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

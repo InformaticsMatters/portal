@@ -5,6 +5,8 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.cdi.ConversationPropagation;
 import org.apache.wicket.protocol.http.WebApplication;
+import portal.webapp.registration.ConfirmationEmailPage;
+import portal.webapp.registration.UserCreatedPage;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;

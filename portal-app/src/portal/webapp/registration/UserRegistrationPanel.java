@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.registration;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
