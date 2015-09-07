@@ -227,7 +227,7 @@ public class WorkflowPage extends WebPage {
             canvasItemDataList.add(serviceCanvasItemData);
             data = serviceCanvasItemData;
             canvasItemPanel = serviceCanvasItemPanel;
-        } else if (LegacyDatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
+        } else if (DatasetsPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
             DatasetCanvasItemData datasetCanvasItemData = new DatasetCanvasItemData();
             datasetCanvasItemData.setDatasetDescriptor(datasetsSession.findDatasetDescriptorById(Long.parseLong(dropDataId)));
             datasetCanvasItemData.setPositionX(x);
