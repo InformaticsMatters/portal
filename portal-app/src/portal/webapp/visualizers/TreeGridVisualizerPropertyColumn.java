@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.visualizers;
 
 import com.inmethod.grid.column.AbstractColumn;
 import org.apache.wicket.Component;

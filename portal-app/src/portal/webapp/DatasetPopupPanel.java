@@ -5,6 +5,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.dataset.DatasetDescriptor;
 import portal.dataset.IDatasetDescriptor;
+import portal.webapp.visualizers.TreeGridVisualizerPage;
 
 /**
  * @author simetrias

@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.visualizers;
 
 import com.inmethod.grid.treegrid.BaseTreeColumn;
 import com.inmethod.icon.Icon;
@@ -9,6 +9,7 @@ import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IPropertyDescriptor;
 import portal.dataset.IRow;
 import portal.dataset.IRowDescriptor;
+import portal.webapp.DynamicStructureImageResource;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;

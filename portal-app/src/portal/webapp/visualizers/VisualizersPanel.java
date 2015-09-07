@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.visualizers;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.list.ListItem;

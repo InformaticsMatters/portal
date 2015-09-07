@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.visualizers;
 
 import java.io.Serializable;
 

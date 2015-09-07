@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.visualizers;
 
 import com.vaynberg.wicket.select2.Select2Choice;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -21,6 +21,7 @@ import portal.chemcentral.ChemcentralSession;
 import portal.chemcentral.PropertyData;
 import portal.chemcentral.PropertyDefinition;
 import portal.dataset.IDatasetDescriptor;
+import portal.webapp.*;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

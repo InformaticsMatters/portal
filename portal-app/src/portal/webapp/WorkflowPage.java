@@ -28,6 +28,7 @@ import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.dataset.IDatasetDescriptor;
+import portal.webapp.visualizers.VisualizersPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

@@ -3,6 +3,7 @@ package portal.webapp;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.dataset.IDatasetDescriptor;
+import portal.webapp.visualizers.TreeGridVisualizerPage;
 import toolkit.wicket.inmethod.EasyGrid;
 import toolkit.wicket.inmethod.EasyGridBuilder;
 import toolkit.wicket.inmethod.EasyListDataSource;
