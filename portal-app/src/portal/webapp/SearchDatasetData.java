@@ -2,8 +2,6 @@ package portal.webapp;
 
 import java.io.Serializable;
 
-Author
-
 /**
  * @author simetrias
  */
