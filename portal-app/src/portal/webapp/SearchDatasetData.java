@@ -2,8 +2,10 @@ package portal.webapp;
 
 import java.io.Serializable;
 
+Author
+
 /**
- * Created by mariapaz on 6/4/15.
+ * @author simetrias
  */
 public class SearchDatasetData implements Serializable {
 

@@ -7,7 +7,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 /**
- * Created by mariapaz on 9/7/15.
+ * @author simetrias
  */
 public class BooleanPropertyEditorPanel extends Panel {
 
