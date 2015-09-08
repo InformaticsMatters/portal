@@ -11,14 +11,34 @@ import org.apache.wicket.model.IModel;
  */
 public class BooleanPropertyEditorPanel extends Panel {
 
+    private IModel<String> servicePropertyModel;
+
     public BooleanPropertyEditorPanel(String id, ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         super(id);
         addComponents(servicePropertyDescriptor, servicePropertyModel);
     }
 
     private void addComponents(ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
+        this.servicePropertyModel = servicePropertyModel;
         add(new Label("label", servicePropertyDescriptor.getLabel()));
-        CheckBox nombre = new CheckBox("boolean", servicePropertyModel);
+        IModel<Boolean> model = new IModel<Boolean>() {
+            @Override
+            public Boolean getObject() {
+                String string = servicePropertyModel.getObject();
+                return string == null ? Boolean.FALSE : Boolean.valueOf(string);
+            }
+
+            @Override
+            public void setObject(Boolean aBoolean) {
+                servicePropertyModel.setObject(aBoolean.toString());
+            }
+
+            @Override
+            public void detach() {
+
+            }
+        };
+        CheckBox nombre = new CheckBox("boolean", model);
         add(nombre);
     }
 }
