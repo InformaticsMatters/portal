@@ -101,6 +101,8 @@ public class ServiceCanvasItemPopupPanel extends Panel {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         } else if (ServicePropertyDescriptor.Type.STRUCTURE == servicePropertyDescriptor.getType()) {
             listItem.add(new StructurePropertyEditorPanel("editor", "canvasMarvinEditor", servicePropertyDescriptor, servicePropertyModel));
+        } else if (ServicePropertyDescriptor.Type.BOOLEAN == servicePropertyDescriptor.getType()) {
+            listItem.add(new BooleanPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         } else {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         }
