@@ -3,7 +3,6 @@ package portal.webapp;
 import com.im.lac.services.user.User;
 import com.im.lac.user.client.UserClient;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -13,7 +12,6 @@ import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.webapp.registration.UserRegistrationPage;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -56,15 +54,6 @@ public class LoginPage extends WebPage {
             }
         };
         loginForm.add(submitLink);
-
-        AjaxLink userRegistrationLink = new AjaxLink("userRegistration") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                setResponsePage(UserRegistrationPage.class);
-            }
-        };
-        loginForm.add(userRegistrationLink);
 
         add(loginForm);
     }
