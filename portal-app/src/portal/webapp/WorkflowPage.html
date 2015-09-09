@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+
+<body>
+
+<div wicket:id="notifier"></div>
+<div wicket:id="popupContainer">
+    <div wicket:id="content"></div>
+</div>
+
+<div class="wrapper flex-column">
+
+    <div wicket:id="menuPanel"></div>
+
+    <div class="ui grid flex-1 workflow">
+        <div class="vertical-left-menu">
+            <a class="left-nav-item verticalItem active" wicket:id="servicesToggle">Services</a>
+            <a class="left-nav-item verticalItem active" wicket:id="datasetsToggle">Datasets</a>
+        </div>
+
+        <div class="column flex-column-2 left-column">
+            <div wicket:id="datasets" class="ui segment child-1 datasetsPanel" style="overflow-y: auto;"></div>
+            <div wicket:id="services" class="ui segment child-1 servicesPanel" style="overflow-y: auto;"></div>
+        </div>
+
+        <div class="column flex-column-1 right-column">
+            <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer ui segment">
+                <div wicket:id="canvasItem" class="canvas-item">
+                    <div wicket:id="item"></div>
+                </div>
+                <div class="ui popup canvasItemPopup"></div>
+            </div>
+
+            <div wicket:id="jobs" class="ui segment child-1 jobsPanel"></div>
+
+            <div wicket:id="visualizers" class="ui segment child-1 visualizersPanel"></div>
+        </div>
+
+        <div class="vertical-right-menu">
+            <a class="right-nav-item verticalItem active" wicket:id="canvasToggle">Canvas</a>
+            <a class="right-nav-item verticalItem active" wicket:id="jobsToggle">Jobs</a>
+            <a class="right-nav-item verticalItem active" wicket:id="visualizersToggle">Visualizers</a>
+        </div>
+
+    </div>
+    <div class="push"></div>
+</div>
+
+<!--div wicket:id="cardDropModalPanel"></div-->
+
+<div wicket:id="footerPanel"></div>
+
+</body>
+</html>

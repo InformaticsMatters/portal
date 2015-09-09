@@ -11,7 +11,7 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import portal.webapp.FooterPanel;
 import portal.webapp.MenuPanel;
 import portal.webapp.PortalWebApplication;
-import portal.webapp.workflow.WorkflowPage;
+import portal.webapp.WorkflowPage;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
