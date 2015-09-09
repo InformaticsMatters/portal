@@ -8,8 +8,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
-import portal.webapp.chemcentral.ChemcentralPage;
-import portal.webapp.workbench.DrugWorkbenchPage;
 
 import javax.inject.Inject;
 
@@ -37,25 +35,15 @@ public class MenuPanel extends Panel {
         };
         add(homeLink);
 
-        AjaxLink datasetsLink = new AjaxLink("chemcentral") {
+        AjaxLink notebookLink = new AjaxLink("notebook") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setResponsePage(ChemcentralPage.class);
+                setResponsePage(NotebookPage.class);
                 add(attributeAppender);
             }
         };
-        add(datasetsLink);
-
-        AjaxLink workbenchLink = new AjaxLink("workbench") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                setResponsePage(DrugWorkbenchPage.class);
-                add(attributeAppender);
-            }
-        };
-        add(workbenchLink);
+        add(notebookLink);
 
         AjaxLink workflowLink = new AjaxLink("workflow") {
 
