@@ -1,0 +1,17 @@
+<wicket:panel xmlns="http://www.w3.org/1999/html">
+    Table display!!<br/>
+    <div>
+        <form wicket:id="form">
+            Source var name
+            <input type="text" name="sourceVarName" wicket:id="sourceVarName"/>
+            <input type="submit" wicket:id="show" value="Show"/>
+        </form>
+    </div>
+    <div>
+        <table width="100%">
+            <tr wicket:id="item">
+                <td><label wicket:id="cells"/></td>
+            </tr>
+        </table>
+    </div>
+</wicket:panel>

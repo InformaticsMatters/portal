@@ -12,11 +12,15 @@ import portal.webapp.MenuPanel;
 import portal.webapp.PortalHomePage;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
+import javax.inject.Inject;
+
 /**
  * @author simetrias
  */
 
 public class NotebookPage extends WebPage {
+    @Inject
+    private NotebookService notebookService;
 
     public NotebookPage() {
         addPanels();
@@ -33,5 +37,17 @@ public class NotebookPage extends WebPage {
     private void addPanels() {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
+        addPoc();
     }
+
+
+    private void addPoc() {
+        NotebookDescriptor notebookDescriptor = notebookService.retrievePocNotebookDescriptor();
+        NotebookPanel notebookPanel = new NotebookPanel("notebook", notebookDescriptor);
+        notebookPanel.setOutputMarkupId(true);
+        add(notebookPanel);
+    }
+
+
+
 }
