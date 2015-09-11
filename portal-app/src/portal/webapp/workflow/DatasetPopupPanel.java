@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;

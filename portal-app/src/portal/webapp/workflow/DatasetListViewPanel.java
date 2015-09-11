@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;

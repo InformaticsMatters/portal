@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import com.im.lac.services.ServiceDescriptor;
 import org.apache.wicket.AttributeModifier;
@@ -16,7 +16,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.util.time.Duration;
-import portal.webapp.workflow.WorkflowPage;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;

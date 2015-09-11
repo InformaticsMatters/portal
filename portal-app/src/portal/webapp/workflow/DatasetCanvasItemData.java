@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import portal.dataset.IDatasetDescriptor;
 

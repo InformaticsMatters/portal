@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import com.im.lac.services.ServiceDescriptor;
 import com.im.lac.services.ServicePropertyDescriptor;

@@ -20,8 +20,6 @@ public class JobsPanel extends Panel {
 
     @Inject
     private JobsSession jobsSession;
-    @Inject
-    private DatasetsSession datasetsSession;
     private ListView<JobStatus> jobListView;
 
     public JobsPanel(String id) {

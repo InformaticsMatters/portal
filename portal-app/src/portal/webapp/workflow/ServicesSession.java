@@ -1,9 +1,10 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import com.im.lac.services.ServiceDescriptor;
 import com.im.lac.services.client.ServicesClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.webapp.SessionContext;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;

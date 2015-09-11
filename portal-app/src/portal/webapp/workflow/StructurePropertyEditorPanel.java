@@ -1,5 +1,5 @@
 
-package portal.webapp;
+package portal.webapp.workflow;
 
 import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;

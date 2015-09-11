@@ -3,7 +3,7 @@ package portal.chemcentral;
 import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IRow;
 import portal.dataset.IRowDescriptor;
-import portal.webapp.DatasetFilterData;
+import portal.webapp.workflow.DatasetFilterData;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;

@@ -8,6 +8,7 @@ import org.apache.wicket.request.resource.DynamicImageResource;
 import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IPropertyDescriptor;
 import portal.dataset.IRow;
+import portal.webapp.workflow.DatasetsSession;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;

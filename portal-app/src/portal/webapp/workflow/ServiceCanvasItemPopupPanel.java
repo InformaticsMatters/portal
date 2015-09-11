@@ -1,17 +1,17 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import com.im.lac.services.ServiceDescriptor;
 import com.im.lac.services.ServicePropertyDescriptor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import toolkit.wicket.semantic.SemanticModalPanel;
+import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,22 +21,24 @@ import java.util.Map;
 /**
  * @author simetrias
  */
-public class CardDropModalPanel extends SemanticModalPanel {
+public class ServiceCanvasItemPopupPanel extends Panel {
 
-    private final ServiceDescriptor serviceDescriptor;
-    private Callbacks callbacks;
+    private final ServiceCanvasItemData serviceCanvasItemData;
     private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
     private Form form;
+    private Callbacks callbacks;
     private String outputFileName;
     private Boolean createOutputFile = true;
 
-    public CardDropModalPanel(String id, ServiceDescriptor serviceDescriptor) {
-        super(id, "modalElement");
+    public ServiceCanvasItemPopupPanel(String id, ServiceCanvasItemData serviceCanvasItemData, Callbacks callbacks) {
+        super(id);
+        this.callbacks = callbacks;
+        this.serviceCanvasItemData = serviceCanvasItemData;
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
-        this.serviceDescriptor = serviceDescriptor;
         addForm();
         addServiceProperties();
+        addActions();
     }
 
     private void addForm() {
@@ -48,22 +50,27 @@ public class CardDropModalPanel extends SemanticModalPanel {
         CheckBox outputFileNameCheck = new CheckBox("createOutputFile", new PropertyModel<>(this, "createOutputFile"));
         form.add(outputFileNameCheck);
 
-        AjaxLink cancelAction = new AjaxLink("cancel") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                callbacks.onCancel();
-            }
-        };
-        form.add(cancelAction);
-        getModalRootComponent().add(form);
+        add(form);
     }
 
-    public void setCallbacks(Callbacks callbacks) {
-        this.callbacks = callbacks;
+    public String getOutputFileName() {
+        return outputFileName;
+    }
+
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
+    }
+
+    public Boolean getCreateOutputFile() {
+        return createOutputFile;
+    }
+
+    public void setCreateOutputFile(Boolean createOutputFile) {
+        this.createOutputFile = createOutputFile;
     }
 
     private void addServiceProperties() {
+        ServiceDescriptor serviceDescriptor = serviceCanvasItemData.getServiceDescriptor();
         ServicePropertyDescriptor[] parameters = serviceDescriptor.getAccessModes()[0].getParameters();
         createServicePropertyValueMap(parameters);
         ArrayList<ServicePropertyDescriptor> servicePropertyDescriptorList = new ArrayList<>(servicePropertyValueMap.keySet());
@@ -93,15 +100,31 @@ public class CardDropModalPanel extends SemanticModalPanel {
         if (ServicePropertyDescriptor.Type.STRING == servicePropertyDescriptor.getType()) {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         } else if (ServicePropertyDescriptor.Type.STRUCTURE == servicePropertyDescriptor.getType()) {
-            listItem.add(new StructurePropertyEditorPanel("editor", "cardDropMarvinEditor", servicePropertyDescriptor, servicePropertyModel));
+            listItem.add(new StructurePropertyEditorPanel("editor", "canvasMarvinEditor", servicePropertyDescriptor, servicePropertyModel));
+        } else if (ServicePropertyDescriptor.Type.BOOLEAN == servicePropertyDescriptor.getType()) {
+            listItem.add(new BooleanPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         } else {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
         }
     }
 
+    private void addActions() {
+        form.add(new IndicatingAjaxSubmitLink("save") {
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                serviceCanvasItemData.setServicePropertyValueMap(servicePropertyValueMap);
+                serviceCanvasItemData.setCreateOutputFile(createOutputFile);
+                serviceCanvasItemData.setOutputFileName(outputFileName);
+                callbacks.onSave();
+            }
+        });
+    }
+
+
     public interface Callbacks extends Serializable {
 
-        void onCancel();
+        void onSave();
 
     }
 
@@ -127,5 +150,4 @@ public class CardDropModalPanel extends SemanticModalPanel {
         public void detach() {
         }
     }
-
 }

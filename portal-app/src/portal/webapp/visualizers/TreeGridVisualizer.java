@@ -9,7 +9,7 @@ import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IPropertyDescriptor;
 import portal.dataset.IRow;
 import portal.dataset.IRowDescriptor;
-import portal.webapp.DatasetsSession;
+import portal.webapp.workflow.DatasetsSession;
 
 import javax.inject.Inject;
 import javax.swing.tree.DefaultMutableTreeNode;

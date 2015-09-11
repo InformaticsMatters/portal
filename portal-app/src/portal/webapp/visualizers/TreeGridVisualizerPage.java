@@ -21,7 +21,11 @@ import portal.chemcentral.ChemcentralSession;
 import portal.chemcentral.PropertyData;
 import portal.chemcentral.PropertyDefinition;
 import portal.dataset.IDatasetDescriptor;
-import portal.webapp.*;
+import portal.webapp.FooterPanel;
+import portal.webapp.MenuPanel;
+import portal.webapp.PortalWebApplication;
+import portal.webapp.PropertyDefinitionProvider;
+import portal.webapp.workflow.DatasetsSession;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

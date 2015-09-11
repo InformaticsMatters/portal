@@ -1,4 +1,4 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import com.im.lac.services.ServicePropertyDescriptor;
 import org.apache.wicket.markup.html.basic.Label;

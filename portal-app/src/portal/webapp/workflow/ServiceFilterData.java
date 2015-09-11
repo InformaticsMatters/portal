@@ -1,12 +1,11 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import java.io.Serializable;
-
 
 /**
  * @author simetrias
  */
-public class SearchServiceData implements Serializable {
+public class ServiceFilterData implements Serializable {
 
     private String pattern;
     private Boolean freeOnly;

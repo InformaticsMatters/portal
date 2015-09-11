@@ -1,10 +1,10 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import portal.dataset.IDatasetDescriptor;
+import portal.webapp.PopupContainerProvider;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -12,41 +12,38 @@ import java.io.Serializable;
 /**
  * @author simetrias
  */
-public class DatasetPanel extends Panel {
+public class DatasetCanvasItemPanel extends Panel {
 
-    private final IDatasetDescriptor datasetDescriptor;
+    private final DatasetCanvasItemData data;
     private final Callbacks callbacks;
-    private DatasetPopupPanel datasetPopupPanel;
-    private AjaxLink openPopupLink;
+    private DatasetPopupPanel popupPanel;
 
     @Inject
     private PopupContainerProvider popupContainerProvider;
-    @Inject
-    private DatasetsSession datasetsSession;
+    private AjaxLink openPopupLink;
 
-    public DatasetPanel(String id, IDatasetDescriptor datasetDescriptor, Callbacks callbacks) {
+    public DatasetCanvasItemPanel(String id, DatasetCanvasItemData data, Callbacks callbacks) {
         super(id);
+        this.data = data;
         this.callbacks = callbacks;
-        this.datasetDescriptor = datasetDescriptor;
         setOutputMarkupId(true);
-        addComponents();
-        createDatasetPopupPanel();
-    }
 
-    private void addComponents() {
-        add(new Label("description", datasetDescriptor.getDescription()));
-        add(new Label("rowCount", datasetDescriptor.getRowCount()));
+        createPopupPanel();
+
+        add(new Label("description", data.getDatasetDescriptor().getDescription()));
+        add(new Label("rowCount", data.getDatasetDescriptor().getRowCount()));
 
         openPopupLink = new AjaxLink("openPopup") {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                popupContainerProvider.setPopupContentForPage(getPage(), datasetPopupPanel);
+                popupContainerProvider.setPopupContentForPage(getPage(), popupPanel);
                 popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
                 String js = "$('#:link')" +
                         ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.datasetPopup.popup'), on : 'click'})" +
                         ".popup('toggle').popup('destroy')";
-                js = js.replace(":link", openPopupLink.getMarkupId()).replace(":content", datasetPopupPanel.getMarkupId());
+                js = js.replace(":link", openPopupLink.getMarkupId()).replace(":content", popupPanel.getMarkupId());
+                System.out.println(js);
                 ajaxRequestTarget.appendJavaScript(js);
             }
         };
@@ -56,20 +53,23 @@ public class DatasetPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                datasetsSession.deleteDataset(datasetDescriptor);
                 popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
-                callbacks.onDelete();
+                callbacks.onDatasetCanvasItemDelete();
             }
         });
     }
 
-    private void createDatasetPopupPanel() {
-        datasetPopupPanel = new DatasetPopupPanel("content", datasetDescriptor);
+    private void createPopupPanel() {
+        popupPanel = new DatasetPopupPanel("content", data.getDatasetDescriptor());
+    }
+
+    public DatasetCanvasItemData getData() {
+        return data;
     }
 
     public interface Callbacks extends Serializable {
 
-        void onDelete();
+        void onDatasetCanvasItemDelete();
 
     }
 }

@@ -1,11 +1,11 @@
-package portal.webapp;
+package portal.webapp.workflow;
 
 import java.io.Serializable;
 
 /**
  * @author simetrias
  */
-public class DatasetFilterData implements Serializable {
+public class SearchDatasetData implements Serializable {
 
     private String pattern;
 
