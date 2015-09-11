@@ -1,17 +1,18 @@
 <wicket:panel xmlns="http://www.w3.org/1999/html">
-    Table display!!<br/>
+    <div class="ui small header">Table display!!</div>
     <div>
-        <form wicket:id="form">
-            Source var name
-            <input type="text" name="sourceVarName" wicket:id="sourceVarName"/>
-            <input type="submit" wicket:id="show" value="Show"/>
+        <form wicket:id="form" class="ui form">
+            <div class="field">
+                <label>Source var name</label>
+                <input type="text" name="sourceVarName" wicket:id="sourceVarName"/>
+            </div>
+            <div><input type="submit" wicket:id="show" value="Show" class="ui button"/></div>
         </form>
     </div>
-    <div>
-        <table width="100%">
-            <tr wicket:id="item">
-                <td><label wicket:id="cells"/></td>
-            </tr>
-        </table>
-    </div>
+
+    <table width="100%" class="ui table">
+        <tr wicket:id="item">
+            <td><label wicket:id="cells"/></td>
+        </tr>
+    </table>
 </wicket:panel>

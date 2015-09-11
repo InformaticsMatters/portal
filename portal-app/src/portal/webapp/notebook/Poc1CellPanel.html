@@ -1,13 +1,20 @@
 <wicket:panel xmlns="http://www.w3.org/1999/html">
-    PoC var set cell
+    <div class="ui small header">PoC var set cell</div>
     <div>
-        <form wicket:id="form">
-            <input type="text" name="varName" wicket:id="varName"/>
-            <input type="text" name="varValue" wicket:id="varValue"/>
-            <input type="submit" wicket:id="run" value="Save" />
+        <form wicket:id="form" class="ui form">
+            <div class="fields">
+                <div class="field">
+                    <input type="text" name="varName" wicket:id="varName"/>
+                </div>
+                <div class="field">
+                    <input type="text" name="varValue" wicket:id="varValue"/>
+                </div>
+                <input type="submit" wicket:id="run" value="Save" class="ui button"/>
+            </div>
+
         </form>
     </div>
-    Outcome
+    <div class="ui small header">Outcome</div>
     <div>
          <label wicket:id="outcome"></label>
     </div>
