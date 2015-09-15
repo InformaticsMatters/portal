@@ -5,6 +5,7 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.cdi.ConversationPropagation;
 import org.apache.wicket.protocol.http.WebApplication;
+import portal.webapp.notebook.NotebookCanvasPage;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
@@ -30,6 +31,7 @@ public class PortalWebApplication extends WebApplication {
 
         mountPage("/login", LoginPage.class);
         mountPage("/forgotPassword", ForgotPasswordPage.class);
+        mountPage("/nbcanvas", NotebookCanvasPage.class);
 
         configureSecurity();
     }
