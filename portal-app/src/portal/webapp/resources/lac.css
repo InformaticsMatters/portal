@@ -266,7 +266,8 @@
 .servicesPanel,
 .plumbContainer,
 .jobsPanel,
-.visualizersPanel {
+.visualizersPanel,
+.cellsPanel {
     overflow-y: auto;
     height: 0px;
 }
@@ -348,6 +349,33 @@
   -o-transform: rotate(90deg) translateX(140px) translateY(-140px);
   transform: rotate(90deg) translateX(140px) translateY(-140px);
   width: 300px;
+  height: 20px;
+  margin: 0;
+  padding: 0!important;
+  position: absolute;
+  right: 0;
+}
+
+.nb-vertical-left-menu {
+  text-align:center;
+  -moz-transform: rotate(-90deg) translateX(-40px) translateY(-40px);
+  -webkit-transform: rotate(-90deg) translateX(-40px) translateY(-40px);
+  -o-transform: rotate(-90deg) translateX(-40px) translateY(-40px);
+  transform: rotate(-90deg) translateX(-40px) translateY(-40px);
+  width: 100px;
+  height: 20px;
+  margin: 0;
+  padding: 0!important;
+  position: absolute;
+}
+
+.nb-vertical-right-menu {
+  text-align:center;
+  -moz-transform: rotate(90deg) translateX(40px) translateY(-40px);
+  -webkit-transform: rotate(90deg) translateX(40px) translateY(-40px);
+  -o-transform: rotate(90deg) translateX(40px) translateY(-40px);
+  transform: rotate(90deg) translateX(40px) translateY(-40px);
+  width: 100px;
   height: 20px;
   margin: 0;
   padding: 0!important;

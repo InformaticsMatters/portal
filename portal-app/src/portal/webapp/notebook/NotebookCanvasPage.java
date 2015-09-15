@@ -51,7 +51,7 @@ public class NotebookCanvasPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/dom.jsPlumb-1.7.5.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/Canvas.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/lac.js")));
-        response.render(OnDomReadyHeaderItem.forScript("init(); workflowDragAndDrop(); datasetsDragAndDrop();"));
+        response.render(OnDomReadyHeaderItem.forScript("init(); notebookDragAndDrop();"));
     }
 
     private void addPanels() {
@@ -81,7 +81,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void refreshPanelsVisibility(AjaxRequestTarget target) {
-        target.appendJavaScript("applyWorkflowPageLayout('" + cellsVisibility + "', '" + canvasVisibility + "')");
+        target.appendJavaScript("applyNotebookCanvasPageLayout('" + cellsVisibility + "', '" + canvasVisibility + "')");
     }
 
     private void addActions() {
