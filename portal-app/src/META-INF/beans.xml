@@ -1,8 +1,6 @@
 <beans>
     <alternatives>
-        <class>portal.chemcentral.ChemcentralIDEAConfig</class>
     </alternatives>
     <interceptors>
-        <class>portal.chemcentral.ChemcentralTransactionalInterceptor</class>
     </interceptors>
 </beans>
