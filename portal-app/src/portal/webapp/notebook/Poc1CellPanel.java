@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Poc1CellPanel extends CellPanel<Poc1CellDescriptor> {
 
     @Inject
-    private NotebookService notebookService;
+    private NotebooksSession notebooksSession;
     private Form<Poc1Model> form;
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
@@ -82,7 +82,7 @@ public class Poc1CellPanel extends CellPanel<Poc1CellDescriptor> {
         variable.setVariableType(VariableType.STRING);
         variable.setValue(form.getModelObject().getVarValue());
         getNotebookDescriptor().getVariableMap().put(variable.getName(), variable);
-        notebookService.saveNotebookDescriptor(getNotebookDescriptor());
+        notebooksSession.saveNotebookDescriptor(getNotebookDescriptor());
         ajaxRequestTarget.add(outcomeLabel);
     }
 

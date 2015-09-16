@@ -6,7 +6,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 
@@ -19,7 +18,7 @@ import java.util.Collection;
 public class CodeCellPanel extends CellPanel<CodeCellDescriptor> {
 
     @Inject
-    private NotebookService notebookService;
+    private NotebooksSession notebooksSession;
     private Form<CodeModel> form;
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
@@ -104,7 +103,7 @@ public class CodeCellPanel extends CellPanel<CodeCellDescriptor> {
         } catch (ScriptException se) {
             getCellDescriptor().setErrorMessage(se.getMessage());
         }
-        notebookService.saveNotebookDescriptor(getNotebookDescriptor());
+        notebooksSession.saveNotebookDescriptor(getNotebookDescriptor());
         ajaxRequestTarget.add(outcomeLabel);
     }
 

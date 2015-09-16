@@ -2,7 +2,6 @@ package portal.webapp.notebook;
 
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -23,7 +22,7 @@ public class TableDisplayCellPanel extends CellPanel<TableDisplayCellDescriptor>
 
     private Form<TableDisplayModel> form;
     @Inject
-    private NotebookService notebookService;
+    private NotebooksSession notebooksSession;
 
     public TableDisplayCellPanel(String id, NotebookDescriptor notebookDescriptor, TableDisplayCellDescriptor cellDescriptor) {
         super(id, notebookDescriptor, cellDescriptor);
@@ -52,7 +51,7 @@ public class TableDisplayCellPanel extends CellPanel<TableDisplayCellDescriptor>
 
     private void processShow(AjaxRequestTarget ajaxRequestTarget) {
         getCellDescriptor().setSourceVarName(form.getModelObject().getSourceVarName());
-        notebookService.saveNotebookDescriptor(getNotebookDescriptor());
+        notebooksSession.saveNotebookDescriptor(getNotebookDescriptor());
         ajaxRequestTarget.add(TableDisplayCellPanel.this);
     }
 

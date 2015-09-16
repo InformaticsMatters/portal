@@ -1,11 +1,14 @@
 package portal.webapp.notebook;
 
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 
-@ApplicationScoped
-public class NotebookService {
+@SessionScoped
+public class NotebooksSession implements Serializable {
+
     private static final NotebookDescriptor POC_DESCRIPTOR = createPocDescriptor();
 
     private static NotebookDescriptor createPocDescriptor() {
@@ -54,4 +57,7 @@ public class NotebookService {
         }
     }
 
+    public List<CellDescriptor> listCellDescriptor() {
+        return Arrays.asList(new CodeCellDescriptor(), new NotebookDebugCellDescriptor(), new Poc1CellDescriptor(), new TableDisplayCellDescriptor());
+    }
 }

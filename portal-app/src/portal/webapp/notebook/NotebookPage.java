@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 public class NotebookPage extends WebPage {
     @Inject
-    private NotebookService notebookService;
+    private NotebooksSession notebooksSession;
 
     public NotebookPage() {
         addPanels();
@@ -42,7 +42,7 @@ public class NotebookPage extends WebPage {
 
 
     private void addPoc() {
-        NotebookDescriptor notebookDescriptor = notebookService.retrievePocNotebookDescriptor();
+        NotebookDescriptor notebookDescriptor = notebooksSession.retrievePocNotebookDescriptor();
         NotebookPanel notebookPanel = new NotebookPanel("notebook", notebookDescriptor);
         notebookPanel.setOutputMarkupId(true);
         add(notebookPanel);
