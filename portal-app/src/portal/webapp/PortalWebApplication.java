@@ -26,13 +26,8 @@ public class PortalWebApplication extends WebApplication {
         super.init();
         BeanManager beanManager = CDI.current().getBeanManager();
         new CdiConfiguration(beanManager).setPropagation(ConversationPropagation.NONE).configure(this);
-
         getSharedResources().add("structureImageResource", new DynamicStructureImageResource());
-
-        mountPage("/login", LoginPage.class);
-        mountPage("/forgotPassword", ForgotPasswordPage.class);
         mountPage("/nbcanvas", NotebookCanvasPage.class);
-
         configureSecurity();
     }
 
