@@ -33,7 +33,9 @@ public class NotebookCellsPanel extends Panel {
 
             @Override
             protected void populateItem(ListItem<CellDescriptor> listItem) {
-                // add cell attributes
+                CellDescriptor cellDescriptor = listItem.getModelObject();
+                listItem.add(new NotebookCellPanel("cellItem", cellDescriptor));
+                listItem.setOutputMarkupId(true);
             }
         };
         cellsContainer.add(cellRepeater);

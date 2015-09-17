@@ -1,6 +1,9 @@
 package portal.webapp.notebook;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+
+import javax.inject.Inject;
 
 /**
  * @author simetrias
@@ -8,8 +11,18 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 public class NotebookCellPanel extends Panel {
 
-    public NotebookCellPanel(String id) {
-        super(id);
+    private final CellDescriptor cellDescriptor;
 
+    @Inject
+    private NotebooksSession notebooksSession;
+
+    public NotebookCellPanel(String id, CellDescriptor cellDescriptor) {
+        super(id);
+        this.cellDescriptor = cellDescriptor;
+        addComponents();
+    }
+
+    private void addComponents() {
+        add(new Label("description", cellDescriptor.getCellClass()));
     }
 }
