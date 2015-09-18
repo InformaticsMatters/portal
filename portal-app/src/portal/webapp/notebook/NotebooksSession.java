@@ -28,10 +28,12 @@ public class NotebooksSession implements Serializable {
         } else {
             NotebookDescriptor notebookDescriptor = new NotebookDescriptor();
             notebookDescriptor.setName("PoC");
-            notebookDescriptor.getCellDescriptorList().add(new Poc1CellDescriptor());
-            notebookDescriptor.getCellDescriptorList().add(new CodeCellDescriptor());
-            notebookDescriptor.getCellDescriptorList().add(new TableDisplayCellDescriptor());
-            notebookDescriptor.getCellDescriptorList().add(new NotebookDebugCellDescriptor());
+            CellDescriptor cellDescriptor = new CodeCellDescriptor();
+            cellDescriptor.setName("CODE 1");
+            notebookDescriptor.getCellDescriptorList().add(cellDescriptor);
+            cellDescriptor = new NotebookDebugCellDescriptor();
+            cellDescriptor.setName("DEBUG 1");
+            notebookDescriptor.getCellDescriptorList().add(cellDescriptor);
             return notebookDescriptor;
         }
     }
@@ -58,6 +60,13 @@ public class NotebooksSession implements Serializable {
     }
 
     public List<CellDescriptor> listCellDescriptor() {
-        return Arrays.asList(new CodeCellDescriptor(), new NotebookDebugCellDescriptor(), new Poc1CellDescriptor(), new TableDisplayCellDescriptor());
+        return Arrays.asList(new CodeCellDescriptor(), new NotebookDebugCellDescriptor());
     }
+
+    // palette items
+    public List<CellTemplate> listCellTemplate() {
+        return Arrays.asList(new CodeCellTemplate(), new NotebookDebugCellTemplate());
+    }
+
+
 }

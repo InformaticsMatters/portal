@@ -23,6 +23,6 @@ public class NotebookCellPanel extends Panel {
     }
 
     private void addComponents() {
-        add(new Label("description", cellDescriptor.getCellClass()));
+        add(new Label("description", cellDescriptor.getName()));
     }
 }

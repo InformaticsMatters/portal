@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 public class Variable implements Serializable {
     private String name;
-    private VariableType variableType;
     private Object value;
 
     public String getName() {
@@ -13,14 +12,6 @@ public class Variable implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public VariableType getVariableType() {
-        return variableType;
-    }
-
-    public void setVariableType(VariableType variableType) {
-        this.variableType = variableType;
     }
 
     public Object getValue() {
