@@ -1,6 +1,6 @@
 package portal.webapp.notebook;
 
-public class NotebookDebugCellTemplate implements CellTemplate<NotebookDebugCellDescriptor> {
+public class NotebookDebugCellTemplate implements CellTemplate {
 
     @Override
     public CellType getCellType() {
