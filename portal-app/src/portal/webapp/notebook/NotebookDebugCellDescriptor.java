@@ -1,9 +1,24 @@
 package portal.webapp.notebook;
 
 
-public class NotebookDebugCellDescriptor implements CellDescriptor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class NotebookDebugCellDescriptor extends AbstractCellDescriptor {
+
+
     @Override
-    public Class getCellClass() {
-        return NotebookDebugCellPanel.class;
+    public CellType getCellType() {
+        return CellType.DEBUG;
+    }
+
+    @Override
+    public List<String> getInputVariableNameList() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<String> getOutputVariableNameList() {
+        return new ArrayList<>();
     }
 }
