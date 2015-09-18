@@ -6,7 +6,6 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -27,10 +26,10 @@ public class NotebookCanvasPage extends WebPage {
 
     boolean cellsVisibility = true;
     boolean canvasVisibility = true;
-    private WebMarkupContainer notebookCanvas;
     private AjaxLink cellsToggle;
     private AjaxLink canvasToggle;
     private NotebookCellsPanel notebookCellsPanel;
+    private NotebookCanvasPanel notebookCanvasPanel;
 
     @Inject
     private NotifierProvider notifierProvider;
@@ -39,7 +38,6 @@ public class NotebookCanvasPage extends WebPage {
         notifierProvider.createNotifier(this, "notifier");
         addPanels();
         addActions();
-        addCanvas();
     }
 
     @Override
@@ -61,23 +59,10 @@ public class NotebookCanvasPage extends WebPage {
         notebookCellsPanel = new NotebookCellsPanel("cells");
         add(notebookCellsPanel);
         notebookCellsPanel.setOutputMarkupPlaceholderTag(true);
-    }
 
-    private void addCanvas() {
-        notebookCanvas = new WebMarkupContainer("notebookCanvas");
-        notebookCanvas.setOutputMarkupId(true);
-        notebookCanvas.setOutputMarkupPlaceholderTag(true);
-        add(notebookCanvas);
-
-       /* canvasItemRepeater = new ListView<AbstractCanvasItemData>(CANVASITEM_WICKETID, canvasItemDataList) {
-
-            @Override
-            protected void populateItem(ListItem<AbstractCanvasItemData> components) {
-                // we manage items manually when dropping or removing them from the Canvas
-            }
-        };
-        canvasItemRepeater.setOutputMarkupId(true);
-        plumbContainer.add(canvasItemRepeater); */
+        notebookCanvasPanel = new NotebookCanvasPanel("notebookCanvas");
+        add(notebookCanvasPanel);
+        notebookCanvasPanel.setOutputMarkupPlaceholderTag(true);
     }
 
     private void refreshPanelsVisibility(AjaxRequestTarget target) {

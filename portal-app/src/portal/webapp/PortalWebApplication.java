@@ -6,6 +6,7 @@ import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.cdi.ConversationPropagation;
 import org.apache.wicket.protocol.http.WebApplication;
 import portal.webapp.notebook.NotebookCanvasPage;
+import portal.webapp.notebook.TestCanvasCellPage;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
@@ -28,6 +29,7 @@ public class PortalWebApplication extends WebApplication {
         new CdiConfiguration(beanManager).setPropagation(ConversationPropagation.NONE).configure(this);
         getSharedResources().add("structureImageResource", new DynamicStructureImageResource());
         mountPage("/nbcanvas", NotebookCanvasPage.class);
+        mountPage("/test", TestCanvasCellPage.class);
         configureSecurity();
     }
 
