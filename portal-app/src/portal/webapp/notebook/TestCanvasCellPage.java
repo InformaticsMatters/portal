@@ -21,7 +21,7 @@ public class TestCanvasCellPage extends WebPage {
 
     private WebMarkupContainer plumbContainer;
 
-    private AjaxLink fileUploadButton;
+    private AjaxLink fileButton;
 
     private FileUploadCanvasItemPanel fileUploadCanvasItemPanel;
     private GroovyScriptCanvasItemPanel groovyScriptCanvasItemPanel;
@@ -29,7 +29,7 @@ public class TestCanvasCellPage extends WebPage {
 
     public TestCanvasCellPage() {
         addCanvas();
-        addLinks();
+        addButtons();
     }
 
     @Override
@@ -66,8 +66,9 @@ public class TestCanvasCellPage extends WebPage {
         tableViewCanvasItemPanel.setVisible(false);
     }
 
-    private void addLinks() {
-        fileUploadButton = new AjaxLink("fileUploadButton") {
+    private void addButtons() {
+        fileButton = new AjaxLink("fileButton") {
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 fileUploadCanvasItemPanel.setVisible(true);
@@ -77,7 +78,6 @@ public class TestCanvasCellPage extends WebPage {
                 target.appendJavaScript("addTargetEndpoint('" + fileUploadCanvasItemPanel.getMarkupId() + "')");
             }
         };
-        add(fileUploadButton);
-
+        add(fileButton);
     }
 }
