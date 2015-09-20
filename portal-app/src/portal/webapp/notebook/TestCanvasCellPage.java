@@ -15,7 +15,7 @@ import portal.webapp.PortalHomePage;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
 /**
- * Created by mariapaz on 9/18/15.
+ * @author simetrias
  */
 public class TestCanvasCellPage extends WebPage {
 
@@ -73,7 +73,7 @@ public class TestCanvasCellPage extends WebPage {
             public void onClick(AjaxRequestTarget target) {
                 fileUploadCanvasItemPanel.setVisible(true);
                 target.add(fileUploadCanvasItemPanel);
-                target.appendJavaScript("makeCanvasItemsDraggable('" + fileUploadCanvasItemPanel.getMarkupId() + "')");
+                target.appendJavaScript("makeCanvasItemsDraggable('#" + fileUploadCanvasItemPanel.getMarkupId() + "')");
                 target.appendJavaScript("addSourceEndpoint('" + fileUploadCanvasItemPanel.getMarkupId() + "')");
                 target.appendJavaScript("addTargetEndpoint('" + fileUploadCanvasItemPanel.getMarkupId() + "')");
             }
