@@ -31,11 +31,11 @@ public class NotebookPanel extends Panel {
         add(listView);
     }
 
-    private <T extends Cell> CellPanel<T> createCellPanel(String id, T cellDescriptor) {
+    private <T extends Cell> CellPanel<T> createCellPanel(String id, T cell) {
         try {
             try {
-                Class cellClass = resolveCellClass(cellDescriptor);
-                return (CellPanel<T>) cellClass.getConstructor(String.class, Notebook.class, cellDescriptor.getClass()).newInstance(id, notebook, cellDescriptor);
+                Class cellClass = resolveCellClass(cell);
+                return (CellPanel<T>) cellClass.getConstructor(String.class, Notebook.class, cell.getClass()).newInstance(id, notebook, cell);
             } catch (InvocationTargetException ite) {
                 throw ite.getCause();
             }
@@ -44,11 +44,13 @@ public class NotebookPanel extends Panel {
         }
     }
 
-    private <T extends Cell> Class<? extends CellPanel> resolveCellClass(T cellDescriptor) {
-        if (CellType.CODE.equals(cellDescriptor.getCellType())) {
+    private <T extends Cell> Class<? extends CellPanel> resolveCellClass(T cell) {
+        if (CellType.CODE.equals(cell.getCellType())) {
             return CodeCellPanel.class;
-        } else if (CellType.DEBUG.equals(cellDescriptor.getCellType())) {
+        } else if (CellType.NOTEBOOK_DEBUG.equals(cell.getCellType())) {
             return NotebookDebugCellPanel.class;
+        } else if (CellType.QND_PRODUCER.equals(cell.getCellType())) {
+            return QndProducerCellPanel.class;
         } else {
             return null;
         }
@@ -68,7 +70,7 @@ public class NotebookPanel extends Panel {
     }
 
     private Class<? extends Cell> resolveDescriptorClass(CellType cellType) {
-        if (CellType.DEBUG.equals(cellType)) {
+        if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
             return NotebookDebugCell.class;
         } else if (CellType.CODE.equals(cellType)) {
             return CodeCell.class;

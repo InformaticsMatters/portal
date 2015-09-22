@@ -1,4 +1,4 @@
 package portal.webapp.notebook;
 
 
-public enum CellType {CODE, DEBUG}
+public enum CellType {CODE, NOTEBOOK_DEBUG, QND_PRODUCER}

@@ -4,7 +4,7 @@ public class NotebookDebugCellTemplate implements CellTemplate {
 
     @Override
     public CellType getCellType() {
-        return CellType.DEBUG;
+        return CellType.NOTEBOOK_DEBUG;
     }
 
     @Override

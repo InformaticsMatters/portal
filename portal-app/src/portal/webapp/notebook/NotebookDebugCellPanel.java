@@ -29,7 +29,7 @@ public class NotebookDebugCellPanel extends CellPanel<NotebookDebugCell> {
         IModel<? extends List<Variable>> listModel = new IModel<List<Variable>>() {
             @Override
             public List<Variable> getObject() {
-                return new ArrayList<Variable>(getNotebook().getVariableMap().values());
+                return new ArrayList<Variable>(getNotebook().getVariableList());
             }
 
             @Override
@@ -46,7 +46,7 @@ public class NotebookDebugCellPanel extends CellPanel<NotebookDebugCell> {
             @Override
             protected void populateItem(ListItem<Variable> listItem) {
                 Variable variable = listItem.getModelObject();
-                Label varNameLabel = new Label("varName", variable.getName());
+                Label varNameLabel = new Label("varName", variable.getProducer().getName() + "." + variable.getName());
                 listItem.add(varNameLabel);
                 Label varValueLabel = new Label("varValue", variable.getValue() == null ? "null" : variable.getValue().toString());
                 listItem.add(varValueLabel);

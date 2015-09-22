@@ -7,8 +7,8 @@ public class CodeCell extends AbstractCell {
     private String code;
     private String errorMessage;
     private Object outcome;
-    private final List<String> inputVariableNameList = new ArrayList<String>();
-    private final List<String> outputVariableNameList = new ArrayList<String>();
+    private final List<Variable> inputVariableList = new ArrayList<>();
+    private final List<String> outputVariableNameList = new ArrayList<>();
 
     public String getCode() {
         return code;
@@ -40,8 +40,8 @@ public class CodeCell extends AbstractCell {
     }
 
     @Override
-    public List<String> getInputVariableNameList() {
-        return inputVariableNameList;
+    public List<Variable> getInputVariableList() {
+        return inputVariableList;
     }
 
     @Override

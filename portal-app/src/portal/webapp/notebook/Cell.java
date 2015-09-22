@@ -12,7 +12,7 @@ public interface Cell extends Serializable {
     void setX(int x);
     int getY();
     void setY(int y);
-    List<String> getInputVariableNameList();
+    List<Variable> getInputVariableList();
     List<String> getOutputVariableNameList();
 
 

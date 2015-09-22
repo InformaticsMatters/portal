@@ -23,8 +23,8 @@ public class CodeCellPanel extends CellPanel<CodeCell> {
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
 
-    public CodeCellPanel(String id, Notebook notebook, CodeCell cellDescriptor) {
-        super(id, notebook, cellDescriptor);
+    public CodeCellPanel(String id, Notebook notebook, CodeCell cell) {
+        super(id, notebook, cell);
         setOutputMarkupId(true);
         addForm();
         addOutcome();
@@ -34,10 +34,10 @@ public class CodeCellPanel extends CellPanel<CodeCell> {
         outcomeModel = new IModel<String>() {
             @Override
             public String getObject() {
-                if (getCellDescriptor().getErrorMessage() != null) {
-                    return getCellDescriptor().getErrorMessage();
+                if (getCell().getErrorMessage() != null) {
+                    return getCell().getErrorMessage();
                 } else {
-                    return getCellDescriptor().getOutcome() == null ? "[nothing]" : getCellDescriptor().getOutcome().toString();
+                    return getCell().getOutcome() == null ? "[nothing]" : getCell().getOutcome().toString();
                 }
             }
 
@@ -61,7 +61,7 @@ public class CodeCellPanel extends CellPanel<CodeCell> {
     private void addForm() {
         form = new Form<CodeModel>("form");
         CodeModel modelObject = new CodeModel();
-        modelObject.setCode(getCellDescriptor().getCode());
+        modelObject.setCode(getCell().getCode());
         TextArea<String> codeArea = new TextArea<String>("code");
         AjaxSubmitLink runLink = new AjaxSubmitLink("run") {
 
@@ -77,33 +77,34 @@ public class CodeCellPanel extends CellPanel<CodeCell> {
     }
 
     private void processRun(AjaxRequestTarget ajaxRequestTarget) {
-        getCellDescriptor().setCode(form.getModelObject().getCode());
+        getCell().setCode(form.getModelObject().getCode());
         ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("JavaScript");
+        ScriptEngine engine = manager.getEngineByName("Groovy");
         Bindings bindings = engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
-        for (Variable variable : getNotebook().getVariableMap().values()) {
+        /**/
+        getCell().getInputVariableList().clear();
+        getCell().getInputVariableList().addAll(getNotebook().getVariableList());
+        /**/
+        for (Variable variable : getCell().getInputVariableList()) {
             if (variable.getValue() != null) {
-                bindings.put(variable.getName(), variable.getValue());
+                bindings.put(variable.getProducer().getName() + "_" + variable.getName(), variable.getValue());
             }
         }
         try {
-            Object result = scriptToVm(engine.eval(getCellDescriptor().getCode()));
-            getCellDescriptor().setOutcome(result);
-            getCellDescriptor().setErrorMessage(null);
-            for (String key : bindings.keySet()) {
-                Variable variable = getNotebook().getVariableMap().get(key);
-                if (variable == null) {
-                    variable = new Variable();
-                    variable.setName(key);
-                    getNotebook().getVariableMap().put(key, variable);
+            Object result = scriptToVm(engine.eval(getCell().getCode()));
+            getCell().setOutcome(result);
+            getCell().setErrorMessage(null);
+            for (String key : getCell().getOutputVariableNameList()) {
+                Object value = bindings.get(key);
+                Variable variable = getNotebook().findVariable(getCell(), key);
+                if (variable != null) {
+                    variable.setValue(value);
                 }
-
-                variable.setValue(scriptToVm(bindings.get(key)));
             }
         } catch (ScriptException se) {
-            getCellDescriptor().setErrorMessage(se.getMessage());
+            getCell().setErrorMessage(se.getMessage());
         }
-        notebooksSession.saveNotebookDescriptor(getNotebook());
+        notebooksSession.saveNotebook(getNotebook());
         ajaxRequestTarget.add(outcomeLabel);
     }
 

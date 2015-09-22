@@ -28,12 +28,14 @@ public class NotebooksSession implements Serializable {
         } else {
             Notebook notebook = new Notebook();
             notebook.setName("PoC");
-            Cell cell = new CodeCell();
+            Cell cell = new QndProducerCell();
+            notebook.registerCell(cell);
+            cell = new CodeCell();
             cell.setName("CODE 1");
-            notebook.getCellList().add(cell);
+            notebook.registerCell(cell);
             cell = new NotebookDebugCell();
-            cell.setName("DEBUG 1");
-            notebook.getCellList().add(cell);
+            cell.setName("NOTEBOOK_DEBUG 1");
+            notebook.registerCell(cell);
             return notebook;
         }
     }
@@ -43,7 +45,7 @@ public class NotebooksSession implements Serializable {
         return POC_DESCRIPTOR;
     }
 
-    public void saveNotebookDescriptor(Notebook notebook) {
+    public void saveNotebook(Notebook notebook) {
         try {
             OutputStream outputStream = new FileOutputStream(notebook.getName() + ".dat");
             try {
