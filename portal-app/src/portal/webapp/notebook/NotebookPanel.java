@@ -9,33 +9,33 @@ import java.util.List;
 
 public class NotebookPanel extends Panel {
 
-    private final NotebookDescriptor notebookDescriptor;
+    private final Notebook notebook;
 
-    public NotebookPanel(String id, NotebookDescriptor notebookDescriptor) {
+    public NotebookPanel(String id, Notebook notebook) {
         super(id);
-        this.notebookDescriptor = notebookDescriptor;
+        this.notebook = notebook;
         setOutputMarkupId(true);
         addCells();
     }
 
     private void addCells() {
-        List<CellDescriptor> list = notebookDescriptor.getCellDescriptorList();
-        ListView<CellDescriptor> listView = new ListView<CellDescriptor>("item", list) {
+        List<Cell> list = notebook.getCellList();
+        ListView<Cell> listView = new ListView<Cell>("item", list) {
             @Override
-            protected void populateItem(ListItem<CellDescriptor> listItem) {
-                CellDescriptor descriptor = listItem.getModelObject();
-                CellPanel<CellDescriptor> panel = createCellPanel("cell", descriptor);
+            protected void populateItem(ListItem<Cell> listItem) {
+                Cell descriptor = listItem.getModelObject();
+                CellPanel<Cell> panel = createCellPanel("cell", descriptor);
                 listItem.add(panel);
             }
         };
         add(listView);
     }
 
-    private <T extends CellDescriptor> CellPanel<T> createCellPanel(String id, T cellDescriptor) {
+    private <T extends Cell> CellPanel<T> createCellPanel(String id, T cellDescriptor) {
         try {
             try {
                 Class cellClass = resolveCellClass(cellDescriptor);
-                return (CellPanel<T>) cellClass.getConstructor(String.class, NotebookDescriptor.class, cellDescriptor.getClass()).newInstance(id, notebookDescriptor, cellDescriptor);
+                return (CellPanel<T>) cellClass.getConstructor(String.class, Notebook.class, cellDescriptor.getClass()).newInstance(id, notebook, cellDescriptor);
             } catch (InvocationTargetException ite) {
                 throw ite.getCause();
             }
@@ -44,7 +44,7 @@ public class NotebookPanel extends Panel {
         }
     }
 
-    private <T extends CellDescriptor> Class<? extends CellPanel> resolveCellClass(T cellDescriptor) {
+    private <T extends Cell> Class<? extends CellPanel> resolveCellClass(T cellDescriptor) {
         if (CellType.CODE.equals(cellDescriptor.getCellType())) {
             return CodeCellPanel.class;
         } else if (CellType.DEBUG.equals(cellDescriptor.getCellType())) {
@@ -55,23 +55,23 @@ public class NotebookPanel extends Panel {
     }
 
     public void addNewCell(CellType cellType, int x, int y) {
-        Class<?extends CellDescriptor> descriptorClass = resolveDescriptorClass(cellType);
+        Class<?extends Cell> descriptorClass = resolveDescriptorClass(cellType);
         try {
-            CellDescriptor descriptor = descriptorClass.newInstance();
+            Cell descriptor = descriptorClass.newInstance();
             descriptor.setX(x);
             descriptor.setY(y);
-            notebookDescriptor.getCellDescriptorList().add(descriptor);
+            notebook.getCellList().add(descriptor);
             //refresh list!!!!!!!!!!!
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Class<? extends CellDescriptor> resolveDescriptorClass(CellType cellType) {
+    private Class<? extends Cell> resolveDescriptorClass(CellType cellType) {
         if (CellType.DEBUG.equals(cellType)) {
-            return NotebookDebugCellDescriptor.class;
+            return NotebookDebugCell.class;
         } else if (CellType.CODE.equals(cellType)) {
-            return CodeCellDescriptor.class;
+            return CodeCell.class;
         } else {
             return null;
         }

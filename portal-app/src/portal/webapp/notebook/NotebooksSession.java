@@ -9,16 +9,16 @@ import java.util.List;
 @SessionScoped
 public class NotebooksSession implements Serializable {
 
-    private static final NotebookDescriptor POC_DESCRIPTOR = createPocDescriptor();
+    private static final Notebook POC_DESCRIPTOR = createPocDescriptor();
 
-    private static NotebookDescriptor createPocDescriptor() {
+    private static Notebook createPocDescriptor() {
         File file = new File("PoC.dat");
         if (file.exists()) {
             try {
                 FileInputStream inputStream = new FileInputStream(file);
                 try {
                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-                    return (NotebookDescriptor) objectInputStream.readObject();
+                    return (Notebook) objectInputStream.readObject();
                 } finally {
                     inputStream.close();
                 }
@@ -26,29 +26,29 @@ public class NotebooksSession implements Serializable {
                 throw new RuntimeException(e);
             }
         } else {
-            NotebookDescriptor notebookDescriptor = new NotebookDescriptor();
-            notebookDescriptor.setName("PoC");
-            CellDescriptor cellDescriptor = new CodeCellDescriptor();
-            cellDescriptor.setName("CODE 1");
-            notebookDescriptor.getCellDescriptorList().add(cellDescriptor);
-            cellDescriptor = new NotebookDebugCellDescriptor();
-            cellDescriptor.setName("DEBUG 1");
-            notebookDescriptor.getCellDescriptorList().add(cellDescriptor);
-            return notebookDescriptor;
+            Notebook notebook = new Notebook();
+            notebook.setName("PoC");
+            Cell cell = new CodeCell();
+            cell.setName("CODE 1");
+            notebook.getCellList().add(cell);
+            cell = new NotebookDebugCell();
+            cell.setName("DEBUG 1");
+            notebook.getCellList().add(cell);
+            return notebook;
         }
     }
 
 
-    public NotebookDescriptor retrievePocNotebookDescriptor() {
+    public Notebook retrievePocNotebookDescriptor() {
         return POC_DESCRIPTOR;
     }
 
-    public void saveNotebookDescriptor(NotebookDescriptor notebookDescriptor) {
+    public void saveNotebookDescriptor(Notebook notebook) {
         try {
-            OutputStream outputStream = new FileOutputStream(notebookDescriptor.getName() + ".dat");
+            OutputStream outputStream = new FileOutputStream(notebook.getName() + ".dat");
             try {
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                objectOutputStream.writeObject(notebookDescriptor);
+                objectOutputStream.writeObject(notebook);
                 objectOutputStream.flush();
                 outputStream.flush();
             } finally {
@@ -59,8 +59,8 @@ public class NotebooksSession implements Serializable {
         }
     }
 
-    public List<CellDescriptor> listCellDescriptor() {
-        return Arrays.asList(new CodeCellDescriptor(), new NotebookDebugCellDescriptor());
+    public List<Cell> listCellDescriptor() {
+        return Arrays.asList(new CodeCell(), new NotebookDebugCell());
     }
 
     // palette items

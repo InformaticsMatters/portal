@@ -3,7 +3,7 @@ package portal.webapp.notebook;
 import java.io.Serializable;
 import java.util.List;
 
-public interface CellDescriptor extends Serializable {
+public interface Cell extends Serializable {
 
     CellType getCellType();
     void setName(String name);

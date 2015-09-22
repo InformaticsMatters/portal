@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CodeCellPanel extends CellPanel<CodeCellDescriptor> {
+public class CodeCellPanel extends CellPanel<CodeCell> {
 
     @Inject
     private NotebooksSession notebooksSession;
@@ -23,8 +23,8 @@ public class CodeCellPanel extends CellPanel<CodeCellDescriptor> {
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
 
-    public CodeCellPanel(String id, NotebookDescriptor notebookDescriptor, CodeCellDescriptor cellDescriptor) {
-        super(id, notebookDescriptor, cellDescriptor);
+    public CodeCellPanel(String id, Notebook notebook, CodeCell cellDescriptor) {
+        super(id, notebook, cellDescriptor);
         setOutputMarkupId(true);
         addForm();
         addOutcome();
@@ -81,7 +81,7 @@ public class CodeCellPanel extends CellPanel<CodeCellDescriptor> {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("JavaScript");
         Bindings bindings = engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
-        for (Variable variable : getNotebookDescriptor().getVariableMap().values()) {
+        for (Variable variable : getNotebook().getVariableMap().values()) {
             if (variable.getValue() != null) {
                 bindings.put(variable.getName(), variable.getValue());
             }
@@ -91,11 +91,11 @@ public class CodeCellPanel extends CellPanel<CodeCellDescriptor> {
             getCellDescriptor().setOutcome(result);
             getCellDescriptor().setErrorMessage(null);
             for (String key : bindings.keySet()) {
-                Variable variable = getNotebookDescriptor().getVariableMap().get(key);
+                Variable variable = getNotebook().getVariableMap().get(key);
                 if (variable == null) {
                     variable = new Variable();
                     variable.setName(key);
-                    getNotebookDescriptor().getVariableMap().put(key, variable);
+                    getNotebook().getVariableMap().put(key, variable);
                 }
 
                 variable.setValue(scriptToVm(bindings.get(key)));
@@ -103,7 +103,7 @@ public class CodeCellPanel extends CellPanel<CodeCellDescriptor> {
         } catch (ScriptException se) {
             getCellDescriptor().setErrorMessage(se.getMessage());
         }
-        notebooksSession.saveNotebookDescriptor(getNotebookDescriptor());
+        notebooksSession.saveNotebookDescriptor(getNotebook());
         ajaxRequestTarget.add(outcomeLabel);
     }
 

@@ -14,7 +14,7 @@ import java.util.List;
 public class NotebookCellsPanel extends Panel {
 
     private WebMarkupContainer cellsContainer;
-    private ListView<CellDescriptor> cellRepeater;
+    private ListView<Cell> cellRepeater;
 
     @Inject
     private NotebooksSession notebooksSession;
@@ -28,13 +28,13 @@ public class NotebookCellsPanel extends Panel {
         cellsContainer = new WebMarkupContainer("cellsContainer");
         cellsContainer.setOutputMarkupId(true);
 
-        List<CellDescriptor> cells = notebooksSession.listCellDescriptor();
-        cellRepeater = new ListView<CellDescriptor>("cell", cells) {
+        List<Cell> cells = notebooksSession.listCellDescriptor();
+        cellRepeater = new ListView<Cell>("cell", cells) {
 
             @Override
-            protected void populateItem(ListItem<CellDescriptor> listItem) {
-                CellDescriptor cellDescriptor = listItem.getModelObject();
-                listItem.add(new NotebookCellPanel("cellItem", cellDescriptor));
+            protected void populateItem(ListItem<Cell> listItem) {
+                Cell cell = listItem.getModelObject();
+                listItem.add(new NotebookCellPanel("cellItem", cell));
                 listItem.setOutputMarkupId(true);
             }
         };

@@ -6,9 +6,9 @@ package portal.webapp.notebook;
 
 public class FileUploadCanvasItemData extends NotebookCanvasItemData {
 
-    private CellDescriptor cellDescriptor;
+    private Cell cell;
 
-    public CellDescriptor getCellDescriptor() {
-        return cellDescriptor;
+    public Cell getCell() {
+        return cell;
     }
 }

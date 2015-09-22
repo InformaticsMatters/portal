@@ -7,14 +7,13 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotebookDebugCellPanel extends CellPanel<NotebookDebugCellDescriptor> {
+public class NotebookDebugCellPanel extends CellPanel<NotebookDebugCell> {
 
-    public NotebookDebugCellPanel(String id, NotebookDescriptor notebookDescriptor, NotebookDebugCellDescriptor cellDescriptor) {
-        super(id, notebookDescriptor, cellDescriptor);
+    public NotebookDebugCellPanel(String id, Notebook notebook, NotebookDebugCell cellDescriptor) {
+        super(id, notebook, cellDescriptor);
         setOutputMarkupId(true);
         addOutcome();
     }
@@ -30,7 +29,7 @@ public class NotebookDebugCellPanel extends CellPanel<NotebookDebugCellDescripto
         IModel<? extends List<Variable>> listModel = new IModel<List<Variable>>() {
             @Override
             public List<Variable> getObject() {
-                return new ArrayList<Variable>(getNotebookDescriptor().getVariableMap().values());
+                return new ArrayList<Variable>(getNotebook().getVariableMap().values());
             }
 
             @Override

@@ -11,18 +11,18 @@ import javax.inject.Inject;
 
 public class NotebookCellPanel extends Panel {
 
-    private final CellDescriptor cellDescriptor;
+    private final Cell cell;
 
     @Inject
     private NotebooksSession notebooksSession;
 
-    public NotebookCellPanel(String id, CellDescriptor cellDescriptor) {
+    public NotebookCellPanel(String id, Cell cell) {
         super(id);
-        this.cellDescriptor = cellDescriptor;
+        this.cell = cell;
         addComponents();
     }
 
     private void addComponents() {
-        add(new Label("description", cellDescriptor.getName()));
+        add(new Label("description", cell.getName()));
     }
 }

@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NotebookDescriptor implements Serializable {
+public class Notebook implements Serializable {
     private String name;
     private final Map<String, Variable> variableMap = new HashMap<String, Variable>();
-    private final List<CellDescriptor> cellDescriptorList = new ArrayList<CellDescriptor>();
+    private final List<Cell> cellList = new ArrayList<Cell>();
 
 
     public String getName() {
@@ -24,7 +24,7 @@ public class NotebookDescriptor implements Serializable {
         return variableMap;
     }
 
-    public List<CellDescriptor> getCellDescriptorList() {
-        return cellDescriptorList;
+    public List<Cell> getCellList() {
+        return cellList;
     }
 }

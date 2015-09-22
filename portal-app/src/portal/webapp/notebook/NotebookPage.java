@@ -42,8 +42,8 @@ public class NotebookPage extends WebPage {
 
 
     private void addPoc() {
-        NotebookDescriptor notebookDescriptor = notebooksSession.retrievePocNotebookDescriptor();
-        NotebookPanel notebookPanel = new NotebookPanel("notebook", notebookDescriptor);
+        Notebook notebook = notebooksSession.retrievePocNotebookDescriptor();
+        NotebookPanel notebookPanel = new NotebookPanel("notebook", notebook);
         notebookPanel.setOutputMarkupId(true);
         add(notebookPanel);
     }

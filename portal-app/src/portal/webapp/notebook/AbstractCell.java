@@ -1,6 +1,6 @@
 package portal.webapp.notebook;
 
-public abstract class AbstractCellDescriptor implements CellDescriptor {
+public abstract class AbstractCell implements Cell {
     private String name;
     private int x;
     private int y;

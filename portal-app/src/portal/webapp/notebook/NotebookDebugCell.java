@@ -4,7 +4,7 @@ package portal.webapp.notebook;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotebookDebugCellDescriptor extends AbstractCellDescriptor {
+public class NotebookDebugCell extends AbstractCell {
 
 
     @Override
