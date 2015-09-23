@@ -81,8 +81,34 @@ public class Notebook implements Serializable {
         return null;
     }
 
-    public void registerVariables(List<Variable> variableList) {
-        this.variableList.addAll(variableList);
+    public Map<String, Variable> registerVariablesForProducer(Cell cell) {
+        Map<String, Variable> map = new HashMap<>();
+        for (Variable variable : variableList) {
+            if (variable.getProducer().equals(cell)) {
+                map.put(variable.getName(), variable);
+            }
+        }
+        for (String name : cell.getOutputVariableNameList()) {
+            Variable variable = map.get(name);
+            if (variable == null) {
+                variable = new Variable();
+                variable.setProducer(cell);
+                variable.setName(name);
+                variableList.add(variable);
+            }
+            map.put(name, variable);
+        }
+        return map;
+    }
+
+    public Map<String, Variable> findVariablesForProducer(Cell cell) {
+        Map<String, Variable> map = new HashMap<>();
+        for (Variable variable : variableList) {
+            if (variable.getProducer().equals(cell)) {
+                map.put(variable.getName(), variable);
+            }
+        }
+        return map;
     }
 
     public void unregisterVariablesForProducer(Cell cell) {

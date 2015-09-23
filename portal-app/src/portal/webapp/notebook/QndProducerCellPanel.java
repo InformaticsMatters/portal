@@ -5,8 +5,8 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class QndProducerCellPanel extends CellPanel<QndProducerCell> {
     @Inject
@@ -18,16 +18,13 @@ public class QndProducerCellPanel extends CellPanel<QndProducerCell> {
         add(new AjaxLink("register") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getNotebook().unregisterVariablesForProducer(getCell());
-                List<Variable> list = new ArrayList<Variable>();
-                for (String name : getCell().getOutputVariableNameList()) {
-                    Variable variable = new Variable();
-                    variable.setProducer(getCell());
-                    variable.setName(name);
-                    variable.setValue("Value of " + name);
-                    list.add(variable);
+                Map<String, Variable> map = getNotebook().findVariablesForProducer(getCell());
+                if (map.isEmpty()) {
+                    map = getNotebook().registerVariablesForProducer(getCell());
+                    for (Variable variable : map.values()) {
+                        variable.setValue("Value for " + variable.getName());
+                    }
                 }
-                getNotebook().registerVariables(list);
                 notebooksSession.saveNotebook(notebook);
             }
         });

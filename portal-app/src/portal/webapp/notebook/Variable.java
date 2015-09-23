@@ -9,6 +9,7 @@ public class Variable implements Serializable {
     private final List<Cell> consumerList = new ArrayList<>();
     private String name;
     private Object value;
+    private transient List<VariableChangeListener> changeListenerList;
 
     public String getName() {
         return name;
@@ -26,6 +27,7 @@ public class Variable implements Serializable {
         if ((value == null && this.value != null) || !value.equals(this.value)) {
             Object oldValue = this.value;
             this.value = value;
+            notifyValueChanged(oldValue);
         }
     }
 
@@ -46,6 +48,21 @@ public class Variable implements Serializable {
     private void unregisterConsumer(Cell cell) {
         synchronized (consumerList) {
             consumerList.add(cell);
+        }
+    }
+
+    public synchronized void registerChangeListener(VariableChangeListener changeListener) {
+        if (changeListenerList == null) {
+            changeListenerList = new ArrayList<>();
+        }
+        changeListenerList.add(changeListener);
+    }
+
+    private synchronized void notifyValueChanged(Object oldValue) {
+        if (changeListenerList != null) {
+            for (VariableChangeListener listener : changeListenerList) {
+                listener.onValueChanged(this, oldValue);
+            }
         }
     }
 

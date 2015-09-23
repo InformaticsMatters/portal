@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.script.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class CodeCellPanel extends CellPanel<CodeCell> {
@@ -28,6 +29,15 @@ public class CodeCellPanel extends CellPanel<CodeCell> {
         setOutputMarkupId(true);
         addForm();
         addOutcome();
+        registerOutputVariables();
+    }
+
+    private void registerOutputVariables() {
+        if (getCell().getOutputVariableNameList().isEmpty()) {
+            getCell().getOutputVariableNameList().add("codeVar1");
+            getNotebook().registerVariablesForProducer(getCell());
+        }
+
     }
 
     private void addOutcome() {
