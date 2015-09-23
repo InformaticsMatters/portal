@@ -56,6 +56,7 @@ public class Notebook implements Serializable {
     }
 
     public void unregisterCell(Cell cell) {
+        unregisterVariablesForProducer(cell);
         synchronized (cellList) {
             cellList.remove(cell);
         }

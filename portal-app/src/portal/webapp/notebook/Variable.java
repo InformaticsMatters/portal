@@ -23,7 +23,10 @@ public class Variable implements Serializable {
     }
 
     public void setValue(Object value) {
-        this.value = value;
+        if ((value == null && this.value != null) || !value.equals(this.value)) {
+            Object oldValue = this.value;
+            this.value = value;
+        }
     }
 
     public Cell getProducer() {

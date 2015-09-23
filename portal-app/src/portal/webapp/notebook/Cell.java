@@ -15,5 +15,4 @@ public interface Cell extends Serializable {
     List<Variable> getInputVariableList();
     List<String> getOutputVariableNameList();
 
-
 }
