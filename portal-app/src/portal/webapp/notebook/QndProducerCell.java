@@ -1,10 +1,15 @@
 package portal.webapp.notebook;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class QndProducerCell extends AbstractCell {
+    private final List<String> outputVariableNameList = new ArrayList<>();
+
+
     @Override
     public CellType getCellType() {
         return CellType.QND_PRODUCER;
@@ -12,11 +17,12 @@ public class QndProducerCell extends AbstractCell {
 
     @Override
     public List<Variable> getInputVariableList() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<String> getOutputVariableNameList() {
-        return Arrays.asList("var1", "var2", "var3");
+         return outputVariableNameList;
+
     }
 }

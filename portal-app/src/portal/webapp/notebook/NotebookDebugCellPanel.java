@@ -1,6 +1,5 @@
 package portal.webapp.notebook;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -26,6 +25,10 @@ public class NotebookDebugCellPanel extends CellPanel<NotebookDebugCell> {
         AjaxLink refreshLink = new AjaxLink("refresh") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                for (Variable variable : getNotebook().getVariableList()) {
+                    variable.removeChangeListener(variableChangeListener);
+                    variable.addChangeListener(variableChangeListener);
+                }
                 ajaxRequestTarget.add(NotebookDebugCellPanel.this);
             }
         };
@@ -47,9 +50,6 @@ public class NotebookDebugCellPanel extends CellPanel<NotebookDebugCell> {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
             }
         };
-        for (Variable variable : getNotebook().getVariableList()) {
-            variable.registerChangeListener(variableChangeListener);
-        }
     }
 
     private void addList() {

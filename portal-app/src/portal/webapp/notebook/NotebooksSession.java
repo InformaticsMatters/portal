@@ -29,13 +29,13 @@ public class NotebooksSession implements Serializable {
             Notebook notebook = new Notebook();
             notebook.setName("PoC");
             Cell cell = new QndProducerCell();
-            notebook.registerCell(cell);
+            notebook.addCell(cell);
             cell = new CodeCell();
             cell.setName("CODE 1");
-            notebook.registerCell(cell);
+            notebook.addCell(cell);
             cell = new NotebookDebugCell();
             cell.setName("NOTEBOOK_DEBUG 1");
-            notebook.registerCell(cell);
+            notebook.addCell(cell);
             return notebook;
         }
     }

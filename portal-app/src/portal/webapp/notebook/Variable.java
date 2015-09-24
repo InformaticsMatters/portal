@@ -24,7 +24,7 @@ public class Variable implements Serializable {
     }
 
     public void setValue(Object value) {
-        if ((value == null && this.value != null) || !value.equals(this.value)) {
+        if ((value != null && !value.equals(this.value)) || (this.value != null && !this.value.equals(value))) {
             Object oldValue = this.value;
             this.value = value;
             notifyValueChanged(oldValue);
@@ -51,11 +51,17 @@ public class Variable implements Serializable {
         }
     }
 
-    public synchronized void registerChangeListener(VariableChangeListener changeListener) {
+    public synchronized void addChangeListener(VariableChangeListener changeListener) {
         if (changeListenerList == null) {
             changeListenerList = new ArrayList<>();
         }
         changeListenerList.add(changeListener);
+    }
+
+    public synchronized  void removeChangeListener(VariableChangeListener changeListener) {
+        if (changeListenerList != null) {
+            changeListenerList.remove(changeListener);
+        }
     }
 
     private synchronized void notifyValueChanged(Object oldValue) {
@@ -66,4 +72,11 @@ public class Variable implements Serializable {
         }
     }
 
+    public void notifyRemoved() {
+        if (changeListenerList != null) {
+            for (VariableChangeListener listener : changeListenerList) {
+                listener.onVariableRemoved(this);
+            }
+        }
+    }
 }

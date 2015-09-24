@@ -1,8 +1,11 @@
 package portal.webapp.notebook;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -10,17 +13,49 @@ import java.util.List;
 public class NotebookPanel extends Panel {
 
     private final Notebook notebook;
+    private NotebookChangeListener notebookChnageListener;
 
     public NotebookPanel(String id, Notebook notebook) {
         super(id);
         this.notebook = notebook;
         setOutputMarkupId(true);
         addCells();
+        addListeners();
+    }
+
+    private void addListeners() {
+        notebookChnageListener = new NotebookChangeListener() {
+            @Override
+            public void onCellRemoved(Cell cell) {
+                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookPanel.this);
+            }
+
+            @Override
+            public void onCellAdded(Cell cell) {
+                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookPanel.this);
+            }
+        };
+        notebook.addNotebookChangeListener(notebookChnageListener);
     }
 
     private void addCells() {
-        List<Cell> list = notebook.getCellList();
-        ListView<Cell> listView = new ListView<Cell>("item", list) {
+        IModel<List<Cell>> listModel = new IModel<List<Cell>>() {
+            @Override
+            public void detach() {
+
+            }
+
+            @Override
+            public List<Cell> getObject() {
+                return notebook.getCellList();
+            }
+
+            @Override
+            public void setObject(List<Cell> cells) {
+
+            }
+        };
+        ListView<Cell> listView = new ListView<Cell>("item", listModel) {
             @Override
             protected void populateItem(ListItem<Cell> listItem) {
                 Cell descriptor = listItem.getModelObject();

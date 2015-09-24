@@ -5,7 +5,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Map;
 
 public class QndProducerCellPanel extends CellPanel<QndProducerCell> {
@@ -18,6 +17,9 @@ public class QndProducerCellPanel extends CellPanel<QndProducerCell> {
         add(new AjaxLink("register") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                getCell().getOutputVariableNameList().add("var1");
+                getCell().getOutputVariableNameList().add("var2");
+                getCell().getOutputVariableNameList().add("var3");
                 Map<String, Variable> map = getNotebook().findVariablesForProducer(getCell());
                 if (map.isEmpty()) {
                     map = getNotebook().registerVariablesForProducer(getCell());
@@ -25,6 +27,25 @@ public class QndProducerCellPanel extends CellPanel<QndProducerCell> {
                         variable.setValue("Value for " + variable.getName());
                     }
                 }
+                notebooksSession.saveNotebook(notebook);
+            }
+        });
+        add(new AjaxLink("change") {
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                getCell().getOutputVariableNameList().remove(2);
+                getCell().getOutputVariableNameList().add("var4");
+                Map<String, Variable> map = getNotebook().registerVariablesForProducer(getCell());
+                for (Variable variable : map.values()) {
+                    variable.setValue("Value for " + variable.getName());
+                }
+                notebooksSession.saveNotebook(notebook);
+            }
+        });
+        add(new AjaxLink("remove") {
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                getNotebook().removeCell(getCell());
                 notebooksSession.saveNotebook(notebook);
             }
         });

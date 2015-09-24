@@ -7,6 +7,7 @@ public class Notebook implements Serializable {
     private String name;
     private final List<Cell> cellList = new ArrayList<Cell>();
     private final List<Variable> variableList = new ArrayList<>();
+    private transient List<NotebookChangeListener> changeListenerList;
 
     public String getName() {
         return name;
@@ -16,7 +17,7 @@ public class Notebook implements Serializable {
         this.name = name;
     }
 
-    public void registerCell(Cell cell) {
+    public void addCell(Cell cell) {
         synchronized (cellList) {
             String name = cell.getName();
             if (name == null) {
@@ -26,6 +27,15 @@ public class Notebook implements Serializable {
                 checkCellName(cell);
             }
             cellList.add(cell);
+        }
+        notifyCellAdded(cell);
+    }
+
+    private void notifyCellAdded(Cell cell) {
+        if (changeListenerList != null) {
+            for (NotebookChangeListener listener : changeListenerList) {
+                listener.onCellAdded(cell);
+            }
         }
     }
 
@@ -55,10 +65,27 @@ public class Notebook implements Serializable {
         return newName;
     }
 
-    public void unregisterCell(Cell cell) {
-        unregisterVariablesForProducer(cell);
+    public void removeCell(Cell cell) {
+        synchronized (variableList) {
+            Variable[] snapshot = variableList.toArray(new Variable[0]);
+            for (Variable variable : snapshot) {
+                if (variable.getProducer() == cell) {
+                    variableList.remove(variable);
+                    variable.notifyRemoved();
+                }
+            }
+        }
         synchronized (cellList) {
             cellList.remove(cell);
+            notifyCellRemoved(cell);
+        }
+    }
+
+    private void notifyCellRemoved(Cell cell) {
+        if (changeListenerList != null) {
+            for (NotebookChangeListener listener : changeListenerList) {
+                listener.onCellRemoved(cell);
+            }
         }
     }
 
@@ -82,23 +109,33 @@ public class Notebook implements Serializable {
     }
 
     public Map<String, Variable> registerVariablesForProducer(Cell cell) {
-        Map<String, Variable> map = new HashMap<>();
-        for (Variable variable : variableList) {
-            if (variable.getProducer().equals(cell)) {
-                map.put(variable.getName(), variable);
+        synchronized (variableList) {
+            Map<String, Variable> oldMap = new HashMap<>();
+            for (Variable variable : variableList) {
+                if (variable.getProducer().equals(cell)) {
+                    oldMap.put(variable.getName(), variable);
+                }
             }
-        }
-        for (String name : cell.getOutputVariableNameList()) {
-            Variable variable = map.get(name);
-            if (variable == null) {
-                variable = new Variable();
-                variable.setProducer(cell);
-                variable.setName(name);
-                variableList.add(variable);
+            Map<String, Variable> newMap = new HashMap<>();
+            for (String name : cell.getOutputVariableNameList()) {
+                Variable variable = oldMap.get(name);
+                if (variable == null) {
+                    variable = new Variable();
+                    variable.setProducer(cell);
+                    variable.setName(name);
+                    variableList.add(variable);
+                } else {
+                    oldMap.remove(name);
+                }
+                newMap.put(name, variable);
             }
-            map.put(name, variable);
+            for (Variable variable : oldMap.values()) {
+                variableList.remove(variable);
+                variable.notifyRemoved();
+            }
+            return newMap;
         }
-        return map;
+
     }
 
     public Map<String, Variable> findVariablesForProducer(Cell cell) {
@@ -111,14 +148,16 @@ public class Notebook implements Serializable {
         return map;
     }
 
-    public void unregisterVariablesForProducer(Cell cell) {
-        synchronized (variableList) {
-            Variable[] variables = variableList.toArray(new Variable[0]);
-            for (Variable variable : variables) {
-                if (variable.getProducer() == cell) {
-                    variableList.remove(variable);
-                }
-            }
+    public synchronized void addNotebookChangeListener(NotebookChangeListener notebookChangeListener) {
+        if (changeListenerList == null) {
+            changeListenerList = new ArrayList<>();
+        }
+        changeListenerList.add(notebookChangeListener);
+    }
+
+    public void removeNotebookChangeListener(NotebookChangeListener notebookChangeListener) {
+        if (changeListenerList != null) {
+            changeListenerList.remove(notebookChangeListener);
         }
     }
 
