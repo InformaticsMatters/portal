@@ -8,7 +8,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
-import portal.webapp.notebook.NotebookPage;
+import portal.webapp.notebook.QndNotebookPage;
 import portal.webapp.workflow.WorkflowPage;
 
 import javax.inject.Inject;
@@ -41,7 +41,7 @@ public class MenuPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setResponsePage(NotebookPage.class);
+                setResponsePage(QndNotebookPage.class);
                 add(attributeAppender);
             }
         };

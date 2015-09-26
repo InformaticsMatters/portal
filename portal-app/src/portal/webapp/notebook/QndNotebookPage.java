@@ -18,11 +18,11 @@ import javax.inject.Inject;
  * @author simetrias
  */
 
-public class NotebookPage extends WebPage {
+public class QndNotebookPage extends WebPage {
     @Inject
     private NotebooksSession notebooksSession;
 
-    public NotebookPage() {
+    public QndNotebookPage() {
         addPanels();
     }
 
@@ -43,9 +43,9 @@ public class NotebookPage extends WebPage {
 
     private void addPoc() {
         Notebook notebook = notebooksSession.retrievePocNotebookDescriptor();
-        NotebookPanel notebookPanel = new NotebookPanel("notebook", notebook);
-        notebookPanel.setOutputMarkupId(true);
-        add(notebookPanel);
+        QndNotebookPanel qndNotebookPanel = new QndNotebookPanel("notebook", notebook);
+        qndNotebookPanel.setOutputMarkupId(true);
+        add(qndNotebookPanel);
     }
 
 

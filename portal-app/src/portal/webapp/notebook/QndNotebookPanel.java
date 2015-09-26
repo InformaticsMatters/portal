@@ -10,12 +10,12 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-public class NotebookPanel extends Panel {
+public class QndNotebookPanel extends Panel {
 
     private final Notebook notebook;
     private NotebookChangeListener notebookChnageListener;
 
-    public NotebookPanel(String id, Notebook notebook) {
+    public QndNotebookPanel(String id, Notebook notebook) {
         super(id);
         this.notebook = notebook;
         setOutputMarkupId(true);
@@ -27,12 +27,12 @@ public class NotebookPanel extends Panel {
         notebookChnageListener = new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookPanel.this);
+                RequestCycle.get().find(AjaxRequestTarget.class).add(QndNotebookPanel.this);
             }
 
             @Override
             public void onCellAdded(Cell cell) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookPanel.this);
+                RequestCycle.get().find(AjaxRequestTarget.class).add(QndNotebookPanel.this);
             }
         };
         notebook.addNotebookChangeListener(notebookChnageListener);
@@ -59,18 +59,18 @@ public class NotebookPanel extends Panel {
             @Override
             protected void populateItem(ListItem<Cell> listItem) {
                 Cell descriptor = listItem.getModelObject();
-                CellPanel<Cell> panel = createCellPanel("cell", descriptor);
+                CanvasItemPanel<Cell> panel = createCellPanel("cell", descriptor);
                 listItem.add(panel);
             }
         };
         add(listView);
     }
 
-    private <T extends Cell> CellPanel<T> createCellPanel(String id, T cell) {
+    private <T extends Cell> CanvasItemPanel<T> createCellPanel(String id, T cell) {
         try {
             try {
                 Class cellClass = resolveCellClass(cell);
-                return (CellPanel<T>) cellClass.getConstructor(String.class, Notebook.class, cell.getClass()).newInstance(id, notebook, cell);
+                return (CanvasItemPanel<T>) cellClass.getConstructor(String.class, Notebook.class, cell.getClass()).newInstance(id, notebook, cell);
             } catch (InvocationTargetException ite) {
                 throw ite.getCause();
             }
@@ -79,13 +79,13 @@ public class NotebookPanel extends Panel {
         }
     }
 
-    private <T extends Cell> Class<? extends CellPanel> resolveCellClass(T cell) {
+    private <T extends Cell> Class<? extends CanvasItemPanel> resolveCellClass(T cell) {
         if (CellType.CODE.equals(cell.getCellType())) {
-            return CodeCellPanel.class;
+            return CodeCanvasItemPanel.class;
         } else if (CellType.NOTEBOOK_DEBUG.equals(cell.getCellType())) {
-            return NotebookDebugCellPanel.class;
-        } else if (CellType.QND_PRODUCER.equals(cell.getCellType())) {
-            return QndProducerCellPanel.class;
+            return NotebookDebugCanvasItemPanel.class;
+        } else if (CellType.FILE_UPLOAD.equals(cell.getCellType())) {
+            return FileUploadCanvasItemPanel.class;
         } else {
             return null;
         }

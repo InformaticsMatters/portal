@@ -1,5 +1,33 @@
 <wicket:panel>
+    <div >
 
-    <div>File upload item</div>
+        <div class="header">
+            Upload File
+        </div>
 
+        <form wicket:id="form" class="ui form">
+            <div class="content">
+                <div class="field">
+                    <label>File name</label>
+                    <input wicket:id="fileName" type="text">
+                </div>
+                <div class="field">
+                    <div class="left-floated">
+                        <div class="left-floated">
+                            <input wicket:id="fileInput" type="file"/>
+                        </div>
+                        <div class="left-floated">
+                            <span id="appender" style="display: none;"><img wicket:id="appender"/></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <div wicket:id="submit" style="width: 78px;" class="ui small submit approve button">
+                    Ok
+                </div>
+            </div>
+        </form>
+
+    </div>
 </wicket:panel>

@@ -24,7 +24,6 @@ public class TestCanvasCellPage extends WebPage {
     private AjaxLink fileButton;
 
     private FileUploadCanvasItemPanel fileUploadCanvasItemPanel;
-    private GroovyScriptCanvasItemPanel groovyScriptCanvasItemPanel;
     private TableViewCanvasItemPanel tableViewCanvasItemPanel;
 
     public TestCanvasCellPage() {
@@ -49,16 +48,6 @@ public class TestCanvasCellPage extends WebPage {
         plumbContainer.setOutputMarkupId(true);
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
-
-        fileUploadCanvasItemPanel = new FileUploadCanvasItemPanel("fileUploadItem");
-        plumbContainer.add(fileUploadCanvasItemPanel);
-        fileUploadCanvasItemPanel.setOutputMarkupPlaceholderTag(true);
-        fileUploadCanvasItemPanel.setVisible(false);
-
-        groovyScriptCanvasItemPanel = new GroovyScriptCanvasItemPanel("groovyScriptItem");
-        plumbContainer.add(groovyScriptCanvasItemPanel);
-        groovyScriptCanvasItemPanel.setOutputMarkupPlaceholderTag(true);
-        groovyScriptCanvasItemPanel.setVisible(false);
 
         tableViewCanvasItemPanel = new TableViewCanvasItemPanel("tableViewItem");
         plumbContainer.add(tableViewCanvasItemPanel);

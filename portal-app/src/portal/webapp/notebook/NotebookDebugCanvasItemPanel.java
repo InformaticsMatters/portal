@@ -12,14 +12,14 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotebookDebugCellPanel extends CellPanel<NotebookDebugCell> {
+public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugCell> {
 
     private VariableChangeListener variableChangeListener;
     private ListView<Variable> listView;
     private IModel<List<Variable>> listModel;
     private WebMarkupContainer listContainer;
 
-    public NotebookDebugCellPanel(String id, Notebook notebook, NotebookDebugCell cellDescriptor) {
+    public NotebookDebugCanvasItemPanel(String id, Notebook notebook, NotebookDebugCell cellDescriptor) {
         super(id, notebook, cellDescriptor);
         setOutputMarkupId(true);
         AjaxLink refreshLink = new AjaxLink("refresh") {
@@ -29,7 +29,7 @@ public class NotebookDebugCellPanel extends CellPanel<NotebookDebugCell> {
                     variable.removeChangeListener(variableChangeListener);
                     variable.addChangeListener(variableChangeListener);
                 }
-                ajaxRequestTarget.add(NotebookDebugCellPanel.this);
+                ajaxRequestTarget.add(NotebookDebugCanvasItemPanel.this);
             }
         };
         add(refreshLink);

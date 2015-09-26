@@ -13,10 +13,9 @@ import javax.inject.Inject;
 import javax.script.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
-public class CodeCellPanel extends CellPanel<CodeCell> {
+public class CodeCanvasItemPanel extends CanvasItemPanel<CodeCell> {
 
     @Inject
     private NotebooksSession notebooksSession;
@@ -24,7 +23,7 @@ public class CodeCellPanel extends CellPanel<CodeCell> {
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
 
-    public CodeCellPanel(String id, Notebook notebook, CodeCell cell) {
+    public CodeCanvasItemPanel(String id, Notebook notebook, CodeCell cell) {
         super(id, notebook, cell);
         setOutputMarkupId(true);
         addForm();

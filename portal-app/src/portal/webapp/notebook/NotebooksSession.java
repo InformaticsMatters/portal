@@ -28,7 +28,8 @@ public class NotebooksSession implements Serializable {
         } else {
             Notebook notebook = new Notebook();
             notebook.setName("PoC");
-            Cell cell = new QndProducerCell();
+            Cell cell = new FileUploadCell();
+            cell.setName("File upload 1");
             notebook.addCell(cell);
             cell = new CodeCell();
             cell.setName("CODE 1");
@@ -68,4 +69,26 @@ public class NotebooksSession implements Serializable {
     public List<CellDescriptor> listCellDescriptor() {
         return Arrays.asList(new CodeCellDescriptor(), new NotebookDebugCellDescriptor());
     }
+
+
+    public void uploadFile(String clientFileName, InputStream inputStream) {
+        try {
+            OutputStream outputStream = new FileOutputStream("files/" + clientFileName);
+            try {
+                byte[] buffer = new byte[4096];
+                int r = inputStream.read(buffer, 0, buffer.length);
+                while (r > -1) {
+                    outputStream.write(buffer, 0, r);
+                    r = inputStream.read(buffer);
+                }
+              outputStream.flush();
+            } finally {
+                outputStream.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
