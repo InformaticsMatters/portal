@@ -1,6 +1,6 @@
 package portal.webapp.notebook;
 
-public interface CellTemplate {
+public interface CellDescriptor {
 
     CellType getCellType();
     String getIcon();

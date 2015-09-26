@@ -61,14 +61,11 @@ public class NotebooksSession implements Serializable {
         }
     }
 
-    public List<Cell> listCellDescriptor() {
+    public List<Cell> listCell() {
         return Arrays.asList(new CodeCell(), new NotebookDebugCell());
     }
 
-    // palette items
-    public List<CellTemplate> listCellTemplate() {
-        return Arrays.asList(new CodeCellTemplate(), new NotebookDebugCellTemplate());
+    public List<CellDescriptor> listCellDescriptor() {
+        return Arrays.asList(new CodeCellDescriptor(), new NotebookDebugCellDescriptor());
     }
-
-
 }

@@ -8,21 +8,20 @@ import javax.inject.Inject;
 /**
  * @author simetrias
  */
-
 public class NotebookCellPanel extends Panel {
 
-    private final Cell cell;
+    private final CellDescriptor cellDescriptor;
 
     @Inject
     private NotebooksSession notebooksSession;
 
-    public NotebookCellPanel(String id, Cell cell) {
+    public NotebookCellPanel(String id, CellDescriptor cellDescriptor) {
         super(id);
-        this.cell = cell;
+        this.cellDescriptor = cellDescriptor;
         addComponents();
     }
 
     private void addComponents() {
-        add(new Label("description", cell.getName()));
+        add(new Label("description", cellDescriptor.getDescription()));
     }
 }
