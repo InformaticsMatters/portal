@@ -1,6 +1,8 @@
 package portal.webapp.notebook;
 
-public interface CellDescriptor {
+import java.io.Serializable;
+
+public interface CellDescriptor extends Serializable {
 
     CellType getCellType();
     String getIcon();

@@ -24,8 +24,11 @@ import javax.inject.Inject;
 
 public class NotebookCanvasPage extends WebPage {
 
-    boolean cellsVisibility = true;
-    boolean canvasVisibility = true;
+    public static final String DROP_DATA_TYPE = "dropDataType";
+    public static final String DROP_DATA_ID = "dropDataId";
+
+    boolean cellsVisible = true;
+    boolean canvasVisible = true;
     private AjaxLink cellsToggle;
     private AjaxLink canvasToggle;
     private NotebookCellsPanel notebookCellsPanel;
@@ -66,7 +69,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void refreshPanelsVisibility(AjaxRequestTarget target) {
-        target.appendJavaScript("applyNotebookCanvasPageLayout('" + cellsVisibility + "', '" + canvasVisibility + "')");
+        target.appendJavaScript("applyNotebookCanvasPageLayout('" + cellsVisible + "', '" + canvasVisible + "')");
     }
 
     private void addActions() {
@@ -74,7 +77,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                cellsVisibility = !cellsVisibility;
+                cellsVisible = !cellsVisible;
                 target.appendJavaScript("makeVerticalItemActive('" + cellsToggle.getMarkupId() + "')");
                 refreshPanelsVisibility(target);
             }
@@ -85,7 +88,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                canvasVisibility = !canvasVisibility;
+                canvasVisible = !canvasVisible;
                 target.appendJavaScript("makeVerticalItemActive('" + canvasToggle.getMarkupId() + "')");
                 refreshPanelsVisibility(target);
             }
