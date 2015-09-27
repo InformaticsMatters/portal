@@ -346,80 +346,6 @@ if(visualizersVisible) {
                 }
 }
 
-function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility) {
-
-var cellsVisible = (cellsVisibility === 'true');
-var canvasVisible = (canvasVisibility === 'true');
-
-if(cellsVisible) {
-      $('.notebookCellsPanel').show();
-  } else if (!cellsVisible) {
-          $('.notebookCellsPanel').hide();
-      }
-if(canvasVisible) {
-      $('.plumbContainer').show();
-  } else if (!canvasVisible) {
-          $('.plumbContainer').hide();
-      }
-
-if(!cellsVisible && !canvasVisible) {
-      $('.left-column').attr('style','display: flex!important;');
-      $('.right-column').attr('style','display:flex!important;');
-  } else if (cellsVisible && canvasVisible) {
-          $('.left-column').attr('style','display: flex!important;');
-          $('.right-column').attr('style','display: flex!important;');
-      } else if (cellsVisible && !canvasVisible) {
-              $('.left-column').attr('style','margin-right: 20px!important; border-right: 1px solid #ddd;');
-              $('.right-column').attr('style','display:none!important;');
-         } else if (!cellsVisible && canvasVisible) {
-                   $('.left-column').attr('style','display:none!important;');
-                   $('.right-column').attr('style','margin-left: 20px!important; border-left: 1px solid #ddd;');
-              }
-}
-
-
-function notebookDragAndDrop() {
-
-    var droptarget = document.getElementById("plumbContainer");
-     droptarget.addEventListener('dragenter', dragEnter, false);
-     droptarget.addEventListener('dragover', dragOver, false);
-     droptarget.addEventListener('dragleave', dragLeave, false);
-     droptarget.addEventListener('drop', drop, false);
-
-
-     function dragEnter(event) {
-     }
-
-     function dragOver(event) {
-         event.preventDefault();
-         return false;
-     }
-
-     function dragLeave(event) {
-     }
-
-     function drop(event) {
-         var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
-         var mouseOffsetX = event.dataTransfer.getData('mouseOffsetX');
-         var mouseOffsetY = event.dataTransfer.getData('mouseOffsetY');
-         var el = document.getElementById(draggableMarkupId);
-         var dropDataType = el.getAttribute("dropDataType");
-         var dropDataId = el.getAttribute("dropDataId");
-
-         var $el = $(el);
-         var width = $el.width();
-         var height = $el.height();
-
-         var left = event.layerX - mouseOffsetX;
-         var top = event.layerY - mouseOffsetY;
-         event.preventDefault();
-         onCanvasDrop(dropDataType, dropDataId, left, top, draggableMarkupId);
-         console.log(event);
-         return false;
-     }
-}
-
-
 if (window.FileReader) {
     var drop;
     addEventHandler(window, 'load', function () {
@@ -455,7 +381,6 @@ if (window.FileReader) {
 
     });
 }
-
 
 function addEventHandler(obj, evt, handler) {
     if (obj.addEventListener) {

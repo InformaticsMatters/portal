@@ -106,7 +106,7 @@ public class WorkflowPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(JQueryResourceReference.get()));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/lac.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/dom.jsPlumb-1.7.5.js")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/Canvas.js")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/workflow-canvas.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/lac.js")));
         response.render(OnDomReadyHeaderItem.forScript("init(); tabularMenu(); workflowDragAndDrop(); datasetsDragAndDrop(); servicesDragAndDrop(); onVisualizerDrop();"));
     }
