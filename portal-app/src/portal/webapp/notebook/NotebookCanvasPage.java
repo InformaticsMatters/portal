@@ -1,5 +1,6 @@
 package portal.webapp.notebook;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -9,7 +10,11 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
@@ -22,6 +27,8 @@ import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author simetrias
@@ -32,15 +39,24 @@ public class NotebookCanvasPage extends WebPage {
     public static final String DROP_DATA_ID = "dropDataId";
     public static final String POSITION_X = "positionX";
     public static final String POSITION_Y = "positionY";
+    public static final String CANVASITEM_WICKETID = "canvasItem";
     private static final Logger logger = LoggerFactory.getLogger(NotebookCanvasPage.class);
+
     boolean cellsVisible = true;
     boolean canvasVisible = true;
     private AjaxLink cellsToggle;
     private AjaxLink canvasToggle;
+
     private NotebookCellsPanel notebookCellsPanel;
-    private NotebookCanvasPanel notebookCanvasPanel;
+    private WebMarkupContainer plumbContainer;
+
+    private List<Cell> cellList;
+    private ListView<Cell> canvasItemRepeater;
+
     @Inject
     private NotifierProvider notifierProvider;
+    @Inject
+    private NotebooksSession notebooksSession;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -68,9 +84,21 @@ public class NotebookCanvasPage extends WebPage {
         add(notebookCellsPanel);
         notebookCellsPanel.setOutputMarkupPlaceholderTag(true);
 
-        notebookCanvasPanel = new NotebookCanvasPanel("notebookCanvas");
-        add(notebookCanvasPanel);
-        notebookCanvasPanel.setOutputMarkupPlaceholderTag(true);
+        plumbContainer = new WebMarkupContainer("plumbContainer");
+        plumbContainer.setOutputMarkupId(true);
+        plumbContainer.setOutputMarkupPlaceholderTag(true);
+        add(plumbContainer);
+
+        cellList = new ArrayList<>();
+        canvasItemRepeater = new ListView<Cell>(CANVASITEM_WICKETID, cellList) {
+
+            @Override
+            protected void populateItem(ListItem<Cell> components) {
+                // we manage items manually when dropping or removing them from the Canvas
+            }
+        };
+        canvasItemRepeater.setOutputMarkupId(true);
+        plumbContainer.add(canvasItemRepeater);
     }
 
     private void refreshPanelsVisibility(AjaxRequestTarget target) {
@@ -131,6 +159,34 @@ public class NotebookCanvasPage extends WebPage {
         String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y).toString();
 
         logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
-    }
 
+        Cell cell = null;
+        Panel canvasItemPanel = null;
+
+        if (CellType.NOTEBOOK_DEBUG.toString().equals(dropDataId)) {
+            cell = new NotebookDebugCell();
+            cell.setX(Integer.parseInt(x));
+            cell.setY(Integer.parseInt(y));
+            cellList.add(cell);
+            canvasItemPanel = new NotebookDebugCanvasItemPanel("item", notebooksSession.retrievePocNotebookDescriptor(), (NotebookDebugCell) cell);
+        } else if (CellType.FILE_UPLOAD.toString().equals(dropDataId)) {
+        } else if (CellType.CODE.toString().equals(dropDataId)) {
+        }
+
+        if (cell != null) {
+            ListItem listItem = new ListItem(dropDataType + dropDataId, cellList.size());
+            listItem.setOutputMarkupId(true);
+            listItem.add(new AttributeModifier("style", "top:" + cell.getX() + "px; left:" + cell.getY() + "px;"));
+            listItem.add(canvasItemPanel);
+            canvasItemRepeater.add(listItem);
+
+            // create the div within the DOM before we can ajax-update it
+            String markup = "<div class='canvas-item' id=':id'></div>".replaceAll(":id", listItem.getMarkupId());
+            String prepend = "$('#:container').append(\":markup\")".replaceAll(":container", plumbContainer.getMarkupId()).replaceAll(":markup", markup);
+            target.prependJavaScript(prepend);
+
+            // ajax-update the div
+            target.add(listItem);
+        }
+    }
 }

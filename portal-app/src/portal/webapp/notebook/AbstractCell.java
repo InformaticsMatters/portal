@@ -1,18 +1,19 @@
 package portal.webapp.notebook;
 
 public abstract class AbstractCell implements Cell {
+
     private String name;
     private int x;
     private int y;
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
