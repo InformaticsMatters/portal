@@ -162,18 +162,24 @@ public class NotebookCanvasPage extends WebPage {
 
         Cell cell = null;
         Panel canvasItemPanel = null;
+        Notebook notebook = notebooksSession.retrievePocNotebookDescriptor();
 
         if (CellType.NOTEBOOK_DEBUG.toString().equals(dropDataId)) {
             cell = new NotebookDebugCell();
-            cell.setX(Integer.parseInt(x));
-            cell.setY(Integer.parseInt(y));
-            cellList.add(cell);
-            canvasItemPanel = new NotebookDebugCanvasItemPanel("item", notebooksSession.retrievePocNotebookDescriptor(), (NotebookDebugCell) cell);
+            canvasItemPanel = new NotebookDebugCanvasItemPanel("item", notebook, (NotebookDebugCell) cell);
         } else if (CellType.FILE_UPLOAD.toString().equals(dropDataId)) {
+            cell = new FileUploadCell();
+            canvasItemPanel = new FileUploadCanvasItemPanel("item", notebook, (FileUploadCell) cell);
         } else if (CellType.CODE.toString().equals(dropDataId)) {
+            cell = new CodeCell();
+            canvasItemPanel = new CodeCanvasItemPanel("item", notebook, (CodeCell) cell);
         }
 
         if (cell != null) {
+            cell.setX(Integer.parseInt(x));
+            cell.setY(Integer.parseInt(y));
+            cellList.add(cell);
+
             ListItem listItem = new ListItem(dropDataType + dropDataId, cellList.size());
             listItem.setOutputMarkupId(true);
             listItem.add(new AttributeModifier("style", "top:" + cell.getX() + "px; left:" + cell.getY() + "px;"));
