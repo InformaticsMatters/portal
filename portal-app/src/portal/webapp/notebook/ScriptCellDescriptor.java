@@ -1,6 +1,6 @@
 package portal.webapp.notebook;
 
-public class CodeCellDescriptor implements CellDescriptor {
+public class ScriptCellDescriptor implements CellDescriptor {
 
     @Override
     public CellType getCellType() {

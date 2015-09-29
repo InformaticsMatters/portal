@@ -162,7 +162,7 @@ public class NotebookCanvasPage extends WebPage {
 
         Cell cell = null;
         Panel canvasItemPanel = null;
-        Notebook notebook = notebooksSession.retrievePocNotebookDescriptor();
+        Notebook notebook = notebooksSession.retrievePocNotebook();
 
         if (CellType.NOTEBOOK_DEBUG.toString().equals(dropDataId)) {
             cell = new NotebookDebugCell();
@@ -171,8 +171,8 @@ public class NotebookCanvasPage extends WebPage {
             cell = new FileUploadCell();
             canvasItemPanel = new FileUploadCanvasItemPanel("item", notebook, (FileUploadCell) cell);
         } else if (CellType.CODE.toString().equals(dropDataId)) {
-            cell = new CodeCell();
-            canvasItemPanel = new CodeCanvasItemPanel("item", notebook, (CodeCell) cell);
+            cell = new ScriptCell();
+            canvasItemPanel = new ScriptCanvasItemPanel("item", notebook, (ScriptCell) cell);
         }
 
         if (cell != null) {

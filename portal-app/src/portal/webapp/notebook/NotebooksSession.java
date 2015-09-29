@@ -9,9 +9,9 @@ import java.util.List;
 @SessionScoped
 public class NotebooksSession implements Serializable {
 
-    private static final Notebook POC_DESCRIPTOR = createPocDescriptor();
+    private static final Notebook POC_NOTEBOOK = createPocNotebook();
 
-    private static Notebook createPocDescriptor() {
+    private static Notebook createPocNotebook() {
         File file = new File("PoC.dat");
         if (file.exists()) {
             try {
@@ -31,7 +31,7 @@ public class NotebooksSession implements Serializable {
             Cell cell = new FileUploadCell();
             cell.setName("File upload 1");
             notebook.addCell(cell);
-            cell = new CodeCell();
+            cell = new ScriptCell();
             cell.setName("CODE 1");
             notebook.addCell(cell);
             cell = new NotebookDebugCell();
@@ -42,8 +42,8 @@ public class NotebooksSession implements Serializable {
     }
 
 
-    public Notebook retrievePocNotebookDescriptor() {
-        return POC_DESCRIPTOR;
+    public Notebook retrievePocNotebook() {
+        return POC_NOTEBOOK;
     }
 
     public void saveNotebook(Notebook notebook) {
@@ -63,11 +63,11 @@ public class NotebooksSession implements Serializable {
     }
 
     public List<Cell> listCell() {
-        return Arrays.asList(new CodeCell(), new NotebookDebugCell());
+        return Arrays.asList(new ScriptCell(), new NotebookDebugCell());
     }
 
     public List<CellDescriptor> listCellDescriptor() {
-        return Arrays.asList(new CodeCellDescriptor(), new NotebookDebugCellDescriptor());
+        return Arrays.asList(new ScriptCellDescriptor(), new NotebookDebugCellDescriptor());
     }
 
 

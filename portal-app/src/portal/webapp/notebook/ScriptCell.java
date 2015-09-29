@@ -3,7 +3,7 @@ package portal.webapp.notebook;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CodeCell extends AbstractCell {
+public class ScriptCell extends AbstractCell {
     private String code;
     private String errorMessage;
     private Object outcome;
