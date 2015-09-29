@@ -68,6 +68,7 @@ public class NotebooksSession implements Serializable {
 
     public List<CellDescriptor> listCellDescriptor() {
         return Arrays.asList(new ScriptCellDescriptor(), new NotebookDebugCellDescriptor());
+        return Arrays.asList(new CodeCellDescriptor(), new NotebookDebugCellDescriptor(), new FileUploadCellDescriptor());
     }
 
 

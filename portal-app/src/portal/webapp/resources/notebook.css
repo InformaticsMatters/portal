@@ -1,0 +1,86 @@
+.notebook-canvas-item {
+    /* width: 120px; */
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 0.2857rem;
+    transition: box-shadow 0.2s ease;
+    position:absolute;
+    z-index: 100;
+}
+
+.notebook-canvas-item:hover {
+    box-shadow: 0px 0px 5px #999!important;
+    -o-box-shadow: 0px 0px 5px #999!important;
+    -webkit-box-shadow: 0px 0px 5px #999!important;
+    -moz-box-shadow: 0px 0px 5px #999!important;
+    border: 1px solid #aaa!important;
+}
+
+.notebook-canvas-item-content > .content {
+  background: none;
+  margin: 0em;
+  padding: 1.3em 1em 0.5em 1em;
+  box-shadow: none;
+  font-size: 1em;
+  border: none;
+  border-radius: 0em;
+  height: 40px;
+}
+
+.notebook-canvas-item-content > .content:after {
+  display: block;
+  content: ' ';
+  height: 0px;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.notebook-canvas-item-content > .content > .name {
+    height: 18px;
+    overflow: hidden;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notebook-canvas-item-content .icon.remove {
+    visibility: hidden;
+}
+
+.notebook-canvas-item-content:hover .icon.remove {
+    visibility: visible;
+}
+
+.notebook-canvas-item-content > .extra {
+  max-width: 100%;
+  min-height: 0em !important;
+  position: static;
+  background: none;
+  width: auto;
+  margin: 0em 0em;
+  padding: 0.75em 1em;
+  top: 0em;
+  left: 0em;
+  color: rgba(0, 0, 0, 0.4);
+  box-shadow: none;
+  -webkit-transition: color 0.2s ease;
+  transition: color 0.2s ease;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.notebook-canvas-item-content > .extra a {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.notebook-canvas-item-content > .extra a:hover {
+  color: #00b2f3;
+}
+
+.notebook-canvas-item-content [class*="left floated"]  {
+  float: left;
+}
+
+.notebook-canvas-item-content [class*="right floated"]{
+  float: right;
+}

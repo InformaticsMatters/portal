@@ -72,6 +72,7 @@ public class NotebookCanvasPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(JQueryResourceReference.get()));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/lac.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/lac.js")));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/notebook.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
         response.render(OnDomReadyHeaderItem.forScript("notebookDragAndDrop();"));
     }
@@ -186,8 +187,8 @@ public class NotebookCanvasPage extends WebPage {
             listItem.add(canvasItemPanel);
             canvasItemRepeater.add(listItem);
 
-            // create the div within the DOM before we can ajax-update it
-            String markup = "<div class='canvas-item' id=':id'></div>".replaceAll(":id", listItem.getMarkupId());
+            // create the div with appropriate class within the DOM before we can ajax-update it
+            String markup = "<div id=':id'></div>".replaceAll(":id", listItem.getMarkupId());
             String prepend = "$('#:container').append(\":markup\")".replaceAll(":container", plumbContainer.getMarkupId()).replaceAll(":markup", markup);
             target.prependJavaScript(prepend);
 
