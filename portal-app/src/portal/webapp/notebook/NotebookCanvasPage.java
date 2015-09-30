@@ -177,6 +177,9 @@ public class NotebookCanvasPage extends WebPage {
         } else if (CellType.CODE.toString().equals(dropDataId)) {
             cell = new ScriptCell();
             canvasItemPanel = new ScriptCanvasItemPanel("item", notebook, (ScriptCell) cell);
+        } else if (CellType.PROPERTY_CALCULATE.toString().equals(dropDataId)) {
+            cell = new PropertyCalculateCell();
+            canvasItemPanel = new PropertyCalculateCanvasItemPanel("item", notebook, (PropertyCalculateCell) cell);
         }
 
         if (cell != null) {
