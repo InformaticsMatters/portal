@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CodeCanvasItemPanel extends CanvasItemPanel<CodeCell> {
+public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
 
     @Inject
     private NotebooksSession notebooksSession;
@@ -23,7 +23,7 @@ public class CodeCanvasItemPanel extends CanvasItemPanel<CodeCell> {
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
 
-    public CodeCanvasItemPanel(String id, Notebook notebook, CodeCell cell) {
+    public ScriptCanvasItemPanel(String id, Notebook notebook, ScriptCell cell) {
         super(id, notebook, cell);
         setOutputMarkupId(true);
         addForm();
@@ -96,7 +96,8 @@ public class CodeCanvasItemPanel extends CanvasItemPanel<CodeCell> {
         /**/
         for (Variable variable : getCell().getInputVariableList()) {
             if (variable.getValue() != null) {
-                bindings.put(variable.getProducer().getName() + "_" + variable.getName(), variable.getValue());
+                String producerName = variable.getProducer().getName().replaceAll(" ", "_");
+                bindings.put(producerName + "_" + variable.getName(), variable.getValue());
             }
         }
         try {

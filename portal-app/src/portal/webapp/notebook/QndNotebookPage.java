@@ -42,7 +42,7 @@ public class QndNotebookPage extends WebPage {
 
 
     private void addPoc() {
-        Notebook notebook = notebooksSession.retrievePocNotebookDescriptor();
+        Notebook notebook = notebooksSession.retrievePocNotebook();
         QndNotebookPanel qndNotebookPanel = new QndNotebookPanel("notebook", notebook);
         qndNotebookPanel.setOutputMarkupId(true);
         add(qndNotebookPanel);

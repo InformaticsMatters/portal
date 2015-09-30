@@ -1,10 +1,10 @@
 package portal.webapp.notebook;
 
-public class CodeCellDescriptor implements CellDescriptor {
 
+public class PropertyCalculateCellDescriptor implements CellDescriptor {
     @Override
     public CellType getCellType() {
-        return CellType.CODE;
+        return CellType.PROPERTY_CALCULATE;
     }
 
     @Override
@@ -14,6 +14,6 @@ public class CodeCellDescriptor implements CellDescriptor {
 
     @Override
     public String getDescription() {
-        return "Code cell";
+        return "Property calc.";
     }
 }

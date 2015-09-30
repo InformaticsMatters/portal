@@ -67,9 +67,28 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
     }
 
     private void processUpload(FileUpload upload) throws IOException {
-        notebooksSession.uploadFile(upload.getClientFileName(), upload.getInputStream());
+        uploadFile(upload.getClientFileName(), upload.getInputStream());
         uploadForm.getModelObject().setFileName(upload.getClientFileName());
         store();
+    }
+
+    private void uploadFile(String clientFileName, InputStream inputStream) {
+        try {
+            OutputStream outputStream = new FileOutputStream("files/" + clientFileName);
+            try {
+                byte[] buffer = new byte[4096];
+                int r = inputStream.read(buffer, 0, buffer.length);
+                while (r > -1) {
+                    outputStream.write(buffer, 0, r);
+                    r = inputStream.read(buffer);
+                }
+                outputStream.flush();
+            } finally {
+                outputStream.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void load() {
