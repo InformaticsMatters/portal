@@ -79,4 +79,10 @@ public class Variable implements Serializable {
             }
         }
     }
+
+    public String toString() {
+        return (producer == null ? "" : producer.getName())
+                + "." + (name == null ? "" : name);
+    }
+
 }

@@ -34,6 +34,9 @@ public class NotebooksSession implements Serializable {
             cell = new ScriptCell();
             cell.setName("CODE 1");
             notebook.addCell(cell);
+            cell = new PropertyCalculateCell();
+            cell.setName("Property calculate 1");
+            notebook.addCell(cell);
             cell = new NotebookDebugCell();
             cell.setName("NOTEBOOK_DEBUG 1");
             notebook.addCell(cell);
@@ -71,19 +74,22 @@ public class NotebooksSession implements Serializable {
     }
 
 
-    public void uploadFile(String clientFileName, InputStream inputStream) {
+    public byte[] retrieveFileContentAsMolecules(String fileName) {
         try {
-            OutputStream outputStream = new FileOutputStream("files/" + clientFileName);
+            File file = new File("files/" + fileName);
+            InputStream inputStream = new FileInputStream(file);
             try {
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 byte[] buffer = new byte[4096];
                 int r = inputStream.read(buffer, 0, buffer.length);
                 while (r > -1) {
-                    outputStream.write(buffer, 0, r);
-                    r = inputStream.read(buffer);
+                    byteArrayOutputStream.write(buffer, 0, r);
+                    r = inputStream.read(buffer, 0, buffer.length);
                 }
-              outputStream.flush();
+                byteArrayOutputStream.flush();
+                return byteArrayOutputStream.toByteArray();
             } finally {
-                outputStream.close();
+                inputStream.close();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

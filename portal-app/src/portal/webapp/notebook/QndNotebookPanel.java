@@ -86,6 +86,8 @@ public class QndNotebookPanel extends Panel {
             return NotebookDebugCanvasItemPanel.class;
         } else if (CellType.FILE_UPLOAD.equals(cell.getCellType())) {
             return FileUploadCanvasItemPanel.class;
+        } else if (CellType.PROPERTY_CALCULATE.equals(cell.getCellType())) {
+            return PropertyCalculateCanvasItemPanel.class;
         } else {
             return null;
         }
@@ -109,6 +111,8 @@ public class QndNotebookPanel extends Panel {
             return NotebookDebugCell.class;
         } else if (CellType.CODE.equals(cellType)) {
             return ScriptCell.class;
+        } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
+            return PropertyCalculateCell.class;
         } else {
             return null;
         }
