@@ -1,4 +1,5 @@
-var onNotebookCanvasDrop;
+var onNotebookCanvasPaletteDrop;
+var onNotebookCanvasItemDragged;
 
 function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility) {
     var cellsVisible = (cellsVisibility === 'true');
@@ -31,7 +32,7 @@ function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility) {
     }
 }
 
-function notebookDragAndDrop() {
+function addCellsPaletteDragAndDropSupport() {
     var draggable = document.getElementById("cellsDraggablesContainer");
     draggable.addEventListener('dragstart', dragStart, false);
     draggable.addEventListener('dragend'  , dragEnd  , false);
@@ -68,21 +69,39 @@ function notebookDragAndDrop() {
 
     function drop(event) {
         var draggableMarkupId = event.dataTransfer.getData('draggableMarkupId');
-        var mouseOffsetX = event.dataTransfer.getData('mouseOffsetX');
-        var mouseOffsetY = event.dataTransfer.getData('mouseOffsetY');
-        var el = document.getElementById(draggableMarkupId);
-        var dropDataType = el.getAttribute("dropDataType");
-        var dropDataId = el.getAttribute("dropDataId");
 
-        var $el = $(el);
-        var width = $el.width();
-        var height = $el.height();
+        if (draggableMarkupId != "") {
+            var mouseOffsetX = event.dataTransfer.getData('mouseOffsetX');
+            var mouseOffsetY = event.dataTransfer.getData('mouseOffsetY');
+            var el = document.getElementById(draggableMarkupId);
+            var dropDataType = el.getAttribute("dropDataType");
+            var dropDataId = el.getAttribute("dropDataId");
 
-        var left = event.layerX - mouseOffsetX;
-        var top = event.layerY - mouseOffsetY;
-        event.preventDefault();
-        onNotebookCanvasDrop(dropDataType, dropDataId, left, top);
-        console.log(event);
+            var $el = $(el);
+            var width = $el.width();
+            var height = $el.height();
+
+            var left = event.layerX - mouseOffsetX;
+            var top = event.layerY - mouseOffsetY;
+            event.preventDefault();
+            onNotebookCanvasPaletteDrop(dropDataType, dropDataId, left, top);
+        }
+
         return false;
     }
 }
+
+function makeCanvasItemPlumbDraggable(selector) {
+    jsPlumb.draggable($(selector), {
+        containment: 'parent',
+        stop: function(params) {
+            var index = $('#' + params.el.id).index('.notebook-canvas-item');
+            onNotebookCanvasItemDragged(index, params.pos[0], params.pos[1]);
+        }
+    });
+}
+
+function initJsPlumb() {
+    jsPlumb.setContainer($('#plumbContainer'));
+}
+

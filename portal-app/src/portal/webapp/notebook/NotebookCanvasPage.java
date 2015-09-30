@@ -40,6 +40,7 @@ public class NotebookCanvasPage extends WebPage {
     public static final String POSITION_X = "positionX";
     public static final String POSITION_Y = "positionY";
     public static final String CANVASITEM_WICKETID = "canvasItem";
+    public static final String CANVASITEM_INDEX = "index";
     private static final Logger logger = LoggerFactory.getLogger(NotebookCanvasPage.class);
 
     boolean cellsVisible = true;
@@ -62,7 +63,8 @@ public class NotebookCanvasPage extends WebPage {
         notifierProvider.createNotifier(this, "notifier");
         addPanels();
         addActions();
-        addCanvasDropBehavior();
+        addCanvasPaletteDropBehavior();
+        addCanvasItemDraggedBehavior();
     }
 
     @Override
@@ -70,11 +72,12 @@ public class NotebookCanvasPage extends WebPage {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
         response.render(JavaScriptHeaderItem.forReference(JQueryResourceReference.get()));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/dom.jsPlumb-1.7.5.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/lac.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/lac.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/notebook.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
-        response.render(OnDomReadyHeaderItem.forScript("notebookDragAndDrop();"));
+        response.render(OnDomReadyHeaderItem.forScript("initJsPlumb(); addCellsPaletteDragAndDropSupport();"));
     }
 
     private void addPanels() {
@@ -130,7 +133,7 @@ public class NotebookCanvasPage extends WebPage {
         add(canvasToggle);
     }
 
-    private void addCanvasDropBehavior() {
+    private void addCanvasPaletteDropBehavior() {
         AbstractDefaultAjaxBehavior onCanvasDropBehavior = new AbstractDefaultAjaxBehavior() {
 
             @Override
@@ -146,7 +149,7 @@ public class NotebookCanvasPage extends WebPage {
                         CallbackParameter.explicit(DROP_DATA_ID),
                         CallbackParameter.explicit(POSITION_X),
                         CallbackParameter.explicit(POSITION_Y));
-                callBackScript = "onNotebookCanvasDrop=" + callBackScript + ";";
+                callBackScript = "onNotebookCanvasPaletteDrop=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
         };
@@ -194,6 +197,40 @@ public class NotebookCanvasPage extends WebPage {
 
             // ajax-update the div
             target.add(listItem);
+
+            // activate jsPlumb dragging on new canvas item
+            target.appendJavaScript("makeCanvasItemPlumbDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
         }
+    }
+
+    private void addCanvasItemDraggedBehavior() {
+        AbstractDefaultAjaxBehavior onCanvasItemDragStopBehavior = new AbstractDefaultAjaxBehavior() {
+
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
+                String x = getRequest().getRequestParameters().getParameterValue(POSITION_X).toString();
+                String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y).toString();
+
+                logger.info("Item index " + index + " Dragged to: " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
+
+                int i = Integer.parseInt(index);
+                Cell model = cellList.get(i);
+                model.setX(Integer.parseInt(x));
+                model.setY(Integer.parseInt(y));
+            }
+
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                super.renderHead(component, response);
+                CharSequence callBackScript = getCallbackFunction(
+                        CallbackParameter.explicit(CANVASITEM_INDEX),
+                        CallbackParameter.explicit(POSITION_X),
+                        CallbackParameter.explicit(POSITION_Y));
+                callBackScript = "onNotebookCanvasItemDragged=" + callBackScript + ";";
+                response.render(OnDomReadyHeaderItem.forScript(callBackScript));
+            }
+        };
+        add(onCanvasItemDragStopBehavior);
     }
 }
