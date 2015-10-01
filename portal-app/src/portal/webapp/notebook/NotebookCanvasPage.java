@@ -60,6 +60,7 @@ public class NotebookCanvasPage extends WebPage {
     @Inject
     private NotebooksSession notebooksSession;
     private transient Notebook notebook;
+    private int initialItemCount;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -81,6 +82,9 @@ public class NotebookCanvasPage extends WebPage {
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/notebook.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
         response.render(OnDomReadyHeaderItem.forScript("initJsPlumb(); addCellsPaletteDragAndDropSupport();"));
+        for (int i = 0; i < notebook.getCellList().size(); i++) {
+            response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable(':itemId')".replaceAll(":itemId", "#canvasItem" + (i + 1))));
+        }
     }
 
     private void addPanels() {
@@ -112,13 +116,16 @@ public class NotebookCanvasPage extends WebPage {
 
             }
         };
+        initialItemCount = 0;
         canvasItemRepeater = new ListView<Cell>(CANVASITEM_WICKETID, listModel) {
 
             @Override
             protected void populateItem(ListItem<Cell> listItem) {
+                initialItemCount++;
                 Cell cell = listItem.getModelObject();
                 Panel canvasItemPanel = createCanvasItemPanel(cell);
                 listItem.setOutputMarkupId(true);
+                listItem.setMarkupId("canvasItem" + initialItemCount);
                 listItem.add(new AttributeModifier("style", "left:" + cell.getX() + "px; top:" + cell.getY() + "px;"));
                 listItem.add(canvasItemPanel);
             }
@@ -200,7 +207,7 @@ public class NotebookCanvasPage extends WebPage {
             cell.setY(Integer.parseInt(y));
 
             List<Cell> cellList = notebook.getCellList();
-            ListItem listItem = new ListItem(dropDataType + dropDataId + cellList.size(), cellList.size());
+            ListItem listItem = new ListItem("canvasItem" + cellList.size(), cellList.size());
             listItem.setOutputMarkupId(true);
             listItem.add(new AttributeModifier("style", "left:" + cell.getX() + "px; top:" + cell.getY() + "px;"));
             listItem.add(canvasItemPanel);
