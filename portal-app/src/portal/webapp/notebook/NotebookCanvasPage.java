@@ -60,6 +60,7 @@ public class NotebookCanvasPage extends WebPage {
     @Inject
     private NotebooksSession notebooksSession;
     private transient Notebook notebook;
+    private int initialItemCount;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -118,6 +119,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void populateItem(ListItem<Cell> listItem) {
+                initialItemCount++;
                 Cell cell = listItem.getModelObject();
                 Panel canvasItemPanel = createCanvasItemPanel(cell);
                 listItem.setOutputMarkupId(true);
