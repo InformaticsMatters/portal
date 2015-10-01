@@ -8,14 +8,14 @@ import javax.inject.Inject;
 /**
  * @author simetrias
  */
-public class NotebookCellPanel extends Panel {
+public class NotebookCellDescriptorPanel extends Panel {
 
     private final CellDescriptor cellDescriptor;
 
     @Inject
     private NotebooksSession notebooksSession;
 
-    public NotebookCellPanel(String id, CellDescriptor cellDescriptor) {
+    public NotebookCellDescriptorPanel(String id, CellDescriptor cellDescriptor) {
         super(id);
         this.cellDescriptor = cellDescriptor;
         addComponents();

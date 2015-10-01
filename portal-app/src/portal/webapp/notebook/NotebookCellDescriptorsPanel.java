@@ -16,8 +16,8 @@ public class NotebookCellDescriptorsPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "cellDescriptor";
 
-    private WebMarkupContainer cellsContainer;
-    private ListView<CellDescriptor> cellRepeater;
+    private WebMarkupContainer descriptorssContainer;
+    private ListView<CellDescriptor> descriptorRepeater;
 
     @Inject
     private NotebooksSession notebooksSession;
@@ -28,24 +28,24 @@ public class NotebookCellDescriptorsPanel extends Panel {
     }
 
     private void addCells() {
-        cellsContainer = new WebMarkupContainer("descriptorsContainer");
-        cellsContainer.setOutputMarkupId(true);
+        descriptorssContainer = new WebMarkupContainer("descriptorsContainer");
+        descriptorssContainer.setOutputMarkupId(true);
 
         List<CellDescriptor> cells = notebooksSession.listCellDescriptor();
-        cellRepeater = new ListView<CellDescriptor>("descriptor", cells) {
+        descriptorRepeater = new ListView<CellDescriptor>("descriptor", cells) {
 
             @Override
             protected void populateItem(ListItem<CellDescriptor> listItem) {
                 CellDescriptor cellDescriptor = listItem.getModelObject();
-                listItem.add(new NotebookCellPanel("descriptorItem", cellDescriptor));
+                listItem.add(new NotebookCellDescriptorPanel("descriptorItem", cellDescriptor));
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
                 listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_ID, cellDescriptor.getCellType()));
             }
         };
-        cellsContainer.add(cellRepeater);
+        descriptorssContainer.add(descriptorRepeater);
 
-        add(cellsContainer);
+        add(descriptorssContainer);
     }
 
 }
