@@ -1,6 +1,5 @@
 package portal.webapp.notebook;
 
-import chemaxon.nfunk.jep.function.Not;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -29,7 +28,6 @@ import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,8 +37,8 @@ public class NotebookCanvasPage extends WebPage {
 
     public static final String DROP_DATA_TYPE = "dropDataType";
     public static final String DROP_DATA_ID = "dropDataId";
-    public static final String POSITION_X = "positionX";
-    public static final String POSITION_Y = "positionY";
+    public static final String POSITION_LEFT = "positionX";
+    public static final String POSITION_TOP = "positionY";
     public static final String CANVASITEM_WICKETID = "canvasItem";
     public static final String CANVASITEM_INDEX = "index";
     private static final Logger logger = LoggerFactory.getLogger(NotebookCanvasPage.class);
@@ -123,8 +121,8 @@ public class NotebookCanvasPage extends WebPage {
                 Cell cell = listItem.getModelObject();
                 Panel canvasItemPanel = createCanvasItemPanel(cell);
                 listItem.setOutputMarkupId(true);
-                listItem.setMarkupId("canvasItem" + initialItemCount);
-                listItem.add(new AttributeModifier("style", "left:" + cell.getX() + "px; top:" + cell.getY() + "px;"));
+                listItem.setMarkupId(CANVASITEM_WICKETID + initialItemCount);
+                listItem.add(new AttributeModifier("style", "left:" + cell.getPositionLeft() + "px; top:" + cell.getPositionTop() + "px;"));
                 listItem.add(canvasItemPanel);
             }
         };
@@ -174,8 +172,8 @@ public class NotebookCanvasPage extends WebPage {
                 CharSequence callBackScript = getCallbackFunction(
                         CallbackParameter.explicit(DROP_DATA_TYPE),
                         CallbackParameter.explicit(DROP_DATA_ID),
-                        CallbackParameter.explicit(POSITION_X),
-                        CallbackParameter.explicit(POSITION_Y));
+                        CallbackParameter.explicit(POSITION_LEFT),
+                        CallbackParameter.explicit(POSITION_TOP));
                 callBackScript = "onNotebookCanvasPaletteDrop=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
@@ -187,10 +185,10 @@ public class NotebookCanvasPage extends WebPage {
     private void addCanvasItemFromDrop(AjaxRequestTarget target) {
         String dropDataType = getRequest().getRequestParameters().getParameterValue(DROP_DATA_TYPE).toString();
         String dropDataId = getRequest().getRequestParameters().getParameterValue(DROP_DATA_ID).toString();
-        String x = getRequest().getRequestParameters().getParameterValue(POSITION_X).toString();
-        String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y).toString();
+        String x = getRequest().getRequestParameters().getParameterValue(POSITION_LEFT).toString();
+        String y = getRequest().getRequestParameters().getParameterValue(POSITION_TOP).toString();
 
-        logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
+        logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
         CellType cellType = CellType.valueOf(dropDataId);
         Cell cell = createCell(cellType);
@@ -201,13 +199,13 @@ public class NotebookCanvasPage extends WebPage {
 
             notebook.addCell(cell);
 
-            cell.setX(Integer.parseInt(x));
-            cell.setY(Integer.parseInt(y));
+            cell.setPositionLeft(Integer.parseInt(x));
+            cell.setPositionTop(Integer.parseInt(y));
 
             List<Cell> cellList = notebook.getCellList();
-            ListItem listItem = new ListItem("canvasItem" + cellList.size(), cellList.size());
+            ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellList.size(), cellList.size());
             listItem.setOutputMarkupId(true);
-            listItem.add(new AttributeModifier("style", "left:" + cell.getX() + "px; top:" + cell.getY() + "px;"));
+            listItem.add(new AttributeModifier("style", "left:" + cell.getPositionLeft() + "px; top:" + cell.getPositionTop() + "px;"));
             listItem.add(canvasItemPanel);
             canvasItemRepeater.add(listItem);
 
@@ -261,15 +259,15 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             protected void respond(AjaxRequestTarget target) {
                 String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
-                String x = getRequest().getRequestParameters().getParameterValue(POSITION_X).toString();
-                String y = getRequest().getRequestParameters().getParameterValue(POSITION_Y).toString();
+                String x = getRequest().getRequestParameters().getParameterValue(POSITION_LEFT).toString();
+                String y = getRequest().getRequestParameters().getParameterValue(POSITION_TOP).toString();
 
-                logger.info("Item index " + index + " Dragged to: " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
+                logger.info("Item index " + index + " Dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
                 int i = Integer.parseInt(index);
                 Cell model = notebook.getCellList().get(i);
-                model.setX(Integer.parseInt(x));
-                model.setY(Integer.parseInt(y));
+                model.setPositionLeft(Integer.parseInt(x));
+                model.setPositionTop(Integer.parseInt(y));
                 notebooksSession.saveNotebook(notebook);
             }
 
@@ -278,8 +276,8 @@ public class NotebookCanvasPage extends WebPage {
                 super.renderHead(component, response);
                 CharSequence callBackScript = getCallbackFunction(
                         CallbackParameter.explicit(CANVASITEM_INDEX),
-                        CallbackParameter.explicit(POSITION_X),
-                        CallbackParameter.explicit(POSITION_Y));
+                        CallbackParameter.explicit(POSITION_LEFT),
+                        CallbackParameter.explicit(POSITION_TOP));
                 callBackScript = "onNotebookCanvasItemDragged=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }

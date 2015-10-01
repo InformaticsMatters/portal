@@ -3,8 +3,8 @@ package portal.webapp.notebook;
 public abstract class AbstractCell implements Cell {
 
     private String name;
-    private int x;
-    private int y;
+    private int positionLeft;
+    private int positionTop;
 
     @Override
     public String getName() {
@@ -17,20 +17,20 @@ public abstract class AbstractCell implements Cell {
     }
 
     @Override
-    public int getX() {
-        return x;
+    public int getPositionLeft() {
+        return positionLeft;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setPositionLeft(int x) {
+        this.positionLeft = x;
     }
 
     @Override
-    public int getY() {
-        return y;
+    public int getPositionTop() {
+        return positionTop;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public void setPositionTop(int y) {
+        this.positionTop = y;
     }
 }

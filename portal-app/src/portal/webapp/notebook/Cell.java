@@ -8,10 +8,10 @@ public interface Cell extends Serializable {
     CellType getCellType();
     void setName(String name);
     String getName();
-    int getX();
-    void setX(int x);
-    int getY();
-    void setY(int y);
+    int getPositionLeft();
+    void setPositionLeft(int x);
+    int getPositionTop();
+    void setPositionTop(int y);
     List<Variable> getInputVariableList();
     List<String> getOutputVariableNameList();
 

@@ -7,7 +7,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.CssResourceReference;
-import portal.webapp.notebook.QndNotebookPage;
+import portal.webapp.notebook.NotebookCanvasPage;
 import portal.webapp.workflow.WorkflowPage;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -52,7 +52,7 @@ public class PortalHomePage extends WebPage implements SecuredComponent {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setResponsePage(QndNotebookPage.class);
+                setResponsePage(NotebookCanvasPage.class);
             }
         };
         add(notebookLink);
