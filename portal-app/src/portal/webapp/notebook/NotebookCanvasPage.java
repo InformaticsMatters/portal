@@ -76,7 +76,7 @@ public class NotebookCanvasPage extends WebPage {
         notebook.addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
+                RequestCycle.get().find(AjaxRequestTarget.class).add(plumbContainer);
             }
 
             @Override
@@ -104,7 +104,7 @@ public class NotebookCanvasPage extends WebPage {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-        notebookCellDescriptorsPanel = new NotebookCellDescriptorsPanel("cells");
+        notebookCellDescriptorsPanel = new NotebookCellDescriptorsPanel("descriptors");
         add(notebookCellDescriptorsPanel);
         notebookCellDescriptorsPanel.setOutputMarkupPlaceholderTag(true);
 
