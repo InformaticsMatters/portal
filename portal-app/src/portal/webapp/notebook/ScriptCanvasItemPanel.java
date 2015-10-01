@@ -28,15 +28,6 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         setOutputMarkupId(true);
         addForm();
         addOutcome();
-        registerOutputVariables();
-    }
-
-    private void registerOutputVariables() {
-        if (getCell().getOutputVariableNameList().isEmpty()) {
-            getCell().getOutputVariableNameList().add("codeVar1");
-            getNotebook().registerVariablesForProducer(getCell());
-        }
-
     }
 
     private void addOutcome() {

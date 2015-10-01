@@ -29,7 +29,6 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
     public FileUploadCanvasItemPanel(String id, Notebook notebook, FileUploadCell cell) {
         super(id, notebook, cell);
         addForm();
-        getNotebook().registerVariablesForProducer(getCell());
         load();
     }
 

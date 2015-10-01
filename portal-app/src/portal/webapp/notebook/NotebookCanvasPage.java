@@ -183,6 +183,9 @@ public class NotebookCanvasPage extends WebPage {
         }
 
         if (cell != null) {
+
+            notebook.addCell(cell);
+
             cell.setX(Integer.parseInt(x));
             cell.setY(Integer.parseInt(y));
             cellList.add(cell);

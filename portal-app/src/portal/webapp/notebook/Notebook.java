@@ -28,6 +28,7 @@ public class Notebook implements Serializable {
             }
             cellList.add(cell);
         }
+        registerVariablesForProducer(cell);
         notifyCellAdded(cell);
     }
 
