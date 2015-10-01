@@ -121,7 +121,6 @@ public class NotebookCanvasPage extends WebPage {
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier("style", "top:" + cell.getX() + "px; left:" + cell.getY() + "px;"));
                 listItem.add(canvasItemPanel);
-                canvasItemRepeater.add(listItem);
             }
         };
         canvasItemRepeater.setOutputMarkupId(true);
@@ -266,6 +265,7 @@ public class NotebookCanvasPage extends WebPage {
                 Cell model = notebook.getCellList().get(i);
                 model.setX(Integer.parseInt(x));
                 model.setY(Integer.parseInt(y));
+                notebooksSession.saveNotebook(notebook);
             }
 
             @Override

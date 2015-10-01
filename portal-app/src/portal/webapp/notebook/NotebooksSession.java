@@ -28,6 +28,7 @@ public class NotebooksSession implements Serializable {
         } else {
             Notebook notebook = new Notebook();
             notebook.setName("PoC");
+            /**
             Cell cell = new FileUploadCell();
             cell.setName("File upload 1");
             notebook.addCell(cell);
@@ -40,6 +41,7 @@ public class NotebooksSession implements Serializable {
             cell = new NotebookDebugCell();
             cell.setName("NOTEBOOK_DEBUG 1");
             notebook.addCell(cell);
+             **/
             return notebook;
         }
     }
