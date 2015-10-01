@@ -1,5 +1,6 @@
 package portal.webapp.notebook;
 
+import chemaxon.nfunk.jep.function.Not;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -15,6 +16,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
@@ -51,16 +53,17 @@ public class NotebookCanvasPage extends WebPage {
     private NotebookCellsPanel notebookCellsPanel;
     private WebMarkupContainer plumbContainer;
 
-    private List<Cell> cellList;
     private ListView<Cell> canvasItemRepeater;
 
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
     private NotebooksSession notebooksSession;
+    private transient Notebook notebook;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
+        notebook = notebooksSession.retrievePocNotebook();
         addPanels();
         addActions();
         addCanvasPaletteDropBehavior();
@@ -93,12 +96,32 @@ public class NotebookCanvasPage extends WebPage {
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
 
-        cellList = new ArrayList<>();
-        canvasItemRepeater = new ListView<Cell>(CANVASITEM_WICKETID, cellList) {
+        IModel<List<Cell>> listModel = new IModel<List<Cell>>() {
+            @Override
+            public List<Cell> getObject() {
+                return notebook.getCellList();
+            }
 
             @Override
-            protected void populateItem(ListItem<Cell> components) {
-                // we manage items manually when dropping or removing them from the Canvas
+            public void setObject(List<Cell> cells) {
+
+            }
+
+            @Override
+            public void detach() {
+
+            }
+        };
+        canvasItemRepeater = new ListView<Cell>(CANVASITEM_WICKETID, listModel) {
+
+            @Override
+            protected void populateItem(ListItem<Cell> listItem) {
+                Cell cell = listItem.getModelObject();
+                Panel canvasItemPanel = createCanvasItemPanel(cell);
+                listItem.setOutputMarkupId(true);
+                listItem.add(new AttributeModifier("style", "top:" + cell.getX() + "px; left:" + cell.getY() + "px;"));
+                listItem.add(canvasItemPanel);
+                canvasItemRepeater.add(listItem);
             }
         };
         canvasItemRepeater.setOutputMarkupId(true);
@@ -138,7 +161,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void respond(AjaxRequestTarget target) {
-                addCanvasItem(target);
+                addCanvasItemFromDrop(target);
             }
 
             @Override
@@ -156,7 +179,8 @@ public class NotebookCanvasPage extends WebPage {
         add(onCanvasDropBehavior);
     }
 
-    private void addCanvasItem(AjaxRequestTarget target) {
+
+    private void addCanvasItemFromDrop(AjaxRequestTarget target) {
         String dropDataType = getRequest().getRequestParameters().getParameterValue(DROP_DATA_TYPE).toString();
         String dropDataId = getRequest().getRequestParameters().getParameterValue(DROP_DATA_ID).toString();
         String x = getRequest().getRequestParameters().getParameterValue(POSITION_X).toString();
@@ -164,33 +188,20 @@ public class NotebookCanvasPage extends WebPage {
 
         logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
 
-        Cell cell = null;
-        Panel canvasItemPanel = null;
-        Notebook notebook = notebooksSession.retrievePocNotebook();
-
-        if (CellType.NOTEBOOK_DEBUG.toString().equals(dropDataId)) {
-            cell = new NotebookDebugCell();
-            canvasItemPanel = new NotebookDebugCanvasItemPanel("item", notebook, (NotebookDebugCell) cell);
-        } else if (CellType.FILE_UPLOAD.toString().equals(dropDataId)) {
-            cell = new FileUploadCell();
-            canvasItemPanel = new FileUploadCanvasItemPanel("item", notebook, (FileUploadCell) cell);
-        } else if (CellType.CODE.toString().equals(dropDataId)) {
-            cell = new ScriptCell();
-            canvasItemPanel = new ScriptCanvasItemPanel("item", notebook, (ScriptCell) cell);
-        } else if (CellType.PROPERTY_CALCULATE.toString().equals(dropDataId)) {
-            cell = new PropertyCalculateCell();
-            canvasItemPanel = new PropertyCalculateCanvasItemPanel("item", notebook, (PropertyCalculateCell) cell);
-        }
+        CellType cellType = CellType.valueOf(dropDataId);
+        Cell cell = createCell(cellType);
 
         if (cell != null) {
+
+            Panel canvasItemPanel = createCanvasItemPanel(cell);
 
             notebook.addCell(cell);
 
             cell.setX(Integer.parseInt(x));
             cell.setY(Integer.parseInt(y));
-            cellList.add(cell);
 
-            ListItem listItem = new ListItem(dropDataType + dropDataId, cellList.size());
+            List<Cell> cellList = notebook.getCellList();
+            ListItem listItem = new ListItem(dropDataType + dropDataId + cellList.size(), cellList.size());
             listItem.setOutputMarkupId(true);
             listItem.add(new AttributeModifier("style", "top:" + cell.getX() + "px; left:" + cell.getY() + "px;"));
             listItem.add(canvasItemPanel);
@@ -209,6 +220,35 @@ public class NotebookCanvasPage extends WebPage {
         }
     }
 
+    private Panel createCanvasItemPanel(Cell cell) {
+        CellType cellType = cell.getCellType();
+        if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
+            return new NotebookDebugCanvasItemPanel("item", notebook, (NotebookDebugCell) cell);
+        } else if (CellType.FILE_UPLOAD.equals(cellType)) {
+            return new FileUploadCanvasItemPanel("item", notebook, (FileUploadCell) cell);
+        } else if (CellType.CODE.equals(cellType)) {
+            return new ScriptCanvasItemPanel("item", notebook, (ScriptCell) cell);
+        } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
+            return new PropertyCalculateCanvasItemPanel("item", notebook, (PropertyCalculateCell) cell);
+        } else {
+            return null;
+        }
+    }
+
+    private Cell createCell(CellType cellType) {
+        if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
+            return new NotebookDebugCell();
+        } else if (CellType.FILE_UPLOAD.equals(cellType)) {
+            return new FileUploadCell();
+        } else if (CellType.CODE.equals(cellType)) {
+            return new ScriptCell();
+        } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
+            return new PropertyCalculateCell();
+        }  else {
+            return null;
+        }
+    }
+
     private void addCanvasItemDraggedBehavior() {
         AbstractDefaultAjaxBehavior onCanvasItemDragStopBehavior = new AbstractDefaultAjaxBehavior() {
 
@@ -221,7 +261,7 @@ public class NotebookCanvasPage extends WebPage {
                 logger.info("Item index " + index + " Dragged to: " + POSITION_X + ": " + x + " " + POSITION_Y + ": " + y);
 
                 int i = Integer.parseInt(index);
-                Cell model = cellList.get(i);
+                Cell model = notebook.getCellList().get(i);
                 model.setX(Integer.parseInt(x));
                 model.setY(Integer.parseInt(y));
             }
