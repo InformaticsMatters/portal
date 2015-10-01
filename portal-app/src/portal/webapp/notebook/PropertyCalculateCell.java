@@ -6,7 +6,7 @@ import java.util.List;
 
 public class PropertyCalculateCell extends AbstractCell {
     private Variable inputVariable;
-    private final List<String> outputVariableNameList = Collections.singletonList("fileName");
+    private final List<String> outputVariableNameList = Collections.singletonList("outputFileName");
 
     @Override
     public CellType getCellType() {
