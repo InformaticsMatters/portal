@@ -8,10 +8,16 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 import javax.inject.Inject;
 import java.io.FileOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCalculateCell> {
     @Inject
@@ -23,6 +29,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         super(id, notebook, cell);
         addHeader();
         addForm();
+        addListeners();
         load();
     }
 
@@ -37,6 +44,20 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         });
     }
 
+    private void addListeners() {
+        getNotebook().addNotebookChangeListener(new NotebookChangeListener() {
+            @Override
+            public void onCellRemoved(Cell cell) {
+                RequestCycle.get().find(AjaxRequestTarget.class).add(form);
+            }
+
+            @Override
+            public void onCellAdded(Cell cell) {
+                RequestCycle.get().find(AjaxRequestTarget.class).add(form);
+            }
+        });
+    }
+
     private void load() {
         form.getModelObject().setInputVariable(getCell().getInputVariable());
         Variable variable = getNotebook().findVariable(getCell(), "outputFileName");
@@ -47,7 +68,30 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void addForm() {
         form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
-        DropDownChoice<Variable> inputVariableChoice = new DropDownChoice<Variable>("inputVariable", getNotebook().getVariableList());
+        IModel<List<Variable>> dropDownModel = new IModel<List<Variable>>() {
+            @Override
+            public List<Variable> getObject() {
+                List<Variable> list = new ArrayList<>(getNotebook().getVariableList());
+                Collections.sort(list, new Comparator<Variable>() {
+                    @Override
+                    public int compare(Variable o1, Variable o2) {
+                        return o2.getName().compareTo(o1.getName());
+                    }
+                });
+                return list;
+            }
+
+            @Override
+            public void setObject(List<Variable> variableList) {
+
+            }
+
+            @Override
+            public void detach() {
+
+            }
+        };
+        DropDownChoice<Variable> inputVariableChoice = new DropDownChoice<Variable>("inputVariable", dropDownModel);
         form.add(inputVariableChoice);
         TextField<String> outputFileNameField = new TextField<String>("outputFileName");
         form.add(outputFileNameField);

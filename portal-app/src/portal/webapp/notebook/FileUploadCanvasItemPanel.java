@@ -46,6 +46,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
         });
     }
 
+
     private void addForm() {
         uploadForm = new Form<>("form");
         uploadForm.setOutputMarkupId(true);
