@@ -3,6 +3,7 @@ package portal.webapp.notebook;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -28,6 +29,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
 
     public FileUploadCanvasItemPanel(String id, Notebook notebook, FileUploadCell cell) {
         super(id, notebook, cell);
+        add(new Label("cellName", cell.getName()));
         addForm();
         load();
     }

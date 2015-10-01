@@ -19,8 +19,9 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
     private IModel<List<Variable>> listModel;
     private WebMarkupContainer listContainer;
 
-    public NotebookDebugCanvasItemPanel(String id, Notebook notebook, NotebookDebugCell cellDescriptor) {
-        super(id, notebook, cellDescriptor);
+    public NotebookDebugCanvasItemPanel(String id, Notebook notebook, NotebookDebugCell cell) {
+        super(id, notebook, cell);
+        add(new Label("cellName", cell.getName()));
         setOutputMarkupId(true);
         AjaxLink refreshLink = new AjaxLink("refresh") {
             @Override

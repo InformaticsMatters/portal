@@ -195,12 +195,11 @@ public class NotebookCanvasPage extends WebPage {
 
         if (cell != null) {
 
-            Panel canvasItemPanel = createCanvasItemPanel(cell);
-
-            notebook.addCell(cell);
-
             cell.setPositionLeft(Integer.parseInt(x));
             cell.setPositionTop(Integer.parseInt(y));
+            notebook.addCell(cell);
+
+            Panel canvasItemPanel = createCanvasItemPanel(cell);
 
             List<Cell> cellList = notebook.getCellList();
             ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellList.size(), cellList.size());

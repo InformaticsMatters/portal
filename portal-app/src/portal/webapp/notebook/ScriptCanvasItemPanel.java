@@ -25,6 +25,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
 
     public ScriptCanvasItemPanel(String id, Notebook notebook, ScriptCell cell) {
         super(id, notebook, cell);
+        add(new Label("cellName", cell.getName()));
         setOutputMarkupId(true);
         addForm();
         addOutcome();
