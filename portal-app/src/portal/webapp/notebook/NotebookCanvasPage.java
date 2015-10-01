@@ -119,7 +119,7 @@ public class NotebookCanvasPage extends WebPage {
                 Cell cell = listItem.getModelObject();
                 Panel canvasItemPanel = createCanvasItemPanel(cell);
                 listItem.setOutputMarkupId(true);
-                listItem.add(new AttributeModifier("style", "top:" + cell.getX() + "px; left:" + cell.getY() + "px;"));
+                listItem.add(new AttributeModifier("style", "left:" + cell.getX() + "px; top:" + cell.getY() + "px;"));
                 listItem.add(canvasItemPanel);
             }
         };
@@ -202,7 +202,7 @@ public class NotebookCanvasPage extends WebPage {
             List<Cell> cellList = notebook.getCellList();
             ListItem listItem = new ListItem(dropDataType + dropDataId + cellList.size(), cellList.size());
             listItem.setOutputMarkupId(true);
-            listItem.add(new AttributeModifier("style", "top:" + cell.getX() + "px; left:" + cell.getY() + "px;"));
+            listItem.add(new AttributeModifier("style", "left:" + cell.getX() + "px; top:" + cell.getY() + "px;"));
             listItem.add(canvasItemPanel);
             canvasItemRepeater.add(listItem);
 
