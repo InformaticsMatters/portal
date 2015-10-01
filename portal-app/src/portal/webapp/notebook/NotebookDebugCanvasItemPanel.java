@@ -14,7 +14,6 @@ import java.util.List;
 
 public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugCell> {
 
-    private VariableChangeListener variableChangeListener;
     private ListView<Variable> listView;
     private IModel<List<Variable>> listModel;
     private WebMarkupContainer listContainer;
@@ -23,23 +22,12 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
         super(id, notebook, cell);
         add(new Label("cellName", cell.getName()));
         setOutputMarkupId(true);
-        AjaxLink refreshLink = new AjaxLink("refresh") {
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                for (Variable variable : getNotebook().getVariableList()) {
-                    variable.removeChangeListener(variableChangeListener);
-                    variable.addChangeListener(variableChangeListener);
-                }
-                ajaxRequestTarget.add(NotebookDebugCanvasItemPanel.this);
-            }
-        };
-        add(refreshLink);
         addList();
         addListeners();
     }
 
     private void addListeners() {
-        variableChangeListener = new VariableChangeListener() {
+        VariableChangeListener variableChangeListener = new VariableChangeListener() {
 
             @Override
             public void onValueChanged(Variable source, Object oldValue) {
@@ -51,6 +39,22 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
                 RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
             }
         };
+        for (Variable variable : getNotebook().getVariableList()) {
+            variable.removeChangeListener(variableChangeListener);
+            variable.addChangeListener(variableChangeListener);
+        }
+        getNotebook().addNotebookChangeListener(new NotebookChangeListener() {
+            @Override
+            public void onCellRemoved(Cell cell) {
+                RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
+            }
+
+            @Override
+            public void onCellAdded(Cell cell) {
+                RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
+
+            }
+        });
     }
 
     private void addList() {
