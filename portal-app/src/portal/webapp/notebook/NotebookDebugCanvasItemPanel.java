@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,13 +18,26 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
     private ListView<Variable> listView;
     private IModel<List<Variable>> listModel;
     private WebMarkupContainer listContainer;
+    @Inject
+    private NotebooksSession notebooksSession;
 
     public NotebookDebugCanvasItemPanel(String id, Notebook notebook, NotebookDebugCell cell) {
         super(id, notebook, cell);
-        add(new Label("cellName", cell.getName()));
+        addHeader();
         setOutputMarkupId(true);
         addList();
         addListeners();
+    }
+
+    private void addHeader() {
+        add(new Label("cellName", getCell().getName()));
+        add(new AjaxLink("remove") {
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                getNotebook().removeCell(getCell());
+                notebooksSession.saveNotebook(getNotebook());
+            }
+        });
     }
 
     private void addListeners() {

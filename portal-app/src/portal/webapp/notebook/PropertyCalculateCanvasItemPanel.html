@@ -1,6 +1,15 @@
 <wicket:panel xmlns="http://www.w3.org/1999/html">
     <div class="ui header">
-        <label wicket:id="cellName"/>
+        <table style="width: 100%;">
+            <tr>
+                <td style="text-align: left;">
+                    <label wicket:id="cellName"/>
+                </td>
+                <td style="text-align: right;">
+                    <a href="" wicket:id="remove">X</a>
+                </td>
+            </tr>
+        </table>
     </div>
     <form wicket:id="form">
         <div>

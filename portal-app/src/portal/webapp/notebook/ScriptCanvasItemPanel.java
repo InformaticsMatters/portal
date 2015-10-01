@@ -2,6 +2,7 @@ package portal.webapp.notebook;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -25,10 +26,21 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
 
     public ScriptCanvasItemPanel(String id, Notebook notebook, ScriptCell cell) {
         super(id, notebook, cell);
-        add(new Label("cellName", cell.getName()));
         setOutputMarkupId(true);
+        addHeader();
         addForm();
         addOutcome();
+    }
+
+    private void addHeader() {
+        add(new Label("cellName", getCell().getName()));
+        add(new AjaxLink("remove") {
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                getNotebook().removeCell(getCell());
+                notebooksSession.saveNotebook(getNotebook());
+            }
+        });
     }
 
     private void addOutcome() {

@@ -1,6 +1,7 @@
 package portal.webapp.notebook;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -20,9 +21,20 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     public PropertyCalculateCanvasItemPanel(String id, Notebook notebook, PropertyCalculateCell cell) {
         super(id, notebook, cell);
-        add(new Label("cellName", cell.getName()));
+        addHeader();
         addForm();
         load();
+    }
+
+    private void addHeader() {
+        add(new Label("cellName", getCell().getName()));
+        add(new AjaxLink("remove") {
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                getNotebook().removeCell(getCell());
+                notebooksSession.saveNotebook(getNotebook());
+            }
+        });
     }
 
     private void load() {

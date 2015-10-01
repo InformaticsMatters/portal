@@ -16,6 +16,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
@@ -63,10 +64,26 @@ public class NotebookCanvasPage extends WebPage {
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
         notebook = notebooksSession.retrievePocNotebook();
+        setOutputMarkupId(true);
         addPanels();
         addActions();
         addCanvasPaletteDropBehavior();
         addCanvasItemDraggedBehavior();
+        addListeners();
+    }
+
+    private void addListeners() {
+        notebook.addNotebookChangeListener(new NotebookChangeListener() {
+            @Override
+            public void onCellRemoved(Cell cell) {
+                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
+            }
+
+            @Override
+            public void onCellAdded(Cell cell) {
+
+            }
+        });
     }
 
     @Override
