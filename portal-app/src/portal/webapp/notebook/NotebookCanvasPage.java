@@ -48,7 +48,7 @@ public class NotebookCanvasPage extends WebPage {
     private AjaxLink cellsToggle;
     private AjaxLink canvasToggle;
 
-    private NotebookCellsPanel notebookCellsPanel;
+    private NotebookCellDescriptorsPanel notebookCellDescriptorsPanel;
     private WebMarkupContainer plumbContainer;
 
     private ListView<Cell> canvasItemRepeater;
@@ -87,9 +87,9 @@ public class NotebookCanvasPage extends WebPage {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-        notebookCellsPanel = new NotebookCellsPanel("cells");
-        add(notebookCellsPanel);
-        notebookCellsPanel.setOutputMarkupPlaceholderTag(true);
+        notebookCellDescriptorsPanel = new NotebookCellDescriptorsPanel("cells");
+        add(notebookCellDescriptorsPanel);
+        notebookCellDescriptorsPanel.setOutputMarkupPlaceholderTag(true);
 
         plumbContainer = new WebMarkupContainer("plumbContainer");
         plumbContainer.setOutputMarkupId(true);
@@ -234,6 +234,8 @@ public class NotebookCanvasPage extends WebPage {
             return new ScriptCanvasItemPanel("item", notebook, (ScriptCell) cell);
         } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
             return new PropertyCalculateCanvasItemPanel("item", notebook, (PropertyCalculateCell) cell);
+        } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
+            return new TableDisplayCanvasItemPanel("item", notebook, (TableDisplayCell) cell);
         } else {
             return null;
         }
@@ -248,6 +250,8 @@ public class NotebookCanvasPage extends WebPage {
             return new ScriptCell();
         } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
             return new PropertyCalculateCell();
+        } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
+            return new TableDisplayCell();
         }  else {
             return null;
         }

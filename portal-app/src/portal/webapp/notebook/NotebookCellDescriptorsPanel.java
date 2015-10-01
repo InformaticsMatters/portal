@@ -12,9 +12,9 @@ import java.util.List;
 /**
  * @author simetrias
  */
-public class NotebookCellsPanel extends Panel {
+public class NotebookCellDescriptorsPanel extends Panel {
 
-    public static final String DROP_DATA_TYPE_VALUE = "cell";
+    public static final String DROP_DATA_TYPE_VALUE = "cellDescriptor";
 
     private WebMarkupContainer cellsContainer;
     private ListView<CellDescriptor> cellRepeater;
@@ -22,22 +22,22 @@ public class NotebookCellsPanel extends Panel {
     @Inject
     private NotebooksSession notebooksSession;
 
-    public NotebookCellsPanel(String id) {
+    public NotebookCellDescriptorsPanel(String id) {
         super(id);
         addCells();
     }
 
     private void addCells() {
-        cellsContainer = new WebMarkupContainer("cellsContainer");
+        cellsContainer = new WebMarkupContainer("descriptorsContainer");
         cellsContainer.setOutputMarkupId(true);
 
         List<CellDescriptor> cells = notebooksSession.listCellDescriptor();
-        cellRepeater = new ListView<CellDescriptor>("cell", cells) {
+        cellRepeater = new ListView<CellDescriptor>("descriptor", cells) {
 
             @Override
             protected void populateItem(ListItem<CellDescriptor> listItem) {
                 CellDescriptor cellDescriptor = listItem.getModelObject();
-                listItem.add(new NotebookCellPanel("cellItem", cellDescriptor));
+                listItem.add(new NotebookCellPanel("descriptorItem", cellDescriptor));
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
                 listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_ID, cellDescriptor.getCellType()));
