@@ -76,7 +76,7 @@ public class NotebookCanvasPage extends WebPage {
         notebook.addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(plumbContainer);
+                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
             }
 
             @Override
