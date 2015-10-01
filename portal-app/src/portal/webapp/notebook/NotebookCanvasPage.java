@@ -60,7 +60,6 @@ public class NotebookCanvasPage extends WebPage {
     @Inject
     private NotebooksSession notebooksSession;
     private transient Notebook notebook;
-    private int initialItemCount;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -82,9 +81,7 @@ public class NotebookCanvasPage extends WebPage {
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/notebook.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
         response.render(OnDomReadyHeaderItem.forScript("initJsPlumb(); addCellsPaletteDragAndDropSupport();"));
-        for (int i = 0; i < notebook.getCellList().size(); i++) {
-            response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable(':itemId')".replaceAll(":itemId", "#canvasItem" + (i + 1))));
-        }
+        response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');"));
     }
 
     private void addPanels() {
@@ -121,7 +118,6 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void populateItem(ListItem<Cell> listItem) {
-                initialItemCount++;
                 Cell cell = listItem.getModelObject();
                 Panel canvasItemPanel = createCanvasItemPanel(cell);
                 listItem.setOutputMarkupId(true);
