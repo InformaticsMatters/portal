@@ -6,7 +6,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
@@ -20,11 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
+    private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
     @Inject
     private NotebooksSession notebooksSession;
-
-    private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
-
     private Form<UploadData> uploadForm;
     private FileUploadField fileUploadField;
 
@@ -52,9 +49,9 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
         uploadForm.setOutputMarkupId(true);
 
         uploadForm.setModel(new CompoundPropertyModel<>(new UploadData()));
-        TextField<String> fileNameField = new TextField<>("fileName");
-        fileNameField.setEnabled(false);
-        uploadForm.add(fileNameField);
+        // TextField<String> fileNameField = new TextField<>("fileName");
+        // fileNameField.setEnabled(false);
+        // uploadForm.add(fileNameField);
 
         fileUploadField = new FileUploadField("fileInput");
         uploadForm.add(fileUploadField);

@@ -1,11 +1,13 @@
 .notebook-canvas-item {
-    /* width: 120px; */
+    width: 200px;
     background: #ffffff;
     border: 1px solid #ddd;
     border-radius: 0.2857rem;
     transition: box-shadow 0.2s ease;
     position:absolute;
     z-index: 100;
+    padding: 10px;
+    padding-top: 7px;
 }
 
 .notebook-canvas-item:hover {
@@ -46,10 +48,12 @@
 
 .notebook-canvas-item-content .icon.remove {
     visibility: hidden;
+    margin-right: 0 !important;
 }
 
 .notebook-canvas-item-content:hover .icon.remove {
     visibility: visible;
+    margin-right: 0 !important;
 }
 
 .notebook-canvas-item-content > .extra {
@@ -83,4 +87,15 @@
 
 .notebook-canvas-item-content [class*="right floated"]{
   float: right;
+}
+
+.notebook-canvas-item-content > form > .actions {
+    margin-top: 10px;
+}
+
+.fileUploadInput {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 180px;
+    font-size: 11px;
 }

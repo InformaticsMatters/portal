@@ -1,38 +1,29 @@
 <wicket:panel>
-    <div>
+    <div class="notebook-canvas-item-content">
 
-        <div class="ui header">
-            <table style="width: 100%;">
-                <tr>
-                    <td style="text-align: left;">
-                        <label wicket:id="cellName"/>
-                    </td>
-                    <td style="text-align: right;">
-                        <a href="" wicket:id="remove">X</a>
-                    </td>
-                </tr>
-            </table>
+        <div class="ui tiny header left floated">
+            <label wicket:id="cellName"/>
         </div>
+        <div style="text-align: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
 
         <form wicket:id="form" class="ui form">
             <div class="content">
-                <div class="field">
+                <!--div class="field">
                     <label>File name</label>
                     <input wicket:id="fileName" type="text">
-                </div>
-                <div class="field">
+                </div-->
+                <div class="fileUploadInput left-floated">
                     <div class="left-floated">
-                        <div class="left-floated">
-                            <input wicket:id="fileInput" type="file"/>
-                        </div>
-                        <div class="left-floated">
-                            <span id="appender" style="display: none;"><img wicket:id="appender"/></span>
-                        </div>
+                        <input wicket:id="fileInput" type="file"/>
+                    </div>
+                    <div class="left-floated">
+                        <span id="appender" style="display: none;"><img wicket:id="appender"/></span>
                     </div>
                 </div>
+                <div style="clear: both;"></div>
             </div>
             <div class="actions">
-                <div wicket:id="submit" style="width: 78px;" class="ui small submit approve button">
+                <div wicket:id="submit" class="ui mini submit approve button">
                     Ok
                 </div>
             </div>
