@@ -1,13 +1,11 @@
 .notebook-canvas-item {
-    width: 200px;
+    width: 230px;
     background: #ffffff;
     border: 1px solid #ddd;
     border-radius: 0.2857rem;
     transition: box-shadow 0.2s ease;
     position:absolute;
     z-index: 100;
-    padding: 10px;
-    padding-top: 7px;
 }
 
 .notebook-canvas-item:hover {
@@ -18,15 +16,23 @@
     border: 1px solid #aaa!important;
 }
 
+.notebook-canvas-item-content > .titleBar {
+  background: none;
+  margin-bottom: 5px;
+  padding: 5px 3px 5px 10px;
+  box-shadow: none;
+  font-size: 1em;
+  border-bottom: 1px solid #ddd;
+}
+
 .notebook-canvas-item-content > .content {
   background: none;
   margin: 0em;
-  padding: 1.3em 1em 0.5em 1em;
+  padding: 0.5em;
   box-shadow: none;
   font-size: 1em;
   border: none;
   border-radius: 0em;
-  height: 40px;
 }
 
 .notebook-canvas-item-content > .content:after {
@@ -34,8 +40,6 @@
   content: ' ';
   height: 0px;
   clear: both;
-  overflow: hidden;
-  visibility: hidden;
 }
 
 .notebook-canvas-item-content > .content > .name {
@@ -91,11 +95,13 @@
 
 .notebook-canvas-item-content > form > .actions {
     margin-top: 10px;
+    text-align: right;
 }
 
 .fileUploadInput {
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 180px;
+    width: 195px;
+    height: 20px;
     font-size: 11px;
 }

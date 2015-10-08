@@ -33,7 +33,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
     }
 
     private void addHeader() {
-        add(new Label("cellName", getCell().getName()));
+        add(new Label("cellName", getCell().getName().toLowerCase()));
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
