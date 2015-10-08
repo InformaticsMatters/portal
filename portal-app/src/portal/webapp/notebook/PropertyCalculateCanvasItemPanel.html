@@ -1,25 +1,29 @@
 <wicket:panel xmlns="http://www.w3.org/1999/html">
-    <div class="ui header">
-        <table style="width: 100%;">
-            <tr>
-                <td style="text-align: left;">
-                    <label wicket:id="cellName"/>
-                </td>
-                <td style="text-align: right;">
-                    <a href="" wicket:id="remove">X</a>
-                </td>
-            </tr>
-        </table>
+    <div class="notebook-canvas-item-content">
+        <div class="titleBar">
+            <div class="name left floated">
+                <label wicket:id="cellName"/>
+            </div>
+            <div style="text-align: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
+        </div>
+        <form wicket:id="form" class="ui form content">
+            <div class="field">
+                <label>Input variable </label>
+
+                <div class="ui small input">
+                    <select wicket:id="inputVariable"></select>
+                </div>
+            </div>
+            <div class="field">
+                <label>Output file name</label>
+
+                <div class="ui small input">
+                    <input type="text" wicket:id="outputFileName"/>
+                </div>
+            </div>
+            <div class="actions">
+                <div class="ui mini blue button" wicket:id="calculate">Calculate</div>
+            </div>
+        </form>
     </div>
-    <form wicket:id="form">
-        <div>
-            Input variable <select wicket:id="inputVariable"></select>
-        </div>
-        <div>
-            Output file name <input type="text" wicket:id="outputFileName"/>
-        </div>
-        <div>
-            <a href="" wicket:id="calculate">Calculate</a>
-        </div>
-    </form>
 </wicket:panel>
