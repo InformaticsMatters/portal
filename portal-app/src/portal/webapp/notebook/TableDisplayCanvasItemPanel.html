@@ -4,6 +4,20 @@
             <div class="name left floated">
                 <label wicket:id="cellName"/>
             </div>
+            <div>
+                <form wicket:id="form" class="ui form content">
+                    <div class="field">
+                        <label>Input variable </label>
+
+                        <div class="ui small input">
+                            <select wicket:id="inputVariable"></select>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <div class="ui mini blue button" wicket:id="display">Display</div>
+                    </div>
+                </form>
+            </div>
             <div style="text-align: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
         </div>
     </div>

@@ -3,8 +3,7 @@ package portal.webapp.notebook;
 
 import javax.enterprise.context.SessionScoped;
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @SessionScoped
 public class NotebooksSession implements Serializable {
@@ -96,6 +95,24 @@ public class NotebooksSession implements Serializable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public List<Variable> listAvailableInputVariablesFor(Cell cell, Notebook notebook) {
+        List<Variable> list = new ArrayList<>();
+        for (Variable variable : notebook.getVariableList()) {
+            if (!variable.getProducer().equals(cell)) {
+               list.add(variable);
+            }
+        }
+
+        Collections.sort(list, new Comparator<Variable>() {
+            @Override
+            public int compare(Variable o1, Variable o2) {
+                return o2.getName().compareTo(o1.getName());
+            }
+        });
+        return list;
     }
 
 

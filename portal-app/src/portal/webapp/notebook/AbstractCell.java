@@ -33,4 +33,13 @@ public abstract class AbstractCell implements Cell {
     public void setPositionTop(int y) {
         this.positionTop = y;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !o.getClass().equals(getClass())) {
+            return false;
+        }
+        return ((Cell)o).getName().equals(getName());
+    }
+
 }

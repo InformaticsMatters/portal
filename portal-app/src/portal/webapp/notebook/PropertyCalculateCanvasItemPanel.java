@@ -14,9 +14,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import javax.inject.Inject;
 import java.io.FileOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCalculateCell> {
@@ -71,13 +68,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         IModel<List<Variable>> dropDownModel = new IModel<List<Variable>>() {
             @Override
             public List<Variable> getObject() {
-                List<Variable> list = new ArrayList<>(getNotebook().getVariableList());
-                Collections.sort(list, new Comparator<Variable>() {
-                    @Override
-                    public int compare(Variable o1, Variable o2) {
-                        return o2.getName().compareTo(o1.getName());
-                    }
-                });
+                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), getNotebook());
                 return list;
             }
 
