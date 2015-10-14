@@ -49,9 +49,8 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
         uploadForm.setOutputMarkupId(true);
 
         uploadForm.setModel(new CompoundPropertyModel<>(new UploadData()));
-        // TextField<String> fileNameField = new TextField<>("fileName");
-        // fileNameField.setEnabled(false);
-        // uploadForm.add(fileNameField);
+        Label fileNameField = new Label("fileName");
+        uploadForm.add(fileNameField);
 
         fileUploadField = new FileUploadField("fileInput");
         uploadForm.add(fileUploadField);

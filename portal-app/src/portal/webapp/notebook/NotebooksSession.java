@@ -1,21 +1,26 @@
 package portal.webapp.notebook;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import portal.dataset.DatasetDescriptor;
-import portal.dataset.IDatasetDescriptor;
+import portal.dataset.*;
 
 import javax.enterprise.context.SessionScoped;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.stream.Stream;
 
 @SessionScoped
 public class NotebooksSession implements Serializable {
 
     private static final Notebook POC_NOTEBOOK = createPocNotebook();
-    private final Map<String, Map<UUID, MoleculeObject>> fileObjectsMap = new HashMap<>();
+    private final Map<Long, Map<UUID, MoleculeObject>> fileObjectsMap = new HashMap<>();
+    private final Map<Long, IDatasetDescriptor> datasetDescriptorMap = new HashMap<>();
+    private long lastDatasetId = 0;
+
+    public NotebooksSession() {
+        fileObjectsMap.put(0l, new HashMap<>());
+    }
 
     private static Notebook createPocNotebook() {
         File file = new File("PoC.dat");
@@ -90,19 +95,6 @@ public class NotebooksSession implements Serializable {
         }
     }
 
-    public void loadTSV(String fileName) {
-        try {
-            List<MoleculeObject> objects = parseTSV(fileName);
-            Map<UUID, MoleculeObject> objectMap = new HashMap<>();
-            objects.forEach(moleculeObject -> {
-                objectMap.put(moleculeObject.getUUID(), moleculeObject);
-            });
-            fileObjectsMap.put(fileName, objectMap);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private List<MoleculeObject> parseTSV(String fileName) throws IOException {
         File file = new File("files/" + fileName);
         InputStream inputStream = new FileInputStream(file);
@@ -144,4 +136,85 @@ public class NotebooksSession implements Serializable {
     }
 
 
+    public List<UUID> listAllUuids(IDatasetDescriptor datasetDescriptor) {
+        Map<UUID, MoleculeObject> map = fileObjectsMap.get(datasetDescriptor.getId());
+        return new ArrayList<>(map.keySet());
+    }
+
+    public IDatasetDescriptor loadDatasetFromFile(String fileName) {
+        try {
+            List<MoleculeObject> list = parseJsonFile(fileName);
+
+            Map<UUID, MoleculeObject> objectMap = new HashMap<>();
+            for (MoleculeObject moleculeObject : list) {
+                objectMap.put(moleculeObject.getUUID(), moleculeObject);
+            }
+            Long datasetId = nextDatasetId();
+            fileObjectsMap.put(datasetId, objectMap);
+
+            TableDisplayDescriptor datasetDescriptor = new TableDisplayDescriptor(datasetId, fileName, list.size());
+
+            RowDescriptor rowDescriptor = new RowDescriptor();
+            datasetDescriptor.addRowDescriptor(rowDescriptor);
+            PropertyDescriptor structurePropertyDescriptor = new PropertyDescriptor();
+            structurePropertyDescriptor.setDescription("Structure property");
+            structurePropertyDescriptor.setId(1l);
+            rowDescriptor.addPropertyDescriptor(structurePropertyDescriptor);
+            rowDescriptor.setStructurePropertyId(structurePropertyDescriptor.getId());
+            rowDescriptor.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
+            datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
+            return datasetDescriptor;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private synchronized Long nextDatasetId() {
+        lastDatasetId++;
+        return lastDatasetId;
+    }
+
+    private List<MoleculeObject> parseJsonFile(String fileName) throws Exception {
+        File file = new File("files/" + fileName);
+        InputStream inputStream = new FileInputStream(file);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(inputStream, new TypeReference<List<MoleculeObject>>() {});
+        } finally {
+            inputStream.close();
+        }
+    }
+
+    public List<IRow> listRow(IDatasetDescriptor datasetDescriptor, List<UUID> uuidList) {
+        Map<UUID, MoleculeObject> datasetContents = fileObjectsMap.get(datasetDescriptor.getId());
+
+        if (datasetContents.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        RowDescriptor rowDescriptor = (RowDescriptor) datasetDescriptor.getAllRowDescriptors().get(0);
+        PropertyDescriptor structurePropertyDescriptor = (PropertyDescriptor) rowDescriptor.getStructurePropertyDescriptor();
+
+        List<IRow> result = new ArrayList<>();
+        for (UUID uuid : uuidList) {
+            MoleculeObject molecule = datasetContents.get(uuid);
+            Row row = new Row();
+            row.setUuid(molecule.getUUID());
+            row.setDescriptor(rowDescriptor);
+            row.setProperty(structurePropertyDescriptor, molecule.getSource());
+
+            for (IPropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
+                if (!propertyDescriptor.getId().equals(structurePropertyDescriptor.getId())) {
+                    row.setProperty((PropertyDescriptor) propertyDescriptor, molecule.getValue(propertyDescriptor.getDescription()));
+                }
+            }
+
+            result.add(row);
+        }
+        return result;
+    }
+
+    public IDatasetDescriptor findDatasetDescriptorById(Long datasetDescriptorId) {
+        return datasetDescriptorMap.get(datasetDescriptorId);
+    }
 }

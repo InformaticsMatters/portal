@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import portal.dataset.IDatasetDescriptor;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -21,11 +22,13 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     @Inject
     private NotebooksSession notebooksSession;
     private Form<ModelObject> form;
+    private TableDisplayVisualizer tableDisplayVisualizer;
 
     public TableDisplayCanvasItemPanel(String id, Notebook notebook, TableDisplayCell cell) {
         super(id, notebook, cell);
         addHeader();
         addInput();
+        addGrid();
         addListeners();
         load();
     }
@@ -72,6 +75,17 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         add(form);
     }
 
+    private void addGrid() {
+        addOrReplaceTreeGridVisualizer(new TableDisplayDescriptor(0l, "", 0));
+    }
+
+    private void addOrReplaceTreeGridVisualizer(IDatasetDescriptor datasetDescriptor) {
+        tableDisplayVisualizer = new TableDisplayVisualizer("visualizer", datasetDescriptor);
+        addOrReplace(tableDisplayVisualizer);
+        TableDisplayNavigationPanel treeGridNavigation = new TableDisplayNavigationPanel("navigation", tableDisplayVisualizer);
+        addOrReplace(treeGridNavigation);
+    }
+
     private void addListeners() {
         getNotebook().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
@@ -88,12 +102,16 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
 
     private void load() {
         form.getModelObject().setInputVariable(getCell().getInputVariable());
-     }
+        if (getCell().getInputVariable() != null && getCell().getInputVariable().getValue() != null) {
+            IDatasetDescriptor descriptor = notebooksSession.loadDatasetFromFile(getCell().getInputVariable().getValue().toString());
+            addOrReplaceTreeGridVisualizer(descriptor);
+        }
+    }
 
     private void displayAndSave() {
         getCell().setInputVariable(form.getModelObject().getInputVariable());
-
-        //display
+        IDatasetDescriptor descriptor = notebooksSession.loadDatasetFromFile(getCell().getInputVariable().getValue().toString());
+        addOrReplaceTreeGridVisualizer(descriptor);
         notebooksSession.saveNotebook(getNotebook());
     }
 
