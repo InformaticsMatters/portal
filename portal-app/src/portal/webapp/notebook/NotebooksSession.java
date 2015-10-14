@@ -89,31 +89,9 @@ public class NotebooksSession implements Serializable {
 
     public List<MoleculeObject> retrieveFileContentAsMolecules(String fileName) {
         try {
-            return parseTSV(fileName);
+            return parseFile(fileName);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private List<MoleculeObject> parseTSV(String fileName) throws IOException {
-        File file = new File("files/" + fileName);
-        InputStream inputStream = new FileInputStream(file);
-        try {
-            List<MoleculeObject> list = new ArrayList<>();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                line = line.trim();
-                String[] columns = line.split("\t");
-                String value = columns[0].trim();
-                String smile = value.substring(1, value.length() - 1);
-                MoleculeObject object = new MoleculeObject(smile);
-                list.add(object);
-                line = bufferedReader.readLine();
-            }
-            return list;
-        } finally {
-            inputStream.close();
         }
     }
 
@@ -143,7 +121,8 @@ public class NotebooksSession implements Serializable {
 
     public IDatasetDescriptor loadDatasetFromFile(String fileName) {
         try {
-            List<MoleculeObject> list = parseJsonFile(fileName);
+
+            List<MoleculeObject> list = parseFile(fileName);
 
             Map<UUID, MoleculeObject> objectMap = new HashMap<>();
             for (MoleculeObject moleculeObject : list) {
@@ -166,6 +145,40 @@ public class NotebooksSession implements Serializable {
             return datasetDescriptor;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private List<MoleculeObject> parseFile(String fileName) throws Exception {
+        int x = fileName.lastIndexOf(".");
+        String ext = fileName.toLowerCase().substring(x + 1);
+        if (ext.equals("json")) {
+            return parseJsonFile(fileName);
+        } else if (ext.equals("tab")) {
+            return parseTsv(fileName);
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    private List<MoleculeObject> parseTsv(String fileName) throws IOException {
+        File file = new File("files/" + fileName);
+        InputStream inputStream = new FileInputStream(file);
+        try {
+            List<MoleculeObject> list = new ArrayList<>();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                line = line.trim();
+                String[] columns = line.split("\t");
+                String value = columns[0].trim();
+                String smile = value.substring(1, value.length() - 1);
+                MoleculeObject object = new MoleculeObject(smile);
+                list.add(object);
+                line = bufferedReader.readLine();
+            }
+            return list;
+        } finally {
+            inputStream.close();
         }
     }
 

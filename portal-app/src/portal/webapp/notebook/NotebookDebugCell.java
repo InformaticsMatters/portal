@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NotebookDebugCell extends AbstractCell {
-
+    private static final Long serialVersionUid = 1l;
 
     @Override
     public CellType getCellType() {

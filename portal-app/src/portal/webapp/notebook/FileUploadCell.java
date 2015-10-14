@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FileUploadCell extends AbstractCell {
-
+    private static final Long serialVersionUid = 1l;
     private final List<Variable> inputVariableList = Collections.emptyList();
     private List<String> outputVariableNameList = Arrays.asList("resourceId");
     private String fileName;

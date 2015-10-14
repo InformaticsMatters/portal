@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Notebook implements Serializable {
+    private static final Long serialVersionUid = 1l;
     private String name;
     private final List<Cell> cellList = new ArrayList<Cell>();
     private final List<Variable> variableList = new ArrayList<>();

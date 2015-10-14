@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class TableDisplayCell extends AbstractCell {
+    private static final Long serialVersionUid = 1l;
     private Variable inputVariable;
 
     @Override

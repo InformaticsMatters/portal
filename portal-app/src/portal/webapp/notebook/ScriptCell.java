@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScriptCell extends AbstractCell {
+    private static final Long serialVersionUid = 1l;
     private String code;
     private String errorMessage;
     private Object outcome;
