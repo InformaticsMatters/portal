@@ -8,7 +8,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import portal.dataset.IDatasetDescriptor;
 
 import javax.inject.Inject;
@@ -79,40 +78,63 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         addOrReplaceTreeGridVisualizer(new TableDisplayDescriptor(0l, "", 0));
     }
 
+    private void addListeners() {
+        VariableChangeListener variableChangeListener = new VariableChangeListener() {
+
+            @Override
+            public void onValueChanged(Variable source, Object oldValue) {
+                refresh();
+            }
+
+            @Override
+            public void onVariableRemoved(Variable source) {
+                refresh();
+            }
+        };
+        for (Variable variable : getNotebook().getVariableList()) {
+            variable.removeChangeListener(variableChangeListener);
+            variable.addChangeListener(variableChangeListener);
+        }
+        getNotebook().addNotebookChangeListener(new NotebookChangeListener() {
+            @Override
+            public void onCellRemoved(Cell cell) {
+                refresh();
+
+            }
+
+            @Override
+            public void onCellAdded(Cell cell) {
+                refresh();
+            }
+        });
+    }
+
+    private void displayAndSave() {
+        getCell().setInputVariable(form.getModelObject().getInputVariable());
+        loadTableData();
+        notebooksSession.saveNotebook(getNotebook());
+    }
+
+    private void refresh() {
+        getRequestCycle().find(AjaxRequestTarget.class).add(form);
+        loadTableData();
+    }
+
+    private void load() {
+        form.getModelObject().setInputVariable(getCell().getInputVariable());
+    }
+
+    private void loadTableData() {
+        boolean assigned = getCell().getInputVariable() != null && getCell().getInputVariable().getValue() != null;
+        IDatasetDescriptor descriptor = assigned ? notebooksSession.loadDatasetFromFile(getCell().getInputVariable().getValue().toString()) : new TableDisplayDescriptor(0l, "", 0);
+        addOrReplaceTreeGridVisualizer(descriptor);
+    }
+
     private void addOrReplaceTreeGridVisualizer(IDatasetDescriptor datasetDescriptor) {
         tableDisplayVisualizer = new TableDisplayVisualizer("visualizer", datasetDescriptor);
         addOrReplace(tableDisplayVisualizer);
         TableDisplayNavigationPanel treeGridNavigation = new TableDisplayNavigationPanel("navigation", tableDisplayVisualizer);
         addOrReplace(treeGridNavigation);
-    }
-
-    private void addListeners() {
-        getNotebook().addNotebookChangeListener(new NotebookChangeListener() {
-            @Override
-            public void onCellRemoved(Cell cell) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(form);
-            }
-
-            @Override
-            public void onCellAdded(Cell cell) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(form);
-            }
-        });
-    }
-
-    private void load() {
-        form.getModelObject().setInputVariable(getCell().getInputVariable());
-        if (getCell().getInputVariable() != null && getCell().getInputVariable().getValue() != null) {
-            IDatasetDescriptor descriptor = notebooksSession.loadDatasetFromFile(getCell().getInputVariable().getValue().toString());
-            addOrReplaceTreeGridVisualizer(descriptor);
-        }
-    }
-
-    private void displayAndSave() {
-        getCell().setInputVariable(form.getModelObject().getInputVariable());
-        IDatasetDescriptor descriptor = notebooksSession.loadDatasetFromFile(getCell().getInputVariable().getValue().toString());
-        addOrReplaceTreeGridVisualizer(descriptor);
-        notebooksSession.saveNotebook(getNotebook());
     }
 
     class ModelObject implements Serializable {

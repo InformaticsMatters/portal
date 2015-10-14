@@ -1,10 +1,13 @@
 package portal.webapp.notebook;
 
 
+import org.eclipse.jetty.util.log.Log;
+
 import java.util.Collections;
 import java.util.List;
 
 public class PropertyCalculateCell extends AbstractCell {
+    private static final long serialVersionUID = 1l;
     private Variable inputVariable;
     private final List<String> outputVariableNameList = Collections.singletonList("outputFileName");
 
