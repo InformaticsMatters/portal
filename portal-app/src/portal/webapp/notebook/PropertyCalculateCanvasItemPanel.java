@@ -1,5 +1,7 @@
 package portal.webapp.notebook;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -98,17 +100,19 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void calculateAndSave() {
         getCell().setInputVariable(form.getModelObject().getInputVariable());
-        byte[] buffer = notebooksSession.retrieveFileContentAsMolecules((String) getCell().getInputVariable().getValue());
-        calculateTo(buffer, form.getModelObject().getOutputFileName());
+        List<MoleculeObject> objects = notebooksSession.retrieveFileContentAsMolecules((String) getCell().getInputVariable().getValue());
+        calculateTo(objects, form.getModelObject().getOutputFileName());
         getNotebook().findVariable(getCell(), "outputFileName").setValue(form.getModelObject().getOutputFileName());
         notebooksSession.saveNotebook(getNotebook());
     }
 
-    private void calculateTo(byte[] source, String fileName) {
+    private void calculateTo(List<MoleculeObject> objects, String fileName) {
         try {
             FileOutputStream outputStream = new FileOutputStream("files/" + fileName);
             try {
-                  outputStream.write(source);
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.writeValue(outputStream, objects);
+                outputStream.flush();
             } finally {
                 outputStream.close();
             }

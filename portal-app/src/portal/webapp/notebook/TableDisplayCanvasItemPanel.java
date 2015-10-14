@@ -92,6 +92,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
 
     private void displayAndSave() {
         getCell().setInputVariable(form.getModelObject().getInputVariable());
+
+        //display
         notebooksSession.saveNotebook(getNotebook());
     }
 
