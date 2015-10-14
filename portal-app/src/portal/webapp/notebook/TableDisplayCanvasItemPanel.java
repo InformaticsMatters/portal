@@ -135,6 +135,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     private IDatasetDescriptor loadDescriptor() {
         if (getCell().getInputVariable().getValue() instanceof String) {
             return notebooksSession.loadDatasetFromFile(getCell().getInputVariable().getValue().toString());
+        } else if (getCell().getInputVariable().getValue() instanceof Strings) {
+            return notebooksSession.createDatasetFromStrings((Strings)getCell().getInputVariable().getValue(), getCell().getInputVariable().getName());
         } else if (getCell().getInputVariable().getValue() instanceof List) {
             return notebooksSession.createDatasetFromMolecules((List<MoleculeObject>)getCell().getInputVariable().getValue(), getCell().getInputVariable().getName());
         } else {

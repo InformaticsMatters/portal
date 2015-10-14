@@ -30,7 +30,6 @@ public class NotebooksSession implements Serializable {
                 try {
                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
                     Notebook notebook = (Notebook)objectInputStream.readObject();
-                    fixReferences(notebook);
                     return notebook;
                 } finally {
                     inputStream.close();
@@ -56,18 +55,6 @@ public class NotebooksSession implements Serializable {
             notebook.addCell(cell);
              **/
             return notebook;
-        }
-    }
-
-    private static void fixReferences(Notebook notebook) {
-        for (Cell cell : notebook.getCellList()) {
-            List<Variable> inputVariableList = new ArrayList<>();
-            for (Variable variable : cell.getInputVariableList()) {
-                Variable actual = notebook.findVariable(variable.getProducer().getName(), variable.getName());
-                inputVariableList.add(actual);
-            }
-            cell.getInputVariableList().clear();
-            cell.getInputVariableList().addAll(inputVariableList);
         }
     }
 
@@ -153,6 +140,15 @@ public class NotebooksSession implements Serializable {
         rowDescriptor.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
         datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
         return datasetDescriptor;
+    }
+
+    public IDatasetDescriptor createDatasetFromStrings(Strings value, String name) {
+        List<MoleculeObject> list = new ArrayList<>();
+        for (String smile : value.getStrings()) {
+            MoleculeObject moleculeObject = new MoleculeObject(smile);
+            list.add(moleculeObject);
+        }
+        return createDatasetFromMolecules(list, name);
     }
 
     public IDatasetDescriptor loadDatasetFromFile(String fileName) {
@@ -246,5 +242,6 @@ public class NotebooksSession implements Serializable {
     public IDatasetDescriptor findDatasetDescriptorById(Long datasetDescriptorId) {
         return datasetDescriptorMap.get(datasetDescriptorId);
     }
+
 
 }
