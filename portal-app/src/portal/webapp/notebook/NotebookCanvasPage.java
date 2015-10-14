@@ -58,12 +58,10 @@ public class NotebookCanvasPage extends WebPage {
     private NotifierProvider notifierProvider;
     @Inject
     private NotebooksSession notebooksSession;
-    private transient Notebook notebook;
     private int initialItemCount;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
-        notebook = notebooksSession.retrievePocNotebook();
         setOutputMarkupId(true);
         addPanels();
         addActions();
@@ -73,6 +71,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addListeners() {
+        Notebook notebook = notebooksSession.retrievePocNotebook();
         notebook.addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
@@ -116,7 +115,7 @@ public class NotebookCanvasPage extends WebPage {
         IModel<List<Cell>> listModel = new IModel<List<Cell>>() {
             @Override
             public List<Cell> getObject() {
-                return notebook.getCellList();
+                return notebooksSession.retrievePocNotebook().getCellList();
             }
 
             @Override
@@ -212,6 +211,7 @@ public class NotebookCanvasPage extends WebPage {
 
         if (cell != null) {
 
+            Notebook notebook = notebooksSession.retrievePocNotebook();
             cell.setPositionLeft(Integer.parseInt(x));
             cell.setPositionTop(Integer.parseInt(y));
             notebook.addCell(cell);
@@ -241,6 +241,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private Panel createCanvasItemPanel(Cell cell) {
+        Notebook notebook = notebooksSession.retrievePocNotebook();
         CellType cellType = cell.getCellType();
         if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
             return new NotebookDebugCanvasItemPanel("item", notebook, (NotebookDebugCell) cell);
@@ -284,6 +285,7 @@ public class NotebookCanvasPage extends WebPage {
 
                 logger.info("Item index " + index + " Dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
+                Notebook notebook = notebooksSession.retrievePocNotebook();
                 int i = Integer.parseInt(index);
                 Cell model = notebook.getCellList().get(i);
                 model.setPositionLeft(Integer.parseInt(x));
