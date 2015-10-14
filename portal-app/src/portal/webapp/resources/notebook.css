@@ -1,5 +1,4 @@
 .notebook-canvas-item {
-    width: 230px;
     background: #ffffff;
     border: 1px solid #ddd;
     border-radius: 0.2857rem;
@@ -14,6 +13,10 @@
     -webkit-box-shadow: 0px 0px 5px #999!important;
     -moz-box-shadow: 0px 0px 5px #999!important;
     border: 1px solid #aaa!important;
+}
+
+.notebook-canvas-item-content {
+    width: 230px;
 }
 
 .notebook-canvas-item-content > .titleBar {
