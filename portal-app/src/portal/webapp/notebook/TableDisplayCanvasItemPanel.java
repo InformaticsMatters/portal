@@ -1,5 +1,6 @@
 package portal.webapp.notebook;
 
+import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -122,12 +123,23 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
 
     private void load() {
         form.getModelObject().setInputVariable(getCell().getInputVariable());
+        loadTableData();
     }
 
     private void loadTableData() {
         boolean assigned = getCell().getInputVariable() != null && getCell().getInputVariable().getValue() != null;
-        IDatasetDescriptor descriptor = assigned ? notebooksSession.loadDatasetFromFile(getCell().getInputVariable().getValue().toString()) : new TableDisplayDescriptor(0l, "", 0);
+        IDatasetDescriptor descriptor = assigned ? loadDescriptor() : new TableDisplayDescriptor(0l, "", 0);
         addOrReplaceTreeGridVisualizer(descriptor);
+    }
+
+    private IDatasetDescriptor loadDescriptor() {
+        if (getCell().getInputVariable().getValue() instanceof String) {
+            return notebooksSession.loadDatasetFromFile(getCell().getInputVariable().getValue().toString());
+        } else if (getCell().getInputVariable().getValue() instanceof List) {
+            return notebooksSession.createDatasetFromMolecules((List<MoleculeObject>)getCell().getInputVariable().getValue(), getCell().getInputVariable().getName());
+        } else {
+            return new TableDisplayDescriptor(0l, "", 0);
+        }
     }
 
     private void addOrReplaceTreeGridVisualizer(IDatasetDescriptor datasetDescriptor) {

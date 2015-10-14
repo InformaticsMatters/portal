@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Notebook implements Serializable {
-    private static final Long serialVersionUid = 1l;
+    private static final Long serialVersionUID = 1l;
     private String name;
     private final List<Cell> cellList = new ArrayList<Cell>();
     private final List<Variable> variableList = new ArrayList<>();
@@ -101,9 +101,9 @@ public class Notebook implements Serializable {
         return Collections.unmodifiableList(variableList);
     }
 
-    public Variable findVariable(Cell producer, String name) {
+    public Variable findVariable(String producerName, String name) {
         for (Variable variable : variableList) {
-            if (variable.getProducer() == producer && variable.getName().equals(name)) {
+            if (variable.getName().equals(name)) {
                 return variable;
             }
         }

@@ -29,7 +29,9 @@ public class NotebooksSession implements Serializable {
                 FileInputStream inputStream = new FileInputStream(file);
                 try {
                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-                    return (Notebook) objectInputStream.readObject();
+                    Notebook notebook = (Notebook)objectInputStream.readObject();
+                    fixReferences(notebook);
+                    return notebook;
                 } finally {
                     inputStream.close();
                 }
@@ -54,6 +56,18 @@ public class NotebooksSession implements Serializable {
             notebook.addCell(cell);
              **/
             return notebook;
+        }
+    }
+
+    private static void fixReferences(Notebook notebook) {
+        for (Cell cell : notebook.getCellList()) {
+            List<Variable> inputVariableList = new ArrayList<>();
+            for (Variable variable : cell.getInputVariableList()) {
+                Variable actual = notebook.findVariable(variable.getProducer().getName(), variable.getName());
+                inputVariableList.add(actual);
+            }
+            cell.getInputVariableList().clear();
+            cell.getInputVariableList().addAll(inputVariableList);
         }
     }
 
@@ -119,30 +133,32 @@ public class NotebooksSession implements Serializable {
         return new ArrayList<>(map.keySet());
     }
 
+    public IDatasetDescriptor createDatasetFromMolecules(List<MoleculeObject> list, String name) {
+        Map<UUID, MoleculeObject> objectMap = new HashMap<>();
+        for (MoleculeObject moleculeObject : list) {
+            objectMap.put(moleculeObject.getUUID(), moleculeObject);
+        }
+        Long datasetId = nextDatasetId();
+        fileObjectsMap.put(datasetId, objectMap);
+
+        TableDisplayDescriptor datasetDescriptor = new TableDisplayDescriptor(datasetId, name, list.size());
+
+        RowDescriptor rowDescriptor = new RowDescriptor();
+        datasetDescriptor.addRowDescriptor(rowDescriptor);
+        PropertyDescriptor structurePropertyDescriptor = new PropertyDescriptor();
+        structurePropertyDescriptor.setDescription("Structure property");
+        structurePropertyDescriptor.setId(1l);
+        rowDescriptor.addPropertyDescriptor(structurePropertyDescriptor);
+        rowDescriptor.setStructurePropertyId(structurePropertyDescriptor.getId());
+        rowDescriptor.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
+        datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
+        return datasetDescriptor;
+    }
+
     public IDatasetDescriptor loadDatasetFromFile(String fileName) {
         try {
-
             List<MoleculeObject> list = parseFile(fileName);
-
-            Map<UUID, MoleculeObject> objectMap = new HashMap<>();
-            for (MoleculeObject moleculeObject : list) {
-                objectMap.put(moleculeObject.getUUID(), moleculeObject);
-            }
-            Long datasetId = nextDatasetId();
-            fileObjectsMap.put(datasetId, objectMap);
-
-            TableDisplayDescriptor datasetDescriptor = new TableDisplayDescriptor(datasetId, fileName, list.size());
-
-            RowDescriptor rowDescriptor = new RowDescriptor();
-            datasetDescriptor.addRowDescriptor(rowDescriptor);
-            PropertyDescriptor structurePropertyDescriptor = new PropertyDescriptor();
-            structurePropertyDescriptor.setDescription("Structure property");
-            structurePropertyDescriptor.setId(1l);
-            rowDescriptor.addPropertyDescriptor(structurePropertyDescriptor);
-            rowDescriptor.setStructurePropertyId(structurePropertyDescriptor.getId());
-            rowDescriptor.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
-            datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
-            return datasetDescriptor;
+            return createDatasetFromMolecules(list, fileName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -152,7 +168,7 @@ public class NotebooksSession implements Serializable {
         int x = fileName.lastIndexOf(".");
         String ext = fileName.toLowerCase().substring(x + 1);
         if (ext.equals("json")) {
-            return parseJsonFile(fileName);
+            return parseJson(fileName);
         } else if (ext.equals("tab")) {
             return parseTsv(fileName);
         } else {
@@ -187,7 +203,7 @@ public class NotebooksSession implements Serializable {
         return lastDatasetId;
     }
 
-    private List<MoleculeObject> parseJsonFile(String fileName) throws Exception {
+    private List<MoleculeObject> parseJson(String fileName) throws Exception {
         File file = new File("files/" + fileName);
         InputStream inputStream = new FileInputStream(file);
         try {
@@ -230,4 +246,5 @@ public class NotebooksSession implements Serializable {
     public IDatasetDescriptor findDatasetDescriptorById(Long datasetDescriptorId) {
         return datasetDescriptorMap.get(datasetDescriptorId);
     }
+
 }

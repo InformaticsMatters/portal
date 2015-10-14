@@ -1,5 +1,6 @@
 package portal.webapp.notebook;
 
+import com.im.lac.types.MoleculeObject;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -104,13 +105,14 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
                 bindings.put(producerName + "_" + variable.getName(), variable.getValue());
             }
         }
+        bindings.put("session", notebooksSession);
         try {
             Object result = scriptToVm(engine.eval(getCell().getCode()));
             getCell().setOutcome(result);
             getCell().setErrorMessage(null);
             for (String key : getCell().getOutputVariableNameList()) {
-                Object value = bindings.get(key);
-                Variable variable = getNotebook().findVariable(getCell(), key);
+                Object value = engine.get(key);
+                Variable variable = getNotebook().findVariable(getCell().getName(), key);
                 if (variable != null) {
                     variable.setValue(value);
                 }

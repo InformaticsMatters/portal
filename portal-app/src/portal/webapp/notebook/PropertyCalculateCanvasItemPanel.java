@@ -59,7 +59,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void load() {
         form.getModelObject().setInputVariable(getCell().getInputVariable());
-        Variable variable = getNotebook().findVariable(getCell(), "outputFileName");
+        Variable variable = getNotebook().findVariable(getCell().getName(), "outputFileName");
         if (variable != null) {
             form.getModelObject().setOutputFileName((String)variable.getValue());
         }
@@ -102,7 +102,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         getCell().setInputVariable(form.getModelObject().getInputVariable());
         List<MoleculeObject> objects = notebooksSession.retrieveFileContentAsMolecules((String) getCell().getInputVariable().getValue());
         calculateTo(objects, form.getModelObject().getOutputFileName());
-        getNotebook().findVariable(getCell(), "outputFileName").setValue(form.getModelObject().getOutputFileName());
+        getNotebook().findVariable(getCell().getName(), "outputFileName").setValue(form.getModelObject().getOutputFileName());
         notebooksSession.saveNotebook(getNotebook());
     }
 

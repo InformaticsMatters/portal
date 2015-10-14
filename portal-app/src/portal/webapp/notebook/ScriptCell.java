@@ -1,6 +1,7 @@
 package portal.webapp.notebook;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ScriptCell extends AbstractCell {
@@ -9,7 +10,7 @@ public class ScriptCell extends AbstractCell {
     private String errorMessage;
     private Object outcome;
     private final List<Variable> inputVariableList = new ArrayList<>();
-    private final List<String> outputVariableNameList = new ArrayList<>();
+    private final List<String> outputVariableNameList = Collections.singletonList("outcome");
 
     public String getCode() {
         return code;

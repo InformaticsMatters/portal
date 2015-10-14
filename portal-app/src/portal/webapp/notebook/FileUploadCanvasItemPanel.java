@@ -106,7 +106,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
     }
 
     private void store() {
-        getNotebook().findVariable(getCell(), "resourceId").setValue(uploadForm.getModelObject().getFileName());
+        getNotebook().findVariable(getCell().getName(), "resourceId").setValue(uploadForm.getModelObject().getFileName());
         getCell().setFileName(uploadForm.getModelObject().getFileName());
         notebooksSession.saveNotebook(getNotebook());
     }
