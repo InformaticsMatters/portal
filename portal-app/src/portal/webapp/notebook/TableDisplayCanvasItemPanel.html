@@ -1,31 +1,30 @@
 <wicket:panel>
     <div class="notebook-canvas-item-content" style="width: auto;">
-        <div class="content" >
+        <div class="titleBar">
             <div class="name left floated">
                 <label wicket:id="cellName"/>
             </div>
-            <div>
-                <form wicket:id="form" class="ui form content">
-                    <div class="field">
-                        <label>Input variable </label>
+            <div style="text-align: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
+        </div>
 
-                        <div class="ui small input" style="width: 300px;">
-                            <select wicket:id="inputVariable"></select>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <div class="ui mini blue button" wicket:id="display">Display</div>
-                    </div>
-                </form>
-            </div>
-            <div>
-                <div wicket:id="navigation" style="margin-top: 10px;"></div>
-                <div class="separator10"></div>
-                <div>
-                    <div wicket:id="visualizer"></div>
+        <form wicket:id="form" class="ui form content">
+            <div class="field">
+                <label>Input variable </label>
+
+                <div class="ui small input" style="width: 300px;">
+                    <select wicket:id="inputVariable"></select>
                 </div>
             </div>
-            <div style="text-align: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
+            <div class="actions">
+                <div class="ui mini blue button" wicket:id="display">Display</div>
+            </div>
+        </form>
+        <div class="content">
+            <div wicket:id="navigation" style="margin-top: 10px;"></div>
+            <div class="separator10"></div>
+            <div>
+                <div wicket:id="visualizer"></div>
+            </div>
         </div>
     </div>
 </wicket:panel>
