@@ -108,3 +108,15 @@
     height: 20px;
     font-size: 11px;
 }
+
+.tableCellContent {
+    width: auto;
+    max-width: 550px;
+    overflow-x: scroll;
+}
+
+div.imxt-vista div.imxt-body-container1 {
+    max-height: 270px;
+    overflow-y: scroll;
+    max-width: 500px;
+}
