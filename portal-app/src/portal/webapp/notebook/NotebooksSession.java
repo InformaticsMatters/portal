@@ -179,18 +179,35 @@ public class NotebooksSession implements Serializable {
             List<MoleculeObject> list = new ArrayList<>();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             String line = bufferedReader.readLine();
+            String[] headers = line.split("\t");
+            for (int h = 0; h < headers.length; h++) {
+                headers[h] = trim(headers[h]);
+            }
             while (line != null) {
                 line = line.trim();
                 String[] columns = line.split("\t");
                 String value = columns[0].trim();
                 String smile = value.substring(1, value.length() - 1);
                 MoleculeObject object = new MoleculeObject(smile);
+                for (int i = 1; i < columns.length; i++) {
+                    String name = headers[i];
+                    String prop = trim(columns[i]);
+                    object.putValue(name, prop);
+                }
                 list.add(object);
                 line = bufferedReader.readLine();
             }
             return list;
         } finally {
             inputStream.close();
+        }
+    }
+
+    private String trim(String v) {
+        if (v.length() > 1 && v.charAt(0) == '"' && v.charAt(v.length()-1) == '"') {
+            return v.substring(1, v.length() - 1);
+        } else {
+            return v;
         }
     }
 
