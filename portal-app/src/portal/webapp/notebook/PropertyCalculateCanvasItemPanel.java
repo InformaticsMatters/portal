@@ -120,11 +120,13 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.writeValue(byteArrayOutputStream, list);
             byteArrayOutputStream.flush();
+            System.out.write(byteArrayOutputStream.toByteArray());
+            System.out.println();
             FileOutputStream outputStream = new FileOutputStream("files/" + outputFileName);
             try {
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
                 try {
-                    calculatorsClient.calculate("lipinski", inputStream, outputStream);
+                    calculatorsClient.calculate("drugLikeFilter", inputStream, outputStream);
                 } catch (Throwable t) {
                     outputStream.write("[]".getBytes());
                     LOGGER.log(Level.WARNING, "Error executing calculator", t);
