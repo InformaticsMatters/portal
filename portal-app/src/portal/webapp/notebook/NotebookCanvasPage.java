@@ -90,6 +90,8 @@ public class NotebookCanvasPage extends WebPage {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
         response.render(JavaScriptHeaderItem.forReference(JQueryResourceReference.get()));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/jquery-ui.min.css")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/jquery-ui.min.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/dom.jsPlumb-1.7.5.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/lac.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/lac.js")));

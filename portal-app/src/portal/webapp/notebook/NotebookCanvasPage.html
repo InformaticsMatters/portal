@@ -14,6 +14,14 @@
 
 <div class="wrapper flex-column">
 
+    <script>
+    $(".notebook-canvas-item").resizable({
+        resize : function(event, ui) {
+                jsPlumb.repaint(ui.helper);
+            }
+        });
+    </script>
+
     <div wicket:id="menuPanel"></div>
 
     <div class="ui grid flex-1 workflow">

@@ -14,6 +14,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 
 import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.List;
@@ -21,6 +23,8 @@ import java.util.List;
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCalculateCell> {
     @Inject
     private NotebooksSession notebooksSession;
+    @Inject
+    private transient CalculatorsClient calculatorsClient;
 
     private Form<ModelObject> form;
 
@@ -61,7 +65,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         form.getModelObject().setInputVariable(getCell().getInputVariable());
         Variable variable = getNotebook().findVariable(getCell().getName(), "outputFileName");
         if (variable != null) {
-            form.getModelObject().setOutputFileName((String)variable.getValue());
+            form.getModelObject().setOutputFileName((String) variable.getValue());
         }
     }
 
@@ -100,18 +104,23 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void calculateAndSave() {
         getCell().setInputVariable(form.getModelObject().getInputVariable());
-        List<MoleculeObject> objects = notebooksSession.retrieveFileContentAsMolecules((String) getCell().getInputVariable().getValue());
-        calculateTo(objects, form.getModelObject().getOutputFileName());
-        getNotebook().findVariable(getCell().getName(), "outputFileName").setValue(form.getModelObject().getOutputFileName());
+        Variable outputVariable = getNotebook().findVariable(getCell().getName(), "outputFileName");
+        outputVariable.setValue(form.getModelObject().getOutputFileName());
+        calculateTo(getCell().getInputVariable().getValue().toString(), outputVariable.getValue().toString());
         notebooksSession.saveNotebook(getNotebook());
     }
 
-    private void calculateTo(List<MoleculeObject> objects, String fileName) {
+    private void calculateTo(String inputFileName, String outputFileName) {
         try {
-            FileOutputStream outputStream = new FileOutputStream("files/" + fileName);
+            List<MoleculeObject> list = notebooksSession.retrieveFileContentAsMolecules(inputFileName);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(byteArrayOutputStream, list);
+            byteArrayOutputStream.flush();
+            FileOutputStream outputStream = new FileOutputStream("files/" + outputFileName);
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.writeValue(outputStream, objects);
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                calculatorsClient.calculate("rings", inputStream, outputStream);
                 outputStream.flush();
             } finally {
                 outputStream.close();

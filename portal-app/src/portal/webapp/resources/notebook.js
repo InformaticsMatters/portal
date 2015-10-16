@@ -99,6 +99,13 @@ function makeCanvasItemPlumbDraggable(selector) {
             onNotebookCanvasItemDragged(index, params.pos[0], params.pos[1]);
         }
     });
+    /**
+    $(selector).resizable({
+        resize : function(event, ui) {
+                jsPlumb.repaint(ui.helper);
+            }
+        });
+        **/
 }
 
 function initJsPlumb() {
