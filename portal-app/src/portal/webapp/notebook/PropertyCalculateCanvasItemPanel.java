@@ -19,8 +19,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCalculateCell> {
+    private static final Logger LOGGER = Logger.getLogger(PropertyCalculateCanvasItemPanel.class.getName());
     @Inject
     private NotebooksSession notebooksSession;
     @Inject
@@ -120,7 +123,12 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
             FileOutputStream outputStream = new FileOutputStream("files/" + outputFileName);
             try {
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                calculatorsClient.calculate("rings", inputStream, outputStream);
+                try {
+                    calculatorsClient.calculate("lipinski", inputStream, outputStream);
+                } catch (Throwable t) {
+                    outputStream.write("[]".getBytes());
+                    LOGGER.log(Level.WARNING, "Error executing calculator", t);
+                }
                 outputStream.flush();
             } finally {
                 outputStream.close();

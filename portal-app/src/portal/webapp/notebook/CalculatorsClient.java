@@ -17,24 +17,27 @@ import java.util.logging.Logger;
 public class CalculatorsClient implements Serializable {
     private static final Logger LOG = Logger.getLogger(CalculatorsClient.class.getName());
     private static final String DEFAULT_BASE_URL = "http://demos.informaticsmatters.com:9080/chem-services-chemaxon-basic/rest/v1/calculators/";
-    private final String base;
+    private final String uriBase;
     private final CloseableHttpClient httpclient = HttpClients.createDefault();
     private final JsonHandler jsonHandler = new JsonHandler();
 
-    public CalculatorsClient(String baseUrl) {
-        this.base = baseUrl;
-    }
 
     public CalculatorsClient() {
-        this.base = DEFAULT_BASE_URL;
+        this.uriBase = DEFAULT_BASE_URL;
     }
 
 
     public void calculate(String calculatorName, InputStream inputStream, OutputStream outputStream) {
-        HttpPost httpPost = new HttpPost(this.base + calculatorName);
+        String uri = this.uriBase + calculatorName;
+        LOG.info(uri);
+        HttpPost httpPost = new HttpPost(this.uriBase + calculatorName);
         httpPost.setEntity(new InputStreamEntity(inputStream));
         try {
             CloseableHttpResponse response = this.httpclient.execute(httpPost);
+            if (response.getStatusLine().getStatusCode() != 200) {
+                throw new RuntimeException("Error code " + response.getStatusLine().getStatusCode()
+                + ": " + response.getStatusLine().getReasonPhrase());
+            }
             InputStream responseStream = response.getEntity().getContent();
             try {
                 transfer(responseStream, outputStream);
