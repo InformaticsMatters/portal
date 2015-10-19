@@ -1,7 +1,6 @@
 package portal.webapp.notebook;
 
 
-import com.im.lac.types.io.JsonHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
@@ -16,10 +15,9 @@ import java.util.logging.Logger;
 
 public class CalculatorsClient implements Serializable {
     private static final Logger LOG = Logger.getLogger(CalculatorsClient.class.getName());
-    private static final String DEFAULT_BASE_URL = "http://demos.informaticsmatters.com:9080/chem-services-chemaxon-basic/rest/v1/calculators/";
+    private static final String DEFAULT_BASE_URL = "http://demos.informaticsmatters.com:9080/chem-services-rdkit-basic/rest/v1/calculators/";// "http://demos.informaticsmatters.com:9080/chem-services-chemaxon-basic/rest/v1/calculators/";
     private final String uriBase;
     private final CloseableHttpClient httpclient = HttpClients.createDefault();
-    private final JsonHandler jsonHandler = new JsonHandler();
 
 
     public CalculatorsClient() {

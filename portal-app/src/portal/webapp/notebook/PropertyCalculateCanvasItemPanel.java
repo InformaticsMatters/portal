@@ -14,10 +14,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -125,8 +122,9 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
             FileOutputStream outputStream = new FileOutputStream("files/" + outputFileName);
             try {
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                //FileInputStream inputStream = new FileInputStream("files/" + inputFileName);
                 try {
-                    calculatorsClient.calculate("drugLikeFilter", inputStream, outputStream);
+                    calculatorsClient.calculate("rings", inputStream, outputStream);
                 } catch (Throwable t) {
                     outputStream.write("[]".getBytes());
                     LOGGER.log(Level.WARNING, "Error executing calculator", t);
