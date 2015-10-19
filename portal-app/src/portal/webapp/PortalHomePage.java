@@ -14,6 +14,9 @@ import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
 
+/**
+ * @author simetrias
+ */
 public class PortalHomePage extends WebPage implements SecuredComponent {
 
     @Inject
