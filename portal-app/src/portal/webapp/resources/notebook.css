@@ -5,6 +5,7 @@
     transition: box-shadow 0.2s ease;
     position:absolute;
     z-index: 100;
+    overflow: auto;
 }
 
 .notebook-canvas-item:hover {
