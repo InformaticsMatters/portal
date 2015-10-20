@@ -1,26 +1,28 @@
 <wicket:panel>
     <div class="notebook-canvas-item-content" style="width: auto;">
-        <div class="titleBar">
+        <div class="titleBar" style="margin-bottom: 0px;">
             <div class="name left floated">
                 <label wicket:id="cellName"/>
             </div>
             <div style="text-align: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
         </div>
-        <form wicket:id="form" class="ui form content">
-            <div class="field">
-                <label>Input variable </label>
+        <div class="tableCell">
+            <form wicket:id="form" class="ui form content">
+                <div class="field">
+                    <label>Input variable </label>
 
-                <div class="ui small input" style="width: 300px;">
-                    <select wicket:id="inputVariable"></select>
+                    <div class="ui small input" style="width: 300px;">
+                        <select wicket:id="inputVariable"></select>
+                    </div>
                 </div>
-            </div>
-            <div class="ui mini blue button" wicket:id="display">Display</div>
-        </form>
-        <div class="content">
-            <div wicket:id="navigation" style="margin-top: 10px;"></div>
-            <div class="separator10"></div>
-            <div style="max-width: 500px;">
-                <div wicket:id="visualizer"></div>
+                <div class="ui mini blue button" wicket:id="display">Display</div>
+            </form>
+            <div class="content">
+                <div wicket:id="navigation" style="margin-top: 10px;"></div>
+                <div class="separator10"></div>
+                <div style="max-width: 500px;">
+                    <div wicket:id="visualizer"></div>
+                </div>
             </div>
         </div>
     </div>

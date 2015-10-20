@@ -100,7 +100,7 @@ function makeCanvasItemPlumbDraggable(selector) {
         }
     });
 
-    $(selector).resizable({
+    $(".tableCell").resizable({
         resize : function(event, ui) {
                 jsPlumb.repaint(ui.helper);
             }
