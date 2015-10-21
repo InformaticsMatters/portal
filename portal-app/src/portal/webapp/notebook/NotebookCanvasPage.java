@@ -237,6 +237,8 @@ public class NotebookCanvasPage extends WebPage {
 
             // activate jsPlumb dragging on new canvas item
             target.appendJavaScript("makeCanvasItemPlumbDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
+            target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
+            target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
 
             notebooksSession.saveNotebook(notebook);
         }

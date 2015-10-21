@@ -108,6 +108,37 @@ function makeCanvasItemPlumbDraggable(selector) {
 
 }
 
+function addSourceEndpoint(itemId) {
+    var sourceEndpointOptions = {
+        anchor: 'BottomCenter',
+        isSource:true,
+        paintStyle: {
+            fillStyle: "#7AB02C",
+            radius: 10
+        },
+        connectorStyle : {
+            lineWidth: 4,
+            strokeStyle: "#61B7CF",
+            joinstyle: "round"
+        }
+    };
+    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions);
+}
+
+function addTargetEndpoint(itemId) {
+    var targetEndpointOptions = {
+        endpoint: 'Dot',
+        anchor: 'TopCenter',
+        isTarget:true,
+        paintStyle : {
+            strokeStyle: "#7AB02C",
+            radius: 9,
+            lineWidth: 3
+        },
+    };
+    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions);
+}
+
 function initJsPlumb() {
     jsPlumb.setContainer($('#plumbContainer'));
 }
