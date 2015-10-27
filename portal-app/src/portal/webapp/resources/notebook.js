@@ -102,7 +102,7 @@ function makeCanvasItemPlumbDraggable(selector) {
 
     $(".tableCell").resizable({
         resize : function(event, ui) {
-                jsPlumb.repaint(ui.helper);
+                jsPlumb.repaintEverything();
             }
         });
 
