@@ -3,7 +3,6 @@ package portal.webapp.notebook;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -12,6 +11,7 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -25,8 +25,8 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
     private Form<UploadData> uploadForm;
     private FileUploadField fileUploadField;
 
-    public FileUploadCanvasItemPanel(String id, Notebook notebook, FileUploadCell cell) {
-        super(id, notebook, cell);
+    public FileUploadCanvasItemPanel(String id, NotebookData notebookData, FileUploadCell cell) {
+        super(id, notebookData, cell);
         addHeader();
         addForm();
         load();
@@ -37,8 +37,8 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getNotebook().removeCell(getCell());
-                notebooksSession.saveNotebook(getNotebook());
+                getNotebookData().removeCell(getCell());
+                notebooksSession.saveNotebook(getNotebookData());
             }
         });
     }
@@ -57,7 +57,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
 
         uploadForm.add(new Image("appender", AbstractDefaultAjaxBehavior.INDICATOR));
 
-        final AjaxSubmitLink submit = new AjaxSubmitLink("submit") {
+        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit") {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -106,9 +106,9 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
     }
 
     private void store() {
-        getNotebook().findVariable(getCell().getName(), "resourceId").setValue(uploadForm.getModelObject().getFileName());
+        getNotebookData().findVariable(getCell().getName(), "resourceId").setValue(uploadForm.getModelObject().getFileName());
         getCell().setFileName(uploadForm.getModelObject().getFileName());
-        notebooksSession.saveNotebook(getNotebook());
+        notebooksSession.saveNotebook(getNotebookData());
     }
 
 

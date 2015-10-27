@@ -10,6 +10,7 @@ public class PropertyCalculateCell extends AbstractCell {
     private static final long serialVersionUID = 1l;
     private Variable inputVariable;
     private final List<String> outputVariableNameList = Collections.singletonList("outputFileName");
+    private String serviceName;
 
     @Override
     public CellType getCellType() {
@@ -34,4 +35,11 @@ public class PropertyCalculateCell extends AbstractCell {
         this.inputVariable = inputVariable;
     }
 
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
 }

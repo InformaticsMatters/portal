@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -12,10 +11,11 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.*;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,11 +25,10 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     private NotebooksSession notebooksSession;
     @Inject
     private transient CalculatorsClient calculatorsClient;
-
     private Form<ModelObject> form;
 
-    public PropertyCalculateCanvasItemPanel(String id, Notebook notebook, PropertyCalculateCell cell) {
-        super(id, notebook, cell);
+    public PropertyCalculateCanvasItemPanel(String id, NotebookData notebookData, PropertyCalculateCell cell) {
+        super(id, notebookData, cell);
         addHeader();
         addForm();
         addListeners();
@@ -41,14 +40,14 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getNotebook().removeCell(getCell());
-                notebooksSession.saveNotebook(getNotebook());
+                getNotebookData().removeCell(getCell());
+                notebooksSession.saveNotebook(getNotebookData());
             }
         });
     }
 
     private void addListeners() {
-        getNotebook().addNotebookChangeListener(new NotebookChangeListener() {
+        getNotebookData().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(form);
@@ -63,18 +62,19 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void load() {
         form.getModelObject().setInputVariable(getCell().getInputVariable());
-        Variable variable = getNotebook().findVariable(getCell().getName(), "outputFileName");
+        Variable variable = getNotebookData().findVariable(getCell().getName(), "outputFileName");
         if (variable != null) {
             form.getModelObject().setOutputFileName((String) variable.getValue());
         }
+        form.getModelObject().setServiceName(getCell().getServiceName());
     }
 
     private void addForm() {
         form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
-        IModel<List<Variable>> dropDownModel = new IModel<List<Variable>>() {
+        IModel<List<Variable>> inputVariableModel = new IModel<List<Variable>>() {
             @Override
             public List<Variable> getObject() {
-                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), getNotebook());
+                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), getNotebookData());
                 return list;
             }
 
@@ -88,11 +88,13 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
             }
         };
-        DropDownChoice<Variable> inputVariableChoice = new DropDownChoice<Variable>("inputVariable", dropDownModel);
+        DropDownChoice<Variable> inputVariableChoice = new DropDownChoice<Variable>("inputVariable", inputVariableModel);
         form.add(inputVariableChoice);
+        DropDownChoice<String> serviceNameChoice = new DropDownChoice<String>("serviceName", Arrays.asList(CalculatorsClient.getServiceNames()));
+        form.add(serviceNameChoice);
         TextField<String> outputFileNameField = new TextField<String>("outputFileName");
         form.add(outputFileNameField);
-        AjaxSubmitLink calculateLink = new AjaxSubmitLink("calculate") {
+        IndicatingAjaxSubmitLink calculateLink = new IndicatingAjaxSubmitLink("calculate") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 calculateAndSave();
@@ -104,27 +106,27 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void calculateAndSave() {
         getCell().setInputVariable(form.getModelObject().getInputVariable());
-        Variable outputVariable = getNotebook().findVariable(getCell().getName(), "outputFileName");
+        getCell().setServiceName(form.getModelObject().getServiceName());
+        Variable outputVariable = getNotebookData().findVariable(getCell().getName(), "outputFileName");
         outputVariable.setValue(form.getModelObject().getOutputFileName());
-        calculateTo(getCell().getInputVariable().getValue().toString(), outputVariable.getValue().toString());
-        notebooksSession.saveNotebook(getNotebook());
+        calculateTo(getCell().getServiceName(), getCell().getInputVariable().getValue().toString(), outputVariable.getValue().toString());
+        notebooksSession.saveNotebook(getNotebookData());
     }
 
-    private void calculateTo(String inputFileName, String outputFileName) {
+    private void calculateTo(String serviceName, String inputFileName, String outputFileName) {
         try {
             List<MoleculeObject> list = notebooksSession.retrieveFileContentAsMolecules(inputFileName);
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.writeValue(byteArrayOutputStream, list);
             byteArrayOutputStream.flush();
-            System.out.write(byteArrayOutputStream.toByteArray());
-            System.out.println();
             FileOutputStream outputStream = new FileOutputStream("files/" + outputFileName);
             try {
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                //FileInputStream inputStream = new FileInputStream("files/" + inputFileName);
                 try {
-                    calculatorsClient.calculate("rings", inputStream, outputStream);
+                    LOGGER.log(Level.INFO, "Calling service...");
+                    calculatorsClient.calculate(serviceName, inputStream, outputStream);
+                    LOGGER.log(Level.INFO, "Service call finished");
                 } catch (Throwable t) {
                     outputStream.write("[]".getBytes());
                     LOGGER.log(Level.WARNING, "Error executing calculator", t);
@@ -135,12 +137,12 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
-
         }
     }
 
     class ModelObject implements Serializable {
         private Variable inputVariable;
+        private String serviceName;
         private String outputFileName;
 
         public Variable getInputVariable() {
@@ -157,6 +159,14 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
         public void setOutputFileName(String outputFileName) {
             this.outputFileName = outputFileName;
+        }
+
+        public String getServiceName() {
+            return serviceName;
+        }
+
+        public void setServiceName(String serviceName) {
+            this.serviceName = serviceName;
         }
     }
 

@@ -11,24 +11,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class CalculatorsClient implements Serializable {
-    private static final Logger LOG = Logger.getLogger(CalculatorsClient.class.getName());
-    private static final String DEFAULT_BASE_URL = "http://demos.informaticsmatters.com:9080/chem-services-rdkit-basic/rest/v1/calculators/";// "http://demos.informaticsmatters.com:9080/chem-services-chemaxon-basic/rest/v1/calculators/";
-    private final String uriBase;
+    private static final Logger LOGGER = Logger.getLogger(CalculatorsClient.class.getName());
+    private static final Map<String, String> ENDPOINT_MAP = createEndpointMap();
     private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
-
-    public CalculatorsClient() {
-        this.uriBase = DEFAULT_BASE_URL;
+    private static Map<String, String> createEndpointMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put("CXN Lipinski Properties", "http://demos.informaticsmatters.com:9080/chem-services-chemaxon-basic/rest/v1/calculators/lipinski");
+        map.put("CXN Drug-Like Filter", "http://demos.informaticsmatters.com:9080/chem-services-chemaxon-basic/rest/v1/calculators/drugLikeFilter");
+        map.put("RDKit rings", "http://demos.informaticsmatters.com:9080/chem-services-rdkit-basic/rest/v1/calculators/rings");
+        map.put("RDKit rotatable bond count", "http://demos.informaticsmatters.com:9080/chem-services-rdkit-basic/rest/v1/calculators/rings");
+        return map;
     }
 
+    public static String[] getServiceNames() {
+        return ENDPOINT_MAP.keySet().toArray(new String[0]);
+    }
 
     public void calculate(String calculatorName, InputStream inputStream, OutputStream outputStream) {
-        String uri = this.uriBase + calculatorName;
-        LOG.info(uri);
-        HttpPost httpPost = new HttpPost(this.uriBase + calculatorName);
+        String uri = ENDPOINT_MAP.get(calculatorName);
+        LOGGER.info(uri);
+        HttpPost httpPost = new HttpPost(uri);
         httpPost.setEntity(new InputStreamEntity(inputStream));
         try {
             CloseableHttpResponse response = this.httpclient.execute(httpPost);

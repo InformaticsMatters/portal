@@ -3,13 +3,13 @@ package portal.webapp.notebook;
 import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import portal.dataset.IDatasetDescriptor;
+import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -24,8 +24,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
 
-    public TableDisplayCanvasItemPanel(String id, Notebook notebook, TableDisplayCell cell) {
-        super(id, notebook, cell);
+    public TableDisplayCanvasItemPanel(String id, NotebookData notebookData, TableDisplayCell cell) {
+        super(id, notebookData, cell);
         addHeader();
         addInput();
         addGrid();
@@ -38,8 +38,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getNotebook().removeCell(getCell());
-                notebooksSession.saveNotebook(getNotebook());
+                getNotebookData().removeCell(getCell());
+                notebooksSession.saveNotebook(getNotebookData());
             }
         });
     }
@@ -49,7 +49,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         IModel<List<Variable>> dropDownModel = new IModel<List<Variable>>() {
             @Override
             public List<Variable> getObject() {
-                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), getNotebook());
+                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), getNotebookData());
                 return list;
             }
 
@@ -65,7 +65,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         };
         DropDownChoice<Variable> inputVariableChoice = new DropDownChoice<Variable>("inputVariable", dropDownModel);
         form.add(inputVariableChoice);
-        AjaxSubmitLink calculateLink = new AjaxSubmitLink("display") {
+        IndicatingAjaxSubmitLink calculateLink = new IndicatingAjaxSubmitLink("display") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 displayAndSave();
@@ -92,11 +92,11 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
                 refresh();
             }
         };
-        for (Variable variable : getNotebook().getVariableList()) {
+        for (Variable variable : getNotebookData().getVariableList()) {
             variable.removeChangeListener(variableChangeListener);
             variable.addChangeListener(variableChangeListener);
         }
-        getNotebook().addNotebookChangeListener(new NotebookChangeListener() {
+        getNotebookData().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
                 refresh();
@@ -113,7 +113,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     private void displayAndSave() {
         getCell().setInputVariable(form.getModelObject().getInputVariable());
         loadTableData();
-        notebooksSession.saveNotebook(getNotebook());
+        notebooksSession.saveNotebook(getNotebookData());
     }
 
     private void refresh() {
@@ -128,7 +128,10 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
 
     private void loadTableData() {
         boolean assigned = getCell().getInputVariable() != null && getCell().getInputVariable().getValue() != null;
-        IDatasetDescriptor descriptor = assigned ? loadDescriptor() : new TableDisplayDescriptor(0l, "", 0);
+        IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
+        if (descriptor == null) {
+            descriptor = new TableDisplayDescriptor(0l, "", 0);
+        }
         addOrReplaceTreeGridVisualizer(descriptor);
     }
 
@@ -140,7 +143,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         } else if (getCell().getInputVariable().getValue() instanceof List) {
             return notebooksSession.createDatasetFromMolecules((List<MoleculeObject>)getCell().getInputVariable().getValue(), getCell().getInputVariable().getName());
         } else {
-            return new TableDisplayDescriptor(0l, "", 0);
+            return null;
         }
     }
 

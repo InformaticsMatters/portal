@@ -1,6 +1,5 @@
 package portal.webapp.notebook;
 
-import com.im.lac.types.MoleculeObject;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -25,8 +24,8 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
 
-    public ScriptCanvasItemPanel(String id, Notebook notebook, ScriptCell cell) {
-        super(id, notebook, cell);
+    public ScriptCanvasItemPanel(String id, NotebookData notebookData, ScriptCell cell) {
+        super(id, notebookData, cell);
         setOutputMarkupId(true);
         addHeader();
         addForm();
@@ -38,8 +37,8 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getNotebook().removeCell(getCell());
-                notebooksSession.saveNotebook(getNotebook());
+                getNotebookData().removeCell(getCell());
+                notebooksSession.saveNotebook(getNotebookData());
             }
         });
     }
@@ -97,7 +96,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         Bindings bindings = engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
         /**/
         getCell().getInputVariableList().clear();
-        getCell().getInputVariableList().addAll(getNotebook().getVariableList());
+        getCell().getInputVariableList().addAll(getNotebookData().getVariableList());
         /**/
         for (Variable variable : getCell().getInputVariableList()) {
             if (variable.getValue() != null) {
@@ -112,7 +111,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
             getCell().setErrorMessage(null);
             for (String key : getCell().getOutputVariableNameList()) {
                 Object value = engine.get(key);
-                Variable variable = getNotebook().findVariable(getCell().getName(), key);
+                Variable variable = getNotebookData().findVariable(getCell().getName(), key);
                 if (variable != null) {
                     variable.setValue(value);
                 }
@@ -120,7 +119,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         } catch (ScriptException se) {
             getCell().setErrorMessage(se.getMessage());
         }
-        notebooksSession.saveNotebook(getNotebook());
+        notebooksSession.saveNotebook(getNotebookData());
         ajaxRequestTarget.add(outcomeLabel);
     }
 

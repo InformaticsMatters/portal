@@ -13,7 +13,7 @@ import java.util.*;
 @SessionScoped
 public class NotebooksSession implements Serializable {
 
-    private static final Notebook POC_NOTEBOOK = createPocNotebook();
+    private static final NotebookData POC_NOTEBOOK_DATA = createPocNotebook();
     private final Map<Long, Map<UUID, MoleculeObject>> fileObjectsMap = new HashMap<>();
     private final Map<Long, IDatasetDescriptor> datasetDescriptorMap = new HashMap<>();
     private long lastDatasetId = 0;
@@ -22,15 +22,15 @@ public class NotebooksSession implements Serializable {
         fileObjectsMap.put(0l, new HashMap<>());
     }
 
-    private static Notebook createPocNotebook() {
+    private static NotebookData createPocNotebook() {
         File file = new File("PoC.dat");
         if (file.exists()) {
             try {
                 FileInputStream inputStream = new FileInputStream(file);
                 try {
                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-                    Notebook notebook = (Notebook)objectInputStream.readObject();
-                    return notebook;
+                    NotebookData notebookData = (NotebookData)objectInputStream.readObject();
+                    return notebookData;
                 } finally {
                     inputStream.close();
                 }
@@ -38,8 +38,8 @@ public class NotebooksSession implements Serializable {
                 throw new RuntimeException(e);
             }
         } else {
-            Notebook notebook = new Notebook();
-            notebook.setName("PoC");
+            NotebookData notebookData = new NotebookData();
+            notebookData.setName("PoC");
             /**
             Cell cell = new FileUploadCell();
             cell.setName("File upload 1");
@@ -54,21 +54,21 @@ public class NotebooksSession implements Serializable {
             cell.setName("NOTEBOOK_DEBUG 1");
             notebook.addCell(cell);
              **/
-            return notebook;
+            return notebookData;
         }
     }
 
 
-    public Notebook retrievePocNotebook() {
-        return POC_NOTEBOOK;
+    public NotebookData retrievePocNotebook() {
+        return POC_NOTEBOOK_DATA;
     }
 
-    public void saveNotebook(Notebook notebook) {
+    public void saveNotebook(NotebookData notebookData) {
         try {
-            OutputStream outputStream = new FileOutputStream(notebook.getName() + ".dat");
+            OutputStream outputStream = new FileOutputStream(notebookData.getName() + ".dat");
             try {
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                objectOutputStream.writeObject(notebook);
+                objectOutputStream.writeObject(notebookData);
                 objectOutputStream.flush();
                 outputStream.flush();
             } finally {
@@ -97,9 +97,9 @@ public class NotebooksSession implements Serializable {
     }
 
 
-    public List<Variable> listAvailableInputVariablesFor(Cell cell, Notebook notebook) {
+    public List<Variable> listAvailableInputVariablesFor(Cell cell, NotebookData notebookData) {
         List<Variable> list = new ArrayList<>();
-        for (Variable variable : notebook.getVariableList()) {
+        for (Variable variable : notebookData.getVariableList()) {
             if (!variable.getProducer().equals(cell)) {
                list.add(variable);
             }
@@ -170,7 +170,12 @@ public class NotebooksSession implements Serializable {
     public IDatasetDescriptor loadDatasetFromFile(String fileName) {
         try {
             List<MoleculeObject> list = parseFile(fileName);
-            return createDatasetFromMolecules(list, fileName);
+            File file = new File("files/" + fileName);
+            if (file.exists()) {
+                return createDatasetFromMolecules(list, fileName);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

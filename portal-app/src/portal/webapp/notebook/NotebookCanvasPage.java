@@ -71,8 +71,8 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addListeners() {
-        Notebook notebook = notebooksSession.retrievePocNotebook();
-        notebook.addNotebookChangeListener(new NotebookChangeListener() {
+        NotebookData notebookData = notebooksSession.retrievePocNotebook();
+        notebookData.addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(plumbContainer);
@@ -213,14 +213,14 @@ public class NotebookCanvasPage extends WebPage {
 
         if (cell != null) {
 
-            Notebook notebook = notebooksSession.retrievePocNotebook();
+            NotebookData notebookData = notebooksSession.retrievePocNotebook();
             cell.setPositionLeft(Integer.parseInt(x));
             cell.setPositionTop(Integer.parseInt(y));
-            notebook.addCell(cell);
+            notebookData.addCell(cell);
 
             Panel canvasItemPanel = createCanvasItemPanel(cell);
 
-            List<Cell> cellList = notebook.getCellList();
+            List<Cell> cellList = notebookData.getCellList();
             ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellList.size(), cellList.size());
             listItem.setOutputMarkupId(true);
             listItem.add(new AttributeModifier("style", "left:" + cell.getPositionLeft() + "px; top:" + cell.getPositionTop() + "px;"));
@@ -240,23 +240,23 @@ public class NotebookCanvasPage extends WebPage {
             target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
             target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
 
-            notebooksSession.saveNotebook(notebook);
+            notebooksSession.saveNotebook(notebookData);
         }
     }
 
     private Panel createCanvasItemPanel(Cell cell) {
-        Notebook notebook = notebooksSession.retrievePocNotebook();
+        NotebookData notebookData = notebooksSession.retrievePocNotebook();
         CellType cellType = cell.getCellType();
         if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
-            return new NotebookDebugCanvasItemPanel("item", notebook, (NotebookDebugCell) cell);
+            return new NotebookDebugCanvasItemPanel("item", notebookData, (NotebookDebugCell) cell);
         } else if (CellType.FILE_UPLOAD.equals(cellType)) {
-            return new FileUploadCanvasItemPanel("item", notebook, (FileUploadCell) cell);
+            return new FileUploadCanvasItemPanel("item", notebookData, (FileUploadCell) cell);
         } else if (CellType.CODE.equals(cellType)) {
-            return new ScriptCanvasItemPanel("item", notebook, (ScriptCell) cell);
+            return new ScriptCanvasItemPanel("item", notebookData, (ScriptCell) cell);
         } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
-            return new PropertyCalculateCanvasItemPanel("item", notebook, (PropertyCalculateCell) cell);
+            return new PropertyCalculateCanvasItemPanel("item", notebookData, (PropertyCalculateCell) cell);
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
-            return new TableDisplayCanvasItemPanel("item", notebook, (TableDisplayCell) cell);
+            return new TableDisplayCanvasItemPanel("item", notebookData, (TableDisplayCell) cell);
         } else {
             return null;
         }
@@ -289,12 +289,12 @@ public class NotebookCanvasPage extends WebPage {
 
                 logger.info("Item index " + index + " Dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-                Notebook notebook = notebooksSession.retrievePocNotebook();
+                NotebookData notebookData = notebooksSession.retrievePocNotebook();
                 int i = Integer.parseInt(index);
-                Cell model = notebook.getCellList().get(i);
+                Cell model = notebookData.getCellList().get(i);
                 model.setPositionLeft(Integer.parseInt(x));
                 model.setPositionTop(Integer.parseInt(y));
-                notebooksSession.saveNotebook(notebook);
+                notebooksSession.saveNotebook(notebookData);
             }
 
             @Override
