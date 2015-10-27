@@ -27,8 +27,8 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     private transient CalculatorsClient calculatorsClient;
     private Form<ModelObject> form;
 
-    public PropertyCalculateCanvasItemPanel(String id, NotebookData notebookData, PropertyCalculateCell cell) {
-        super(id, notebookData, cell);
+    public PropertyCalculateCanvasItemPanel(String id, PropertyCalculateCell cell) {
+        super(id, cell);
         addHeader();
         addForm();
         addListeners();
@@ -40,14 +40,14 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getNotebookData().removeCell(getCell());
-                notebooksSession.saveNotebook(getNotebookData());
+                notebooksSession.getNotebookContents().removeCell(getCell());
+                notebooksSession.storeNotebook();
             }
         });
     }
 
     private void addListeners() {
-        getNotebookData().addNotebookChangeListener(new NotebookChangeListener() {
+        notebooksSession.getNotebookContents().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(form);
@@ -62,7 +62,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void load() {
         form.getModelObject().setInputVariable(getCell().getInputVariable());
-        Variable variable = getNotebookData().findVariable(getCell().getName(), "outputFileName");
+        Variable variable = notebooksSession.getNotebookContents().findVariable(getCell().getName(), "outputFileName");
         if (variable != null) {
             form.getModelObject().setOutputFileName((String) variable.getValue());
         }
@@ -74,7 +74,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         IModel<List<Variable>> inputVariableModel = new IModel<List<Variable>>() {
             @Override
             public List<Variable> getObject() {
-                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), getNotebookData());
+                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), notebooksSession.getNotebookContents());
                 return list;
             }
 
@@ -107,10 +107,10 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     private void calculateAndSave() {
         getCell().setInputVariable(form.getModelObject().getInputVariable());
         getCell().setServiceName(form.getModelObject().getServiceName());
-        Variable outputVariable = getNotebookData().findVariable(getCell().getName(), "outputFileName");
+        Variable outputVariable = notebooksSession.getNotebookContents().findVariable(getCell().getName(), "outputFileName");
         outputVariable.setValue(form.getModelObject().getOutputFileName());
         calculateTo(getCell().getServiceName(), getCell().getInputVariable().getValue().toString(), outputVariable.getValue().toString());
-        notebooksSession.saveNotebook(getNotebookData());
+        notebooksSession.storeNotebook();
     }
 
     private void calculateTo(String serviceName, String inputFileName, String outputFileName) {

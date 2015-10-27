@@ -24,8 +24,8 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
 
-    public ScriptCanvasItemPanel(String id, NotebookData notebookData, ScriptCell cell) {
-        super(id, notebookData, cell);
+    public ScriptCanvasItemPanel(String id, ScriptCell cell) {
+        super(id, cell);
         setOutputMarkupId(true);
         addHeader();
         addForm();
@@ -37,8 +37,8 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getNotebookData().removeCell(getCell());
-                notebooksSession.saveNotebook(getNotebookData());
+                notebooksSession.getNotebookContents().removeCell(getCell());
+                notebooksSession.storeNotebook();
             }
         });
     }
@@ -96,7 +96,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         Bindings bindings = engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
         /**/
         getCell().getInputVariableList().clear();
-        getCell().getInputVariableList().addAll(getNotebookData().getVariableList());
+        getCell().getInputVariableList().addAll(notebooksSession.getNotebookContents().getVariableList());
         /**/
         for (Variable variable : getCell().getInputVariableList()) {
             if (variable.getValue() != null) {
@@ -111,7 +111,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
             getCell().setErrorMessage(null);
             for (String key : getCell().getOutputVariableNameList()) {
                 Object value = engine.get(key);
-                Variable variable = getNotebookData().findVariable(getCell().getName(), key);
+                Variable variable = notebooksSession.getNotebookContents().findVariable(getCell().getName(), key);
                 if (variable != null) {
                     variable.setValue(value);
                 }
@@ -119,7 +119,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         } catch (ScriptException se) {
             getCell().setErrorMessage(se.getMessage());
         }
-        notebooksSession.saveNotebook(getNotebookData());
+        notebooksSession.storeNotebook();
         ajaxRequestTarget.add(outcomeLabel);
     }
 

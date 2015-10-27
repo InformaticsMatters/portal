@@ -5,82 +5,55 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
+import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import java.io.*;
 import java.util.*;
 
 @SessionScoped
+@Transactional
 public class NotebooksSession implements Serializable {
 
-    private static final NotebookData POC_NOTEBOOK_DATA = createPocNotebook();
     private final Map<Long, Map<UUID, MoleculeObject>> fileObjectsMap = new HashMap<>();
     private final Map<Long, IDatasetDescriptor> datasetDescriptorMap = new HashMap<>();
     private long lastDatasetId = 0;
+    @Inject
+    private NotebooksService notebooksService;
+    private NotebookInfo pocNotebookInfo;
+    private NotebookContents notebookContents;
 
     public NotebooksSession() {
         fileObjectsMap.put(0l, new HashMap<>());
     }
 
-    private static NotebookData createPocNotebook() {
-        File file = new File("PoC.dat");
-        if (file.exists()) {
-            try {
-                FileInputStream inputStream = new FileInputStream(file);
-                try {
-                    ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-                    NotebookData notebookData = (NotebookData)objectInputStream.readObject();
-                    return notebookData;
-                } finally {
-                    inputStream.close();
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            NotebookData notebookData = new NotebookData();
-            notebookData.setName("PoC");
-            /**
-            Cell cell = new FileUploadCell();
-            cell.setName("File upload 1");
-            notebook.addCell(cell);
-            cell = new ScriptCell();
-            cell.setName("CODE 1");
-            notebook.addCell(cell);
-            cell = new PropertyCalculateCell();
-            cell.setName("Property calculate 1");
-            notebook.addCell(cell);
-            cell = new NotebookDebugCell();
-            cell.setName("NOTEBOOK_DEBUG 1");
-            notebook.addCell(cell);
-             **/
-            return notebookData;
+    public NotebookInfo loadPocNotebook() {
+        List<NotebookInfo> list = notebooksService.listNotebookInfo();
+        if (list.isEmpty()) {
+            NotebookInfo notebookInfo = new NotebookInfo();
+            notebookInfo.setName("POC");
+            NotebookContents notebookContents = new NotebookContents();
+            StoreNotebookData storeNotebookData = new StoreNotebookData();
+            storeNotebookData.setNotebookInfo(notebookInfo);
+            storeNotebookData.setNotebookContents(notebookContents);
+            notebooksService.storeNotebook(storeNotebookData);
+            list = notebooksService.listNotebookInfo();
         }
+        pocNotebookInfo = list.get(0);
+        notebookContents = notebooksService.retrieveNotebookData(pocNotebookInfo.getId());
+        return pocNotebookInfo;
     }
 
-
-    public NotebookData retrievePocNotebook() {
-        return POC_NOTEBOOK_DATA;
+    public NotebookContents getNotebookContents() {
+        return notebookContents;
     }
 
-    public void saveNotebook(NotebookData notebookData) {
-        try {
-            OutputStream outputStream = new FileOutputStream(notebookData.getName() + ".dat");
-            try {
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                objectOutputStream.writeObject(notebookData);
-                objectOutputStream.flush();
-                outputStream.flush();
-            } finally {
-                outputStream.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public List<Cell> listCell() {
-        return Arrays.asList(new ScriptCell(), new NotebookDebugCell());
+    public void storeNotebook() {
+        StoreNotebookData storeNotebookData = new StoreNotebookData();
+        storeNotebookData.setNotebookInfo(pocNotebookInfo);
+        storeNotebookData.setNotebookContents(notebookContents);
+        notebooksService.storeNotebook(storeNotebookData);
     }
 
     public List<CellDescriptor> listCellDescriptor() {
@@ -97,11 +70,11 @@ public class NotebooksSession implements Serializable {
     }
 
 
-    public List<Variable> listAvailableInputVariablesFor(Cell cell, NotebookData notebookData) {
+    public List<Variable> listAvailableInputVariablesFor(Cell cell, NotebookContents notebookContents) {
         List<Variable> list = new ArrayList<>();
-        for (Variable variable : notebookData.getVariableList()) {
+        for (Variable variable : notebookContents.getVariableList()) {
             if (!variable.getProducer().equals(cell)) {
-               list.add(variable);
+                list.add(variable);
             }
         }
 
@@ -152,7 +125,6 @@ public class NotebooksSession implements Serializable {
         datasetDescriptor.addRowDescriptor(rowDescriptor);
 
         datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
-
 
 
         return datasetDescriptor;
@@ -225,7 +197,7 @@ public class NotebooksSession implements Serializable {
     }
 
     private String trim(String v) {
-        if (v.length() > 1 && v.charAt(0) == '"' && v.charAt(v.length()-1) == '"') {
+        if (v.length() > 1 && v.charAt(0) == '"' && v.charAt(v.length() - 1) == '"') {
             return v.substring(1, v.length() - 1);
         } else {
             return v;
@@ -242,7 +214,8 @@ public class NotebooksSession implements Serializable {
         InputStream inputStream = new FileInputStream(file);
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(inputStream, new TypeReference<List<MoleculeObject>>() {});
+            return objectMapper.readValue(inputStream, new TypeReference<List<MoleculeObject>>() {
+            });
         } finally {
             inputStream.close();
         }

@@ -24,8 +24,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
 
-    public TableDisplayCanvasItemPanel(String id, NotebookData notebookData, TableDisplayCell cell) {
-        super(id, notebookData, cell);
+    public TableDisplayCanvasItemPanel(String id, TableDisplayCell cell) {
+        super(id, cell);
         addHeader();
         addInput();
         addGrid();
@@ -38,18 +38,18 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getNotebookData().removeCell(getCell());
-                notebooksSession.saveNotebook(getNotebookData());
+                notebooksSession.getNotebookContents().removeCell(getCell());
+                notebooksSession.storeNotebook();
             }
         });
     }
 
     private void addInput() {
-        form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
+        form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
         IModel<List<Variable>> dropDownModel = new IModel<List<Variable>>() {
             @Override
             public List<Variable> getObject() {
-                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), getNotebookData());
+                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), notebooksSession.getNotebookContents());
                 return list;
             }
 
@@ -92,11 +92,11 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
                 refresh();
             }
         };
-        for (Variable variable : getNotebookData().getVariableList()) {
+        for (Variable variable : notebooksSession.getNotebookContents().getVariableList()) {
             variable.removeChangeListener(variableChangeListener);
             variable.addChangeListener(variableChangeListener);
         }
-        getNotebookData().addNotebookChangeListener(new NotebookChangeListener() {
+        notebooksSession.getNotebookContents().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
                 refresh();
@@ -113,7 +113,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     private void displayAndSave() {
         getCell().setInputVariable(form.getModelObject().getInputVariable());
         loadTableData();
-        notebooksSession.saveNotebook(getNotebookData());
+        notebooksSession.storeNotebook();
     }
 
     private void refresh() {

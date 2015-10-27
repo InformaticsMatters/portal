@@ -20,12 +20,14 @@
       <root url="file://$PROJECT_DIR$/../lib/groovy-all/2.2.2" />
       <root url="file://$PROJECT_DIR$/../lib/jackson/2.5.3" />
       <root url="file://$PROJECT_DIR$/../lib/core-services-client" />
+      <root url="file://$PROJECT_DIR$/../lib/derby/10.8" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/cdi-api/1.2.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/core-services" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/core-services-client" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/derby/10.8" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/eclipselink/2.5.2" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/el-api/2.2" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/groovy-all/2.2.2" recursive="false" />

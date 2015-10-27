@@ -4,11 +4,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 public abstract class CanvasItemPanel<T extends Cell> extends Panel {
     private final T cell;
-    private final NotebookData notebookData;
 
-    public CanvasItemPanel(String id, NotebookData notebookData, T cell) {
+    public CanvasItemPanel(String id, T cell) {
         super(id);
-        this.notebookData = notebookData;
         this.cell = cell;
     }
 
@@ -16,7 +14,4 @@ public abstract class CanvasItemPanel<T extends Cell> extends Panel {
         return cell;
     }
 
-    public NotebookData getNotebookData() {
-        return notebookData;
-    }
 }

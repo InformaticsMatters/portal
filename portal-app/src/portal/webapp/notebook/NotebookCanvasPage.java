@@ -67,11 +67,12 @@ public class NotebookCanvasPage extends WebPage {
         addActions();
         addCanvasPaletteDropBehavior();
         addCanvasItemDraggedBehavior();
+        notebooksSession.loadPocNotebook();
         addListeners();
     }
 
     private void addListeners() {
-        NotebookData notebookData = notebooksSession.retrievePocNotebook();
+        NotebookContents notebookData = notebooksSession.getNotebookContents();
         notebookData.addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
@@ -117,7 +118,7 @@ public class NotebookCanvasPage extends WebPage {
         IModel<List<Cell>> listModel = new IModel<List<Cell>>() {
             @Override
             public List<Cell> getObject() {
-                return notebooksSession.retrievePocNotebook().getCellList();
+                return notebooksSession.getNotebookContents().getCellList();
             }
 
             @Override
@@ -213,14 +214,14 @@ public class NotebookCanvasPage extends WebPage {
 
         if (cell != null) {
 
-            NotebookData notebookData = notebooksSession.retrievePocNotebook();
+            NotebookContents notebookContents = notebooksSession.getNotebookContents();
             cell.setPositionLeft(Integer.parseInt(x));
             cell.setPositionTop(Integer.parseInt(y));
-            notebookData.addCell(cell);
+            notebookContents.addCell(cell);
 
             Panel canvasItemPanel = createCanvasItemPanel(cell);
 
-            List<Cell> cellList = notebookData.getCellList();
+            List<Cell> cellList = notebookContents.getCellList();
             ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellList.size(), cellList.size());
             listItem.setOutputMarkupId(true);
             listItem.add(new AttributeModifier("style", "left:" + cell.getPositionLeft() + "px; top:" + cell.getPositionTop() + "px;"));
@@ -240,23 +241,22 @@ public class NotebookCanvasPage extends WebPage {
             target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
             target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
 
-            notebooksSession.saveNotebook(notebookData);
+            notebooksSession.storeNotebook();
         }
     }
 
     private Panel createCanvasItemPanel(Cell cell) {
-        NotebookData notebookData = notebooksSession.retrievePocNotebook();
         CellType cellType = cell.getCellType();
         if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
-            return new NotebookDebugCanvasItemPanel("item", notebookData, (NotebookDebugCell) cell);
+            return new NotebookDebugCanvasItemPanel("item", (NotebookDebugCell) cell);
         } else if (CellType.FILE_UPLOAD.equals(cellType)) {
-            return new FileUploadCanvasItemPanel("item", notebookData, (FileUploadCell) cell);
+            return new FileUploadCanvasItemPanel("item", (FileUploadCell) cell);
         } else if (CellType.CODE.equals(cellType)) {
-            return new ScriptCanvasItemPanel("item", notebookData, (ScriptCell) cell);
+            return new ScriptCanvasItemPanel("item", (ScriptCell) cell);
         } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
-            return new PropertyCalculateCanvasItemPanel("item", notebookData, (PropertyCalculateCell) cell);
+            return new PropertyCalculateCanvasItemPanel("item", (PropertyCalculateCell) cell);
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
-            return new TableDisplayCanvasItemPanel("item", notebookData, (TableDisplayCell) cell);
+            return new TableDisplayCanvasItemPanel("item", (TableDisplayCell) cell);
         } else {
             return null;
         }
@@ -289,12 +289,12 @@ public class NotebookCanvasPage extends WebPage {
 
                 logger.info("Item index " + index + " Dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-                NotebookData notebookData = notebooksSession.retrievePocNotebook();
+                NotebookContents notebookContents = notebooksSession.getNotebookContents();
                 int i = Integer.parseInt(index);
-                Cell model = notebookData.getCellList().get(i);
+                Cell model = notebookContents.getCellList().get(i);
                 model.setPositionLeft(Integer.parseInt(x));
                 model.setPositionTop(Integer.parseInt(y));
-                notebooksSession.saveNotebook(notebookData);
+                notebooksSession.storeNotebook();
             }
 
             @Override

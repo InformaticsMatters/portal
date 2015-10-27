@@ -21,8 +21,8 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
     @Inject
     private NotebooksSession notebooksSession;
 
-    public NotebookDebugCanvasItemPanel(String id, NotebookData notebookData, NotebookDebugCell cell) {
-        super(id, notebookData, cell);
+    public NotebookDebugCanvasItemPanel(String id, NotebookDebugCell cell) {
+        super(id, cell);
         addHeader();
         setOutputMarkupId(true);
         addList();
@@ -34,8 +34,8 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getNotebookData().removeCell(getCell());
-                notebooksSession.saveNotebook(getNotebookData());
+                notebooksSession.getNotebookContents().removeCell(getCell());
+                notebooksSession.storeNotebook();
             }
         });
     }
@@ -53,11 +53,11 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
                 RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
             }
         };
-        for (Variable variable : getNotebookData().getVariableList()) {
+        for (Variable variable : notebooksSession.getNotebookContents().getVariableList()) {
             variable.removeChangeListener(variableChangeListener);
             variable.addChangeListener(variableChangeListener);
         }
-        getNotebookData().addNotebookChangeListener(new NotebookChangeListener() {
+        notebooksSession.getNotebookContents().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
@@ -75,7 +75,7 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
         listModel = new IModel<List<Variable>>() {
             @Override
             public List<Variable> getObject() {
-                return new ArrayList<>(getNotebookData().getVariableList());
+                return new ArrayList<>(notebooksSession.getNotebookContents().getVariableList());
             }
 
             @Override

@@ -3,7 +3,7 @@ package portal.webapp.notebook;
 import java.io.Serializable;
 import java.util.*;
 
-public class NotebookData implements Serializable {
+public class NotebookContents implements Serializable {
     private static final Long serialVersionUID = 1l;
     private String name;
     private final List<Cell> cellList = new ArrayList<Cell>();

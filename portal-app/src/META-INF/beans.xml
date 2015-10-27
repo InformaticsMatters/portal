@@ -1,6 +1,8 @@
 <beans>
     <alternatives>
+        <class>portal.webapp.notebook.IdeDerbyNotebooksConfig</class>
     </alternatives>
     <interceptors>
+        <class>portal.webapp.notebook.NotebooksTransactionalInterceptor</class>
     </interceptors>
 </beans>
