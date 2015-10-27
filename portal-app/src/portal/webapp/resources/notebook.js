@@ -94,6 +94,7 @@ function addCellsPaletteDragAndDropSupport() {
 function makeCanvasItemPlumbDraggable(selector) {
     jsPlumb.draggable($(selector), {
         containment: 'parent',
+        filter : ".ui-resizable-handle.ui-resizable-se.ui-icon.ui-icon-gripsmall-diagonal-se",
         stop: function(params) {
             var index = $('#' + params.el.id).index('.notebook-canvas-item');
             onNotebookCanvasItemDragged(index, params.pos[0], params.pos[1]);
