@@ -41,7 +41,7 @@ public class NotebooksSession implements Serializable {
             list = notebooksService.listNotebookInfo();
         }
         pocNotebookInfo = list.get(0);
-        notebookContents = notebooksService.retrieveNotebookData(pocNotebookInfo.getId());
+        notebookContents = notebooksService.retrieveNotebookContents(pocNotebookInfo.getId());
         return pocNotebookInfo;
     }
 

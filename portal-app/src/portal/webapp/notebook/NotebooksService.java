@@ -16,22 +16,6 @@ public class NotebooksService {
     private EntityManager entityManager;
 
 
-    public void savePocNotebook(NotebookContents notebookContents) {
-        try {
-            OutputStream outputStream = new FileOutputStream(notebookContents.getName() + ".dat");
-            try {
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                objectOutputStream.writeObject(notebookContents);
-                objectOutputStream.flush();
-                outputStream.flush();
-            } finally {
-                outputStream.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public List<NotebookInfo> listNotebookInfo() {
         List<NotebookInfo> list = new ArrayList<>();
         for (Notebook notebook : entityManager.createQuery("select o from Notebook o order by o.name", Notebook.class).getResultList()) {
@@ -43,7 +27,7 @@ public class NotebooksService {
         return list;
     }
 
-    public NotebookContents retrieveNotebookData(Long id) {
+    public NotebookContents retrieveNotebookContents(Long id) {
         try {
             Notebook notebook = entityManager.find(Notebook.class, id);
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(notebook.getData());
