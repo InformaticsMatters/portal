@@ -21,14 +21,14 @@ public class NotebooksSession implements Serializable {
     private long lastDatasetId = 0;
     @Inject
     private NotebooksService notebooksService;
-    private NotebookInfo pocNotebookInfo;
     private NotebookContents notebookContents;
+    private NotebookInfo notebookInfo;
 
     public NotebooksSession() {
         fileObjectsMap.put(0l, new HashMap<>());
     }
 
-    public NotebookInfo loadPocNotebook() {
+    public NotebookInfo preparePocNotebook() {
         List<NotebookInfo> list = notebooksService.listNotebookInfo();
         if (list.isEmpty()) {
             NotebookInfo notebookInfo = new NotebookInfo();
@@ -40,9 +40,16 @@ public class NotebooksSession implements Serializable {
             notebooksService.storeNotebook(storeNotebookData);
             list = notebooksService.listNotebookInfo();
         }
-        pocNotebookInfo = list.get(0);
-        notebookContents = notebooksService.retrieveNotebookContents(pocNotebookInfo.getId());
-        return pocNotebookInfo;
+        return list.get(0);
+    }
+
+    public List<NotebookInfo> listNotebookInfo() {
+        return notebooksService.listNotebookInfo();
+    }
+
+    public void loadNotebook(Long id) {
+        notebookInfo = notebooksService.retrieveNotebookInfo(id);
+        notebookContents = notebooksService.retrieveNotebookContents(id);
     }
 
     public NotebookContents getNotebookContents() {
@@ -51,7 +58,7 @@ public class NotebooksSession implements Serializable {
 
     public void storeNotebook() {
         StoreNotebookData storeNotebookData = new StoreNotebookData();
-        storeNotebookData.setNotebookInfo(pocNotebookInfo);
+        storeNotebookData.setNotebookInfo(notebookInfo);
         storeNotebookData.setNotebookContents(notebookContents);
         notebooksService.storeNotebook(storeNotebookData);
     }

@@ -67,7 +67,8 @@ public class NotebookCanvasPage extends WebPage {
         addActions();
         addCanvasPaletteDropBehavior();
         addCanvasItemDraggedBehavior();
-        notebooksSession.loadPocNotebook();
+        NotebookInfo notebookInfo = notebooksSession.preparePocNotebook();
+        notebooksSession.loadNotebook(notebookInfo.getId());
         addListeners();
     }
 

@@ -27,6 +27,14 @@ public class NotebooksService {
         return list;
     }
 
+    public NotebookInfo retrieveNotebookInfo(Long id) {
+        Notebook notebook = entityManager.find(Notebook.class, id);
+        NotebookInfo notebookInfo = new NotebookInfo();
+        notebookInfo.setId(notebook.getId());
+        notebookInfo.setName(notebook.getName());
+        return notebookInfo;
+    }
+
     public NotebookContents retrieveNotebookContents(Long id) {
         try {
             Notebook notebook = entityManager.find(Notebook.class, id);
