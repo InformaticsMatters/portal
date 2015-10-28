@@ -1,5 +1,6 @@
 package portal.webapp.notebook;
 
+import portal.webapp.notebook.persistence.Notebook;
 import toolkit.services.PU;
 
 import javax.enterprise.context.ApplicationScoped;
