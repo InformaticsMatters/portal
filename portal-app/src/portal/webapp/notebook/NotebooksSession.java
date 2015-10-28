@@ -52,6 +52,10 @@ public class NotebooksSession implements Serializable {
         notebookContents = notebooksService.retrieveNotebookContents(id);
     }
 
+    public NotebookInfo getNotebookInfo() {
+        return notebookInfo;
+    }
+
     public NotebookContents getNotebookContents() {
         return notebookContents;
     }
