@@ -1,4 +1,4 @@
-package portal.webapp.notebook;
+package portal.notebook;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;

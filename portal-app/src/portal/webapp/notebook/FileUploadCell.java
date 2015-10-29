@@ -1,6 +1,10 @@
 package portal.webapp.notebook;
 
 
+import portal.notebook.AbstractCell;
+import portal.notebook.CellType;
+import portal.notebook.Variable;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

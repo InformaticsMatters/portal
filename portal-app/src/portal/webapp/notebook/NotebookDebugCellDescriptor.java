@@ -1,5 +1,8 @@
 package portal.webapp.notebook;
 
+import portal.notebook.CellDescriptor;
+import portal.notebook.CellType;
+
 public class NotebookDebugCellDescriptor implements CellDescriptor {
 
     @Override

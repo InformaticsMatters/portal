@@ -1,5 +1,8 @@
 package portal.webapp.notebook;
 
+import portal.notebook.NotebookContents;
+import portal.notebook.NotebookInfo;
+
 import java.io.Serializable;
 
 public class StoreNotebookData implements Serializable {

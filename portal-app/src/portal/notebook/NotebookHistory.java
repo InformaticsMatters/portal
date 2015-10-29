@@ -1,4 +1,4 @@
-package portal.webapp.notebook.persistence;
+package portal.notebook;
 
 import toolkit.services.AbstractEntity;
 
@@ -8,7 +8,6 @@ import java.util.Date;
 @Entity
 public class NotebookHistory extends AbstractEntity {
     private Notebook notebook;
-    private Integer revision;
     private Date revisionDate;
     private Date revisionTime;
     private byte[] data;
@@ -21,15 +20,6 @@ public class NotebookHistory extends AbstractEntity {
 
     public void setNotebook(Notebook notebook) {
         this.notebook = notebook;
-    }
-
-    @Column(nullable = false)
-    public Integer getRevision() {
-        return revision;
-    }
-
-    public void setRevision(Integer revision) {
-        this.revision = revision;
     }
 
     @Temporal(TemporalType.DATE)

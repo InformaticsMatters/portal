@@ -2,6 +2,7 @@ package portal.webapp.notebook;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.notebook.CellDescriptor;
 
 import javax.inject.Inject;
 

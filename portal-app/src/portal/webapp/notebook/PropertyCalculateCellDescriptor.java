@@ -1,6 +1,9 @@
 package portal.webapp.notebook;
 
 
+import portal.notebook.CellDescriptor;
+import portal.notebook.CellType;
+
 public class PropertyCalculateCellDescriptor implements CellDescriptor {
     @Override
     public CellType getCellType() {

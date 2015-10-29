@@ -1,6 +1,7 @@
 package portal.webapp.notebook;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.notebook.Cell;
 
 public abstract class CanvasItemPanel<T extends Cell> extends Panel {
     private final T cell;

@@ -1,4 +1,4 @@
-package portal.webapp.notebook;
+package portal.notebook;
 
 import toolkit.services.PU;
 

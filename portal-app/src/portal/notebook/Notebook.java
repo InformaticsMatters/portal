@@ -1,4 +1,4 @@
-package portal.webapp.notebook.persistence;
+package portal.notebook;
 
 import toolkit.services.AbstractEntity;
 

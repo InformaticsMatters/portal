@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
+import portal.notebook.*;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;

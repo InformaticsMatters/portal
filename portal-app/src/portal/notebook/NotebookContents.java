@@ -1,4 +1,6 @@
-package portal.webapp.notebook;
+package portal.notebook;
+
+import portal.webapp.notebook.NotebookChangeListener;
 
 import java.io.Serializable;
 import java.util.*;

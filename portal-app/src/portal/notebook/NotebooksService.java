@@ -1,13 +1,17 @@
-package portal.webapp.notebook;
+package portal.notebook;
 
-import portal.webapp.notebook.persistence.Notebook;
+import portal.webapp.notebook.StoreNotebookData;
 import toolkit.services.PU;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @ApplicationScoped
@@ -61,6 +65,11 @@ public class NotebooksService {
             objectOutputStream.flush();
             byteArrayOutputStream.flush();
             notebook.setData(byteArrayOutputStream.toByteArray());
+            NotebookHistory notebookHistory = new NotebookHistory();
+            notebookHistory.setNotebook(notebook);
+            notebookHistory.setData(notebook.getData());
+            notebookHistory.setRevisionDate(new Date());
+            notebookHistory.setRevisionTime(new Date());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

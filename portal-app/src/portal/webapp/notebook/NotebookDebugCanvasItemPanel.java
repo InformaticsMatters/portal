@@ -8,6 +8,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import portal.notebook.Cell;
+import portal.notebook.Variable;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
