@@ -3,6 +3,6 @@
         <class>portal.notebook.IdeDerbyNotebooksConfig</class>
     </alternatives>
     <interceptors>
-        <class>portal.notebook.NotebooksTransactionalInterceptor</class>
+        <class>portal.notebook.NotebookTransactionalInterceptor</class>
     </interceptors>
 </beans>

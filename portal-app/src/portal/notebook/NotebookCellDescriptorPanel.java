@@ -13,7 +13,7 @@ public class NotebookCellDescriptorPanel extends Panel {
     private final CellDescriptor cellDescriptor;
 
     @Inject
-    private NotebooksSession notebooksSession;
+    private NotebookSession notebookSession;
 
     public NotebookCellDescriptorPanel(String id, CellDescriptor cellDescriptor) {
         super(id);

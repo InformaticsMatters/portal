@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
-import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -13,23 +12,22 @@ import java.io.*;
 import java.util.*;
 
 @SessionScoped
-@Transactional
-public class NotebooksSession implements Serializable {
+public class NotebookSession implements Serializable {
 
     private final Map<Long, Map<UUID, MoleculeObject>> fileObjectsMap = new HashMap<>();
     private final Map<Long, IDatasetDescriptor> datasetDescriptorMap = new HashMap<>();
     private long lastDatasetId = 0;
     @Inject
-    private NotebooksService notebooksService;
+    private NotebookService notebookService;
     private NotebookContents notebookContents;
     private NotebookInfo notebookInfo;
 
-    public NotebooksSession() {
+    public NotebookSession() {
         fileObjectsMap.put(0l, new HashMap<>());
     }
 
     public NotebookInfo preparePocNotebook() {
-        List<NotebookInfo> list = notebooksService.listNotebookInfo();
+        List<NotebookInfo> list = notebookService.listNotebookInfo();
         if (list.isEmpty()) {
             NotebookInfo notebookInfo = new NotebookInfo();
             notebookInfo.setName("POC");
@@ -37,19 +35,19 @@ public class NotebooksSession implements Serializable {
             StoreNotebookData storeNotebookData = new StoreNotebookData();
             storeNotebookData.setNotebookInfo(notebookInfo);
             storeNotebookData.setNotebookContents(notebookContents);
-            notebooksService.storeNotebook(storeNotebookData);
-            list = notebooksService.listNotebookInfo();
+            notebookService.storeNotebook(storeNotebookData);
+            list = notebookService.listNotebookInfo();
         }
         return list.get(0);
     }
 
     public List<NotebookInfo> listNotebookInfo() {
-        return notebooksService.listNotebookInfo();
+        return notebookService.listNotebookInfo();
     }
 
     public void loadNotebook(Long id) {
-        notebookInfo = notebooksService.retrieveNotebookInfo(id);
-        notebookContents = notebooksService.retrieveNotebookContents(id);
+        notebookInfo = notebookService.retrieveNotebookInfo(id);
+        notebookContents = notebookService.retrieveNotebookContents(id);
     }
 
     public NotebookInfo getNotebookInfo() {
@@ -64,7 +62,7 @@ public class NotebooksSession implements Serializable {
         StoreNotebookData storeNotebookData = new StoreNotebookData();
         storeNotebookData.setNotebookInfo(notebookInfo);
         storeNotebookData.setNotebookContents(notebookContents);
-        notebooksService.storeNotebook(storeNotebookData);
+        notebookService.storeNotebook(storeNotebookData);
     }
 
     public List<CellDescriptor> listCellDescriptor() {

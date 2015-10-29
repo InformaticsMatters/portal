@@ -20,7 +20,7 @@ public class NotebookCellDescriptorsPanel extends Panel {
     private ListView<CellDescriptor> descriptorRepeater;
 
     @Inject
-    private NotebooksSession notebooksSession;
+    private NotebookSession notebookSession;
 
     public NotebookCellDescriptorsPanel(String id) {
         super(id);
@@ -31,7 +31,7 @@ public class NotebookCellDescriptorsPanel extends Panel {
         descriptorssContainer = new WebMarkupContainer("descriptorsContainer");
         descriptorssContainer.setOutputMarkupId(true);
 
-        List<CellDescriptor> cells = notebooksSession.listCellDescriptor();
+        List<CellDescriptor> cells = notebookSession.listCellDescriptor();
         descriptorRepeater = new ListView<CellDescriptor>("descriptor", cells) {
 
             @Override

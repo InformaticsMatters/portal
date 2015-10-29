@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Interceptor
 @Transactional
-public class NotebooksTransactionalInterceptor extends TransactionalInterceptor implements Serializable {
+public class NotebookTransactionalInterceptor extends TransactionalInterceptor implements Serializable {
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
     private EntityManager entityManager;

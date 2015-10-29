@@ -25,7 +25,7 @@ public class NotebookStructureImageResource extends DynamicImageResource {
     public static final String PARAM_ROW = "row";
 
     @Inject
-    private NotebooksSession notebooksSession;
+    private NotebookSession notebookSession;
 
     public NotebookStructureImageResource() {
         CdiContainer.get().getNonContextualManager().postConstruct(this);
@@ -52,8 +52,8 @@ public class NotebookStructureImageResource extends DynamicImageResource {
         Long datasetDescriptorId = Long.valueOf(datasetIdAsString);
         UUID rowId = UUID.fromString(rowIdAsString);
 
-        IDatasetDescriptor dataset = notebooksSession.findDatasetDescriptorById(datasetDescriptorId);
-        List<IRow> rows = notebooksSession.listRow(dataset, Collections.singletonList(rowId));
+        IDatasetDescriptor dataset = notebookSession.findDatasetDescriptorById(datasetDescriptorId);
+        List<IRow> rows = notebookSession.listRow(dataset, Collections.singletonList(rowId));
         IRow row = rows.get(0);
 
         if (row != null) {

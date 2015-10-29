@@ -19,7 +19,7 @@ import java.util.Collection;
 public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
 
     @Inject
-    private NotebooksSession notebooksSession;
+    private NotebookSession notebookSession;
     private Form<CodeModel> form;
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
@@ -37,8 +37,8 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebooksSession.getNotebookContents().removeCell(getCell());
-                notebooksSession.storeNotebook();
+                notebookSession.getNotebookContents().removeCell(getCell());
+                notebookSession.storeNotebook();
             }
         });
     }
@@ -96,7 +96,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         Bindings bindings = engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
         /**/
         getCell().getInputVariableList().clear();
-        getCell().getInputVariableList().addAll(notebooksSession.getNotebookContents().getVariableList());
+        getCell().getInputVariableList().addAll(notebookSession.getNotebookContents().getVariableList());
         /**/
         for (Variable variable : getCell().getInputVariableList()) {
             if (variable.getValue() != null) {
@@ -104,14 +104,14 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
                 bindings.put(producerName + "_" + variable.getName(), variable.getValue());
             }
         }
-        bindings.put("session", notebooksSession);
+        bindings.put("session", notebookSession);
         try {
             Object result = scriptToVm(engine.eval(getCell().getCode()));
             getCell().setOutcome(result);
             getCell().setErrorMessage(null);
             for (String key : getCell().getOutputVariableNameList()) {
                 Object value = engine.get(key);
-                Variable variable = notebooksSession.getNotebookContents().findVariable(getCell().getName(), key);
+                Variable variable = notebookSession.getNotebookContents().findVariable(getCell().getName(), key);
                 if (variable != null) {
                     variable.setValue(value);
                 }
@@ -119,7 +119,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         } catch (ScriptException se) {
             getCell().setErrorMessage(se.getMessage());
         }
-        notebooksSession.storeNotebook();
+        notebookSession.storeNotebook();
         ajaxRequestTarget.add(outcomeLabel);
     }
 

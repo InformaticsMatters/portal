@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @ApplicationScoped
-public class NotebooksService {
+public class NotebookService {
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
     private EntityManager entityManager;

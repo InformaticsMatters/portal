@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCalculateCell> {
     private static final Logger LOGGER = Logger.getLogger(PropertyCalculateCanvasItemPanel.class.getName());
     @Inject
-    private NotebooksSession notebooksSession;
+    private NotebookSession notebookSession;
     @Inject
     private transient CalculatorsClient calculatorsClient;
     private Form<ModelObject> form;
@@ -40,14 +40,14 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebooksSession.getNotebookContents().removeCell(getCell());
-                notebooksSession.storeNotebook();
+                notebookSession.getNotebookContents().removeCell(getCell());
+                notebookSession.storeNotebook();
             }
         });
     }
 
     private void addListeners() {
-        notebooksSession.getNotebookContents().addNotebookChangeListener(new NotebookChangeListener() {
+        notebookSession.getNotebookContents().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(form);
@@ -62,7 +62,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void load() {
         form.getModelObject().setInputVariable(getCell().getInputVariable());
-        Variable variable = notebooksSession.getNotebookContents().findVariable(getCell().getName(), "outputFileName");
+        Variable variable = notebookSession.getNotebookContents().findVariable(getCell().getName(), "outputFileName");
         if (variable != null) {
             form.getModelObject().setOutputFileName((String) variable.getValue());
         }
@@ -74,7 +74,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         IModel<List<Variable>> inputVariableModel = new IModel<List<Variable>>() {
             @Override
             public List<Variable> getObject() {
-                List<Variable> list = notebooksSession.listAvailableInputVariablesFor(getCell(), notebooksSession.getNotebookContents());
+                List<Variable> list = notebookSession.listAvailableInputVariablesFor(getCell(), notebookSession.getNotebookContents());
                 return list;
             }
 
@@ -107,15 +107,15 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     private void calculateAndSave() {
         getCell().setInputVariable(form.getModelObject().getInputVariable());
         getCell().setServiceName(form.getModelObject().getServiceName());
-        Variable outputVariable = notebooksSession.getNotebookContents().findVariable(getCell().getName(), "outputFileName");
+        Variable outputVariable = notebookSession.getNotebookContents().findVariable(getCell().getName(), "outputFileName");
         outputVariable.setValue(form.getModelObject().getOutputFileName());
         calculateTo(getCell().getServiceName(), getCell().getInputVariable().getValue().toString(), outputVariable.getValue().toString());
-        notebooksSession.storeNotebook();
+        notebookSession.storeNotebook();
     }
 
     private void calculateTo(String serviceName, String inputFileName, String outputFileName) {
         try {
-            List<MoleculeObject> list = notebooksSession.retrieveFileContentAsMolecules(inputFileName);
+            List<MoleculeObject> list = notebookSession.retrieveFileContentAsMolecules(inputFileName);
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.writeValue(byteArrayOutputStream, list);

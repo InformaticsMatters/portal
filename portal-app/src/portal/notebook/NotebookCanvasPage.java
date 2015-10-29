@@ -57,7 +57,7 @@ public class NotebookCanvasPage extends WebPage {
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
-    private NotebooksSession notebooksSession;
+    private NotebookSession notebookSession;
     private int initialItemCount;
 
     public NotebookCanvasPage() {
@@ -67,13 +67,13 @@ public class NotebookCanvasPage extends WebPage {
         addActions();
         addCanvasPaletteDropBehavior();
         addCanvasItemDraggedBehavior();
-        NotebookInfo notebookInfo = notebooksSession.preparePocNotebook();
-        notebooksSession.loadNotebook(notebookInfo.getId());
+        NotebookInfo notebookInfo = notebookSession.preparePocNotebook();
+        notebookSession.loadNotebook(notebookInfo.getId());
         addListeners();
     }
 
     private void addListeners() {
-        NotebookContents notebookData = notebooksSession.getNotebookContents();
+        NotebookContents notebookData = notebookSession.getNotebookContents();
         notebookData.addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(Cell cell) {
@@ -119,7 +119,7 @@ public class NotebookCanvasPage extends WebPage {
         IModel<List<Cell>> listModel = new IModel<List<Cell>>() {
             @Override
             public List<Cell> getObject() {
-                return notebooksSession.getNotebookContents().getCellList();
+                return notebookSession.getNotebookContents().getCellList();
             }
 
             @Override
@@ -215,7 +215,7 @@ public class NotebookCanvasPage extends WebPage {
 
         if (cell != null) {
 
-            NotebookContents notebookContents = notebooksSession.getNotebookContents();
+            NotebookContents notebookContents = notebookSession.getNotebookContents();
             cell.setPositionLeft(Integer.parseInt(x));
             cell.setPositionTop(Integer.parseInt(y));
             notebookContents.addCell(cell);
@@ -242,7 +242,7 @@ public class NotebookCanvasPage extends WebPage {
             target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
             target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
 
-            notebooksSession.storeNotebook();
+            notebookSession.storeNotebook();
         }
     }
 
@@ -290,12 +290,12 @@ public class NotebookCanvasPage extends WebPage {
 
                 logger.info("Item index " + index + " Dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-                NotebookContents notebookContents = notebooksSession.getNotebookContents();
+                NotebookContents notebookContents = notebookSession.getNotebookContents();
                 int i = Integer.parseInt(index);
                 Cell model = notebookContents.getCellList().get(i);
                 model.setPositionLeft(Integer.parseInt(x));
                 model.setPositionTop(Integer.parseInt(y));
-                notebooksSession.storeNotebook();
+                notebookSession.storeNotebook();
             }
 
             @Override

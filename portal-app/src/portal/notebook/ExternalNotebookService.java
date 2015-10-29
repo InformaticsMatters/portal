@@ -18,12 +18,12 @@ import java.util.Map;
 @Path("notebook")
 @ApplicationScoped
 @Transactional
-public class ExternalNotebooksService {
+public class ExternalNotebookService {
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
     private EntityManager entityManager;
     @Inject
-    private NotebooksService notebooksService;
+    private NotebookService notebookService;
 
 
     @Path("createNotebook")
@@ -37,7 +37,7 @@ public class ExternalNotebooksService {
         StoreNotebookData storeNotebookData = new StoreNotebookData();
         storeNotebookData.setNotebookInfo(notebookInfo);
         storeNotebookData.setNotebookContents(notebookContents);
-        Long id = notebooksService.storeNotebook(storeNotebookData);
+        Long id = notebookService.storeNotebook(storeNotebookData);
         notebookMetadataDTO.setId(id);
         notebookMetadataDTO.setOwnerName("poc");
         return notebookMetadataDTO;
@@ -63,7 +63,7 @@ public class ExternalNotebooksService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public NotebookDefinitionDTO notebookDefinition(@QueryParam("notebookId") Long notebookId) {
-        NotebookContents notebookContents = notebooksService.retrieveNotebookContents(notebookId);
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         NotebookDefinitionDTO notebookDefinitionDTO = new NotebookDefinitionDTO();
         Map<String, VariableDefinitionDTO> variableDefinitionDTOMap = new HashMap<>();
         for (Variable variable : notebookContents.getVariableList()) {
@@ -91,7 +91,7 @@ public class ExternalNotebooksService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String variableValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("name") String name) {
-        NotebookContents notebookContents = notebooksService.retrieveNotebookContents(notebookId);
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         Variable variable = notebookContents.findVariable(producerName, name);
         return variable.getValue() == null ? null : variable.getValue().toString();
     }
@@ -99,7 +99,7 @@ public class ExternalNotebooksService {
     @Path("fileVariableContents")
     @GET
     public StreamingOutput fileContents(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("name") String name) {
-        NotebookContents notebookContents = notebooksService.retrieveNotebookContents(notebookId);
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         Variable variable = notebookContents.findVariable(producerName, name);
         if (variable.getValue() == null) {
             return null;
