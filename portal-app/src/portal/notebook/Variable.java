@@ -1,7 +1,5 @@
 package portal.notebook;
 
-import portal.webapp.notebook.VariableChangeListener;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

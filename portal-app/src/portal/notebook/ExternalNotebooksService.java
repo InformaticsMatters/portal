@@ -25,6 +25,25 @@ public class ExternalNotebooksService {
     @Inject
     private NotebooksService notebooksService;
 
+
+    @Path("createNotebook")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public NotebookMetadataDTO createNotebook(NotebookMetadataDTO notebookMetadataDTO) {
+        NotebookInfo notebookInfo = new NotebookInfo();
+        notebookInfo.setName(notebookMetadataDTO.getName());
+        NotebookContents notebookContents = new NotebookContents();
+        StoreNotebookData storeNotebookData = new StoreNotebookData();
+        storeNotebookData.setNotebookInfo(notebookInfo);
+        storeNotebookData.setNotebookContents(notebookContents);
+        Long id = notebooksService.storeNotebook(storeNotebookData);
+        notebookMetadataDTO.setId(id);
+        notebookMetadataDTO.setOwnerName("poc");
+        return notebookMetadataDTO;
+    }
+
+
     @Path("listNotebookMetadata")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import portal.webapp.notebook.StoreNotebookData;
 import toolkit.services.PU;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -51,7 +50,7 @@ public class NotebooksService {
         }
     }
 
-    public void storeNotebook(StoreNotebookData storeNotebookData) {
+    public Long storeNotebook(StoreNotebookData storeNotebookData) {
         try {
             boolean insert = storeNotebookData.getNotebookInfo().getId() == null;
             Notebook notebook = insert ? new Notebook() : entityManager.find(Notebook.class, storeNotebookData.getNotebookInfo().getId());
@@ -70,6 +69,7 @@ public class NotebooksService {
             notebookHistory.setData(notebook.getData());
             notebookHistory.setRevisionDate(new Date());
             notebookHistory.setRevisionTime(new Date());
+            return notebook.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

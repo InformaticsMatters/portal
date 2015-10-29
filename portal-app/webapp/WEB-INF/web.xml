@@ -27,7 +27,7 @@
         <servlet-class>org.apache.wicket.protocol.http.WicketServlet</servlet-class>
         <init-param>
             <param-name>applicationClassName</param-name>
-            <param-value>portal.webapp.PortalWebApplication</param-value>
+            <param-value>portal.PortalWebApplication</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
