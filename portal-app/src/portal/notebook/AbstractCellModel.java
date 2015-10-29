@@ -1,6 +1,6 @@
 package portal.notebook;
 
-public abstract class AbstractCell implements Cell {
+public abstract class AbstractCellModel implements CellModel {
 
     private String name;
     private int positionLeft;
@@ -39,7 +39,7 @@ public abstract class AbstractCell implements Cell {
         if (o == null || !o.getClass().equals(getClass())) {
             return false;
         }
-        return ((Cell)o).getName().equals(getName());
+        return ((CellModel)o).getName().equals(getName());
     }
 
 }

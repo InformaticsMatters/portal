@@ -52,7 +52,7 @@ public class NotebookCanvasPage extends WebPage {
     private NotebookCellDescriptorsPanel notebookCellDescriptorsPanel;
     private WebMarkupContainer plumbContainer;
 
-    private ListView<Cell> canvasItemRepeater;
+    private ListView<CellModel> canvasItemRepeater;
 
     @Inject
     private NotifierProvider notifierProvider;
@@ -73,15 +73,15 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addListeners() {
-        NotebookContents notebookData = notebookSession.getNotebookContents();
+        NotebookModel notebookData = notebookSession.getNotebookModel();
         notebookData.addNotebookChangeListener(new NotebookChangeListener() {
             @Override
-            public void onCellRemoved(Cell cell) {
+            public void onCellRemoved(CellModel cellModel) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(plumbContainer);
             }
 
             @Override
-            public void onCellAdded(Cell cell) {
+            public void onCellAdded(CellModel cellModel) {
 
             }
         });
@@ -116,14 +116,14 @@ public class NotebookCanvasPage extends WebPage {
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
 
-        IModel<List<Cell>> listModel = new IModel<List<Cell>>() {
+        IModel<List<CellModel>> listModel = new IModel<List<CellModel>>() {
             @Override
-            public List<Cell> getObject() {
-                return notebookSession.getNotebookContents().getCellList();
+            public List<CellModel> getObject() {
+                return notebookSession.getNotebookModel().getCellModelList();
             }
 
             @Override
-            public void setObject(List<Cell> cells) {
+            public void setObject(List<CellModel> cells) {
 
             }
 
@@ -133,16 +133,16 @@ public class NotebookCanvasPage extends WebPage {
             }
         };
         initialItemCount = 0;
-        canvasItemRepeater = new ListView<Cell>(CANVASITEM_WICKETID, listModel) {
+        canvasItemRepeater = new ListView<CellModel>(CANVASITEM_WICKETID, listModel) {
 
             @Override
-            protected void populateItem(ListItem<Cell> listItem) {
+            protected void populateItem(ListItem<CellModel> listItem) {
                 initialItemCount++;
-                Cell cell = listItem.getModelObject();
-                Panel canvasItemPanel = createCanvasItemPanel(cell);
+                CellModel cellModel = listItem.getModelObject();
+                Panel canvasItemPanel = createCanvasItemPanel(cellModel);
                 listItem.setOutputMarkupId(true);
                 listItem.setMarkupId(CANVASITEM_WICKETID + initialItemCount);
-                listItem.add(new AttributeModifier("style", "left:" + cell.getPositionLeft() + "px; top:" + cell.getPositionTop() + "px;"));
+                listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
                 listItem.add(canvasItemPanel);
             }
         };
@@ -211,21 +211,21 @@ public class NotebookCanvasPage extends WebPage {
         logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
         CellType cellType = CellType.valueOf(dropDataId);
-        Cell cell = createCell(cellType);
+        CellModel cellModel = createCell(cellType);
 
-        if (cell != null) {
+        if (cellModel != null) {
 
-            NotebookContents notebookContents = notebookSession.getNotebookContents();
-            cell.setPositionLeft(Integer.parseInt(x));
-            cell.setPositionTop(Integer.parseInt(y));
-            notebookContents.addCell(cell);
+            NotebookModel notebookModel = notebookSession.getNotebookModel();
+            cellModel.setPositionLeft(Integer.parseInt(x));
+            cellModel.setPositionTop(Integer.parseInt(y));
+            notebookModel.addCell(cellModel);
 
-            Panel canvasItemPanel = createCanvasItemPanel(cell);
+            Panel canvasItemPanel = createCanvasItemPanel(cellModel);
 
-            List<Cell> cellList = notebookContents.getCellList();
-            ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellList.size(), cellList.size());
+            List<CellModel> cellModelList = notebookModel.getCellModelList();
+            ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellModelList.size(), cellModelList.size());
             listItem.setOutputMarkupId(true);
-            listItem.add(new AttributeModifier("style", "left:" + cell.getPositionLeft() + "px; top:" + cell.getPositionTop() + "px;"));
+            listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
             listItem.add(canvasItemPanel);
             canvasItemRepeater.add(listItem);
 
@@ -246,34 +246,34 @@ public class NotebookCanvasPage extends WebPage {
         }
     }
 
-    private Panel createCanvasItemPanel(Cell cell) {
-        CellType cellType = cell.getCellType();
+    private Panel createCanvasItemPanel(CellModel cellModel) {
+        CellType cellType = cellModel.getCellType();
         if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
-            return new NotebookDebugCanvasItemPanel("item", (NotebookDebugCell) cell);
+            return new NotebookDebugCanvasItemPanel("item", (NotebookDebugCellModel) cellModel);
         } else if (CellType.FILE_UPLOAD.equals(cellType)) {
-            return new FileUploadCanvasItemPanel("item", (FileUploadCell) cell);
+            return new FileUploadCanvasItemPanel("item", (FileUploadCellModel) cellModel);
         } else if (CellType.CODE.equals(cellType)) {
-            return new ScriptCanvasItemPanel("item", (ScriptCell) cell);
+            return new ScriptCanvasItemPanel("item", (ScriptCellModel) cellModel);
         } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
-            return new PropertyCalculateCanvasItemPanel("item", (PropertyCalculateCell) cell);
+            return new PropertyCalculateCanvasItemPanel("item", (PropertyCalculateCellModel) cellModel);
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
-            return new TableDisplayCanvasItemPanel("item", (TableDisplayCell) cell);
+            return new TableDisplayCanvasItemPanel("item", (TableDisplayCellModel) cellModel);
         } else {
             return null;
         }
     }
 
-    private Cell createCell(CellType cellType) {
+    private CellModel createCell(CellType cellType) {
         if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
-            return new NotebookDebugCell();
+            return new NotebookDebugCellModel();
         } else if (CellType.FILE_UPLOAD.equals(cellType)) {
-            return new FileUploadCell();
+            return new FileUploadCellModel();
         } else if (CellType.CODE.equals(cellType)) {
-            return new ScriptCell();
+            return new ScriptCellModel();
         } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
-            return new PropertyCalculateCell();
+            return new PropertyCalculateCellModel();
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
-            return new TableDisplayCell();
+            return new TableDisplayCellModel();
         }  else {
             return null;
         }
@@ -290,9 +290,9 @@ public class NotebookCanvasPage extends WebPage {
 
                 logger.info("Item index " + index + " Dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-                NotebookContents notebookContents = notebookSession.getNotebookContents();
+                NotebookModel notebookModel = notebookSession.getNotebookModel();
                 int i = Integer.parseInt(index);
-                Cell model = notebookContents.getCellList().get(i);
+                CellModel model = notebookModel.getCellModelList().get(i);
                 model.setPositionLeft(Integer.parseInt(x));
                 model.setPositionTop(Integer.parseInt(y));
                 notebookSession.storeNotebook();

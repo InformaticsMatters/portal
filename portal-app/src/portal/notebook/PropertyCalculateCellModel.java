@@ -1,16 +1,12 @@
 package portal.notebook;
 
 
-import portal.notebook.AbstractCell;
-import portal.notebook.CellType;
-import portal.notebook.Variable;
-
 import java.util.Collections;
 import java.util.List;
 
-public class PropertyCalculateCell extends AbstractCell {
+public class PropertyCalculateCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
-    private Variable inputVariable;
+    private VariableModel inputVariableModel;
     private final List<String> outputVariableNameList = Collections.singletonList("outputFileName");
     private String serviceName;
 
@@ -20,8 +16,8 @@ public class PropertyCalculateCell extends AbstractCell {
     }
 
     @Override
-    public List<Variable> getInputVariableList() {
-        return inputVariable == null ? Collections.emptyList() : Collections.singletonList(inputVariable);
+    public List<VariableModel> getInputVariableModelList() {
+        return inputVariableModel == null ? Collections.emptyList() : Collections.singletonList(inputVariableModel);
     }
 
     @Override
@@ -29,12 +25,12 @@ public class PropertyCalculateCell extends AbstractCell {
         return outputVariableNameList;
     }
 
-    public Variable getInputVariable() {
-        return inputVariable;
+    public VariableModel getInputVariableModel() {
+        return inputVariableModel;
     }
 
-    public void setInputVariable(Variable inputVariable) {
-        this.inputVariable = inputVariable;
+    public void setInputVariableModel(VariableModel inputVariableModel) {
+        this.inputVariableModel = inputVariableModel;
     }
 
     public void setServiceName(String serviceName) {

@@ -18,14 +18,14 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
+public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellModel> {
     private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
     private Form<UploadData> uploadForm;
     private FileUploadField fileUploadField;
 
-    public FileUploadCanvasItemPanel(String id, FileUploadCell cell) {
+    public FileUploadCanvasItemPanel(String id, FileUploadCellModel cell) {
         super(id, cell);
         addHeader();
         addForm();
@@ -37,7 +37,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookContents().removeCell(getCell());
+                notebookSession.getNotebookModel().removeCell(getCell());
                 notebookSession.storeNotebook();
             }
         });
@@ -106,7 +106,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCell> {
     }
 
     private void store() {
-        notebookSession.getNotebookContents().findVariable(getCell().getName(), "resourceId").setValue(uploadForm.getModelObject().getFileName());
+        notebookSession.getNotebookModel().findVariable(getCell().getName(), "resourceId").setValue(uploadForm.getModelObject().getFileName());
         getCell().setFileName(uploadForm.getModelObject().getFileName());
         notebookSession.storeNotebook();
     }

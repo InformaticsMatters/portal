@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Variable implements Serializable {
-    private Cell producer;
-    private final List<Cell> consumerList = new ArrayList<>();
+public class VariableModel implements Serializable {
+    private CellModel producer;
+    private final List<CellModel> consumerList = new ArrayList<>();
     private String name;
     private Object value;
     private transient List<VariableChangeListener> changeListenerList;
@@ -31,23 +31,23 @@ public class Variable implements Serializable {
         }
     }
 
-    public Cell getProducer() {
+    public CellModel getProducer() {
         return producer;
     }
 
-    public void setProducer(Cell producer) {
+    public void setProducer(CellModel producer) {
         this.producer = producer;
     }
 
-    private void registerConsumer(Cell cell) {
+    private void registerConsumer(CellModel cellModel) {
         synchronized (consumerList) {
-            consumerList.add(cell);
+            consumerList.add(cellModel);
         }
     }
 
-    private void unregisterConsumer(Cell cell) {
+    private void unregisterConsumer(CellModel cellModel) {
         synchronized (consumerList) {
-            consumerList.add(cell);
+            consumerList.add(cellModel);
         }
     }
 

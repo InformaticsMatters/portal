@@ -19,7 +19,7 @@ public class NotebookSession implements Serializable {
     private long lastDatasetId = 0;
     @Inject
     private NotebookService notebookService;
-    private NotebookContents notebookContents;
+    private NotebookModel notebookModel;
     private NotebookInfo notebookInfo;
 
     public NotebookSession() {
@@ -31,10 +31,10 @@ public class NotebookSession implements Serializable {
         if (list.isEmpty()) {
             NotebookInfo notebookInfo = new NotebookInfo();
             notebookInfo.setName("POC");
-            NotebookContents notebookContents = new NotebookContents();
+            NotebookModel notebookModel = new NotebookModel();
             StoreNotebookData storeNotebookData = new StoreNotebookData();
             storeNotebookData.setNotebookInfo(notebookInfo);
-            storeNotebookData.setNotebookContents(notebookContents);
+            storeNotebookData.setNotebookModel(notebookModel);
             notebookService.storeNotebook(storeNotebookData);
             list = notebookService.listNotebookInfo();
         }
@@ -47,21 +47,21 @@ public class NotebookSession implements Serializable {
 
     public void loadNotebook(Long id) {
         notebookInfo = notebookService.retrieveNotebookInfo(id);
-        notebookContents = notebookService.retrieveNotebookContents(id);
+        notebookModel = notebookService.retrieveNotebookContents(id);
     }
 
     public NotebookInfo getNotebookInfo() {
         return notebookInfo;
     }
 
-    public NotebookContents getNotebookContents() {
-        return notebookContents;
+    public NotebookModel getNotebookModel() {
+        return notebookModel;
     }
 
     public void storeNotebook() {
         StoreNotebookData storeNotebookData = new StoreNotebookData();
         storeNotebookData.setNotebookInfo(notebookInfo);
-        storeNotebookData.setNotebookContents(notebookContents);
+        storeNotebookData.setNotebookModel(notebookModel);
         notebookService.storeNotebook(storeNotebookData);
     }
 
@@ -79,17 +79,17 @@ public class NotebookSession implements Serializable {
     }
 
 
-    public List<Variable> listAvailableInputVariablesFor(Cell cell, NotebookContents notebookContents) {
-        List<Variable> list = new ArrayList<>();
-        for (Variable variable : notebookContents.getVariableList()) {
-            if (!variable.getProducer().equals(cell)) {
-                list.add(variable);
+    public List<VariableModel> listAvailableInputVariablesFor(CellModel cellModel, NotebookModel notebookModel) {
+        List<VariableModel> list = new ArrayList<>();
+        for (VariableModel variableModel : notebookModel.getVariableModelList()) {
+            if (!variableModel.getProducer().equals(cellModel)) {
+                list.add(variableModel);
             }
         }
 
-        Collections.sort(list, new Comparator<Variable>() {
+        Collections.sort(list, new Comparator<VariableModel>() {
             @Override
-            public int compare(Variable o1, Variable o2) {
+            public int compare(VariableModel o1, VariableModel o2) {
                 return o2.getName().compareTo(o1.getName());
             }
         });

@@ -13,15 +13,15 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugCell> {
+public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugCellModel> {
 
-    private ListView<Variable> listView;
-    private IModel<List<Variable>> listModel;
+    private ListView<VariableModel> listView;
+    private IModel<List<VariableModel>> listModel;
     private WebMarkupContainer listContainer;
     @Inject
     private NotebookSession notebookSession;
 
-    public NotebookDebugCanvasItemPanel(String id, NotebookDebugCell cell) {
+    public NotebookDebugCanvasItemPanel(String id, NotebookDebugCellModel cell) {
         super(id, cell);
         addHeader();
         setOutputMarkupId(true);
@@ -34,7 +34,7 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookContents().removeCell(getCell());
+                notebookSession.getNotebookModel().removeCell(getCell());
                 notebookSession.storeNotebook();
             }
         });
@@ -44,27 +44,27 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
         VariableChangeListener variableChangeListener = new VariableChangeListener() {
 
             @Override
-            public void onValueChanged(Variable source, Object oldValue) {
+            public void onValueChanged(VariableModel source, Object oldValue) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
             }
 
             @Override
-            public void onVariableRemoved(Variable source) {
+            public void onVariableRemoved(VariableModel source) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
             }
         };
-        for (Variable variable : notebookSession.getNotebookContents().getVariableList()) {
-            variable.removeChangeListener(variableChangeListener);
-            variable.addChangeListener(variableChangeListener);
+        for (VariableModel variableModel : notebookSession.getNotebookModel().getVariableModelList()) {
+            variableModel.removeChangeListener(variableChangeListener);
+            variableModel.addChangeListener(variableChangeListener);
         }
-        notebookSession.getNotebookContents().addNotebookChangeListener(new NotebookChangeListener() {
+        notebookSession.getNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
-            public void onCellRemoved(Cell cell) {
+            public void onCellRemoved(CellModel cellModel) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
             }
 
             @Override
-            public void onCellAdded(Cell cell) {
+            public void onCellAdded(CellModel cellModel) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(listContainer);
 
             }
@@ -72,14 +72,14 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
     }
 
     private void addList() {
-        listModel = new IModel<List<Variable>>() {
+        listModel = new IModel<List<VariableModel>>() {
             @Override
-            public List<Variable> getObject() {
-                return new ArrayList<>(notebookSession.getNotebookContents().getVariableList());
+            public List<VariableModel> getObject() {
+                return new ArrayList<>(notebookSession.getNotebookModel().getVariableModelList());
             }
 
             @Override
-            public void setObject(List<Variable> variables) {
+            public void setObject(List<VariableModel> variableModels) {
 
             }
 
@@ -88,13 +88,13 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
 
             }
         };
-        listView = new ListView<Variable>("item", listModel) {
+        listView = new ListView<VariableModel>("item", listModel) {
             @Override
-            protected void populateItem(ListItem<Variable> listItem) {
-                Variable variable = listItem.getModelObject();
-                Label varNameLabel = new Label("varName", variable.getProducer().getName() + "." + variable.getName());
+            protected void populateItem(ListItem<VariableModel> listItem) {
+                VariableModel variableModel = listItem.getModelObject();
+                Label varNameLabel = new Label("varName", variableModel.getProducer().getName() + "." + variableModel.getName());
                 listItem.add(varNameLabel);
-                Label varValueLabel = new Label("varValue", variable.getValue() == null ? "null" : variable.getValue().toString());
+                Label varValueLabel = new Label("varValue", variableModel.getValue() == null ? "null" : variableModel.getValue().toString());
                 listItem.add(varValueLabel);
             }
         };

@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCalculateCell> {
+public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCalculateCellModel> {
     private static final Logger LOGGER = Logger.getLogger(PropertyCalculateCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
@@ -27,7 +27,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     private transient CalculatorsClient calculatorsClient;
     private Form<ModelObject> form;
 
-    public PropertyCalculateCanvasItemPanel(String id, PropertyCalculateCell cell) {
+    public PropertyCalculateCanvasItemPanel(String id, PropertyCalculateCellModel cell) {
         super(id, cell);
         addHeader();
         addForm();
@@ -40,46 +40,46 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookContents().removeCell(getCell());
+                notebookSession.getNotebookModel().removeCell(getCell());
                 notebookSession.storeNotebook();
             }
         });
     }
 
     private void addListeners() {
-        notebookSession.getNotebookContents().addNotebookChangeListener(new NotebookChangeListener() {
+        notebookSession.getNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
-            public void onCellRemoved(Cell cell) {
+            public void onCellRemoved(CellModel cellModel) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(form);
             }
 
             @Override
-            public void onCellAdded(Cell cell) {
+            public void onCellAdded(CellModel cellModel) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(form);
             }
         });
     }
 
     private void load() {
-        form.getModelObject().setInputVariable(getCell().getInputVariable());
-        Variable variable = notebookSession.getNotebookContents().findVariable(getCell().getName(), "outputFileName");
-        if (variable != null) {
-            form.getModelObject().setOutputFileName((String) variable.getValue());
+        form.getModelObject().setInputVariableModel(getCell().getInputVariableModel());
+        VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCell().getName(), "outputFileName");
+        if (variableModel != null) {
+            form.getModelObject().setOutputFileName((String) variableModel.getValue());
         }
         form.getModelObject().setServiceName(getCell().getServiceName());
     }
 
     private void addForm() {
         form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
-        IModel<List<Variable>> inputVariableModel = new IModel<List<Variable>>() {
+        IModel<List<VariableModel>> inputVariableModel = new IModel<List<VariableModel>>() {
             @Override
-            public List<Variable> getObject() {
-                List<Variable> list = notebookSession.listAvailableInputVariablesFor(getCell(), notebookSession.getNotebookContents());
+            public List<VariableModel> getObject() {
+                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCell(), notebookSession.getNotebookModel());
                 return list;
             }
 
             @Override
-            public void setObject(List<Variable> variableList) {
+            public void setObject(List<VariableModel> variableList) {
 
             }
 
@@ -88,7 +88,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
             }
         };
-        DropDownChoice<Variable> inputVariableChoice = new DropDownChoice<Variable>("inputVariable", inputVariableModel);
+        DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariable", inputVariableModel);
         form.add(inputVariableChoice);
         DropDownChoice<String> serviceNameChoice = new DropDownChoice<String>("serviceName", Arrays.asList(CalculatorsClient.getServiceNames()));
         form.add(serviceNameChoice);
@@ -105,11 +105,11 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     private void calculateAndSave() {
-        getCell().setInputVariable(form.getModelObject().getInputVariable());
+        getCell().setInputVariableModel(form.getModelObject().getInputVariableModel());
         getCell().setServiceName(form.getModelObject().getServiceName());
-        Variable outputVariable = notebookSession.getNotebookContents().findVariable(getCell().getName(), "outputFileName");
-        outputVariable.setValue(form.getModelObject().getOutputFileName());
-        calculateTo(getCell().getServiceName(), getCell().getInputVariable().getValue().toString(), outputVariable.getValue().toString());
+        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariable(getCell().getName(), "outputFileName");
+        outputVariableModel.setValue(form.getModelObject().getOutputFileName());
+        calculateTo(getCell().getServiceName(), getCell().getInputVariableModel().getValue().toString(), outputVariableModel.getValue().toString());
         notebookSession.storeNotebook();
     }
 
@@ -141,16 +141,16 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     class ModelObject implements Serializable {
-        private Variable inputVariable;
+        private VariableModel inputVariableModel;
         private String serviceName;
         private String outputFileName;
 
-        public Variable getInputVariable() {
-            return inputVariable;
+        public VariableModel getInputVariableModel() {
+            return inputVariableModel;
         }
 
-        public void setInputVariable(Variable inputVariable) {
-            this.inputVariable = inputVariable;
+        public void setInputVariableModel(VariableModel inputVariableModel) {
+            this.inputVariableModel = inputVariableModel;
         }
 
         public String getOutputFileName() {

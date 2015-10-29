@@ -3,7 +3,7 @@ package portal.notebook;
 import java.io.Serializable;
 import java.util.List;
 
-public interface Cell extends Serializable {
+public interface CellModel extends Serializable {
 
     CellType getCellType();
     void setName(String name);
@@ -12,7 +12,7 @@ public interface Cell extends Serializable {
     void setPositionLeft(int x);
     int getPositionTop();
     void setPositionTop(int y);
-    List<Variable> getInputVariableList();
+    List<VariableModel> getInputVariableModelList();
     List<String> getOutputVariableNameList();
 
 }

@@ -18,13 +18,13 @@ import java.util.List;
 /**
  * @author simetrias
  */
-public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCell> {
+public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCellModel> {
     @Inject
     private NotebookSession notebookSession;
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
 
-    public TableDisplayCanvasItemPanel(String id, TableDisplayCell cell) {
+    public TableDisplayCanvasItemPanel(String id, TableDisplayCellModel cell) {
         super(id, cell);
         addHeader();
         addInput();
@@ -38,7 +38,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookContents().removeCell(getCell());
+                notebookSession.getNotebookModel().removeCell(getCell());
                 notebookSession.storeNotebook();
             }
         });
@@ -46,15 +46,15 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
 
     private void addInput() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
-        IModel<List<Variable>> dropDownModel = new IModel<List<Variable>>() {
+        IModel<List<VariableModel>> dropDownModel = new IModel<List<VariableModel>>() {
             @Override
-            public List<Variable> getObject() {
-                List<Variable> list = notebookSession.listAvailableInputVariablesFor(getCell(), notebookSession.getNotebookContents());
+            public List<VariableModel> getObject() {
+                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCell(), notebookSession.getNotebookModel());
                 return list;
             }
 
             @Override
-            public void setObject(List<Variable> variableList) {
+            public void setObject(List<VariableModel> variableList) {
 
             }
 
@@ -63,7 +63,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
 
             }
         };
-        DropDownChoice<Variable> inputVariableChoice = new DropDownChoice<Variable>("inputVariable", dropDownModel);
+        DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariable", dropDownModel);
         form.add(inputVariableChoice);
         IndicatingAjaxSubmitLink calculateLink = new IndicatingAjaxSubmitLink("display") {
             @Override
@@ -83,35 +83,35 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         VariableChangeListener variableChangeListener = new VariableChangeListener() {
 
             @Override
-            public void onValueChanged(Variable source, Object oldValue) {
+            public void onValueChanged(VariableModel source, Object oldValue) {
                 refresh();
             }
 
             @Override
-            public void onVariableRemoved(Variable source) {
+            public void onVariableRemoved(VariableModel source) {
                 refresh();
             }
         };
-        for (Variable variable : notebookSession.getNotebookContents().getVariableList()) {
-            variable.removeChangeListener(variableChangeListener);
-            variable.addChangeListener(variableChangeListener);
+        for (VariableModel variableModel : notebookSession.getNotebookModel().getVariableModelList()) {
+            variableModel.removeChangeListener(variableChangeListener);
+            variableModel.addChangeListener(variableChangeListener);
         }
-        notebookSession.getNotebookContents().addNotebookChangeListener(new NotebookChangeListener() {
+        notebookSession.getNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
-            public void onCellRemoved(Cell cell) {
+            public void onCellRemoved(CellModel cellModel) {
                 refresh();
 
             }
 
             @Override
-            public void onCellAdded(Cell cell) {
+            public void onCellAdded(CellModel cellModel) {
                 refresh();
             }
         });
     }
 
     private void displayAndSave() {
-        getCell().setInputVariable(form.getModelObject().getInputVariable());
+        getCell().setInputVariableModel(form.getModelObject().getInputVariableModel());
         loadTableData();
         notebookSession.storeNotebook();
     }
@@ -122,12 +122,12 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void load() {
-        form.getModelObject().setInputVariable(getCell().getInputVariable());
+        form.getModelObject().setInputVariableModel(getCell().getInputVariableModel());
         loadTableData();
     }
 
     private void loadTableData() {
-        boolean assigned = getCell().getInputVariable() != null && getCell().getInputVariable().getValue() != null;
+        boolean assigned = getCell().getInputVariableModel() != null && getCell().getInputVariableModel().getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
             descriptor = new TableDisplayDescriptor(0l, "", 0);
@@ -136,12 +136,12 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private IDatasetDescriptor loadDescriptor() {
-        if (getCell().getInputVariable().getValue() instanceof String) {
-            return notebookSession.loadDatasetFromFile(getCell().getInputVariable().getValue().toString());
-        } else if (getCell().getInputVariable().getValue() instanceof Strings) {
-            return notebookSession.createDatasetFromStrings((Strings)getCell().getInputVariable().getValue(), getCell().getInputVariable().getName());
-        } else if (getCell().getInputVariable().getValue() instanceof List) {
-            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>)getCell().getInputVariable().getValue(), getCell().getInputVariable().getName());
+        if (getCell().getInputVariableModel().getValue() instanceof String) {
+            return notebookSession.loadDatasetFromFile(getCell().getInputVariableModel().getValue().toString());
+        } else if (getCell().getInputVariableModel().getValue() instanceof Strings) {
+            return notebookSession.createDatasetFromStrings((Strings)getCell().getInputVariableModel().getValue(), getCell().getInputVariableModel().getName());
+        } else if (getCell().getInputVariableModel().getValue() instanceof List) {
+            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>)getCell().getInputVariableModel().getValue(), getCell().getInputVariableModel().getName());
         } else {
             return null;
         }
@@ -155,14 +155,14 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     class ModelObject implements Serializable {
-        private Variable inputVariable;
+        private VariableModel inputVariableModel;
 
-        public Variable getInputVariable() {
-            return inputVariable;
+        public VariableModel getInputVariableModel() {
+            return inputVariableModel;
         }
 
-        public void setInputVariable(Variable inputVariable) {
-            this.inputVariable = inputVariable;
+        public void setInputVariableModel(VariableModel inputVariableModel) {
+            this.inputVariableModel = inputVariableModel;
         }
     }
 

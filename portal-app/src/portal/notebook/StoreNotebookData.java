@@ -1,13 +1,10 @@
 package portal.notebook;
 
-import portal.notebook.NotebookContents;
-import portal.notebook.NotebookInfo;
-
 import java.io.Serializable;
 
 public class StoreNotebookData implements Serializable {
     private NotebookInfo notebookInfo;
-    private NotebookContents notebookContents;
+    private NotebookModel notebookModel;
 
     public NotebookInfo getNotebookInfo() {
         return notebookInfo;
@@ -17,11 +14,11 @@ public class StoreNotebookData implements Serializable {
         this.notebookInfo = notebookInfo;
     }
 
-    public NotebookContents getNotebookContents() {
-        return notebookContents;
+    public NotebookModel getNotebookModel() {
+        return notebookModel;
     }
 
-    public void setNotebookContents(NotebookContents notebookContents) {
-        this.notebookContents = notebookContents;
+    public void setNotebookModel(NotebookModel notebookModel) {
+        this.notebookModel = notebookModel;
     }
 }

@@ -1,19 +1,15 @@
 package portal.notebook;
 
-import portal.notebook.AbstractCell;
-import portal.notebook.CellType;
-import portal.notebook.Variable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ScriptCell extends AbstractCell {
+public class ScriptCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
     private String code;
     private String errorMessage;
     private Object outcome;
-    private final List<Variable> inputVariableList = new ArrayList<>();
+    private final List<VariableModel> inputVariableModelList = new ArrayList<>();
     private final List<String> outputVariableNameList = Collections.singletonList("outcome");
 
     public String getCode() {
@@ -46,8 +42,8 @@ public class ScriptCell extends AbstractCell {
     }
 
     @Override
-    public List<Variable> getInputVariableList() {
-        return inputVariableList;
+    public List<VariableModel> getInputVariableModelList() {
+        return inputVariableModelList;
     }
 
     @Override

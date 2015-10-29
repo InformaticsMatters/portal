@@ -1,17 +1,13 @@
 package portal.notebook;
 
 
-import portal.notebook.AbstractCell;
-import portal.notebook.CellType;
-import portal.notebook.Variable;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class FileUploadCell extends AbstractCell {
+public class FileUploadCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
-    private final List<Variable> inputVariableList = Collections.emptyList();
+    private final List<VariableModel> inputVariableModelList = Collections.emptyList();
     private List<String> outputVariableNameList = Arrays.asList("resourceId");
     private String fileName;
 
@@ -21,8 +17,8 @@ public class FileUploadCell extends AbstractCell {
     }
 
     @Override
-    public List<Variable> getInputVariableList() {
-        return inputVariableList;
+    public List<VariableModel> getInputVariableModelList() {
+        return inputVariableModelList;
     }
 
     @Override

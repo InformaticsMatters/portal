@@ -1,19 +1,17 @@
 package portal.notebook;
 
 import toolkit.services.PU;
+import toolkit.services.Transactional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @ApplicationScoped
+@Transactional
 public class NotebookService {
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
@@ -39,12 +37,10 @@ public class NotebookService {
         return notebookInfo;
     }
 
-    public NotebookContents retrieveNotebookContents(Long id) {
+    public NotebookModel retrieveNotebookContents(Long id) {
         try {
             Notebook notebook = entityManager.find(Notebook.class, id);
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(notebook.getData());
-            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-            return (NotebookContents)objectInputStream.readObject();
+            return NotebookModel.fromBytes(notebook.getData());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -58,12 +54,7 @@ public class NotebookService {
             if (insert) {
                 entityManager.persist(notebook);
             }
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(storeNotebookData.getNotebookContents());
-            objectOutputStream.flush();
-            byteArrayOutputStream.flush();
-            notebook.setData(byteArrayOutputStream.toByteArray());
+            notebook.setData(storeNotebookData.getNotebookModel().toBytes());
             NotebookHistory notebookHistory = new NotebookHistory();
             notebookHistory.setNotebook(notebook);
             notebookHistory.setData(notebook.getData());

@@ -16,7 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
+public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
 
     @Inject
     private NotebookSession notebookSession;
@@ -24,7 +24,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
 
-    public ScriptCanvasItemPanel(String id, ScriptCell cell) {
+    public ScriptCanvasItemPanel(String id, ScriptCellModel cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addHeader();
@@ -37,7 +37,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookContents().removeCell(getCell());
+                notebookSession.getNotebookModel().removeCell(getCell());
                 notebookSession.storeNotebook();
             }
         });
@@ -95,13 +95,13 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
         ScriptEngine engine = manager.getEngineByName("Groovy");
         Bindings bindings = engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
         /**/
-        getCell().getInputVariableList().clear();
-        getCell().getInputVariableList().addAll(notebookSession.getNotebookContents().getVariableList());
+        getCell().getInputVariableModelList().clear();
+        getCell().getInputVariableModelList().addAll(notebookSession.getNotebookModel().getVariableModelList());
         /**/
-        for (Variable variable : getCell().getInputVariableList()) {
-            if (variable.getValue() != null) {
-                String producerName = variable.getProducer().getName().replaceAll(" ", "_");
-                bindings.put(producerName + "_" + variable.getName(), variable.getValue());
+        for (VariableModel variableModel : getCell().getInputVariableModelList()) {
+            if (variableModel.getValue() != null) {
+                String producerName = variableModel.getProducer().getName().replaceAll(" ", "_");
+                bindings.put(producerName + "_" + variableModel.getName(), variableModel.getValue());
             }
         }
         bindings.put("session", notebookSession);
@@ -111,9 +111,9 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCell> {
             getCell().setErrorMessage(null);
             for (String key : getCell().getOutputVariableNameList()) {
                 Object value = engine.get(key);
-                Variable variable = notebookSession.getNotebookContents().findVariable(getCell().getName(), key);
-                if (variable != null) {
-                    variable.setValue(value);
+                VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCell().getName(), key);
+                if (variableModel != null) {
+                    variableModel.setValue(value);
                 }
             }
         } catch (ScriptException se) {

@@ -1,14 +1,10 @@
 package portal.notebook;
 
 
-import portal.notebook.AbstractCell;
-import portal.notebook.CellType;
-import portal.notebook.Variable;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotebookDebugCell extends AbstractCell {
+public class NotebookDebugCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
 
     @Override
@@ -17,7 +13,7 @@ public class NotebookDebugCell extends AbstractCell {
     }
 
     @Override
-    public List<Variable> getInputVariableList() {
+    public List<VariableModel> getInputVariableModelList() {
         return new ArrayList<>();
     }
 
