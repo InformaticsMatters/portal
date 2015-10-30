@@ -14,6 +14,8 @@ public class CellDefinitionDTO {
     private final List<VariableDefinitionDTO> inputVariableDefinitionList = new ArrayList<>();
     private final List<String> outputVariableNameList = new ArrayList<>();
     private final Map<String, Object> propertyMap = new HashMap<>();
+    private int positionTop;
+    private int positionLeft;
 
     public String getName() {
         return name;
@@ -43,5 +45,21 @@ public class CellDefinitionDTO {
 
     public Map<String, Object> getPropertyMap() {
         return propertyMap;
+    }
+
+    public int getPositionTop() {
+        return positionTop;
+    }
+
+    public void setPositionTop(int positionTop) {
+        this.positionTop = positionTop;
+    }
+
+    public int getPositionLeft() {
+        return positionLeft;
+    }
+
+    public void setPositionLeft(int positionLeft) {
+        this.positionLeft = positionLeft;
     }
 }

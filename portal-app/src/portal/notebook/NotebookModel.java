@@ -1,6 +1,6 @@
 package portal.notebook;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 
 public class NotebookModel implements Serializable {
@@ -164,8 +164,10 @@ public class NotebookModel implements Serializable {
     }
 
     public void toNotebookContents(NotebookContents notebookContents) {
+        Map<String, Cell> cellMap = new HashMap<>();
         for (CellModel cellModel : cellModelList) {
             Cell cell = new Cell();
+            cell.setName(cellModel.getName());
             for (String variableName : cellModel.getOutputVariableNameList()) {
                 Variable variable = notebookContents.findVariable(getName(), variableName);
                 if (variable == null) {
@@ -177,31 +179,39 @@ public class NotebookModel implements Serializable {
                     notebookContents.getVariableList().add(variable);
                 }
             }
-            cellModel.store(notebookContents, cell);
+            cellMap.put(cellModel.getName(), cell);
             notebookContents.getCellList().add(cell);
+        }
+        for (CellModel cellModel : cellModelList) {
+            Cell cell = cellMap.get(cellModel.getName());
+            cellModel.store(notebookContents, cell);
         }
 
     }
 
     public void fromNotebookContents(NotebookContents notebookContents) {
-         for (Cell cell : notebookContents.getCellList()) {
-             System.out.println(cell.getName() + ": " + cell.getCellType());
-             CellModel cellModel = createCellModel(cell.getCellType());
-             System.out.println(cellModel);
-             for (Variable variable : cell.getOutputVariableList()) {
-                 VariableModel variableModel = new VariableModel();
-                 variableModel.setName(variable.getName());
-                 variableModel.setProducer(cellModel);
-                 variableModel.setValue(variable.getValue());
-                 variableModelList.add(variableModel);
-             }
-             cellModel.load(this, cell);
-             cellModelList.add(cellModel);
-         }
+        Map<String, CellModel> cellModelMap = new HashMap<>();
+        for (Cell cell : notebookContents.getCellList()) {
+            CellModel cellModel = createCellModel(cell.getCellType());
+            cellModel.setName(cell.getName());
+            for (Variable variable : cell.getOutputVariableList()) {
+                VariableModel variableModel = new VariableModel();
+                variableModel.setName(variable.getName());
+                variableModel.setProducer(cellModel);
+                variableModel.setValue(variable.getValue());
+                variableModelList.add(variableModel);
+            }
+            cellModelMap.put(cell.getName(), cellModel);
+            cellModelList.add(cellModel);
+        }
+        for (Cell cell : notebookContents.getCellList()) {
+            CellModel cellModel = cellModelMap.get(cell.getName());
+            cellModel.load(this, cell);
+        }
 
     }
 
-    private CellModel createCellModel(CellType cellType) {
+    public static CellModel createCellModel(CellType cellType) {
         if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
             return new NotebookDebugCellModel();
         } else if (CellType.FILE_UPLOAD.equals(cellType)) {
@@ -212,7 +222,7 @@ public class NotebookModel implements Serializable {
             return new PropertyCalculateCellModel();
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
             return new TableDisplayCellModel();
-        }  else {
+        } else {
             return null;
         }
     }

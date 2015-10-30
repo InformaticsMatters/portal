@@ -31,4 +31,9 @@ public class NotebookMetadataDTO {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public void fromNotebook(Notebook notebook) {
+        id = notebook.getId();
+        name = notebook.getName();
+    }
 }

@@ -33,9 +33,7 @@ public class ExternalNotebookService {
         List<NotebookMetadataDTO> list = new ArrayList<>();
         for (Notebook notebook : entityManager.createQuery("select o from Notebook o order by o.name", Notebook.class).getResultList()) {
             NotebookMetadataDTO notebookMetadataDTO = new NotebookMetadataDTO();
-            notebookMetadataDTO.setId(notebook.getId());
-            notebookMetadataDTO.setName(notebook.getName());
-            notebookMetadataDTO.setOwnerName("poc");
+            notebookMetadataDTO.fromNotebook(notebook);
             list.add(notebookMetadataDTO);
         }
         return list;
@@ -46,8 +44,43 @@ public class ExternalNotebookService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public NotebookMetadataDTO storeNotebook(StoreNotebookDTO storeNotebookDTO) {
-         return  null;
-
+        NotebookInfo notebookInfo = new NotebookInfo();
+        notebookInfo.setId(storeNotebookDTO.getNotebookMetadataDTO().getId());
+        notebookInfo.setName(storeNotebookDTO.getNotebookMetadataDTO().getName());
+        NotebookContents notebookContents = new NotebookContents();
+        Map<String, Cell> cellMap = new HashMap<>();
+        for (CellDefinitionDTO cellDefinitionDTO : storeNotebookDTO.getNotebookDefinitionDTO().getCellDefinitionList()) {
+            Cell cell = new Cell();
+            cell.setName(cellDefinitionDTO.getName());
+            cell.setCellType(cellDefinitionDTO.getCellType());
+            cell.setPositionTop(cellDefinitionDTO.getPositionTop());
+            cell.setPositionLeft(cellDefinitionDTO.getPositionLeft());
+            cell.getPropertyMap().putAll(cellDefinitionDTO.getPropertyMap());
+            for (String variableName : cellDefinitionDTO.getOutputVariableNameList()) {
+                Variable variable = new Variable();
+                variable.setProducerCell(cell);
+                variable.setName(variableName);
+                cell.getOutputVariableList().add(variable);
+                notebookContents.getVariableList().add(variable);
+            }
+            notebookContents.getCellList().add(cell);
+            cellMap.put(cell.getName(), cell);
+        }
+        for (CellDefinitionDTO cellDefinitionDTO : storeNotebookDTO.getNotebookDefinitionDTO().getCellDefinitionList()) {
+            for (VariableDefinitionDTO variableDefinitionDTO : cellDefinitionDTO.getInputVariableDefinitionList()) {
+                Cell cell = cellMap.get(variableDefinitionDTO.getProducerName());
+                Variable variable = notebookContents.findVariable(variableDefinitionDTO.getProducerName(), variableDefinitionDTO.getName());
+                cell.getInputVariableList().add(variable);
+            }
+        }
+        StoreNotebookData storeNotebookData = new StoreNotebookData();
+        storeNotebookData.setNotebookInfo(notebookInfo);
+        storeNotebookData.setNotebookContents(notebookContents);
+        Long id = notebookService.storeNotebook(storeNotebookData);
+        Notebook notebook = entityManager.find(Notebook.class, id);
+        NotebookMetadataDTO notebookMetadataDTO = new NotebookMetadataDTO();
+        notebookMetadataDTO.fromNotebook(notebook);
+        return notebookMetadataDTO;
     }
 
     @Path("retrieveNotebookDefinition")

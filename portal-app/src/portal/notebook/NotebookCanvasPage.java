@@ -211,7 +211,7 @@ public class NotebookCanvasPage extends WebPage {
         logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
         CellType cellType = CellType.valueOf(dropDataId);
-        CellModel cellModel = createCell(cellType);
+        CellModel cellModel = NotebookModel.createCellModel(cellType);
 
         if (cellModel != null) {
 
@@ -259,22 +259,6 @@ public class NotebookCanvasPage extends WebPage {
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
             return new TableDisplayCanvasItemPanel("item", (TableDisplayCellModel) cellModel);
         } else {
-            return null;
-        }
-    }
-
-    private CellModel createCell(CellType cellType) {
-        if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
-            return new NotebookDebugCellModel();
-        } else if (CellType.FILE_UPLOAD.equals(cellType)) {
-            return new FileUploadCellModel();
-        } else if (CellType.CODE.equals(cellType)) {
-            return new ScriptCellModel();
-        } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
-            return new PropertyCalculateCellModel();
-        } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
-            return new TableDisplayCellModel();
-        }  else {
             return null;
         }
     }
