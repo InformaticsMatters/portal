@@ -61,7 +61,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     private void load() {
-        form.getModelObject().setInputVariableModel(getCell().getInputVariableModel());
+        form.getModelObject().setInputVariable(getCell().getInputVariableModel());
         VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCell().getName(), "outputFileName");
         if (variableModel != null) {
             form.getModelObject().setOutputFileName((String) variableModel.getValue());
@@ -105,7 +105,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     private void calculateAndSave() {
-        getCell().setInputVariableModel(form.getModelObject().getInputVariableModel());
+        getCell().setInputVariableModel(form.getModelObject().getInputVariable());
         getCell().setServiceName(form.getModelObject().getServiceName());
         VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariable(getCell().getName(), "outputFileName");
         outputVariableModel.setValue(form.getModelObject().getOutputFileName());
@@ -141,16 +141,16 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     class ModelObject implements Serializable {
-        private VariableModel inputVariableModel;
+        private VariableModel inputVariable;
         private String serviceName;
         private String outputFileName;
 
-        public VariableModel getInputVariableModel() {
-            return inputVariableModel;
+        public VariableModel getInputVariable() {
+            return inputVariable;
         }
 
-        public void setInputVariableModel(VariableModel inputVariableModel) {
-            this.inputVariableModel = inputVariableModel;
+        public void setInputVariable(VariableModel inputVariable) {
+            this.inputVariable = inputVariable;
         }
 
         public String getOutputFileName() {

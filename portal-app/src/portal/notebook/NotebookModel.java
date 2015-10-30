@@ -103,7 +103,7 @@ public class NotebookModel implements Serializable {
 
     public VariableModel findVariable(String producerName, String name) {
         for (VariableModel variableModel : variableModelList) {
-            if (variableModel.getName().equals(name)) {
+            if (variableModel.getProducer().getName().equals(producerName) && variableModel.getName().equals(name)) {
                 return variableModel;
             }
         }
@@ -163,19 +163,58 @@ public class NotebookModel implements Serializable {
         }
     }
 
-    public static NotebookModel fromBytes(byte[] bytes) throws Exception {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-        return (NotebookModel)objectInputStream.readObject();
+    public void toNotebookContents(NotebookContents notebookContents) {
+        for (CellModel cellModel : cellModelList) {
+            Cell cell = new Cell();
+            for (String variableName : cellModel.getOutputVariableNameList()) {
+                Variable variable = notebookContents.findVariable(getName(), variableName);
+                if (variable == null) {
+                    variable = new Variable();
+                    variable.setProducerCell(cell);
+                    variable.setName(variableName);
+                    VariableModel variableModel = findVariable(cellModel.getName(), variableName);
+                    variable.setValue(variableModel == null ? null : variableModel.getValue());
+                    notebookContents.getVariableList().add(variable);
+                }
+            }
+            cellModel.store(notebookContents, cell);
+            notebookContents.getCellList().add(cell);
+        }
+
     }
 
-    public byte[] toBytes() throws Exception {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-        objectOutputStream.writeObject(this);
-        objectOutputStream.flush();
-        byteArrayOutputStream.flush();
-        return  byteArrayOutputStream.toByteArray();
+    public void fromNotebookContents(NotebookContents notebookContents) {
+         for (Cell cell : notebookContents.getCellList()) {
+             System.out.println(cell.getName() + ": " + cell.getCellType());
+             CellModel cellModel = createCellModel(cell.getCellType());
+             System.out.println(cellModel);
+             for (Variable variable : cell.getOutputVariableList()) {
+                 VariableModel variableModel = new VariableModel();
+                 variableModel.setName(variable.getName());
+                 variableModel.setProducer(cellModel);
+                 variableModel.setValue(variable.getValue());
+                 variableModelList.add(variableModel);
+             }
+             cellModel.load(this, cell);
+             cellModelList.add(cellModel);
+         }
+
+    }
+
+    private CellModel createCellModel(CellType cellType) {
+        if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
+            return new NotebookDebugCellModel();
+        } else if (CellType.FILE_UPLOAD.equals(cellType)) {
+            return new FileUploadCellModel();
+        } else if (CellType.CODE.equals(cellType)) {
+            return new ScriptCellModel();
+        } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
+            return new PropertyCalculateCellModel();
+        } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
+            return new TableDisplayCellModel();
+        }  else {
+            return null;
+        }
     }
 
 

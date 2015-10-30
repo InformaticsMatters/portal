@@ -34,6 +34,62 @@ public abstract class AbstractCellModel implements CellModel {
         this.positionTop = y;
     }
 
+
+    @Override
+    public void store(NotebookContents notebookContents, Cell cell) {
+        storeHeader(cell);
+        storeOutputVariables(notebookContents, cell);
+        storeInputVariables(notebookContents, cell);
+    }
+
+    protected void storeHeader(Cell cell) {
+        cell.setCellType(getCellType());
+        cell.setPositionLeft(getPositionLeft());
+        cell.setPositionTop(getPositionTop());
+        cell.setName(getName());
+    }
+
+    protected void storeInputVariables(NotebookContents notebookContents, Cell cell) {
+        for (VariableModel variableModel : getInputVariableModelList()) {
+            Variable variable = notebookContents.findVariable(variableModel.getProducer().getName(), variableModel.getName());
+            cell.getInputVariableList().add(variable);
+        }
+    }
+
+    protected void storeOutputVariables(NotebookContents notebookContents, Cell cell) {
+        for (String variableName : getOutputVariableNameList()) {
+            Variable variable = notebookContents.findVariable(getName(), variableName);
+            cell.getOutputVariableList().add(variable);
+        }
+    }
+
+    @Override
+    public void load(NotebookModel notebookModel, Cell cell) {
+        loadHeader(cell);
+        loadInputVariables(notebookModel, cell);
+        loadOutputVariables(cell);
+    }
+
+    protected void loadHeader(Cell cell) {
+        setName(cell.getName());
+        positionLeft = cell.getPositionLeft();
+        positionTop = cell.getPositionTop();
+    }
+
+    protected void loadOutputVariables(Cell cell) {
+        for (Variable variable : cell.getOutputVariableList())  {
+            getOutputVariableNameList().add(variable.getName());
+        }
+    }
+
+    protected void loadInputVariables(NotebookModel notebookModel, Cell cell) {
+        for (Variable variable : cell.getInputVariableList())  {
+             VariableModel variableModel = notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
+             getInputVariableModelList().add(variableModel);
+        }
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (o == null || !o.getClass().equals(getClass())) {

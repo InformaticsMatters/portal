@@ -111,7 +111,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void displayAndSave() {
-        getCell().setInputVariableModel(form.getModelObject().getInputVariableModel());
+        getCell().setInputVariableModel(form.getModelObject().getInputVariable());
         loadTableData();
         notebookSession.storeNotebook();
     }
@@ -122,7 +122,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void load() {
-        form.getModelObject().setInputVariableModel(getCell().getInputVariableModel());
+        form.getModelObject().setInputVariable(getCell().getInputVariableModel());
         loadTableData();
     }
 
@@ -155,14 +155,14 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     class ModelObject implements Serializable {
-        private VariableModel inputVariableModel;
+        private VariableModel inputVariable;
 
-        public VariableModel getInputVariableModel() {
-            return inputVariableModel;
+        public VariableModel getInputVariable() {
+            return inputVariable;
         }
 
-        public void setInputVariableModel(VariableModel inputVariableModel) {
-            this.inputVariableModel = inputVariableModel;
+        public void setInputVariable(VariableModel inputVariable) {
+            this.inputVariable = inputVariable;
         }
     }
 

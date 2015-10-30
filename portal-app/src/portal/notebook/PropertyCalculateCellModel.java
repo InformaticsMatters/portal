@@ -40,4 +40,18 @@ public class PropertyCalculateCellModel extends AbstractCellModel {
     public String getServiceName() {
         return serviceName;
     }
+
+    @Override
+    public void store(NotebookContents notebookContents, Cell cell) {
+        super.store(notebookContents, cell);
+        cell.getPropertyMap().put("serviceName", serviceName);
+    }
+
+    @Override
+    public void load(NotebookModel notebookModel, Cell cell) {
+        loadHeader(cell);
+        Variable variable = cell.getInputVariableList().isEmpty() ? null : cell.getInputVariableList().get(0) ;
+        inputVariableModel = variable == null ? null : notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
+        serviceName = (String)cell.getPropertyMap().get("serviceName");
+    }
 }

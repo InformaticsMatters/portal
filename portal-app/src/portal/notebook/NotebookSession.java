@@ -31,10 +31,10 @@ public class NotebookSession implements Serializable {
         if (list.isEmpty()) {
             NotebookInfo notebookInfo = new NotebookInfo();
             notebookInfo.setName("POC");
-            NotebookModel notebookModel = new NotebookModel();
+            NotebookContents notebookContents = new NotebookContents();
             StoreNotebookData storeNotebookData = new StoreNotebookData();
             storeNotebookData.setNotebookInfo(notebookInfo);
-            storeNotebookData.setNotebookModel(notebookModel);
+            storeNotebookData.setNotebookContents(notebookContents);
             notebookService.storeNotebook(storeNotebookData);
             list = notebookService.listNotebookInfo();
         }
@@ -47,7 +47,9 @@ public class NotebookSession implements Serializable {
 
     public void loadNotebook(Long id) {
         notebookInfo = notebookService.retrieveNotebookInfo(id);
-        notebookModel = notebookService.retrieveNotebookContents(id);
+        notebookModel = new NotebookModel();
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(id);
+        notebookModel.fromNotebookContents(notebookContents);
     }
 
     public NotebookInfo getNotebookInfo() {
@@ -61,7 +63,9 @@ public class NotebookSession implements Serializable {
     public void storeNotebook() {
         StoreNotebookData storeNotebookData = new StoreNotebookData();
         storeNotebookData.setNotebookInfo(notebookInfo);
-        storeNotebookData.setNotebookModel(notebookModel);
+        NotebookContents notebookContents = new NotebookContents();
+        notebookModel.toNotebookContents(notebookContents);
+        storeNotebookData.setNotebookContents(notebookContents);
         notebookService.storeNotebook(storeNotebookData);
     }
 

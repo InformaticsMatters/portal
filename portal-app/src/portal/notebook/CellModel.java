@@ -14,5 +14,8 @@ public interface CellModel extends Serializable {
     void setPositionTop(int y);
     List<VariableModel> getInputVariableModelList();
     List<String> getOutputVariableNameList();
+    void store(NotebookContents notebookContents, Cell cell);
+    void load(NotebookModel notebookContents, Cell cell);
+
 
 }

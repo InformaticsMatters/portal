@@ -37,10 +37,10 @@ public class NotebookService {
         return notebookInfo;
     }
 
-    public NotebookModel retrieveNotebookContents(Long id) {
+    public NotebookContents retrieveNotebookContents(Long id) {
         try {
             Notebook notebook = entityManager.find(Notebook.class, id);
-            return NotebookModel.fromBytes(notebook.getData());
+            return NotebookContents.fromBytes(notebook.getData());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -54,7 +54,7 @@ public class NotebookService {
             if (insert) {
                 entityManager.persist(notebook);
             }
-            notebook.setData(storeNotebookData.getNotebookModel().toBytes());
+            notebook.setData(storeNotebookData.getNotebookContents().toBytes());
             NotebookHistory notebookHistory = new NotebookHistory();
             notebookHistory.setNotebook(notebook);
             notebookHistory.setData(notebook.getData());

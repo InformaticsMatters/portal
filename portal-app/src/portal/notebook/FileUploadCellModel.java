@@ -26,6 +26,7 @@ public class FileUploadCellModel extends AbstractCellModel {
         return outputVariableNameList;
     }
 
+
     public String getFileName() {
         return fileName;
     }
@@ -34,4 +35,17 @@ public class FileUploadCellModel extends AbstractCellModel {
         this.fileName = fileName;
     }
 
+    @Override
+    public void store(NotebookContents notebookContents, Cell cell) {
+        storeHeader(cell);
+        Variable outputVariable = notebookContents.findVariable(cell.getName(), "resourceId");
+        cell.getOutputVariableList().add(outputVariable);
+        cell.getPropertyMap().put("fileName", fileName);
+    }
+
+    @Override
+    public void load(NotebookModel notebookModel, Cell cell) {
+        loadHeader(cell);
+        fileName = (String)cell.getPropertyMap().get("fileName");
+    }
 }

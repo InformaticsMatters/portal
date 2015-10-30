@@ -26,24 +26,6 @@ public class ExternalNotebookService {
     private NotebookService notebookService;
 
 
-    @Path("createNotebook")
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public NotebookMetadataDTO createNotebook(NotebookMetadataDTO notebookMetadataDTO) {
-        NotebookInfo notebookInfo = new NotebookInfo();
-        notebookInfo.setName(notebookMetadataDTO.getName());
-        NotebookModel notebookModel = new NotebookModel();
-        StoreNotebookData storeNotebookData = new StoreNotebookData();
-        storeNotebookData.setNotebookInfo(notebookInfo);
-        storeNotebookData.setNotebookModel(notebookModel);
-        Long id = notebookService.storeNotebook(storeNotebookData);
-        notebookMetadataDTO.setId(id);
-        notebookMetadataDTO.setOwnerName("poc");
-        return notebookMetadataDTO;
-    }
-
-
     @Path("listNotebookMetadata")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -63,25 +45,27 @@ public class ExternalNotebookService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public NotebookDefinitionDTO notebookDefinition(@QueryParam("notebookId") Long notebookId) {
-        NotebookModel notebookModel = notebookService.retrieveNotebookContents(notebookId);
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         NotebookDefinitionDTO notebookDefinitionDTO = new NotebookDefinitionDTO();
         Map<String, VariableDefinitionDTO> variableDefinitionDTOMap = new HashMap<>();
-        for (VariableModel variableModel : notebookModel.getVariableModelList()) {
+        for (Variable variable : notebookContents.getVariableList()) {
             VariableDefinitionDTO variableDefinitionDTO = new VariableDefinitionDTO();
-            variableDefinitionDTO.setName(variableModel.getName());
-            variableDefinitionDTO.setProducerName(variableModel.getProducer().getName());
+            variableDefinitionDTO.setName(variable.getName());
+            variableDefinitionDTO.setProducerName(variable.getProducerCell().getName());
             notebookDefinitionDTO.getVariableDefinitionList().add(variableDefinitionDTO);
-            variableDefinitionDTOMap.put(variableModel.getProducer().getName() + "." + variableModel.getName(), variableDefinitionDTO);
+            variableDefinitionDTOMap.put(variable.getProducerCell().getName() + "." + variable.getName(), variableDefinitionDTO);
         }
-        for (CellModel cellModel : notebookModel.getCellModelList()) {
+        for (Cell cell : notebookContents.getCellList()) {
             CellDefinitionDTO cellDefinitionDTO = new CellDefinitionDTO();
-            cellDefinitionDTO.setName(cellModel.getName());
-            cellDefinitionDTO.setCellType(cellModel.getCellType());
-            for (VariableModel variableModel : cellModel.getInputVariableModelList()) {
-                VariableDefinitionDTO variableDefinitionDTO = variableDefinitionDTOMap.get(variableModel.getProducer().getName() + "." + variableModel.getName());
+            cellDefinitionDTO.setName(cell.getName());
+            cellDefinitionDTO.setCellType(cell.getCellType());
+            for (Variable variable : cell.getInputVariableList()) {
+                VariableDefinitionDTO variableDefinitionDTO = variableDefinitionDTOMap.get(variable.getProducerCell().getName() + "." + variable.getName());
                 cellDefinitionDTO.getInputVariableDefinitionList().add(variableDefinitionDTO);
             }
-            cellDefinitionDTO.getOutputVariableNameList().addAll(cellModel.getOutputVariableNameList());
+            for (Variable variable : cell.getOutputVariableList()) {
+                cellDefinitionDTO.getOutputVariableNameList().add(variable.getName());
+            }
             notebookDefinitionDTO.getCellDefinitionList().add(cellDefinitionDTO);
         }
         return notebookDefinitionDTO;
@@ -91,20 +75,20 @@ public class ExternalNotebookService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String retrieveStringValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("name") String name) {
-        NotebookModel notebookModel = notebookService.retrieveNotebookContents(notebookId);
-        VariableModel variableModel = notebookModel.findVariable(producerName, name);
-        return variableModel.getValue() == null ? null : variableModel.getValue().toString();
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
+        Variable variable = notebookContents.findVariable(producerName, name);
+        return variable.getValue() == null ? null : variable.getValue().toString();
     }
 
     @Path("retrieveStreamingContents")
     @GET
     public StreamingOutput retrieveStreamingContents(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("name") String name) {
-        NotebookModel notebookModel = notebookService.retrieveNotebookContents(notebookId);
-        VariableModel variableModel = notebookModel.findVariable(producerName, name);
-        if (variableModel.getValue() == null) {
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
+        Variable variable = notebookContents.findVariable(producerName, name);
+        if (variable.getValue() == null) {
             return null;
         }
-        final String fileName = "files/" + variableModel.getValue();
+        final String fileName = "files/" + variable.getValue();
         File file = new File(fileName);
         if (!file.exists()) {
             return null;
@@ -133,9 +117,9 @@ public class ExternalNotebookService {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public void updateStringValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("name") String name, @QueryParam("value") String value) {
-        NotebookModel notebookModel = notebookService.retrieveNotebookContents(notebookId);
-        VariableModel variableModel = notebookModel.findVariable(producerName, name);
-        variableModel.setValue(value);
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
+        Variable variable = notebookContents.findVariable(producerName, name);
+        variable.setValue(value);
     }
 
 

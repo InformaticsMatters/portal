@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class StoreNotebookData implements Serializable {
     private NotebookInfo notebookInfo;
-    private NotebookModel notebookModel;
+    private NotebookContents notebookContents;
 
     public NotebookInfo getNotebookInfo() {
         return notebookInfo;
@@ -14,11 +14,11 @@ public class StoreNotebookData implements Serializable {
         this.notebookInfo = notebookInfo;
     }
 
-    public NotebookModel getNotebookModel() {
-        return notebookModel;
+    public NotebookContents getNotebookContents() {
+        return notebookContents;
     }
 
-    public void setNotebookModel(NotebookModel notebookModel) {
-        this.notebookModel = notebookModel;
+    public void setNotebookContents(NotebookContents notebookContents) {
+        this.notebookContents = notebookContents;
     }
 }

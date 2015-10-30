@@ -50,4 +50,17 @@ public class ScriptCellModel extends AbstractCellModel {
     public List<String> getOutputVariableNameList() {
         return outputVariableNameList;
     }
+
+    @Override
+    public void store(NotebookContents notebookContents, Cell cell) {
+        super.store(notebookContents, cell);
+        cell.getPropertyMap().put("outcome", outcome);
+    }
+
+    @Override
+    public void load(NotebookModel notebookModel, Cell cell) {
+        loadHeader(cell);
+        outcome = cell.getPropertyMap().get("outcome");
+    }
+
 }
