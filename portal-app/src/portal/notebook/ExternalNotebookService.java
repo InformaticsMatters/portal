@@ -165,6 +165,29 @@ public class ExternalNotebookService {
         variable.setValue(value);
     }
 
+    @Path("updateStreamingContents")
+    @POST
+    public void updateStreamingValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("name") String name, InputStream inputStream) {
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
+        Variable variable = notebookContents.findVariable(producerName, name);
+        try {
+            OutputStream outputStream = new FileOutputStream("files/" + variable.getValue());
+            try {
+                byte[] buffer = new byte[4096];
+                int r = inputStream.read(buffer);
+                while (r > -1) {
+                    outputStream.write(buffer, 0, r);
+                    r = inputStream.read(buffer);
+                }
+                outputStream.flush();
+            } finally {
+                outputStream.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 
 }
