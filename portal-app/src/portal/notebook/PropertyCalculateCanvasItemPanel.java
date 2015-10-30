@@ -36,11 +36,11 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     private void addHeader() {
-        add(new Label("cellName", getCell().getName().toLowerCase()));
+        add(new Label("cellName", getCellModel().getName().toLowerCase()));
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCell());
+                notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
             }
         });
@@ -61,12 +61,12 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     private void load() {
-        form.getModelObject().setInputVariable(getCell().getInputVariableModel());
-        VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCell().getName(), "outputFileName");
+        form.getModelObject().setInputVariable(getCellModel().getInputVariableModel());
+        VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "outputFileName");
         if (variableModel != null) {
             form.getModelObject().setOutputFileName((String) variableModel.getValue());
         }
-        form.getModelObject().setServiceName(getCell().getServiceName());
+        form.getModelObject().setServiceName(getCellModel().getServiceName());
     }
 
     private void addForm() {
@@ -74,7 +74,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         IModel<List<VariableModel>> inputVariableModel = new IModel<List<VariableModel>>() {
             @Override
             public List<VariableModel> getObject() {
-                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCell(), notebookSession.getNotebookModel());
+                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), notebookSession.getNotebookModel());
                 return list;
             }
 
@@ -105,11 +105,11 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     private void calculateAndSave() {
-        getCell().setInputVariableModel(form.getModelObject().getInputVariable());
-        getCell().setServiceName(form.getModelObject().getServiceName());
-        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariable(getCell().getName(), "outputFileName");
+        getCellModel().setInputVariableModel(form.getModelObject().getInputVariable());
+        getCellModel().setServiceName(form.getModelObject().getServiceName());
+        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "outputFileName");
         outputVariableModel.setValue(form.getModelObject().getOutputFileName());
-        calculateTo(getCell().getServiceName(), getCell().getInputVariableModel().getValue().toString(), outputVariableModel.getValue().toString());
+        calculateTo(getCellModel().getServiceName(), getCellModel().getInputVariableModel().getValue().toString(), outputVariableModel.getValue().toString());
         notebookSession.storeNotebook();
     }
 

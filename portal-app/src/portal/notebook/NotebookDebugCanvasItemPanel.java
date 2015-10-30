@@ -30,11 +30,11 @@ public class NotebookDebugCanvasItemPanel extends CanvasItemPanel<NotebookDebugC
     }
 
     private void addHeader() {
-        add(new Label("cellName", getCell().getName().toLowerCase()));
+        add(new Label("cellName", getCellModel().getName().toLowerCase()));
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCell());
+                notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
             }
         });

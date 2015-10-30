@@ -3,15 +3,15 @@ package portal.notebook;
 import org.apache.wicket.markup.html.panel.Panel;
 
 public abstract class CanvasItemPanel<T extends CellModel> extends Panel {
-    private final T cell;
+    private final T cellModel;
 
-    public CanvasItemPanel(String id, T cell) {
+    public CanvasItemPanel(String id, T cellModel) {
         super(id);
-        this.cell = cell;
+        this.cellModel = cellModel;
     }
 
-    public T getCell() {
-        return cell;
+    public T getCellModel() {
+        return cellModel;
     }
 
 }

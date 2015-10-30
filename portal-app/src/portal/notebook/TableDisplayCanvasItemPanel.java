@@ -34,11 +34,11 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void addHeader() {
-        add(new Label("cellName", getCell().getName().toLowerCase()));
+        add(new Label("cellName", getCellModel().getName().toLowerCase()));
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCell());
+                notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
             }
         });
@@ -49,7 +49,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         IModel<List<VariableModel>> dropDownModel = new IModel<List<VariableModel>>() {
             @Override
             public List<VariableModel> getObject() {
-                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCell(), notebookSession.getNotebookModel());
+                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), notebookSession.getNotebookModel());
                 return list;
             }
 
@@ -111,7 +111,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void displayAndSave() {
-        getCell().setInputVariableModel(form.getModelObject().getInputVariable());
+        getCellModel().setInputVariableModel(form.getModelObject().getInputVariable());
         loadTableData();
         notebookSession.storeNotebook();
     }
@@ -122,12 +122,12 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void load() {
-        form.getModelObject().setInputVariable(getCell().getInputVariableModel());
+        form.getModelObject().setInputVariable(getCellModel().getInputVariableModel());
         loadTableData();
     }
 
     private void loadTableData() {
-        boolean assigned = getCell().getInputVariableModel() != null && getCell().getInputVariableModel().getValue() != null;
+        boolean assigned = getCellModel().getInputVariableModel() != null && getCellModel().getInputVariableModel().getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
             descriptor = new TableDisplayDescriptor(0l, "", 0);
@@ -136,12 +136,12 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private IDatasetDescriptor loadDescriptor() {
-        if (getCell().getInputVariableModel().getValue() instanceof String) {
-            return notebookSession.loadDatasetFromFile(getCell().getInputVariableModel().getValue().toString());
-        } else if (getCell().getInputVariableModel().getValue() instanceof Strings) {
-            return notebookSession.createDatasetFromStrings((Strings)getCell().getInputVariableModel().getValue(), getCell().getInputVariableModel().getName());
-        } else if (getCell().getInputVariableModel().getValue() instanceof List) {
-            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>)getCell().getInputVariableModel().getValue(), getCell().getInputVariableModel().getName());
+        if (getCellModel().getInputVariableModel().getValue() instanceof String) {
+            return notebookSession.loadDatasetFromFile(getCellModel().getInputVariableModel().getValue().toString());
+        } else if (getCellModel().getInputVariableModel().getValue() instanceof Strings) {
+            return notebookSession.createDatasetFromStrings((Strings) getCellModel().getInputVariableModel().getValue(), getCellModel().getInputVariableModel().getName());
+        } else if (getCellModel().getInputVariableModel().getValue() instanceof List) {
+            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>) getCellModel().getInputVariableModel().getValue(), getCellModel().getInputVariableModel().getName());
         } else {
             return null;
         }

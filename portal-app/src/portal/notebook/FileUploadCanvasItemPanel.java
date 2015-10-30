@@ -33,11 +33,11 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
     }
 
     private void addHeader() {
-        add(new Label("cellName", getCell().getName().toLowerCase()));
+        add(new Label("cellName", getCellModel().getName().toLowerCase()));
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCell());
+                notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
             }
         });
@@ -102,12 +102,12 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
     }
 
     private void load() {
-        uploadForm.getModelObject().setFileName(getCell().getFileName());
+        uploadForm.getModelObject().setFileName(getCellModel().getFileName());
     }
 
     private void store() {
-        notebookSession.getNotebookModel().findVariable(getCell().getName(), "resourceId").setValue(uploadForm.getModelObject().getFileName());
-        getCell().setFileName(uploadForm.getModelObject().getFileName());
+        notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "resourceId").setValue(uploadForm.getModelObject().getFileName());
+        getCellModel().setFileName(uploadForm.getModelObject().getFileName());
         notebookSession.storeNotebook();
     }
 
