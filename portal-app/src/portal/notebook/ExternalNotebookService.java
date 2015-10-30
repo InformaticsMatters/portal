@@ -41,10 +41,19 @@ public class ExternalNotebookService {
         return list;
     }
 
-    @Path("notebookDefinition")
+    @Path("retrieveNotebookDefinition")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public NotebookMetadataDTO storeNotebook(StoreNotebookDTO storeNotebookDTO) {
+         return  null;
+
+    }
+
+    @Path("retrieveNotebookDefinition")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public NotebookDefinitionDTO notebookDefinition(@QueryParam("notebookId") Long notebookId) {
+    public NotebookDefinitionDTO retrieveNotebookDefinition(@QueryParam("notebookId") Long notebookId) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         NotebookDefinitionDTO notebookDefinitionDTO = new NotebookDefinitionDTO();
         Map<String, VariableDefinitionDTO> variableDefinitionDTOMap = new HashMap<>();
@@ -66,6 +75,7 @@ public class ExternalNotebookService {
             for (Variable variable : cell.getOutputVariableList()) {
                 cellDefinitionDTO.getOutputVariableNameList().add(variable.getName());
             }
+            cellDefinitionDTO.getPropertyMap().putAll(cell.getPropertyMap());
             notebookDefinitionDTO.getCellDefinitionList().add(cellDefinitionDTO);
         }
         return notebookDefinitionDTO;
@@ -113,7 +123,7 @@ public class ExternalNotebookService {
 
     }
 
-    @Path("updateVariableValue")
+    @Path("updateStringValue")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public void updateStringValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("name") String name, @QueryParam("value") String value) {

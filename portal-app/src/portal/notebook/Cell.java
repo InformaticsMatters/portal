@@ -2,13 +2,14 @@ package portal.notebook;
 
 import toolkit.services.AbstractEntity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class Cell extends AbstractEntity {
+public class Cell implements Serializable {
     private Long id;
     private String name;
     private CellType cellType;
@@ -43,12 +44,10 @@ public class Cell extends AbstractEntity {
         return outputVariableList;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
