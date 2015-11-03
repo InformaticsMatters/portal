@@ -38,6 +38,8 @@ public class NotebookCanvasPage extends WebPage {
 
     public static final String DROP_DATA_TYPE = "dropDataType";
     public static final String DROP_DATA_ID = "dropDataId";
+    public static final String SOURCE_ID = "sourceId";
+    public static final String TARGET_ID = "targetId";
     public static final String POSITION_LEFT = "positionX";
     public static final String POSITION_TOP = "positionY";
     public static final String CANVASITEM_WICKETID = "canvasItem";
@@ -67,6 +69,7 @@ public class NotebookCanvasPage extends WebPage {
         addActions();
         addCanvasPaletteDropBehavior();
         addCanvasItemDraggedBehavior();
+        addCanvasNewConnectionBehavior();
         NotebookInfo notebookInfo = notebookSession.preparePocNotebook();
         notebookSession.loadNotebook(notebookInfo.getId());
         addListeners();
@@ -294,5 +297,27 @@ public class NotebookCanvasPage extends WebPage {
             }
         };
         add(onCanvasItemDragStopBehavior);
+    }
+
+    private void addCanvasNewConnectionBehavior() {
+        AbstractDefaultAjaxBehavior onNotebookCanvasNewConnectionBehavior = new AbstractDefaultAjaxBehavior() {
+
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                System.out.println("connection");
+
+            }
+
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                super.renderHead(component, response);
+                CharSequence callBackScript = getCallbackFunction(
+                        CallbackParameter.explicit(SOURCE_ID),
+                        CallbackParameter.explicit(TARGET_ID));
+                callBackScript = "onNotebookCanvasNewConnection=" + callBackScript + ";";
+                response.render(OnDomReadyHeaderItem.forScript(callBackScript));
+            }
+        };
+        add(onNotebookCanvasNewConnectionBehavior);
     }
 }
