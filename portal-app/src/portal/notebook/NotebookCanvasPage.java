@@ -304,7 +304,9 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void respond(AjaxRequestTarget target) {
-                System.out.println("connection");
+                String sourceId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
+                String targetId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
+                System.out.println(sourceId + ", " + targetId);
 
             }
 
