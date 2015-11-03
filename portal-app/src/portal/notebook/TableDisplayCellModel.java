@@ -33,8 +33,8 @@ public class TableDisplayCellModel extends AbstractCellModel {
     @Override
     public void load(NotebookModel notebookModel, Cell cell) {
         loadHeader(cell);
-        Variable variable = cell.getInputVariableList().get(0);
-        inputVariableModel = notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
+        Variable variable = cell.getInputVariableList().isEmpty() ? null : cell.getInputVariableList().get(0);
+        inputVariableModel = variable == null ? null : notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
     }
 
 
