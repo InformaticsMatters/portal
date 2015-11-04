@@ -70,4 +70,12 @@ public class NotebookContents implements Serializable {
         return  byteArrayOutputStream.toByteArray();
     }
 
+    public Cell findCell(String name) {
+        for (Cell cell : cellList) {
+            if (cell.getName().equals(name)) {
+                return cell;
+            }
+        }
+        return null;
+    }
 }

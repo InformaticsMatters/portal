@@ -92,16 +92,7 @@ public class NotebookSession implements Serializable {
     }
 
 
-    public List<MoleculeObject> retrieveFileContentAsMolecules(String fileName) {
-        try {
-            return parseFile(fileName);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public List<VariableModel> listAvailableInputVariablesFor(CellModel cellModel, NotebookModel notebookModel) {
+      public List<VariableModel> listAvailableInputVariablesFor(CellModel cellModel, NotebookModel notebookModel) {
         List<VariableModel> list = new ArrayList<>();
         for (VariableModel variableModel : notebookModel.getVariableModelList()) {
             if (!variableModel.getProducer().equals(cellModel)) {
@@ -172,7 +163,7 @@ public class NotebookSession implements Serializable {
 
     public IDatasetDescriptor loadDatasetFromFile(String fileName) {
         try {
-            List<MoleculeObject> list = parseFile(fileName);
+            List<MoleculeObject> list = notebookService.parseFile(fileName);
             File file = new File("files/" + fileName);
             if (file.exists()) {
                 return createDatasetFromMolecules(list, fileName);
@@ -184,72 +175,11 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    private List<MoleculeObject> parseFile(String fileName) throws Exception {
-        int x = fileName.lastIndexOf(".");
-        String ext = fileName.toLowerCase().substring(x + 1);
-        if (ext.equals("json")) {
-            return parseJson(fileName);
-        } else if (ext.equals("tab")) {
-            return parseTsv(fileName);
-        } else {
-            return new ArrayList<>();
-        }
-    }
 
-    private List<MoleculeObject> parseTsv(String fileName) throws IOException {
-        File file = new File("files/" + fileName);
-        InputStream inputStream = new FileInputStream(file);
-        try {
-            List<MoleculeObject> list = new ArrayList<>();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line = bufferedReader.readLine();
-            String[] headers = line.split("\t");
-            for (int h = 0; h < headers.length; h++) {
-                headers[h] = trim(headers[h]);
-            }
-            while (line != null) {
-                line = line.trim();
-                String[] columns = line.split("\t");
-                String value = columns[0].trim();
-                String smile = value.substring(1, value.length() - 1);
-                MoleculeObject object = new MoleculeObject(smile);
-                for (int i = 1; i < columns.length; i++) {
-                    String name = headers[i];
-                    String prop = trim(columns[i]);
-                    object.putValue(name, prop);
-                }
-                list.add(object);
-                line = bufferedReader.readLine();
-            }
-            return list;
-        } finally {
-            inputStream.close();
-        }
-    }
-
-    private String trim(String v) {
-        if (v.length() > 1 && v.charAt(0) == '"' && v.charAt(v.length() - 1) == '"') {
-            return v.substring(1, v.length() - 1);
-        } else {
-            return v;
-        }
-    }
 
     private synchronized Long nextDatasetId() {
         lastDatasetId++;
         return lastDatasetId;
-    }
-
-    private List<MoleculeObject> parseJson(String fileName) throws Exception {
-        File file = new File("files/" + fileName);
-        InputStream inputStream = new FileInputStream(file);
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(inputStream, new TypeReference<List<MoleculeObject>>() {
-            });
-        } finally {
-            inputStream.close();
-        }
     }
 
     public List<IRow> listRow(IDatasetDescriptor datasetDescriptor, List<UUID> uuidList) {
@@ -286,4 +216,7 @@ public class NotebookSession implements Serializable {
     }
 
 
+    public void executeCell(String cellName) {
+        notebookService.executeCell(getNotebookInfo().getId(), cellName);
+    }
 }

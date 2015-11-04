@@ -38,7 +38,6 @@ public abstract class AbstractCellModel implements CellModel {
     @Override
     public void store(NotebookContents notebookContents, Cell cell) {
         storeHeader(cell);
-        storeOutputVariables(notebookContents, cell);
         storeInputVariables(notebookContents, cell);
     }
 
@@ -53,13 +52,6 @@ public abstract class AbstractCellModel implements CellModel {
         for (VariableModel variableModel : getInputVariableModelList()) {
             Variable variable = notebookContents.findVariable(variableModel.getProducer().getName(), variableModel.getName());
             cell.getInputVariableList().add(variable);
-        }
-    }
-
-    protected void storeOutputVariables(NotebookContents notebookContents, Cell cell) {
-        for (String variableName : getOutputVariableNameList()) {
-            Variable variable = notebookContents.findVariable(getName(), variableName);
-            cell.getOutputVariableList().add(variable);
         }
     }
 

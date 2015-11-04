@@ -39,8 +39,6 @@ public class FileUploadCellModel extends AbstractCellModel {
     @Override
     public void store(NotebookContents notebookContents, Cell cell) {
         storeHeader(cell);
-        Variable outputVariable = notebookContents.findVariable(cell.getName(), "file");
-        cell.getOutputVariableList().add(outputVariable);
         cell.getPropertyMap().put("fileName", fileName);
     }
 

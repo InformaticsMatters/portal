@@ -62,7 +62,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void load() {
         form.getModelObject().setInputVariable(getCellModel().getInputVariableModel());
-        VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "outputFileName");
+        VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "outputFile");
         if (variableModel != null) {
             form.getModelObject().setOutputFileName((String) variableModel.getValue());
         }
@@ -109,36 +109,10 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         getCellModel().setServiceName(form.getModelObject().getServiceName());
         VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "outputFile");
         outputVariableModel.setValue(form.getModelObject().getOutputFileName());
-        calculateTo(getCellModel().getServiceName(), getCellModel().getInputVariableModel().getValue().toString(), outputVariableModel.getValue().toString());
         notebookSession.storeNotebook();
+        notebookSession.executeCell(getCellModel().getName());
     }
 
-    private void calculateTo(String serviceName, String inputFileName, String outputFileName) {
-        try {
-            List<MoleculeObject> list = notebookSession.retrieveFileContentAsMolecules(inputFileName);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(byteArrayOutputStream, list);
-            byteArrayOutputStream.flush();
-            FileOutputStream outputStream = new FileOutputStream("files/" + outputFileName);
-            try {
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                try {
-                    LOGGER.log(Level.INFO, "Calling service...");
-                    calculatorsClient.calculate(serviceName, inputStream, outputStream);
-                    LOGGER.log(Level.INFO, "Service call finished");
-                } catch (Throwable t) {
-                    outputStream.write("[]".getBytes());
-                    LOGGER.log(Level.WARNING, "Error executing calculator", t);
-                }
-                outputStream.flush();
-            } finally {
-                outputStream.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     class ModelObject implements Serializable {
         private VariableModel inputVariable;
