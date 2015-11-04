@@ -1,15 +1,14 @@
 package portal.notebook;
 
-
-public class ScriptHandler implements CellHandler {
+public class FileUploadCellHandler implements CellHandler {
     @Override
     public Cell createCell() {
         Cell cell = new Cell();
-        cell.setCellType(CellType.CODE);
+        cell.setCellType(CellType.FILE_UPLOAD);
         Variable variable = new Variable();
         variable.setProducerCell(cell);
-        variable.setName("outcome");
-        variable.setVariableType(VariableType.VALUE);
+        variable.setName("file");
+        variable.setVariableType(VariableType.FILE);
         cell.getOutputVariableList().add(variable);
         return cell;
     }
@@ -17,5 +16,10 @@ public class ScriptHandler implements CellHandler {
     @Override
     public void execute(Cell cell) {
 
+    }
+
+    @Override
+    public boolean handles(CellType cellType) {
+        return cellType.equals(CellType.FILE_UPLOAD);
     }
 }

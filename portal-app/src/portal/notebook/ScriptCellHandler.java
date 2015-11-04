@@ -1,14 +1,15 @@
 package portal.notebook;
 
-public class PropertyCalculateHandler implements CellHandler {
+
+public class ScriptCellHandler implements CellHandler {
     @Override
     public Cell createCell() {
         Cell cell = new Cell();
-        cell.setCellType(CellType.PROPERTY_CALCULATE);
+        cell.setCellType(CellType.CODE);
         Variable variable = new Variable();
         variable.setProducerCell(cell);
-        variable.setName("outputFile");
-        variable.setVariableType(VariableType.FILE);
+        variable.setName("outcome");
+        variable.setVariableType(VariableType.VALUE);
         cell.getOutputVariableList().add(variable);
         return cell;
     }
@@ -18,4 +19,8 @@ public class PropertyCalculateHandler implements CellHandler {
 
     }
 
+    @Override
+    public boolean handles(CellType cellType) {
+        return cellType.equals(CellType.CODE);
+    }
 }

@@ -188,5 +188,11 @@ public class ExternalNotebookService {
     }
 
 
+    @Path("executeCell")
+    @POST
+    public void executeCell(@QueryParam("notebookId") Long notebookId, @QueryParam("cellName") String cellName) {
+         notebookService.executeCell(notebookId, cellName);
+    }
+
 
 }

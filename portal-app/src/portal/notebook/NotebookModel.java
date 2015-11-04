@@ -154,10 +154,11 @@ public class NotebookModel implements Serializable {
         }
     }
 
-    public void toNotebookContents(NotebookContents notebookContents) {
+    public void toNotebookContents(NotebookContents notebookContents, CellHandlerProvider cellHandlerProvider) {
         Map<String, Cell> cellMap = new HashMap<>();
         for (CellModel cellModel : cellModelList) {
-            Cell cell = notebookContents.addCell(cellModel.getCellType());
+            Cell cell = cellHandlerProvider.getCellHandler(cellModel.getCellType()).createCell();
+            notebookContents.addCell(cell);
             cell.setName(cellModel.getName());
             for (String variableName : cellModel.getOutputVariableNameList()) {
                 Variable variable = notebookContents.findVariable(cellModel.getName(), variableName);
@@ -165,7 +166,6 @@ public class NotebookModel implements Serializable {
                 variable.setValue(variableModel == null ? null : variableModel.getValue());
             }
             cellMap.put(cellModel.getName(), cell);
-            notebookContents.getCellList().add(cell);
         }
         for (CellModel cellModel : cellModelList) {
             Cell cell = cellMap.get(cellModel.getName());

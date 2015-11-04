@@ -217,9 +217,6 @@ public class NotebookCanvasPage extends WebPage {
         CellModel cellModel = notebookSession.addCell(cellType, Integer.parseInt(x), Integer.parseInt(y));
 
         NotebookModel notebookModel = notebookSession.getNotebookModel();
-        cellModel.setPositionLeft(Integer.parseInt(x));
-        cellModel.setPositionTop(Integer.parseInt(y));
-        notebookModel.addCell(cellModel);
 
         Panel canvasItemPanel = createCanvasItemPanel(cellModel);
 

@@ -19,6 +19,8 @@ public class NotebookSession implements Serializable {
     private long lastDatasetId = 0;
     @Inject
     private NotebookService notebookService;
+    @Inject
+    private CellHandlerProvider cellHandlerProvider;
     private NotebookModel notebookModel;
     private NotebookInfo notebookInfo;
 
@@ -52,14 +54,6 @@ public class NotebookSession implements Serializable {
         notebookModel.fromNotebookContents(notebookContents);
     }
 
-    public void reloadNotebook() {
-        Long id = notebookInfo.getId();
-        notebookInfo = notebookService.retrieveNotebookInfo(id);
-        notebookModel = new NotebookModel();
-        NotebookContents notebookContents = notebookService.retrieveNotebookContents(id);
-        notebookModel.fromNotebookContents(notebookContents);
-    }
-
     public NotebookInfo getNotebookInfo() {
         return notebookInfo;
     }
@@ -72,14 +66,15 @@ public class NotebookSession implements Serializable {
         StoreNotebookData storeNotebookData = new StoreNotebookData();
         storeNotebookData.setNotebookInfo(notebookInfo);
         NotebookContents notebookContents = new NotebookContents();
-        notebookModel.toNotebookContents(notebookContents);
+        notebookModel.toNotebookContents(notebookContents, cellHandlerProvider);
         storeNotebookData.setNotebookContents(notebookContents);
         notebookService.storeNotebook(storeNotebookData);
     }
 
     public CellModel addCell(CellType cellType, int x, int y) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookInfo.getId());
-        Cell cell = notebookContents.addCell(cellType);
+        Cell cell = cellHandlerProvider.getCellHandler(cellType).createCell();
+        notebookContents.addCell(cell);
         cell.setPositionTop(y);
         cell.setPositionLeft(x);
         StoreNotebookData storeNotebookData = new StoreNotebookData();

@@ -66,4 +66,9 @@ public class NotebookService {
         }
 
     }
+
+    public void executeCell(Long notebookId, String cellName) {
+        NotebookContents notebookContents = retrieveNotebookContents(notebookId);
+
+    }
 }
