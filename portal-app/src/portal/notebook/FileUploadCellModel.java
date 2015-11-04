@@ -1,6 +1,7 @@
 package portal.notebook;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 public class FileUploadCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
     private final List<VariableModel> inputVariableModelList = Collections.emptyList();
-    private List<String> outputVariableNameList = Arrays.asList("resourceId");
+    private final List<String> outputVariableNameList = new ArrayList<>();
     private String fileName;
 
     @Override
@@ -38,7 +39,7 @@ public class FileUploadCellModel extends AbstractCellModel {
     @Override
     public void store(NotebookContents notebookContents, Cell cell) {
         storeHeader(cell);
-        Variable outputVariable = notebookContents.findVariable(cell.getName(), "resourceId");
+        Variable outputVariable = notebookContents.findVariable(cell.getName(), "file");
         cell.getOutputVariableList().add(outputVariable);
         cell.getPropertyMap().put("fileName", fileName);
     }
@@ -46,6 +47,10 @@ public class FileUploadCellModel extends AbstractCellModel {
     @Override
     public void load(NotebookModel notebookModel, Cell cell) {
         loadHeader(cell);
+        outputVariableNameList.clear();
+        for (Variable variable : cell.getOutputVariableList()) {
+            outputVariableNameList.add(variable.getName());
+        }
         fileName = (String)cell.getPropertyMap().get("fileName");
     }
 }

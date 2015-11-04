@@ -116,7 +116,6 @@ public class ExternalNotebookService {
 
     @Path("retrieveStringValue")
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public String retrieveStringValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("name") String name) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         Variable variable = notebookContents.findVariable(producerName, name);

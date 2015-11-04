@@ -8,6 +8,7 @@ public class VariableModel implements Serializable {
     private CellModel producer;
     private final List<CellModel> consumerList = new ArrayList<>();
     private String name;
+    private VariableType variableType;
     private Object value;
     private transient List<VariableChangeListener> changeListenerList;
 
@@ -85,4 +86,11 @@ public class VariableModel implements Serializable {
                 + "." + (name == null ? "" : name);
     }
 
+    public VariableType getVariableType() {
+        return variableType;
+    }
+
+    public void setVariableType(VariableType variableType) {
+        this.variableType = variableType;
+    }
 }

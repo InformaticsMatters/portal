@@ -19,16 +19,7 @@ public class NotebookModel implements Serializable {
     }
 
     public void addCell(CellModel cellModel) {
-        synchronized (cellModelList) {
-            String name = cellModel.getName();
-            if (name == null) {
-                name = calculateCellName(cellModel);
-                cellModel.setName(name);
-            } else {
-                checkCellName(cellModel);
-            }
-            cellModelList.add(cellModel);
-        }
+        cellModelList.add(cellModel);
         registerVariablesForProducer(cellModel);
         notifyCellAdded(cellModel);
     }
@@ -166,18 +157,12 @@ public class NotebookModel implements Serializable {
     public void toNotebookContents(NotebookContents notebookContents) {
         Map<String, Cell> cellMap = new HashMap<>();
         for (CellModel cellModel : cellModelList) {
-            Cell cell = new Cell();
+            Cell cell = notebookContents.addCell(cellModel.getCellType());
             cell.setName(cellModel.getName());
             for (String variableName : cellModel.getOutputVariableNameList()) {
-                Variable variable = notebookContents.findVariable(getName(), variableName);
-                if (variable == null) {
-                    variable = new Variable();
-                    variable.setProducerCell(cell);
-                    variable.setName(variableName);
-                    VariableModel variableModel = findVariable(cellModel.getName(), variableName);
-                    variable.setValue(variableModel == null ? null : variableModel.getValue());
-                    notebookContents.getVariableList().add(variable);
-                }
+                Variable variable = notebookContents.findVariable(cellModel.getName(), variableName);
+                VariableModel variableModel = findVariable(cellModel.getName(), variableName);
+                variable.setValue(variableModel == null ? null : variableModel.getValue());
             }
             cellMap.put(cellModel.getName(), cell);
             notebookContents.getCellList().add(cell);
@@ -199,6 +184,7 @@ public class NotebookModel implements Serializable {
                 variableModel.setName(variable.getName());
                 variableModel.setProducer(cellModel);
                 variableModel.setValue(variable.getValue());
+                variableModel.setVariableType(variable.getVariableType());
                 variableModelList.add(variableModel);
             }
             cellModelMap.put(cell.getName(), cellModel);
@@ -212,9 +198,7 @@ public class NotebookModel implements Serializable {
     }
 
     public static CellModel createCellModel(CellType cellType) {
-        if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
-            return new NotebookDebugCellModel();
-        } else if (CellType.FILE_UPLOAD.equals(cellType)) {
+        if (CellType.FILE_UPLOAD.equals(cellType)) {
             return new FileUploadCellModel();
         } else if (CellType.CODE.equals(cellType)) {
             return new ScriptCellModel();

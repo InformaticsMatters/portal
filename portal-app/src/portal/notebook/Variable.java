@@ -6,6 +6,7 @@ public class Variable implements Serializable {
     private Long id;
     private Cell producerCell;
     private String name;
+    private VariableType variableType;
     private Object value;
 
     public Cell getProducerCell() {
@@ -38,5 +39,13 @@ public class Variable implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public VariableType getVariableType() {
+        return variableType;
+    }
+
+    public void setVariableType(VariableType variableType) {
+        this.variableType = variableType;
     }
 }

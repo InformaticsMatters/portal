@@ -10,7 +10,7 @@ public class ScriptCellModel extends AbstractCellModel {
     private String errorMessage;
     private Object outcome;
     private final List<VariableModel> inputVariableModelList = new ArrayList<>();
-    private final List<String> outputVariableNameList = Collections.singletonList("outcome");
+    private final List<String> outputVariableNameList = new ArrayList<>();
 
     public String getCode() {
         return code;
@@ -60,6 +60,10 @@ public class ScriptCellModel extends AbstractCellModel {
     @Override
     public void load(NotebookModel notebookModel, Cell cell) {
         loadHeader(cell);
+        outputVariableNameList.clear();
+        for (Variable variable : cell.getOutputVariableList()) {
+            outputVariableNameList.add(variable.getName());
+        }
         outcome = cell.getPropertyMap().get("outcome");
     }
 

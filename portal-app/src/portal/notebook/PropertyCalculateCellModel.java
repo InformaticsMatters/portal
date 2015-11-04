@@ -1,13 +1,14 @@
 package portal.notebook;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class PropertyCalculateCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
     private VariableModel inputVariableModel;
-    private final List<String> outputVariableNameList = Collections.singletonList("outputFileName");
+    private final List<String> outputVariableNameList = new ArrayList<>();
     private String serviceName;
 
     @Override
@@ -50,6 +51,10 @@ public class PropertyCalculateCellModel extends AbstractCellModel {
     @Override
     public void load(NotebookModel notebookModel, Cell cell) {
         loadHeader(cell);
+        outputVariableNameList.clear();
+        for (Variable variable : cell.getOutputVariableList()) {
+            outputVariableNameList.add(variable.getName());
+        }
         Variable variable = cell.getInputVariableList().isEmpty() ? null : cell.getInputVariableList().get(0) ;
         inputVariableModel = variable == null ? null : notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
         serviceName = (String)cell.getPropertyMap().get("serviceName");

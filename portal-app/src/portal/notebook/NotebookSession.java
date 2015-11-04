@@ -52,6 +52,14 @@ public class NotebookSession implements Serializable {
         notebookModel.fromNotebookContents(notebookContents);
     }
 
+    public void reloadNotebook() {
+        Long id = notebookInfo.getId();
+        notebookInfo = notebookService.retrieveNotebookInfo(id);
+        notebookModel = new NotebookModel();
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(id);
+        notebookModel.fromNotebookContents(notebookContents);
+    }
+
     public NotebookInfo getNotebookInfo() {
         return notebookInfo;
     }
@@ -69,8 +77,23 @@ public class NotebookSession implements Serializable {
         notebookService.storeNotebook(storeNotebookData);
     }
 
+    public CellModel addCell(CellType cellType, int x, int y) {
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookInfo.getId());
+        Cell cell = notebookContents.addCell(cellType);
+        cell.setPositionTop(y);
+        cell.setPositionLeft(x);
+        StoreNotebookData storeNotebookData = new StoreNotebookData();
+        storeNotebookData.setNotebookInfo(notebookInfo);
+        storeNotebookData.setNotebookContents(notebookContents);
+        notebookService.storeNotebook(storeNotebookData);
+        CellModel cellModel = NotebookModel.createCellModel(cellType);
+        cellModel.load(notebookModel, cell);
+        notebookModel.addCell(cellModel);
+        return cellModel;
+    }
+
     public List<CellDescriptor> listCellDescriptor() {
-        return Arrays.asList(new ScriptCellDescriptor(), new NotebookDebugCellDescriptor(), new FileUploadCellDescriptor(), new PropertyCalculateCellDescriptor(), new TableDiplayCellDescriptor());
+        return Arrays.asList(new ScriptCellDescriptor(), new FileUploadCellDescriptor(), new PropertyCalculateCellDescriptor(), new TableDiplayCellDescriptor());
     }
 
 

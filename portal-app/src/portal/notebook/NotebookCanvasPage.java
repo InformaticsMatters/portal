@@ -211,46 +211,40 @@ public class NotebookCanvasPage extends WebPage {
         logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
         CellType cellType = CellType.valueOf(dropDataId);
-        CellModel cellModel = NotebookModel.createCellModel(cellType);
+        CellModel cellModel = notebookSession.addCell(cellType, Integer.parseInt(x), Integer.parseInt(y));
 
-        if (cellModel != null) {
+        NotebookModel notebookModel = notebookSession.getNotebookModel();
+        cellModel.setPositionLeft(Integer.parseInt(x));
+        cellModel.setPositionTop(Integer.parseInt(y));
+        notebookModel.addCell(cellModel);
 
-            NotebookModel notebookModel = notebookSession.getNotebookModel();
-            cellModel.setPositionLeft(Integer.parseInt(x));
-            cellModel.setPositionTop(Integer.parseInt(y));
-            notebookModel.addCell(cellModel);
+        Panel canvasItemPanel = createCanvasItemPanel(cellModel);
 
-            Panel canvasItemPanel = createCanvasItemPanel(cellModel);
+        List<CellModel> cellModelList = notebookModel.getCellModelList();
+        ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellModelList.size(), cellModelList.size());
+        listItem.setOutputMarkupId(true);
+        listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
+        listItem.add(canvasItemPanel);
+        canvasItemRepeater.add(listItem);
 
-            List<CellModel> cellModelList = notebookModel.getCellModelList();
-            ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellModelList.size(), cellModelList.size());
-            listItem.setOutputMarkupId(true);
-            listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
-            listItem.add(canvasItemPanel);
-            canvasItemRepeater.add(listItem);
+        // create the div with appropriate class within the DOM before we can ajax-update it
+        String markup = "<div id=':id'></div>".replaceAll(":id", listItem.getMarkupId());
+        String prepend = "$('#:container').append(\":markup\")".replaceAll(":container", plumbContainer.getMarkupId()).replaceAll(":markup", markup);
+        target.prependJavaScript(prepend);
 
-            // create the div with appropriate class within the DOM before we can ajax-update it
-            String markup = "<div id=':id'></div>".replaceAll(":id", listItem.getMarkupId());
-            String prepend = "$('#:container').append(\":markup\")".replaceAll(":container", plumbContainer.getMarkupId()).replaceAll(":markup", markup);
-            target.prependJavaScript(prepend);
+        // ajax-update the div
+        target.add(listItem);
 
-            // ajax-update the div
-            target.add(listItem);
+        // activate jsPlumb dragging on new canvas item
+        target.appendJavaScript("makeCanvasItemPlumbDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
+        target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
+        target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
 
-            // activate jsPlumb dragging on new canvas item
-            target.appendJavaScript("makeCanvasItemPlumbDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
-            target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
-            target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
-
-            notebookSession.storeNotebook();
-        }
     }
 
     private Panel createCanvasItemPanel(CellModel cellModel) {
         CellType cellType = cellModel.getCellType();
-        if (CellType.NOTEBOOK_DEBUG.equals(cellType)) {
-            return new NotebookDebugCanvasItemPanel("item", (NotebookDebugCellModel) cellModel);
-        } else if (CellType.FILE_UPLOAD.equals(cellType)) {
+        if (CellType.FILE_UPLOAD.equals(cellType)) {
             return new FileUploadCanvasItemPanel("item", (FileUploadCellModel) cellModel);
         } else if (CellType.CODE.equals(cellType)) {
             return new ScriptCanvasItemPanel("item", (ScriptCellModel) cellModel);
