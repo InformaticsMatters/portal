@@ -142,5 +142,11 @@ function addTargetEndpoint(itemId) {
 
 function initJsPlumb() {
     jsPlumb.setContainer($('#plumbContainer'));
+
+    jsPlumb.bind("connection", function (i, c) {
+            var sourceId = i.connection.sourceId;
+            var targetId = i.connection.targetId;
+            onNotebookCanvasNewConnection(sourceId, targetId);
+        });
 }
 
