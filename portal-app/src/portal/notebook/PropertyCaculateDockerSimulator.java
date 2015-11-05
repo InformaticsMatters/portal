@@ -22,6 +22,7 @@ public class PropertyCaculateDockerSimulator {
         CellDefinitionDTO cellDefinition = findCell(notebookDefinition, cellName);
         VariableDefinitionDTO inputVariableDefinition = cellDefinition.getInputVariableDefinitionList().get(0);
 
+        //special case for VariableType FILE: text value is the file name, file contents accessed through stream API
         String fileName = cellExecutionClient.readTextValue(notebookId, inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
         InputStream inputStream = cellExecutionClient.readStreamValue(notebookId, inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
 
@@ -30,18 +31,20 @@ public class PropertyCaculateDockerSimulator {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(moleculesOutputStream, molecules);
         moleculesOutputStream.flush();
-        byte[] resultBytes = calculate(moleculesOutputStream.toByteArray(), cellDefinition);
+
+        String serviceName = (String)cellDefinition.getPropertyMap().get("serviceName");
+        byte[] resultBytes = calculate(moleculesOutputStream.toByteArray(), serviceName);
 
         String outputVariableName = cellDefinition.getOutputVariableNameList().get(0);
         cellExecutionClient.writeStreamValue(notebookId, cellName, outputVariableName, new ByteArrayInputStream(resultBytes));
 
     }
 
-    private byte[] calculate(byte[] bytes, CellDefinitionDTO cellDefinition) throws IOException {
+    private byte[] calculate(byte[] bytes, String serviceName) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         try {
-            calculatorsClient.calculate(cellDefinition.getPropertyMap().get("serviceName").toString(), inputStream, outputStream);
+            calculatorsClient.calculate(serviceName, inputStream, outputStream);
         } catch (Throwable t) {
             outputStream.write("[]".getBytes());
         }
