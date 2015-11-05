@@ -1,8 +1,5 @@
 package portal.notebook;
 
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
 
@@ -52,6 +49,10 @@ public class NotebookSession implements Serializable {
         notebookModel = new NotebookModel();
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(id);
         notebookModel.fromNotebookContents(notebookContents);
+    }
+
+    public void reloadNotebook() {
+        loadNotebook(notebookInfo.getId());
     }
 
     public NotebookInfo getNotebookInfo() {
@@ -217,6 +218,8 @@ public class NotebookSession implements Serializable {
 
 
     public void executeCell(String cellName) {
-        notebookService.executeCell(getNotebookInfo().getId(), cellName);
+        notebookService.executeCell(notebookInfo.getId(), cellName);
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookInfo.getId());
+        notebookModel.fromNotebookContents(notebookContents);
     }
 }

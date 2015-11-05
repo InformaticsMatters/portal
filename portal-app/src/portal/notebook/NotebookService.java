@@ -79,10 +79,9 @@ public class NotebookService {
     }
 
     public void executeCell(Long notebookId, String cellName) {
-        Notebook notebook = entityManager.find(Notebook.class, notebookId);
         NotebookContents notebookContents = retrieveNotebookContents(notebookId);
         Cell cell = notebookContents.findCell(cellName);
-        cellHandlerProvider.getCellHandler(cell.getCellType()).execute(notebook, cell);
+        cellHandlerProvider.getCellHandler(cell.getCellType()).execute(notebookId, cellName);
     }
 
     public List<MoleculeObject> retrieveFileContentAsMolecules(String fileName) {

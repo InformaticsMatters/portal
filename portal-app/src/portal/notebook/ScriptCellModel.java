@@ -54,6 +54,7 @@ public class ScriptCellModel extends AbstractCellModel {
     @Override
     public void store(NotebookContents notebookContents, Cell cell) {
         super.store(notebookContents, cell);
+        cell.getPropertyMap().put("code", code);
         cell.getPropertyMap().put("outcome", outcome);
     }
 
@@ -65,6 +66,8 @@ public class ScriptCellModel extends AbstractCellModel {
             outputVariableNameList.add(variable.getName());
         }
         outcome = cell.getPropertyMap().get("outcome");
+        code = (String)cell.getPropertyMap().get("code");
+        errorMessage = (String)cell.getPropertyMap().get("errorMessage");
     }
 
 }

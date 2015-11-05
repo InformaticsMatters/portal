@@ -69,12 +69,14 @@ public abstract class AbstractCellModel implements CellModel {
     }
 
     protected void loadOutputVariables(Cell cell) {
+        getOutputVariableNameList().clear();
         for (Variable variable : cell.getOutputVariableList())  {
             getOutputVariableNameList().add(variable.getName());
         }
     }
 
     protected void loadInputVariables(NotebookModel notebookModel, Cell cell) {
+        getInputVariableModelList().clear();
         for (Variable variable : cell.getInputVariableList())  {
              VariableModel variableModel = notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
              getInputVariableModelList().add(variableModel);

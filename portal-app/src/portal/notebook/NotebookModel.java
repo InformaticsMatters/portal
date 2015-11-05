@@ -32,32 +32,6 @@ public class NotebookModel implements Serializable {
         }
     }
 
-    private void checkCellName(CellModel cellModel) {
-        for (CellModel item : cellModelList) {
-            if (item.getName().equalsIgnoreCase(cellModel.getName())) {
-                throw new RuntimeException("Cell name already used");
-            }
-        }
-    }
-
-    private String calculateCellName(CellModel cellModel) {
-        int typeCount = 0;
-        Set<String> nameSet = new HashSet<String>();
-        for (CellModel item : cellModelList) {
-            if (item.getCellType().equals(cellModel.getCellType())) {
-                typeCount++;
-            }
-            nameSet.add(item.getName());
-        }
-        int suffix = typeCount + 1;
-        String newName = cellModel.getCellType().name() + suffix;
-        while (nameSet.contains(newName)) {
-            suffix++;
-            newName = cellModel.getCellType().name() + suffix;
-        }
-        return newName;
-    }
-
     public void removeCell(CellModel cellModel) {
         synchronized (variableModelList) {
             VariableModel[] snapshot = variableModelList.toArray(new VariableModel[0]);
@@ -80,6 +54,15 @@ public class NotebookModel implements Serializable {
                 listener.onCellRemoved(cellModel);
             }
         }
+    }
+
+    public CellModel findCell(String name) {
+        for (CellModel cellModel : cellModelList) {
+            if (cellModel.getName().equals(name)) {
+                return cellModel;
+            }
+        }
+        return null;
     }
 
     public List<CellModel> getCellModelList() {
@@ -177,18 +160,24 @@ public class NotebookModel implements Serializable {
     public void fromNotebookContents(NotebookContents notebookContents) {
         Map<String, CellModel> cellModelMap = new HashMap<>();
         for (Cell cell : notebookContents.getCellList()) {
-            CellModel cellModel = createCellModel(cell.getCellType());
-            cellModel.setName(cell.getName());
+            CellModel cellModel = findCell(cell.getName());
+            if (cellModel == null) {
+                cellModel = createCellModel(cell.getCellType());
+                cellModel.setName(cell.getName());
+                cellModelList.add(cellModel);
+            }
             for (Variable variable : cell.getOutputVariableList()) {
-                VariableModel variableModel = new VariableModel();
-                variableModel.setName(variable.getName());
-                variableModel.setProducer(cellModel);
+                VariableModel variableModel = findVariable(cell.getName(), variable.getName());
+                if (variableModel == null) {
+                    variableModel = new VariableModel();
+                    variableModel.setName(variable.getName());
+                    variableModel.setProducer(cellModel);
+                    variableModel.setVariableType(variable.getVariableType());
+                    variableModelList.add(variableModel);
+                }
                 variableModel.setValue(variable.getValue());
-                variableModel.setVariableType(variable.getVariableType());
-                variableModelList.add(variableModel);
             }
             cellModelMap.put(cell.getName(), cellModel);
-            cellModelList.add(cellModel);
         }
         for (Cell cell : notebookContents.getCellList()) {
             CellModel cellModel = cellModelMap.get(cell.getName());

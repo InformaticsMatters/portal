@@ -39,6 +39,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
+                ajaxRequestTarget.add(getParent());
             }
         });
     }
@@ -91,35 +92,9 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
 
     private void processRun(AjaxRequestTarget ajaxRequestTarget) {
         getCellModel().setCode(form.getModelObject().getCode());
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("Groovy");
-        Bindings bindings = engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
-        /**/
-        getCellModel().getInputVariableModelList().clear();
-        getCellModel().getInputVariableModelList().addAll(notebookSession.getNotebookModel().getVariableModelList());
-        /**/
-        for (VariableModel variableModel : getCellModel().getInputVariableModelList()) {
-            if (variableModel.getValue() != null) {
-                String producerName = variableModel.getProducer().getName().replaceAll(" ", "_");
-                bindings.put(producerName + "_" + variableModel.getName(), variableModel.getValue());
-            }
-        }
-        bindings.put("session", notebookSession);
-        try {
-            Object result = scriptToVm(engine.eval(getCellModel().getCode()));
-            getCellModel().setOutcome(result);
-            getCellModel().setErrorMessage(null);
-            for (String key : getCellModel().getOutputVariableNameList()) {
-                Object value = engine.get(key);
-                VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), key);
-                if (variableModel != null) {
-                    variableModel.setValue(value);
-                }
-            }
-        } catch (ScriptException se) {
-            getCellModel().setErrorMessage(se.getMessage());
-        }
         notebookSession.storeNotebook();
+        notebookSession.executeCell(getCellModel().getName());
+        notebookSession.reloadNotebook();
         ajaxRequestTarget.add(outcomeLabel);
     }
 

@@ -23,13 +23,14 @@ public class PropertyCalculateCellHandler implements CellHandler {
     }
 
     @Override
-    public void execute(Notebook notebook, Cell cell) {
+    public void execute(Long notebookId, String cellName) {
         try {
-            propertyCaculateDockerSimulator.execute("http://localhost:8080/ws/cell", notebook.getId(), cell.getName());
+            propertyCaculateDockerSimulator.execute("http://localhost:8080/ws/cell", notebookId, cellName);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     @Override
     public boolean handles(CellType cellType) {
