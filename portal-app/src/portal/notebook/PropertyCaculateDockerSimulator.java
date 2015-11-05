@@ -21,14 +21,17 @@ public class PropertyCaculateDockerSimulator {
         NotebookDefinitionDTO notebookDefinition = cellExecutionClient.retrieveNotebookDefinition(notebookId);
         CellDefinitionDTO cellDefinition = findCell(notebookDefinition, cellName);
         VariableDefinitionDTO inputVariableDefinition = cellDefinition.getInputVariableDefinitionList().get(0);
+
         String fileName = cellExecutionClient.readTextValue(notebookId, inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
         InputStream inputStream = cellExecutionClient.readStreamValue(notebookId, inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
+
         List<MoleculeObject> molecules = parseFileStream(fileName, inputStream);
         ByteArrayOutputStream moleculesOutputStream = new ByteArrayOutputStream();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(moleculesOutputStream, molecules);
         moleculesOutputStream.flush();
         byte[] resultBytes = calculate(moleculesOutputStream.toByteArray(), cellDefinition);
+
         String outputVariableName = cellDefinition.getOutputVariableNameList().get(0);
         cellExecutionClient.writeStreamValue(notebookId, cellName, outputVariableName, new ByteArrayInputStream(resultBytes));
 
