@@ -1,10 +1,7 @@
 package portal.notebook;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.im.lac.types.MoleculeObject;
-import com.squonk.types.io.JsonHandler;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -14,9 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Path("cell")
 @ApplicationScoped

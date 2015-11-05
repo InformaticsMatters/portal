@@ -1,13 +1,6 @@
 package portal.notebook;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.im.lac.types.MoleculeObject;
-
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.util.List;
 
 public class PropertyCalculateCellHandler implements CellHandler {
     @Inject
