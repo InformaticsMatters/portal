@@ -6,7 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 public interface CellHandler {
 
     Cell createCell();
-    void execute(Cell cell);
+    void execute(Notebook notebook, Cell cell);
 
     boolean handles(CellType cellType);
 }

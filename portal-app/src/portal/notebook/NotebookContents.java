@@ -9,20 +9,19 @@ import java.util.Set;
 
 public class NotebookContents implements Serializable {
     private final List<Cell> cellList = new ArrayList<>();
-    private final List<Variable> variableList = new ArrayList<>();
 
     public List<Cell> getCellList() {
         return cellList;
     }
 
-    public List<Variable> getVariableList() {
-        return variableList;
-    }
-
     public Variable findVariable(String producerName, String name) {
-        for (Variable variable : variableList) {
-            if (variable.getProducerCell().getName().equals(producerName) && variable.getName().equals(name)) {
-                return variable;
+        for (Cell cell : cellList) {
+            if (cell.getName().equals(producerName)) {
+                for (Variable variable : cell.getOutputVariableList()) {
+                    if (variable.getName().equals(name)) {
+                        return variable;
+                    }
+                }
             }
         }
         return null;
@@ -31,9 +30,6 @@ public class NotebookContents implements Serializable {
     public Cell addCell(Cell cell) {
         cell.setName(calculateCellName(cell));
         cellList.add(cell);
-        for (Variable variable : cell.getOutputVariableList()) {
-            variableList.add(variable);
-        }
         return cell;
     }
 

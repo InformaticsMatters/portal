@@ -1,5 +1,7 @@
 package portal.notebook;
 
+import chemaxon.nfunk.jep.function.Not;
+
 public class TableDisplayCellHandler implements CellHandler {
     @Override
     public Cell createCell() {
@@ -9,7 +11,7 @@ public class TableDisplayCellHandler implements CellHandler {
     }
 
     @Override
-    public void execute(Cell cell) {
+    public void execute(Notebook notebook, Cell cell) {
 
     }
 

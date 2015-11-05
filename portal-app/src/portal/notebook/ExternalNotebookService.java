@@ -61,7 +61,6 @@ public class ExternalNotebookService {
                 variable.setProducerCell(cell);
                 variable.setName(variableName);
                 cell.getOutputVariableList().add(variable);
-                notebookContents.getVariableList().add(variable);
             }
             notebookContents.getCellList().add(cell);
             cellMap.put(cell.getName(), cell);
@@ -90,13 +89,6 @@ public class ExternalNotebookService {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         NotebookDefinitionDTO notebookDefinitionDTO = new NotebookDefinitionDTO();
         Map<String, VariableDefinitionDTO> variableDefinitionDTOMap = new HashMap<>();
-        for (Variable variable : notebookContents.getVariableList()) {
-            VariableDefinitionDTO variableDefinitionDTO = new VariableDefinitionDTO();
-            variableDefinitionDTO.setName(variable.getName());
-            variableDefinitionDTO.setProducerName(variable.getProducerCell().getName());
-            notebookDefinitionDTO.getVariableDefinitionList().add(variableDefinitionDTO);
-            variableDefinitionDTOMap.put(variable.getProducerCell().getName() + "." + variable.getName(), variableDefinitionDTO);
-        }
         for (Cell cell : notebookContents.getCellList()) {
             CellDefinitionDTO cellDefinitionDTO = new CellDefinitionDTO();
             cellDefinitionDTO.setName(cell.getName());

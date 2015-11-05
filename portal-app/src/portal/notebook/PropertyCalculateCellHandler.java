@@ -14,6 +14,8 @@ public class PropertyCalculateCellHandler implements CellHandler {
     private NotebookService notebookService;
     @Inject
     private CalculatorsClient calculatorsClient;
+    @Inject
+    private PropertyCaculateDockerSimulator propertyCaculateDockerSimulator;
 
     @Override
     public Cell createCell() {
@@ -28,27 +30,11 @@ public class PropertyCalculateCellHandler implements CellHandler {
     }
 
     @Override
-    public void execute(Cell cell) {
+    public void execute(Notebook notebook, Cell cell) {
         try {
-            List<MoleculeObject> list = notebookService.retrieveFileContentAsMolecules((String) cell.getInputVariableList().get(0).getValue());
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(byteArrayOutputStream, list);
-            byteArrayOutputStream.flush();
-            FileOutputStream outputStream = new FileOutputStream("files/" + cell.getOutputVariableList().get(0).getValue());
-            try {
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                try {
-                    calculatorsClient.calculate(cell.getPropertyMap().get("serviceName").toString(), inputStream, outputStream);
-                } catch (Throwable t) {
-                    outputStream.write("[]".getBytes());
-                }
-                outputStream.flush();
-            } finally {
-                outputStream.close();
-            }
+            propertyCaculateDockerSimulator.execute("http://localhost:8080/ws/cell", notebook.getId(), cell.getName());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 

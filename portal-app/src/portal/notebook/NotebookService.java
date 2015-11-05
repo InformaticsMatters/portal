@@ -60,12 +60,7 @@ public class NotebookService {
             if (insert) {
                 entityManager.persist(notebook);
             }
-            notebook.setData(storeNotebookData.getNotebookContents().toBytes());
-            NotebookHistory notebookHistory = new NotebookHistory();
-            notebookHistory.setNotebook(notebook);
-            notebookHistory.setData(notebook.getData());
-            notebookHistory.setRevisionDate(new Date());
-            notebookHistory.setRevisionTime(new Date());
+            doStoreNotebookContents(storeNotebookData.getNotebookContents(), notebook);
             return notebook.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -73,10 +68,21 @@ public class NotebookService {
 
     }
 
+    private void doStoreNotebookContents(NotebookContents notebookContents, Notebook notebook) throws Exception {
+        notebook.setData(notebookContents.toBytes());
+        NotebookHistory notebookHistory = new NotebookHistory();
+        notebookHistory.setNotebook(notebook);
+        notebookHistory.setData(notebook.getData());
+        notebookHistory.setRevisionDate(new Date());
+        notebookHistory.setRevisionTime(new Date());
+        entityManager.persist(notebookHistory);
+    }
+
     public void executeCell(Long notebookId, String cellName) {
+        Notebook notebook = entityManager.find(Notebook.class, notebookId);
         NotebookContents notebookContents = retrieveNotebookContents(notebookId);
         Cell cell = notebookContents.findCell(cellName);
-        cellHandlerProvider.getCellHandler(cell.getCellType()).execute(cell);
+        cellHandlerProvider.getCellHandler(cell.getCellType()).execute(notebook, cell);
     }
 
     public List<MoleculeObject> retrieveFileContentAsMolecules(String fileName) {
@@ -152,4 +158,12 @@ public class NotebookService {
     }
 
 
+    public void storeNotebookContents(Long notebookId, NotebookContents notebookContents) {
+        Notebook notebook = entityManager.find(Notebook.class, notebookId);
+        try {
+            doStoreNotebookContents(notebookContents, notebook);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
