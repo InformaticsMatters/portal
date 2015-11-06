@@ -2,7 +2,6 @@ package portal.notebook;
 
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import jdk.nashorn.internal.runtime.DebugLogger;
 
 import javax.inject.Inject;
 import javax.script.*;
