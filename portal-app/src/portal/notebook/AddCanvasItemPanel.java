@@ -61,7 +61,6 @@ public class AddCanvasItemPanel extends CanvasItemPanel<AddCellModel> {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     execute();
-                    load();
                     target.add(form);
                 } catch (Throwable t) {
                     logger.error(null, t);
@@ -78,6 +77,7 @@ public class AddCanvasItemPanel extends CanvasItemPanel<AddCellModel> {
     private void execute() throws IOException {
         store();
         notebookSession.executeCell(getCellModel().getName());
+        load();
     }
 
     private void load() {

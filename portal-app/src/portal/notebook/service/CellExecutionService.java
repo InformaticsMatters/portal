@@ -42,10 +42,10 @@ public class CellExecutionService {
                 VariableDTO variableDTO = new VariableDTO();
                 variableDTO.setName(variable.getName());
                 variableDTO.setProducerName(variable.getProducerCell().getName());
-                cellDTO.getInputVariableDefinitionList().add(variableDTO);
+                cellDTO.getInputVariableList().add(variableDTO);
             }
             cellDTO.getPropertyMap().putAll(cell.getPropertyMap());
-            notebookDTO.getCellDefinitionList().add(cellDTO);
+            notebookDTO.getCellList().add(cellDTO);
         }
         return notebookDTO;
     }
@@ -99,6 +99,15 @@ public class CellExecutionService {
     @Path("writeTextValue")
     @POST
     public void writeValueAsText(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") String value) {
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
+        Variable variable = notebookContents.findVariable(producerName, variableName);
+        variable.setValue(value);
+        notebookService.storeNotebookContents(notebookId, notebookContents);
+    }
+
+    @Path("writeIntegerValue")
+    @POST
+    public void writeValueAsInteger(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") Integer value) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         Variable variable = notebookContents.findVariable(producerName, variableName);
         variable.setValue(value);

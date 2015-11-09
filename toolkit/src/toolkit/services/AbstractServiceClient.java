@@ -60,4 +60,6 @@ public abstract class AbstractServiceClient {
     }
 
     protected abstract String getServiceBaseUri();
+
+
 }

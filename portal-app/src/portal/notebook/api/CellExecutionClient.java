@@ -82,6 +82,16 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
         newResourceBuilder("/writeTextValue", queryParams).post();
     }
 
+
+    public void writeIntegerValue(Long notebookId, String cellName, String variableName, Integer value) {
+        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("producerName", cellName);
+        queryParams.add("variableName", variableName);
+        queryParams.add("value", value == null ? null : value.toString());
+        newResourceBuilder("/writeIntegerValue", queryParams).post();
+    }
+
     @Path("writeValueAsText")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -135,4 +145,5 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
     public void setUriBase(String uriBase) {
         this.uriBase = uriBase;
     }
+
 }

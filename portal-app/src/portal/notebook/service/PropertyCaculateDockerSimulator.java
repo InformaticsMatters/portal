@@ -24,7 +24,7 @@ public class PropertyCaculateDockerSimulator {
         cellExecutionClient.setUriBase(uriBase);
         NotebookDTO notebookDefinition = cellExecutionClient.retrieveNotebookDefinition(notebookId);
         CellDTO cellDefinition = findCell(notebookDefinition, cellName);
-        VariableDTO inputVariableDefinition = cellDefinition.getInputVariableDefinitionList().get(0);
+        VariableDTO inputVariableDefinition = cellDefinition.getInputVariableList().get(0);
 
         //special case for VariableType FILE: text value is the file name, file contents accessed through stream API
         String fileName = cellExecutionClient.readTextValue(notebookId, inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
@@ -57,7 +57,7 @@ public class PropertyCaculateDockerSimulator {
     }
 
     private CellDTO findCell(NotebookDTO notebookDefinition, String cellName) {
-        for (CellDTO cellDefinition : notebookDefinition.getCellDefinitionList()) {
+        for (CellDTO cellDefinition : notebookDefinition.getCellList()) {
             if (cellDefinition.getName().equals(cellName)) {
                 return cellDefinition;
             }

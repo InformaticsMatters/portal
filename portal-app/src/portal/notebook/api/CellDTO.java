@@ -11,7 +11,7 @@ import java.util.Map;
 public class CellDTO {
     private String name;
     private CellType cellType;
-    private final List<VariableDTO> inputVariableDefinitionList = new ArrayList<>();
+    private final List<VariableDTO> inputVariableList = new ArrayList<>();
     private final List<String> outputVariableNameList = new ArrayList<>();
     private final Map<String, Object> propertyMap = new HashMap<>();
     private int positionTop;
@@ -34,8 +34,8 @@ public class CellDTO {
     }
 
     @XmlElement
-    public List<VariableDTO> getInputVariableDefinitionList() {
-        return inputVariableDefinitionList;
+    public List<VariableDTO> getInputVariableList() {
+        return inputVariableList;
     }
 
     @XmlElement

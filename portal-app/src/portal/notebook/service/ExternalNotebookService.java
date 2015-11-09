@@ -53,7 +53,7 @@ public class ExternalNotebookService {
         notebookInfo.setName(storeNotebookDTO.getNotebookMetadataDTO().getName());
         NotebookContents notebookContents = new NotebookContents();
         Map<String, Cell> cellMap = new HashMap<>();
-        for (CellDTO cellDTO : storeNotebookDTO.getNotebookDTO().getCellDefinitionList()) {
+        for (CellDTO cellDTO : storeNotebookDTO.getNotebookDTO().getCellList()) {
             Cell cell = new Cell();
             cell.setName(cellDTO.getName());
             cell.setCellType(cellDTO.getCellType());
@@ -69,8 +69,8 @@ public class ExternalNotebookService {
             notebookContents.getCellList().add(cell);
             cellMap.put(cell.getName(), cell);
         }
-        for (CellDTO cellDTO : storeNotebookDTO.getNotebookDTO().getCellDefinitionList()) {
-            for (VariableDTO variableDTO : cellDTO.getInputVariableDefinitionList()) {
+        for (CellDTO cellDTO : storeNotebookDTO.getNotebookDTO().getCellList()) {
+            for (VariableDTO variableDTO : cellDTO.getInputVariableList()) {
                 Cell cell = cellMap.get(variableDTO.getProducerName());
                 Variable variable = notebookContents.findVariable(variableDTO.getProducerName(), variableDTO.getName());
                 cell.getInputVariableList().add(variable);
@@ -99,13 +99,13 @@ public class ExternalNotebookService {
             cellDTO.setCellType(cell.getCellType());
             for (Variable variable : cell.getInputVariableList()) {
                 VariableDTO variableDTO = variableDefinitionDTOMap.get(variable.getProducerCell().getName() + "." + variable.getName());
-                cellDTO.getInputVariableDefinitionList().add(variableDTO);
+                cellDTO.getInputVariableList().add(variableDTO);
             }
             for (Variable variable : cell.getOutputVariableList()) {
                 cellDTO.getOutputVariableNameList().add(variable.getName());
             }
             cellDTO.getPropertyMap().putAll(cell.getPropertyMap());
-            notebookDTO.getCellDefinitionList().add(cellDTO);
+            notebookDTO.getCellList().add(cellDTO);
         }
         return notebookDTO;
     }
