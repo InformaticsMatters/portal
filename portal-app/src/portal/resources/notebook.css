@@ -118,10 +118,12 @@
 div.imxt-vista div.imxt-body-container1 {
     max-height: 270px;
     overflow-y: scroll;
-    max-width: 500px;
+   /* max-width: 500px; */
+   width: inherit;
 }
 
 .tableCell {
     overflow: auto;
     padding: 10px;
+    width: 500px;
 }
