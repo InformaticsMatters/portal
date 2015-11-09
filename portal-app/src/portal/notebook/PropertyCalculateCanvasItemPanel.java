@@ -1,7 +1,5 @@
 package portal.notebook;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -11,12 +9,13 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import portal.notebook.service.CalculatorsClient;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
-import java.io.*;
-import java.util.*;
-import java.util.logging.Level;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCalculateCellModel> {

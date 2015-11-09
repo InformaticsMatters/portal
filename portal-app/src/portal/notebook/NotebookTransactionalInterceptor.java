@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import portal.notebook.service.NotebookConstants;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 import toolkit.services.TransactionalInterceptor;

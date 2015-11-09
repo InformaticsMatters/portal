@@ -1,5 +1,7 @@
 package portal.notebook;
 
+import portal.notebook.api.VariableType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

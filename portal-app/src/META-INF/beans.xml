@@ -1,6 +1,6 @@
 <beans>
     <alternatives>
-        <class>portal.notebook.IdeDerbyNotebooksConfig</class>
+        <class>portal.notebook.service.IdeDerbyNotebookConfig</class>
     </alternatives>
     <interceptors>
         <class>portal.notebook.NotebookTransactionalInterceptor</class>

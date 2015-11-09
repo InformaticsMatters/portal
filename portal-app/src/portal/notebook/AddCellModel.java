@@ -1,6 +1,5 @@
 package portal.notebook;
 
-
 import portal.notebook.api.CellType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
@@ -10,15 +9,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FileUploadCellModel extends AbstractCellModel {
+public class AddCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
     private final List<VariableModel> inputVariableModelList = Collections.emptyList();
     private final List<String> outputVariableNameList = new ArrayList<>();
-    private String fileName;
+    private Integer num1;
+    private Integer num2;
 
     @Override
     public CellType getCellType() {
-        return CellType.FILE_UPLOAD;
+        return CellType.ADD;
     }
 
     @Override
@@ -31,19 +31,11 @@ public class FileUploadCellModel extends AbstractCellModel {
         return outputVariableNameList;
     }
 
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     @Override
     public void store(NotebookContents notebookContents, Cell cell) {
         storeHeader(cell);
-        cell.getPropertyMap().put("fileName", fileName);
+        cell.getPropertyMap().put("num1", num1);
+        cell.getPropertyMap().put("num2", num2);
     }
 
     @Override
@@ -53,6 +45,23 @@ public class FileUploadCellModel extends AbstractCellModel {
         for (Variable variable : cell.getOutputVariableList()) {
             outputVariableNameList.add(variable.getName());
         }
-        fileName = (String)cell.getPropertyMap().get("fileName");
+        num1 = (Integer) cell.getPropertyMap().get("num1");
+        num2 = (Integer) cell.getPropertyMap().get("num2");
+    }
+
+    public Integer getNum1() {
+        return num1;
+    }
+
+    public void setNum1(Integer num1) {
+        this.num1 = num1;
+    }
+
+    public Integer getNum2() {
+        return num2;
+    }
+
+    public void setNum2(Integer num2) {
+        this.num2 = num2;
     }
 }

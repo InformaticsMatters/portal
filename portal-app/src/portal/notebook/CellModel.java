@@ -1,5 +1,9 @@
 package portal.notebook;
 
+import portal.notebook.api.CellType;
+import portal.notebook.service.Cell;
+import portal.notebook.service.NotebookContents;
+
 import java.io.Serializable;
 import java.util.List;
 

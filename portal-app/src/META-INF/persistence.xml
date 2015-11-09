@@ -7,8 +7,8 @@
     </persistence-unit>
     <persistence-unit name="notebooks" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <class>portal.notebook.Notebook</class>
-        <class>portal.notebook.NotebookHistory</class>
+        <class>portal.notebook.service.Notebook</class>
+        <class>portal.notebook.service.NotebookHistory</class>
     </persistence-unit>
 
 </persistence>

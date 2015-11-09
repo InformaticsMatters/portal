@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PortalHomePage;
+import portal.notebook.api.CellType;
+import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -252,6 +254,8 @@ public class NotebookCanvasPage extends WebPage {
             return new PropertyCalculateCanvasItemPanel("item", (PropertyCalculateCellModel) cellModel);
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
             return new TableDisplayCanvasItemPanel("item", (TableDisplayCellModel) cellModel);
+        } else if (CellType.ADD.equals(cellType)) {
+            return new AddCanvasItemPanel("item", (AddCellModel) cellModel);
         } else {
             return null;
         }

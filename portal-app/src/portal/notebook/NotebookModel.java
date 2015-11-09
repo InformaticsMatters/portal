@@ -1,5 +1,11 @@
 package portal.notebook;
 
+import portal.notebook.api.CellType;
+import portal.notebook.service.Cell;
+import portal.notebook.service.CellHandlerProvider;
+import portal.notebook.service.NotebookContents;
+import portal.notebook.service.Variable;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -195,6 +201,8 @@ public class NotebookModel implements Serializable {
             return new PropertyCalculateCellModel();
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
             return new TableDisplayCellModel();
+        } else if (CellType.ADD.equals(cellType)) {
+            return new AddCellModel();
         } else {
             return null;
         }

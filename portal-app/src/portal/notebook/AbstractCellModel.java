@@ -1,5 +1,9 @@
 package portal.notebook;
 
+import portal.notebook.service.Cell;
+import portal.notebook.service.NotebookContents;
+import portal.notebook.service.Variable;
+
 public abstract class AbstractCellModel implements CellModel {
 
     private String name;

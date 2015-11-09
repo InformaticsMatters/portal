@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import portal.dataset.IDatasetDescriptor;
+import portal.notebook.service.Strings;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -77,7 +78,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void addGrid() {
-        addOrReplaceTreeGridVisualizer(new TableDisplayDescriptor(0l, "", 0));
+        addOrReplaceTreeGridVisualizer(new TableDisplayDatasetDescriptor(0l, "", 0));
     }
 
     private void addListeners() {
@@ -131,7 +132,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         boolean assigned = getCellModel().getInputVariableModel() != null && getCellModel().getInputVariableModel().getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
-            descriptor = new TableDisplayDescriptor(0l, "", 0);
+            descriptor = new TableDisplayDatasetDescriptor(0l, "", 0);
         }
         addOrReplaceTreeGridVisualizer(descriptor);
     }

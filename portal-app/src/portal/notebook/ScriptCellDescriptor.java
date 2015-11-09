@@ -1,7 +1,6 @@
 package portal.notebook;
 
-import portal.notebook.CellDescriptor;
-import portal.notebook.CellType;
+import portal.notebook.api.CellType;
 
 public class ScriptCellDescriptor implements CellDescriptor {
 

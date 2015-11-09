@@ -1,12 +1,12 @@
 package portal.notebook;
 
-
 import portal.notebook.api.CellType;
 
-public class PropertyCalculateCellDescriptor implements CellDescriptor {
+public class AddCellDescriptor implements CellDescriptor {
+
     @Override
     public CellType getCellType() {
-        return CellType.PROPERTY_CALCULATE;
+        return CellType.ADD;
     }
 
     @Override
@@ -16,6 +16,6 @@ public class PropertyCalculateCellDescriptor implements CellDescriptor {
 
     @Override
     public String getDescription() {
-        return "Property calc.";
+        return "Add a + b";
     }
 }
