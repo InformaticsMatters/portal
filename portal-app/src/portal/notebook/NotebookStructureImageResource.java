@@ -20,7 +20,8 @@ import java.util.UUID;
 
 public class NotebookStructureImageResource extends DynamicImageResource {
 
-    public static final Rectangle RECTANGLE = new Rectangle(200, 130);
+    // public static final Rectangle RECTANGLE = new Rectangle(200, 130);
+    public static final Rectangle RECTANGLE = new Rectangle(100, 65);
     public static final String PARAM_DATASET = "dataset";
     public static final String PARAM_ROW = "row";
 
