@@ -40,6 +40,13 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
         return newResourceBuilder("/readTextValue", queryParams).get(String.class);
     }
 
+    public Integer readIntegerValue(Long notebookId, String producerName, String variableName) {
+        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("producerName", producerName);
+        queryParams.add("variableName", variableName);
+        return newResourceBuilder("/readTextValue", queryParams).get(Integer.class);
+    }
 
     public String readObjectValueAsJson(Long notebookId, String producerName, String variableName) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
@@ -145,5 +152,6 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
     public void setUriBase(String uriBase) {
         this.uriBase = uriBase;
     }
+
 
 }

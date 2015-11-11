@@ -254,8 +254,10 @@ public class NotebookCanvasPage extends WebPage {
             return new PropertyCalculateCanvasItemPanel("item", (PropertyCalculateCellModel) cellModel);
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
             return new TableDisplayCanvasItemPanel("item", (TableDisplayCellModel) cellModel);
-        } else if (CellType.ADD.equals(cellType)) {
-            return new AddCanvasItemPanel("item", (AddCellModel) cellModel);
+        } else if (CellType.SAMPLE1.equals(cellType)) {
+            return new Sample1CanvasItemPanel("item", (Sample1CellModel) cellModel);
+        } else if (CellType.SAMPLE2.equals(cellType)) {
+            return new Sample2CanvasItemPanel("item", (Sample2CellModel) cellModel);
         } else {
             return null;
         }

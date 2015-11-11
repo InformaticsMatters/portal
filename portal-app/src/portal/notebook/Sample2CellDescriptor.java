@@ -2,11 +2,11 @@ package portal.notebook;
 
 import portal.notebook.api.CellType;
 
-public class AddCellDescriptor implements CellDescriptor {
+public class Sample2CellDescriptor implements CellDescriptor {
 
     @Override
     public CellType getCellType() {
-        return CellType.ADD;
+        return CellType.SAMPLE2;
     }
 
     @Override
@@ -16,6 +16,6 @@ public class AddCellDescriptor implements CellDescriptor {
 
     @Override
     public String getDescription() {
-        return "Add a + b";
+        return "Integer producer";
     }
 }

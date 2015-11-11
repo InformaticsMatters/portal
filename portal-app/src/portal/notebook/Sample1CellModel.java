@@ -9,21 +9,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class AddCellModel extends AbstractCellModel {
+public class Sample1CellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
-    private final List<VariableModel> inputVariableModelList = Collections.emptyList();
     private final List<String> outputVariableNameList = new ArrayList<>();
-    private Integer num1;
     private Integer num2;
+    private VariableModel inputVariableModel;
 
     @Override
     public CellType getCellType() {
-        return CellType.ADD;
+        return CellType.SAMPLE1;
     }
 
     @Override
     public List<VariableModel> getInputVariableModelList() {
-        return inputVariableModelList;
+        return inputVariableModel == null ? Collections.emptyList() : Collections.singletonList(inputVariableModel);
     }
 
     @Override
@@ -33,8 +32,7 @@ public class AddCellModel extends AbstractCellModel {
 
     @Override
     public void store(NotebookContents notebookContents, Cell cell) {
-        storeHeader(cell);
-        cell.getPropertyMap().put("num1", num1);
+        super.store(notebookContents, cell);
         cell.getPropertyMap().put("num2", num2);
     }
 
@@ -45,17 +43,12 @@ public class AddCellModel extends AbstractCellModel {
         for (Variable variable : cell.getOutputVariableList()) {
             outputVariableNameList.add(variable.getName());
         }
-        num1 = (Integer) cell.getPropertyMap().get("num1");
         num2 = (Integer) cell.getPropertyMap().get("num2");
+        Variable variable = cell.getInputVariableList().isEmpty() ? null : cell.getInputVariableList().get(0);
+        inputVariableModel = variable == null ? null : notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
+
     }
 
-    public Integer getNum1() {
-        return num1;
-    }
-
-    public void setNum1(Integer num1) {
-        this.num1 = num1;
-    }
 
     public Integer getNum2() {
         return num2;
@@ -63,5 +56,13 @@ public class AddCellModel extends AbstractCellModel {
 
     public void setNum2(Integer num2) {
         this.num2 = num2;
+    }
+
+    public VariableModel getInputVariableModel() {
+        return inputVariableModel;
+    }
+
+    public void setInputVariableModel(VariableModel inputVariableModel) {
+        this.inputVariableModel = inputVariableModel;
     }
 }

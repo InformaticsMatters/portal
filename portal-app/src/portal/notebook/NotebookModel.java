@@ -201,8 +201,10 @@ public class NotebookModel implements Serializable {
             return new PropertyCalculateCellModel();
         } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
             return new TableDisplayCellModel();
-        } else if (CellType.ADD.equals(cellType)) {
-            return new AddCellModel();
+        } else if (CellType.SAMPLE1.equals(cellType)) {
+            return new Sample1CellModel();
+        } else if (CellType.SAMPLE2.equals(cellType)) {
+            return new Sample2CellModel();
         } else {
             return null;
         }

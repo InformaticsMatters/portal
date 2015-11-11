@@ -3,9 +3,11 @@ package portal.notebook;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
@@ -13,14 +15,15 @@ import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
-public class AddCanvasItemPanel extends CanvasItemPanel<AddCellModel> {
-    private static final Logger logger = LoggerFactory.getLogger(AddCanvasItemPanel.class.getName());
+public class Sample1CanvasItemPanel extends CanvasItemPanel<Sample1CellModel> {
+    private static final Logger logger = LoggerFactory.getLogger(Sample1CanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
     private Form<AddData> form;
 
-    public AddCanvasItemPanel(String id, AddCellModel cell) {
+    public Sample1CanvasItemPanel(String id, Sample1CellModel cell) {
         super(id, cell);
         addHeader();
         addForm();
@@ -45,9 +48,25 @@ public class AddCanvasItemPanel extends CanvasItemPanel<AddCellModel> {
         form.setOutputMarkupId(true);
 
         form.setModel(new CompoundPropertyModel<>(new AddData()));
+        IModel<List<VariableModel>> inputVariableModel = new IModel<List<VariableModel>>() {
+            @Override
+            public List<VariableModel> getObject() {
+                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), notebookSession.getNotebookModel());
+                return list;
+            }
 
-        TextField<Integer> num1Field = new TextField<Integer>("num1");
-        form.add(num1Field);
+            @Override
+            public void setObject(List<VariableModel> variableList) {
+
+            }
+
+            @Override
+            public void detach() {
+
+            }
+        };
+        DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariable", inputVariableModel);
+        form.add(inputVariableChoice);
         TextField<Integer> num2Field = new TextField<Integer>("num2");
         form.add(num2Field);
         TextField<Integer> resultField = new TextField<Integer>("result");
@@ -81,30 +100,31 @@ public class AddCanvasItemPanel extends CanvasItemPanel<AddCellModel> {
     }
 
     private void load() {
-        form.getModelObject().setNum1(getCellModel().getNum1());
+        form.getModelObject().setInputVariable(getCellModel().getInputVariableModel());
         form.getModelObject().setNum2(getCellModel().getNum2());
         form.getModelObject().setResult((Integer) notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "result").getValue());
     }
 
     private void store() {
         notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "result").setValue(null);
-        getCellModel().setNum1(form.getModelObject().getNum1());
+        getCellModel().setInputVariableModel(form.getModelObject().getInputVariable());
         getCellModel().setNum2(form.getModelObject().getNum2());
         notebookSession.storeNotebook();
     }
 
 
     private class AddData implements Serializable {
-        private Integer num1;
         private Integer num2;
         private Integer result;
+        private VariableModel inputVariable;
 
-        public Integer getNum1() {
-            return num1;
+
+        public VariableModel getInputVariable() {
+            return inputVariable;
         }
 
-        public void setNum1(Integer num1) {
-            this.num1 = num1;
+        public void setInputVariable(VariableModel inputVariable) {
+            this.inputVariable = inputVariable;
         }
 
         public Integer getNum2() {
