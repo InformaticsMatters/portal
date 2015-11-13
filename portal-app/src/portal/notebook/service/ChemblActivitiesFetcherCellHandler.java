@@ -41,9 +41,9 @@ public class ChemblActivitiesFetcherCellHandler implements CellHandler {
     }
 
     @Override
-    public void execute(Long notebookId, String cellName) {
+    public void execute(String cellName) {
 
-        CellDTO cell = cellExecutionClient.retrieveCell(notebookId, cellName);
+        CellDTO cell = cellExecutionClient.retrieveCell(cellName);
         String assayID = (String) cell.getPropertyMap().get("assayId");
         String prefix = (String) cell.getPropertyMap().get("prefix");
         // real implmentation class not yet accessible so using the inner class as a mock for now
@@ -60,10 +60,10 @@ public class ChemblActivitiesFetcherCellHandler implements CellHandler {
             Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
             try (Stream stream = generator.getAsStream()) {
                 InputStream dataInputStream = generator.getAsInputStream(stream, true);
-                cellExecutionClient.writeStreamContents(notebookId, cellName, "results", dataInputStream);
+                cellExecutionClient.writeStreamContents(cellName, "results", dataInputStream);
             }
             DatasetMetadata metadata = generator.getDatasetMetadata();
-            cellExecutionClient.writeTextValue(notebookId, cellName, "results", JsonHandler.getInstance().objectToJson(metadata));
+            cellExecutionClient.writeTextValue(cellName, "results", JsonHandler.getInstance().objectToJson(metadata));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

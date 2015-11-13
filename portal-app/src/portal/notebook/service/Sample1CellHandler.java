@@ -1,5 +1,6 @@
 package portal.notebook.service;
 
+import portal.notebook.api.CellExecutionContext;
 import portal.notebook.api.CellType;
 import portal.notebook.api.VariableType;
 import toolkit.services.Transactional;
@@ -10,6 +11,8 @@ import javax.inject.Inject;
 public class Sample1CellHandler implements CellHandler {
     @Inject
     private NotebookService notebookService;
+    @Inject
+    private CellExecutionContext cellExecutionContext;
 
     @Override
     public Cell createCell() {
@@ -24,8 +27,8 @@ public class Sample1CellHandler implements CellHandler {
     }
 
     @Override
-    public void execute(Long notebookId, String cellName) {
-        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
+    public void execute(String cellName) {
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(cellExecutionContext.getNotebookId());
         Cell cell = notebookContents.findCell(cellName);
         Variable inputVariable = cell.getInputVariableList().get(0);
         Integer num1 = (Integer) inputVariable.getValue();
@@ -33,7 +36,7 @@ public class Sample1CellHandler implements CellHandler {
         Integer result = (num1 == null || num2 == null) ? null : num1 + num2;
         Variable outputVariable = cell.getOutputVariableList().get(0);
         outputVariable.setValue(result);
-        notebookService.storeNotebookContents(notebookId, notebookContents);
+        notebookService.storeNotebookContents(cellExecutionContext.getNotebookId(), notebookContents);
     }
 
 

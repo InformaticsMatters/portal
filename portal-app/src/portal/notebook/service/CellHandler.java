@@ -8,7 +8,8 @@ import javax.enterprise.context.ApplicationScoped;
 public interface CellHandler {
 
     Cell createCell();
-    void execute(Long notebookId, String cellName);
+
+    void execute(String cellName);
 
     boolean handles(CellType cellType);
 }

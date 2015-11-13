@@ -22,50 +22,51 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
     private static final Logger LOGGER = Logger.getLogger(CellExecutionClient.class.getName());
     @Inject
     private CellExecutionClientConfig config;
-    ;
+    @Inject
+    private CellExecutionContext context;
 
-    public NotebookDTO retrieveNotebookDefinition(Long notebookId) {
+    public NotebookDTO retrieveNotebookDefinition() {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         return newResourceBuilder("/retrieveNotebook", queryParams).get(NotebookDTO.class);
 
     }
 
-    public CellDTO retrieveCell(Long notebookId, String cellName) {
+    public CellDTO retrieveCell(String cellName) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("cellName", cellName);
         return newResourceBuilder("/retrieveCell", queryParams).get(CellDTO.class);
     }
 
-    public String readTextValue(Long notebookId, String producerName, String variableName) {
+    public String readTextValue(String producerName, String variableName) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         return newResourceBuilder("/readTextValue", queryParams).get(String.class);
     }
 
-    public Integer readIntegerValue(Long notebookId, String producerName, String variableName) {
+    public Integer readIntegerValue(String producerName, String variableName) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         return newResourceBuilder("/readTextValue", queryParams).get(Integer.class);
     }
 
-    public InputStream readStreamValue(Long notebookId, String producerName, String variableName) {
+    public InputStream readStreamValue(String producerName, String variableName) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         WebResource.Builder builder = newResourceBuilder("/readStreamValue", queryParams);
         return builder.get(InputStream.class);
     }
 
-    public List<MoleculeObject> readFileValueAsMolecules(Long notebookId, String producerName, String variableName) {
+    public List<MoleculeObject> readFileValueAsMolecules(String producerName, String variableName) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         WebResource.Builder builder = newResourceBuilder("/readFileValueAsMolecules", queryParams);
@@ -78,9 +79,9 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
         }
     }
 
-    public void writeTextValue(Long notebookId, String producerName, String variableName, String value) {
+    public void writeTextValue(String producerName, String variableName, String value) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         queryParams.add("value", value);
@@ -88,18 +89,18 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
     }
 
 
-    public void writeIntegerValue(Long notebookId, String cellName, String variableName, Integer value) {
+    public void writeIntegerValue(String cellName, String variableName, Integer value) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("producerName", cellName);
         queryParams.add("variableName", variableName);
         queryParams.add("value", value == null ? null : value.toString());
         newResourceBuilder("/writeIntegerValue", queryParams).post();
     }
 
-    public void writeStreamContents(Long notebookId, String producerName, String variableName, InputStream inputStream) {
+    public void writeStreamContents(String producerName, String variableName, InputStream inputStream) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         WebResource.Builder builder = newResourceBuilder("/writeStreamContents", queryParams);
@@ -112,9 +113,9 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
         });
     }
 
-    public void writeStreamContents(Long notebookId, String producerName, String variableName, StreamingOutput streamingOutput) {
+    public void writeStreamContents(String producerName, String variableName, StreamingOutput streamingOutput) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         WebResource.Builder builder = newResourceBuilder("/writeStreamContents", queryParams);

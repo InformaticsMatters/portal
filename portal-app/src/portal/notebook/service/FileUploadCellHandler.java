@@ -17,7 +17,7 @@ public class FileUploadCellHandler implements CellHandler {
     }
 
     @Override
-    public void execute(Long notebookId, String cellName) {
+    public void execute(String cellName) {
 
     }
 
