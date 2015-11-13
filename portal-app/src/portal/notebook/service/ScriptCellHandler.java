@@ -2,6 +2,7 @@ package portal.notebook.service;
 
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import portal.notebook.api.CellExecutionContext;
 import portal.notebook.api.CellType;
 import portal.notebook.api.VariableType;
 
@@ -16,6 +17,8 @@ public class ScriptCellHandler implements CellHandler {
     @Inject
     private NotebookService notebookService;
     private static final Logger LOGGER = Logger.getLogger(ScriptCellHandler.class.getName());
+    @Inject
+    private CellExecutionContext cellExecutionContext;
 
     @Override
     public Cell createCell() {
@@ -30,8 +33,8 @@ public class ScriptCellHandler implements CellHandler {
     }
 
     @Override
-    public void execute(Long notebookId, String cellName) {
-        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
+    public void execute(String cellName) {
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(cellExecutionContext.getNotebookId());
         Cell cell = notebookContents.findCell(cellName);
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("Groovy");
@@ -58,7 +61,7 @@ public class ScriptCellHandler implements CellHandler {
             LOGGER.log(Level.WARNING, se.getMessage());
             cell.getPropertyMap().put("errorMssage", se.getMessage());
         }
-        notebookService.storeNotebookContents(notebookId, notebookContents);
+        notebookService.storeNotebookContents(cellExecutionContext.getNotebookId(), notebookContents);
     }
 
     private Object scriptToVm(Object o) {

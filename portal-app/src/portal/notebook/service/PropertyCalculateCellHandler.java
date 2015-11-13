@@ -31,15 +31,15 @@ public class PropertyCalculateCellHandler implements CellHandler {
     }
 
     @Override
-    public void execute(Long notebookId, String cellName) {
+    public void execute(String cellName) {
         try {
-            NotebookDTO notebookDefinition = cellExecutionClient.retrieveNotebookDefinition(notebookId);
+            NotebookDTO notebookDefinition = cellExecutionClient.retrieveNotebookDefinition();
             CellDTO cellDefinition = findCell(notebookDefinition, cellName);
             VariableDTO inputVariableDefinition = cellDefinition.getInputVariableList().get(0);
 
             //special case for VariableType FILE: text value is the file name, file contents accessed through stream API
-            String fileName = cellExecutionClient.readTextValue(notebookId, inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
-            InputStream inputStream = cellExecutionClient.readStreamValue(notebookId, inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
+            String fileName = cellExecutionClient.readTextValue(inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
+            InputStream inputStream = cellExecutionClient.readStreamValue(inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
 
             List<MoleculeObject> molecules = parseFileStream(fileName, inputStream);
             ByteArrayOutputStream moleculesOutputStream = new ByteArrayOutputStream();
@@ -51,7 +51,7 @@ public class PropertyCalculateCellHandler implements CellHandler {
             byte[] resultBytes = calculate(moleculesOutputStream.toByteArray(), serviceName);
 
             String outputVariableName = cellDefinition.getOutputVariableNameList().get(0);
-            cellExecutionClient.writeStreamContents(notebookId, cellName, outputVariableName, new ByteArrayInputStream(resultBytes));
+            cellExecutionClient.writeStreamContents(cellName, outputVariableName, new ByteArrayInputStream(resultBytes));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
