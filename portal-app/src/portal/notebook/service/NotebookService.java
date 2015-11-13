@@ -3,6 +3,7 @@ package portal.notebook.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
+import portal.notebook.api.CellExecutionContext;
 import toolkit.services.PU;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -20,6 +21,8 @@ public class NotebookService {
     private EntityManager entityManager;
     @Inject
     private CellHandlerProvider cellHandlerProvider;
+    @Inject
+    private CellExecutionContext cellExecutionContext;
 
 
     public List<NotebookInfo> listNotebookInfo() {
@@ -79,7 +82,9 @@ public class NotebookService {
     public void executeCell(Long notebookId, String cellName) {
         NotebookContents notebookContents = retrieveNotebookContents(notebookId);
         Cell cell = notebookContents.findCell(cellName);
-        cellHandlerProvider.getCellHandler(cell.getCellType()).execute(notebookId, cellName);
+        cellExecutionContext.setNotebookId(notebookId);
+        cellExecutionContext.setCellName(cellName);
+        cellHandlerProvider.getCellHandler(cell.getCellType()).execute(cellName);
     }
 
     public List<MoleculeObject> retrieveFileContentAsMolecules(String fileName) {
