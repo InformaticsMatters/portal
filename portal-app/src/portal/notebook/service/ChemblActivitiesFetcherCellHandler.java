@@ -2,12 +2,19 @@ package portal.notebook.service;
 
 import com.im.lac.types.MoleculeObject;
 import com.squonk.dataset.Dataset;
-import portal.notebook.api.*;
+import com.squonk.dataset.DatasetMetadata;
+import com.squonk.types.io.JsonHandler;
+import portal.notebook.api.CellDTO;
+import portal.notebook.api.CellExecutionClient;
+import portal.notebook.api.CellType;
+import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Given a ChEMBL assay ID fetches all activities for that assay and generated a Dataset or
@@ -24,50 +31,48 @@ public class ChemblActivitiesFetcherCellHandler implements CellHandler {
     @Override
     public Cell createCell() {
         Cell cell = new Cell();
-        //cell.setCellType(CellType.???);
+        cell.setCellType(CellType.CHEMBLACTIVITIESFETCHER);
         Variable variable = new Variable();
         variable.setProducerCell(cell);
-        variable.setName("Results");
-        //variable.setVariableType(VariableType.???);
+        variable.setName("results");
+        variable.setVariableType(VariableType.DATASET);
         cell.getOutputVariableList().add(variable);
         return cell;
     }
 
     @Override
     public void execute(Long notebookId, String cellName) {
-        // not sure what's needed here
-        cellExecutionClient.setUriBase("http://localhost:8080/ws/cell");
-        // better to request cell using notebook and cell ID's?
-        // - that way cell executor does not gain access to whole notebook?
-        NotebookDTO notebookDTO = cellExecutionClient.retrieveNotebookDefinition(notebookId);
-        CellDTO cell = notebookDTO.findCell(notebookDTO, cellName);
-        String assayID = (String) cell.getPropertyMap().get("AssayID");
-        String prefix = (String) cell.getPropertyMap().get("Prefix");
+
+        CellDTO cell = cellExecutionClient.retrieveCell(notebookId, cellName);
+        String assayID = (String) cell.getPropertyMap().get("assayId");
+        String prefix = (String) cell.getPropertyMap().get("prefix");
         // real implmentation class not yet accessible so using the inner class as a mock for now
         ChemblClient client = new ChemblClient();
         // the batchSize of 100 should be thought of as an advanced option - not present in the standard
         // UI but able to be specified using "Advanced" settings. For now we hard code a sensible value.
         Dataset<MoleculeObject> dataset = client.fetchActivitiesForAssay(assayID, 100, prefix);
 
-        // this code needs an updated version of the libraries
-        // the dataset need to be written in 2 parts:
-        // 1. the Stream<MoleculeObject> as a (poentially very large) byte stream
-        // 2. the metedata as small bit of JSON
-//        Dataset.DatasetMetadataGenerator generator = ds.createDatasetMetadataGenerator();
-//        try (Stream s = generator.getAsStream()) {
-//            InputStream is = generator.getAsInputStream(s, true);
-//            // write to variable as stream of bytes
-//            //loader.writeToBytes(name + "#DATA", is);
-//        } // stream now closed
-//        // now write the metadata as JSON
-//        DatasetMetadata md = (DatasetMetadata)generator.getDatasetMetadata();
-//        //loader.writeToJson(name + "#META", md);
+        try {
+            // this code needs an updated version of the libraries
+            // the dataset need to be written in 2 parts:
+            // 1. the Stream<MoleculeObject> as a (poentially very large) byte stream
+            // 2. the metedata as small bit of JSON
+            Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
+            try (Stream stream = generator.getAsStream()) {
+                InputStream dataInputStream = generator.getAsInputStream(stream, true);
+                cellExecutionClient.writeStreamContents(notebookId, cellName, "results", dataInputStream);
+            }
+            DatasetMetadata metadata = generator.getDatasetMetadata();
+            cellExecutionClient.writeTextValue(notebookId, cellName, "results", JsonHandler.getInstance().objectToJson(metadata));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
     @Override
     public boolean handles(CellType cellType) {
-        return false;
+        return cellType.equals(CellType.CHEMBLACTIVITIESFETCHER);
     }
 
     /**

@@ -7,11 +7,8 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import toolkit.services.AbstractServiceClient;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
@@ -23,13 +20,22 @@ import java.util.logging.Logger;
 
 public class CellExecutionClient extends AbstractServiceClient implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(CellExecutionClient.class.getName());
-    private String uriBase;
+    @Inject
+    private CellExecutionClientConfig config;
+    ;
 
     public NotebookDTO retrieveNotebookDefinition(Long notebookId) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.add("notebookId", notebookId.toString());
-        return newResourceBuilder("/retrieveNotebookDefinition", queryParams).get(NotebookDTO.class);
+        return newResourceBuilder("/retrieveNotebook", queryParams).get(NotebookDTO.class);
 
+    }
+
+    public CellDTO retrieveCell(Long notebookId, String cellName) {
+        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+        queryParams.add("notebookId", notebookId.toString());
+        queryParams.add("cellName", cellName);
+        return newResourceBuilder("/retrieveCell", queryParams).get(CellDTO.class);
     }
 
     public String readTextValue(Long notebookId, String producerName, String variableName) {
@@ -46,14 +52,6 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         return newResourceBuilder("/readTextValue", queryParams).get(Integer.class);
-    }
-
-    public String readObjectValueAsJson(Long notebookId, String producerName, String variableName) {
-        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
-        queryParams.add("producerName", producerName);
-        queryParams.add("variableName", variableName);
-        return newResourceBuilder("/readObjectValue", queryParams).get(String.class);
     }
 
     public InputStream readStreamValue(Long notebookId, String producerName, String variableName) {
@@ -99,23 +97,12 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
         newResourceBuilder("/writeIntegerValue", queryParams).post();
     }
 
-    @Path("writeValueAsText")
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void writeObjectValueAsJson(Long notebookId, String producerName, String variableName, String value) {
+    public void writeStreamContents(Long notebookId, String producerName, String variableName, InputStream inputStream) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.add("notebookId", notebookId.toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
-        newResourceBuilder("/writeTextValue", queryParams).post(value);
-    }
-
-    public void writeStreamValue(Long notebookId, String producerName, String variableName, InputStream inputStream) {
-        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.add("notebookId", notebookId.toString());
-        queryParams.add("producerName", producerName);
-        queryParams.add("variableName", variableName);
-        WebResource.Builder builder = newResourceBuilder("/writeStreamValue", queryParams);
+        WebResource.Builder builder = newResourceBuilder("/writeStreamContents", queryParams);
         builder.post(new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
@@ -125,12 +112,12 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
         });
     }
 
-    public void writeStreamValue(Long notebookId, String producerName, String variableName, StreamingOutput streamingOutput) {
+    public void writeStreamContents(Long notebookId, String producerName, String variableName, StreamingOutput streamingOutput) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.add("notebookId", notebookId.toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
-        WebResource.Builder builder = newResourceBuilder("/writeStreamValue", queryParams);
+        WebResource.Builder builder = newResourceBuilder("/writeStreamContents", queryParams);
         builder.post(streamingOutput);
     }
 
@@ -146,11 +133,7 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
 
     @Override
     protected String getServiceBaseUri() {
-        return uriBase;
-    }
-
-    public void setUriBase(String uriBase) {
-        this.uriBase = uriBase;
+        return config.getBaseUri();
     }
 
 

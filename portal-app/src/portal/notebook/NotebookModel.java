@@ -205,6 +205,8 @@ public class NotebookModel implements Serializable {
             return new Sample1CellModel();
         } else if (CellType.SAMPLE2.equals(cellType)) {
             return new Sample2CellModel();
+        } else if (CellType.CHEMBLACTIVITIESFETCHER.equals(cellType)) {
+            return new ChemblActivitiesFetcherCellModel();
         } else {
             return null;
         }

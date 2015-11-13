@@ -25,10 +25,10 @@ public class CellExecutionService {
     @Inject
     private NotebookService notebookService;
 
-    @Path("retrieveNotebookDefinition")
+    @Path("retrieveNotebook")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public NotebookDTO retrieveNotebookDefinition(@QueryParam("notebookId") Long notebookId) {
+    public NotebookDTO retrieveNotebook(@QueryParam("notebookId") Long notebookId) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         NotebookDTO notebookDTO = new NotebookDTO();
         for (Cell cell : notebookContents.getCellList()) {
@@ -49,6 +49,15 @@ public class CellExecutionService {
         }
         return notebookDTO;
     }
+
+    @Path("retrieveCell")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public CellDTO retrieveCell(@QueryParam("notebookId") Long notebookId, @QueryParam("cellName") String cellName) {
+        NotebookDTO notebookDTO = retrieveNotebook(notebookId);
+        return notebookDTO.findCell(cellName);
+    }
+
 
     @Path("readTextValue")
     @GET
@@ -107,7 +116,7 @@ public class CellExecutionService {
 
     @Path("writeIntegerValue")
     @POST
-    public void writeValueAsInteger(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") Integer value) {
+    public void writeIntegerValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") Integer value) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         Variable variable = notebookContents.findVariable(producerName, variableName);
         variable.setValue(value);
@@ -117,16 +126,16 @@ public class CellExecutionService {
     @Path("writeObjectValue")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void writeValueAsJson(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, Object value) {
+    public void writeObjectValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, Object value) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         Variable variable = notebookContents.findVariable(producerName, variableName);
         variable.setValue(value);
         notebookService.storeNotebookContents(notebookId, notebookContents);
     }
 
-    @Path("writeStreamValue")
+    @Path("writeStreamContents")
     @POST
-    public void writeStreamValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, InputStream inputStream) {
+    public void writeStreamContents(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, InputStream inputStream) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         Variable variable = notebookContents.findVariable(producerName, variableName);
         try {
@@ -151,7 +160,8 @@ public class CellExecutionService {
     private File resolveFile(Long notebookId, Variable variable) throws UnsupportedEncodingException {
         if (variable.getVariableType().equals(VariableType.FILE)) {
              return new File("files/" + variable.getValue());
-        } if (variable.getVariableType().equals(VariableType.STREAM)) {
+        }
+        if (variable.getVariableType().equals(VariableType.STREAM) || variable.getVariableType().equals(VariableType.DATASET)) {
             String fileName = URLEncoder.encode(variable.getProducerCell().getName() + "_" + variable.getName(), "US-ASCII");
             return new File("files/" + fileName);
         }  else {

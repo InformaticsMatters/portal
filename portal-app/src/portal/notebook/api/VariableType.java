@@ -1,3 +1,3 @@
 package portal.notebook.api;
 
-public enum VariableType {VALUE, FILE, STREAM}
+public enum VariableType {VALUE, DATASET, FILE, STREAM}

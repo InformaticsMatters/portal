@@ -1,0 +1,29 @@
+<wicket:panel xmlns="http://www.w3.org/1999/html">
+    <div class="notebook-canvas-item-content">
+        <div class="titleBar">
+            <div class="name left floated">
+                <label wicket:id="cellName"/>
+            </div>
+            <div style="text-align: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
+        </div>
+        <form wicket:id="form" class="ui form content">
+            <div class="field">
+                <label>Assay ID </label>
+
+                <div class="ui small input">
+                    <input type="text" wicket:id="assayId"/>
+                </div>
+            </div>
+            <div class="field">
+                <label>Prefix</label>
+
+                <div class="ui small input">
+                    <input type="text" wicket:id="prefix"/>
+                </div>
+            </div>
+            <div class="actions">
+                <div class="ui mini blue button" wicket:id="execute">Execute</div>
+            </div>
+        </form>
+    </div>
+</wicket:panel>

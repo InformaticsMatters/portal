@@ -14,10 +14,10 @@ public class NotebookDTO {
         return cellList;
     }
 
-    public CellDTO findCell(NotebookDTO notebookDefinition, String cellName) {
-        for (CellDTO cellDefinition : notebookDefinition.getCellList()) {
-            if (cellDefinition.getName().equals(cellName)) {
-                return cellDefinition;
+    public CellDTO findCell(String cellName) {
+        for (CellDTO cellDTO : cellList) {
+            if (cellDTO.getName().equals(cellName)) {
+                return cellDTO;
             }
         }
         return null;

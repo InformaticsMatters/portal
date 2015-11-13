@@ -258,6 +258,8 @@ public class NotebookCanvasPage extends WebPage {
             return new Sample1CanvasItemPanel("item", (Sample1CellModel) cellModel);
         } else if (CellType.SAMPLE2.equals(cellType)) {
             return new Sample2CanvasItemPanel("item", (Sample2CellModel) cellModel);
+        } else if (CellType.CHEMBLACTIVITIESFETCHER.equals(cellType)) {
+            return new ChemblActivitiesFetcherCanvasItemPanel("item", (ChemblActivitiesFetcherCellModel) cellModel);
         } else {
             return null;
         }

@@ -1,6 +1,7 @@
 <beans>
     <alternatives>
         <class>portal.notebook.service.IdeDerbyNotebookConfig</class>
+        <class>portal.notebook.api.DefaultCellExecutionClientconfig</class>
     </alternatives>
     <interceptors>
         <class>portal.notebook.NotebookTransactionalInterceptor</class>
