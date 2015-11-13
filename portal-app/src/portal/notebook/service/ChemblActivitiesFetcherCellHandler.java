@@ -53,10 +53,7 @@ public class ChemblActivitiesFetcherCellHandler implements CellHandler {
         Dataset<MoleculeObject> dataset = client.fetchActivitiesForAssay(assayID, 100, prefix);
 
         try {
-            // this code needs an updated version of the libraries
-            // the dataset need to be written in 2 parts:
-            // 1. the Stream<MoleculeObject> as a (poentially very large) byte stream
-            // 2. the metedata as small bit of JSON
+            // As it´s a DATASET variable type we write metatada to value and contents as any stream-based variable(like FILE)
             Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
             try (Stream stream = generator.getAsStream()) {
                 InputStream dataInputStream = generator.getAsInputStream(stream, true);
