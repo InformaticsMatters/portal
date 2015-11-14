@@ -8,7 +8,6 @@ import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 
@@ -167,15 +166,19 @@ public class NotebookSession implements Serializable {
         return createDatasetFromMolecules(list, name);
     }
 
+    public IDatasetDescriptor loadDatasetFromSquonkDataset(VariableModel inputVariableModel) {
+        try {
+            List<MoleculeObject> list = notebookService.squonkDatasetAsMolecules(notebookInfo.getId(), inputVariableModel.getProducer().getName(), inputVariableModel.getName());
+            return createDatasetFromMolecules(list, inputVariableModel.getProducer().getName() + "." + inputVariableModel.getName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public IDatasetDescriptor loadDatasetFromFile(String fileName) {
         try {
             List<MoleculeObject> list = notebookService.parseFile(fileName);
-            File file = new File("files/" + fileName);
-            if (file.exists()) {
-                return createDatasetFromMolecules(list, fileName);
-            } else {
-                return null;
-            }
+            return createDatasetFromMolecules(list, fileName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -227,4 +230,5 @@ public class NotebookSession implements Serializable {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookInfo.getId());
         notebookModel.fromNotebookContents(notebookContents);
     }
+
 }

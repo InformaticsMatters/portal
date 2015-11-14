@@ -5,7 +5,6 @@ import com.im.lac.types.MoleculeObject;
 import portal.notebook.api.CellDTO;
 import portal.notebook.api.NotebookDTO;
 import portal.notebook.api.VariableDTO;
-import portal.notebook.api.VariableType;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -13,8 +12,9 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.*;
-import java.net.URLEncoder;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 @Path("cell")
@@ -85,21 +85,7 @@ public class CellExecutionService {
         return new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                File file = resolveFile(notebookId, variable);
-                if (file.exists()) {
-                    InputStream inputStream = new FileInputStream(file);
-                    try {
-                        byte[] buffer = new byte[4096];
-                        int r = inputStream.read(buffer);
-                        while (r > -1) {
-                            outputStream.write(buffer, 0, r);
-                            r = inputStream.read(buffer);
-                        }
-                        outputStream.flush();
-                    } finally {
-                        inputStream.close();
-                    }
-                }
+                notebookService.outputStreamingContents(notebookId, variable, outputStream);
             }
         };
 
@@ -138,35 +124,7 @@ public class CellExecutionService {
     public void writeStreamContents(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, InputStream inputStream) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
         Variable variable = notebookContents.findVariable(producerName, variableName);
-        try {
-            File file = resolveFile(notebookId, variable);
-            OutputStream outputStream = new FileOutputStream(file);
-            try {
-                byte[] buffer = new byte[4096];
-                int r = inputStream.read(buffer);
-                while (r > -1) {
-                    outputStream.write(buffer, 0, r);
-                    r = inputStream.read(buffer);
-                }
-                outputStream.flush();
-            } finally {
-                outputStream.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private File resolveFile(Long notebookId, Variable variable) throws UnsupportedEncodingException {
-        if (variable.getVariableType().equals(VariableType.FILE)) {
-             return new File("files/" + variable.getValue());
-        }
-        if (variable.getVariableType().equals(VariableType.STREAM) || variable.getVariableType().equals(VariableType.DATASET)) {
-            String fileName = URLEncoder.encode(variable.getProducerCell().getName() + "_" + variable.getName(), "US-ASCII");
-            return new File("files/" + fileName);
-        }  else {
-            return null;
-        }
+        notebookService.storeStreamingContents(notebookId, variable, inputStream);
     }
 
     @Path("readFileValueAsMolecules")

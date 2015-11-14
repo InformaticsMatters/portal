@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import portal.notebook.api.CellExecutionContext;
+import portal.notebook.api.VariableType;
 import toolkit.services.PU;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -85,6 +87,18 @@ public class NotebookService {
         cellExecutionContext.setNotebookId(notebookId);
         cellExecutionContext.setCellName(cellName);
         cellHandlerProvider.getCellHandler(cell.getCellType()).execute(cellName);
+    }
+
+    public List<MoleculeObject> squonkDatasetAsMolecules(Long notebookId, String cellName, String variableName) {
+        try {
+            NotebookContents notebookContents = retrieveNotebookContents(notebookId);
+            Variable variable = notebookContents.findVariable(cellName, variableName);
+            File file = resolveContentsFile(notebookId, variable);
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public List<MoleculeObject> retrieveFileContentAsMolecules(String fileName) {
@@ -164,6 +178,60 @@ public class NotebookService {
         Notebook notebook = entityManager.find(Notebook.class, notebookId);
         try {
             doStoreNotebookContents(notebookContents, notebook);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public File resolveContentsFile(Long notebookId, Variable variable) throws UnsupportedEncodingException {
+        if (variable.getVariableType().equals(VariableType.FILE)) {
+            return new File("files/" + variable.getValue());
+        }
+        if (variable.getVariableType().equals(VariableType.STREAM) || variable.getVariableType().equals(VariableType.DATASET)) {
+            String fileName = URLEncoder.encode(variable.getProducerCell().getName() + "_" + variable.getName(), "US-ASCII");
+            return new File("files/" + fileName);
+        } else {
+            return null;
+        }
+    }
+
+    public void storeStreamingContents(Long notebookId, Variable variable, InputStream inputStream) {
+        try {
+            File file = resolveContentsFile(notebookId, variable);
+            OutputStream outputStream = new FileOutputStream(file);
+            try {
+                byte[] buffer = new byte[4096];
+                int r = inputStream.read(buffer);
+                while (r > -1) {
+                    outputStream.write(buffer, 0, r);
+                    r = inputStream.read(buffer);
+                }
+                outputStream.flush();
+            } finally {
+                outputStream.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void outputStreamingContents(Long notebookId, Variable variable, OutputStream outputStream) {
+        try {
+            File file = resolveContentsFile(notebookId, variable);
+            if (file.exists()) {
+                InputStream inputStream = new FileInputStream(file);
+                try {
+                    byte[] buffer = new byte[4096];
+                    int r = inputStream.read(buffer);
+                    while (r > -1) {
+                        outputStream.write(buffer, 0, r);
+                        r = inputStream.read(buffer);
+                    }
+                    outputStream.flush();
+                } finally {
+                    inputStream.close();
+                }
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

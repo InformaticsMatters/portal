@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import portal.dataset.IDatasetDescriptor;
+import portal.notebook.api.VariableType;
 import portal.notebook.service.Strings;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -138,8 +139,10 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private IDatasetDescriptor loadDescriptor() {
-        if (getCellModel().getInputVariableModel().getValue() instanceof String) {
+        if (getCellModel().getInputVariableModel().getVariableType().equals(VariableType.FILE)) {
             return notebookSession.loadDatasetFromFile(getCellModel().getInputVariableModel().getValue().toString());
+        } else if (getCellModel().getInputVariableModel().getVariableType().equals(VariableType.DATASET)) {
+            return notebookSession.loadDatasetFromSquonkDataset(getCellModel().getInputVariableModel());
         } else if (getCellModel().getInputVariableModel().getValue() instanceof Strings) {
             return notebookSession.createDatasetFromStrings((Strings) getCellModel().getInputVariableModel().getValue(), getCellModel().getInputVariableModel().getName());
         } else if (getCellModel().getInputVariableModel().getValue() instanceof List) {
