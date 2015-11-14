@@ -15,6 +15,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 @ApplicationScoped
 public class NotebookService {
@@ -94,7 +95,15 @@ public class NotebookService {
             NotebookContents notebookContents = retrieveNotebookContents(notebookId);
             Variable variable = notebookContents.findVariable(cellName, variableName);
             File file = resolveContentsFile(notebookId, variable);
-            return null;
+            FileInputStream fileInputStream = new FileInputStream(file);
+            try {
+                GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.readValue(gzipInputStream, new TypeReference<List<MoleculeObject>>() {
+                });
+            } finally {
+                fileInputStream.close();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
