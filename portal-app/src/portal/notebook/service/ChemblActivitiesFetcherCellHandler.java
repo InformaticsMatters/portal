@@ -1,5 +1,7 @@
 package portal.notebook.service;
 
+import com.im.lac.job.jobdef.StepDefinition;
+import com.im.lac.job.jobdef.StepDefinitionConstants;
 import com.im.lac.types.MoleculeObject;
 import com.squonk.dataset.Dataset;
 import com.squonk.dataset.DatasetMetadata;
@@ -11,9 +13,7 @@ import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -64,6 +64,33 @@ public class ChemblActivitiesFetcherCellHandler implements CellHandler {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    public void executeUsingSteps(String cellName) {
+        CellDTO cell = cellExecutionClient.retrieveCell(cellName);
+
+        // define the execution options
+        Map<String,Object> options = new HashMap<>();
+        options.put("AssayID", cell.getPropertyMap().get("assayId"));
+        options.put("Prefix", cell.getPropertyMap().get("prefix"));
+
+        // define the variable name mappings
+        Map<String,String> mappings = new HashMap<>();
+        mappings.put("_OutputDataset", "results");
+
+        // define the step(s)
+        StepDefinition step = new StepDefinition(StepDefinitionConstants.STEP_CHEMBL_ACTIVITIES_FETCHER,
+                options,mappings);
+
+
+        // execute, passing in the cell name/id which is needed to get/set the variables
+        //cellExecutionService.execute(cell.getName(), step);
+
+        // we really want to avoid needing a custom exectuor for every cell type and we could avoid
+        // this if the cell implementation generates the StepDefinition(s). The cell itself knows how
+        // its UI components need to be bound to its exection so can easily generate this.
+        // If this was so then all cells that are implemented using steps can have a single generic executor.
 
     }
 
