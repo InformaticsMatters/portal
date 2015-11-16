@@ -15,7 +15,7 @@ public class MockCellClient implements CellClient {
     @Inject
     private CallbackContext callbackContext;
     @Inject
-    private CellHandlerProvider cellHandlerProvider;
+    private QnDCellExecutorProvider qnDCellExecutorProvider;
 
     private static List<CellType> createDescriptors() {
         List<CellType> list = new ArrayList<>();
@@ -102,7 +102,7 @@ public class MockCellClient implements CellClient {
     public void executeCell(Long notebookId, String cellName) {
         callbackContext.setNotebookId(notebookId);
         CellDTO cell = callbackClient.retrieveCell(cellName);
-        cellHandlerProvider.resolveCellHandler(cell.getCellType()).execute(cellName);
+        qnDCellExecutorProvider.resolveCellHandler(cell.getCellType()).execute(cellName);
     }
 
     @Override
