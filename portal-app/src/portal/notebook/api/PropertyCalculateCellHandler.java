@@ -1,9 +1,8 @@
-package portal.notebook.service;
+package portal.notebook.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import portal.notebook.api.*;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -12,34 +11,19 @@ import java.util.List;
 
 public class PropertyCalculateCellHandler implements CellHandler {
     @Inject
-    private NotebookService notebookService;
-    @Inject
     private CalculatorsClient calculatorsClient;
     @Inject
-    private CellExecutionClient cellExecutionClient;
+    private CallbackClient callbackClient;
 
-    @Override
-    public Cell createCell() {
-        Cell cell = new Cell();
-        cell.setCellType(CellType.PROPERTY_CALCULATE);
-        Variable variable = new Variable();
-        variable.setProducerCell(cell);
-        variable.setName("outputFile");
-        variable.setVariableType(VariableType.FILE);
-        cell.getOutputVariableList().add(variable);
-        return cell;
-    }
-
-    @Override
     public void execute(String cellName) {
         try {
-            NotebookDTO notebookDefinition = cellExecutionClient.retrieveNotebookDefinition();
+            NotebookDTO notebookDefinition = callbackClient.retrieveNotebookDefinition();
             CellDTO cellDefinition = findCell(notebookDefinition, cellName);
             VariableDTO inputVariableDefinition = cellDefinition.getInputVariableList().get(0);
 
             //special case for VariableType FILE: text value is the file name, file contents accessed through stream API
-            String fileName = cellExecutionClient.readTextValue(inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
-            InputStream inputStream = cellExecutionClient.readStreamValue(inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
+            String fileName = callbackClient.readTextValue(inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
+            InputStream inputStream = callbackClient.readStreamValue(inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
 
             List<MoleculeObject> molecules = parseFileStream(fileName, inputStream);
             ByteArrayOutputStream moleculesOutputStream = new ByteArrayOutputStream();
@@ -51,11 +35,16 @@ public class PropertyCalculateCellHandler implements CellHandler {
             byte[] resultBytes = calculate(moleculesOutputStream.toByteArray(), serviceName);
 
             String outputVariableName = cellDefinition.getOutputVariableNameList().get(0);
-            cellExecutionClient.writeStreamContents(cellName, outputVariableName, new ByteArrayInputStream(resultBytes));
+            callbackClient.writeStreamContents(cellName, outputVariableName, new ByteArrayInputStream(resultBytes));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public boolean handles(CellType cellType) {
+        return "PropertyCalculate".equals(cellType.getName());
     }
 
     private byte[] calculate(byte[] bytes, String serviceName) throws IOException {
@@ -125,12 +114,6 @@ public class PropertyCalculateCellHandler implements CellHandler {
         } else {
             return v;
         }
-    }
-
-
-    @Override
-    public boolean handles(CellType cellType) {
-        return cellType.equals(CellType.PROPERTY_CALCULATE);
     }
 
 }

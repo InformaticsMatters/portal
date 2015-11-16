@@ -15,10 +15,10 @@ public class ChemblActivitiesFetcherCellModel extends AbstractCellModel {
     private String assayId;
     private String prefix;
 
-    @Override
-    public CellType getCellType() {
-        return CellType.CHEMBLACTIVITIESFETCHER;
+    public ChemblActivitiesFetcherCellModel(CellType cellType) {
+        super(cellType);
     }
+
 
     @Override
     public List<VariableModel> getInputVariableModelList() {

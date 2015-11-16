@@ -1,14 +1,19 @@
 package portal.notebook;
 
+import portal.notebook.api.CellType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;
 
 public abstract class AbstractCellModel implements CellModel {
-
+    private final CellType cellType;
     private String name;
     private int positionLeft;
     private int positionTop;
+
+    public AbstractCellModel(CellType cellType) {
+        this.cellType = cellType;
+    }
 
     @Override
     public String getName() {
@@ -96,4 +101,8 @@ public abstract class AbstractCellModel implements CellModel {
         return ((CellModel)o).getName().equals(getName());
     }
 
+    @Override
+    public CellType getCellType() {
+        return cellType;
+    }
 }

@@ -17,10 +17,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-@Path("cell")
+@Path("callback")
 @ApplicationScoped
 @Transactional
-public class CellExecutionService {
+public class CallbackWebService {
 
     @Inject
     private NotebookService notebookService;
@@ -40,8 +40,11 @@ public class CellExecutionService {
             }
             for (Variable variable : cell.getInputVariableList()) {
                 VariableDTO variableDTO = new VariableDTO();
+                variableDTO.setId(variable.getId());
                 variableDTO.setName(variable.getName());
                 variableDTO.setProducerName(variable.getProducerCell().getName());
+                variableDTO.setVariableType(variable.getVariableType());
+                variableDTO.setValue(variable.getValue());
                 cellDTO.getInputVariableList().add(variableDTO);
             }
             cellDTO.getPropertyMap().putAll(cell.getPropertyMap());

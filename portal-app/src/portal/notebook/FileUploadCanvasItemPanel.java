@@ -110,6 +110,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
         notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "file").setValue(uploadForm.getModelObject().getFileName());
         getCellModel().setFileName(uploadForm.getModelObject().getFileName());
         notebookSession.storeNotebook();
+        notebookSession.reloadNotebook();
     }
 
 

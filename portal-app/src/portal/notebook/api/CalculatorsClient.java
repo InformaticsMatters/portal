@@ -1,4 +1,4 @@
-package portal.notebook.service;
+package portal.notebook.api;
 
 
 import org.apache.http.client.methods.CloseableHttpResponse;

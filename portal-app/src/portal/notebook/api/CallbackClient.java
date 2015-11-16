@@ -18,18 +18,17 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class CellExecutionClient extends AbstractServiceClient implements Serializable {
-    private static final Logger LOGGER = Logger.getLogger(CellExecutionClient.class.getName());
+public class CallbackClient extends AbstractServiceClient implements Serializable {
+    private static final Logger LOGGER = Logger.getLogger(CallbackClient.class.getName());
     @Inject
-    private CellExecutionClientConfig config;
+    private CallbackClientConfig config;
     @Inject
-    private CellExecutionContext context;
+    private CallbackContext context;
 
     public NotebookDTO retrieveNotebookDefinition() {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.add("notebookId", context.getNotebookId().toString());
         return newResourceBuilder("/retrieveNotebook", queryParams).get(NotebookDTO.class);
-
     }
 
     public CellDTO retrieveCell(String cellName) {
@@ -52,7 +51,8 @@ public class CellExecutionClient extends AbstractServiceClient implements Serial
         queryParams.add("notebookId", context.getNotebookId().toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
-        return newResourceBuilder("/readTextValue", queryParams).get(Integer.class);
+        String string = newResourceBuilder("/readTextValue", queryParams).get(String.class);
+        return string == null ? null : new Integer(string);
     }
 
     public InputStream readStreamValue(String producerName, String variableName) {

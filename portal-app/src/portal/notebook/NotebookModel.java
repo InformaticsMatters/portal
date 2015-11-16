@@ -2,7 +2,6 @@ package portal.notebook;
 
 import portal.notebook.api.CellType;
 import portal.notebook.service.Cell;
-import portal.notebook.service.CellHandlerProvider;
 import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;
 
@@ -143,11 +142,10 @@ public class NotebookModel implements Serializable {
         }
     }
 
-    public void toNotebookContents(NotebookContents notebookContents, CellHandlerProvider cellHandlerProvider) {
+    public void toNotebookContents(NotebookContents notebookContents) {
         Map<String, Cell> cellMap = new HashMap<>();
         for (CellModel cellModel : cellModelList) {
-            Cell cell = cellHandlerProvider.getCellHandler(cellModel.getCellType()).createCell();
-            notebookContents.addCell(cell);
+            Cell cell = notebookContents.addCell(cellModel.getCellType());
             cell.setName(cellModel.getName());
             for (String variableName : cellModel.getOutputVariableNameList()) {
                 Variable variable = notebookContents.findVariable(cellModel.getName(), variableName);
@@ -193,20 +191,20 @@ public class NotebookModel implements Serializable {
     }
 
     public static CellModel createCellModel(CellType cellType) {
-        if (CellType.FILE_UPLOAD.equals(cellType)) {
-            return new FileUploadCellModel();
-        } else if (CellType.CODE.equals(cellType)) {
-            return new ScriptCellModel();
-        } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
-            return new PropertyCalculateCellModel();
-        } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
-            return new TableDisplayCellModel();
-        } else if (CellType.SAMPLE1.equals(cellType)) {
-            return new Sample1CellModel();
-        } else if (CellType.SAMPLE2.equals(cellType)) {
-            return new Sample2CellModel();
-        } else if (CellType.CHEMBLACTIVITIESFETCHER.equals(cellType)) {
-            return new ChemblActivitiesFetcherCellModel();
+        if ("FileUpload".equals(cellType.getName())) {
+            return new FileUploadCellModel(cellType);
+        } else if ("Script".equals(cellType.getName())) {
+            return new ScriptCellModel(cellType);
+        } else if ("PropertyCalculate".equals(cellType.getName())) {
+            return new PropertyCalculateCellModel(cellType);
+        } else if ("TableDisplay".equals(cellType.getName())) {
+            return new TableDisplayCellModel(cellType);
+        } else if ("Sample1".equals(cellType.getName())) {
+            return new Sample1CellModel(cellType);
+        } else if ("Sample2".equals(cellType.getName())) {
+            return new Sample2CellModel(cellType);
+        } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
+            return new ChemblActivitiesFetcherCellModel(cellType);
         } else {
             return null;
         }

@@ -1,4 +1,4 @@
-package portal.notebook.service;
+package portal.notebook.api;
 
 import com.im.lac.job.jobdef.StepDefinition;
 import com.im.lac.job.jobdef.StepDefinitionConstants;
@@ -6,10 +6,6 @@ import com.im.lac.types.MoleculeObject;
 import com.squonk.dataset.Dataset;
 import com.squonk.dataset.DatasetMetadata;
 import com.squonk.types.io.JsonHandler;
-import portal.notebook.api.CellDTO;
-import portal.notebook.api.CellExecutionClient;
-import portal.notebook.api.CellType;
-import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -24,26 +20,20 @@ import java.util.stream.Stream;
  * Created by timbo on 10/11/15.
  */
 public class ChemblActivitiesFetcherCellHandler implements CellHandler {
-
     @Inject
-    private CellExecutionClient cellExecutionClient;
+    private CallbackClient callbackClient;
+    @Inject
+    private CallbackContext callbackContext;
+
 
     @Override
-    public Cell createCell() {
-        Cell cell = new Cell();
-        cell.setCellType(CellType.CHEMBLACTIVITIESFETCHER);
-        Variable variable = new Variable();
-        variable.setProducerCell(cell);
-        variable.setName("results");
-        variable.setVariableType(VariableType.DATASET);
-        cell.getOutputVariableList().add(variable);
-        return cell;
+    public boolean handles(CellType cellType) {
+        return "ChemblActivitiesFetcher".equals(cellType.getName());
     }
 
     @Override
     public void execute(String cellName) {
-
-        CellDTO cell = cellExecutionClient.retrieveCell(cellName);
+        CellDTO cell = callbackClient.retrieveCell(cellName);
         String assayID = (String) cell.getPropertyMap().get("assayId");
         String prefix = (String) cell.getPropertyMap().get("prefix");
         // real implmentation class not yet accessible so using the inner class as a mock for now
@@ -57,10 +47,10 @@ public class ChemblActivitiesFetcherCellHandler implements CellHandler {
             Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
             try (Stream stream = generator.getAsStream()) {
                 InputStream dataInputStream = generator.getAsInputStream(stream, true);
-                cellExecutionClient.writeStreamContents(cellName, "results", dataInputStream);
+                callbackClient.writeStreamContents(cellName, "results", dataInputStream);
             }
             DatasetMetadata metadata = generator.getDatasetMetadata();
-            cellExecutionClient.writeTextValue(cellName, "results", JsonHandler.getInstance().objectToJson(metadata));
+            callbackClient.writeTextValue(cellName, "results", JsonHandler.getInstance().objectToJson(metadata));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -68,7 +58,7 @@ public class ChemblActivitiesFetcherCellHandler implements CellHandler {
     }
 
     public void executeUsingSteps(String cellName) {
-        CellDTO cell = cellExecutionClient.retrieveCell(cellName);
+        CellDTO cell = callbackClient.retrieveCell(cellName);
 
         // define the execution options
         Map<String,Object> options = new HashMap<>();
@@ -92,11 +82,6 @@ public class ChemblActivitiesFetcherCellHandler implements CellHandler {
         // its UI components need to be bound to its exection so can easily generate this.
         // If this was so then all cells that are implemented using steps can have a single generic executor.
 
-    }
-
-    @Override
-    public boolean handles(CellType cellType) {
-        return cellType.equals(CellType.CHEMBLACTIVITIESFETCHER);
     }
 
     /**

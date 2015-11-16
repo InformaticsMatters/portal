@@ -1,6 +1,9 @@
 package portal.notebook.service;
 
 
+import portal.notebook.api.CellType;
+import portal.notebook.api.VariableDefinition;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 public class NotebookContents implements Serializable {
+    private Long lastCellId;
     private final List<Cell> cellList = new ArrayList<>();
 
     public List<Cell> getCellList() {
@@ -27,9 +31,16 @@ public class NotebookContents implements Serializable {
         return null;
     }
 
-    public Cell addCell(Cell cell) {
+    public Cell addCell(CellType cellType) {
+        Cell cell = createCell(cellType);
         cell.setName(calculateCellName(cell));
         cellList.add(cell);
+        if (lastCellId == null) {
+            cell.setId(1l);
+        } else {
+            cell.setId(lastCellId + 1l);
+        }
+        lastCellId = cell.getId();
         return cell;
     }
 
@@ -43,10 +54,10 @@ public class NotebookContents implements Serializable {
             nameSet.add(item.getName());
         }
         int suffix = typeCount + 1;
-        String newName = cell.getCellType().name() + suffix;
+        String newName = cell.getCellType().getName() + suffix;
         while (nameSet.contains(newName)) {
             suffix++;
-            newName = cell.getCellType().name() + suffix;
+            newName = cell.getCellType().getName() + suffix;
         }
         return newName;
     }
@@ -74,4 +85,19 @@ public class NotebookContents implements Serializable {
         }
         return null;
     }
+
+    private Cell createCell(CellType cellType) {
+        Cell cell = new Cell();
+        cell.setCellType(cellType);
+        for (VariableDefinition variableDefinition : cellType.getOutputVariableDefinitionList()) {
+            Variable variable = new Variable();
+            variable.setName(variableDefinition.getName());
+            variable.setVariableType(variableDefinition.getVariableType());
+            variable.setValue(variableDefinition.getDefaultValue());
+            variable.setProducerCell(cell);
+            cell.getOutputVariableList().add(variable);
+        }
+        return cell;
+    }
+
 }

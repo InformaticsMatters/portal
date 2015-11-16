@@ -2,11 +2,13 @@ package portal.notebook.service;
 
 import toolkit.services.AbstractEntity;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 
 @Entity
+@Cacheable(value = false)
 public class Notebook extends AbstractEntity {
     private String name;
     private byte[] data;

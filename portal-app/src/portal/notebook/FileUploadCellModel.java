@@ -16,10 +16,10 @@ public class FileUploadCellModel extends AbstractCellModel {
     private final List<String> outputVariableNameList = new ArrayList<>();
     private String fileName;
 
-    @Override
-    public CellType getCellType() {
-        return CellType.FILE_UPLOAD;
+    public FileUploadCellModel(CellType cellType) {
+        super(cellType);
     }
+
 
     @Override
     public List<VariableModel> getInputVariableModelList() {

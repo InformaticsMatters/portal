@@ -16,9 +16,8 @@ public class PropertyCalculateCellModel extends AbstractCellModel {
     private final List<String> outputVariableNameList = new ArrayList<>();
     private String serviceName;
 
-    @Override
-    public CellType getCellType() {
-        return CellType.PROPERTY_CALCULATE;
+    public PropertyCalculateCellModel(CellType cellType) {
+        super(cellType);
     }
 
     @Override

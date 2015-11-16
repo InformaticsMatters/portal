@@ -1,6 +1,6 @@
 package portal.notebook.api;
 
-public interface CellExecutionClientConfig {
+public interface CallbackClientConfig {
 
     String getBaseUri();
 

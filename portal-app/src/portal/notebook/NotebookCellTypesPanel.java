@@ -5,6 +5,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.notebook.api.CellType;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -12,17 +13,17 @@ import java.util.List;
 /**
  * @author simetrias
  */
-public class NotebookCellDescriptorsPanel extends Panel {
+public class NotebookCellTypesPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "cellDescriptor";
 
     private WebMarkupContainer descriptorssContainer;
-    private ListView<CellDescriptor> descriptorRepeater;
+    private ListView<CellType> descriptorRepeater;
 
     @Inject
     private NotebookSession notebookSession;
 
-    public NotebookCellDescriptorsPanel(String id) {
+    public NotebookCellTypesPanel(String id) {
         super(id);
         addCells();
     }
@@ -31,16 +32,16 @@ public class NotebookCellDescriptorsPanel extends Panel {
         descriptorssContainer = new WebMarkupContainer("descriptorsContainer");
         descriptorssContainer.setOutputMarkupId(true);
 
-        List<CellDescriptor> cells = notebookSession.listCellDescriptor();
-        descriptorRepeater = new ListView<CellDescriptor>("descriptor", cells) {
+        List<CellType> cells = notebookSession.listCellDescriptor();
+        descriptorRepeater = new ListView<CellType>("descriptor", cells) {
 
             @Override
-            protected void populateItem(ListItem<CellDescriptor> listItem) {
-                CellDescriptor cellDescriptor = listItem.getModelObject();
-                listItem.add(new NotebookCellDescriptorPanel("descriptorItem", cellDescriptor));
+            protected void populateItem(ListItem<CellType> listItem) {
+                CellType cellType = listItem.getModelObject();
+                listItem.add(new NotebookCellTypePanel("descriptorItem", cellType));
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
-                listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_ID, cellDescriptor.getCellType()));
+                listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_ID, cellType.getName()));
             }
         };
         descriptorssContainer.add(descriptorRepeater);

@@ -3,7 +3,7 @@ package portal.notebook.api;
 import javax.enterprise.context.RequestScoped;
 
 @RequestScoped
-public class CellExecutionContext {
+public class CallbackContext {
     private Long notebookId;
     private String cellName;
 

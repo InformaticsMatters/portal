@@ -2,6 +2,7 @@ package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
+import portal.notebook.api.CellClient;
 import portal.notebook.api.CellType;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
@@ -21,7 +22,7 @@ public class NotebookSession implements Serializable {
     @Inject
     private NotebookService notebookService;
     @Inject
-    private CellHandlerProvider cellHandlerProvider;
+    private CellClient cellClient;
     private NotebookModel notebookModel;
     private NotebookInfo notebookInfo;
 
@@ -71,15 +72,14 @@ public class NotebookSession implements Serializable {
         StoreNotebookData storeNotebookData = new StoreNotebookData();
         storeNotebookData.setNotebookInfo(notebookInfo);
         NotebookContents notebookContents = new NotebookContents();
-        notebookModel.toNotebookContents(notebookContents, cellHandlerProvider);
+        notebookModel.toNotebookContents(notebookContents);
         storeNotebookData.setNotebookContents(notebookContents);
         notebookService.storeNotebook(storeNotebookData);
     }
 
     public CellModel addCell(CellType cellType, int x, int y) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookInfo.getId());
-        Cell cell = cellHandlerProvider.getCellHandler(cellType).createCell();
-        notebookContents.addCell(cell);
+        Cell cell = notebookContents.addCell(cellType);
         cell.setPositionTop(y);
         cell.setPositionLeft(x);
         StoreNotebookData storeNotebookData = new StoreNotebookData();
@@ -92,12 +92,12 @@ public class NotebookSession implements Serializable {
         return cellModel;
     }
 
-    public List<CellDescriptor> listCellDescriptor() {
-        return Arrays.asList(new ScriptCellDescriptor(), new FileUploadCellDescriptor(), new PropertyCalculateCellDescriptor(), new TableDisplayCellDescriptor(), new Sample1CellDescriptor(), new Sample2CellDescriptor(), new ChemblActivitiesFetcherCellDescriptor());
+    public List<CellType> listCellDescriptor() {
+        return cellClient.listCellType();
     }
 
 
-      public List<VariableModel> listAvailableInputVariablesFor(CellModel cellModel, NotebookModel notebookModel) {
+    public List<VariableModel> listAvailableInputVariablesFor(CellModel cellModel, NotebookModel notebookModel) {
         List<VariableModel> list = new ArrayList<>();
         for (VariableModel variableModel : notebookModel.getVariableModelList()) {
             if (!variableModel.getProducer().equals(cellModel)) {
@@ -185,7 +185,6 @@ public class NotebookSession implements Serializable {
     }
 
 
-
     private synchronized Long nextDatasetId() {
         lastDatasetId++;
         return lastDatasetId;
@@ -226,9 +225,12 @@ public class NotebookSession implements Serializable {
 
 
     public void executeCell(String cellName) {
-        notebookService.executeCell(notebookInfo.getId(), cellName);
-        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookInfo.getId());
-        notebookModel.fromNotebookContents(notebookContents);
+        if (notebookModel.findCell(cellName).getCellType().getExecutable()) {
+            cellClient.executeCell(notebookInfo.getId(), cellName);
+        }
     }
 
+    public CellType findCellType(String dropDataId) {
+        return cellClient.retrieveCellType(dropDataId);
+    }
 }

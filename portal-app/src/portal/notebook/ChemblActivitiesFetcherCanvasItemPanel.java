@@ -82,21 +82,13 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel<Chem
         outputVariableModel.setValue(null);
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());
+        notebookSession.reloadNotebook();
     }
 
 
     class ModelObject implements Serializable {
-        private VariableModel inputVariable;
         private String assayId;
         private String prefix;
-
-        public VariableModel getInputVariable() {
-            return inputVariable;
-        }
-
-        public void setInputVariable(VariableModel inputVariable) {
-            this.inputVariable = inputVariable;
-        }
 
         public String getPrefix() {
             return prefix;

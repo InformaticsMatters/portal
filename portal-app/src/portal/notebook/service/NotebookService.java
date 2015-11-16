@@ -3,11 +3,10 @@ package portal.notebook.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import portal.notebook.api.CellExecutionContext;
 import portal.notebook.api.VariableType;
 import toolkit.services.PU;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.*;
@@ -17,16 +16,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-@ApplicationScoped
+@RequestScoped
 public class NotebookService {
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
     private EntityManager entityManager;
-    @Inject
-    private CellHandlerProvider cellHandlerProvider;
-    @Inject
-    private CellExecutionContext cellExecutionContext;
-
 
     public List<NotebookInfo> listNotebookInfo() {
         List<NotebookInfo> list = new ArrayList<>();
@@ -50,6 +44,7 @@ public class NotebookService {
     public NotebookContents retrieveNotebookContents(Long id) {
         try {
             Notebook notebook = entityManager.find(Notebook.class, id);
+            entityManager.refresh(notebook);
             return NotebookContents.fromBytes(notebook.getData());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -80,14 +75,6 @@ public class NotebookService {
         notebookHistory.setRevisionDate(new Date());
         notebookHistory.setRevisionTime(new Date());
         entityManager.persist(notebookHistory);
-    }
-
-    public void executeCell(Long notebookId, String cellName) {
-        NotebookContents notebookContents = retrieveNotebookContents(notebookId);
-        Cell cell = notebookContents.findCell(cellName);
-        cellExecutionContext.setNotebookId(notebookId);
-        cellExecutionContext.setCellName(cellName);
-        cellHandlerProvider.getCellHandler(cell.getCellType()).execute(cellName);
     }
 
     public List<MoleculeObject> squonkDatasetAsMolecules(Long notebookId, String cellName, String variableName) {

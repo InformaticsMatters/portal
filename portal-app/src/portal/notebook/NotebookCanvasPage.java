@@ -53,7 +53,7 @@ public class NotebookCanvasPage extends WebPage {
     private AjaxLink cellsToggle;
     private AjaxLink canvasToggle;
 
-    private NotebookCellDescriptorsPanel notebookCellDescriptorsPanel;
+    private NotebookCellTypesPanel notebookCellTypesPanel;
     private WebMarkupContainer plumbContainer;
 
     private ListView<CellModel> canvasItemRepeater;
@@ -112,9 +112,9 @@ public class NotebookCanvasPage extends WebPage {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-        notebookCellDescriptorsPanel = new NotebookCellDescriptorsPanel("descriptors");
-        add(notebookCellDescriptorsPanel);
-        notebookCellDescriptorsPanel.setOutputMarkupPlaceholderTag(true);
+        notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
+        add(notebookCellTypesPanel);
+        notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
 
         plumbContainer = new WebMarkupContainer("plumbContainer");
         plumbContainer.setOutputMarkupId(true);
@@ -215,7 +215,7 @@ public class NotebookCanvasPage extends WebPage {
 
         logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-        CellType cellType = CellType.valueOf(dropDataId);
+        CellType cellType = notebookSession.findCellType(dropDataId);
         CellModel cellModel = notebookSession.addCell(cellType, Integer.parseInt(x), Integer.parseInt(y));
 
         NotebookModel notebookModel = notebookSession.getNotebookModel();
@@ -246,19 +246,19 @@ public class NotebookCanvasPage extends WebPage {
 
     private Panel createCanvasItemPanel(CellModel cellModel) {
         CellType cellType = cellModel.getCellType();
-        if (CellType.FILE_UPLOAD.equals(cellType)) {
+        if ("FileUpload".equals(cellType.getName())) {
             return new FileUploadCanvasItemPanel("item", (FileUploadCellModel) cellModel);
-        } else if (CellType.CODE.equals(cellType)) {
+        } else if ("Script".equals(cellType.getName())) {
             return new ScriptCanvasItemPanel("item", (ScriptCellModel) cellModel);
-        } else if (CellType.PROPERTY_CALCULATE.equals(cellType)) {
+        } else if ("PropertyCalculate".equals(cellType.getName())) {
             return new PropertyCalculateCanvasItemPanel("item", (PropertyCalculateCellModel) cellModel);
-        } else if (CellType.TABLE_DISPLAY.equals(cellType)) {
+        } else if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCanvasItemPanel("item", (TableDisplayCellModel) cellModel);
-        } else if (CellType.SAMPLE1.equals(cellType)) {
+        } else if ("Sample1".equals(cellType.getName())) {
             return new Sample1CanvasItemPanel("item", (Sample1CellModel) cellModel);
-        } else if (CellType.SAMPLE2.equals(cellType)) {
+        } else if ("Sample2".equals(cellType.getName())) {
             return new Sample2CanvasItemPanel("item", (Sample2CellModel) cellModel);
-        } else if (CellType.CHEMBLACTIVITIESFETCHER.equals(cellType)) {
+        } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
             return new ChemblActivitiesFetcherCanvasItemPanel("item", (ChemblActivitiesFetcherCellModel) cellModel);
         } else {
             return null;

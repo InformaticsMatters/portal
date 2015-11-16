@@ -5,7 +5,7 @@ import javax.enterprise.inject.Alternative;
 
 @SessionScoped
 @Alternative
-public class SessionCellExecutionClientConfig implements CellExecutionClientConfig {
+public class SessionCallbackClientConfig implements CallbackClientConfig {
     @Override
     public String getBaseUri() {
         return null;

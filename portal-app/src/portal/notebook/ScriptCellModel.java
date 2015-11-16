@@ -16,6 +16,10 @@ public class ScriptCellModel extends AbstractCellModel {
     private final List<VariableModel> inputVariableModelList = new ArrayList<>();
     private final List<String> outputVariableNameList = new ArrayList<>();
 
+    public ScriptCellModel(CellType cellType) {
+        super(cellType);
+    }
+
     public String getCode() {
         return code;
     }
@@ -38,11 +42,6 @@ public class ScriptCellModel extends AbstractCellModel {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
-    }
-
-    @Override
-    public CellType getCellType() {
-        return CellType.CODE;
     }
 
     @Override

@@ -2,26 +2,27 @@ package portal.notebook;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.notebook.api.CellType;
 
 import javax.inject.Inject;
 
 /**
  * @author simetrias
  */
-public class NotebookCellDescriptorPanel extends Panel {
+public class NotebookCellTypePanel extends Panel {
 
-    private final CellDescriptor cellDescriptor;
+    private final CellType cellType;
 
     @Inject
     private NotebookSession notebookSession;
 
-    public NotebookCellDescriptorPanel(String id, CellDescriptor cellDescriptor) {
+    public NotebookCellTypePanel(String id, CellType cellType) {
         super(id);
-        this.cellDescriptor = cellDescriptor;
+        this.cellType = cellType;
         addComponents();
     }
 
     private void addComponents() {
-        add(new Label("description", cellDescriptor.getDescription()));
+        add(new Label("description", cellType.getDescription()));
     }
 }

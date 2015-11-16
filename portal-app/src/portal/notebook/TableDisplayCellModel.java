@@ -11,9 +11,8 @@ public class TableDisplayCellModel extends AbstractCellModel {
     private static final Long serialVersionUID = 1l;
     private VariableModel inputVariableModel;
 
-    @Override
-    public CellType getCellType() {
-        return CellType.TABLE_DISPLAY;
+    public TableDisplayCellModel(CellType cellType) {
+        super(cellType);
     }
 
     @Override

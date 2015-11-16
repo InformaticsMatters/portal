@@ -130,7 +130,9 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void loadTableData() {
-        boolean assigned = getCellModel().getInputVariableModel() != null && getCellModel().getInputVariableModel().getValue() != null;
+        TableDisplayCellModel cellModel = getCellModel();
+        VariableModel variableModel = cellModel.getInputVariableModel();
+        boolean assigned = variableModel != null && variableModel.getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
             descriptor = new TableDisplayDatasetDescriptor(0l, "", 0);
@@ -139,14 +141,16 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private IDatasetDescriptor loadDescriptor() {
-        if (getCellModel().getInputVariableModel().getVariableType().equals(VariableType.FILE)) {
-            return notebookSession.loadDatasetFromFile(getCellModel().getInputVariableModel().getValue().toString());
-        } else if (getCellModel().getInputVariableModel().getVariableType().equals(VariableType.DATASET)) {
-            return notebookSession.loadDatasetFromSquonkDataset(getCellModel().getInputVariableModel());
-        } else if (getCellModel().getInputVariableModel().getValue() instanceof Strings) {
-            return notebookSession.createDatasetFromStrings((Strings) getCellModel().getInputVariableModel().getValue(), getCellModel().getInputVariableModel().getName());
-        } else if (getCellModel().getInputVariableModel().getValue() instanceof List) {
-            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>) getCellModel().getInputVariableModel().getValue(), getCellModel().getInputVariableModel().getName());
+        TableDisplayCellModel cellModel = getCellModel();
+        VariableModel variableModel = cellModel.getInputVariableModel();
+        if (variableModel.getVariableType().equals(VariableType.FILE)) {
+            return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());
+        } else if (variableModel.getVariableType().equals(VariableType.DATASET)) {
+            return notebookSession.loadDatasetFromSquonkDataset(variableModel);
+        } else if (variableModel.getValue() instanceof Strings) {
+            return notebookSession.createDatasetFromStrings((Strings) variableModel.getValue(), getCellModel().getInputVariableModel().getName());
+        } else if (variableModel.getValue() instanceof List) {
+            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>) variableModel.getValue(), getCellModel().getInputVariableModel().getName());
         } else {
             return null;
         }

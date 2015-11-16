@@ -9,7 +9,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import portal.notebook.service.CalculatorsClient;
+import portal.notebook.api.CalculatorsClient;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -111,6 +111,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         outputVariableModel.setValue(form.getModelObject().getOutputFileName());
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());
+        notebookSession.reloadNotebook();
     }
 
 

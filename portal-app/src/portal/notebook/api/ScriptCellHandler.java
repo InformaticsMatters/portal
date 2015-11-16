@@ -1,45 +1,32 @@
-package portal.notebook.service;
+package portal.notebook.api;
 
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import portal.notebook.api.CellExecutionContext;
-import portal.notebook.api.CellType;
-import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
-import javax.script.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ScriptCellHandler implements CellHandler {
-    @Inject
-    private NotebookService notebookService;
     private static final Logger LOGGER = Logger.getLogger(ScriptCellHandler.class.getName());
     @Inject
-    private CellExecutionContext cellExecutionContext;
+    private CallbackContext callbackContext;
 
     @Override
-    public Cell createCell() {
-        Cell cell = new Cell();
-        cell.setCellType(CellType.CODE);
-        Variable variable = new Variable();
-        variable.setProducerCell(cell);
-        variable.setName("outcome");
-        variable.setVariableType(VariableType.VALUE);
-        cell.getOutputVariableList().add(variable);
-        return cell;
+    public boolean handles(CellType cellType) {
+        return "Script".equals(cellType.getName());
     }
+
 
     @Override
     public void execute(String cellName) {
-        NotebookContents notebookContents = notebookService.retrieveNotebookContents(cellExecutionContext.getNotebookId());
+        /**
+         NotebookContents notebookContents = notebookService.retrieveNotebookContents(callbackContext.getNotebookId());
         Cell cell = notebookContents.findCell(cellName);
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("Groovy");
         Bindings bindings = engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
-        /**/
         cell.getInputVariableList().clear();
         for (Cell other : notebookContents.getCellList()) {
             if (other != cell) {
@@ -61,7 +48,8 @@ public class ScriptCellHandler implements CellHandler {
             LOGGER.log(Level.WARNING, se.getMessage());
             cell.getPropertyMap().put("errorMssage", se.getMessage());
         }
-        notebookService.storeNotebookContents(cellExecutionContext.getNotebookId(), notebookContents);
+         notebookService.storeNotebookContents(callbackContext.getNotebookId(), notebookContents);
+         **/
     }
 
     private Object scriptToVm(Object o) {
@@ -80,8 +68,4 @@ public class ScriptCellHandler implements CellHandler {
         }
     }
 
-    @Override
-    public boolean handles(CellType cellType) {
-        return cellType.equals(CellType.CODE);
-    }
 }
