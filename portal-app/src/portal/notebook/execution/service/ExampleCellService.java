@@ -4,10 +4,7 @@ import portal.notebook.execution.api.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +105,7 @@ public class ExampleCellService {
 
     @Path("executeCell")
     @POST
-    public void executeCell(Long notebookId, String cellName) {
+    public void executeCell(@QueryParam("notebookId") Long notebookId, @QueryParam("cellName") String cellName) {
         callbackContext.setNotebookId(notebookId);
         CellDTO cell = callbackClient.retrieveCell(cellName);
         qndCellExecutorProvider.resolveCellHandler(cell.getCellType()).execute(cellName);
@@ -117,7 +114,7 @@ public class ExampleCellService {
     @Path("retrieveCellType")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public CellType retrieveCellType(String name) {
+    public CellType retrieveCellType(@QueryParam("name") String name) {
         for (CellType cellType : CELL_TYPE_DESCRIPTOR_LIST) {
             if (cellType.getName().equals(name)) {
                 return cellType;
