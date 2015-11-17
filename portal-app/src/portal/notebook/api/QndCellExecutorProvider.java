@@ -6,13 +6,13 @@ import java.io.Serializable;
 
 public class QndCellExecutorProvider implements Serializable {
     @Inject
-    private Instance<QnDCellExecutor> cellHandlerInstance;
+    private Instance<QndCellExecutor> cellHandlerInstance;
 
-    public QnDCellExecutor resolveCellHandler(CellType cellType) {
+    public QndCellExecutor resolveCellHandler(CellType cellType) {
 
-        for (QnDCellExecutor qnDCellExecutor : cellHandlerInstance) {
-            if (qnDCellExecutor.handles(cellType)) {
-                return qnDCellExecutor;
+        for (QndCellExecutor qndCellExecutor : cellHandlerInstance) {
+            if (qndCellExecutor.handles(cellType)) {
+                return qndCellExecutor;
             }
         }
         return null;
