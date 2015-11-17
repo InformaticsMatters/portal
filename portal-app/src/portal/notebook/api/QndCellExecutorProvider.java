@@ -4,7 +4,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.io.Serializable;
 
-public class QnDCellExecutorProvider implements Serializable {
+public class QndCellExecutorProvider implements Serializable {
     @Inject
     private Instance<QnDCellExecutor> cellHandlerInstance;
 
