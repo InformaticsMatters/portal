@@ -1,10 +1,13 @@
-package portal.notebook.api;
+package portal.notebook.execution.service;
+
+import portal.notebook.execution.api.CallbackClient;
+import portal.notebook.execution.api.CellDTO;
+import portal.notebook.execution.api.CellType;
+import portal.notebook.execution.api.VariableDTO;
 
 import javax.inject.Inject;
 
 public class Sample2QndCellExecutor implements QndCellExecutor {
-    @Inject
-    private CallbackContext callbackContext;
     @Inject
     private CallbackClient callbackClient;
 

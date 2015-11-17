@@ -1,11 +1,10 @@
-package portal.notebook.api;
+package portal.notebook.execution.api;
 
 import javax.enterprise.context.RequestScoped;
 
 @RequestScoped
 public class CallbackContext {
     private Long notebookId;
-    private String cellName;
 
     public Long getNotebookId() {
         return notebookId;
@@ -15,11 +14,4 @@ public class CallbackContext {
         this.notebookId = notebookId;
     }
 
-    public String getCellName() {
-        return cellName;
-    }
-
-    public void setCellName(String cellName) {
-        this.cellName = cellName;
-    }
 }

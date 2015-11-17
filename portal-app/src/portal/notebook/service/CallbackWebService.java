@@ -2,9 +2,9 @@ package portal.notebook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import portal.notebook.api.CellDTO;
-import portal.notebook.api.NotebookDTO;
-import portal.notebook.api.VariableDTO;
+import portal.notebook.execution.api.CellDTO;
+import portal.notebook.execution.api.NotebookDTO;
+import portal.notebook.execution.api.VariableDTO;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.ApplicationScoped;

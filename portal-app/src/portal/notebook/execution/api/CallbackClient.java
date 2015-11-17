@@ -1,4 +1,4 @@
-package portal.notebook.api;
+package portal.notebook.execution.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

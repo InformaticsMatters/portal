@@ -1,4 +1,4 @@
-package portal.notebook.api;
+package portal.notebook.execution.service;
 
 import com.im.lac.job.jobdef.StepDefinition;
 import com.im.lac.job.jobdef.StepDefinitionConstants;
@@ -6,6 +6,9 @@ import com.im.lac.types.MoleculeObject;
 import com.squonk.dataset.Dataset;
 import com.squonk.dataset.DatasetMetadata;
 import com.squonk.types.io.JsonHandler;
+import portal.notebook.execution.api.CallbackClient;
+import portal.notebook.execution.api.CellDTO;
+import portal.notebook.execution.api.CellType;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -22,8 +25,6 @@ import java.util.stream.Stream;
 public class ChemblActivitiesFetcherQndCellExecutor implements QndCellExecutor {
     @Inject
     private CallbackClient callbackClient;
-    @Inject
-    private CallbackContext callbackContext;
 
 
     @Override

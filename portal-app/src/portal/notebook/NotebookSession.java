@@ -2,8 +2,8 @@ package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
-import portal.notebook.api.CellClient;
-import portal.notebook.api.CellType;
+import portal.notebook.execution.api.CellClient;
+import portal.notebook.execution.api.CellType;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
 

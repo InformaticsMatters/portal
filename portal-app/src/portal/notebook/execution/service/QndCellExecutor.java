@@ -1,4 +1,6 @@
-package portal.notebook.api;
+package portal.notebook.execution.service;
+
+import portal.notebook.execution.api.CellType;
 
 import javax.enterprise.context.ApplicationScoped;
 

@@ -1,9 +1,9 @@
 package portal.notebook.service;
 
-import portal.notebook.api.CellClient;
-import portal.notebook.api.CellDTO;
-import portal.notebook.api.NotebookDTO;
-import portal.notebook.api.VariableDTO;
+import portal.notebook.execution.api.CellClient;
+import portal.notebook.execution.api.CellDTO;
+import portal.notebook.execution.api.NotebookDTO;
+import portal.notebook.execution.api.VariableDTO;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 

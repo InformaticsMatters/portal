@@ -1,6 +1,6 @@
 package portal.notebook;
 
-import portal.notebook.api.CellType;
+import portal.notebook.execution.api.CellType;
 
 import java.util.ArrayList;
 import java.util.Collections;

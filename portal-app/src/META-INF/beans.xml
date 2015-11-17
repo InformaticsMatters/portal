@@ -1,8 +1,8 @@
 <beans>
     <alternatives>
         <class>portal.notebook.service.IdeDerbyNotebookConfig</class>
-        <class>portal.notebook.api.DefaultCallbackClientConfig</class>
-        <class>portal.notebook.api.MockCellClient</class>
+        <class>portal.notebook.execution.api.DefaultCellClientConfig</class>
+        <class>portal.notebook.execution.api.DefaultCallbackClientConfig</class>
     </alternatives>
     <interceptors>
         <class>portal.notebook.NotebookTransactionalInterceptor</class>

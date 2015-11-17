@@ -1,8 +1,8 @@
 package portal.notebook.service;
 
 import com.sun.jersey.core.util.MultivaluedMapImpl;
-import portal.notebook.api.CallbackClient;
-import portal.notebook.api.NotebookDTO;
+import portal.notebook.execution.api.CallbackClient;
+import portal.notebook.execution.api.NotebookDTO;
 import toolkit.services.AbstractServiceClient;
 
 import javax.ws.rs.core.MultivaluedMap;

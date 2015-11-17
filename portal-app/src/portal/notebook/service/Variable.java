@@ -1,6 +1,6 @@
 package portal.notebook.service;
 
-import portal.notebook.api.VariableType;
+import portal.notebook.execution.api.VariableType;
 
 import java.io.Serializable;
 

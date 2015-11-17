@@ -1,17 +1,15 @@
-package portal.notebook.api;
+package portal.notebook.execution.service;
 
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import portal.notebook.execution.api.CellType;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
 
 public class ScriptQndCellExecutor implements QndCellExecutor {
     private static final Logger LOGGER = Logger.getLogger(ScriptQndCellExecutor.class.getName());
-    @Inject
-    private CallbackContext callbackContext;
 
     @Override
     public boolean handles(CellType cellType) {

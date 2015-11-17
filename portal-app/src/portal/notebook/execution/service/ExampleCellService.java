@@ -1,21 +1,27 @@
-package portal.notebook.api;
+package portal.notebook.execution.service;
 
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.Alternative;
+import portal.notebook.execution.api.*;
+
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 
-@Alternative
-@SessionScoped
-public class MockCellClient implements CellClient {
+@ApplicationScoped
+@Path("cell")
+public class ExampleCellService {
     private static final List<CellType> CELL_TYPE_DESCRIPTOR_LIST = createDescriptors();
+    @Inject
+    private QndCellExecutorProvider qndCellExecutorProvider;
     @Inject
     private CallbackClient callbackClient;
     @Inject
     private CallbackContext callbackContext;
-    @Inject
-    private QndCellExecutorProvider qnDCellExecutorProvider;
 
     private static List<CellType> createDescriptors() {
         List<CellType> list = new ArrayList<>();
@@ -93,19 +99,24 @@ public class MockCellClient implements CellClient {
         return list;
     }
 
-    @Override
+    @Path("listCellType")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public List<CellType> listCellType() {
         return CELL_TYPE_DESCRIPTOR_LIST;
     }
 
-    @Override
+    @Path("executeCell")
+    @POST
     public void executeCell(Long notebookId, String cellName) {
         callbackContext.setNotebookId(notebookId);
         CellDTO cell = callbackClient.retrieveCell(cellName);
-        qnDCellExecutorProvider.resolveCellHandler(cell.getCellType()).execute(cellName);
+        qndCellExecutorProvider.resolveCellHandler(cell.getCellType()).execute(cellName);
     }
 
-    @Override
+    @Path("retriveCellType")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public CellType retrieveCellType(String name) {
         for (CellType cellType : CELL_TYPE_DESCRIPTOR_LIST) {
             if (cellType.getName().equals(name)) {

@@ -9,7 +9,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import portal.dataset.IDatasetDescriptor;
-import portal.notebook.api.VariableType;
+import portal.notebook.execution.api.VariableType;
 import portal.notebook.service.Strings;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 

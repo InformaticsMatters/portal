@@ -1,4 +1,4 @@
-package portal.notebook.api;
+package portal.notebook.execution.api;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

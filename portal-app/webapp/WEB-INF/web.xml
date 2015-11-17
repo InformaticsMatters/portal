@@ -9,7 +9,7 @@
         <servlet-class>toolkit.jersey.CDIJerseyServlet</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>portal.notebook</param-value>
+            <param-value>portal.notebook,portal.notebook.service,portal.notebook.execution.service</param-value>
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
