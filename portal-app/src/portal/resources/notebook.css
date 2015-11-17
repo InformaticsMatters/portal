@@ -126,4 +126,11 @@ div.imxt-vista div.imxt-body-container1 {
     overflow: auto;
     padding: 10px;
     width: 500px;
+    min-width: 325px!important;
+    min-height: 300px!important;
+}
+
+div.ui-resizable-handle.ui-resizable-e,
+div.ui-resizable-handle.ui-resizable-s {
+    display: none!important;
 }
