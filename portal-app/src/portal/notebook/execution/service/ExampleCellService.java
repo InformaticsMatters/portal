@@ -114,7 +114,7 @@ public class ExampleCellService {
         qndCellExecutorProvider.resolveCellHandler(cell.getCellType()).execute(cellName);
     }
 
-    @Path("retriveCellType")
+    @Path("retrieveCellType")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public CellType retrieveCellType(String name) {
