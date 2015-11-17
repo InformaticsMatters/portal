@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PropertyCalculateQndCellExecutor implements QndCellExecutor {
+public class PropertyCalculateQnxCellExecutor implements QnxCellExecutor {
     @Inject
     private CalculatorsClient calculatorsClient;
     @Inject

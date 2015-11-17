@@ -3,7 +3,7 @@ package portal.notebook.api;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public interface QndCellExecutor {
+public interface QnxCellExecutor {
 
     void execute(String cellName);
     boolean handles(CellType cellType);

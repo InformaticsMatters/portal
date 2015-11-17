@@ -15,7 +15,7 @@ public class MockCellClient implements CellClient {
     @Inject
     private CallbackContext callbackContext;
     @Inject
-    private QndCellExecutorProvider qnDCellExecutorProvider;
+    private QnxCellExecutorProvider qnDCellExecutorProvider;
 
     private static List<CellType> createDescriptors() {
         List<CellType> list = new ArrayList<>();

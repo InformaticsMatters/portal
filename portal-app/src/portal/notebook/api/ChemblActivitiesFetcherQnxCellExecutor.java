@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  *
  * Created by timbo on 10/11/15.
  */
-public class ChemblActivitiesFetcherQndCellExecutor implements QndCellExecutor {
+public class ChemblActivitiesFetcherQnxCellExecutor implements QnxCellExecutor {
     @Inject
     private CallbackClient callbackClient;
     @Inject

@@ -2,7 +2,7 @@ package portal.notebook.api;
 
 import javax.inject.Inject;
 
-public class Sample2QndCellExecutor implements QndCellExecutor {
+public class Sample2QnxCellExecutor implements QnxCellExecutor {
     @Inject
     private CallbackContext callbackContext;
     @Inject

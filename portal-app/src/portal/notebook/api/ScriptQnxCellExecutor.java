@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-public class ScriptQndCellExecutor implements QndCellExecutor {
-    private static final Logger LOGGER = Logger.getLogger(ScriptQndCellExecutor.class.getName());
+public class ScriptQnxCellExecutor implements QnxCellExecutor {
+    private static final Logger LOGGER = Logger.getLogger(ScriptQnxCellExecutor.class.getName());
     @Inject
     private CallbackContext callbackContext;
 
