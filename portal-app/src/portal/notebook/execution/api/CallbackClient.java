@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
-import toolkit.services.AbstractServiceClient;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -18,7 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class CallbackClient extends AbstractServiceClient implements Serializable {
+public class CallbackClient extends AbstractClient implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(CallbackClient.class.getName());
     @Inject
     private CallbackClientConfig config;
