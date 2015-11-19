@@ -53,12 +53,14 @@
     white-space: nowrap;
 }
 
-.notebook-canvas-item-content .icon.remove {
+.notebook-canvas-item-content .icon.remove,
+.notebook-canvas-item-content .icon.checkmark {
     visibility: hidden;
     margin-right: 0 !important;
 }
 
-.notebook-canvas-item-content:hover .icon.remove {
+.notebook-canvas-item-content:hover .icon.remove,
+.notebook-canvas-item-content:hover .icon.checkmark {
     visibility: visible;
     margin-right: 0 !important;
 }

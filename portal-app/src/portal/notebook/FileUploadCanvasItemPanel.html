@@ -4,7 +4,8 @@
             <div class="name left floated">
                 <label wicket:id="cellName"/>
             </div>
-            <div style="text-align: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
+            <div style="float: right;"><a wicket:id="remove"><i class="icon red remove"></i></a></div>
+            <div style="text-align: right;"><a wicket:id="submit"><i class="icon green checkmark"></i></a></div>
         </div>
 
         <form wicket:id="form" class="ui form content">
@@ -21,11 +22,6 @@
                 </div>
             </div>
             <div style="clear: both;"></div>
-            <div class="actions">
-                <div wicket:id="submit" class="ui mini blue button">
-                    Upload
-                </div>
-            </div>
         </form>
 
     </div>

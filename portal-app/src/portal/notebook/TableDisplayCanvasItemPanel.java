@@ -45,6 +45,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
                 ajaxRequestTarget.add(getParent());
             }
         });
+
+
     }
 
     private void addInput() {
@@ -68,13 +70,14 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         };
         DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariable", dropDownModel);
         form.add(inputVariableChoice);
-        IndicatingAjaxSubmitLink calculateLink = new IndicatingAjaxSubmitLink("display") {
+
+        add(new IndicatingAjaxSubmitLink("display", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 displayAndSave();
             }
-        };
-        form.add(calculateLink);
+        });
+
         add(form);
     }
 

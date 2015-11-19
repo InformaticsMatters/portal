@@ -58,7 +58,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
 
         uploadForm.add(new Image("appender", AbstractDefaultAjaxBehavior.INDICATOR));
 
-        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit") {
+        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit", uploadForm) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -71,7 +71,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
             }
         };
         submit.setOutputMarkupId(true);
-        uploadForm.add(submit);
+        add(submit);
         uploadForm.setOutputMarkupId(true);
         add(uploadForm);
 
