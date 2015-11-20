@@ -6,7 +6,6 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import toolkit.derby.DerbyUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -41,7 +40,6 @@ public class WebContainer {
 
     public static void main(String[] args) {
         try {
-            DerbyUtils.startDerbyServer();
             WebContainer server = new WebContainer();
             server.start();
         } catch (Throwable t) {

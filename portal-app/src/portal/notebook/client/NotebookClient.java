@@ -1,4 +1,4 @@
-package portal.notebook.service;
+package portal.notebook.client;
 
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import portal.notebook.execution.api.CallbackClient;
@@ -12,10 +12,15 @@ import java.util.logging.Logger;
 public class NotebookClient extends AbstractServiceClient implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(CallbackClient.class.getName());
 
-    public NotebookDTO retrieveNotebook(Long notebookId) {
+
+    public NotebookData retrieveNotebook(Long notebookId) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.add("notebookId", notebookId.toString());
-        return newResourceBuilder("/retrieveNotebook", queryParams).get(NotebookDTO.class);
+        return newResourceBuilder("/retrieveNotebook", queryParams).get(NotebookData.class);
+    }
+
+    public NotebookData storeNotebook(NotebookDTO notebookData) {
+        return newResourceBuilder("/storeNotebook").post(NotebookData.class, notebookData);
     }
 
     @Override

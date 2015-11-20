@@ -1,5 +1,7 @@
 package portal.notebook.service;
 
+import portal.notebook.client.NotebookInfo;
+
 import java.io.Serializable;
 
 public class StoreNotebookData implements Serializable {

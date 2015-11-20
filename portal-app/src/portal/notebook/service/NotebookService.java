@@ -3,6 +3,7 @@ package portal.notebook.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
+import portal.notebook.client.NotebookInfo;
 import portal.notebook.execution.api.VariableType;
 import toolkit.services.PU;
 

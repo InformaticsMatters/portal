@@ -1,9 +1,9 @@
 package portal.notebook.service;
 
+import portal.notebook.client.CellData;
+import portal.notebook.client.NotebookData;
+import portal.notebook.client.VariableData;
 import portal.notebook.execution.api.CellClient;
-import portal.notebook.execution.api.CellDTO;
-import portal.notebook.execution.api.NotebookDTO;
-import portal.notebook.execution.api.VariableDTO;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 
@@ -28,18 +28,18 @@ public class NotebookWebService {
     @Path("retrieveNotebook")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public NotebookDTO retrieveNotebook(@QueryParam("notebookId") Long notebookId) {
+    public NotebookData retrieveNotebook(@QueryParam("notebookId") Long notebookId) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookId);
-        NotebookDTO notebookDTO = new NotebookDTO();
+        NotebookData notebookDTO = new NotebookData();
         for (Cell cell : notebookContents.getCellList()) {
-            CellDTO cellDTO = new CellDTO();
+            CellData cellDTO = new CellData();
             cellDTO.setName(cell.getName());
             cellDTO.setCellType(cell.getCellType());
             for (Variable variable : cell.getOutputVariableList()) {
                 cellDTO.getOutputVariableNameList().add(variable.getName());
             }
             for (Variable variable : cell.getInputVariableList()) {
-                VariableDTO variableDTO = new VariableDTO();
+                VariableData variableDTO = new VariableData();
                 variableDTO.setName(variable.getName());
                 variableDTO.setProducerName(variable.getProducerCell().getName());
                 cellDTO.getInputVariableList().add(variableDTO);

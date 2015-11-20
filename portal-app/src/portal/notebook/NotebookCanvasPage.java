@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PortalHomePage;
+import portal.notebook.client.NotebookInfo;
 import portal.notebook.execution.api.CellType;
-import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

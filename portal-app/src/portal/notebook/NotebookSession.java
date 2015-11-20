@@ -2,10 +2,10 @@ package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
+import portal.notebook.client.NotebookInfo;
 import portal.notebook.execution.api.CellClient;
 import portal.notebook.execution.api.CellType;
 import portal.notebook.service.*;
-import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.util.*;
 
 @SessionScoped
-@Transactional
 public class NotebookSession implements Serializable {
 
     private final Map<Long, Map<UUID, MoleculeObject>> fileObjectsMap = new HashMap<>();
@@ -60,10 +59,6 @@ public class NotebookSession implements Serializable {
         loadNotebook(notebookInfo.getId());
     }
 
-    public NotebookInfo getNotebookInfo() {
-        return notebookInfo;
-    }
-
     public NotebookModel getNotebookModel() {
         return notebookModel;
     }
@@ -92,7 +87,7 @@ public class NotebookSession implements Serializable {
         return cellModel;
     }
 
-    public List<CellType> listCellDescriptor() {
+    public List<CellType> listCellType() {
         return cellClient.listCellType();
     }
 

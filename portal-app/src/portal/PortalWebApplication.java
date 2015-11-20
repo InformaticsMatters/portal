@@ -8,6 +8,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import portal.notebook.NotebookCanvasPage;
 import portal.notebook.NotebookStructureImageResource;
 import portal.visualizers.DynamicStructureImageResource;
+import toolkit.derby.DerbyUtils;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
@@ -26,12 +27,23 @@ public class PortalWebApplication extends WebApplication {
     @Override
     protected void init() {
         super.init();
+        checkDerbyServer();
         BeanManager beanManager = CDI.current().getBeanManager();
         new CdiConfiguration(beanManager).setPropagation(ConversationPropagation.NONE).configure(this);
         getSharedResources().add("structureImageResource", new DynamicStructureImageResource());
         getSharedResources().add("notebookStructureImageResource", new NotebookStructureImageResource());
         mountPage("/nbcanvas", NotebookCanvasPage.class);
         configureSecurity();
+    }
+
+    private void checkDerbyServer() {
+        try {
+            if (System.getProperty("startDerbyServer", "false").equals("true")) {
+                DerbyUtils.startDerbyServer();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

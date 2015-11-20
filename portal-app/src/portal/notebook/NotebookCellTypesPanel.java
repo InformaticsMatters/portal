@@ -32,7 +32,7 @@ public class NotebookCellTypesPanel extends Panel {
         descriptorssContainer = new WebMarkupContainer("descriptorsContainer");
         descriptorssContainer.setOutputMarkupId(true);
 
-        List<CellType> cells = notebookSession.listCellDescriptor();
+        List<CellType> cells = notebookSession.listCellType();
         descriptorRepeater = new ListView<CellType>("descriptor", cells) {
 
             @Override
