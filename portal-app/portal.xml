@@ -320,7 +320,10 @@
         <copy file="${module.portal-app.basedir}/src/META-INF/beans.xml"
               tofile="${portal-app.output.dir}/META-INF/beans.xml" overwrite="true"/>
 
-        <copy todir="${portal-app.output.dir}">
+      <copy file="${module.portal-app.basedir}/src/META-INF/persistence.xml"
+            tofile="${portal-app.output.dir}/META-INF/persistence.xml" overwrite="true"/>
+
+      <copy todir="${portal-app.output.dir}">
             <fileset dir="${toolkit.output.dir}">
             </fileset>
         </copy>
