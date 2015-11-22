@@ -83,6 +83,8 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onCellRemoved(CellModel cellModel) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(plumbContainer);
+                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');");
+                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("addCellsPaletteDragAndDropSupport();");
             }
 
             @Override
