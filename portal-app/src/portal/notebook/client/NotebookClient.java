@@ -12,6 +12,17 @@ import java.util.logging.Logger;
 public class NotebookClient extends AbstractServiceClient implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(CallbackClient.class.getName());
 
+    private final String url;
+
+    public NotebookClient() {
+        String s = System.getenv("SERVICE_NOTEBOOK");
+        if (s == null) {
+            url = "http://localhost:8080/ws/notebook";
+        }   else {
+            url = s;
+        }
+    }
+
 
     public NotebookData retrieveNotebook(Long notebookId) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
@@ -25,6 +36,6 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
 
     @Override
     protected String getServiceBaseUri() {
-        return "http://localhost:8080/ws/notebook";
+        return url;
     }
 }
