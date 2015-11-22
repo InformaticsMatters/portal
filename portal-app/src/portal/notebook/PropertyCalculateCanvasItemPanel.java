@@ -106,13 +106,19 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     private void calculateAndSave() {
-        getCellModel().setInputVariableModel(form.getModelObject().getInputVariable());
-        getCellModel().setServiceName(form.getModelObject().getServiceName());
-        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "outputFile");
-        outputVariableModel.setValue(form.getModelObject().getOutputFileName());
-        notebookSession.storeNotebook();
-        notebookSession.executeCell(getCellModel().getName());
-        notebookSession.reloadNotebook();
+        if (isValidInput()) {
+            getCellModel().setInputVariableModel(form.getModelObject().getInputVariable());
+            getCellModel().setServiceName(form.getModelObject().getServiceName());
+            VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "outputFile");
+            outputVariableModel.setValue(form.getModelObject().getOutputFileName());
+            notebookSession.storeNotebook();
+            notebookSession.executeCell(getCellModel().getName());
+            notebookSession.reloadNotebook();
+        }
+    }
+
+    private boolean isValidInput() {
+        return form.getModelObject().getInputVariable() != null && form.getModelObject().getServiceName() != null;
     }
 
 
