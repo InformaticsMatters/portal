@@ -95,13 +95,13 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         form.add(serviceNameChoice);
         TextField<String> outputFileNameField = new TextField<String>("outputFileName");
         form.add(outputFileNameField);
-        IndicatingAjaxSubmitLink calculateLink = new IndicatingAjaxSubmitLink("calculate") {
+        IndicatingAjaxSubmitLink calculateLink = new IndicatingAjaxSubmitLink("submit", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 calculateAndSave();
             }
         };
-        form.add(calculateLink);
+        add(calculateLink);
         add(form);
     }
 

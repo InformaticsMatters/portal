@@ -3,15 +3,14 @@ package portal.notebook;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
-import javax.script.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,7 +76,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
         CodeModel modelObject = new CodeModel();
         modelObject.setCode(getCellModel().getCode());
         TextArea<String> codeArea = new TextArea<String>("code");
-        AjaxSubmitLink runLink = new AjaxSubmitLink("run") {
+        IndicatingAjaxSubmitLink runLink = new IndicatingAjaxSubmitLink("submit", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -86,7 +85,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
         };
         form.setModel(new CompoundPropertyModel<CodeModel>(modelObject));
         form.add(codeArea);
-        form.add(runLink);
+        add(runLink);
         add(form);
     }
 

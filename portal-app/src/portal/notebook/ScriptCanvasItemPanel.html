@@ -4,15 +4,13 @@
             <div class="name left floated">
                     <label wicket:id="cellName"/>
             </div>
-            <div style="text-align: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
+            <div style="float: right;"><a wicket:id="remove"><i class="icon red remove"></i></a></div>
+            <div style="text-align: right;"><a wicket:id="submit"><i class="icon green checkmark"></i></a></div>
         </div>
 
         <form wicket:id="form" class="ui form content">
             <div class="field">
                 <textarea name="code" wicket:id="code" rows="10" cols="80"/>
-            </div>
-            <div class="actions">
-                <input type="submit" wicket:id="run" value="Run" class="ui mini blue button"/>
             </div>
         </form>
         <div class="content">

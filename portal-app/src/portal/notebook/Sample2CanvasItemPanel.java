@@ -75,7 +75,7 @@ public class Sample2CanvasItemPanel extends CanvasItemPanel<Sample2CellModel> {
         form.add(resultField);
 
 
-        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit") {
+        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -88,7 +88,7 @@ public class Sample2CanvasItemPanel extends CanvasItemPanel<Sample2CellModel> {
             }
         };
         submit.setOutputMarkupId(true);
-        form.add(submit);
+        add(submit);
         form.setOutputMarkupId(true);
         add(form);
 
