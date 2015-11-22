@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
-import java.io.*;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,40 +79,20 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
     }
 
     private void processUpload(FileUpload upload) throws IOException {
-        uploadFile(upload.getClientFileName(), upload.getInputStream());
+        VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "file");
+        variableModel.setValue(uploadForm.getModelObject().getFileName());
+        getCellModel().setFileName(uploadForm.getModelObject().getFileName());
+        notebookSession.storeNotebook();
+        notebookSession.writeVariableFileContents(variableModel, upload.getClientFileName(), upload.getInputStream());
+        notebookSession.reloadNotebook();
         uploadForm.getModelObject().setFileName(upload.getClientFileName());
-        store();
-    }
 
-    private void uploadFile(String clientFileName, InputStream inputStream) {
-        try {
-            OutputStream outputStream = new FileOutputStream("files/" + clientFileName);
-            try {
-                byte[] buffer = new byte[4096];
-                int r = inputStream.read(buffer, 0, buffer.length);
-                while (r > -1) {
-                    outputStream.write(buffer, 0, r);
-                    r = inputStream.read(buffer);
-                }
-                outputStream.flush();
-            } finally {
-                outputStream.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void load() {
         uploadForm.getModelObject().setFileName(getCellModel().getFileName());
     }
 
-    private void store() {
-        notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "file").setValue(uploadForm.getModelObject().getFileName());
-        getCellModel().setFileName(uploadForm.getModelObject().getFileName());
-        notebookSession.storeNotebook();
-        notebookSession.reloadNotebook();
-    }
 
 
     private class UploadData implements Serializable {

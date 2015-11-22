@@ -10,6 +10,7 @@ import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
 
@@ -230,4 +231,11 @@ public class NotebookSession implements Serializable {
     public CellType findCellType(String dropDataId) {
         return cellClient.retrieveCellType(dropDataId);
     }
+
+    public void writeVariableFileContents(VariableModel variableModel, String clientFileName, InputStream inputStream) {
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookInfo.getId());
+        Variable variable = notebookContents.findVariable(variableModel.getProducer().getName(), variableModel.getName());
+        notebookService.storeStreamingContents(notebookInfo.getId(), variable, inputStream);
+    }
 }
+

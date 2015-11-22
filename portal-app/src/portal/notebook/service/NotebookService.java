@@ -119,7 +119,8 @@ public class NotebookService {
     }
 
     private List<MoleculeObject> parseTsv(String fileName) throws IOException {
-        File file = new File("files/" + fileName);
+        File parent = new File(System.getProperty("user.home"), "notebook-files");
+        File file = new File(parent, fileName);
         InputStream inputStream = new FileInputStream(file);
         try {
             List<MoleculeObject> list = new ArrayList<>();
@@ -150,7 +151,8 @@ public class NotebookService {
     }
 
     private List<MoleculeObject> parseJson(String fileName) throws Exception {
-        File file = new File("files/" + fileName);
+        File parent = new File(System.getProperty("user.home"), "notebook-files");
+        File file = new File(parent, fileName);
         InputStream inputStream = new FileInputStream(file);
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -180,13 +182,17 @@ public class NotebookService {
         }
     }
 
-    public File resolveContentsFile(Long notebookId, Variable variable) throws UnsupportedEncodingException {
+    public File resolveContentsFile(Long notebookId, Variable variable) throws Exception {
+        File parent = new File(System.getProperty("user.home"), "notebook-files");
+        if (!parent.exists() && !parent.mkdirs()) {
+            throw new Exception("Couled not create " + parent.getAbsolutePath());
+        }
         if (variable.getVariableType().equals(VariableType.FILE)) {
-            return new File("files/" + variable.getValue());
+            return new File(parent, variable.getValue().toString());
         }
         if (variable.getVariableType().equals(VariableType.STREAM) || variable.getVariableType().equals(VariableType.DATASET)) {
             String fileName = URLEncoder.encode(variable.getProducerCell().getName() + "_" + variable.getName(), "US-ASCII");
-            return new File("files/" + fileName);
+            return new File(parent, fileName);
         } else {
             return null;
         }
@@ -195,6 +201,7 @@ public class NotebookService {
     public void storeStreamingContents(Long notebookId, Variable variable, InputStream inputStream) {
         try {
             File file = resolveContentsFile(notebookId, variable);
+            System.out.println(file.getAbsolutePath());
             OutputStream outputStream = new FileOutputStream(file);
             try {
                 byte[] buffer = new byte[4096];
