@@ -16,6 +16,7 @@ public class Sample1CanvasItemPanel extends CanvasItemPanel<Sample1CellModel> {
     public Sample1CanvasItemPanel(String id, Sample1CellModel cell) {
         super(id, cell);
         addHeader();
+        setOutputMarkupId(true);
     }
 
     private void addHeader() {

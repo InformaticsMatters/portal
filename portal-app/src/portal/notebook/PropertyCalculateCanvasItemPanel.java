@@ -32,6 +32,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         addForm();
         addListeners();
         load();
+        setOutputMarkupId(true);
     }
 
     private void addHeader() {

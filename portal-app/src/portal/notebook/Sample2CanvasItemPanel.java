@@ -28,6 +28,7 @@ public class Sample2CanvasItemPanel extends CanvasItemPanel<Sample2CellModel> {
         addHeader();
         addForm();
         load();
+        setOutputMarkupId(true);
     }
 
     private void addHeader() {

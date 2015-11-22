@@ -33,6 +33,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
         addGrid();
         addListeners();
         load();
+        setOutputMarkupId(true);
     }
 
     private void addHeader() {

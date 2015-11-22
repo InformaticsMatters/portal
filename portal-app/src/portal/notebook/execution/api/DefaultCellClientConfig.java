@@ -6,6 +6,6 @@ import javax.enterprise.inject.Alternative;
 public class DefaultCellClientConfig implements CellClientConfig {
     @Override
     public String getServiceBaseUri() {
-        return "http://localhost:8080/core-services/ws/cell";
+        return "http://localhost:8080/ws/cell";
     }
 }

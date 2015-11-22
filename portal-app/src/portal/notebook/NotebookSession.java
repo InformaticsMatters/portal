@@ -232,7 +232,7 @@ public class NotebookSession implements Serializable {
         return cellClient.retrieveCellType(dropDataId);
     }
 
-    public void writeVariableFileContents(VariableModel variableModel, String clientFileName, InputStream inputStream) {
+    public void writeVariableFileContents(VariableModel variableModel, InputStream inputStream) {
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookInfo.getId());
         Variable variable = notebookContents.findVariable(variableModel.getProducer().getName(), variableModel.getName());
         notebookService.storeStreamingContents(notebookInfo.getId(), variable, inputStream);

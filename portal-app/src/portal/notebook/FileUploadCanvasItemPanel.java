@@ -15,6 +15,7 @@ import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
 
     public FileUploadCanvasItemPanel(String id, FileUploadCellModel cell) {
         super(id, cell);
+        setOutputMarkupId(true);
         addHeader();
         addForm();
         load();
@@ -79,11 +81,13 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
     }
 
     private void processUpload(FileUpload upload) throws IOException {
+        String fileName = upload.getClientFileName();
+        InputStream inputStream = upload.getInputStream();
         VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "file");
-        variableModel.setValue(uploadForm.getModelObject().getFileName());
-        getCellModel().setFileName(uploadForm.getModelObject().getFileName());
+        variableModel.setValue(fileName);
+        getCellModel().setFileName(fileName);
         notebookSession.storeNotebook();
-        notebookSession.writeVariableFileContents(variableModel, upload.getClientFileName(), upload.getInputStream());
+        notebookSession.writeVariableFileContents(variableModel, inputStream);
         notebookSession.reloadNotebook();
         uploadForm.getModelObject().setFileName(upload.getClientFileName());
 
