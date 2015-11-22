@@ -81,15 +81,19 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
     }
 
     private void processUpload(FileUpload upload) throws IOException {
-        String fileName = upload.getClientFileName();
-        InputStream inputStream = upload.getInputStream();
-        VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "file");
-        variableModel.setValue(fileName);
-        getCellModel().setFileName(fileName);
-        notebookSession.storeNotebook();
-        notebookSession.writeVariableFileContents(variableModel, inputStream);
-        notebookSession.reloadNotebook();
-        uploadForm.getModelObject().setFileName(upload.getClientFileName());
+        if (upload == null) {
+            uploadForm.getModelObject().setErrorMessage("No file chosen");
+        } else {
+            String fileName = upload.getClientFileName();
+            InputStream inputStream = upload.getInputStream();
+            VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "file");
+            variableModel.setValue(fileName);
+            getCellModel().setFileName(fileName);
+            notebookSession.storeNotebook();
+            notebookSession.writeVariableFileContents(variableModel, inputStream);
+            notebookSession.reloadNotebook();
+            uploadForm.getModelObject().setFileName(upload.getClientFileName());
+        }
 
     }
 
@@ -103,6 +107,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
 
         private String fileName;
         private List<FileUpload> fileInput = new ArrayList<FileUpload>();
+        private String errorMessage;
 
         public List<FileUpload> getFileInput() {
             return fileInput;
@@ -118,6 +123,14 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
 
         public void setFileName(String fileName) {
             this.fileName = fileName;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
         }
     }
 
