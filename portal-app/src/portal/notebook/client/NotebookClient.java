@@ -18,7 +18,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         String s = System.getenv("SERVICE_NOTEBOOK");
         if (s == null) {
             url = "http://localhost:8080/ws/notebook";
-        }   else {
+        } else {
             url = s;
         }
     }

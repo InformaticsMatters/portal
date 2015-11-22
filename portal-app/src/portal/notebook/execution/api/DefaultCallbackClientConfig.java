@@ -11,7 +11,7 @@ public class DefaultCallbackClientConfig implements CallbackClientConfig {
         String s = System.getenv("SERVICE_CALLBACK");
         if (s == null) {
             url = "http://localhost:8080/ws/callback";
-        }   else {
+        } else {
             url = s;
         }
     }
