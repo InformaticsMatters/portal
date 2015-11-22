@@ -61,17 +61,19 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel<Chem
 
     private void addForm() {
         form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
+        form.setOutputMarkupId(true);
         TextField<String> assayIdField = new TextField<String>("assayId");
         form.add(assayIdField);
         TextField<String> prefixField = new TextField<String>("prefix");
         form.add(prefixField);
-        IndicatingAjaxSubmitLink executeLink = new IndicatingAjaxSubmitLink("execute") {
+        IndicatingAjaxSubmitLink executeLink = new IndicatingAjaxSubmitLink("submit", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 execute();
             }
         };
-        form.add(executeLink);
+        executeLink.setOutputMarkupId(true);
+        add(executeLink);
         add(form);
     }
 
