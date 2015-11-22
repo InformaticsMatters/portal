@@ -42,7 +42,6 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
-                ajaxRequestTarget.add(getParent());
             }
         });
     }

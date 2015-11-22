@@ -42,7 +42,6 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
-                ajaxRequestTarget.add(PropertyCalculateCanvasItemPanel.this);
             }
         });
     }

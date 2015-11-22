@@ -38,7 +38,6 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
-                ajaxRequestTarget.add(getParent());
             }
         });
     }

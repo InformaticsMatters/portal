@@ -35,7 +35,6 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel<Chem
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
-                ajaxRequestTarget.add(ChemblActivitiesFetcherCanvasItemPanel.this);
             }
         });
     }

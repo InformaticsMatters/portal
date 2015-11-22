@@ -26,7 +26,6 @@ public class Sample1CanvasItemPanel extends CanvasItemPanel<Sample1CellModel> {
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 notebookSession.getNotebookModel().removeCell(getCellModel());
                 notebookSession.storeNotebook();
-                ajaxRequestTarget.add(getParent());
             }
         });
         notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "number").setValue(1);
