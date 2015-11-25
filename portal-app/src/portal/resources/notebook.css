@@ -1,3 +1,10 @@
+.notebookContainer {
+    display: flex;
+    flex: 3;
+    flex-direction: column;
+    overflow-x: auto;
+}
+
 .notebook-canvas-item {
     background: #ffffff;
     border: 1px solid #ddd;
