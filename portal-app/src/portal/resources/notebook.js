@@ -114,15 +114,23 @@ function makeCanvasItemPlumbDraggable(selector) {
     });
 
      $(".tableCell").resizable({
-     resize : function(event, ui) {
+        resize : function(event, ui) {
              jsPlumb.repaintEverything();
 
              var containerh = $('.tableCell').outerHeight();
              var upperh = $(".imxt-vista .imxt-body-container1").position().top;
              var h = containerh - upperh - 12;
              $(".imxt-vista .imxt-body-container1").css("height", h);
+         },
+         stop: function guardarHeight() {
+                 var height = $(".imxt-vista .imxt-body-container1").height();
          }
      });
+
+}
+
+function addTableLastHeight() {
+    $(".imxt-vista .imxt-body-container1").css("height", height);
 
 }
 

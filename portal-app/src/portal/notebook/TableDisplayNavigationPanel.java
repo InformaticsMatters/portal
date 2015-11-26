@@ -25,7 +25,9 @@ public class TableDisplayNavigationPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+
                 tableDisplayVisualizer.setCurrentPage(0);
+                ajaxRequestTarget.appendJavaScript("addTableLastHeight()");
             }
         });
 
@@ -34,6 +36,7 @@ public class TableDisplayNavigationPanel extends Panel {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 tableDisplayVisualizer.setCurrentPage(tableDisplayVisualizer.getPageCount() - 1);
+                ajaxRequestTarget.appendJavaScript("addTableLastHeight()");
             }
         });
 
@@ -45,6 +48,7 @@ public class TableDisplayNavigationPanel extends Panel {
                 AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
                 ajaxRequestTarget.add(TableDisplayNavigationPanel.this);
                 ajaxRequestTarget.add(tableDisplayVisualizer);
+                ajaxRequestTarget.appendJavaScript("addTableLastHeight()");
             }
         });
     }
