@@ -143,3 +143,26 @@ div.ui-resizable-handle.ui-resizable-e,
 div.ui-resizable-handle.ui-resizable-s {
     display: none!important;
 }
+
+.column.flex-column-2.right-column,
+.column.flex-column-1.right-column {
+    padding-top: 0!important;
+}
+
+.ui.segment.notebookContainer {
+    margin-top: 0!important;
+}
+
+.ui.segment.child-1.notebookCellsPanel {
+    margin-top: 15px!important;
+}
+
+.ui.menu.text.notebookMenu {
+    margin-bottom: 0px;
+    margin-top: 7px;
+    height: 14px;
+}
+
+.ui.menu.text.notebookMenu a {
+    font-size: 13px;
+}
