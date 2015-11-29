@@ -191,6 +191,7 @@ public class NotebookModel implements Serializable {
     }
 
     public static CellModel createCellModel(CellType cellType) {
+        System.out.println("Creating CellModel for " + cellType.getName());
         if ("FileUpload".equals(cellType.getName())) {
             return new FileUploadCellModel(cellType);
         } else if ("Script".equals(cellType.getName())) {
@@ -205,6 +206,10 @@ public class NotebookModel implements Serializable {
             return new Sample2CellModel(cellType);
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
             return new ChemblActivitiesFetcherCellModel(cellType);
+        } else if ("SdfUploader".equals(cellType.getName())) {
+            return new SDFUploadCellModel(cellType);
+        } else if ("DatasetMerger".equals(cellType.getName())) {
+            return new DatasetMergerCellModel(cellType);
         } else {
             return null;
         }

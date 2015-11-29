@@ -1,0 +1,30 @@
+<wicket:panel xmlns="http://www.w3.org/1999/html">
+    <div class="notebook-canvas-item-content">
+        <div class="titleBar">
+            <div class="name left floated">
+                <label wicket:id="cellName"/>
+            </div>
+            <div style="float: right;"><a wicket:id="remove"><i class="icon red remove"></i></a></div>
+            <div style="text-align: right;"><a wicket:id="submit"><i class="icon green checkmark"></i></a></div>
+        </div>
+        <form wicket:id="form" class="ui form content">
+            <div class="field">
+                <label>Merge field name</label>
+
+                <div class="ui small input">
+                    <input type="text" wicket:id="mergeFieldName"/>
+                </div>
+            </div>
+            <div class="field">
+                <label>When merge keep first</label>
+
+                <div class="ui small input">
+                    <input type="checkbox" wicket:id="keepFirst"/>
+                </div>
+            </div>
+            <!--div class="actions">
+                <div class="ui mini blue button" wicket:id="execute">Execute</div>
+            </div-->
+        </form>
+    </div>
+</wicket:panel>

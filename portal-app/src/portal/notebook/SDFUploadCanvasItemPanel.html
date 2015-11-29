@@ -1,0 +1,28 @@
+<wicket:panel>
+    <div class="notebook-canvas-item-content">
+        <div class="titleBar">
+            <div class="name left floated">
+                <label wicket:id="cellName"/>
+            </div>
+            <div style="float: right;"><a wicket:id="remove"><i class="icon red remove"></i></a></div>
+            <div style="text-align: right;"><a wicket:id="submit"><i class="icon green checkmark"></i></a></div>
+        </div>
+
+        <form wicket:id="form" class="ui form content">
+            <div class="field">
+                <label>File name</label>
+                <label wicket:id="fileName" />
+            </div>
+            <div>
+                <div class="left-floated fileUploadInput">
+                    <input wicket:id="fileInput" type="file"/>
+                </div>
+                <div class="right floated">
+                    <span id="appender" style="display: none;"><img wicket:id="appender"/></span>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+        </form>
+
+    </div>
+</wicket:panel>

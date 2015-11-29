@@ -248,6 +248,7 @@ public class NotebookCanvasPage extends WebPage {
 
     private Panel createCanvasItemPanel(CellModel cellModel) {
         CellType cellType = cellModel.getCellType();
+        logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("FileUpload".equals(cellType.getName())) {
             return new FileUploadCanvasItemPanel("item", (FileUploadCellModel) cellModel);
         } else if ("Script".equals(cellType.getName())) {
@@ -262,6 +263,10 @@ public class NotebookCanvasPage extends WebPage {
             return new Sample2CanvasItemPanel("item", (Sample2CellModel) cellModel);
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
             return new ChemblActivitiesFetcherCanvasItemPanel("item", (ChemblActivitiesFetcherCellModel) cellModel);
+        } else if ("SdfUploader".equals(cellType.getName())) {
+            return new SDFUploadCanvasItemPanel("item", (SDFUploadCellModel) cellModel);
+        } else if ("DatasetMerger".equals(cellType.getName())) {
+            return new DatasetMergerCanvasItemPanel("item", (DatasetMergerCellModel) cellModel);
         } else {
             return null;
         }
