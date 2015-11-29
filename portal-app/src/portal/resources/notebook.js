@@ -123,14 +123,14 @@ function makeCanvasItemPlumbDraggable(selector) {
              $(".imxt-vista .imxt-body-container1").css("height", h);
          },
          stop: function guardarHeight() {
-                 var height = $(".imxt-vista .imxt-body-container1").height();
+                 window.height = $(".imxt-vista .imxt-body-container1").height();
          }
      });
 
 }
 
 function addTableLastHeight() {
-    $(".imxt-vista .imxt-body-container1").css("height", height);
+    $(".imxt-vista .imxt-body-container1").css("height", window.height);
 
 }
 
