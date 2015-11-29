@@ -2,7 +2,7 @@ package portal.notebook.execution.service;
 
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import portal.notebook.execution.api.CellType;
+import com.squonk.notebook.api.CellType;
 
 import java.util.ArrayList;
 import java.util.Collection;

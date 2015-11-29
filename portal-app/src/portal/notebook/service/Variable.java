@@ -1,6 +1,6 @@
 package portal.notebook.service;
 
-import portal.notebook.execution.api.VariableType;
+import com.squonk.notebook.api.VariableType;
 
 import java.io.Serializable;
 

@@ -1,6 +1,6 @@
 package portal.notebook.client;
 
-import portal.notebook.execution.api.VariableType;
+import com.squonk.notebook.api.VariableType;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

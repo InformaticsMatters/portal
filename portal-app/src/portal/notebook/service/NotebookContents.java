@@ -1,8 +1,8 @@
 package portal.notebook.service;
 
 
-import portal.notebook.execution.api.CellType;
-import portal.notebook.execution.api.VariableDefinition;
+import com.squonk.notebook.api.CellType;
+import com.squonk.notebook.api.VariableDefinition;
 
 import java.io.*;
 import java.util.ArrayList;

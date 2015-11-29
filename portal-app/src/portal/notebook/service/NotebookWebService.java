@@ -3,7 +3,7 @@ package portal.notebook.service;
 import portal.notebook.client.CellData;
 import portal.notebook.client.NotebookData;
 import portal.notebook.client.VariableData;
-import portal.notebook.execution.api.CellClient;
+import com.squonk.notebook.client.CellClient;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 

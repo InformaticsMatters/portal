@@ -1,6 +1,6 @@
 package portal.notebook.execution.service;
 
-import portal.notebook.execution.api.CellType;
+import com.squonk.notebook.api.CellType;
 
 import javax.enterprise.context.ApplicationScoped;
 

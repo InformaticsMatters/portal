@@ -1,6 +1,11 @@
 package portal.notebook.execution.service;
 
-import portal.notebook.execution.api.*;
+import com.squonk.notebook.api.CellDTO;
+import com.squonk.notebook.api.CellType;
+import com.squonk.notebook.api.VariableDefinition;
+import com.squonk.notebook.api.VariableType;
+import com.squonk.notebook.client.CallbackClient;
+import com.squonk.notebook.client.CallbackContext;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -92,6 +97,16 @@ public class ExampleCellService {
         cellType.getOptionNameList().add("number2");
         cellType.setExecutable(Boolean.TRUE);
         list.add(cellType);
+
+        list.add(new CellType("SdfUploader", "SDF upload", true)
+                .withOutputVariable("FileContent", VariableType.FILE)
+                .withOutputVariable("Results", VariableType.DATASET)
+                .withOption("NameFieldName"));
+
+        list.add(new CellType("DatasetMerger", "Dataset merger", true)
+                .withOutputVariable("Results", VariableType.DATASET)
+                .withOption("MergeFieldName")
+                .withOption("KeepFirst"));
 
         return list;
     }

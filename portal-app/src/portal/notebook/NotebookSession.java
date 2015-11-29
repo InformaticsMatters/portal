@@ -3,8 +3,8 @@ package portal.notebook;
 import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
 import portal.notebook.client.NotebookInfo;
-import portal.notebook.execution.api.CellClient;
-import portal.notebook.execution.api.CellType;
+import com.squonk.notebook.client.CellClient;
+import com.squonk.notebook.api.CellType;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
 

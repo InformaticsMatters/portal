@@ -1,12 +1,11 @@
 package portal.notebook;
 
-import portal.notebook.execution.api.CellType;
+import com.squonk.notebook.api.CellType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DatasetMergerCellModel extends AbstractCellModel {

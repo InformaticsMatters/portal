@@ -1,6 +1,6 @@
 package portal.notebook.service;
 
-import portal.notebook.execution.api.CellType;
+import com.squonk.notebook.api.CellType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
