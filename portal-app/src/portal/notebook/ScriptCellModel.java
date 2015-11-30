@@ -1,6 +1,6 @@
 package portal.notebook;
 
-import portal.notebook.execution.api.CellType;
+import com.squonk.notebook.api.CellType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;

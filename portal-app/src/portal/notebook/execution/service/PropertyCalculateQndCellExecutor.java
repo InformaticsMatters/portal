@@ -3,7 +3,11 @@ package portal.notebook.execution.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import portal.notebook.execution.api.*;
+import com.squonk.notebook.api.CellDTO;
+import com.squonk.notebook.api.CellType;
+import com.squonk.notebook.api.NotebookDTO;
+import com.squonk.notebook.api.VariableDTO;
+import com.squonk.notebook.client.CallbackClient;
 
 import javax.inject.Inject;
 import java.io.*;
