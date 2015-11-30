@@ -266,7 +266,7 @@ public class NotebookCanvasPage extends WebPage {
         } else if ("SdfUploader".equals(cellType.getName())) {
             return new SDFUploadCanvasItemPanel("item", (SDFUploadCellModel) cellModel);
         } else if ("DatasetMerger".equals(cellType.getName())) {
-            return new TmpDatasetmergerCanvasItemPanel("item", (DatasetMergerCellModel) cellModel);
+            return new DatasetMergerCanvasItemPanel("item", (DatasetMergerCellModel) cellModel);
         } else {
             return null;
         }
