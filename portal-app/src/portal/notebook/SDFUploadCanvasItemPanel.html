@@ -5,7 +5,7 @@
                 <label wicket:id="cellName"/>
             </div>
             <div style="float: right;"><a wicket:id="remove"><i class="icon red remove"></i></a></div>
-            <div style="text-align: right;"><a wicket:id="submit"><i class="icon green checkmark"></i></a></div>
+            <div style="text-align: right;"><a wicket:id="execute"><i class="icon green checkmark"></i></a></div>
         </div>
 
         <form wicket:id="form" class="ui form content">
@@ -18,11 +18,14 @@
                     <input wicket:id="fileInput" type="file"/>
                 </div>
                 <div class="right floated">
-                    <span id="appender" style="display: none;"><img wicket:id="appender"/></span>
+                    <input type="submit" wicket:id="upload">
                 </div>
+            </div>
+            <div class="field">
+                <label>Name field name</label>
+                <input type="text" wicket:id="nameFieldName"/>
             </div>
             <div style="clear: both;"></div>
         </form>
-
     </div>
 </wicket:panel>

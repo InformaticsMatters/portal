@@ -13,18 +13,9 @@ public class SDFUploadCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
     private final List<String> outputVariableNameList = new ArrayList<>();
     private String nameFieldName;
-    private String fileName;
 
     public SDFUploadCellModel(CellType cellType) {
         super(cellType);
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
 

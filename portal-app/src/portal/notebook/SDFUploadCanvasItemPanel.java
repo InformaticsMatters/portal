@@ -1,13 +1,12 @@
 package portal.notebook;
 
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
     private static final Logger logger = LoggerFactory.getLogger(SDFUploadCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
-    private Form<UploadData> uploadForm;
+    private Form<UploadData> form;
     private FileUploadField fileUploadField;
 
     public SDFUploadCanvasItemPanel(String id, SDFUploadCellModel cell) {
@@ -48,64 +47,88 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
 
 
     private void addForm() {
-        uploadForm = new Form<>("form");
-        uploadForm.setOutputMarkupId(true);
+        form = new Form<>("form");
+        form.setOutputMarkupId(true);
 
-        uploadForm.setModel(new CompoundPropertyModel<>(new UploadData()));
-        Label fileNameField = new Label("fileName");
-        uploadForm.add(fileNameField);
+        form.setModel(new CompoundPropertyModel<>(new UploadData()));
+        Label fileNameLabel = new Label("fileName");
+        form.add(fileNameLabel);
 
         fileUploadField = new FileUploadField("fileInput");
-        uploadForm.add(fileUploadField);
+        form.add(fileUploadField);
 
-        uploadForm.add(new Image("appender", AbstractDefaultAjaxBehavior.INDICATOR));
+        TextField<String> nameFieldNameField = new TextField<String>("nameFieldName");
+        form.add(nameFieldNameField);
 
-        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit", uploadForm) {
+        IndicatingAjaxSubmitLink uploadLink = new IndicatingAjaxSubmitLink("upload", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     processUpload(fileUploadField.getFileUpload());
-                    target.add(uploadForm);
+                    target.add(SDFUploadCanvasItemPanel.this.form);
                 } catch (Throwable t) {
                     logger.error(null, t);
                 }
             }
         };
-        submit.setOutputMarkupId(true);
-        add(submit);
-        uploadForm.setOutputMarkupId(true);
-        add(uploadForm);
+        form.add(uploadLink);
+
+        IndicatingAjaxSubmitLink executeLink = new IndicatingAjaxSubmitLink("execute", form) {
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                try {
+                    execute();
+                    target.add(SDFUploadCanvasItemPanel.this.form);
+                } catch (Throwable t) {
+                    logger.error(null, t);
+                }
+            }
+        };
+        executeLink.setOutputMarkupId(true);
+        add(executeLink);
+        form.setOutputMarkupId(true);
+        add(form);
 
     }
 
     private void processUpload(FileUpload upload) throws IOException {
         if (upload == null) {
-            uploadForm.getModelObject().setErrorMessage("No file chosen");
+            form.getModelObject().setErrorMessage("No file chosen");
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "file");
+            VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "FileContent");
             variableModel.setValue(fileName);
-            getCellModel().setFileName(fileName);
             notebookSession.storeNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
             notebookSession.reloadNotebook();
-            uploadForm.getModelObject().setFileName(upload.getClientFileName());
+            form.getModelObject().setFileName(upload.getClientFileName());
         }
 
     }
 
-    private void load() {
-        uploadForm.getModelObject().setFileName(getCellModel().getFileName());
+    private void execute() throws IOException {
+        getCellModel().setNameFieldName(form.getModelObject().getNameFieldName());
+        notebookSession.storeNotebook();
+        notebookSession.executeCell(getCellModel().getName());
+        notebookSession.reloadNotebook();
+        form.getModelObject().setNameFieldName(getCellModel().getNameFieldName());
     }
 
+    private void load() {
+        VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "FileContent");
+        form.getModelObject().setFileName((String) variableModel.getValue());
+        form.getModelObject().setNameFieldName(getCellModel().getNameFieldName());
+    }
 
 
     private class UploadData implements Serializable {
 
         private String fileName;
         private List<FileUpload> fileInput = new ArrayList<FileUpload>();
+        private String nameFieldName;
         private String errorMessage;
 
         public List<FileUpload> getFileInput() {
@@ -130,6 +153,14 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
 
         public void setErrorMessage(String errorMessage) {
             this.errorMessage = errorMessage;
+        }
+
+        public String getNameFieldName() {
+            return nameFieldName;
+        }
+
+        public void setNameFieldName(String nameFieldName) {
+            this.nameFieldName = nameFieldName;
         }
     }
 
