@@ -20,6 +20,11 @@ public class ScriptCellModel extends AbstractCellModel {
         super(cellType);
     }
 
+    @Override
+    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
+
+    }
+
     public String getCode() {
         return code;
     }
@@ -71,6 +76,10 @@ public class ScriptCellModel extends AbstractCellModel {
         outcome = cell.getPropertyMap().get("outcome");
         code = (String)cell.getPropertyMap().get("code");
         errorMessage = (String)cell.getPropertyMap().get("errorMessage");
+    }
+
+    @Override
+    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
     }
 
 }

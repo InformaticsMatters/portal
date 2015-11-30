@@ -1,8 +1,8 @@
 package portal.notebook.execution.service;
 
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import com.squonk.notebook.api.CellType;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +25,7 @@ public class ScriptQndCellExecutor implements QndCellExecutor {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("Groovy");
         Bindings bindings = engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
-        cell.getInputVariableList().clear();
+         cell.getVariablebindingList().clear();
         for (Cell other : notebookContents.getCellList()) {
             if (other != cell) {
                 for (Variable variable : other.getOutputVariableList()) {

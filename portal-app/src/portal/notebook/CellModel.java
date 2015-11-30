@@ -21,5 +21,8 @@ public interface CellModel extends Serializable {
     void store(NotebookContents notebookContents, Cell cell);
     void load(NotebookModel notebookContents, Cell cell);
 
+    List<BindingTargetModel> getBindingTargetModelList();
+
+    void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel);
 
 }

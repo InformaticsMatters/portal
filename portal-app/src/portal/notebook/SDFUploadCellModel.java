@@ -18,6 +18,11 @@ public class SDFUploadCellModel extends AbstractCellModel {
         super(cellType);
     }
 
+    @Override
+    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
+
+    }
+
 
     @Override
     public List<VariableModel> getInputVariableModelList() {
@@ -44,6 +49,11 @@ public class SDFUploadCellModel extends AbstractCellModel {
             outputVariableNameList.add(variable.getName());
         }
         nameFieldName = (String) cell.getPropertyMap().get("NameFieldName");
+    }
+
+    @Override
+    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
+        throw new UnsupportedOperationException();
     }
 
     public String getNameFieldName() {

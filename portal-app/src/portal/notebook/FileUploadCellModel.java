@@ -20,6 +20,11 @@ public class FileUploadCellModel extends AbstractCellModel {
         super(cellType);
     }
 
+    @Override
+    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
+
+    }
+
 
     @Override
     public List<VariableModel> getInputVariableModelList() {
@@ -54,5 +59,10 @@ public class FileUploadCellModel extends AbstractCellModel {
             outputVariableNameList.add(variable.getName());
         }
         fileName = (String)cell.getPropertyMap().get("fileName");
+    }
+
+    @Override
+    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
+        throw new UnsupportedOperationException();
     }
 }

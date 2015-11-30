@@ -2,6 +2,7 @@ package portal.notebook;
 
 
 import com.squonk.notebook.api.CellType;
+import com.squonk.notebook.api.VariableType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;
@@ -18,6 +19,15 @@ public class PropertyCalculateCellModel extends AbstractCellModel {
 
     public PropertyCalculateCellModel(CellType cellType) {
         super(cellType);
+    }
+
+    @Override
+    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
+        BindingTargetModel bindingTargetModel = new BindingTargetModel();
+        bindingTargetModel.setDisplayName("Input file");
+        bindingTargetModel.setName("input");
+        bindingTargetModel.setVariableType(VariableType.FILE);
+        bindingTargetModelList.add(bindingTargetModel);
     }
 
     @Override
@@ -60,7 +70,14 @@ public class PropertyCalculateCellModel extends AbstractCellModel {
             outputVariableNameList.add(variable.getName());
         }
         Variable variable = cell.getInputVariableList().isEmpty() ? null : cell.getInputVariableList().get(0) ;
-        inputVariableModel = variable == null ? null : notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
+        inputVariableModel = variable == null ? null : notebookModel.findVariableModel(variable.getProducerCell().getName(), variable.getName());
         serviceName = (String)cell.getPropertyMap().get("serviceName");
+    }
+
+    @Override
+    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
+        if (bindingTargetModel.getName().equals("input")) {
+            inputVariableModel = sourceVariableModel;
+        }
     }
 }

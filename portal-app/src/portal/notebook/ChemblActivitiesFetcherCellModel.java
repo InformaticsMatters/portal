@@ -19,6 +19,10 @@ public class ChemblActivitiesFetcherCellModel extends AbstractCellModel {
         super(cellType);
     }
 
+    @Override
+    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
+
+    }
 
     @Override
     public List<VariableModel> getInputVariableModelList() {
@@ -47,6 +51,11 @@ public class ChemblActivitiesFetcherCellModel extends AbstractCellModel {
         }
         assayId = (String) cell.getPropertyMap().get("assayId");
         prefix = (String) cell.getPropertyMap().get("prefix");
+    }
+
+    @Override
+    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
+        throw new UnsupportedOperationException();
     }
 
     public String getAssayId() {

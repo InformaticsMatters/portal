@@ -5,15 +5,23 @@ import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public abstract class AbstractCellModel implements CellModel {
     private final CellType cellType;
+    private final List<BindingTargetModel> bindingTargetModelList = new ArrayList<>();
     private String name;
     private int positionLeft;
     private int positionTop;
 
     public AbstractCellModel(CellType cellType) {
         this.cellType = cellType;
+        createVariableTargets(bindingTargetModelList);
     }
+
+    protected abstract void createVariableTargets(List<BindingTargetModel> bindingTargetModelList);
 
     @Override
     public String getName() {
@@ -87,7 +95,7 @@ public abstract class AbstractCellModel implements CellModel {
     protected void loadInputVariables(NotebookModel notebookModel, Cell cell) {
         getInputVariableModelList().clear();
         for (Variable variable : cell.getInputVariableList())  {
-             VariableModel variableModel = notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
+            VariableModel variableModel = notebookModel.findVariableModel(variable.getProducerCell().getName(), variable.getName());
              getInputVariableModelList().add(variableModel);
         }
     }
@@ -104,5 +112,10 @@ public abstract class AbstractCellModel implements CellModel {
     @Override
     public CellType getCellType() {
         return cellType;
+    }
+
+    @Override
+    public List<BindingTargetModel> getBindingTargetModelList() {
+        return Collections.unmodifiableList(bindingTargetModelList);
     }
 }

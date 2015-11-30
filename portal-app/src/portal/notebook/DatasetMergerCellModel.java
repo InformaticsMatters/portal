@@ -1,6 +1,7 @@
 package portal.notebook;
 
 import com.squonk.notebook.api.CellType;
+import com.squonk.notebook.api.VariableType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;
@@ -19,6 +20,16 @@ public class DatasetMergerCellModel extends AbstractCellModel {
         super(cellType);
     }
 
+    @Override
+    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
+        for (int i = 0; i < inputVariableModels.length; i++) {
+            BindingTargetModel bindingTargetModel = new BindingTargetModel();
+            bindingTargetModel.setDisplayName("Dataset");
+            bindingTargetModel.setName("dataset-" + (i + 1));
+            bindingTargetModel.setVariableType(VariableType.DATASET);
+            bindingTargetModelList.add(bindingTargetModel);
+        }
+    }
 
     @Override
     public List<VariableModel> getInputVariableModelList() {
@@ -56,15 +67,22 @@ public class DatasetMergerCellModel extends AbstractCellModel {
             inputVariableModels[i] = null;
         }
 
-        List<Variable> vars = cell.getInputVariableList();
-        for (int i = 0; i < vars.size(); i++) {
-            Variable var = vars.get(i);
-            inputVariableModels[i] = var == null ? null : notebookModel.findVariable(var.getProducerCell().getName(), var.getName());
+        List<Variable> inputVariableList = cell.getInputVariableList();
+        for (int i = 0; i < inputVariableList.size(); i++) {
+            Variable variable = inputVariableList.get(i);
+            inputVariableModels[i] = variable == null ? null : notebookModel.findVariableModel(variable.getProducerCell().getName(), variable.getName());
         }
 
         mergeFieldName = (String) cell.getPropertyMap().get("MergeFieldName");
         Boolean b = (Boolean) cell.getPropertyMap().get("KeepFirst");
         keepFirst = (b == null ? true : b);
+    }
+
+    @Override
+    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
+        String targetName = bindingTargetModel.getName();
+        int targetIndex = Integer.parseInt(targetName.substring(targetName.indexOf('-') + 1));
+        inputVariableModels[targetIndex] = sourceVariableModel;
     }
 
     public String getMergeFieldName() {

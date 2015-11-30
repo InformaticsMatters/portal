@@ -28,7 +28,7 @@ public class Sample1CanvasItemPanel extends CanvasItemPanel<Sample1CellModel> {
                 notebookSession.storeNotebook();
             }
         });
-        notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "number").setValue(1);
+        notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "number").setValue(1);
         notebookSession.storeNotebook();
     }
 

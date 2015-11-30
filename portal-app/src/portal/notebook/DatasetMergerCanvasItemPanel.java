@@ -80,7 +80,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerC
     private void execute() {
         getCellModel().setKeepFirst(form.getModelObject().isKeepFirst());
         getCellModel().setMergeFieldName(form.getModelObject().getMergeFieldName());
-        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "results");
+        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "results");
         outputVariableModel.setValue(null);
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());

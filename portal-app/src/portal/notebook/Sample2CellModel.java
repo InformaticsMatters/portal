@@ -1,6 +1,7 @@
 package portal.notebook;
 
 import com.squonk.notebook.api.CellType;
+import com.squonk.notebook.api.VariableType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;
@@ -15,8 +16,18 @@ public class Sample2CellModel extends AbstractCellModel {
     private Integer num2;
     private VariableModel inputVariableModel;
 
+
     public Sample2CellModel(CellType cellType) {
         super(cellType);
+    }
+
+    @Override
+    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
+        BindingTargetModel bindingTargetModel = new BindingTargetModel();
+        bindingTargetModel.setDisplayName("Number 1");
+        bindingTargetModel.setName("num1");
+        bindingTargetModel.setVariableType(VariableType.VALUE);
+        bindingTargetModelList.add(bindingTargetModel);
     }
 
     @Override
@@ -44,7 +55,7 @@ public class Sample2CellModel extends AbstractCellModel {
         }
         num2 = (Integer) cell.getPropertyMap().get("number2");
         Variable variable = cell.getInputVariableList().isEmpty() ? null : cell.getInputVariableList().get(0);
-        inputVariableModel = variable == null ? null : notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
+        inputVariableModel = variable == null ? null : notebookModel.findVariableModel(variable.getProducerCell().getName(), variable.getName());
 
     }
 
@@ -64,4 +75,14 @@ public class Sample2CellModel extends AbstractCellModel {
     public void setInputVariableModel(VariableModel inputVariableModel) {
         this.inputVariableModel = inputVariableModel;
     }
+
+    @Override
+    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
+        if (bindingTargetModel.getName().equals("num1")) {
+            setInputVariableModel(sourceVariableModel);
+        } else {
+            throw new RuntimeException("Unknown target");
+        }
+    }
+
 }

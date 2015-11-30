@@ -1,6 +1,7 @@
 package portal.notebook;
 
 import com.squonk.notebook.api.CellType;
+import com.squonk.notebook.api.VariableType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.Variable;
 
@@ -13,6 +14,15 @@ public class TableDisplayCellModel extends AbstractCellModel {
 
     public TableDisplayCellModel(CellType cellType) {
         super(cellType);
+    }
+
+    @Override
+    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
+        BindingTargetModel bindingTargetModel = new BindingTargetModel();
+        bindingTargetModel.setDisplayName("Input file");
+        bindingTargetModel.setName("input");
+        bindingTargetModel.setVariableType(VariableType.FILE);
+        bindingTargetModelList.add(bindingTargetModel);
     }
 
     @Override
@@ -37,9 +47,17 @@ public class TableDisplayCellModel extends AbstractCellModel {
     public void load(NotebookModel notebookModel, Cell cell) {
         loadHeader(cell);
         Variable variable = cell.getInputVariableList().isEmpty() ? null : cell.getInputVariableList().get(0);
-        inputVariableModel = variable == null ? null : notebookModel.findVariable(variable.getProducerCell().getName(), variable.getName());
+        inputVariableModel = variable == null ? null : notebookModel.findVariableModel(variable.getProducerCell().getName(), variable.getName());
     }
 
+    @Override
+    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
+        if (bindingTargetModel.getName().equals("input")) {
+            setInputVariableModel(sourceVariableModel);
+        } else {
+            throw new RuntimeException("Unknown target");
+        }
+    }
 
 
 }

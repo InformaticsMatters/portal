@@ -85,7 +85,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "file");
+            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "file");
             variableModel.setValue(fileName);
             getCellModel().setFileName(fileName);
             notebookSession.storeNotebook();

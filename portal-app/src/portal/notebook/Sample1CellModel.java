@@ -16,6 +16,11 @@ public class Sample1CellModel extends AbstractCellModel {
     }
 
     @Override
+    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
+
+    }
+
+    @Override
     public List<VariableModel> getInputVariableModelList() {
         return inputVariableModelList;
     }
@@ -23,6 +28,11 @@ public class Sample1CellModel extends AbstractCellModel {
     @Override
     public List<String> getOutputVariableNameList() {
         return outputVariableNameList;
+    }
+
+    @Override
+    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
+        throw new UnsupportedOperationException();
     }
 
 }

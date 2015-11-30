@@ -79,7 +79,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel<Chem
     private void execute() {
         getCellModel().setAssayId(form.getModelObject().getAssayId());
         getCellModel().setPrefix(form.getModelObject().getPrefix());
-        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "results");
+        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "results");
         outputVariableModel.setValue(null);
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());

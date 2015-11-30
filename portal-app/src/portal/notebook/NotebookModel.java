@@ -80,7 +80,7 @@ public class NotebookModel implements Serializable {
         return Collections.unmodifiableList(variableModelList);
     }
 
-    public VariableModel findVariable(String producerName, String name) {
+    public VariableModel findVariableModel(String producerName, String name) {
         for (VariableModel variableModel : variableModelList) {
             if (variableModel.getProducer().getName().equals(producerName) && variableModel.getName().equals(name)) {
                 return variableModel;
@@ -149,7 +149,7 @@ public class NotebookModel implements Serializable {
             cell.setName(cellModel.getName());
             for (String variableName : cellModel.getOutputVariableNameList()) {
                 Variable variable = notebookContents.findVariable(cellModel.getName(), variableName);
-                VariableModel variableModel = findVariable(cellModel.getName(), variableName);
+                VariableModel variableModel = findVariableModel(cellModel.getName(), variableName);
                 variable.setValue(variableModel == null ? null : variableModel.getValue());
             }
             cellMap.put(cellModel.getName(), cell);
@@ -171,7 +171,7 @@ public class NotebookModel implements Serializable {
                 cellModelList.add(cellModel);
             }
             for (Variable variable : cell.getOutputVariableList()) {
-                VariableModel variableModel = findVariable(cell.getName(), variable.getName());
+                VariableModel variableModel = findVariableModel(cell.getName(), variable.getName());
                 if (variableModel == null) {
                     variableModel = new VariableModel();
                     variableModel.setName(variable.getName());

@@ -104,11 +104,11 @@ public class Sample2CanvasItemPanel extends CanvasItemPanel<Sample2CellModel> {
     private void load() {
         form.getModelObject().setInputVariable(getCellModel().getInputVariableModel());
         form.getModelObject().setNum2(getCellModel().getNum2());
-        form.getModelObject().setResult((Integer) notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "result").getValue());
+        form.getModelObject().setResult((Integer) notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "result").getValue());
     }
 
     private void store() {
-        notebookSession.getNotebookModel().findVariable(getCellModel().getName(), "result").setValue(null);
+        notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "result").setValue(null);
         getCellModel().setInputVariableModel(form.getModelObject().getInputVariable());
         getCellModel().setNum2(form.getModelObject().getNum2());
         notebookSession.storeNotebook();
