@@ -201,7 +201,6 @@ public class NotebookService {
     public void storeStreamingContents(Long notebookId, Variable variable, InputStream inputStream) {
         try {
             File file = resolveContentsFile(notebookId, variable);
-            System.out.println(file.getAbsolutePath());
             OutputStream outputStream = new FileOutputStream(file);
             try {
                 byte[] buffer = new byte[4096];

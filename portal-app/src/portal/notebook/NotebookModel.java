@@ -191,7 +191,6 @@ public class NotebookModel implements Serializable {
     }
 
     public static CellModel createCellModel(CellType cellType) {
-        System.out.println("Creating CellModel for " + cellType.getName());
         if ("FileUpload".equals(cellType.getName())) {
             return new FileUploadCellModel(cellType);
         } else if ("Script".equals(cellType.getName())) {
