@@ -14,13 +14,13 @@ import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
-public class DatasetMergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerCellModel> {
-    private static final Logger LOGGER = Logger.getLogger(DatasetMergerCanvasItemPanel.class.getName());
+public class TmpDatasetmergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerCellModel> {
+    private static final Logger LOGGER = Logger.getLogger(TmpDatasetmergerCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
     private Form<ModelObject> form;
 
-    public DatasetMergerCanvasItemPanel(String id, DatasetMergerCellModel cell) {
+    public TmpDatasetmergerCanvasItemPanel(String id, DatasetMergerCellModel cell) {
         super(id, cell);
         addHeader();
         addForm();
