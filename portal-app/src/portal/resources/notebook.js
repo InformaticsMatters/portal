@@ -106,13 +106,26 @@ function makeCanvasItemPlumbDraggable(selector) {
             if(borderRight == containerWidth) {
                $('#plumbContainer').css("width", newWidth);
             }
+
+            var positiony = params.pos[1];
+            var cellHeight = $('#' + params.el.id).outerHeight();
+            var borderBottom = positiony + cellHeight;
+
+            var containerHeight = $('#plumbContainer').outerHeight();
+            var newHeight = containerHeight + cellHeight;
+
+            if(borderBottom == containerHeight) {
+               $('#plumbContainer').css("height", newHeight);
+            }
         },
         stop: function(params) {
             var index = $('#' + params.el.id).index('.notebook-canvas-item');
             onNotebookCanvasItemDragged(index, params.pos[0], params.pos[1]);
         }
     });
+}
 
+function makeCanvasItemPlumbResizable() {
      $(".tableCell").resizable({
         resize : function(event, ui) {
              jsPlumb.repaintEverything();
