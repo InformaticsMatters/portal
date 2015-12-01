@@ -1,8 +1,9 @@
 .notebookContainer {
     display: flex;
-    flex: 3;
-    flex-direction: column;
-    overflow-x: auto;
+    flex: 1;
+    flex-direction: row;
+    overflow: auto;
+    height: 0px;
 }
 
 .notebook-canvas-item {
@@ -165,4 +166,14 @@ div.ui-resizable-handle.ui-resizable-s {
 
 .ui.menu.text.notebookMenu a {
     font-size: 13px;
+}
+
+.plumbContainer {
+    height: initial;
+}
+
+.innerNbContainer {
+    display: flex;
+    flex: 1;
+    overflow: auto;
 }

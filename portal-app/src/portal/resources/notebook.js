@@ -103,8 +103,9 @@ function makeCanvasItemPlumbDraggable(selector) {
             var containerWidth = $('#plumbContainer').outerWidth();
             var newWidth = containerWidth + cellWidth;
 
+
             if(borderRight == containerWidth) {
-               $('#plumbContainer').css("width", newWidth);
+               $('#plumbContainer').css("min-width", newWidth);
             }
 
             var positiony = params.pos[1];
@@ -113,6 +114,7 @@ function makeCanvasItemPlumbDraggable(selector) {
 
             var containerHeight = $('#plumbContainer').outerHeight();
             var newHeight = containerHeight + cellHeight;
+            var outerContainerHeight = $('.notebookContainer').outerHeight();
 
             if(borderBottom == containerHeight) {
                $('#plumbContainer').css("height", newHeight);
