@@ -3,8 +3,9 @@ package portal.notebook;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -17,16 +18,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel> {
-    private static final Logger logger = LoggerFactory.getLogger(SDFUploadCanvasItemPanel.class.getName());
+public class CSVUploadCanvasItemPanel extends CanvasItemPanel<CSVUploadCellModel> {
+    private static final Logger logger = LoggerFactory.getLogger(CSVUploadCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
 
-    public SDFUploadCanvasItemPanel(String id, SDFUploadCellModel cell) {
+    private static final List<String> CSV_FORMATS = Arrays.asList(new String[] {
+        "DEFAULT", "RFC4180", "EXCEL", "MYSQL", "TDF"
+    });
+
+    public CSVUploadCanvasItemPanel(String id, CSVUploadCellModel cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addHeader();
@@ -57,8 +63,11 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
         fileUploadField = new FileUploadField("fileInput");
         form.add(fileUploadField);
 
-        TextField<String> nameFieldNameField = new TextField<String>("nameFieldName");
-        form.add(nameFieldNameField);
+        DropDownChoice<String> csvFormatChoice = new DropDownChoice<String>("csvFormatType", CSV_FORMATS);
+        form.add(csvFormatChoice);
+
+        CheckBox firstLineIsHeaderField = new CheckBox("firstLineIsHeader");
+        form.add(firstLineIsHeaderField);
 
         IndicatingAjaxSubmitLink uploadLink = new IndicatingAjaxSubmitLink("upload", form) {
 
@@ -66,7 +75,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     processUpload(fileUploadField.getFileUpload());
-                    target.add(SDFUploadCanvasItemPanel.this.form);
+                    target.add(CSVUploadCanvasItemPanel.this.form);
                 } catch (Throwable t) {
                     logger.error(null, t);
                 }
@@ -80,7 +89,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     execute();
-                    target.add(SDFUploadCanvasItemPanel.this.form);
+                    target.add(CSVUploadCanvasItemPanel.this.form);
                 } catch (Throwable t) {
                     logger.error(null, t);
                 }
@@ -101,7 +110,6 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
             InputStream inputStream = upload.getInputStream();
             VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
             variableModel.setValue(fileName);
-            getCellModel().setNameFieldName(form.getModelObject().getNameFieldName());
             notebookSession.storeNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
             notebookSession.reloadNotebook();
@@ -111,18 +119,31 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
     }
 
     private void execute() throws IOException {
-        System.out.println("SDFUploadCanvasItemPanel.execute() " + form.getModelObject().getNameFieldName());
-        getCellModel().setNameFieldName(form.getModelObject().getNameFieldName());
+        System.out.println("File type is " + form.getModelObject().getCsvFormatType());
+        System.out.println("First line header " + form.getModelObject().isFirstLineIsHeader());
+        getCellModel().setCsvFormatType(form.getModelObject().getCsvFormatType());
+        getCellModel().setFirstLineIsHeader(form.getModelObject().isFirstLineIsHeader());
+
+        System.out.println("FTYP set? " + getCellModel().getCsvFormatType());
+        System.out.println("FLIH set? " + getCellModel().isFirstLineIsHeader());
+
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());
         notebookSession.reloadNotebook();
-        form.getModelObject().setNameFieldName(getCellModel().getNameFieldName());
+
+        System.out.println("FTYP set? " + getCellModel().getCsvFormatType());
+        System.out.println("FLIH set? " + getCellModel().isFirstLineIsHeader());
+
+
+        form.getModelObject().setCsvFormatType(getCellModel().getCsvFormatType());
+        form.getModelObject().setFirstLineIsHeader(getCellModel().isFirstLineIsHeader());
     }
 
     private void load() {
         VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
         form.getModelObject().setFileName((String) variableModel.getValue());
-        form.getModelObject().setNameFieldName(getCellModel().getNameFieldName());
+        form.getModelObject().setCsvFormatType(getCellModel().getCsvFormatType());
+        form.getModelObject().setFirstLineIsHeader(getCellModel().isFirstLineIsHeader());
     }
 
 
@@ -130,7 +151,8 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
 
         private String fileName;
         private List<FileUpload> fileInput = new ArrayList<FileUpload>();
-        private String nameFieldName;
+        private String csvFormatType;
+        private boolean firstLineIsHeader;
         private String errorMessage;
 
         public List<FileUpload> getFileInput() {
@@ -157,15 +179,22 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
             this.errorMessage = errorMessage;
         }
 
-        public String getNameFieldName() {
-            System.out.println("UploadData.getNameFieldName() -> " + nameFieldName);
-            return nameFieldName;
+        public String getCsvFormatType() {
+            return csvFormatType;
         }
 
-        public void setNameFieldName(String nameFieldName) {
-            System.out.println("UploadData.setNameFieldName() -> " + nameFieldName);
-            this.nameFieldName = nameFieldName;
+        public void setCsvFormatType(String csvFormatType) {
+            this.csvFormatType = csvFormatType;
         }
+
+        public boolean isFirstLineIsHeader() {
+            return firstLineIsHeader;
+        }
+
+        public void setFirstLineIsHeader(boolean firstLineIsHeader) {
+            this.firstLineIsHeader = firstLineIsHeader;
+        }
+
     }
 
 }

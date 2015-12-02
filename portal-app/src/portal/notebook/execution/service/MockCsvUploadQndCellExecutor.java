@@ -1,5 +1,6 @@
 package portal.notebook.execution.service;
 
+import com.im.lac.types.BasicObject;
 import com.im.lac.types.MoleculeObject;
 import com.squonk.dataset.Dataset;
 import com.squonk.dataset.DatasetMetadata;
@@ -12,41 +13,44 @@ import com.squonk.util.IOUtils;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
-public class SdfUploadQndCellExecutor implements QndCellExecutor {
+public class MockCsvUploadQndCellExecutor implements QndCellExecutor {
     @Inject
     private CallbackClient callbackClient;
 
     @Override
     public boolean handles(CellType cellType) {
-        return "SdfUploader".equals(cellType.getName());
+        return "CsvUploader".equals(cellType.getName());
     }
 
 
     @Override
     public void execute(String cellName) {
         CellDTO cell = callbackClient.retrieveCell(cellName);
-        String nameFieldName = (String) cell.getPropertyMap().get("NameFieldName");
-        System.out.println("NameFieldName: " + nameFieldName);
+
+        for (Map.Entry e : cell.getPropertyMap().entrySet()) {
+            System.out.println("CSV OPTS: " + e.getKey() + " -> " + e.getValue());
+        }
 
         try (InputStream is = callbackClient.readStreamValue(cellName, "FileContent")) {
             byte[] bytes = IOUtils.convertStreamToBytes(is, 1000);
             System.out.println("Read " + bytes.length + " bytes");
         } catch (IOException ioe) {
             ioe.printStackTrace();
-
         }
 
 
-        List<MoleculeObject> mols = new ArrayList<>();
-        mols.add(new MoleculeObject("C", "smiles", Collections.singletonMap("X", 1.1)));
-        mols.add(new MoleculeObject("CC", "smiles", Collections.singletonMap("X", 2.2)));
-        mols.add(new MoleculeObject("CCC", "smiles", Collections.singletonMap("X", 3.3)));
-        Dataset dataset =  new Dataset<>(MoleculeObject.class, mols);
+        List<BasicObject> mols = new ArrayList<>();
+        mols.add(new BasicObject(createMap()));
+        mols.add(new BasicObject(createMap()));
+        mols.add(new BasicObject(createMap()));
+        mols.add(new BasicObject(createMap()));
+        mols.add(new BasicObject(createMap()));
+        mols.add(new BasicObject(createMap()));
+
+        Dataset dataset =  new Dataset<>(BasicObject.class, mols);
 
         // write to Results
         try {
@@ -62,6 +66,15 @@ public class SdfUploadQndCellExecutor implements QndCellExecutor {
             throw new RuntimeException("Failed to write dataset", e);
         }
 
+    }
+
+    Map createMap() {
+        Random r = new Random();
+        Map map = new HashMap();
+        map.put("A", r.nextFloat());
+        map.put("B", r.nextInt());
+        map.put("C", "Hello " + r.nextInt());
+        return map;
     }
 
 }

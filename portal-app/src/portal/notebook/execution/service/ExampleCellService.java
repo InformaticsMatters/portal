@@ -6,6 +6,7 @@ import com.squonk.notebook.api.VariableDefinition;
 import com.squonk.notebook.api.VariableType;
 import com.squonk.notebook.client.CallbackClient;
 import com.squonk.notebook.client.CallbackContext;
+import portal.notebook.CSVUploadCellModel;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -102,6 +103,12 @@ public class ExampleCellService {
                 .withOutputVariable("FileContent", VariableType.FILE)
                 .withOutputVariable("Results", VariableType.DATASET)
                 .withOption("NameFieldName"));
+
+        list.add(new CellType("CsvUploader", "CSV upload", true)
+                .withOutputVariable("FileContent", VariableType.FILE)
+                .withOutputVariable("Results", VariableType.DATASET)
+                .withOption(CSVUploadCellModel.OPTION_FILE_TYPE)
+                .withOption(CSVUploadCellModel.OPTION_FIRST_LINE_IS_HEADER));
 
         list.add(new CellType("DatasetMerger", "Dataset merger", true)
                 .withOutputVariable("Results", VariableType.DATASET)
