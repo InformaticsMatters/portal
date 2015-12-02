@@ -104,7 +104,6 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
             getCellModel().setNameFieldName(form.getModelObject().getNameFieldName());
             notebookSession.storeNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
-            notebookSession.reloadNotebook();
             form.getModelObject().setFileName(upload.getClientFileName());
         }
 
