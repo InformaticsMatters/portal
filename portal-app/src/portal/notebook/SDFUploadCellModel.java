@@ -37,18 +37,21 @@ public class SDFUploadCellModel extends AbstractCellModel {
 
     @Override
     public void store(NotebookContents notebookContents, Cell cell) {
+        System.out.println("SDFUploadCellModel.store(): nameFieldName=" + nameFieldName + " | " + this);
         super.store(notebookContents, cell);
         cell.getPropertyMap().put("NameFieldName", nameFieldName);
     }
 
     @Override
     public void load(NotebookModel notebookModel, Cell cell) {
+        System.out.println("SDFUploadCellModel.load()");
         loadHeader(cell);
         outputVariableNameList.clear();
         for (Variable variable : cell.getOutputVariableList()) {
             outputVariableNameList.add(variable.getName());
         }
         nameFieldName = (String) cell.getPropertyMap().get("NameFieldName");
+        System.out.println("SDFUploadCellModel.load(): nameFieldName=" + nameFieldName);
     }
 
     @Override
@@ -57,11 +60,13 @@ public class SDFUploadCellModel extends AbstractCellModel {
     }
 
     public String getNameFieldName() {
+        System.out.println("SDFUploadCellModel.getNameFieldName() -> " + nameFieldName);
         return nameFieldName;
     }
 
-    public void setNameFieldName(String nameFieldName) {
-        this.nameFieldName = nameFieldName;
+    public void setNameFieldName(String name) {
+        System.out.println("SDFUploadCellModel.setNameFieldName() -> " + name + " | " + this);
+        this.nameFieldName = name;
     }
 
 }

@@ -267,6 +267,8 @@ public class NotebookCanvasPage extends WebPage {
             return new ChemblActivitiesFetcherCanvasItemPanel("item", (ChemblActivitiesFetcherCellModel) cellModel);
         } else if ("SdfUploader".equals(cellType.getName())) {
             return new SDFUploadCanvasItemPanel("item", (SDFUploadCellModel) cellModel);
+        } else if ("CsvUploader".equals(cellType.getName())) {
+            return new CSVUploadCanvasItemPanel("item", (CSVUploadCellModel) cellModel);
         } else if ("DatasetMerger".equals(cellType.getName())) {
             return new DatasetMergerCanvasItemPanel("item", (DatasetMergerCellModel) cellModel);
         } else {

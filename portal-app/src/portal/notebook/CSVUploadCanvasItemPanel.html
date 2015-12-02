@@ -1,0 +1,47 @@
+<wicket:panel>
+    <div class="notebook-canvas-item-content">
+        <div class="titleBar">
+            <div class="name left floated">
+                <label wicket:id="cellName"/>
+            </div>
+            <div style="float: right;"><a wicket:id="remove"><i class="icon red remove"></i></a></div>
+            <div style="text-align: right;"><a wicket:id="execute"><i class="icon green checkmark"></i></a></div>
+        </div>
+
+        <form wicket:id="form" class="ui form content">
+
+            <div class="field">
+                <label>File name</label>
+                <label wicket:id="fileName" />
+            </div>
+            <div>
+                <div class="left-floated fileUploadInput">
+                    <input wicket:id="fileInput" type="file"/>
+                </div>
+                <div class="right floated">
+                    <input type="submit" wicket:id="upload" class="ui tiny small blue" value="Upload"/>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>File type</label>
+                <select wicket:id="csvFormatType" class="ui small input" style="width: 150px;">
+                    <option value="DEFAULT">CSV (default)</option>
+                    <option value="RFC4180">CSV (RFC4180)</option>
+                    <option value="EXCEL">CSV (EXCEL)</option>
+                    <option value="MYSQL">CSV (MYSQL)</option>
+                    <option value="TDF">Tab delineated</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>First line is header</label>
+
+                <div class="ui small input">
+                    <input type="checkbox" wicket:id="firstLineIsHeader"/>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+        </form>
+    </div>
+</wicket:panel>

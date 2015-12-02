@@ -207,6 +207,8 @@ public class NotebookModel implements Serializable {
             return new ChemblActivitiesFetcherCellModel(cellType);
         } else if ("SdfUploader".equals(cellType.getName())) {
             return new SDFUploadCellModel(cellType);
+        } else if ("CsvUploader".equals(cellType.getName())) {
+            return new CSVUploadCellModel(cellType);
         } else if ("DatasetMerger".equals(cellType.getName())) {
             return new DatasetMergerCellModel(cellType);
         } else {
