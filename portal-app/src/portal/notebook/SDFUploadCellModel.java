@@ -20,11 +20,11 @@ public class SDFUploadCellModel extends AbstractCellModel {
 
 
     public String getNameFieldName() {
-        return (String) getOptionMap().get("NameFieldName");
+        return (String) getOptionMap().get("nameFieldName");
     }
 
     public void setNameFieldName(String nameFieldName) {
-        getOptionMap().put("NameFieldName", nameFieldName);
+        getOptionMap().put("nameFieldName", nameFieldName);
     }
 
 }

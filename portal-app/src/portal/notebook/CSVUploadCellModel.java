@@ -23,15 +23,15 @@ public class CSVUploadCellModel extends AbstractCellModel {
     }
 
 
-    public String getFileType() {
+    public String getCsvFormatType() {
         return (String) getOptionMap().get(OPTION_FILE_TYPE);
     }
 
-    public void setFileType(String fileType) {
+    public void setCsvFormatType(String fileType) {
         getOptionMap().put(OPTION_FILE_TYPE, fileType);
     }
 
-    public Boolean getFirstLineIsHeader() {
+    public Boolean isFirstLineIsHeader() {
         return (Boolean) getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER);
     }
 

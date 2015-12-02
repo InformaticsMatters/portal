@@ -112,38 +112,29 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel<CSVUploadCellModel
             variableModel.setValue(fileName);
             notebookSession.storeNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
-            notebookSession.reloadNotebook();
             form.getModelObject().setFileName(upload.getClientFileName());
         }
-
     }
 
     private void execute() throws IOException {
-        System.out.println("File type is " + form.getModelObject().getCsvFormatType());
-        System.out.println("First line header " + form.getModelObject().isFirstLineIsHeader());
-        getCellModel().setFileType(form.getModelObject().getCsvFormatType());
+        //System.out.println("File type is " + form.getModelObject().getCsvFormatType());
+        //System.out.println("First line header " + form.getModelObject().isFirstLineIsHeader());
+        getCellModel().setCsvFormatType(form.getModelObject().getCsvFormatType());
         getCellModel().setFirstLineIsHeader(form.getModelObject().isFirstLineIsHeader());
-
-        System.out.println("FTYP set? " + getCellModel().getFileType());
-        System.out.println("FLIH set? " + getCellModel().getFirstLineIsHeader());
 
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());
         notebookSession.reloadNotebook();
 
-        System.out.println("FTYP set? " + getCellModel().getFileType());
-        System.out.println("FLIH set? " + getCellModel().getFirstLineIsHeader());
-
-
-        form.getModelObject().setCsvFormatType(getCellModel().getFileType());
-        form.getModelObject().setFirstLineIsHeader(getCellModel().getFirstLineIsHeader());
+        form.getModelObject().setCsvFormatType(getCellModel().getCsvFormatType());
+        form.getModelObject().setFirstLineIsHeader(getCellModel().isFirstLineIsHeader());
     }
 
     private void load() {
         VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
         form.getModelObject().setFileName((String) variableModel.getValue());
-        form.getModelObject().setCsvFormatType(getCellModel().getFileType());
-        form.getModelObject().setFirstLineIsHeader(getCellModel().getFirstLineIsHeader());
+        form.getModelObject().setCsvFormatType(getCellModel().getCsvFormatType());
+        form.getModelObject().setFirstLineIsHeader(getCellModel().isFirstLineIsHeader());
     }
 
 
@@ -152,7 +143,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel<CSVUploadCellModel
         private String fileName;
         private List<FileUpload> fileInput = new ArrayList<FileUpload>();
         private String csvFormatType;
-        private boolean firstLineIsHeader;
+        private Boolean firstLineIsHeader;
         private String errorMessage;
 
         public List<FileUpload> getFileInput() {
@@ -187,11 +178,11 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel<CSVUploadCellModel
             this.csvFormatType = csvFormatType;
         }
 
-        public boolean isFirstLineIsHeader() {
+        public Boolean isFirstLineIsHeader() {
             return firstLineIsHeader;
         }
 
-        public void setFirstLineIsHeader(boolean firstLineIsHeader) {
+        public void setFirstLineIsHeader(Boolean firstLineIsHeader) {
             this.firstLineIsHeader = firstLineIsHeader;
         }
 

@@ -110,7 +110,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
     }
 
     private void execute() throws IOException {
-        System.out.println("SDFUploadCanvasItemPanel.execute() " + form.getModelObject().getNameFieldName());
+        //System.out.println("SDFUploadCanvasItemPanel.execute() " + form.getModelObject().getNameFieldName());
         getCellModel().setNameFieldName(form.getModelObject().getNameFieldName());
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());
@@ -157,12 +157,10 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
         }
 
         public String getNameFieldName() {
-            System.out.println("UploadData.getNameFieldName() -> " + nameFieldName);
             return nameFieldName;
         }
 
         public void setNameFieldName(String nameFieldName) {
-            System.out.println("UploadData.setNameFieldName() -> " + nameFieldName);
             this.nameFieldName = nameFieldName;
         }
     }
