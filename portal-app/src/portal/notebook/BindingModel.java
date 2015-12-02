@@ -2,7 +2,9 @@ package portal.notebook;
 
 import com.squonk.notebook.api.VariableType;
 
-public class BindingTargetModel {
+import java.io.Serializable;
+
+public class BindingModel implements Serializable {
     private String displayName;
     private String name;
     private VariableType variableType;

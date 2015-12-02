@@ -8,7 +8,6 @@ import com.squonk.notebook.api.CellType;
 import com.squonk.notebook.client.CallbackClient;
 import com.squonk.types.io.JsonHandler;
 import com.squonk.util.IOUtils;
-import portal.notebook.service.Variable;
 
 import javax.inject.Inject;
 import java.io.IOException;

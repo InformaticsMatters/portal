@@ -38,16 +38,19 @@ public class CallbackWebService {
             for (Variable variable : cell.getOutputVariableList()) {
                 cellDTO.getOutputVariableNameList().add(variable.getName());
             }
-            for (Variable variable : cell.getInputVariableList()) {
-                VariableDTO variableDTO = new VariableDTO();
-                variableDTO.setId(variable.getId());
-                variableDTO.setName(variable.getName());
-                variableDTO.setProducerName(variable.getProducerCell().getName());
-                variableDTO.setVariableType(variable.getVariableType());
-                variableDTO.setValue(variable.getValue());
-                cellDTO.getInputVariableList().add(variableDTO);
+            for (Binding binding : cell.getBindingList()) {
+                Variable variable = binding.getVariable();
+                if (variable != null) {
+                    VariableDTO variableDTO = new VariableDTO();
+                    variableDTO.setId(variable.getId());
+                    variableDTO.setName(variable.getName());
+                    variableDTO.setProducerName(variable.getProducerCell().getName());
+                    variableDTO.setVariableType(variable.getVariableType());
+                    variableDTO.setValue(variable.getValue());
+                    cellDTO.getInputVariableList().add(variableDTO);
+                }
             }
-            cellDTO.getPropertyMap().putAll(cell.getPropertyMap());
+            cellDTO.getPropertyMap().putAll(cell.getOptionMap());
             notebookDTO.getCellList().add(cellDTO);
         }
         return notebookDTO;

@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import com.squonk.notebook.api.VariableType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -61,10 +62,12 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     }
 
     private void load() {
-        form.getModelObject().setInputVariable(getCellModel().getInputVariableModel());
-        VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
-        if (variableModel != null) {
-            form.getModelObject().setOutputFileName((String) variableModel.getValue());
+        BindingModel bindingModel = getCellModel().getBindingModelList().isEmpty() ? null : getCellModel().getBindingModelList().get(0);
+        VariableModel variableModel = bindingModel == null ? null : bindingModel.getSourceVariableModel();
+        form.getModelObject().setInputVariableModel(variableModel);
+        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
+        if (outputVariableModel != null) {
+            form.getModelObject().setOutputFileName((String) outputVariableModel.getValue());
         }
         form.getModelObject().setServiceName(getCellModel().getServiceName());
     }
@@ -88,7 +91,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
             }
         };
-        DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariable", inputVariableModel);
+        DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariableModel", inputVariableModel);
         form.add(inputVariableChoice);
         DropDownChoice<String> serviceNameChoice = new DropDownChoice<String>("serviceName", Arrays.asList(CalculatorsClient.getServiceNames()));
         form.add(serviceNameChoice);
@@ -106,7 +109,8 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
     private void calculateAndSave() {
         if (isValidInput()) {
-            getCellModel().setInputVariableModel(form.getModelObject().getInputVariable());
+            checkBindings();
+            getCellModel().getBindingModelList().get(0).setSourceVariableModel(form.getModelObject().getInputVariableModel());
             getCellModel().setServiceName(form.getModelObject().getServiceName());
             VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
             outputVariableModel.setValue(form.getModelObject().getOutputFileName());
@@ -116,22 +120,32 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         }
     }
 
+    private void checkBindings() {
+        if (getCellModel().getBindingModelList().isEmpty()) {
+            BindingModel bindingModel = new BindingModel();
+            bindingModel.setDisplayName("Input file");
+            bindingModel.setName("input");
+            bindingModel.setVariableType(VariableType.FILE);
+            getCellModel().getBindingModelList().add(bindingModel);
+        }
+    }
+
     private boolean isValidInput() {
-        return form.getModelObject().getInputVariable() != null && form.getModelObject().getServiceName() != null;
+        return form.getModelObject().getInputVariableModel() != null && form.getModelObject().getServiceName() != null;
     }
 
 
     class ModelObject implements Serializable {
-        private VariableModel inputVariable;
+        private VariableModel inputVariableModel;
         private String serviceName;
         private String outputFileName;
 
-        public VariableModel getInputVariable() {
-            return inputVariable;
+        public VariableModel getInputVariableModel() {
+            return inputVariableModel;
         }
 
-        public void setInputVariable(VariableModel inputVariable) {
-            this.inputVariable = inputVariable;
+        public void setInputVariableModel(VariableModel inputVariableModel) {
+            this.inputVariableModel = inputVariableModel;
         }
 
         public String getOutputFileName() {

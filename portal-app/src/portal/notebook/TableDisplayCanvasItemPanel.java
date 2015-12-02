@@ -1,6 +1,7 @@
 package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
+import com.squonk.notebook.api.VariableType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -9,7 +10,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import portal.dataset.IDatasetDescriptor;
-import com.squonk.notebook.api.VariableType;
 import portal.notebook.service.Strings;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -69,7 +69,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
 
             }
         };
-        DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariable", dropDownModel);
+        DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariableModel", dropDownModel);
         form.add(inputVariableChoice);
 
         add(new IndicatingAjaxSubmitLink("display", form) {
@@ -118,7 +118,14 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void displayAndSave() {
-        getCellModel().setInputVariableModel(form.getModelObject().getInputVariable());
+        if (getCellModel().getBindingModelList().isEmpty()) {
+            BindingModel bindingModel = new BindingModel();
+            bindingModel.setDisplayName("Input file");
+            bindingModel.setName("input");
+            bindingModel.setVariableType(VariableType.FILE);
+            getCellModel().getBindingModelList().add(bindingModel);
+        }
+        getCellModel().getBindingModelList().get(0).setSourceVariableModel(form.getModelObject().getInputVariableModel());
         loadTableData();
         notebookSession.storeNotebook();
     }
@@ -129,13 +136,15 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private void load() {
-        form.getModelObject().setInputVariable(getCellModel().getInputVariableModel());
+        BindingModel bindingModel = getCellModel().getBindingModelList().isEmpty() ? null : getCellModel().getBindingModelList().get(0);
+        VariableModel variableModel = bindingModel == null ? null : bindingModel.getSourceVariableModel();
+        form.getModelObject().setInputVariableModel(variableModel);
         loadTableData();
     }
 
     private void loadTableData() {
-        TableDisplayCellModel cellModel = getCellModel();
-        VariableModel variableModel = cellModel.getInputVariableModel();
+        BindingModel bindingModel = getCellModel().getBindingModelList().isEmpty() ? null : getCellModel().getBindingModelList().get(0);
+        VariableModel variableModel = bindingModel == null ? null : bindingModel.getSourceVariableModel();
         boolean assigned = variableModel != null && variableModel.getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
@@ -146,15 +155,15 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
 
     private IDatasetDescriptor loadDescriptor() {
         TableDisplayCellModel cellModel = getCellModel();
-        VariableModel variableModel = cellModel.getInputVariableModel();
+        VariableModel variableModel = cellModel.getBindingModelList().get(0).getSourceVariableModel();
         if (variableModel.getVariableType().equals(VariableType.FILE)) {
             return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());
         } else if (variableModel.getVariableType().equals(VariableType.DATASET)) {
             return notebookSession.loadDatasetFromSquonkDataset(variableModel);
         } else if (variableModel.getValue() instanceof Strings) {
-            return notebookSession.createDatasetFromStrings((Strings) variableModel.getValue(), getCellModel().getInputVariableModel().getName());
+            return notebookSession.createDatasetFromStrings((Strings) variableModel.getValue(), variableModel.getName());
         } else if (variableModel.getValue() instanceof List) {
-            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>) variableModel.getValue(), getCellModel().getInputVariableModel().getName());
+            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>) variableModel.getValue(), variableModel.getName());
         } else {
             return null;
         }
@@ -168,14 +177,14 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     class ModelObject implements Serializable {
-        private VariableModel inputVariable;
+        private VariableModel inputVariableModel;
 
-        public VariableModel getInputVariable() {
-            return inputVariable;
+        public VariableModel getInputVariableModel() {
+            return inputVariableModel;
         }
 
-        public void setInputVariable(VariableModel inputVariable) {
-            this.inputVariable = inputVariable;
+        public void setInputVariableModel(VariableModel inputVariable) {
+            this.inputVariableModel = inputVariable;
         }
     }
 

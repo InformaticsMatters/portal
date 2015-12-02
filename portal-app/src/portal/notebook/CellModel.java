@@ -6,6 +6,7 @@ import portal.notebook.service.NotebookContents;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public interface CellModel extends Serializable {
 
@@ -16,13 +17,12 @@ public interface CellModel extends Serializable {
     void setPositionLeft(int x);
     int getPositionTop();
     void setPositionTop(int y);
-    List<VariableModel> getInputVariableModelList();
     List<String> getOutputVariableNameList();
     void store(NotebookContents notebookContents, Cell cell);
     void load(NotebookModel notebookContents, Cell cell);
 
-    List<BindingTargetModel> getBindingTargetModelList();
+    List<BindingModel> getBindingModelList();
 
-    void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel);
+    Map<String, Object> getOptionMap();
 
 }

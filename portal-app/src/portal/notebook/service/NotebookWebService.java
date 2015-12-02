@@ -1,9 +1,9 @@
 package portal.notebook.service;
 
+import com.squonk.notebook.client.CellClient;
 import portal.notebook.client.CellData;
 import portal.notebook.client.NotebookData;
 import portal.notebook.client.VariableData;
-import com.squonk.notebook.client.CellClient;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 
@@ -38,13 +38,16 @@ public class NotebookWebService {
             for (Variable variable : cell.getOutputVariableList()) {
                 cellDTO.getOutputVariableNameList().add(variable.getName());
             }
-            for (Variable variable : cell.getInputVariableList()) {
-                VariableData variableDTO = new VariableData();
-                variableDTO.setName(variable.getName());
-                variableDTO.setProducerName(variable.getProducerCell().getName());
-                cellDTO.getInputVariableList().add(variableDTO);
+            for (Binding binding : cell.getBindingList()) {
+                Variable variable = binding.getVariable();
+                if (variable != null) {
+                    VariableData variableDTO = new VariableData();
+                    variableDTO.setName(variable.getName());
+                    variableDTO.setProducerName(variable.getProducerCell().getName());
+                    cellDTO.getInputVariableList().add(variableDTO);
+                }
             }
-            cellDTO.getPropertyMap().putAll(cell.getPropertyMap());
+            cellDTO.getPropertyMap().putAll(cell.getOptionMap());
             notebookDTO.getCellList().add(cellDTO);
         }
         return notebookDTO;

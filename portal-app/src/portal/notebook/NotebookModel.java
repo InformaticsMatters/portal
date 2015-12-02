@@ -199,10 +199,6 @@ public class NotebookModel implements Serializable {
             return new PropertyCalculateCellModel(cellType);
         } else if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCellModel(cellType);
-        } else if ("Sample1".equals(cellType.getName())) {
-            return new Sample1CellModel(cellType);
-        } else if ("Sample2".equals(cellType.getName())) {
-            return new Sample2CellModel(cellType);
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
             return new ChemblActivitiesFetcherCellModel(cellType);
         } else if ("SdfUploader".equals(cellType.getName())) {

@@ -13,9 +13,9 @@ public class Cell implements Serializable {
     private Long id;
     private String name;
     private CellType cellType;
-    private final List<Variable> inputVariableList = new ArrayList<>();
+    private final List<Binding> bindingList = new ArrayList<>();
     private final List<Variable> outputVariableList = new ArrayList<>();
-    private final Map<String, Object> propertyMap = new HashMap<>();
+    private final Map<String, Object> optionMap = new HashMap<>();
     private int positionLeft;
     private int positionTop;
 
@@ -36,8 +36,8 @@ public class Cell implements Serializable {
         this.cellType = cellType;
     }
 
-    public List<Variable> getInputVariableList() {
-        return inputVariableList;
+    public List<Binding> getBindingList() {
+        return bindingList;
     }
 
     public List<Variable> getOutputVariableList() {
@@ -52,8 +52,8 @@ public class Cell implements Serializable {
         this.id = id;
     }
 
-    public Map<String, Object> getPropertyMap() {
-        return propertyMap;
+    public Map<String, Object> getOptionMap() {
+        return optionMap;
     }
 
     public int getPositionLeft() {

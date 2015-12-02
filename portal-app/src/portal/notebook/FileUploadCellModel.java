@@ -7,28 +7,15 @@ import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FileUploadCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
-    private final List<VariableModel> inputVariableModelList = Collections.emptyList();
     private final List<String> outputVariableNameList = new ArrayList<>();
     private String fileName;
 
     public FileUploadCellModel(CellType cellType) {
         super(cellType);
-    }
-
-    @Override
-    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
-
-    }
-
-
-    @Override
-    public List<VariableModel> getInputVariableModelList() {
-        return inputVariableModelList;
     }
 
     @Override
@@ -47,8 +34,8 @@ public class FileUploadCellModel extends AbstractCellModel {
 
     @Override
     public void store(NotebookContents notebookContents, Cell cell) {
-        storeHeader(cell);
-        cell.getPropertyMap().put("fileName", fileName);
+        super.store(notebookContents, cell);
+        cell.getOptionMap().put("fileName", fileName);
     }
 
     @Override
@@ -58,11 +45,7 @@ public class FileUploadCellModel extends AbstractCellModel {
         for (Variable variable : cell.getOutputVariableList()) {
             outputVariableNameList.add(variable.getName());
         }
-        fileName = (String)cell.getPropertyMap().get("fileName");
+        fileName = (String) cell.getOptionMap().get("fileName");
     }
 
-    @Override
-    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
-        throw new UnsupportedOperationException();
-    }
 }

@@ -1,85 +1,45 @@
 package portal.notebook;
 
 import com.squonk.notebook.api.CellType;
-import portal.notebook.service.Cell;
-import portal.notebook.service.NotebookContents;
-import portal.notebook.service.Variable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScriptCellModel extends AbstractCellModel {
     private static final long serialVersionUID = 1l;
-    private String code;
-    private String errorMessage;
-    private Object outcome;
-    private final List<VariableModel> inputVariableModelList = new ArrayList<>();
     private final List<String> outputVariableNameList = new ArrayList<>();
 
     public ScriptCellModel(CellType cellType) {
         super(cellType);
     }
 
-    @Override
-    protected void createVariableTargets(List<BindingTargetModel> bindingTargetModelList) {
-
-    }
-
     public String getCode() {
-        return code;
+        return (String) getOptionMap().get("code");
     }
 
     public void setCode(String code) {
-        this.code = code;
+        getOptionMap().put("code", code);
     }
 
     public Object getOutcome() {
-        return outcome;
+        return (String) getOptionMap().get("outcome");
     }
 
     public void setOutcome(Object outcome) {
-        this.outcome = outcome;
+        getOptionMap().put("outcome", outcome);
     }
 
     public String getErrorMessage() {
-        return errorMessage;
+        return (String) getOptionMap().get("errorMessage");
     }
 
     public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    @Override
-    public List<VariableModel> getInputVariableModelList() {
-        return inputVariableModelList;
+        getOptionMap().put("errorMessage", errorMessage);
     }
 
     @Override
     public List<String> getOutputVariableNameList() {
         return outputVariableNameList;
-    }
-
-    @Override
-    public void store(NotebookContents notebookContents, Cell cell) {
-        super.store(notebookContents, cell);
-        cell.getPropertyMap().put("code", code);
-        cell.getPropertyMap().put("outcome", outcome);
-    }
-
-    @Override
-    public void load(NotebookModel notebookModel, Cell cell) {
-        loadHeader(cell);
-        outputVariableNameList.clear();
-        for (Variable variable : cell.getOutputVariableList()) {
-            outputVariableNameList.add(variable.getName());
-        }
-        outcome = cell.getPropertyMap().get("outcome");
-        code = (String)cell.getPropertyMap().get("code");
-        errorMessage = (String)cell.getPropertyMap().get("errorMessage");
-    }
-
-    @Override
-    public void bindVariableModel(VariableModel sourceVariableModel, BindingTargetModel bindingTargetModel) {
     }
 
 }

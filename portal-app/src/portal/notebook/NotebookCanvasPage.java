@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import com.squonk.notebook.api.CellType;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -26,7 +27,6 @@ import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PortalHomePage;
 import portal.notebook.client.NotebookInfo;
-import com.squonk.notebook.api.CellType;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -259,10 +259,6 @@ public class NotebookCanvasPage extends WebPage {
             return new PropertyCalculateCanvasItemPanel("item", (PropertyCalculateCellModel) cellModel);
         } else if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCanvasItemPanel("item", (TableDisplayCellModel) cellModel);
-        } else if ("Sample1".equals(cellType.getName())) {
-            return new Sample1CanvasItemPanel("item", (Sample1CellModel) cellModel);
-        } else if ("Sample2".equals(cellType.getName())) {
-            return new Sample2CanvasItemPanel("item", (Sample2CellModel) cellModel);
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
             return new ChemblActivitiesFetcherCanvasItemPanel("item", (ChemblActivitiesFetcherCellModel) cellModel);
         } else if ("SdfUploader".equals(cellType.getName())) {

@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import com.squonk.notebook.api.VariableType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -78,6 +79,15 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerC
     }
 
     private void execute() {
+        if (getCellModel().getBindingModelList().isEmpty()) {
+            for (int i = 0; i < 5; i++) {
+                BindingModel bindingModel = new BindingModel();
+                bindingModel.setDisplayName("Dataset");
+                bindingModel.setName("dataset-" + (i + 1));
+                bindingModel.setVariableType(VariableType.DATASET);
+                getCellModel().getBindingModelList().add(bindingModel);
+            }
+        }
         getCellModel().setKeepFirst(form.getModelObject().isKeepFirst());
         getCellModel().setMergeFieldName(form.getModelObject().getMergeFieldName());
         VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "results");
