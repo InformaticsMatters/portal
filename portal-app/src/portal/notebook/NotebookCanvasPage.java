@@ -252,21 +252,21 @@ public class NotebookCanvasPage extends WebPage {
         CellType cellType = cellModel.getCellType();
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("FileUpload".equals(cellType.getName())) {
-            return new FileUploadCanvasItemPanel("item", (FileUploadCellModel) cellModel);
+            return new FileUploadCanvasItemPanel("item", cellModel);
         } else if ("Script".equals(cellType.getName())) {
-            return new ScriptCanvasItemPanel("item", (ScriptCellModel) cellModel);
+            return new ScriptCanvasItemPanel("item", cellModel);
         } else if ("PropertyCalculate".equals(cellType.getName())) {
-            return new PropertyCalculateCanvasItemPanel("item", (PropertyCalculateCellModel) cellModel);
+            return new PropertyCalculateCanvasItemPanel("item", cellModel);
         } else if ("TableDisplay".equals(cellType.getName())) {
-            return new TableDisplayCanvasItemPanel("item", (TableDisplayCellModel) cellModel);
+            return new TableDisplayCanvasItemPanel("item", cellModel);
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
-            return new ChemblActivitiesFetcherCanvasItemPanel("item", (ChemblActivitiesFetcherCellModel) cellModel);
+            return new ChemblActivitiesFetcherCanvasItemPanel("item", cellModel);
         } else if ("SdfUploader".equals(cellType.getName())) {
-            return new SDFUploadCanvasItemPanel("item", (SDFUploadCellModel) cellModel);
+            return new SDFUploadCanvasItemPanel("item", cellModel);
         } else if ("CsvUploader".equals(cellType.getName())) {
-            return new CSVUploadCanvasItemPanel("item", (CSVUploadCellModel) cellModel);
+            return new CSVUploadCanvasItemPanel("item", cellModel);
         } else if ("DatasetMerger".equals(cellType.getName())) {
-            return new DatasetMergerCanvasItemPanel("item", (DatasetMergerCellModel) cellModel);
+            return new DatasetMergerCanvasItemPanel("item", cellModel);
         } else {
             return null;
         }

@@ -15,15 +15,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
+public class ScriptCanvasItemPanel extends CanvasItemPanel {
 
     @Inject
     private NotebookSession notebookSession;
-    private Form<CodeModel> form;
+    private Form<ModelObject> form;
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
 
-    public ScriptCanvasItemPanel(String id, ScriptCellModel cell) {
+    public ScriptCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addHeader();
@@ -46,10 +46,12 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
         outcomeModel = new IModel<String>() {
             @Override
             public String getObject() {
-                if (getCellModel().getErrorMessage() != null) {
-                    return getCellModel().getErrorMessage();
+                String errorMessage = (String) getCellModel().getOptionMap().get("errorMessage");
+                if (errorMessage != null) {
+                    return errorMessage;
                 } else {
-                    return getCellModel().getOutcome() == null ? "[nothing]" : getCellModel().getOutcome().toString();
+                    Object outcome = getCellModel().getOptionMap().get("outcome");
+                    return outcome == null ? "[nothing]" : outcome.toString();
                 }
             }
 
@@ -71,9 +73,9 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
     }
 
     private void addForm() {
-        form = new Form<CodeModel>("form");
-        CodeModel modelObject = new CodeModel();
-        modelObject.setCode(getCellModel().getCode());
+        form = new Form<ModelObject>("form");
+        ModelObject modelObject = new ModelObject();
+        modelObject.load();
         TextArea<String> codeArea = new TextArea<String>("code");
         IndicatingAjaxSubmitLink runLink = new IndicatingAjaxSubmitLink("submit", form) {
 
@@ -82,14 +84,14 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
                 processRun(target);
             }
         };
-        form.setModel(new CompoundPropertyModel<CodeModel>(modelObject));
+        form.setModel(new CompoundPropertyModel<ModelObject>(modelObject));
         form.add(codeArea);
         add(runLink);
         add(form);
     }
 
     private void processRun(AjaxRequestTarget ajaxRequestTarget) {
-        getCellModel().setCode(form.getModelObject().getCode());
+        form.getModelObject().store();
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());
         notebookSession.reloadNotebook();
@@ -112,7 +114,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
         }
     }
 
-    public class CodeModel implements Serializable {
+    public class ModelObject implements Serializable {
         private String code;
 
 
@@ -122,6 +124,14 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel<ScriptCellModel> {
 
         public void setCode(String code) {
             this.code = code;
+        }
+
+        public void store() {
+            getCellModel().getOptionMap().put("code", code);
+        }
+
+        public void load() {
+            code = (String) getCellModel().getOptionMap().get("code");
         }
     }
 

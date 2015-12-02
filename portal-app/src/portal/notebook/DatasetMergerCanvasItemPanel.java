@@ -15,13 +15,13 @@ import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
-public class DatasetMergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerCellModel> {
+public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     private static final Logger LOGGER = Logger.getLogger(DatasetMergerCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
     private Form<ModelObject> form;
 
-    public DatasetMergerCanvasItemPanel(String id, DatasetMergerCellModel cell) {
+    public DatasetMergerCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addHeader();
         addForm();
@@ -56,8 +56,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerC
     }
 
     private void load() {
-        form.getModelObject().setKeepFirst(getCellModel().isKeepFirst());
-        form.getModelObject().setMergeFieldName(getCellModel().getMergeFieldName());
+        form.getModelObject().load();
     }
 
     private void addForm() {
@@ -79,6 +78,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerC
     }
 
     private void execute() {
+        // hack until CellType supports bindings
         if (getCellModel().getBindingModelList().isEmpty()) {
             for (int i = 0; i < 5; i++) {
                 BindingModel bindingModel = new BindingModel();
@@ -88,8 +88,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerC
                 getCellModel().getBindingModelList().add(bindingModel);
             }
         }
-        getCellModel().setKeepFirst(form.getModelObject().isKeepFirst());
-        getCellModel().setMergeFieldName(form.getModelObject().getMergeFieldName());
+        form.getModelObject().store();
         VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "results");
         outputVariableModel.setValue(null);
         notebookSession.storeNotebook();
@@ -100,11 +99,13 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerC
 
     class ModelObject implements Serializable {
         private String mergeFieldName;
-        private boolean keepFirst;
+        private Boolean keepFirst;
 
-        public boolean isKeepFirst() { return keepFirst; }
+        public Boolean getKeepFirst() {
+            return keepFirst;
+        }
 
-        public void setKeepFirst(boolean keepFirst) {
+        public void setKeepFirst(Boolean keepFirst) {
             this.keepFirst = keepFirst;
         }
 
@@ -114,6 +115,16 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel<DatasetMergerC
 
         public void setMergeFieldName(String mergeFieldName) {
             this.mergeFieldName = mergeFieldName;
+        }
+
+        public void load() {
+            keepFirst = (Boolean) getCellModel().getOptionMap().get("keepFirst");
+            mergeFieldName = (String) getCellModel().getOptionMap().get("mergeFieldName");
+        }
+
+        public void store() {
+            getCellModel().getOptionMap().put("keepFirst", keepFirst);
+            getCellModel().getOptionMap().put("mergeFieldName", mergeFieldName);
         }
     }
 

@@ -19,14 +19,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel> {
+public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
     private static final Logger logger = LoggerFactory.getLogger(SDFUploadCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
 
-    public SDFUploadCanvasItemPanel(String id, SDFUploadCellModel cell) {
+    public SDFUploadCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addHeader();
@@ -101,7 +101,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
             InputStream inputStream = upload.getInputStream();
             VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
             variableModel.setValue(fileName);
-            getCellModel().setNameFieldName(form.getModelObject().getNameFieldName());
+            form.getModelObject().store();
             notebookSession.storeNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
             form.getModelObject().setFileName(upload.getClientFileName());
@@ -111,17 +111,14 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
 
     private void execute() throws IOException {
         //System.out.println("SDFUploadCanvasItemPanel.execute() " + form.getModelObject().getNameFieldName());
-        getCellModel().setNameFieldName(form.getModelObject().getNameFieldName());
+        form.getModelObject().store();
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());
         notebookSession.reloadNotebook();
-        form.getModelObject().setNameFieldName(getCellModel().getNameFieldName());
     }
 
     private void load() {
-        VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
-        form.getModelObject().setFileName((String) variableModel.getValue());
-        form.getModelObject().setNameFieldName(getCellModel().getNameFieldName());
+        form.getModelObject().load();
     }
 
 
@@ -162,6 +159,16 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel<SDFUploadCellModel
 
         public void setNameFieldName(String nameFieldName) {
             this.nameFieldName = nameFieldName;
+        }
+
+        public void store() {
+            getCellModel().getOptionMap().put("nameFieldName", nameFieldName);
+        }
+
+        public void load() {
+            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
+            fileName = variableModel == null ? null : (String) variableModel.getValue();
+            nameFieldName = (String) getCellModel().getOptionMap().get("nameFieldName");
         }
     }
 

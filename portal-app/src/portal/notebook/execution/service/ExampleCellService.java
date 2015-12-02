@@ -6,7 +6,6 @@ import com.squonk.notebook.api.VariableDefinition;
 import com.squonk.notebook.api.VariableType;
 import com.squonk.notebook.client.CallbackClient;
 import com.squonk.notebook.client.CallbackContext;
-import portal.notebook.CSVUploadCellModel;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,6 +18,8 @@ import java.util.List;
 @Path("cell")
 public class ExampleCellService {
     private static final List<CellType> CELL_TYPE_DESCRIPTOR_LIST = createDescriptors();
+    public static final String OPTION_FILE_TYPE = "csvFormatType";
+    public static final String OPTION_FIRST_LINE_IS_HEADER = "firstLineIsHeader";
     @Inject
     private QndCellExecutorProvider qndCellExecutorProvider;
     @Inject
@@ -107,8 +108,8 @@ public class ExampleCellService {
         list.add(new CellType("CsvUploader", "CSV upload", true)
                 .withOutputVariable("FileContent", VariableType.FILE)
                 .withOutputVariable("Results", VariableType.DATASET)
-                .withOption(CSVUploadCellModel.OPTION_FILE_TYPE)
-                .withOption(CSVUploadCellModel.OPTION_FIRST_LINE_IS_HEADER));
+                .withOption(OPTION_FILE_TYPE)
+                .withOption(OPTION_FIRST_LINE_IS_HEADER));
 
         list.add(new CellType("DatasetMerger", "Dataset merger", true)
                 .withOutputVariable("Results", VariableType.DATASET)

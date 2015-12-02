@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import com.squonk.notebook.api.CellType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
 import portal.notebook.service.Variable;
@@ -166,7 +165,7 @@ public class NotebookModel implements Serializable {
         for (Cell cell : notebookContents.getCellList()) {
             CellModel cellModel = findCell(cell.getName());
             if (cellModel == null) {
-                cellModel = createCellModel(cell.getCellType());
+                cellModel = new DefaultCellModel(cell.getCellType());
                 cellModel.setName(cell.getName());
                 cellModelList.add(cellModel);
             }
@@ -189,28 +188,5 @@ public class NotebookModel implements Serializable {
         }
 
     }
-
-    public static CellModel createCellModel(CellType cellType) {
-        if ("FileUpload".equals(cellType.getName())) {
-            return new FileUploadCellModel(cellType);
-        } else if ("Script".equals(cellType.getName())) {
-            return new ScriptCellModel(cellType);
-        } else if ("PropertyCalculate".equals(cellType.getName())) {
-            return new PropertyCalculateCellModel(cellType);
-        } else if ("TableDisplay".equals(cellType.getName())) {
-            return new TableDisplayCellModel(cellType);
-        } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
-            return new ChemblActivitiesFetcherCellModel(cellType);
-        } else if ("SdfUploader".equals(cellType.getName())) {
-            return new SDFUploadCellModel(cellType);
-        } else if ("CsvUploader".equals(cellType.getName())) {
-            return new CSVUploadCellModel(cellType);
-        } else if ("DatasetMerger".equals(cellType.getName())) {
-            return new DatasetMergerCellModel(cellType);
-        } else {
-            return null;
-        }
-    }
-
 
 }

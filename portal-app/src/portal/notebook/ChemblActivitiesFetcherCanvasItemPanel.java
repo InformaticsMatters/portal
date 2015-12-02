@@ -13,13 +13,13 @@ import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
-public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel<ChemblActivitiesFetcherCellModel> {
+public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
     private static final Logger LOGGER = Logger.getLogger(PropertyCalculateCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
     private Form<ModelObject> form;
 
-    public ChemblActivitiesFetcherCanvasItemPanel(String id, ChemblActivitiesFetcherCellModel cell) {
+    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addHeader();
         addForm();
@@ -54,8 +54,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel<Chem
     }
 
     private void load() {
-        form.getModelObject().setAssayId(getCellModel().getAssayId());
-        form.getModelObject().setPrefix(getCellModel().getPrefix());
+        form.getModelObject().load();
     }
 
     private void addForm() {
@@ -77,8 +76,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel<Chem
     }
 
     private void execute() {
-        getCellModel().setAssayId(form.getModelObject().getAssayId());
-        getCellModel().setPrefix(form.getModelObject().getPrefix());
+        form.getModelObject().store();
         VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "results");
         outputVariableModel.setValue(null);
         notebookSession.storeNotebook();
@@ -106,6 +104,17 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel<Chem
         public void setAssayId(String assayId) {
             this.assayId = assayId;
         }
+
+        public void load() {
+            assayId = (String) getCellModel().getOptionMap().get("assayId");
+            prefix = (String) getCellModel().getOptionMap().get("prefix");
+        }
+
+        public void store() {
+            getCellModel().getOptionMap().put("assayId", assayId);
+            getCellModel().getOptionMap().put("prefix", prefix);
+        }
+
     }
 
 }

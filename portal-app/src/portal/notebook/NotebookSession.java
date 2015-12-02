@@ -1,10 +1,10 @@
 package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
+import com.squonk.notebook.api.CellType;
+import com.squonk.notebook.client.CellClient;
 import portal.dataset.*;
 import portal.notebook.client.NotebookInfo;
-import com.squonk.notebook.client.CellClient;
-import com.squonk.notebook.api.CellType;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
 
@@ -84,7 +84,7 @@ public class NotebookSession implements Serializable {
         storeNotebookData.setNotebookInfo(notebookInfo);
         storeNotebookData.setNotebookContents(notebookContents);
         notebookService.storeNotebook(storeNotebookData);
-        CellModel cellModel = NotebookModel.createCellModel(cellType);
+        CellModel cellModel = new DefaultCellModel(cellType);
         cellModel.load(notebookModel, cell);
         notebookModel.addCell(cellModel);
         return cellModel;

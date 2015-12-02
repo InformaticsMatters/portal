@@ -11,15 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractCellModel implements CellModel {
+public class DefaultCellModel implements CellModel {
     private final CellType cellType;
     private final List<BindingModel> bindingModelList = new ArrayList<>();
+    private final List<String> outputVariableNameList = new ArrayList<>();
     private final Map<String, Object> optionMap = new HashMap<>();
     private String name;
     private int positionLeft;
     private int positionTop;
 
-    public AbstractCellModel(CellType cellType) {
+    public DefaultCellModel(CellType cellType) {
         this.cellType = cellType;
     }
 
@@ -49,6 +50,11 @@ public abstract class AbstractCellModel implements CellModel {
 
     public void setPositionTop(int y) {
         this.positionTop = y;
+    }
+
+    @Override
+    public List<String> getOutputVariableNameList() {
+        return outputVariableNameList;
     }
 
 

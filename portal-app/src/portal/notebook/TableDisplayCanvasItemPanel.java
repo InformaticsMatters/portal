@@ -20,13 +20,13 @@ import java.util.List;
 /**
  * @author simetrias
  */
-public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCellModel> {
+public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
 
-    public TableDisplayCanvasItemPanel(String id, TableDisplayCellModel cell) {
+    public TableDisplayCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addHeader();
         addInput();
@@ -154,7 +154,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel<TableDisplayCel
     }
 
     private IDatasetDescriptor loadDescriptor() {
-        TableDisplayCellModel cellModel = getCellModel();
+        CellModel cellModel = getCellModel();
         VariableModel variableModel = cellModel.getBindingModelList().get(0).getSourceVariableModel();
         if (variableModel.getVariableType().equals(VariableType.FILE)) {
             return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());

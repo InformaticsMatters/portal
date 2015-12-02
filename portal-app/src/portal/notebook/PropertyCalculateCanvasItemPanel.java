@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCalculateCellModel> {
+public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     private static final Logger LOGGER = Logger.getLogger(PropertyCalculateCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
@@ -27,7 +27,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     private transient CalculatorsClient calculatorsClient;
     private Form<ModelObject> form;
 
-    public PropertyCalculateCanvasItemPanel(String id, PropertyCalculateCellModel cell) {
+    public PropertyCalculateCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addHeader();
         addForm();
@@ -69,7 +69,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
         if (outputVariableModel != null) {
             form.getModelObject().setOutputFileName((String) outputVariableModel.getValue());
         }
-        form.getModelObject().setServiceName(getCellModel().getServiceName());
+        form.getModelObject().load();
     }
 
     private void addForm() {
@@ -110,8 +110,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
     private void calculateAndSave() {
         if (isValidInput()) {
             checkBindings();
-            getCellModel().getBindingModelList().get(0).setSourceVariableModel(form.getModelObject().getInputVariableModel());
-            getCellModel().setServiceName(form.getModelObject().getServiceName());
+            form.getModelObject().store();
             VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
             outputVariableModel.setValue(form.getModelObject().getOutputFileName());
             notebookSession.storeNotebook();
@@ -162,6 +161,15 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel<PropertyCa
 
         public void setServiceName(String serviceName) {
             this.serviceName = serviceName;
+        }
+
+        public void load() {
+            serviceName = (String) getCellModel().getOptionMap().get("serviceName");
+        }
+
+        public void store() {
+            getCellModel().getBindingModelList().get(0).setSourceVariableModel(form.getModelObject().getInputVariableModel());
+            getCellModel().getOptionMap().put("serviceName", serviceName);
         }
     }
 

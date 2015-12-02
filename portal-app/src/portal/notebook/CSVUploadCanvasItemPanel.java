@@ -21,18 +21,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CSVUploadCanvasItemPanel extends CanvasItemPanel<CSVUploadCellModel> {
+public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
     private static final Logger logger = LoggerFactory.getLogger(CSVUploadCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
-    private Form<UploadData> form;
+    private Form<ModelObject> form;
     private FileUploadField fileUploadField;
 
-    private static final List<String> CSV_FORMATS = Arrays.asList(new String[] {
-        "DEFAULT", "RFC4180", "EXCEL", "MYSQL", "TDF"
+    private static final List<String> CSV_FORMATS = Arrays.asList(new String[]{
+            "DEFAULT", "RFC4180", "EXCEL", "MYSQL", "TDF"
     });
 
-    public CSVUploadCanvasItemPanel(String id, CSVUploadCellModel cell) {
+    public CSVUploadCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addHeader();
@@ -56,7 +56,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel<CSVUploadCellModel
         form = new Form<>("form");
         form.setOutputMarkupId(true);
 
-        form.setModel(new CompoundPropertyModel<>(new UploadData()));
+        form.setModel(new CompoundPropertyModel<>(new ModelObject()));
         Label fileNameLabel = new Label("fileName");
         form.add(fileNameLabel);
 
@@ -119,26 +119,23 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel<CSVUploadCellModel
     private void execute() throws IOException {
         //System.out.println("File type is " + form.getModelObject().getCsvFormatType());
         //System.out.println("First line header " + form.getModelObject().isFirstLineIsHeader());
-        getCellModel().setCsvFormatType(form.getModelObject().getCsvFormatType());
-        getCellModel().setFirstLineIsHeader(form.getModelObject().isFirstLineIsHeader());
+        form.getModelObject().store();
 
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());
         notebookSession.reloadNotebook();
 
-        form.getModelObject().setCsvFormatType(getCellModel().getCsvFormatType());
-        form.getModelObject().setFirstLineIsHeader(getCellModel().isFirstLineIsHeader());
+        form.getModelObject().load();
     }
 
     private void load() {
-        VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
-        form.getModelObject().setFileName((String) variableModel.getValue());
-        form.getModelObject().setCsvFormatType(getCellModel().getCsvFormatType());
-        form.getModelObject().setFirstLineIsHeader(getCellModel().isFirstLineIsHeader());
+        form.getModelObject().load();
     }
 
 
-    private class UploadData implements Serializable {
+    private class ModelObject implements Serializable {
+        public static final String OPTION_FILE_TYPE = "csvFormatType";
+        public static final String OPTION_FIRST_LINE_IS_HEADER = "firstLineIsHeader";
 
         private String fileName;
         private List<FileUpload> fileInput = new ArrayList<FileUpload>();
@@ -184,6 +181,18 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel<CSVUploadCellModel
 
         public void setFirstLineIsHeader(Boolean firstLineIsHeader) {
             this.firstLineIsHeader = firstLineIsHeader;
+        }
+
+        public void load() {
+            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
+            fileName = (String) variableModel.getValue();
+            csvFormatType = (String) getCellModel().getOptionMap().get(OPTION_FILE_TYPE);
+            firstLineIsHeader = (Boolean) getCellModel().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER);
+        }
+
+        public void store() {
+            getCellModel().getOptionMap().put(OPTION_FILE_TYPE, csvFormatType);
+            getCellModel().getOptionMap().put(OPTION_FIRST_LINE_IS_HEADER, firstLineIsHeader);
         }
 
     }

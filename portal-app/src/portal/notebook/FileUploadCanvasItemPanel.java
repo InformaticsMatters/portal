@@ -20,14 +20,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellModel> {
+public class FileUploadCanvasItemPanel extends CanvasItemPanel {
     private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
     @Inject
     private NotebookSession notebookSession;
-    private Form<UploadData> uploadForm;
+    private Form<UploadData> form;
     private FileUploadField fileUploadField;
 
-    public FileUploadCanvasItemPanel(String id, FileUploadCellModel cell) {
+    public FileUploadCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addHeader();
@@ -48,25 +48,25 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
 
 
     private void addForm() {
-        uploadForm = new Form<>("form");
-        uploadForm.setOutputMarkupId(true);
+        form = new Form<>("form");
+        form.setOutputMarkupId(true);
 
-        uploadForm.setModel(new CompoundPropertyModel<>(new UploadData()));
+        form.setModel(new CompoundPropertyModel<>(new UploadData()));
         Label fileNameField = new Label("fileName");
-        uploadForm.add(fileNameField);
+        form.add(fileNameField);
 
         fileUploadField = new FileUploadField("fileInput");
-        uploadForm.add(fileUploadField);
+        form.add(fileUploadField);
 
-        uploadForm.add(new Image("appender", AbstractDefaultAjaxBehavior.INDICATOR));
+        form.add(new Image("appender", AbstractDefaultAjaxBehavior.INDICATOR));
 
-        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit", uploadForm) {
+        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     processUpload(fileUploadField.getFileUpload());
-                    target.add(uploadForm);
+                    target.add(FileUploadCanvasItemPanel.this.form);
                 } catch (Throwable t) {
                     logger.error(null, t);
                 }
@@ -74,30 +74,31 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
         };
         submit.setOutputMarkupId(true);
         add(submit);
-        uploadForm.setOutputMarkupId(true);
-        add(uploadForm);
+        form.setOutputMarkupId(true);
+        add(form);
 
     }
 
     private void processUpload(FileUpload upload) throws IOException {
         if (upload == null) {
-            uploadForm.getModelObject().setErrorMessage("No file chosen");
+            form.getModelObject().setErrorMessage("No file chosen");
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
             VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "file");
             variableModel.setValue(fileName);
-            getCellModel().setFileName(fileName);
+            form.getModelObject().store();
+            getCellModel().getOptionMap().put("fileName", fileName);
             notebookSession.storeNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
             notebookSession.reloadNotebook();
-            uploadForm.getModelObject().setFileName(upload.getClientFileName());
+            form.getModelObject().setFileName(upload.getClientFileName());
         }
 
     }
 
     private void load() {
-        uploadForm.getModelObject().setFileName(getCellModel().getFileName());
+        form.getModelObject().load();
     }
 
 
@@ -130,6 +131,14 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel<FileUploadCellMod
 
         public void setErrorMessage(String errorMessage) {
             this.errorMessage = errorMessage;
+        }
+
+        public void store() {
+            getCellModel().getOptionMap().put("fileName", fileName);
+        }
+
+        public void load() {
+            fileName = (String) getCellModel().getOptionMap().get("fileName");
         }
     }
 
