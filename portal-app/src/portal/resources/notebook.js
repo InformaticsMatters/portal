@@ -117,6 +117,7 @@ function makeCanvasItemPlumbDraggable(selector) {
             var outerContainerHeight = $('.notebookContainer').outerHeight();
 
             if(borderBottom == containerHeight) {
+               $('.notebookContainer').css("max-height", outerContainerHeight);
                $('#plumbContainer').css("height", newHeight);
             }
         },
