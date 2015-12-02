@@ -121,29 +121,29 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel<CSVUploadCellModel
     private void execute() throws IOException {
         System.out.println("File type is " + form.getModelObject().getCsvFormatType());
         System.out.println("First line header " + form.getModelObject().isFirstLineIsHeader());
-        getCellModel().setCsvFormatType(form.getModelObject().getCsvFormatType());
+        getCellModel().setFileType(form.getModelObject().getCsvFormatType());
         getCellModel().setFirstLineIsHeader(form.getModelObject().isFirstLineIsHeader());
 
-        System.out.println("FTYP set? " + getCellModel().getCsvFormatType());
-        System.out.println("FLIH set? " + getCellModel().isFirstLineIsHeader());
+        System.out.println("FTYP set? " + getCellModel().getFileType());
+        System.out.println("FLIH set? " + getCellModel().getFirstLineIsHeader());
 
         notebookSession.storeNotebook();
         notebookSession.executeCell(getCellModel().getName());
         notebookSession.reloadNotebook();
 
-        System.out.println("FTYP set? " + getCellModel().getCsvFormatType());
-        System.out.println("FLIH set? " + getCellModel().isFirstLineIsHeader());
+        System.out.println("FTYP set? " + getCellModel().getFileType());
+        System.out.println("FLIH set? " + getCellModel().getFirstLineIsHeader());
 
 
-        form.getModelObject().setCsvFormatType(getCellModel().getCsvFormatType());
-        form.getModelObject().setFirstLineIsHeader(getCellModel().isFirstLineIsHeader());
+        form.getModelObject().setCsvFormatType(getCellModel().getFileType());
+        form.getModelObject().setFirstLineIsHeader(getCellModel().getFirstLineIsHeader());
     }
 
     private void load() {
         VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
         form.getModelObject().setFileName((String) variableModel.getValue());
-        form.getModelObject().setCsvFormatType(getCellModel().getCsvFormatType());
-        form.getModelObject().setFirstLineIsHeader(getCellModel().isFirstLineIsHeader());
+        form.getModelObject().setCsvFormatType(getCellModel().getFileType());
+        form.getModelObject().setFirstLineIsHeader(getCellModel().getFirstLineIsHeader());
     }
 
 

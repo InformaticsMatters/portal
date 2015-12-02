@@ -63,7 +63,6 @@ public abstract class AbstractCellModel implements CellModel {
         cell.getOptionMap().putAll(optionMap);
     }
 
-    ;
 
     protected void storeHeader(Cell cell) {
         cell.setCellType(getCellType());
