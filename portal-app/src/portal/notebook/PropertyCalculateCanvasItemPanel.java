@@ -124,7 +124,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
             BindingModel bindingModel = new BindingModel();
             bindingModel.setDisplayName("Input file");
             bindingModel.setName("input");
-            bindingModel.setVariableType(VariableType.FILE);
+            bindingModel.getAcceptedVariableTypeList().add(VariableType.FILE);
             getCellModel().getBindingModelList().add(bindingModel);
         }
     }

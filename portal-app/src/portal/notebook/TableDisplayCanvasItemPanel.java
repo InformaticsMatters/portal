@@ -122,7 +122,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
             BindingModel bindingModel = new BindingModel();
             bindingModel.setDisplayName("Input file");
             bindingModel.setName("input");
-            bindingModel.setVariableType(VariableType.FILE);
+            bindingModel.getAcceptedVariableTypeList().add(VariableType.FILE);
             getCellModel().getBindingModelList().add(bindingModel);
         }
         getCellModel().getBindingModelList().get(0).setSourceVariableModel(form.getModelObject().getInputVariableModel());

@@ -84,7 +84,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
                 BindingModel bindingModel = new BindingModel();
                 bindingModel.setDisplayName("Dataset");
                 bindingModel.setName("dataset-" + (i + 1));
-                bindingModel.setVariableType(VariableType.DATASET);
+                bindingModel.getAcceptedVariableTypeList().add(VariableType.DATASET);
                 getCellModel().getBindingModelList().add(bindingModel);
             }
         }

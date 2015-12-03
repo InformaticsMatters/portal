@@ -82,7 +82,7 @@ public class DefaultCellModel implements CellModel {
             Binding binding = new Binding();
             binding.setName(bindingModel.getName());
             binding.setDisplayName(bindingModel.getDisplayName());
-            binding.setVariableType(bindingModel.getVariableType());
+            binding.getAcceptedVariableTypeList().addAll(bindingModel.getAcceptedVariableTypeList());
             VariableModel variableModel = bindingModel.getSourceVariableModel();
             Variable variable = variableModel == null ? null : notebookContents.findVariable(variableModel.getProducer().getName(), variableModel.getName());
             variable.setValue(variableModel.getValue());
@@ -120,7 +120,7 @@ public class DefaultCellModel implements CellModel {
         bindingModelList.clear();
         for (Binding binding : cell.getBindingList()) {
             BindingModel bindingModel = new BindingModel();
-            bindingModel.setVariableType(binding.getVariableType());
+            bindingModel.getAcceptedVariableTypeList().addAll(binding.getAcceptedVariableTypeList());
             bindingModel.setDisplayName(binding.getDisplayName());
             bindingModel.setName(binding.getName());
             Variable variable = binding.getVariable();

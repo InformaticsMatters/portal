@@ -3,11 +3,13 @@ package portal.notebook;
 import com.squonk.notebook.api.VariableType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BindingModel implements Serializable {
     private String displayName;
     private String name;
-    private VariableType variableType;
+    private final List<VariableType> acceptedVariableTypeList = new ArrayList<>();
     private VariableModel sourceVariableModel;
 
     public String getDisplayName() {
@@ -26,19 +28,15 @@ public class BindingModel implements Serializable {
         this.name = name;
     }
 
-    public VariableType getVariableType() {
-        return variableType;
-    }
-
-    public void setVariableType(VariableType variableType) {
-        this.variableType = variableType;
-    }
-
     public VariableModel getSourceVariableModel() {
         return sourceVariableModel;
     }
 
     public void setSourceVariableModel(VariableModel sourceVariableModel) {
         this.sourceVariableModel = sourceVariableModel;
+    }
+
+    public List<VariableType> getAcceptedVariableTypeList() {
+        return acceptedVariableTypeList;
     }
 }
