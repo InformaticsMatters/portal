@@ -159,8 +159,9 @@ div.ui-resizable-handle.ui-resizable-s {
 }
 
 .notebookListPanel,
-.notebookCellPanel {
+.notebookCellsPanel {
     overflow-y: auto;
+    height: 0;
 }
 
 .ui.menu.text.notebookMenu {
