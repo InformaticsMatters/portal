@@ -154,14 +154,21 @@ div.ui-resizable-handle.ui-resizable-s {
     margin-top: 0!important;
 }
 
-.ui.segment.child-1.notebookCellsPanel {
+.ui.segment.child-1.notebookListPanel {
     margin-top: 15px!important;
+}
+
+.notebookListPanel,
+.notebookCellPanel {
+    overflow-y: auto;
 }
 
 .ui.menu.text.notebookMenu {
     margin-bottom: 0px;
-    margin-top: 7px;
-    height: 14px;
+    margin-top: 2px;
+    text-align: right;
+    margin-right: -7px;
+    float: right;
 }
 
 .ui.menu.text.notebookMenu a {
@@ -176,4 +183,9 @@ div.ui-resizable-handle.ui-resizable-s {
     display: flex;
     flex: 1;
     overflow: auto;
+}
+
+.nbName {
+    margin-bottom: 0!important;
+    float: left;
 }

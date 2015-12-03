@@ -1,9 +1,16 @@
 var onNotebookCanvasPaletteDrop;
 var onNotebookCanvasItemDragged;
 
-function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility) {
+function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbListVisibility) {
+    var nbListVisible = (nbListVisibility === 'true');
     var cellsVisible = (cellsVisibility === 'true');
     var canvasVisible = (canvasVisibility === 'true');
+
+    if (nbListVisible) {
+            $('.notebookListPanel').show();
+        } else if (!nbListVisible) {
+            $('.notebookListPanel').hide();
+        }
 
     if (cellsVisible) {
         $('.notebookCellsPanel').show();

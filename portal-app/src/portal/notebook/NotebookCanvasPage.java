@@ -48,11 +48,14 @@ public class NotebookCanvasPage extends WebPage {
     public static final String CANVASITEM_INDEX = "index";
     private static final Logger logger = LoggerFactory.getLogger(NotebookCanvasPage.class);
 
+    boolean nbListVisible = true;
     boolean cellsVisible = true;
     boolean canvasVisible = true;
+    private AjaxLink nbListToggle;
     private AjaxLink cellsToggle;
     private AjaxLink canvasToggle;
 
+    private NotebookListPanel notebookListPanel;
     private NotebookCellTypesPanel notebookCellTypesPanel;
     private WebMarkupContainer plumbContainer;
 
@@ -114,6 +117,10 @@ public class NotebookCanvasPage extends WebPage {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
+        notebookListPanel = new NotebookListPanel("nbList");
+        add(notebookListPanel);
+        notebookListPanel.setOutputMarkupPlaceholderTag(true);
+
         notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
         add(notebookCellTypesPanel);
         notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
@@ -158,10 +165,21 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void refreshPanelsVisibility(AjaxRequestTarget target) {
-        target.appendJavaScript("applyNotebookCanvasPageLayout('" + cellsVisible + "', '" + canvasVisible + "')");
+        target.appendJavaScript("applyNotebookCanvasPageLayout('" + cellsVisible + "', '" + canvasVisible + "', '" + nbListVisible + "')");
     }
 
     private void addActions() {
+        nbListToggle = new AjaxLink("nbListToggle") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                nbListVisible = !nbListVisible;
+                target.appendJavaScript("makeVerticalItemActive('" + nbListToggle.getMarkupId() + "')");
+                refreshPanelsVisibility(target);
+            }
+        };
+        add(nbListToggle);
+
         cellsToggle = new AjaxLink("cellsToggle") {
 
             @Override
