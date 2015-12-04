@@ -55,7 +55,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         IModel<List<VariableModel>> dropDownModel = new IModel<List<VariableModel>>() {
             @Override
             public List<VariableModel> getObject() {
-                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), notebookSession.getNotebookModel());
+                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel().getBindingModelMap().get("input"), notebookSession.getNotebookModel());
                 return list;
             }
 
@@ -118,7 +118,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void displayAndSave() {
-        getCellModel().getBindingModelList().get(0).setSourceVariableModel(form.getModelObject().getInputVariableModel());
+        getCellModel().getBindingModelMap().get("input").setSourceVariableModel(form.getModelObject().getInputVariableModel());
         loadTableData();
         notebookSession.storeNotebook();
     }
@@ -129,14 +129,14 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        BindingModel bindingModel = getCellModel().getBindingModelList().isEmpty() ? null : getCellModel().getBindingModelList().get(0);
+        BindingModel bindingModel = getCellModel().getBindingModelMap().get("input");
         VariableModel variableModel = bindingModel == null ? null : bindingModel.getSourceVariableModel();
         form.getModelObject().setInputVariableModel(variableModel);
         loadTableData();
     }
 
     private void loadTableData() {
-        BindingModel bindingModel = getCellModel().getBindingModelList().isEmpty() ? null : getCellModel().getBindingModelList().get(0);
+        BindingModel bindingModel = getCellModel().getBindingModelMap().get("input");
         VariableModel variableModel = bindingModel == null ? null : bindingModel.getSourceVariableModel();
         boolean assigned = variableModel != null && variableModel.getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
@@ -148,7 +148,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     private IDatasetDescriptor loadDescriptor() {
         CellModel cellModel = getCellModel();
-        VariableModel variableModel = cellModel.getBindingModelList().get(0).getSourceVariableModel();
+        VariableModel variableModel = cellModel.getBindingModelMap().get("input").getSourceVariableModel();
         if (variableModel.getVariableType().equals(VariableType.FILE)) {
             return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());
         } else if (variableModel.getVariableType().equals(VariableType.DATASET)) {

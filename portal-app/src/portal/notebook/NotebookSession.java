@@ -95,10 +95,10 @@ public class NotebookSession implements Serializable {
     }
 
 
-    public List<VariableModel> listAvailableInputVariablesFor(CellModel cellModel, NotebookModel notebookModel) {
+    public List<VariableModel> listAvailableInputVariablesFor(BindingModel bindingModel, NotebookModel notebookModel) {
         List<VariableModel> list = new ArrayList<>();
         for (VariableModel variableModel : notebookModel.getVariableModelList()) {
-            if (!variableModel.getProducer().equals(cellModel)) {
+            if (bindingModel.getAcceptedVariableTypeList().contains(variableModel.getVariableType())) {
                 list.add(variableModel);
             }
         }

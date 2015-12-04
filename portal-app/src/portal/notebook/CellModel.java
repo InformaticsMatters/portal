@@ -21,8 +21,7 @@ public interface CellModel extends Serializable {
     void store(NotebookContents notebookContents, Cell cell);
     void load(NotebookModel notebookContents, Cell cell);
 
-    List<BindingModel> getBindingModelList();
-
+    Map<String, BindingModel> getBindingModelMap();
     Map<String, OptionModel> getOptionMap();
 
 }

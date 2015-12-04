@@ -14,7 +14,6 @@ import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -61,7 +60,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        BindingModel bindingModel = getCellModel().getBindingModelList().isEmpty() ? null : getCellModel().getBindingModelList().get(0);
+        BindingModel bindingModel = getCellModel().getBindingModelMap().isEmpty() ? null : getCellModel().getBindingModelMap().get(0);
         VariableModel variableModel = bindingModel == null ? null : bindingModel.getSourceVariableModel();
         form.getModelObject().setInputVariableModel(variableModel);
         VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
@@ -76,7 +75,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
         IModel<List<VariableModel>> inputVariableModel = new IModel<List<VariableModel>>() {
             @Override
             public List<VariableModel> getObject() {
-                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), notebookSession.getNotebookModel());
+                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel().getBindingModelMap().get("input"), notebookSession.getNotebookModel());
                 return list;
             }
 
@@ -92,7 +91,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
         };
         DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariableModel", inputVariableModel);
         form.add(inputVariableChoice);
-        DropDownChoice<String> serviceNameChoice = new DropDownChoice<String>("serviceName", Arrays.asList(CalculatorsClient.getServiceNames()));
+        DropDownChoice<String> serviceNameChoice = new DropDownChoice<String>("serviceName", getCellModel().getOptionMap().get("serviceName").getPicklistValueList());
         form.add(serviceNameChoice);
         TextField<String> outputFileNameField = new TextField<String>("outputFileName");
         form.add(outputFileNameField);
@@ -156,7 +155,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getBindingModelList().get(0).setSourceVariableModel(form.getModelObject().getInputVariableModel());
+            getCellModel().getBindingModelMap().get("input").setSourceVariableModel(form.getModelObject().getInputVariableModel());
             getCellModel().getOptionMap().get("serviceName").setValue(serviceName);
         }
     }

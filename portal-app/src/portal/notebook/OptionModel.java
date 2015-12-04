@@ -3,10 +3,13 @@ package portal.notebook;
 import tmp.squonk.notebook.api.OptionType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class OptionModel implements Serializable {
+public class OptionModel<T> implements Serializable {
     private String name;
     private OptionType optionType;
+    private final List<T> picklistValueList = new ArrayList<>();
     private Object value;
 
     public String getName() {
@@ -31,5 +34,9 @@ public class OptionModel implements Serializable {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    public List<T> getPicklistValueList() {
+        return picklistValueList;
     }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class DefaultCellModel implements CellModel {
     private final CellType cellType;
-    private final List<BindingModel> bindingModelList = new ArrayList<>();
+    private final Map<String, BindingModel> bindingModelMap = new HashMap<>();
     private final List<String> outputVariableNameList = new ArrayList<>();
     private final Map<String, OptionModel> optionMap = new HashMap<>();
     private String name;
@@ -77,7 +77,8 @@ public class DefaultCellModel implements CellModel {
     }
 
     protected void storeBindingModels(NotebookContents notebookContents, Cell cell) {
-        for (BindingModel bindingModel : getBindingModelList()) {
+        for (BindingModel bindingModel : getBindingModelMap
+                ().values()) {
             Binding binding = cell.getBindingMap().get(bindingModel.getName());
             VariableModel variableModel = bindingModel.getSourceVariableModel();
             Variable variable = variableModel == null ? null : notebookContents.findVariable(variableModel.getProducer().getName(), variableModel.getName());
@@ -100,6 +101,7 @@ public class DefaultCellModel implements CellModel {
             optionModel.setOptionType(option.getOptionType());
             optionModel.setName(option.getName());
             optionModel.setValue(option.getValue());
+            optionModel.getPicklistValueList().addAll(option.getPicklistValueList());
             optionMap.put(option.getName(), optionModel);
         }
     }
@@ -118,7 +120,7 @@ public class DefaultCellModel implements CellModel {
     }
 
     protected void loadBindings(NotebookModel notebookModel, Cell cell) {
-        bindingModelList.clear();
+        bindingModelMap.clear();
         for (Binding binding : cell.getBindingMap().values()) {
             BindingModel bindingModel = new BindingModel();
             bindingModel.getAcceptedVariableTypeList().addAll(binding.getAcceptedVariableTypeList());
@@ -127,7 +129,7 @@ public class DefaultCellModel implements CellModel {
             Variable variable = binding.getVariable();
             VariableModel variableModel = variable == null ? null : notebookModel.findVariableModel(variable.getProducerCell().getName(), variable.getName());
             bindingModel.setSourceVariableModel(variableModel);
-            bindingModelList.add(bindingModel);
+            bindingModelMap.put(binding.getName(), bindingModel);
         }
     }
 
@@ -146,8 +148,8 @@ public class DefaultCellModel implements CellModel {
     }
 
     @Override
-    public List<BindingModel> getBindingModelList() {
-        return bindingModelList;
+    public Map<String, BindingModel> getBindingModelMap() {
+        return bindingModelMap;
     }
 
     @Override
