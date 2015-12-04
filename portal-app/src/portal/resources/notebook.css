@@ -146,16 +146,13 @@ div.ui-resizable-handle.ui-resizable-s {
 }
 
 .column.flex-column-2.right-column,
-.column.flex-column-1.right-column {
+.column.flex-column-1.right-column,
+.column.flex-column-1.left-column {
     padding-top: 0!important;
 }
 
 .ui.segment.notebookContainer {
     margin-top: 0!important;
-}
-
-.ui.segment.child-1.notebookListPanel {
-    margin-top: 15px!important;
 }
 
 .notebookListPanel,
@@ -172,7 +169,17 @@ div.ui-resizable-handle.ui-resizable-s {
     float: right;
 }
 
-.ui.menu.text.notebookMenu a {
+.ui.menu.text.nbListMenu {
+    margin-bottom: 0px;
+    margin-top: 6px;
+    height: 15px;
+    text-align: right;
+    margin-right: -7px;
+    float: right;
+}
+
+.ui.menu.text.notebookMenu a,
+.ui.menu.text.nbListMenu a {
     font-size: 13px;
 }
 
