@@ -1,8 +1,8 @@
 package portal.notebook.execution.service;
 
 
-import com.squonk.notebook.api.CellType;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import tmp.squonk.notebook.api.CellType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +28,7 @@ public class ScriptQndCellExecutor implements QndCellExecutor {
          cell.getVariablebindingList().clear();
         for (Cell other : notebookContents.getCellList()) {
             if (other != cell) {
-                for (Variable variable : other.getOutputVariableList()) {
+         for (Variable variable : other.getOutputVariableMap()) {
                     if (variable.getValue() != null) {
                         String producerName = variable.getProducerCell().getName().replaceAll(" ", "_");
                         bindings.put(producerName + "_" + variable.getName(), variable.getValue());
@@ -37,14 +37,14 @@ public class ScriptQndCellExecutor implements QndCellExecutor {
             }
         }
         try {
-            String code = (String)cell.getPropertyMap().get("code");
+         String code = (String)cell.getOptionMap().get("code");
             Object result = scriptToVm(engine.eval(code));
-            cell.getPropertyMap().put("outcome", result);
-            cell.getPropertyMap().put("errorMessage", null);
-            cell.getOutputVariableList().get(0).setValue(result);
+         cell.getOptionMap().put("outcome", result);
+         cell.getOptionMap().put("errorMessage", null);
+         cell.getOutputVariableMap().get(0).setValue(result);
         } catch (ScriptException se) {
             LOGGER.log(Level.WARNING, se.getMessage());
-            cell.getPropertyMap().put("errorMssage", se.getMessage());
+         cell.getOptionMap().put("errorMssage", se.getMessage());
         }
          notebookService.storeNotebookContents(callbackContext.getNotebookId(), notebookContents);
          **/

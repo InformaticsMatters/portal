@@ -1,7 +1,6 @@
 package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
-import com.squonk.notebook.api.VariableType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -11,6 +10,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import portal.dataset.IDatasetDescriptor;
 import portal.notebook.service.Strings;
+import tmp.squonk.notebook.api.VariableType;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -118,13 +118,6 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void displayAndSave() {
-        if (getCellModel().getBindingModelList().isEmpty()) {
-            BindingModel bindingModel = new BindingModel();
-            bindingModel.setDisplayName("Input file");
-            bindingModel.setName("input");
-            bindingModel.getAcceptedVariableTypeList().add(VariableType.FILE);
-            getCellModel().getBindingModelList().add(bindingModel);
-        }
         getCellModel().getBindingModelList().get(0).setSourceVariableModel(form.getModelObject().getInputVariableModel());
         loadTableData();
         notebookSession.storeNotebook();

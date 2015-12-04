@@ -99,7 +99,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
+            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
             variableModel.setValue(fileName);
             form.getModelObject().store();
             notebookSession.storeNotebook();
@@ -162,13 +162,13 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getOptionMap().put("nameFieldName", nameFieldName);
+            getCellModel().getOptionMap().get("nameFieldName").setValue(nameFieldName);
         }
 
         public void load() {
             VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
             fileName = variableModel == null ? null : (String) variableModel.getValue();
-            nameFieldName = (String) getCellModel().getOptionMap().get("nameFieldName");
+            nameFieldName = (String) getCellModel().getOptionMap().get("nameFieldName").getValue();
         }
     }
 

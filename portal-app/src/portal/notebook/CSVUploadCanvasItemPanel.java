@@ -186,13 +186,13 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         public void load() {
             VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
             fileName = (String) variableModel.getValue();
-            csvFormatType = (String) getCellModel().getOptionMap().get(OPTION_FILE_TYPE);
-            firstLineIsHeader = (Boolean) getCellModel().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER);
+            csvFormatType = (String) getCellModel().getOptionMap().get(OPTION_FILE_TYPE).getValue();
+            firstLineIsHeader = (Boolean) getCellModel().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).getValue();
         }
 
         public void store() {
-            getCellModel().getOptionMap().put(OPTION_FILE_TYPE, csvFormatType);
-            getCellModel().getOptionMap().put(OPTION_FIRST_LINE_IS_HEADER, firstLineIsHeader);
+            getCellModel().getOptionMap().get(OPTION_FILE_TYPE).setValue(csvFormatType);
+            getCellModel().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
         }
 
     }

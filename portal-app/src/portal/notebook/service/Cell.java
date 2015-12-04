@@ -1,11 +1,9 @@
 package portal.notebook.service;
 
-import com.squonk.notebook.api.CellType;
+import tmp.squonk.notebook.api.CellType;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -13,9 +11,9 @@ public class Cell implements Serializable {
     private Long id;
     private String name;
     private CellType cellType;
-    private final List<Binding> bindingList = new ArrayList<>();
-    private final List<Variable> outputVariableList = new ArrayList<>();
-    private final Map<String, Object> optionMap = new HashMap<>();
+    private final Map<String, Binding> bindingMap = new HashMap<>();
+    private final Map<String, Variable> outputVariableMap = new HashMap<>();
+    private final Map<String, Option> optionMap = new HashMap<>();
     private int positionLeft;
     private int positionTop;
 
@@ -36,12 +34,12 @@ public class Cell implements Serializable {
         this.cellType = cellType;
     }
 
-    public List<Binding> getBindingList() {
-        return bindingList;
+    public Map<String, Binding> getBindingMap() {
+        return bindingMap;
     }
 
-    public List<Variable> getOutputVariableList() {
-        return outputVariableList;
+    public Map<String, Variable> getOutputVariableMap() {
+        return outputVariableMap;
     }
 
     public Long getId() {
@@ -52,7 +50,7 @@ public class Cell implements Serializable {
         this.id = id;
     }
 
-    public Map<String, Object> getOptionMap() {
+    public Map<String, Option> getOptionMap() {
         return optionMap;
     }
 

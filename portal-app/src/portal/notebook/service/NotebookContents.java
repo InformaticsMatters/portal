@@ -1,8 +1,10 @@
 package portal.notebook.service;
 
 
-import com.squonk.notebook.api.CellType;
-import com.squonk.notebook.api.VariableDefinition;
+import tmp.squonk.notebook.api.BindingDefinition;
+import tmp.squonk.notebook.api.CellType;
+import tmp.squonk.notebook.api.OptionDefinition;
+import tmp.squonk.notebook.api.VariableDefinition;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -21,11 +23,7 @@ public class NotebookContents implements Serializable {
     public Variable findVariable(String producerName, String name) {
         for (Cell cell : cellList) {
             if (cell.getName().equals(producerName)) {
-                for (Variable variable : cell.getOutputVariableList()) {
-                    if (variable.getName().equals(name)) {
-                        return variable;
-                    }
-                }
+                return cell.getOutputVariableMap().get(name);
             }
         }
         return null;
@@ -92,10 +90,26 @@ public class NotebookContents implements Serializable {
         for (VariableDefinition variableDefinition : cellType.getOutputVariableDefinitionList()) {
             Variable variable = new Variable();
             variable.setName(variableDefinition.getName());
+            variable.setDisplayName(variableDefinition.getDisplayName());
             variable.setVariableType(variableDefinition.getVariableType());
             variable.setValue(variableDefinition.getDefaultValue());
             variable.setProducerCell(cell);
-            cell.getOutputVariableList().add(variable);
+            cell.getOutputVariableMap().put(variableDefinition.getName(), variable);
+        }
+        for (BindingDefinition bindingDefinition : cellType.getBindingDefinitionList()) {
+            Binding binding = new Binding();
+            binding.getAcceptedVariableTypeList().addAll(bindingDefinition.getAcceptedVariableTypeList());
+            binding.setDisplayName(bindingDefinition.getDisplayName());
+            binding.setName(bindingDefinition.getName());
+            cell.getBindingMap().put(bindingDefinition.getName(), binding);
+        }
+        for (OptionDefinition optionDefinition : cellType.getOptionDefinitionList()) {
+            Option option = new Option();
+            option.setName(optionDefinition.getName());
+            option.setDisplayName(optionDefinition.getDisplayName());
+            option.setValue(optionDefinition.getDefaultValue());
+            option.getPicklistValueList().addAll(optionDefinition.getPicklistValueList());
+            cell.getOptionMap().put(option.getName(), option);
         }
         return cell;
     }

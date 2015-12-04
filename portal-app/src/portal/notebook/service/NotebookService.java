@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import portal.notebook.client.NotebookInfo;
-import com.squonk.notebook.api.VariableType;
+import tmp.squonk.notebook.api.VariableType;
 import toolkit.services.PU;
 
 import javax.enterprise.context.RequestScoped;

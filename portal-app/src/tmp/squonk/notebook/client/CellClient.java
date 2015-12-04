@@ -1,9 +1,9 @@
 package tmp.squonk.notebook.client;
 
 
-import com.squonk.notebook.api.CellType;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import tmp.squonk.notebook.api.CellType;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.MultivaluedMap;

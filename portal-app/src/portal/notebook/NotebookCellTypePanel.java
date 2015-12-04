@@ -2,7 +2,7 @@ package portal.notebook;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import com.squonk.notebook.api.CellType;
+import tmp.squonk.notebook.api.CellType;
 
 import javax.inject.Inject;
 

@@ -35,10 +35,10 @@ public class NotebookWebService {
             CellData cellDTO = new CellData();
             cellDTO.setName(cell.getName());
             cellDTO.setCellType(cell.getCellType());
-            for (Variable variable : cell.getOutputVariableList()) {
+            for (Variable variable : cell.getOutputVariableMap().values()) {
                 cellDTO.getOutputVariableNameList().add(variable.getName());
             }
-            for (Binding binding : cell.getBindingList()) {
+            for (Binding binding : cell.getBindingMap().values()) {
                 Variable variable = binding.getVariable();
                 if (variable != null) {
                     VariableData variableDTO = new VariableData();

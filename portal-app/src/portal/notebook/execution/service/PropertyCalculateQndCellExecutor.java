@@ -3,11 +3,11 @@ package portal.notebook.execution.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import com.squonk.notebook.api.CellDTO;
-import com.squonk.notebook.api.CellType;
-import com.squonk.notebook.api.NotebookDTO;
-import com.squonk.notebook.api.VariableDTO;
-import com.squonk.notebook.client.CallbackClient;
+import tmp.squonk.notebook.api.CellDTO;
+import tmp.squonk.notebook.api.CellType;
+import tmp.squonk.notebook.api.NotebookDTO;
+import tmp.squonk.notebook.api.VariableKey;
+import tmp.squonk.notebook.client.CallbackClient;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -23,12 +23,12 @@ public class PropertyCalculateQndCellExecutor implements QndCellExecutor {
     public void execute(String cellName) {
         try {
             NotebookDTO notebookDefinition = callbackClient.retrieveNotebookDefinition();
-            CellDTO cellDefinition = findCell(notebookDefinition, cellName);
-            VariableDTO inputVariableDefinition = cellDefinition.getInputVariableList().get(0);
+            CellDTO cellDTO = findCell(notebookDefinition, cellName);
+            VariableKey inputVariableKey = cellDTO.getBindingMap().get("input").getVariableKey();
 
             //special case for VariableType FILE: text value is the file name, file contents accessed through stream API
-            String fileName = callbackClient.readTextValue(inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
-            InputStream inputStream = callbackClient.readStreamValue(inputVariableDefinition.getProducerName(), inputVariableDefinition.getName());
+            String fileName = callbackClient.readTextValue(inputVariableKey.getProducerName(), inputVariableKey.getName());
+            InputStream inputStream = callbackClient.readStreamValue(inputVariableKey.getProducerName(), inputVariableKey.getName());
 
             List<MoleculeObject> molecules = parseFileStream(fileName, inputStream);
             ByteArrayOutputStream moleculesOutputStream = new ByteArrayOutputStream();
@@ -36,10 +36,10 @@ public class PropertyCalculateQndCellExecutor implements QndCellExecutor {
             objectMapper.writeValue(moleculesOutputStream, molecules);
             moleculesOutputStream.flush();
 
-            String serviceName = (String) cellDefinition.getPropertyMap().get("serviceName");
+            String serviceName = (String) cellDTO.getOptionMap().get("serviceName").getValue();
             byte[] resultBytes = calculate(moleculesOutputStream.toByteArray(), serviceName);
 
-            String outputVariableName = cellDefinition.getOutputVariableNameList().get(0);
+            String outputVariableName = cellDTO.getOutputVariableNameList().get(0);
             callbackClient.writeStreamContents(cellName, outputVariableName, new ByteArrayInputStream(resultBytes));
         } catch (Exception e) {
             throw new RuntimeException(e);

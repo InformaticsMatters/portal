@@ -1,10 +1,7 @@
 package portal.notebook;
 
-import com.squonk.notebook.api.CellType;
-import portal.notebook.service.Binding;
-import portal.notebook.service.Cell;
-import portal.notebook.service.NotebookContents;
-import portal.notebook.service.Variable;
+import portal.notebook.service.*;
+import tmp.squonk.notebook.api.CellType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +12,7 @@ public class DefaultCellModel implements CellModel {
     private final CellType cellType;
     private final List<BindingModel> bindingModelList = new ArrayList<>();
     private final List<String> outputVariableNameList = new ArrayList<>();
-    private final Map<String, Object> optionMap = new HashMap<>();
+    private final Map<String, OptionModel> optionMap = new HashMap<>();
     private String name;
     private int positionLeft;
     private int positionTop;
@@ -65,10 +62,12 @@ public class DefaultCellModel implements CellModel {
         storeOptions(cell);
     }
 
-    protected void storeOptions(Cell cell) {
-        cell.getOptionMap().putAll(optionMap);
-    }
 
+    protected void storeOptions(Cell cell) {
+        for (OptionModel optionModel : optionMap.values()) {
+            cell.getOptionMap().get(optionModel.getName()).setValue(optionModel.getValue());
+        }
+    }
 
     protected void storeHeader(Cell cell) {
         cell.setCellType(getCellType());
@@ -79,15 +78,10 @@ public class DefaultCellModel implements CellModel {
 
     protected void storeBindingModels(NotebookContents notebookContents, Cell cell) {
         for (BindingModel bindingModel : getBindingModelList()) {
-            Binding binding = new Binding();
-            binding.setName(bindingModel.getName());
-            binding.setDisplayName(bindingModel.getDisplayName());
-            binding.getAcceptedVariableTypeList().addAll(bindingModel.getAcceptedVariableTypeList());
+            Binding binding = cell.getBindingMap().get(bindingModel.getName());
             VariableModel variableModel = bindingModel.getSourceVariableModel();
             Variable variable = variableModel == null ? null : notebookContents.findVariable(variableModel.getProducer().getName(), variableModel.getName());
-            variable.setValue(variableModel.getValue());
             binding.setVariable(variable);
-            cell.getBindingList().add(binding);
         }
     }
 
@@ -100,7 +94,14 @@ public class DefaultCellModel implements CellModel {
     }
 
     private void loadOptions(Cell cell) {
-        optionMap.putAll(cell.getOptionMap());
+        optionMap.clear();
+        for (Option option : cell.getOptionMap().values()) {
+            OptionModel optionModel = new OptionModel();
+            optionModel.setOptionType(option.getOptionType());
+            optionModel.setName(option.getName());
+            optionModel.setValue(option.getValue());
+            optionMap.put(option.getName(), optionModel);
+        }
     }
 
     protected void loadHeader(Cell cell) {
@@ -111,14 +112,14 @@ public class DefaultCellModel implements CellModel {
 
     protected void loadOutputVariables(Cell cell) {
         getOutputVariableNameList().clear();
-        for (Variable variable : cell.getOutputVariableList())  {
+        for (Variable variable : cell.getOutputVariableMap().values()) {
             getOutputVariableNameList().add(variable.getName());
         }
     }
 
     protected void loadBindings(NotebookModel notebookModel, Cell cell) {
         bindingModelList.clear();
-        for (Binding binding : cell.getBindingList()) {
+        for (Binding binding : cell.getBindingMap().values()) {
             BindingModel bindingModel = new BindingModel();
             bindingModel.getAcceptedVariableTypeList().addAll(binding.getAcceptedVariableTypeList());
             bindingModel.setDisplayName(binding.getDisplayName());
@@ -150,7 +151,7 @@ public class DefaultCellModel implements CellModel {
     }
 
     @Override
-    public Map<String, Object> getOptionMap() {
+    public Map<String, OptionModel> getOptionMap() {
         return optionMap;
     }
 }

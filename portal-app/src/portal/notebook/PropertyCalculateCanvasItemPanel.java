@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import com.squonk.notebook.api.VariableType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -109,23 +108,12 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
     private void calculateAndSave() {
         if (isValidInput()) {
-            checkBindings();
             form.getModelObject().store();
             VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
             outputVariableModel.setValue(form.getModelObject().getOutputFileName());
             notebookSession.storeNotebook();
             notebookSession.executeCell(getCellModel().getName());
             notebookSession.reloadNotebook();
-        }
-    }
-
-    private void checkBindings() {
-        if (getCellModel().getBindingModelList().isEmpty()) {
-            BindingModel bindingModel = new BindingModel();
-            bindingModel.setDisplayName("Input file");
-            bindingModel.setName("input");
-            bindingModel.getAcceptedVariableTypeList().add(VariableType.FILE);
-            getCellModel().getBindingModelList().add(bindingModel);
         }
     }
 
@@ -164,12 +152,12 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            serviceName = (String) getCellModel().getOptionMap().get("serviceName");
+            serviceName = (String) getCellModel().getOptionMap().get("serviceName").getValue();
         }
 
         public void store() {
             getCellModel().getBindingModelList().get(0).setSourceVariableModel(form.getModelObject().getInputVariableModel());
-            getCellModel().getOptionMap().put("serviceName", serviceName);
+            getCellModel().getOptionMap().get("serviceName").setValue(serviceName);
         }
     }
 

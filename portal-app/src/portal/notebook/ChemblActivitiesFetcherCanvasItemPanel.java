@@ -106,13 +106,13 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            assayId = (String) getCellModel().getOptionMap().get("assayId");
-            prefix = (String) getCellModel().getOptionMap().get("prefix");
+            assayId = (String) getCellModel().getOptionMap().get("assayId").getValue();
+            prefix = (String) getCellModel().getOptionMap().get("prefix").getValue();
         }
 
         public void store() {
-            getCellModel().getOptionMap().put("assayId", assayId);
-            getCellModel().getOptionMap().put("prefix", prefix);
+            getCellModel().getOptionMap().get("assayId").setValue(assayId);
+            getCellModel().getOptionMap().get("prefix").setValue(prefix);
         }
 
     }

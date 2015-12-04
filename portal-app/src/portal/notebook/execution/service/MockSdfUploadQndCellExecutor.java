@@ -3,11 +3,12 @@ package portal.notebook.execution.service;
 import com.im.lac.types.MoleculeObject;
 import com.squonk.dataset.Dataset;
 import com.squonk.dataset.DatasetMetadata;
-import com.squonk.notebook.api.CellDTO;
-import com.squonk.notebook.api.CellType;
-import com.squonk.notebook.client.CallbackClient;
 import com.squonk.types.io.JsonHandler;
 import com.squonk.util.IOUtils;
+import tmp.squonk.notebook.api.CellDTO;
+import tmp.squonk.notebook.api.CellType;
+import tmp.squonk.notebook.api.OptionDTO;
+import tmp.squonk.notebook.client.CallbackClient;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -32,11 +33,11 @@ public class MockSdfUploadQndCellExecutor implements QndCellExecutor {
     public void execute(String cellName) {
         CellDTO cell = callbackClient.retrieveCell(cellName);
 
-        for (Map.Entry e : cell.getPropertyMap().entrySet()) {
-            System.out.println("SDF OPTS: " + e.getKey() + " -> " + e.getValue());
+        for (Map.Entry<String, OptionDTO> e : cell.getOptionMap().entrySet()) {
+            System.out.println("SDF OPTS: " + e.getKey() + " -> " + e.getValue().getValue());
         }
 
-        try (InputStream is = callbackClient.readStreamValue(cellName, "FileContent")) {
+        try (InputStream is = callbackClient.readStreamValue(cellName, "fileContent")) {
             byte[] bytes = IOUtils.convertStreamToBytes(is, 1000);
             System.out.println("Read " + bytes.length + " bytes");
         } catch (IOException ioe) {
@@ -55,10 +56,10 @@ public class MockSdfUploadQndCellExecutor implements QndCellExecutor {
             Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
             try (Stream stream = generator.getAsStream()) {
                 InputStream dataInputStream = generator.getAsInputStream(stream, true);
-                callbackClient.writeStreamContents(cellName, "Results", dataInputStream);
+                callbackClient.writeStreamContents(cellName, "results", dataInputStream);
             }
             DatasetMetadata metadata = generator.getDatasetMetadata();
-            callbackClient.writeTextValue(cellName, "Results", JsonHandler.getInstance().objectToJson(metadata));
+            callbackClient.writeTextValue(cellName, "results", JsonHandler.getInstance().objectToJson(metadata));
         } catch (Exception e) {
             throw new RuntimeException("Failed to write dataset", e);
         }

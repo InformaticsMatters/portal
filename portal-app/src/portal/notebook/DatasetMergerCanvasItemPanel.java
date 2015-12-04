@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import com.squonk.notebook.api.VariableType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -78,16 +77,6 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void execute() {
-        // hack until CellType supports bindings
-        if (getCellModel().getBindingModelList().isEmpty()) {
-            for (int i = 0; i < 5; i++) {
-                BindingModel bindingModel = new BindingModel();
-                bindingModel.setDisplayName("Dataset");
-                bindingModel.setName("dataset-" + (i + 1));
-                bindingModel.getAcceptedVariableTypeList().add(VariableType.DATASET);
-                getCellModel().getBindingModelList().add(bindingModel);
-            }
-        }
         form.getModelObject().store();
         VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "results");
         outputVariableModel.setValue(null);
@@ -118,13 +107,13 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            keepFirst = (Boolean) getCellModel().getOptionMap().get("keepFirst");
-            mergeFieldName = (String) getCellModel().getOptionMap().get("mergeFieldName");
+            keepFirst = (Boolean) getCellModel().getOptionMap().get("keepFirst").getValue();
+            mergeFieldName = (String) getCellModel().getOptionMap().get("mergeFieldName").getValue();
         }
 
         public void store() {
-            getCellModel().getOptionMap().put("keepFirst", keepFirst);
-            getCellModel().getOptionMap().put("mergeFieldName", mergeFieldName);
+            getCellModel().getOptionMap().get("keepFirst").setValue(keepFirst);
+            getCellModel().getOptionMap().get("mergeFieldName").setValue(mergeFieldName);
         }
     }
 

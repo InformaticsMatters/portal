@@ -6,9 +6,9 @@ import com.im.lac.types.MoleculeObject;
 import com.squonk.dataset.Dataset;
 import com.squonk.dataset.DatasetMetadata;
 import com.squonk.types.io.JsonHandler;
-import com.squonk.notebook.client.CallbackClient;
-import com.squonk.notebook.api.CellDTO;
-import com.squonk.notebook.api.CellType;
+import tmp.squonk.notebook.api.CellDTO;
+import tmp.squonk.notebook.api.CellType;
+import tmp.squonk.notebook.client.CallbackClient;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -35,8 +35,8 @@ public class ChemblActivitiesFetcherQndCellExecutor implements QndCellExecutor {
     @Override
     public void execute(String cellName) {
         CellDTO cell = callbackClient.retrieveCell(cellName);
-        String assayID = (String) cell.getPropertyMap().get("assayId");
-        String prefix = (String) cell.getPropertyMap().get("prefix");
+        String assayID = (String) cell.getOptionMap().get("assayId").getValue();
+        String prefix = (String) cell.getOptionMap().get("prefix").getValue();
         // real implmentation class not yet accessible so using the inner class as a mock for now
         ChemblClient client = new ChemblClient();
         // the batchSize of 100 should be thought of as an advanced option - not present in the standard
@@ -63,8 +63,8 @@ public class ChemblActivitiesFetcherQndCellExecutor implements QndCellExecutor {
 
         // define the execution options
         Map<String,Object> options = new HashMap<>();
-        options.put("AssayID", cell.getPropertyMap().get("assayId"));
-        options.put("Prefix", cell.getPropertyMap().get("prefix"));
+        options.put("AssayID", cell.getOptionMap().get("assayId").getValue());
+        options.put("Prefix", cell.getOptionMap().get("prefix").getValue());
 
         // define the variable name mappings
         Map<String,String> mappings = new HashMap<>();

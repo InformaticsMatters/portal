@@ -1,11 +1,11 @@
 package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
-import com.squonk.notebook.api.CellType;
-import com.squonk.notebook.client.CellClient;
 import portal.dataset.*;
 import portal.notebook.client.NotebookInfo;
 import portal.notebook.service.*;
+import tmp.squonk.notebook.api.CellType;
+import tmp.squonk.notebook.client.CellClient;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;

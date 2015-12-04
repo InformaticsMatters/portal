@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import com.squonk.notebook.api.CellType;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -27,6 +26,7 @@ import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PortalHomePage;
 import portal.notebook.client.NotebookInfo;
+import tmp.squonk.notebook.api.CellType;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

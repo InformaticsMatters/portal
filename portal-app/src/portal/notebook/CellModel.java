@@ -1,8 +1,8 @@
 package portal.notebook;
 
-import com.squonk.notebook.api.CellType;
 import portal.notebook.service.Cell;
 import portal.notebook.service.NotebookContents;
+import tmp.squonk.notebook.api.CellType;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,6 +23,6 @@ public interface CellModel extends Serializable {
 
     List<BindingModel> getBindingModelList();
 
-    Map<String, Object> getOptionMap();
+    Map<String, OptionModel> getOptionMap();
 
 }

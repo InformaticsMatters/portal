@@ -1,13 +1,13 @@
 package portal.notebook.service;
 
-import com.squonk.notebook.api.VariableType;
+import tmp.squonk.notebook.api.VariableType;
 
 import java.io.Serializable;
 
 public class Variable implements Serializable {
-    private Long id;
     private Cell producerCell;
     private String name;
+    private String displayName;
     private VariableType variableType;
     private Object value;
 
@@ -35,19 +35,19 @@ public class Variable implements Serializable {
         this.value = value;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public VariableType getVariableType() {
         return variableType;
     }
 
     public void setVariableType(VariableType variableType) {
         this.variableType = variableType;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

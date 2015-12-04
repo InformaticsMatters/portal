@@ -169,7 +169,7 @@ public class NotebookModel implements Serializable {
                 cellModel.setName(cell.getName());
                 cellModelList.add(cellModel);
             }
-            for (Variable variable : cell.getOutputVariableList()) {
+            for (Variable variable : cell.getOutputVariableMap().values()) {
                 VariableModel variableModel = findVariableModel(cell.getName(), variable.getName());
                 if (variableModel == null) {
                     variableModel = new VariableModel();

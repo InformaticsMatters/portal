@@ -2,9 +2,7 @@ package portal.notebook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import com.squonk.notebook.api.CellDTO;
-import com.squonk.notebook.api.NotebookDTO;
-import com.squonk.notebook.api.VariableDTO;
+import tmp.squonk.notebook.api.*;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -35,22 +33,28 @@ public class CallbackWebService {
             CellDTO cellDTO = new CellDTO();
             cellDTO.setName(cell.getName());
             cellDTO.setCellType(cell.getCellType());
-            for (Variable variable : cell.getOutputVariableList()) {
+            for (Variable variable : cell.getOutputVariableMap().values()) {
                 cellDTO.getOutputVariableNameList().add(variable.getName());
             }
-            for (Binding binding : cell.getBindingList()) {
+            for (Binding binding : cell.getBindingMap().values()) {
+                BindingDTO bindingDTO = new BindingDTO();
+                bindingDTO.setName(binding.getName());
                 Variable variable = binding.getVariable();
                 if (variable != null) {
-                    VariableDTO variableDTO = new VariableDTO();
-                    variableDTO.setId(variable.getId());
-                    variableDTO.setName(variable.getName());
-                    variableDTO.setProducerName(variable.getProducerCell().getName());
-                    variableDTO.setVariableType(variable.getVariableType());
-                    variableDTO.setValue(variable.getValue());
-                    cellDTO.getInputVariableList().add(variableDTO);
+                    VariableKey variableKey = new VariableKey();
+                    variableKey.setName(variable.getName());
+                    variableKey.setProducerName(variable.getProducerCell().getName());
+                    bindingDTO.setVariableKey(variableKey);
                 }
+                cellDTO.getBindingMap().put(binding.getName(), bindingDTO);
             }
-            cellDTO.getPropertyMap().putAll(cell.getOptionMap());
+            for (Option option : cell.getOptionMap().values()) {
+                OptionDTO optionDTO = new OptionDTO();
+                optionDTO.setName(option.getName());
+                optionDTO.setOptionType(option.getOptionType());
+                optionDTO.setValue(option.getValue());
+                cellDTO.getOptionMap().put(option.getName(), optionDTO);
+            }
             notebookDTO.getCellList().add(cellDTO);
         }
         return notebookDTO;

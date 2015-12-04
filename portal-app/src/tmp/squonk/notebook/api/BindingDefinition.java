@@ -1,17 +1,15 @@
-package portal.notebook.service;
+package tmp.squonk.notebook.api;
 
-
-import tmp.squonk.notebook.api.VariableType;
-
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Binding implements Serializable {
+@XmlRootElement
+public class BindingDefinition implements Serializable {
     private String name;
     private String displayName;
     private final List<VariableType> acceptedVariableTypeList = new ArrayList<>();
-    private Variable variable;
 
     public String getName() {
         return name;
@@ -29,15 +27,8 @@ public class Binding implements Serializable {
         this.displayName = displayName;
     }
 
-    public Variable getVariable() {
-        return variable;
-    }
-
-    public void setVariable(Variable variable) {
-        this.variable = variable;
-    }
-
     public List<VariableType> getAcceptedVariableTypeList() {
         return acceptedVariableTypeList;
     }
 }
+

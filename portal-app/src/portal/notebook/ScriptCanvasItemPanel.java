@@ -46,11 +46,11 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         outcomeModel = new IModel<String>() {
             @Override
             public String getObject() {
-                String errorMessage = (String) getCellModel().getOptionMap().get("errorMessage");
+                String errorMessage = (String) getCellModel().getOptionMap().get("errorMessage").getValue();
                 if (errorMessage != null) {
                     return errorMessage;
                 } else {
-                    Object outcome = getCellModel().getOptionMap().get("outcome");
+                    Object outcome = getCellModel().getOptionMap().get("outcome").getValue();
                     return outcome == null ? "[nothing]" : outcome.toString();
                 }
             }
@@ -127,11 +127,11 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getOptionMap().put("code", code);
+            getCellModel().getOptionMap().get("code").setValue(code);
         }
 
         public void load() {
-            code = (String) getCellModel().getOptionMap().get("code");
+            code = (String) getCellModel().getOptionMap().get("code").getValue();
         }
     }
 

@@ -1,11 +1,8 @@
 package portal.notebook.execution.service;
 
-import com.squonk.notebook.api.CellDTO;
-import com.squonk.notebook.api.CellType;
-import com.squonk.notebook.api.VariableDefinition;
-import com.squonk.notebook.api.VariableType;
-import com.squonk.notebook.client.CallbackClient;
-import com.squonk.notebook.client.CallbackContext;
+import tmp.squonk.notebook.api.*;
+import tmp.squonk.notebook.client.CallbackClient;
+import tmp.squonk.notebook.client.CallbackContext;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -17,7 +14,7 @@ import java.util.List;
 @ApplicationScoped
 @Path("cell")
 public class ExampleCellService {
-    private static final List<CellType> CELL_TYPE_DESCRIPTOR_LIST = createDescriptors();
+    private static final List<CellType> CELL_TYPE_LIST = createDefinitions();
     public static final String OPTION_FILE_TYPE = "csvFormatType";
     public static final String OPTION_FIRST_LINE_IS_HEADER = "firstLineIsHeader";
     @Inject
@@ -27,7 +24,7 @@ public class ExampleCellService {
     @Inject
     private CallbackContext callbackContext;
 
-    private static List<CellType> createDescriptors() {
+    private static List<CellType> createDefinitions() {
         List<CellType> list = new ArrayList<>();
 
         CellType cellType = new CellType();
@@ -37,6 +34,11 @@ public class ExampleCellService {
         variableDefinition.setName("file");
         variableDefinition.setVariableType(VariableType.FILE);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        OptionDefinition optionDefinition = new OptionDefinition();
+        optionDefinition.setName("fileName");
+        optionDefinition.setDisplayName("Output file name");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
         cellType.setExecutable(Boolean.FALSE);
         list.add(cellType);
 
@@ -47,6 +49,19 @@ public class ExampleCellService {
         variableDefinition.setName("outputFile");
         variableDefinition.setVariableType(VariableType.FILE);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input file");
+        bindingDefinition.setName("input");
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
+        cellType.getBindingDefinitionList().add(bindingDefinition);
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName("serviceName");
+        optionDefinition.setDisplayName("Service");
+        optionDefinition.setOptionType(OptionType.PICKLIST);
+        for (String serviceName : CalculatorsClient.getServiceNames()) {
+            optionDefinition.getPicklistValueList().add(serviceName);
+        }
+        cellType.getOptionDefinitionList().add(optionDefinition);
         cellType.setExecutable(Boolean.TRUE);
         list.add(cellType);
 
@@ -57,14 +72,27 @@ public class ExampleCellService {
         variableDefinition.setName("results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
-        cellType.getOptionNameList().add("assayId");
-        cellType.getOptionNameList().add("prefix");
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName("assayId");
+        optionDefinition.setDisplayName("Assay ID");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName("prefix");
+        optionDefinition.setDisplayName("Prefix");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
         cellType.setExecutable(Boolean.TRUE);
         list.add(cellType);
 
         cellType = new CellType();
         cellType.setName("TableDisplay");
         cellType.setDescription("Table display");
+        bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input file");
+        bindingDefinition.setName("input");
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
+        cellType.getBindingDefinitionList().add(bindingDefinition);
         cellType.setExecutable(Boolean.FALSE);
         list.add(cellType);
 
@@ -78,43 +106,21 @@ public class ExampleCellService {
         cellType.setExecutable(Boolean.TRUE);
         list.add(cellType);
 
-        cellType = new CellType();
-        cellType.setName("Sample1");
-        cellType.setDescription("Produce number \"1\"");
-        variableDefinition = new VariableDefinition();
-        variableDefinition.setName("number");
-        variableDefinition.setVariableType(VariableType.VALUE);
-        variableDefinition.setDefaultValue(1);
-        cellType.getOutputVariableDefinitionList().add(variableDefinition);
-        cellType.setExecutable(Boolean.FALSE);
-        list.add(cellType);
-
-        cellType = new CellType();
-        cellType.setName("Sample2");
-        cellType.setDescription("Sum input plus option");
-        variableDefinition = new VariableDefinition();
-        variableDefinition.setName("result");
-        variableDefinition.setVariableType(VariableType.VALUE);
-        cellType.getOutputVariableDefinitionList().add(variableDefinition);
-        cellType.getOptionNameList().add("number2");
-        cellType.setExecutable(Boolean.TRUE);
-        list.add(cellType);
-
         list.add(new CellType("SdfUploader", "SDF upload", true)
-                .withOutputVariable("FileContent", VariableType.FILE)
-                .withOutputVariable("Results", VariableType.DATASET)
-                .withOption("NameFieldName"));
+                .withOutputVariable("fileContent", VariableType.FILE)
+                .withOutputVariable("results", VariableType.DATASET)
+                .withOption("nameFieldName", OptionType.SIMPLE));
 
         list.add(new CellType("CsvUploader", "CSV upload", true)
-                .withOutputVariable("FileContent", VariableType.FILE)
-                .withOutputVariable("Results", VariableType.DATASET)
-                .withOption(OPTION_FILE_TYPE)
-                .withOption(OPTION_FIRST_LINE_IS_HEADER));
+                .withOutputVariable("fileContent", VariableType.FILE)
+                .withOutputVariable("results", VariableType.DATASET)
+                .withOption(OPTION_FILE_TYPE, OptionType.SIMPLE)
+                .withOption(OPTION_FIRST_LINE_IS_HEADER, OptionType.SIMPLE));
 
         list.add(new CellType("DatasetMerger", "Dataset merger", true)
                 .withOutputVariable("Results", VariableType.DATASET)
-                .withOption("MergeFieldName")
-                .withOption("KeepFirst"));
+                .withOption("mergeFieldName", OptionType.SIMPLE)
+                .withOption("keepFirst", OptionType.SIMPLE));
 
         return list;
     }
@@ -123,7 +129,7 @@ public class ExampleCellService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<CellType> listCellType() {
-        return CELL_TYPE_DESCRIPTOR_LIST;
+        return CELL_TYPE_LIST;
     }
 
     @Path("executeCell")
@@ -138,7 +144,7 @@ public class ExampleCellService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public CellType retrieveCellType(@QueryParam("name") String name) {
-        for (CellType cellType : CELL_TYPE_DESCRIPTOR_LIST) {
+        for (CellType cellType : CELL_TYPE_LIST) {
             if (cellType.getName().equals(name)) {
                 return cellType;
             }
