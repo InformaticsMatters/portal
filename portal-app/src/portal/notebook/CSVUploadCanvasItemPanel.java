@@ -108,7 +108,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
+            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
             variableModel.setValue(fileName);
             notebookSession.storeNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
@@ -184,7 +184,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
+            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
             fileName = (String) variableModel.getValue();
             csvFormatType = (String) getCellModel().getOptionMap().get(OPTION_FILE_TYPE).getValue();
             firstLineIsHeader = (Boolean) getCellModel().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).getValue();
