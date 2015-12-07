@@ -92,6 +92,9 @@ public class ExampleCellService {
         bindingDefinition.setDisplayName("Input file");
         bindingDefinition.setName("input");
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.VALUE);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellType.getBindingDefinitionList().add(bindingDefinition);
         cellType.setExecutable(Boolean.FALSE);
         list.add(cellType);
