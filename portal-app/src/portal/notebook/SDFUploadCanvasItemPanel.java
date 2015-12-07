@@ -166,7 +166,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "FileContent");
+            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
             fileName = variableModel == null ? null : (String) variableModel.getValue();
             nameFieldName = (String) getCellModel().getOptionMap().get("nameFieldName").getValue();
         }
