@@ -80,7 +80,7 @@ public class NotebookSession implements Serializable {
         storeNotebookData.setNotebookInfo(notebookInfo);
         storeNotebookData.setNotebookContents(notebookModel.getNotebookContents());
         notebookService.storeNotebook(storeNotebookData);
-        return notebookModel.addCell(cell);
+        return notebookModel.addCellModel(cell);
     }
 
     public void removeCell(CellModel cellModel) {
@@ -89,7 +89,7 @@ public class NotebookSession implements Serializable {
         storeNotebookData.setNotebookInfo(notebookInfo);
         storeNotebookData.setNotebookContents(notebookModel.getNotebookContents());
         notebookService.storeNotebook(storeNotebookData);
-        notebookModel.removeCell(cellModel);
+        notebookModel.removeCellModel(cellModel);
     }
 
     public List<CellType> listCellType() {

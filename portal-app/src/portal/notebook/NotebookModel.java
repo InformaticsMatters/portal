@@ -38,7 +38,7 @@ public class NotebookModel implements Serializable {
         return cellModelMap.values().toArray(new CellModel[0]);
     }
 
-    public CellModel addCell(Cell cell) {
+    public CellModel addCellModel(Cell cell) {
         CellModel cellModel = new CellModel(cell, this);
         cellModel.loadBindings();
         cellModelMap.put(cell.getName(), cellModel);
@@ -58,8 +58,7 @@ public class NotebookModel implements Serializable {
         }
     }
 
-    public void removeCell(CellModel cellModel) {
-        getNotebookContents().removeCell(cellModel.getName());
+    public void removeCellModel(CellModel cellModel) {
         cellModelMap.remove(cellModel.getName());
         notifyCellRemoved(cellModel);
     }
