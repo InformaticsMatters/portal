@@ -63,12 +63,12 @@ public class NotebookModel implements Serializable {
         notifyCellRemoved(cellModel);
     }
 
-    public CellModel findCell(String name) {
+    public CellModel findCellModel(String name) {
         return cellModelMap.get(name);
     }
 
     public VariableModel findVariableModel(String cellName, String name) {
-        return findCell(cellName).findVariableModel(name);
+        return findCellModel(cellName).findVariableModel(name);
     }
 
     public void addNotebookChangeListener(NotebookChangeListener notebookChangeListener) {

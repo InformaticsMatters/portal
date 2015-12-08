@@ -229,7 +229,7 @@ public class NotebookSession implements Serializable {
 
 
     public void executeCell(String cellName) {
-        if (notebookModel.findCell(cellName).getCellType().getExecutable()) {
+        if (notebookModel.findCellModel(cellName).getCellType().getExecutable()) {
             cellClient.executeCell(notebookInfo.getId(), cellName);
         }
     }
