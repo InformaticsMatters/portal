@@ -114,4 +114,12 @@ public class NotebookContents implements Serializable {
         return cell;
     }
 
+    public void removeCell(String name) {
+        for (Cell cell : cellList) {
+            if (cell.getName().equals(name)) {
+                cellList.remove(cell);
+                break;
+            }
+        }
+    }
 }

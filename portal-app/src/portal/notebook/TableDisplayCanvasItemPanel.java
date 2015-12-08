@@ -41,9 +41,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCellModel());
-                notebookSession.storeNotebook();
-                ajaxRequestTarget.add(getParent());
+                notebookSession.removeCell(getCellModel());
             }
         });
 
@@ -55,7 +53,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         IModel<List<VariableModel>> dropDownModel = new IModel<List<VariableModel>>() {
             @Override
             public List<VariableModel> getObject() {
-                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel().getBindingModelMap().get("input"), notebookSession.getNotebookModel());
+                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), getCellModel().getBindingModelMap().get("input"), notebookSession.getNotebookModel());
                 return list;
             }
 
@@ -96,10 +94,11 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
             @Override
             public void onVariableRemoved(VariableModel source) {
+                source.removeChangeListener(this);
                 refresh();
             }
         };
-        for (VariableModel variableModel : notebookSession.getNotebookModel().getVariableModelList()) {
+        for (VariableModel variableModel : notebookSession.getNotebookModel().buildVariableModelList()) {
             variableModel.removeChangeListener(variableChangeListener);
             variableModel.addChangeListener(variableChangeListener);
         }
@@ -107,7 +106,6 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
             @Override
             public void onCellRemoved(CellModel cellModel) {
                 refresh();
-
             }
 
             @Override
@@ -118,7 +116,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void displayAndSave() {
-        getCellModel().getBindingModelMap().get("input").setSourceVariableModel(form.getModelObject().getInputVariableModel());
+        getCellModel().getBindingModelMap().get("input").setVariableModel(form.getModelObject().getInputVariableModel());
         loadTableData();
         notebookSession.storeNotebook();
     }
@@ -130,14 +128,14 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     private void load() {
         BindingModel bindingModel = getCellModel().getBindingModelMap().get("input");
-        VariableModel variableModel = bindingModel == null ? null : bindingModel.getSourceVariableModel();
+        VariableModel variableModel = bindingModel == null ? null : bindingModel.getVariableModel();
         form.getModelObject().setInputVariableModel(variableModel);
         loadTableData();
     }
 
     private void loadTableData() {
         BindingModel bindingModel = getCellModel().getBindingModelMap().get("input");
-        VariableModel variableModel = bindingModel == null ? null : bindingModel.getSourceVariableModel();
+        VariableModel variableModel = bindingModel == null ? null : bindingModel.getVariableModel();
         boolean assigned = variableModel != null && variableModel.getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
@@ -148,7 +146,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     private IDatasetDescriptor loadDescriptor() {
         CellModel cellModel = getCellModel();
-        VariableModel variableModel = cellModel.getBindingModelMap().get("input").getSourceVariableModel();
+        VariableModel variableModel = cellModel.getBindingModelMap().get("input").getVariableModel();
         if (variableModel.getVariableType().equals(VariableType.FILE)) {
             return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());
         } else if (variableModel.getVariableType().equals(VariableType.DATASET)) {

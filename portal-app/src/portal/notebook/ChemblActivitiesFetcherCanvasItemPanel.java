@@ -33,8 +33,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCellModel());
-                notebookSession.storeNotebook();
+                notebookSession.removeCell(getCellModel());
             }
         });
     }
@@ -106,13 +105,13 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            assayId = (String) getCellModel().getOptionMap().get("assayId").getValue();
-            prefix = (String) getCellModel().getOptionMap().get("prefix").getValue();
+            assayId = (String) getCellModel().getOptionModelMap().get("assayId").getValue();
+            prefix = (String) getCellModel().getOptionModelMap().get("prefix").getValue();
         }
 
         public void store() {
-            getCellModel().getOptionMap().get("assayId").setValue(assayId);
-            getCellModel().getOptionMap().get("prefix").setValue(prefix);
+            getCellModel().getOptionModelMap().get("assayId").setValue(assayId);
+            getCellModel().getOptionModelMap().get("prefix").setValue(prefix);
         }
 
     }

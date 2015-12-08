@@ -1,42 +1,39 @@
 package portal.notebook;
 
+import portal.notebook.service.Option;
 import tmp.squonk.notebook.api.OptionType;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-public class OptionModel<T> implements Serializable {
-    private String name;
-    private OptionType optionType;
-    private final List<T> picklistValueList = new ArrayList<>();
-    private Object value;
+public class OptionModel implements Serializable {
+    private final Option option;
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return option.getName();
     }
 
     public OptionType getOptionType() {
-        return optionType;
+        return option.getOptionType();
     }
 
-    public void setOptionType(OptionType optionType) {
-        this.optionType = optionType;
-    }
-
-    public Object getValue() {
-        return value;
+    public List getPicklistValueList() {
+        return option.getPicklistValueList();
     }
 
     public void setValue(Object value) {
-        this.value = value;
+        option.setValue(value);
     }
 
-    public List<T> getPicklistValueList() {
-        return picklistValueList;
+    public Object getValue() {
+        return option.getValue();
+    }
+
+    public String getDisplayName() {
+        return option.getDisplayName();
+    }
+
+    public OptionModel(Option option) {
+        this.option = option;
     }
 }

@@ -40,8 +40,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCellModel());
-                notebookSession.storeNotebook();
+                notebookSession.removeCell(getCellModel());
             }
         });
     }
@@ -88,7 +87,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
             VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "file");
             variableModel.setValue(fileName);
             form.getModelObject().store();
-            getCellModel().getOptionMap().get("fileName").setValue(fileName);
+            getCellModel().getOptionModelMap().get("fileName").setValue(fileName);
             notebookSession.storeNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
             notebookSession.reloadNotebook();
@@ -134,11 +133,11 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getOptionMap().get("fileName").setValue(fileName);
+            getCellModel().getOptionModelMap().get("fileName").setValue(fileName);
         }
 
         public void load() {
-            fileName = (String) getCellModel().getOptionMap().get("fileName").getValue();
+            fileName = (String) getCellModel().getOptionModelMap().get("fileName").getValue();
         }
     }
 

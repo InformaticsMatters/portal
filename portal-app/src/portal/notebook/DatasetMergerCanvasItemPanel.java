@@ -34,8 +34,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCellModel());
-                notebookSession.storeNotebook();
+                notebookSession.removeCell(getCellModel());
             }
         });
     }
@@ -107,13 +106,13 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            keepFirst = (Boolean) getCellModel().getOptionMap().get("keepFirst").getValue();
-            mergeFieldName = (String) getCellModel().getOptionMap().get("mergeFieldName").getValue();
+            keepFirst = (Boolean) getCellModel().getOptionModelMap().get("keepFirst").getValue();
+            mergeFieldName = (String) getCellModel().getOptionModelMap().get("mergeFieldName").getValue();
         }
 
         public void store() {
-            getCellModel().getOptionMap().get("keepFirst").setValue(keepFirst);
-            getCellModel().getOptionMap().get("mergeFieldName").setValue(mergeFieldName);
+            getCellModel().getOptionModelMap().get("keepFirst").setValue(keepFirst);
+            getCellModel().getOptionModelMap().get("mergeFieldName").setValue(mergeFieldName);
         }
     }
 

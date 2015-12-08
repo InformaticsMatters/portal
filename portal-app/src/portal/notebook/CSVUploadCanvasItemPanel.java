@@ -45,8 +45,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCellModel());
-                notebookSession.storeNotebook();
+                notebookSession.removeCell(getCellModel());
             }
         });
     }
@@ -186,13 +185,13 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         public void load() {
             VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
             fileName = (String) variableModel.getValue();
-            csvFormatType = (String) getCellModel().getOptionMap().get(OPTION_FILE_TYPE).getValue();
-            firstLineIsHeader = (Boolean) getCellModel().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).getValue();
+            csvFormatType = (String) getCellModel().getOptionModelMap().get(OPTION_FILE_TYPE).getValue();
+            firstLineIsHeader = (Boolean) getCellModel().getOptionModelMap().get(OPTION_FIRST_LINE_IS_HEADER).getValue();
         }
 
         public void store() {
-            getCellModel().getOptionMap().get(OPTION_FILE_TYPE).setValue(csvFormatType);
-            getCellModel().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
+            getCellModel().getOptionModelMap().get(OPTION_FILE_TYPE).setValue(csvFormatType);
+            getCellModel().getOptionModelMap().get(OPTION_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
         }
 
     }

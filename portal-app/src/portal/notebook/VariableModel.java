@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import portal.notebook.service.Variable;
 import tmp.squonk.notebook.api.VariableType;
 
 import java.io.Serializable;
@@ -7,92 +8,64 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VariableModel implements Serializable {
-    private CellModel producer;
-    private final List<CellModel> consumerList = new ArrayList<>();
-    private String name;
-    private VariableType variableType;
-    private Object value;
-    private transient List<VariableChangeListener> changeListenerList;
+    private final CellModel producerCellModel;
+    private final Variable variable;
+    private final List<VariableChangeListener> variableChangeListenerList = new ArrayList<>();
 
-    public String getName() {
-        return name;
+    public VariableModel(CellModel producerCellModel, Variable variable) {
+        this.producerCellModel = producerCellModel;
+        this.variable = variable;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Variable getVariable() {
+        return variable;
+    }
+
+    public String getName() {
+        return variable.getName();
     }
 
     public Object getValue() {
-        return value;
+        return variable.getValue();
     }
 
     public void setValue(Object value) {
-        if ((value != null && !value.equals(this.value)) || (this.value != null && !this.value.equals(value))) {
-            Object oldValue = this.value;
-            this.value = value;
+        Object oldValue = variable.getValue();
+        variable.setValue(value);
+        if ((oldValue == null && value != null) || (oldValue != null && !oldValue.equals(value))) {
             notifyValueChanged(oldValue);
         }
+
     }
 
-    public CellModel getProducer() {
-        return producer;
-    }
-
-    public void setProducer(CellModel producer) {
-        this.producer = producer;
-    }
-
-    private void registerConsumer(CellModel cellModel) {
-        synchronized (consumerList) {
-            consumerList.add(cellModel);
+    private void notifyValueChanged(Object oldValue) {
+        for (VariableChangeListener listener : variableChangeListenerList) {
+            listener.onValueChanged(this, oldValue);
         }
-    }
-
-    private void unregisterConsumer(CellModel cellModel) {
-        synchronized (consumerList) {
-            consumerList.add(cellModel);
-        }
-    }
-
-    public synchronized void addChangeListener(VariableChangeListener changeListener) {
-        if (changeListenerList == null) {
-            changeListenerList = new ArrayList<>();
-        }
-        changeListenerList.add(changeListener);
-    }
-
-    public synchronized  void removeChangeListener(VariableChangeListener changeListener) {
-        if (changeListenerList != null) {
-            changeListenerList.remove(changeListener);
-        }
-    }
-
-    private synchronized void notifyValueChanged(Object oldValue) {
-        if (changeListenerList != null) {
-            for (VariableChangeListener listener : changeListenerList) {
-                listener.onValueChanged(this, oldValue);
-            }
-        }
-    }
-
-    public void notifyRemoved() {
-        if (changeListenerList != null) {
-            for (VariableChangeListener listener : changeListenerList) {
-                listener.onVariableRemoved(this);
-            }
-        }
-    }
-
-    public String toString() {
-        return (producer == null ? "" : producer.getName())
-                + "." + (name == null ? "" : name);
     }
 
     public VariableType getVariableType() {
-        return variableType;
+        return variable.getVariableType();
     }
 
-    public void setVariableType(VariableType variableType) {
-        this.variableType = variableType;
+    public String getDisplayName() {
+        return variable.getDisplayName();
     }
+
+    public CellModel getProducerCellModel() {
+        return producerCellModel;
+    }
+
+    public void removeChangeListener(VariableChangeListener variableChangeListener) {
+        variableChangeListenerList.remove(variableChangeListener);
+    }
+
+    public void addChangeListener(VariableChangeListener variableChangeListener) {
+        variableChangeListenerList.add(variableChangeListener);
+    }
+
+    public String toString() {
+        return getProducerCellModel().getName() + "." + getName();
+    }
+
 }

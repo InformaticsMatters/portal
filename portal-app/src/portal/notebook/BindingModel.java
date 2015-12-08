@@ -1,42 +1,45 @@
 package portal.notebook;
 
+import portal.notebook.service.Binding;
+import portal.notebook.service.Variable;
 import tmp.squonk.notebook.api.VariableType;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BindingModel implements Serializable {
-    private String displayName;
-    private String name;
-    private final List<VariableType> acceptedVariableTypeList = new ArrayList<>();
-    private VariableModel sourceVariableModel;
+    private final Binding binding;
+    private NotebookModel notebookModel;
+    private VariableModel variableModel;
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public BindingModel(Binding binding, NotebookModel notebookModel) {
+        this.binding = binding;
+        this.notebookModel = notebookModel;
+        Variable variable = binding.getVariable();
+        if (variable != null) {
+            variableModel = notebookModel.findVariableModel(variable.getProducerCell().getName(), variable.getName());
+        }
     }
 
     public String getName() {
-        return name;
+        return binding.getName();
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public VariableModel getSourceVariableModel() {
-        return sourceVariableModel;
-    }
-
-    public void setSourceVariableModel(VariableModel sourceVariableModel) {
-        this.sourceVariableModel = sourceVariableModel;
+    public String getDisplayName() {
+        return binding.getDisplayName();
     }
 
     public List<VariableType> getAcceptedVariableTypeList() {
-        return acceptedVariableTypeList;
+        return binding.getAcceptedVariableTypeList();
     }
+
+    public void setVariableModel(VariableModel variableModel) {
+        binding.setVariable(variableModel.getVariable());
+        this.variableModel = variableModel;
+    }
+
+    public VariableModel getVariableModel() {
+        return variableModel;
+    }
+
 }

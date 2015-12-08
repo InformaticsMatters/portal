@@ -28,7 +28,7 @@ public class ScriptQndCellExecutor implements QndCellExecutor {
          cell.getVariablebindingList().clear();
         for (Cell other : notebookContents.getCellList()) {
             if (other != cell) {
-         for (Variable variable : other.getOutputVariableMap()) {
+         for (Variable variable : other.getOutputVariableModelMap()) {
                     if (variable.getValue() != null) {
                         String producerName = variable.getProducerCell().getName().replaceAll(" ", "_");
                         bindings.put(producerName + "_" + variable.getName(), variable.getValue());
@@ -37,14 +37,14 @@ public class ScriptQndCellExecutor implements QndCellExecutor {
             }
         }
         try {
-         String code = (String)cell.getOptionMap().get("code");
+         String code = (String)cell.getOptionModelMap().get("code");
             Object result = scriptToVm(engine.eval(code));
-         cell.getOptionMap().put("outcome", result);
-         cell.getOptionMap().put("errorMessage", null);
-         cell.getOutputVariableMap().get(0).setValue(result);
+         cell.getOptionModelMap().put("outcome", result);
+         cell.getOptionModelMap().put("errorMessage", null);
+         cell.getOutputVariableModelMap().get(0).setValue(result);
         } catch (ScriptException se) {
             LOGGER.log(Level.WARNING, se.getMessage());
-         cell.getOptionMap().put("errorMssage", se.getMessage());
+         cell.getOptionModelMap().put("errorMssage", se.getMessage());
         }
          notebookService.storeNotebookContents(callbackContext.getNotebookId(), notebookContents);
          **/

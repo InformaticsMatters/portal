@@ -36,8 +36,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCellModel());
-                notebookSession.storeNotebook();
+                notebookSession.removeCell(getCellModel());
             }
         });
     }
@@ -46,11 +45,11 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         outcomeModel = new IModel<String>() {
             @Override
             public String getObject() {
-                String errorMessage = (String) getCellModel().getOptionMap().get("errorMessage").getValue();
+                String errorMessage = (String) getCellModel().getOptionModelMap().get("errorMessage").getValue();
                 if (errorMessage != null) {
                     return errorMessage;
                 } else {
-                    Object outcome = getCellModel().getOptionMap().get("outcome").getValue();
+                    Object outcome = getCellModel().getOptionModelMap().get("outcome").getValue();
                     return outcome == null ? "[nothing]" : outcome.toString();
                 }
             }
@@ -127,11 +126,11 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getOptionMap().get("code").setValue(code);
+            getCellModel().getOptionModelMap().get("code").setValue(code);
         }
 
         public void load() {
-            code = (String) getCellModel().getOptionMap().get("code").getValue();
+            code = (String) getCellModel().getOptionModelMap().get("code").getValue();
         }
     }
 

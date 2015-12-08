@@ -39,8 +39,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.getNotebookModel().removeCell(getCellModel());
-                notebookSession.storeNotebook();
+                notebookSession.removeCell(getCellModel());
             }
         });
     }
@@ -162,13 +161,13 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getOptionMap().get("nameFieldName").setValue(nameFieldName);
+            getCellModel().getOptionModelMap().get("nameFieldName").setValue(nameFieldName);
         }
 
         public void load() {
             VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
             fileName = variableModel == null ? null : (String) variableModel.getValue();
-            nameFieldName = (String) getCellModel().getOptionMap().get("nameFieldName").getValue();
+            nameFieldName = (String) getCellModel().getOptionModelMap().get("nameFieldName").getValue();
         }
     }
 

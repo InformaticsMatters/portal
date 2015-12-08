@@ -31,6 +31,7 @@ import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -133,7 +134,7 @@ public class NotebookCanvasPage extends WebPage {
         IModel<List<CellModel>> listModel = new IModel<List<CellModel>>() {
             @Override
             public List<CellModel> getObject() {
-                return notebookSession.getNotebookModel().getCellModelList();
+                return Arrays.asList(notebookSession.getNotebookModel().getCellModels());
             }
 
             @Override
@@ -242,7 +243,7 @@ public class NotebookCanvasPage extends WebPage {
 
         Panel canvasItemPanel = createCanvasItemPanel(cellModel);
 
-        List<CellModel> cellModelList = notebookModel.getCellModelList();
+        List<CellModel> cellModelList = Arrays.asList(notebookModel.getCellModels());
         ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellModelList.size(), cellModelList.size());
         listItem.setOutputMarkupId(true);
         listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
@@ -303,7 +304,7 @@ public class NotebookCanvasPage extends WebPage {
 
                 NotebookModel notebookModel = notebookSession.getNotebookModel();
                 int i = Integer.parseInt(index);
-                CellModel model = notebookModel.getCellModelList().get(i);
+                CellModel model = notebookModel.getCellModels()[i];
                 model.setPositionLeft(Integer.parseInt(x));
                 model.setPositionTop(Integer.parseInt(y));
                 notebookSession.storeNotebook();
