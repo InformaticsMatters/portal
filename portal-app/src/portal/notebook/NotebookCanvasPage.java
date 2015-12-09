@@ -59,6 +59,7 @@ public class NotebookCanvasPage extends WebPage {
     private NotebookListPanel notebookListPanel;
     private NotebookCellTypesPanel notebookCellTypesPanel;
     private WebMarkupContainer plumbContainer;
+    private ConnectionPanel connectionPanel;
 
     private ListView<CellModel> canvasItemRepeater;
 
@@ -163,6 +164,9 @@ public class NotebookCanvasPage extends WebPage {
         };
         canvasItemRepeater.setOutputMarkupId(true);
         plumbContainer.add(canvasItemRepeater);
+
+        connectionPanel = new ConnectionPanel("connectionPanel", "modalElement");
+        plumbContainer.add(connectionPanel);
     }
 
     private void refreshPanelsVisibility(AjaxRequestTarget target) {
@@ -332,7 +336,7 @@ public class NotebookCanvasPage extends WebPage {
                 String sourceId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
                 String targetId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
                 System.out.println(sourceId + ", " + targetId);
-
+                connectionPanel.showModal();
             }
 
             @Override
