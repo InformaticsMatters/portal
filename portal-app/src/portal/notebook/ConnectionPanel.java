@@ -16,6 +16,8 @@ public class ConnectionPanel extends SemanticModalPanel {
 
     private Callbacks callbacks;
     private Form<ConnectionPanelData> connectionForm;
+    private CellModel sourceCellModel;
+    private CellModel targetCellModel;
 
     public ConnectionPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -50,6 +52,11 @@ public class ConnectionPanel extends SemanticModalPanel {
 
     public void setCallbacks(Callbacks callbacks) {
         this.callbacks = callbacks;
+    }
+
+    public void setSourceAndTargetModels(CellModel sourceCellModel, CellModel targetCellModel) {
+        this.sourceCellModel = sourceCellModel;
+        this.targetCellModel = targetCellModel;
     }
 
     public interface Callbacks extends Serializable {

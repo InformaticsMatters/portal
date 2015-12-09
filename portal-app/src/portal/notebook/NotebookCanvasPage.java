@@ -32,6 +32,7 @@ import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -336,6 +337,21 @@ public class NotebookCanvasPage extends WebPage {
                 String sourceId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
                 String targetId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
                 System.out.println(sourceId + ", " + targetId);
+
+                CellModel sourceCellModel = null;
+                CellModel targetCellModel = null;
+
+                Iterator<Component> iterator = canvasItemRepeater.iterator();
+                while (iterator.hasNext()) {
+                    Component component = iterator.next();
+                    if (sourceId.equals(component.getMarkupId())) {
+                        sourceCellModel = (CellModel) component.getDefaultModelObject();
+                    }
+                    if (targetId.equals(component.getMarkupId())) {
+                        targetCellModel = (CellModel) component.getDefaultModelObject();
+                    }
+                }
+                connectionPanel.setSourceAndTargetModels(sourceCellModel, targetCellModel);
                 connectionPanel.showModal();
             }
 
