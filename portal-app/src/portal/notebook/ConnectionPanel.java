@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import com.vaynberg.wicket.select2.Select2Choice;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -19,6 +20,9 @@ public class ConnectionPanel extends SemanticModalPanel {
     private CellModel sourceCellModel;
     private CellModel targetCellModel;
 
+    private Select2Choice<BindingModel> inputSelect2Choice;
+    private InputProvider inputProvider = new InputProvider();
+
     public ConnectionPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
         addForm();
@@ -29,6 +33,13 @@ public class ConnectionPanel extends SemanticModalPanel {
         connectionForm.setOutputMarkupId(true);
         getModalRootComponent().add(connectionForm);
         connectionForm.setModel(new CompoundPropertyModel<>(new ConnectionPanelData()));
+
+        inputSelect2Choice = new Select2Choice<BindingModel>("input");
+        inputSelect2Choice.setProvider(inputProvider);
+        inputSelect2Choice.getSettings().setMinimumInputLength(1);
+        inputSelect2Choice.getSettings().setAllowClear(true);
+        inputSelect2Choice.setOutputMarkupId(true);
+        connectionForm.add(inputSelect2Choice);
 
         final AjaxSubmitLink submit = new AjaxSubmitLink("submit") {
 
@@ -68,6 +79,15 @@ public class ConnectionPanel extends SemanticModalPanel {
     }
 
     private class ConnectionPanelData implements Serializable {
+        private BindingModel input;
+
+        public BindingModel getInput() {
+            return input;
+        }
+
+        public void setInput(BindingModel input) {
+            this.input = input;
+        }
 
 
     }
