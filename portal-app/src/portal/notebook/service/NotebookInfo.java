@@ -1,4 +1,4 @@
-package portal.notebook.client;
+package portal.notebook.service;
 
 
 import java.io.Serializable;

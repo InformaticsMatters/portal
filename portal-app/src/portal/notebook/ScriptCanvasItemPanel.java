@@ -49,7 +49,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
                 if (errorMessage != null) {
                     return errorMessage;
                 } else {
-                    Object outcome = getCellModel().getOptionModelMap().get("outcome").getValue();
+                    Object outcome = getCellModel().getOutputVariableModelMap().get("outcome").getValue();
                     return outcome == null ? "[nothing]" : outcome.toString();
                 }
             }

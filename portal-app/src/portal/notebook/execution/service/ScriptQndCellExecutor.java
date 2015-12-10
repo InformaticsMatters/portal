@@ -46,7 +46,7 @@ public class ScriptQndCellExecutor implements QndCellExecutor {
             LOGGER.log(Level.WARNING, se.getMessage());
          cell.getOptionModelMap().put("errorMssage", se.getMessage());
         }
-         notebookService.storeNotebookContents(callbackContext.getNotebookId(), notebookContents);
+         notebookService.updateNotebookContents(callbackContext.getNotebookId(), notebookContents);
          **/
     }
 

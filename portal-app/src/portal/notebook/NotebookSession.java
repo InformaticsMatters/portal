@@ -2,7 +2,6 @@ package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
-import portal.notebook.client.NotebookInfo;
 import portal.notebook.service.*;
 import tmp.squonk.notebook.api.CellType;
 import tmp.squonk.notebook.client.CellClient;
@@ -35,13 +34,15 @@ public class NotebookSession implements Serializable {
     public NotebookInfo preparePocNotebook() {
         List<NotebookInfo> list = notebookService.listNotebookInfo();
         if (list.isEmpty()) {
-            NotebookInfo notebookInfo = new NotebookInfo();
-            notebookInfo.setName("POC");
+            UpdateNotebookData notebookData = new UpdateNotebookData();
+            notebookData.setName("POC");
+            notebookService.createNotebook(notebookData);
+            notebookInfo = notebookService.listNotebookInfo().get(0);
             NotebookContents notebookContents = new NotebookContents();
-            StoreNotebookData storeNotebookData = new StoreNotebookData();
-            storeNotebookData.setNotebookInfo(notebookInfo);
-            storeNotebookData.setNotebookContents(notebookContents);
-            notebookService.storeNotebook(storeNotebookData);
+            UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
+            updateNotebookContentsData.setId(notebookInfo.getId());
+            updateNotebookContentsData.setNotebookContents(notebookContents);
+            notebookService.updateNotebookContents(updateNotebookContentsData);
             list = notebookService.listNotebookInfo();
         }
         return list.get(0);
@@ -66,29 +67,29 @@ public class NotebookSession implements Serializable {
     }
 
     public void storeNotebook() {
-        StoreNotebookData storeNotebookData = new StoreNotebookData();
-        storeNotebookData.setNotebookInfo(notebookInfo);
-        storeNotebookData.setNotebookContents(notebookModel.getNotebookContents());
-        notebookService.storeNotebook(storeNotebookData);
+        UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
+        updateNotebookContentsData.setId(notebookInfo.getId());
+        updateNotebookContentsData.setNotebookContents(notebookModel.getNotebookContents());
+        notebookService.updateNotebookContents(updateNotebookContentsData);
     }
 
     public CellModel addCell(CellType cellType, int x, int y) {
         Cell cell = notebookModel.getNotebookContents().addCell(cellType);
         cell.setPositionTop(y);
         cell.setPositionLeft(x);
-        StoreNotebookData storeNotebookData = new StoreNotebookData();
-        storeNotebookData.setNotebookInfo(notebookInfo);
-        storeNotebookData.setNotebookContents(notebookModel.getNotebookContents());
-        notebookService.storeNotebook(storeNotebookData);
+        UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
+        updateNotebookContentsData.setId(notebookInfo.getId());
+        updateNotebookContentsData.setNotebookContents(notebookModel.getNotebookContents());
+        notebookService.updateNotebookContents(updateNotebookContentsData);
         return notebookModel.addCellModel(cell);
     }
 
     public void removeCell(CellModel cellModel) {
         notebookModel.getNotebookContents().removeCell(cellModel.getName());
-        StoreNotebookData storeNotebookData = new StoreNotebookData();
-        storeNotebookData.setNotebookInfo(notebookInfo);
-        storeNotebookData.setNotebookContents(notebookModel.getNotebookContents());
-        notebookService.storeNotebook(storeNotebookData);
+        UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
+        updateNotebookContentsData.setId(notebookInfo.getId());
+        updateNotebookContentsData.setNotebookContents(notebookModel.getNotebookContents());
+        notebookService.updateNotebookContents(updateNotebookContentsData);
         notebookModel.removeCellModel(cellModel);
     }
 

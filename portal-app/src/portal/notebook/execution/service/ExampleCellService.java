@@ -102,6 +102,16 @@ public class ExampleCellService {
         cellType = new CellType();
         cellType.setName("Script");
         cellType.setDescription("Script");
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName("code");
+        optionDefinition.setDisplayName("Code");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName("errorMessage");
+        optionDefinition.setDisplayName("Error message");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("outcome");
         variableDefinition.setVariableType(VariableType.VALUE);

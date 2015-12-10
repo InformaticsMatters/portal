@@ -3,7 +3,6 @@ package portal.notebook.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import portal.notebook.client.NotebookInfo;
 import tmp.squonk.notebook.api.VariableType;
 import toolkit.services.PU;
 
@@ -52,15 +51,31 @@ public class NotebookService {
         }
     }
 
-    public Long storeNotebook(StoreNotebookData storeNotebookData) {
+    public void createNotebook(UpdateNotebookData updateNotebookData) {
         try {
-            boolean insert = storeNotebookData.getNotebookInfo().getId() == null;
-            Notebook notebook = insert ? new Notebook() : entityManager.find(Notebook.class, storeNotebookData.getNotebookInfo().getId());
-            notebook.setName(storeNotebookData.getNotebookInfo().getName());
-            if (insert) {
-                entityManager.persist(notebook);
-            }
-            doStoreNotebookContents(storeNotebookData.getNotebookContents(), notebook);
+            Notebook notebook = new Notebook();
+            notebook.setName(updateNotebookData.getName());
+            notebook.setData(new NotebookContents().toBytes());
+            entityManager.persist(notebook);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateNotebook(UpdateNotebookData updateNotebookData) {
+        Notebook notebook = entityManager.find(Notebook.class, updateNotebookData.getId());
+        notebook.setName(updateNotebookData.getName());
+    }
+
+    public void removeNotebook(Long id) {
+        Notebook notebook = entityManager.find(Notebook.class, id);
+        entityManager.remove(notebook);
+    }
+
+    public Long updateNotebookContents(UpdateNotebookContentsData updateNotebookContentsData) {
+        try {
+            Notebook notebook = entityManager.find(Notebook.class, updateNotebookContentsData.getId());
+            doStoreNotebookContents(updateNotebookContentsData.getNotebookContents(), notebook);
             return notebook.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);

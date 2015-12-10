@@ -1,20 +1,10 @@
 package portal.notebook.service;
 
-import portal.notebook.client.NotebookInfo;
-
 import java.io.Serializable;
 
-public class StoreNotebookData implements Serializable {
-    private NotebookInfo notebookInfo;
+public class UpdateNotebookContentsData implements Serializable {
+    private Long id;
     private NotebookContents notebookContents;
-
-    public NotebookInfo getNotebookInfo() {
-        return notebookInfo;
-    }
-
-    public void setNotebookInfo(NotebookInfo notebookInfo) {
-        this.notebookInfo = notebookInfo;
-    }
 
     public NotebookContents getNotebookContents() {
         return notebookContents;
@@ -23,4 +13,14 @@ public class StoreNotebookData implements Serializable {
     public void setNotebookContents(NotebookContents notebookContents) {
         this.notebookContents = notebookContents;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
 }
