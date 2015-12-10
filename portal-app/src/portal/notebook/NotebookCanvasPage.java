@@ -79,12 +79,12 @@ public class NotebookCanvasPage extends WebPage {
         addCanvasItemDraggedBehavior();
         addCanvasNewConnectionBehavior();
         NotebookInfo notebookInfo = notebookSession.preparePocNotebook();
-        notebookSession.loadNotebook(notebookInfo.getId());
+        notebookSession.loadCurrentNotebook(notebookInfo.getId());
         addListeners();
     }
 
     private void addListeners() {
-        NotebookModel notebookData = notebookSession.getNotebookModel();
+        NotebookModel notebookData = notebookSession.getCurrentNotebookModel();
         notebookData.addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(CellModel cellModel) {
@@ -136,7 +136,7 @@ public class NotebookCanvasPage extends WebPage {
         IModel<List<CellModel>> listModel = new IModel<List<CellModel>>() {
             @Override
             public List<CellModel> getObject() {
-                return Arrays.asList(notebookSession.getNotebookModel().getCellModels());
+                return Arrays.asList(notebookSession.getCurrentNotebookModel().getCellModels());
             }
 
             @Override
@@ -244,7 +244,7 @@ public class NotebookCanvasPage extends WebPage {
         CellType cellType = notebookSession.findCellType(dropDataId);
         CellModel cellModel = notebookSession.addCell(cellType, Integer.parseInt(x), Integer.parseInt(y));
 
-        NotebookModel notebookModel = notebookSession.getNotebookModel();
+        NotebookModel notebookModel = notebookSession.getCurrentNotebookModel();
 
         Panel canvasItemPanel = createCanvasItemPanel(cellModel);
 
@@ -307,12 +307,12 @@ public class NotebookCanvasPage extends WebPage {
 
                 logger.info("Item index " + index + " Dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-                NotebookModel notebookModel = notebookSession.getNotebookModel();
+                NotebookModel notebookModel = notebookSession.getCurrentNotebookModel();
                 int i = Integer.parseInt(index);
                 CellModel model = notebookModel.getCellModels()[i];
                 model.setPositionLeft(Integer.parseInt(x));
                 model.setPositionTop(Integer.parseInt(y));
-                notebookSession.storeNotebook();
+                notebookSession.storeCurrentNotebook();
             }
 
             @Override

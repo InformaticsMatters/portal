@@ -53,7 +53,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         IModel<List<VariableModel>> dropDownModel = new IModel<List<VariableModel>>() {
             @Override
             public List<VariableModel> getObject() {
-                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), getCellModel().getBindingModelMap().get("input"), notebookSession.getNotebookModel());
+                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), getCellModel().getBindingModelMap().get("input"), notebookSession.getCurrentNotebookModel());
                 return list;
             }
 
@@ -98,11 +98,11 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
                 refresh();
             }
         };
-        for (VariableModel variableModel : notebookSession.getNotebookModel().buildVariableModelList()) {
+        for (VariableModel variableModel : notebookSession.getCurrentNotebookModel().buildVariableModelList()) {
             variableModel.removeChangeListener(variableChangeListener);
             variableModel.addChangeListener(variableChangeListener);
         }
-        notebookSession.getNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
+        notebookSession.getCurrentNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(CellModel cellModel) {
                 refresh();
@@ -118,7 +118,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     private void displayAndSave() {
         getCellModel().getBindingModelMap().get("input").setVariableModel(form.getModelObject().getInputVariableModel());
         loadTableData();
-        notebookSession.storeNotebook();
+        notebookSession.storeCurrentNotebook();
     }
 
     private void refresh() {

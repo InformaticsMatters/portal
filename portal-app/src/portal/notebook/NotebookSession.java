@@ -52,21 +52,33 @@ public class NotebookSession implements Serializable {
         return notebookService.listNotebookInfo();
     }
 
-    public void loadNotebook(Long id) {
+    public void createNotebook(UpdateNotebookData updateNotebookData) {
+        notebookService.createNotebook(updateNotebookData);
+    }
+
+    public void updateNotebook(UpdateNotebookData updateNotebookData) {
+        notebookService.updateNotebook(updateNotebookData);
+    }
+
+    public void removeNotebook(Long notebookId) {
+        notebookService.removeNotebook(notebookId);
+    }
+
+    public void loadCurrentNotebook(Long id) {
         notebookInfo = notebookService.retrieveNotebookInfo(id);
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(id);
         notebookModel = new NotebookModel(notebookContents);
     }
 
-    public void reloadNotebook() {
-        loadNotebook(notebookInfo.getId());
+    public void reloadCurrentNotebook() {
+        loadCurrentNotebook(notebookInfo.getId());
     }
 
-    public NotebookModel getNotebookModel() {
+    public NotebookModel getCurrentNotebookModel() {
         return notebookModel;
     }
 
-    public void storeNotebook() {
+    public void storeCurrentNotebook() {
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
         updateNotebookContentsData.setId(notebookInfo.getId());
         updateNotebookContentsData.setNotebookContents(notebookModel.getNotebookContents());

@@ -91,9 +91,9 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
 
     private void processRun(AjaxRequestTarget ajaxRequestTarget) {
         form.getModelObject().store();
-        notebookSession.storeNotebook();
+        notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        notebookSession.reloadNotebook();
+        notebookSession.reloadCurrentNotebook();
         ajaxRequestTarget.add(outcomeLabel);
     }
 

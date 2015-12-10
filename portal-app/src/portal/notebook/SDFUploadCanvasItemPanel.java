@@ -98,10 +98,10 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
             variableModel.setValue(fileName);
             form.getModelObject().store();
-            notebookSession.storeNotebook();
+            notebookSession.storeCurrentNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
             form.getModelObject().setFileName(upload.getClientFileName());
         }
@@ -111,9 +111,9 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
     private void execute() throws IOException {
         //System.out.println("SDFUploadCanvasItemPanel.execute() " + form.getModelObject().getNameFieldName());
         form.getModelObject().store();
-        notebookSession.storeNotebook();
+        notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        notebookSession.reloadNotebook();
+        notebookSession.reloadCurrentNotebook();
     }
 
     private void load() {
@@ -165,7 +165,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
             fileName = variableModel == null ? null : (String) variableModel.getValue();
             nameFieldName = (String) getCellModel().getOptionModelMap().get("nameFieldName").getValue();
         }

@@ -40,7 +40,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addListeners() {
-        notebookSession.getNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
+        notebookSession.getCurrentNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(CellModel cellModel) {
                 RequestCycle.get().find(AjaxRequestTarget.class).add(form);
@@ -77,11 +77,11 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
 
     private void execute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getNotebookModel().findVariableModel(getCellModel().getName(), "results");
+        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "results");
         outputVariableModel.setValue(null);
-        notebookSession.storeNotebook();
+        notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        notebookSession.reloadNotebook();
+        notebookSession.reloadCurrentNotebook();
     }
 
 
