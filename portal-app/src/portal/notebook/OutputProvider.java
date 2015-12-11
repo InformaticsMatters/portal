@@ -3,31 +3,42 @@ package portal.notebook;
 import com.vaynberg.wicket.select2.Response;
 import com.vaynberg.wicket.select2.TextChoiceProvider;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author simetrias
  */
 public class OutputProvider extends TextChoiceProvider<VariableModel> {
 
+    private final Map<String, VariableModel> outputVariableModelMap;
+
+    public OutputProvider(Map<String, VariableModel> outputVariableModelMap) {
+        this.outputVariableModelMap = outputVariableModelMap;
+    }
 
     @Override
     protected String getDisplayText(VariableModel variableModel) {
-        return null;
+        return variableModel.getDisplayName();
     }
 
     @Override
     protected Object getId(VariableModel variableModel) {
-        return null;
+        return variableModel.getName();
     }
 
     @Override
     public void query(String s, int i, Response<VariableModel> response) {
-
+        response.addAll(outputVariableModelMap.values());
     }
 
     @Override
     public Collection<VariableModel> toChoices(Collection<String> collection) {
-        return null;
+        String firstChoiceKey = collection.iterator().next();
+        VariableModel firstChoice = outputVariableModelMap.get(firstChoiceKey);
+        ArrayList<VariableModel> result = new ArrayList<>();
+        result.add(firstChoice);
+        return result;
     }
 }

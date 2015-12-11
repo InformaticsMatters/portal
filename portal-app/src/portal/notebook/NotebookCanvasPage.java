@@ -345,10 +345,10 @@ public class NotebookCanvasPage extends WebPage {
                 while (iterator.hasNext()) {
                     Component component = iterator.next();
                     if (sourceId.equals(component.getMarkupId())) {
-                        sourceCellModel = (CellModel) component.getDefaultModelObject();
+                        sourceCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
                     }
                     if (targetId.equals(component.getMarkupId())) {
-                        targetCellModel = (CellModel) component.getDefaultModelObject();
+                        targetCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
                     }
                 }
                 connectionPanel.setSourceAndTargetModels(sourceCellModel, targetCellModel);

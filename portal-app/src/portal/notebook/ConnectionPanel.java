@@ -19,11 +19,8 @@ public class ConnectionPanel extends SemanticModalPanel {
     private Form<ConnectionPanelData> connectionForm;
     private CellModel sourceCellModel;
     private CellModel targetCellModel;
-
-    private Select2Choice<VariableModel> outputSelect2Choice;
-    private OutputProvider outputProvider = new OutputProvider();
-    private Select2Choice<BindingModel> inputSelect2Choice;
-    private InputProvider inputProvider = new InputProvider();
+    private Select2Choice<VariableModel> outputChoice;
+    private Select2Choice<BindingModel> inputChoice;
 
     public ConnectionPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -36,19 +33,19 @@ public class ConnectionPanel extends SemanticModalPanel {
         getModalRootComponent().add(connectionForm);
         connectionForm.setModel(new CompoundPropertyModel<>(new ConnectionPanelData()));
 
-        outputSelect2Choice = new Select2Choice<VariableModel>("output");
-        outputSelect2Choice.setProvider(outputProvider);
-        outputSelect2Choice.getSettings().setMinimumInputLength(1);
-        outputSelect2Choice.getSettings().setAllowClear(true);
-        outputSelect2Choice.setOutputMarkupId(true);
-        connectionForm.add(outputSelect2Choice);
+        outputChoice = new Select2Choice<>("output");
+        outputChoice.getSettings().setMinimumInputLength(0);
+        outputChoice.getSettings().setAllowClear(true);
+        outputChoice.setOutputMarkupId(true);
+        outputChoice.setProvider(new OutputProvider(null));
+        connectionForm.add(outputChoice);
 
-        inputSelect2Choice = new Select2Choice<BindingModel>("input");
-        inputSelect2Choice.setProvider(inputProvider);
-        inputSelect2Choice.getSettings().setMinimumInputLength(1);
-        inputSelect2Choice.getSettings().setAllowClear(true);
-        inputSelect2Choice.setOutputMarkupId(true);
-        connectionForm.add(inputSelect2Choice);
+        inputChoice = new Select2Choice<>("input");
+        inputChoice.getSettings().setMinimumInputLength(0);
+        inputChoice.getSettings().setAllowClear(true);
+        inputChoice.setOutputMarkupId(true);
+        inputChoice.setProvider(new InputProvider());
+        connectionForm.add(inputChoice);
 
         final AjaxSubmitLink submit = new AjaxSubmitLink("submit") {
 
@@ -77,6 +74,12 @@ public class ConnectionPanel extends SemanticModalPanel {
     public void setSourceAndTargetModels(CellModel sourceCellModel, CellModel targetCellModel) {
         this.sourceCellModel = sourceCellModel;
         this.targetCellModel = targetCellModel;
+        configureLists();
+    }
+
+    private void configureLists() {
+        OutputProvider outputProvider = new OutputProvider(sourceCellModel.getOutputVariableModelMap());
+        outputChoice.setProvider(outputProvider);
     }
 
     public interface Callbacks extends Serializable {
