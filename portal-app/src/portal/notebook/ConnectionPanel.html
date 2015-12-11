@@ -7,11 +7,17 @@
 
         <form wicket:id="form" class="ui form">
             <div class="content">
-                <div class="field">
-                    <label>Var 1</label>
-                    <input type="hidden" wicket:id="input">
-                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Output</label>
+                        <input type="hidden" wicket:id="output">
+                    </div>
 
+                    <div class="field">
+                        <label>Input</label>
+                        <input type="hidden" wicket:id="input">
+                    </div>
+                </div>
             </div>
             <div class="actions">
                 <div wicket:id="submit" style="width: 78px;" class="ui small green submit approve button">

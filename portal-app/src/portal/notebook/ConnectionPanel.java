@@ -20,6 +20,8 @@ public class ConnectionPanel extends SemanticModalPanel {
     private CellModel sourceCellModel;
     private CellModel targetCellModel;
 
+    private Select2Choice<VariableModel> outputSelect2Choice;
+    private OutputProvider outputProvider = new OutputProvider();
     private Select2Choice<BindingModel> inputSelect2Choice;
     private InputProvider inputProvider = new InputProvider();
 
@@ -33,6 +35,13 @@ public class ConnectionPanel extends SemanticModalPanel {
         connectionForm.setOutputMarkupId(true);
         getModalRootComponent().add(connectionForm);
         connectionForm.setModel(new CompoundPropertyModel<>(new ConnectionPanelData()));
+
+        outputSelect2Choice = new Select2Choice<VariableModel>("output");
+        outputSelect2Choice.setProvider(outputProvider);
+        outputSelect2Choice.getSettings().setMinimumInputLength(1);
+        outputSelect2Choice.getSettings().setAllowClear(true);
+        outputSelect2Choice.setOutputMarkupId(true);
+        connectionForm.add(outputSelect2Choice);
 
         inputSelect2Choice = new Select2Choice<BindingModel>("input");
         inputSelect2Choice.setProvider(inputProvider);
@@ -80,6 +89,7 @@ public class ConnectionPanel extends SemanticModalPanel {
 
     private class ConnectionPanelData implements Serializable {
         private BindingModel input;
+        private VariableModel output;
 
         public BindingModel getInput() {
             return input;
@@ -87,6 +97,14 @@ public class ConnectionPanel extends SemanticModalPanel {
 
         public void setInput(BindingModel input) {
             this.input = input;
+        }
+
+        public VariableModel getOutput() {
+            return output;
+        }
+
+        public void setOutput(VariableModel output) {
+            this.output = output;
         }
 
 
