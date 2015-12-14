@@ -32,6 +32,7 @@ public class ExampleCellService {
         cellType.setDescription("File upload");
         VariableDefinition variableDefinition = new VariableDefinition();
         variableDefinition.setName("file");
+        variableDefinition.setDisplayName("Uploaded file");
         variableDefinition.setVariableType(VariableType.FILE);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         OptionDefinition optionDefinition = new OptionDefinition();
@@ -47,6 +48,7 @@ public class ExampleCellService {
         cellType.setDescription("Property calc.");
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("outputFile");
+        variableDefinition.setDisplayName("Output file");
         variableDefinition.setVariableType(VariableType.FILE);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         BindingDefinition bindingDefinition = new BindingDefinition();
