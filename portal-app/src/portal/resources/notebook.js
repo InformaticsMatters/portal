@@ -189,8 +189,8 @@ function addTargetEndpoint(itemId) {
     var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions,{uuid:itemId + "-ep2"});
 }
 
-function addConnection(sourceId, targetId) {
-    jsPlumb.connect({uuids:[sourceId + "-ep1", targetId + "-ep2"]});
+function addConnection(sourceMarkupId, targetMarkupId) {
+    jsPlumb.connect({uuids:[sourceMarkupId + "-ep1", targetMarkupId + "-ep2"]});
 }
 
 function initJsPlumb() {
