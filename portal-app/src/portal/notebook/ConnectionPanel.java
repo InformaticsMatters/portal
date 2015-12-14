@@ -92,22 +92,22 @@ public class ConnectionPanel extends SemanticModalPanel {
 
     private class ConnectionPanelData implements Serializable {
 
-        private BindingModel source;
-        private VariableModel target;
+        private VariableModel source;
+        private BindingModel target;
 
-        public BindingModel getSource() {
+        public VariableModel getSource() {
             return source;
         }
 
-        public void setSource(BindingModel source) {
+        public void setSource(VariableModel source) {
             this.source = source;
         }
 
-        public VariableModel getTarget() {
+        public BindingModel getTarget() {
             return target;
         }
 
-        public void setTarget(VariableModel target) {
+        public void setTarget(BindingModel target) {
             this.target = target;
         }
     }
