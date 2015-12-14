@@ -126,6 +126,23 @@ public class NotebookCanvasPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
         response.render(OnDomReadyHeaderItem.forScript("initJsPlumb(); addCellsPaletteDragAndDropSupport();"));
         response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item'); makeCanvasItemPlumbDraggable();"));
+        /**
+         for (CellModel cellModel : canvasItemRepeater.getList()) {
+         String targetId = CANVAS_ITEM_PREFIX + cellModel.getId();
+         response.render(OnDomReadyHeaderItem.forScript("addSourceEndpoint(':itemId');".replaceAll(":itemId", targetId)));
+         response.render(OnDomReadyHeaderItem.forScript("addTargetEndpoint(':itemId');".replaceAll(":itemId", targetId)));
+         }
+         for (CellModel cellModel : canvasItemRepeater.getList()) {
+         String targetId = CANVAS_ITEM_PREFIX + cellModel.getId();
+         for (BindingModel bindingModel : cellModel.getBindingModelMap().values()) {
+         if (bindingModel.getVariableModel() != null) {
+         String sourceId = CANVAS_ITEM_PREFIX + bindingModel.getVariableModel().getProducerCellModel().getId();
+         String js = "addConnection('" + sourceId + "', '" + targetId + "');";
+         response.render(OnDomReadyHeaderItem.forScript(js));
+         }
+         }
+         }
+         **/
     }
 
     private void addPanels() {
@@ -186,7 +203,7 @@ public class NotebookCanvasPage extends WebPage {
                 if (connectionPanel.getSourceCellModel() != null) {
                     String sourceMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getSourceCellModel().getId();
                     String targetMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getTargetCellModel().getId();
-                    String js = "addConnection(" + sourceMarkupId + ", " + targetMarkupId + ");";
+                    String js = "addConnection('" + sourceMarkupId + "', '" + targetMarkupId + "');";
                     getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(js);
                     System.out.println(js);
                 }
