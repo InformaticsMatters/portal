@@ -24,6 +24,8 @@ public class ConnectionPanel extends SemanticModalPanel {
     private CellModel targetCellModel;
     private Select2Choice<VariableModel> sourceChoice;
     private Select2Choice<BindingModel> targetChoice;
+    private String targetMarkupId;
+    private String sourceMarkupId;
 
     public ConnectionPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -73,7 +75,9 @@ public class ConnectionPanel extends SemanticModalPanel {
         this.callbacks = callbacks;
     }
 
-    public void setSourceAndTargetModels(CellModel sourceCellModel, CellModel targetCellModel) {
+    public void configure(String sourceMarkupId, CellModel sourceCellModel, String targetMarkupId, CellModel targetCellModel) {
+        this.sourceMarkupId = sourceMarkupId;
+        this.targetMarkupId = targetMarkupId;
         this.sourceCellModel = sourceCellModel;
         this.targetCellModel = targetCellModel;
 
@@ -85,6 +89,14 @@ public class ConnectionPanel extends SemanticModalPanel {
         targetChoice.setProvider(targetBindingProvider);
 
         connectionForm.setModelObject(new ConnectionPanelData());
+    }
+
+    public String getSourceMarkupId() {
+        return sourceMarkupId;
+    }
+
+    public String getTargetMarkupId() {
+        return targetMarkupId;
     }
 
     public interface Callbacks extends Serializable {

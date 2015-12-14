@@ -178,6 +178,7 @@ function addTargetEndpoint(itemId) {
     var targetEndpointOptions = {
         endpoint: 'Dot',
         anchor: 'TopCenter',
+        maxConnections: 2,
         isTarget:true,
         paintStyle : {
             strokeStyle: "#7AB02C",
