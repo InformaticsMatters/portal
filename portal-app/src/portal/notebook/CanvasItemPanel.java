@@ -29,7 +29,7 @@ public abstract class CanvasItemPanel<T extends CellModel> extends Panel {
         add(new AjaxLink("bindings") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getCallbackHandler().onEditBindings(CanvasItemPanel.this.getMarkupId(), getCellModel());
+                getCallbackHandler().onEditBindings(getCellModel());
             }
         });
     }
@@ -46,7 +46,7 @@ public abstract class CanvasItemPanel<T extends CellModel> extends Panel {
     public interface CallbackHandler extends Serializable {
         void onRemove(CellModel cellModel);
 
-        void onEditBindings(String markupId, CellModel cellModel);
+        void onEditBindings(CellModel cellModel);
     }
 
 }

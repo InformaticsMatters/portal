@@ -86,4 +86,8 @@ public class CellModel implements Serializable {
     public Map<String, OptionModel> getOptionModelMap() {
         return optionModelMap;
     }
+
+    public Long getId() {
+        return cell.getId();
+    }
 }

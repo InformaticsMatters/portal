@@ -31,8 +31,6 @@ public class ConnectionPanel extends SemanticModalPanel {
     private CellModel targetCellModel;
     private Select2Choice<VariableModel> sourceChoice;
     private Select2Choice<BindingModel> targetChoice;
-    private String targetMarkupId;
-    private String sourceMarkupId;
 
     public ConnectionPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -62,7 +60,9 @@ public class ConnectionPanel extends SemanticModalPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                targetChoice.getModelObject().setVariableModel(sourceChoice.getModelObject());
+                if (targetChoice.getModelObject() != null) {
+                    targetChoice.getModelObject().setVariableModel(sourceChoice.getModelObject());
+                }
                 callbacks.onSubmit();
             }
         };
@@ -125,9 +125,7 @@ public class ConnectionPanel extends SemanticModalPanel {
         this.callbacks = callbacks;
     }
 
-    public void configure(String sourceMarkupId, CellModel sourceCellModel, String targetMarkupId, CellModel targetCellModel) {
-        this.sourceMarkupId = sourceMarkupId;
-        this.targetMarkupId = targetMarkupId;
+    public void configure(CellModel sourceCellModel, CellModel targetCellModel) {
         this.sourceCellModel = sourceCellModel;
         this.targetCellModel = targetCellModel;
 
@@ -142,12 +140,12 @@ public class ConnectionPanel extends SemanticModalPanel {
         connectionForm.setModelObject(new ConnectionPanelData());
     }
 
-    public String getSourceMarkupId() {
-        return sourceMarkupId;
+    public CellModel getSourceCellModel() {
+        return sourceCellModel;
     }
 
-    public String getTargetMarkupId() {
-        return targetMarkupId;
+    public CellModel getTargetCellModel() {
+        return targetCellModel;
     }
 
     public interface Callbacks extends Serializable {

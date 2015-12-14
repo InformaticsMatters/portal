@@ -46,7 +46,7 @@ public class NotebookCanvasPage extends WebPage {
     public static final String TARGET_ID = "targetId";
     public static final String POSITION_LEFT = "positionX";
     public static final String POSITION_TOP = "positionY";
-    public static final String CANVASITEM_WICKETID = "canvasItem";
+    public static final String CANVAS_ITEM_PREFIX = "canvasItem";
     public static final String CANVASITEM_INDEX = "index";
     private static final Logger logger = LoggerFactory.getLogger(NotebookCanvasPage.class);
 
@@ -106,8 +106,8 @@ public class NotebookCanvasPage extends WebPage {
             }
 
             @Override
-            public void onEditBindings(String markupId, CellModel cellModel) {
-                connectionPanel.configure(null, null, markupId, cellModel);
+            public void onEditBindings(CellModel cellModel) {
+                connectionPanel.configure(null, cellModel);
                 connectionPanel.showModal();
             }
         };
@@ -161,16 +161,15 @@ public class NotebookCanvasPage extends WebPage {
 
             }
         };
-        initialItemCount = 0;
-        canvasItemRepeater = new ListView<CellModel>(CANVASITEM_WICKETID, listModel) {
+        canvasItemRepeater = new ListView<CellModel>("canvasItem", listModel) {
 
             @Override
             protected void populateItem(ListItem<CellModel> listItem) {
-                initialItemCount++;
                 CellModel cellModel = listItem.getModelObject();
+                String markupId = CANVAS_ITEM_PREFIX + cellModel.getId();
                 Panel canvasItemPanel = createCanvasItemPanel(cellModel);
                 listItem.setOutputMarkupId(true);
-                listItem.setMarkupId(CANVASITEM_WICKETID + initialItemCount);
+                listItem.setMarkupId(markupId);
                 listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
                 listItem.add(canvasItemPanel);
             }
@@ -184,14 +183,12 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onSubmit() {
                 notebookSession.storeCurrentNotebook();
-                String sourceMarkupId = connectionPanel.getSourceMarkupId();
-                String targetMarkupId = connectionPanel.getTargetMarkupId();
-                if (sourceMarkupId != null) {
+                if (connectionPanel.getSourceCellModel() != null) {
+                    String sourceMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getSourceCellModel().getId();
+                    String targetMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getTargetCellModel().getId();
                     String js = "addConnection(" + sourceMarkupId + ", " + targetMarkupId + ");";
-
-                    System.out.println(js);
-
                     getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(js);
+                    System.out.println(js);
                 }
             }
 
@@ -292,7 +289,7 @@ public class NotebookCanvasPage extends WebPage {
         Panel canvasItemPanel = createCanvasItemPanel(cellModel);
 
         List<CellModel> cellModelList = Arrays.asList(notebookModel.getCellModels());
-        ListItem listItem = new ListItem(CANVASITEM_WICKETID + cellModelList.size(), cellModelList.size());
+        ListItem listItem = new ListItem(CANVAS_ITEM_PREFIX + cellModel.getId(), cellModelList.size());
         listItem.setOutputMarkupId(true);
         listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
         listItem.add(canvasItemPanel);
@@ -394,7 +391,7 @@ public class NotebookCanvasPage extends WebPage {
                         targetCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
                     }
                 }
-                connectionPanel.configure(sourceMarkupId, sourceCellModel, targetMarkupId, targetCellModel);
+                connectionPanel.configure(sourceCellModel, targetCellModel);
                 connectionPanel.showModal();
             }
 
