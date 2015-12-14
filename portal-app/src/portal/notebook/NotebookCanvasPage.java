@@ -79,7 +79,7 @@ public class NotebookCanvasPage extends WebPage {
         addCanvasPaletteDropBehavior();
         addCanvasItemDraggedBehavior();
         addCanvasNewConnectionBehavior();
-        addConnections();
+        addConnectionsRenderBehavior();
         NotebookInfo notebookInfo = notebookSession.preparePocNotebook();
         notebookSession.loadCurrentNotebook(notebookInfo.getId());
         addListeners();
@@ -413,7 +413,7 @@ public class NotebookCanvasPage extends WebPage {
         add(onNotebookCanvasNewConnectionBehavior);
     }
 
-    private void addConnections() {
+    private void addConnectionsRenderBehavior() {
         AbstractDefaultAjaxBehavior behavior = new AbstractDefaultAjaxBehavior() {
             @Override
             protected void respond(AjaxRequestTarget ajaxRequestTarget) {
