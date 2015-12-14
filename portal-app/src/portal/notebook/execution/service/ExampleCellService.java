@@ -70,6 +70,7 @@ public class ExampleCellService {
         cellType.setDescription("Chembl activities fetcher");
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("results");
+        variableDefinition.setDisplayName("Results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         optionDefinition = new OptionDefinition();
@@ -114,27 +115,76 @@ public class ExampleCellService {
         cellType.getOptionDefinitionList().add(optionDefinition);
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("outcome");
+        variableDefinition.setDisplayName("Outcome");
         variableDefinition.setVariableType(VariableType.VALUE);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         cellType.setExecutable(Boolean.TRUE);
         list.add(cellType);
 
-        list.add(new CellType("SdfUploader", "SDF upload", true)
-                .withOutputVariable("fileContent", VariableType.FILE)
-                .withOutputVariable("results", VariableType.DATASET)
-                .withOption("nameFieldName", OptionType.SIMPLE));
+        cellType = new CellType();
+        cellType.setName("SdfUploader");
+        cellType.setDescription("SDF upload");
+        variableDefinition = new VariableDefinition();
+        variableDefinition.setName("fileContent");
+        variableDefinition.setDisplayName("File content");
+        variableDefinition.setVariableType(VariableType.FILE);
+        cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        variableDefinition = new VariableDefinition();
+        variableDefinition.setName("results");
+        variableDefinition.setDisplayName("Results");
+        variableDefinition.setVariableType(VariableType.DATASET);
+        cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName("nameFieldName");
+        optionDefinition.setDisplayName("Name field´s name");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
+        list.add(cellType);
 
-        list.add(new CellType("CsvUploader", "CSV upload", true)
-                .withOutputVariable("fileContent", VariableType.FILE)
-                .withOutputVariable("results", VariableType.DATASET)
-                .withOption(OPTION_FILE_TYPE, OptionType.SIMPLE)
-                .withOption(OPTION_FIRST_LINE_IS_HEADER, OptionType.SIMPLE));
+        cellType = new CellType();
+        cellType.setName("CsvUploader");
+        cellType.setDescription("CSV upload");
+        variableDefinition = new VariableDefinition();
+        variableDefinition.setName("fileContent");
+        variableDefinition.setDisplayName("File content");
+        variableDefinition.setVariableType(VariableType.FILE);
+        cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        variableDefinition = new VariableDefinition();
+        variableDefinition.setName("results");
+        variableDefinition.setDisplayName("Results");
+        variableDefinition.setVariableType(VariableType.DATASET);
+        cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName(OPTION_FILE_TYPE);
+        optionDefinition.setDisplayName("File type");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName(OPTION_FIRST_LINE_IS_HEADER);
+        optionDefinition.setDisplayName("First line is header");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
+        list.add(cellType);
 
-        list.add(new CellType("DatasetMerger", "Dataset merger", true)
-                .withOutputVariable("Results", VariableType.DATASET)
-                .withOption("mergeFieldName", OptionType.SIMPLE)
-                .withOption("keepFirst", OptionType.SIMPLE));
-
+        cellType = new CellType();
+        cellType.setName("DatasetMerger");
+        cellType.setDescription("Ddataset merger");
+        variableDefinition = new VariableDefinition();
+        variableDefinition.setName("results");
+        variableDefinition.setDisplayName("Results");
+        variableDefinition.setVariableType(VariableType.DATASET);
+        cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName("mergeFieldName");
+        optionDefinition.setDisplayName("Merge field name");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
+        optionDefinition = new OptionDefinition();
+        optionDefinition.setName("keepFirst");
+        optionDefinition.setDisplayName("Keep first");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
+        list.add(cellType);
         return list;
     }
 
