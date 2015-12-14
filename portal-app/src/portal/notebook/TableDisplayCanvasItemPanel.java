@@ -2,10 +2,8 @@ package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import portal.dataset.IDatasetDescriptor;
 import portal.notebook.service.Strings;
 import tmp.squonk.notebook.api.VariableType;
@@ -35,30 +33,10 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     private void addInput() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
-        IModel<List<VariableModel>> dropDownModel = new IModel<List<VariableModel>>() {
-            @Override
-            public List<VariableModel> getObject() {
-                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), getCellModel().getBindingModelMap().get("input"), notebookSession.getCurrentNotebookModel());
-                return list;
-            }
-
-            @Override
-            public void setObject(List<VariableModel> variableList) {
-
-            }
-
-            @Override
-            public void detach() {
-
-            }
-        };
-        DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariableModel", dropDownModel);
-        form.add(inputVariableChoice);
-
         add(new IndicatingAjaxSubmitLink("display", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                displayAndSave();
+                load();
             }
         });
 
@@ -107,25 +85,12 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         });
     }
 
-    private void displayAndSave() {
-        getCellModel().getBindingModelMap().get("input").setVariableModel(form.getModelObject().getInputVariableModel());
-        loadTableData();
-        notebookSession.storeCurrentNotebook();
-    }
-
     private void refresh() {
         getRequestCycle().find(AjaxRequestTarget.class).add(form);
-        loadTableData();
+        load();
     }
 
     private void load() {
-        BindingModel bindingModel = getCellModel().getBindingModelMap().get("input");
-        VariableModel variableModel = bindingModel == null ? null : bindingModel.getVariableModel();
-        form.getModelObject().setInputVariableModel(variableModel);
-        loadTableData();
-    }
-
-    private void loadTableData() {
         BindingModel bindingModel = getCellModel().getBindingModelMap().get("input");
         VariableModel variableModel = bindingModel == null ? null : bindingModel.getVariableModel();
         boolean assigned = variableModel != null && variableModel.getValue() != null;
@@ -160,15 +125,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     class ModelObject implements Serializable {
-        private VariableModel inputVariableModel;
 
-        public VariableModel getInputVariableModel() {
-            return inputVariableModel;
-        }
-
-        public void setInputVariableModel(VariableModel inputVariable) {
-            this.inputVariableModel = inputVariable;
-        }
     }
 
 }

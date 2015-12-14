@@ -5,14 +5,12 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import portal.notebook.execution.service.CalculatorsClient;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.List;
 import java.util.logging.Logger;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
@@ -53,9 +51,6 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        BindingModel bindingModel = getCellModel().getBindingModelMap().get("input");
-        VariableModel variableModel = bindingModel == null ? null : bindingModel.getVariableModel();
-        form.getModelObject().setInputVariableModel(variableModel);
         VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
         if (outputVariableModel != null) {
             form.getModelObject().setOutputFileName((String) outputVariableModel.getValue());
@@ -65,25 +60,6 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
     private void addForm() {
         form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
-        IModel<List<VariableModel>> inputVariableModel = new IModel<List<VariableModel>>() {
-            @Override
-            public List<VariableModel> getObject() {
-                List<VariableModel> list = notebookSession.listAvailableInputVariablesFor(getCellModel(), getCellModel().getBindingModelMap().get("input"), notebookSession.getCurrentNotebookModel());
-                return list;
-            }
-
-            @Override
-            public void setObject(List<VariableModel> variableList) {
-
-            }
-
-            @Override
-            public void detach() {
-
-            }
-        };
-        DropDownChoice<VariableModel> inputVariableChoice = new DropDownChoice<VariableModel>("inputVariableModel", inputVariableModel);
-        form.add(inputVariableChoice);
         DropDownChoice<String> serviceNameChoice = new DropDownChoice<String>("serviceName", getCellModel().getOptionModelMap().get("serviceName").getPicklistValueList());
         form.add(serviceNameChoice);
         TextField<String> outputFileNameField = new TextField<String>("outputFileName");
@@ -110,22 +86,13 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     }
 
     private boolean isValidInput() {
-        return form.getModelObject().getInputVariableModel() != null && form.getModelObject().getServiceName() != null;
+        return getCellModel().getBindingModelMap().get("input").getVariableModel() != null && form.getModelObject().getServiceName() != null && form.getModelObject().getOutputFileName() != null;
     }
 
 
     class ModelObject implements Serializable {
-        private VariableModel inputVariableModel;
         private String serviceName;
         private String outputFileName;
-
-        public VariableModel getInputVariableModel() {
-            return inputVariableModel;
-        }
-
-        public void setInputVariableModel(VariableModel inputVariableModel) {
-            this.inputVariableModel = inputVariableModel;
-        }
 
         public String getOutputFileName() {
             return outputFileName;
@@ -148,7 +115,6 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getBindingModelMap().get("input").setVariableModel(inputVariableModel);
             getCellModel().getOptionModelMap().get("serviceName").setValue(serviceName);
         }
     }
