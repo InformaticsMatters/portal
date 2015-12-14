@@ -29,7 +29,6 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
     public SDFUploadCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
         super(id, cell, callbackHandler);
         setOutputMarkupId(true);
-        addHeader();
         addForm();
         load();
     }
