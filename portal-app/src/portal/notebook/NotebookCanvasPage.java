@@ -289,7 +289,9 @@ public class NotebookCanvasPage extends WebPage {
         Panel canvasItemPanel = createCanvasItemPanel(cellModel);
 
         List<CellModel> cellModelList = Arrays.asList(notebookModel.getCellModels());
-        ListItem listItem = new ListItem(CANVAS_ITEM_PREFIX + cellModel.getId(), cellModelList.size());
+        String markupId = CANVAS_ITEM_PREFIX + cellModel.getId();
+        ListItem listItem = new ListItem(markupId, cellModelList.size());
+        listItem.setMarkupId(markupId);
         listItem.setOutputMarkupId(true);
         listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
         listItem.add(canvasItemPanel);
