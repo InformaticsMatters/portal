@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -19,6 +20,7 @@ public class NotebookListPanel extends Panel {
     private static final Logger logger = LoggerFactory.getLogger(NotebookListPanel.class);
     @Inject
     private NotebookSession notebooksSession;
+    private ListView<NotebookInfo> listView;
 
     public NotebookListPanel(String id) {
         super(id);
@@ -30,7 +32,7 @@ public class NotebookListPanel extends Panel {
 
         logger.info(notebookList.size() + " notebook/s found.");
 
-        ListView<NotebookInfo> listView = new ListView<NotebookInfo>("notebook", notebookList) {
+        listView = new ListView<NotebookInfo>("notebook", notebookList) {
 
             @Override
             protected void populateItem(ListItem<NotebookInfo> listItem) {
@@ -39,5 +41,10 @@ public class NotebookListPanel extends Panel {
             }
         };
         add(listView);
+    }
+
+    public void refreshNotebookList() {
+        listView.setList(notebooksSession.listNotebookInfo());
+        getRequestCycle().find(AjaxRequestTarget.class).add(this);
     }
 }

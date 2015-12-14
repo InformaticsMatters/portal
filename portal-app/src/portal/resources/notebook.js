@@ -171,13 +171,14 @@ function addSourceEndpoint(itemId) {
             joinstyle: "round"
         }
     };
-    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions);
+    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions,{uuid: itemId + "-ep1"});
 }
 
 function addTargetEndpoint(itemId) {
     var targetEndpointOptions = {
         endpoint: 'Dot',
         anchor: 'TopCenter',
+        maxConnections: 2,
         isTarget:true,
         paintStyle : {
             strokeStyle: "#7AB02C",
@@ -185,16 +186,21 @@ function addTargetEndpoint(itemId) {
             lineWidth: 3
         },
     };
-    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions);
+    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions,{uuid:itemId + "-ep2"});
+}
+
+function addConnection(sourceId, targetId) {
+    jsPlumb.connect({uuids:[sourceId + "-ep1", targetId + "-ep2"]});
 }
 
 function initJsPlumb() {
     jsPlumb.setContainer($('#plumbContainer'));
 
-    jsPlumb.bind("connection", function (i, c) {
-            var sourceId = i.connection.sourceId;
-            var targetId = i.connection.targetId;
-            onNotebookCanvasNewConnection(sourceId, targetId);
-        });
+     jsPlumb.bind("beforeDrop", function (i, c) {
+                var sourceId = i.connection.sourceId;
+                var targetId = i.connection.targetId;
+                onNotebookCanvasNewConnection(sourceId, targetId);
+                return false;
+            });
 }
 

@@ -25,6 +25,7 @@ import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PortalHomePage;
 import portal.notebook.service.NotebookInfo;
+import portal.notebook.service.UpdateNotebookData;
 import tmp.squonk.notebook.api.CellType;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -170,6 +171,9 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onSubmit() {
                 notebookSession.storeCurrentNotebook();
+                String sourceMarkupId = connectionPanel.getSourceMarkupId();
+                String targetMarkupId = connectionPanel.getTargetMarkupId();
+                getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript("addConnection(" + sourceMarkupId + ", " + targetMarkupId + ");");
             }
 
             @Override
@@ -185,6 +189,17 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addActions() {
+        add(new AjaxLink("createNotebook") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                UpdateNotebookData data = new UpdateNotebookData();
+                data.setName("New notebook");
+                notebookSession.createNotebook(data);
+                notebookListPanel.refreshNotebookList();
+            }
+        });
+
         nbListToggle = new AjaxLink("nbListToggle") {
 
             @Override
@@ -241,7 +256,6 @@ public class NotebookCanvasPage extends WebPage {
         };
         add(onCanvasDropBehavior);
     }
-
 
     private void addCanvasItemFromDrop(AjaxRequestTarget target) {
         String dropDataType = getRequest().getRequestParameters().getParameterValue(DROP_DATA_TYPE).toString();
@@ -344,9 +358,9 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void respond(AjaxRequestTarget target) {
-                String sourceId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
-                String targetId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
-                System.out.println(sourceId + ", " + targetId);
+                String sourceMarkupId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
+                String targetMarkupId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
+                System.out.println(sourceMarkupId + ", " + targetMarkupId);
 
                 CellModel sourceCellModel = null;
                 CellModel targetCellModel = null;
@@ -354,14 +368,14 @@ public class NotebookCanvasPage extends WebPage {
                 Iterator<Component> iterator = canvasItemRepeater.iterator();
                 while (iterator.hasNext()) {
                     Component component = iterator.next();
-                    if (sourceId.equals(component.getMarkupId())) {
+                    if (sourceMarkupId.equals(component.getMarkupId())) {
                         sourceCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
                     }
-                    if (targetId.equals(component.getMarkupId())) {
+                    if (targetMarkupId.equals(component.getMarkupId())) {
                         targetCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
                     }
                 }
-                connectionPanel.setSourceAndTargetModels(sourceCellModel, targetCellModel);
+                connectionPanel.configure(sourceMarkupId, sourceCellModel, targetMarkupId, targetCellModel);
                 connectionPanel.showModal();
             }
 
