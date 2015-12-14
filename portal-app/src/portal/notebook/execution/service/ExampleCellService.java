@@ -170,7 +170,7 @@ public class ExampleCellService {
 
         cellType = new CellType();
         cellType.setName("DatasetMerger");
-        cellType.setDescription("Ddataset merger");
+        cellType.setDescription("Dataset merger");
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("results");
         variableDefinition.setDisplayName("Results");
