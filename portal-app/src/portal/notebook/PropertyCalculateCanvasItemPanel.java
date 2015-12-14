@@ -35,7 +35,9 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
         notebookSession.getCurrentNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(CellModel cellModel) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(form);
+                if (cellModel != getCellModel()) {
+                    RequestCycle.get().find(AjaxRequestTarget.class).add(form);
+                }
             }
 
             @Override
@@ -46,7 +48,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        BindingModel bindingModel = getCellModel().getBindingModelMap().isEmpty() ? null : getCellModel().getBindingModelMap().get(0);
+        BindingModel bindingModel = getCellModel().getBindingModelMap().get("input");
         VariableModel variableModel = bindingModel == null ? null : bindingModel.getVariableModel();
         form.getModelObject().setInputVariableModel(variableModel);
         VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
@@ -141,7 +143,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getBindingModelMap().get("input").setVariableModel(form.getModelObject().getInputVariableModel());
+            getCellModel().getBindingModelMap().get("input").setVariableModel(inputVariableModel);
             getCellModel().getOptionModelMap().get("serviceName").setValue(serviceName);
         }
     }
