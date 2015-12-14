@@ -169,7 +169,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onSubmit() {
-
+                notebookSession.storeCurrentNotebook();
             }
 
             @Override

@@ -49,7 +49,8 @@ public class ConnectionPanel extends SemanticModalPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-
+                targetChoice.getModelObject().setVariableModel(sourceChoice.getModelObject());
+                callbacks.onSubmit();
             }
         };
         submit.setOutputMarkupId(true);
