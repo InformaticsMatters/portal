@@ -4,13 +4,20 @@ import com.vaynberg.wicket.select2.Select2Choice;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author simetrias
@@ -28,6 +35,7 @@ public class ConnectionPanel extends SemanticModalPanel {
     public ConnectionPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
         addForm();
+        addBindingList();
     }
 
     private void addForm() {
@@ -67,6 +75,48 @@ public class ConnectionPanel extends SemanticModalPanel {
             }
         };
         connectionForm.add(cancelAction);
+    }
+
+    private void addBindingList() {
+        IModel<List<BindingModel>> listModel = new IModel<List<BindingModel>>() {
+            @Override
+            public void detach() {
+
+            }
+
+            @Override
+            public List<BindingModel> getObject() {
+                return targetCellModel == null ? new ArrayList<BindingModel>() : new ArrayList<BindingModel>(targetCellModel.getBindingModelMap().values());
+            }
+
+            @Override
+            public void setObject(List<BindingModel> bindingModels) {
+
+            }
+
+        };
+        final WebMarkupContainer bindingListContainer = new WebMarkupContainer("bindingListContainer");
+        bindingListContainer.setOutputMarkupId(true);
+        ListView<BindingModel> listView = new ListView<BindingModel>("binding", listModel) {
+
+            @Override
+            protected void populateItem(ListItem<BindingModel> listItem) {
+                final BindingModel bindingModel = listItem.getModelObject();
+                listItem.add(new Label("targetName", bindingModel.getDisplayName()));
+                VariableModel variableModel = bindingModel.getVariableModel();
+                String sourceDisplayName = variableModel == null ? null : variableModel.getDisplayName();
+                listItem.add(new Label("variableName", sourceDisplayName));
+                listItem.add(new AjaxLink("unassign") {
+                    @Override
+                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                        bindingModel.setVariableModel(null);
+                        ajaxRequestTarget.add(bindingListContainer);
+                    }
+                });
+            }
+        };
+        bindingListContainer.add(listView);
+        getModalRootComponent().add(bindingListContainer);
     }
 
     public void setCallbacks(Callbacks callbacks) {

@@ -34,7 +34,11 @@ public class BindingModel implements Serializable {
     }
 
     public void setVariableModel(VariableModel variableModel) {
-        binding.setVariable(variableModel.getVariable());
+        if (variableModel == null) {
+            binding.setVariable(null);
+        } else {
+            binding.setVariable(variableModel.getVariable());
+        }
         this.variableModel = variableModel;
     }
 
