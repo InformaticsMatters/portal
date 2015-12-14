@@ -20,7 +20,7 @@ public class SemanticResourceReference extends JavaScriptResourceReference {
         super(SemanticResourceReference.class, "resources/semantic-simetrias.js");
     }
 
-    public static final SemanticResourceReference get() {
+    public static SemanticResourceReference get() {
         return instance;
     }
 

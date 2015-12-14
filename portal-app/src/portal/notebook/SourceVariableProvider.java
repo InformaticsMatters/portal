@@ -10,27 +10,28 @@ import java.util.Map;
 /**
  * @author simetrias
  */
-public class OutputProvider extends TextChoiceProvider<VariableModel> {
+public class SourceVariableProvider extends TextChoiceProvider<VariableModel> {
 
     private final Map<String, VariableModel> outputVariableModelMap;
 
-    public OutputProvider(Map<String, VariableModel> outputVariableModelMap) {
+    public SourceVariableProvider(Map<String, VariableModel> outputVariableModelMap) {
         this.outputVariableModelMap = outputVariableModelMap;
     }
 
     @Override
     protected String getDisplayText(VariableModel variableModel) {
-        return variableModel.getDisplayName();
+        return variableModel.getVariable().getDisplayName();
     }
 
     @Override
     protected Object getId(VariableModel variableModel) {
-        return variableModel.getName();
+        return variableModel.getVariable().getName();
     }
 
     @Override
     public void query(String s, int i, Response<VariableModel> response) {
         response.addAll(outputVariableModelMap.values());
+        response.setHasMore(false);
     }
 
     @Override

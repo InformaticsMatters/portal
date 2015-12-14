@@ -19,8 +19,8 @@ public class ConnectionPanel extends SemanticModalPanel {
     private Form<ConnectionPanelData> connectionForm;
     private CellModel sourceCellModel;
     private CellModel targetCellModel;
-    private Select2Choice<VariableModel> outputChoice;
-    private Select2Choice<BindingModel> inputChoice;
+    private Select2Choice<VariableModel> sourceChoice;
+    private Select2Choice<BindingModel> targetChoice;
 
     public ConnectionPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -33,19 +33,17 @@ public class ConnectionPanel extends SemanticModalPanel {
         getModalRootComponent().add(connectionForm);
         connectionForm.setModel(new CompoundPropertyModel<>(new ConnectionPanelData()));
 
-        outputChoice = new Select2Choice<>("output");
-        outputChoice.getSettings().setMinimumInputLength(0);
-        outputChoice.getSettings().setAllowClear(true);
-        outputChoice.setOutputMarkupId(true);
-        outputChoice.setProvider(new OutputProvider(null));
-        connectionForm.add(outputChoice);
+        sourceChoice = new Select2Choice<>("source");
+        sourceChoice.getSettings().setMinimumInputLength(0);
+        sourceChoice.setOutputMarkupId(true);
+        sourceChoice.setProvider(new SourceVariableProvider(null));
+        connectionForm.add(sourceChoice);
 
-        inputChoice = new Select2Choice<>("input");
-        inputChoice.getSettings().setMinimumInputLength(0);
-        inputChoice.getSettings().setAllowClear(true);
-        inputChoice.setOutputMarkupId(true);
-        inputChoice.setProvider(new InputProvider());
-        connectionForm.add(inputChoice);
+        targetChoice = new Select2Choice<>("target");
+        targetChoice.getSettings().setMinimumInputLength(0);
+        targetChoice.setOutputMarkupId(true);
+        targetChoice.setProvider(new TargetBindingProvider(null));
+        connectionForm.add(targetChoice);
 
         final AjaxSubmitLink submit = new AjaxSubmitLink("submit") {
 
@@ -78,8 +76,10 @@ public class ConnectionPanel extends SemanticModalPanel {
     }
 
     private void configureLists() {
-        OutputProvider outputProvider = new OutputProvider(sourceCellModel.getOutputVariableModelMap());
-        outputChoice.setProvider(outputProvider);
+        SourceVariableProvider sourceVariableProvider = new SourceVariableProvider(sourceCellModel.getOutputVariableModelMap());
+        sourceChoice.setProvider(sourceVariableProvider);
+        TargetBindingProvider targetBindingProvider = new TargetBindingProvider(targetCellModel.getBindingModelMap());
+        targetChoice.setProvider(targetBindingProvider);
     }
 
     public interface Callbacks extends Serializable {
@@ -91,26 +91,24 @@ public class ConnectionPanel extends SemanticModalPanel {
     }
 
     private class ConnectionPanelData implements Serializable {
-        private BindingModel input;
-        private VariableModel output;
 
-        public BindingModel getInput() {
-            return input;
+        private BindingModel source;
+        private VariableModel target;
+
+        public BindingModel getSource() {
+            return source;
         }
 
-        public void setInput(BindingModel input) {
-            this.input = input;
+        public void setSource(BindingModel source) {
+            this.source = source;
         }
 
-        public VariableModel getOutput() {
-            return output;
+        public VariableModel getTarget() {
+            return target;
         }
 
-        public void setOutput(VariableModel output) {
-            this.output = output;
+        public void setTarget(VariableModel target) {
+            this.target = target;
         }
-
-
     }
-
 }
