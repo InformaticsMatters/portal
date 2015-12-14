@@ -165,6 +165,18 @@ public class NotebookCanvasPage extends WebPage {
         plumbContainer.add(canvasItemRepeater);
 
         connectionPanel = new ConnectionPanel("connectionPanel", "modalElement");
+        connectionPanel.setCallbacks(new ConnectionPanel.Callbacks() {
+
+            @Override
+            public void onSubmit() {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
         plumbContainer.add(connectionPanel);
     }
 

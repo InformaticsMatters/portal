@@ -20,12 +20,12 @@ public class SourceVariableProvider extends TextChoiceProvider<VariableModel> {
 
     @Override
     protected String getDisplayText(VariableModel variableModel) {
-        return variableModel.getVariable().getDisplayName();
+        return variableModel.getDisplayName();
     }
 
     @Override
     protected Object getId(VariableModel variableModel) {
-        return variableModel.getVariable().getName();
+        return variableModel.getName();
     }
 
     @Override
