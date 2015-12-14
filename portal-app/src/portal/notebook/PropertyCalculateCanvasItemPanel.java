@@ -36,6 +36,11 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
             @Override
             public void onCellRemoved(CellModel cellModel) {
                 if (cellModel != getCellModel()) {
+                    for (BindingModel bindingModel : getCellModel().getBindingModelMap().values()) {
+                        if (bindingModel.getVariableModel() != null && bindingModel.getVariableModel().getProducerCellModel() == cellModel) {
+                            bindingModel.setVariableModel(null);
+                        }
+                    }
                     RequestCycle.get().find(AjaxRequestTarget.class).add(form);
                 }
             }
