@@ -6,6 +6,8 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import java.io.Serializable;
@@ -15,6 +17,7 @@ import java.io.Serializable;
  */
 public class ConnectionPanel extends SemanticModalPanel {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionPanel.class);
     private Callbacks callbacks;
     private Form<ConnectionPanelData> connectionForm;
     private CellModel sourceCellModel;
@@ -73,14 +76,15 @@ public class ConnectionPanel extends SemanticModalPanel {
     public void setSourceAndTargetModels(CellModel sourceCellModel, CellModel targetCellModel) {
         this.sourceCellModel = sourceCellModel;
         this.targetCellModel = targetCellModel;
-        configureLists();
-    }
 
-    private void configureLists() {
-        SourceVariableProvider sourceVariableProvider = new SourceVariableProvider(sourceCellModel.getOutputVariableModelMap());
+        logger.info("Connecting " + sourceCellModel.getName() + " to " + targetCellModel.getName());
+
+        SourceVariableProvider sourceVariableProvider = new SourceVariableProvider(this.sourceCellModel.getOutputVariableModelMap());
         sourceChoice.setProvider(sourceVariableProvider);
-        TargetBindingProvider targetBindingProvider = new TargetBindingProvider(targetCellModel.getBindingModelMap());
+        TargetBindingProvider targetBindingProvider = new TargetBindingProvider(this.targetCellModel.getBindingModelMap());
         targetChoice.setProvider(targetBindingProvider);
+
+        connectionForm.setModelObject(new ConnectionPanelData());
     }
 
     public interface Callbacks extends Serializable {
