@@ -90,7 +90,9 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         notebookSession.getCurrentNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(CellModel cellModel) {
-                refresh();
+                if (cellModel != getCellModel()) {
+                    refresh();
+                }
             }
 
             @Override

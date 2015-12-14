@@ -68,7 +68,8 @@ public class NotebookModel implements Serializable {
     }
 
     public VariableModel findVariableModel(String cellName, String name) {
-        return findCellModel(cellName).findVariableModel(name);
+        CellModel cellModel = findCellModel(cellName);
+        return cellModel == null ? null : cellModel.findVariableModel(name);
     }
 
     public void addNotebookChangeListener(NotebookChangeListener notebookChangeListener) {

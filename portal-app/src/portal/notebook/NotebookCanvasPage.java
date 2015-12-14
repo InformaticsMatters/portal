@@ -86,24 +86,14 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addListeners() {
-        NotebookModel notebookData = notebookSession.getCurrentNotebookModel();
-        notebookData.addNotebookChangeListener(new NotebookChangeListener() {
-            @Override
-            public void onCellRemoved(CellModel cellModel) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(plumbContainer);
-                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("addCellsPaletteDragAndDropSupport();");
-                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');");
-            }
-
-            @Override
-            public void onCellAdded(CellModel cellModel) {
-
-            }
-        });
         cellCallbackHandler = new CanvasItemPanel.CallbackHandler() {
             @Override
             public void onRemove(CellModel cellModel) {
                 notebookSession.removeCell(cellModel);
+                RequestCycle.get().find(AjaxRequestTarget.class).add(plumbContainer);
+                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("addCellsPaletteDragAndDropSupport();");
+                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');");
+                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript(buildConnectionsJS());
             }
 
             @Override
@@ -190,7 +180,7 @@ public class NotebookCanvasPage extends WebPage {
                     String targetMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getTargetCellModel().getId();
                     String js = "addConnection('" + sourceMarkupId + "', '" + targetMarkupId + "');";
                     getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(js);
-                    System.out.println(js);
+                    getRequestCycle().find(AjaxRequestTarget.class).add(findItemComponent(connectionPanel.getTargetCellModel()));
                 }
             }
 
@@ -200,6 +190,17 @@ public class NotebookCanvasPage extends WebPage {
             }
         });
         plumbContainer.add(connectionPanel);
+    }
+
+    private Component findItemComponent(CellModel targetCellModel) {
+        Iterator<Component> iterator = canvasItemRepeater.iterator();
+        while (iterator.hasNext()) {
+            Component component = iterator.next();
+            if (component.getMarkupId().equals(CANVAS_ITEM_PREFIX + targetCellModel.getId())) {
+                return component;
+            }
+        }
+        return null;
     }
 
     private void refreshPanelsVisibility(AjaxRequestTarget target) {
@@ -423,21 +424,7 @@ public class NotebookCanvasPage extends WebPage {
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
                 String script = "jsPlumb.bind('ready', function() {";
-                for (CellModel cellModel : canvasItemRepeater.getList()) {
-                    script += "addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellModel.getId() + "');\r\n";
-                    script += "addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellModel.getId() + "');\r\n";
-                }
-
-                for (CellModel cellModel : canvasItemRepeater.getList()) {
-                    String targetId = CANVAS_ITEM_PREFIX + cellModel.getId();
-                    for (BindingModel bindingModel : cellModel.getBindingModelMap().values()) {
-                        if (bindingModel.getVariableModel() != null) {
-                            String sourceId = CANVAS_ITEM_PREFIX + bindingModel.getVariableModel().getProducerCellModel().getId();
-                            String js = "addConnection('" + sourceId + "', '" + targetId + "');\r\n";
-                            script += js;
-                        }
-                    }
-                }
+                script += buildConnectionsJS();
                 script += "})";
                 response.render(OnDomReadyHeaderItem.forScript(script));
             }
@@ -445,5 +432,25 @@ public class NotebookCanvasPage extends WebPage {
         };
         add(behavior);
 
+    }
+
+    private String buildConnectionsJS() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (CellModel cellModel : canvasItemRepeater.getList()) {
+            stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellModel.getId() + "');\r\n");
+            stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellModel.getId() + "');\r\n");
+        }
+
+        for (CellModel cellModel : canvasItemRepeater.getList()) {
+            String targetId = CANVAS_ITEM_PREFIX + cellModel.getId();
+            for (BindingModel bindingModel : cellModel.getBindingModelMap().values()) {
+                if (bindingModel.getVariableModel() != null) {
+                    String sourceId = CANVAS_ITEM_PREFIX + bindingModel.getVariableModel().getProducerCellModel().getId();
+                    String js = "addConnection('" + sourceId + "', '" + targetId + "');\r\n";
+                    stringBuilder.append(js);
+                }
+            }
+        }
+        return stringBuilder.toString();
     }
 }

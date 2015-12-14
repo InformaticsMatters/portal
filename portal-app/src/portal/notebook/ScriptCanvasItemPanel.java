@@ -26,7 +26,6 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
     public ScriptCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
         super(id, cell, callbackHandler);
         setOutputMarkupId(true);
-        addHeader();
         addForm();
         addOutcome();
     }

@@ -29,7 +29,9 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         notebookSession.getCurrentNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
             @Override
             public void onCellRemoved(CellModel cellModel) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(form);
+                if (cellModel != getCellModel()) {
+                    RequestCycle.get().find(AjaxRequestTarget.class).add(form);
+                }
             }
 
             @Override
