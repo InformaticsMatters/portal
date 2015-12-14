@@ -187,7 +187,11 @@ public class NotebookCanvasPage extends WebPage {
                 String sourceMarkupId = connectionPanel.getSourceMarkupId();
                 String targetMarkupId = connectionPanel.getTargetMarkupId();
                 if (sourceMarkupId != null) {
-                    getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript("addConnection(" + sourceMarkupId + ", " + targetMarkupId + ");");
+                    String js = "addConnection(" + sourceMarkupId + ", " + targetMarkupId + ");";
+
+                    System.out.println(js);
+
+                    getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(js);
                 }
             }
 
