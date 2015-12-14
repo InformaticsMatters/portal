@@ -20,8 +20,8 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     private NotebookSession notebookSession;
     private Form<ModelObject> form;
 
-    public DatasetMergerCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public DatasetMergerCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
+        super(id, cell, callbackHandler);
         addHeader();
         addForm();
         addListeners();

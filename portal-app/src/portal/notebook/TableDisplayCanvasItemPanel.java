@@ -26,8 +26,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
 
-    public TableDisplayCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public TableDisplayCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
+        super(id, cell, callbackHandler);
         addHeader();
         addInput();
         addGrid();

@@ -27,8 +27,8 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
 
-    public FileUploadCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public FileUploadCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
+        super(id, cell, callbackHandler);
         setOutputMarkupId(true);
         addHeader();
         addForm();

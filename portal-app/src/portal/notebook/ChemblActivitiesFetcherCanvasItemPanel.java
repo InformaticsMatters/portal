@@ -19,8 +19,8 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
     private NotebookSession notebookSession;
     private Form<ModelObject> form;
 
-    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
+        super(id, cell, callbackHandler);
         addHeader();
         addForm();
         addListeners();

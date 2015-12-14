@@ -131,12 +131,13 @@ public class ConnectionPanel extends SemanticModalPanel {
         this.sourceCellModel = sourceCellModel;
         this.targetCellModel = targetCellModel;
 
-        logger.info("Connecting " + sourceCellModel.getName() + " to " + targetCellModel.getName());
-
-        SourceVariableProvider sourceVariableProvider = new SourceVariableProvider(this.sourceCellModel.getOutputVariableModelMap());
-        sourceChoice.setProvider(sourceVariableProvider);
-        TargetBindingProvider targetBindingProvider = new TargetBindingProvider(this.targetCellModel.getBindingModelMap());
-        targetChoice.setProvider(targetBindingProvider);
+        if (sourceCellModel != null) {
+            logger.info("Connecting " + sourceCellModel.getName() + " to " + targetCellModel.getName());
+            SourceVariableProvider sourceVariableProvider = new SourceVariableProvider(this.sourceCellModel.getOutputVariableModelMap());
+            sourceChoice.setProvider(sourceVariableProvider);
+            TargetBindingProvider targetBindingProvider = new TargetBindingProvider(this.targetCellModel.getBindingModelMap());
+            targetChoice.setProvider(targetBindingProvider);
+        }
 
         connectionForm.setModelObject(new ConnectionPanelData());
     }

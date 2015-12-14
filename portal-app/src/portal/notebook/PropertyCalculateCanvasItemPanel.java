@@ -25,8 +25,8 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     private transient CalculatorsClient calculatorsClient;
     private Form<ModelObject> form;
 
-    public PropertyCalculateCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
+        super(id, cell, callbackHandler);
         addHeader();
         addForm();
         addListeners();
@@ -40,6 +40,12 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 notebookSession.removeCell(getCellModel());
+            }
+        });
+        add(new AjaxLink("bindings") {
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                getCallbackHandler().onEditBindings(PropertyCalculateCanvasItemPanel.this.getMarkupId(), getCellModel());
             }
         });
     }

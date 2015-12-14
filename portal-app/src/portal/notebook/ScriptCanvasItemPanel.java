@@ -23,8 +23,8 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
 
-    public ScriptCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public ScriptCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
+        super(id, cell, callbackHandler);
         setOutputMarkupId(true);
         addHeader();
         addForm();

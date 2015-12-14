@@ -32,8 +32,8 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
             "DEFAULT", "RFC4180", "EXCEL", "MYSQL", "TDF"
     });
 
-    public CSVUploadCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public CSVUploadCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
+        super(id, cell, callbackHandler);
         setOutputMarkupId(true);
         addHeader();
         addForm();

@@ -69,6 +69,7 @@ public class NotebookCanvasPage extends WebPage {
     @Inject
     private NotebookSession notebookSession;
     private int initialItemCount;
+    private CanvasItemPanel.CallbackHandler cellCallbackHandler;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -98,6 +99,18 @@ public class NotebookCanvasPage extends WebPage {
 
             }
         });
+        cellCallbackHandler = new CanvasItemPanel.CallbackHandler() {
+            @Override
+            public void onRemove(CellModel cellModel) {
+
+            }
+
+            @Override
+            public void onEditBindings(String markupId, CellModel cellModel) {
+                connectionPanel.configure(null, null, markupId, cellModel);
+                connectionPanel.showModal();
+            }
+        };
     }
 
     @Override
@@ -173,7 +186,9 @@ public class NotebookCanvasPage extends WebPage {
                 notebookSession.storeCurrentNotebook();
                 String sourceMarkupId = connectionPanel.getSourceMarkupId();
                 String targetMarkupId = connectionPanel.getTargetMarkupId();
-                getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript("addConnection(" + sourceMarkupId + ", " + targetMarkupId + ");");
+                if (sourceMarkupId != null) {
+                    getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript("addConnection(" + sourceMarkupId + ", " + targetMarkupId + ");");
+                }
             }
 
             @Override
@@ -300,21 +315,21 @@ public class NotebookCanvasPage extends WebPage {
         CellType cellType = cellModel.getCellType();
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("FileUpload".equals(cellType.getName())) {
-            return new FileUploadCanvasItemPanel("item", cellModel);
+            return new FileUploadCanvasItemPanel("item", cellModel, cellCallbackHandler);
         } else if ("Script".equals(cellType.getName())) {
-            return new ScriptCanvasItemPanel("item", cellModel);
+            return new ScriptCanvasItemPanel("item", cellModel, cellCallbackHandler);
         } else if ("PropertyCalculate".equals(cellType.getName())) {
-            return new PropertyCalculateCanvasItemPanel("item", cellModel);
+            return new PropertyCalculateCanvasItemPanel("item", cellModel, cellCallbackHandler);
         } else if ("TableDisplay".equals(cellType.getName())) {
-            return new TableDisplayCanvasItemPanel("item", cellModel);
+            return new TableDisplayCanvasItemPanel("item", cellModel, cellCallbackHandler);
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
-            return new ChemblActivitiesFetcherCanvasItemPanel("item", cellModel);
+            return new ChemblActivitiesFetcherCanvasItemPanel("item", cellModel, cellCallbackHandler);
         } else if ("SdfUploader".equals(cellType.getName())) {
-            return new SDFUploadCanvasItemPanel("item", cellModel);
+            return new SDFUploadCanvasItemPanel("item", cellModel, cellCallbackHandler);
         } else if ("CsvUploader".equals(cellType.getName())) {
-            return new CSVUploadCanvasItemPanel("item", cellModel);
+            return new CSVUploadCanvasItemPanel("item", cellModel, cellCallbackHandler);
         } else if ("DatasetMerger".equals(cellType.getName())) {
-            return new DatasetMergerCanvasItemPanel("item", cellModel);
+            return new DatasetMergerCanvasItemPanel("item", cellModel, cellCallbackHandler);
         } else {
             return null;
         }
