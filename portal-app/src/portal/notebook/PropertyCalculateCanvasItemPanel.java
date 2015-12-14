@@ -1,8 +1,6 @@
 package portal.notebook;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -27,27 +25,10 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
     public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
         super(id, cell, callbackHandler);
-        addHeader();
         addForm();
         addListeners();
         load();
         setOutputMarkupId(true);
-    }
-
-    private void addHeader() {
-        add(new Label("cellName", getCellModel().getName().toLowerCase()));
-        add(new AjaxLink("remove") {
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.removeCell(getCellModel());
-            }
-        });
-        add(new AjaxLink("bindings") {
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getCallbackHandler().onEditBindings(PropertyCalculateCanvasItemPanel.this.getMarkupId(), getCellModel());
-            }
-        });
     }
 
     private void addListeners() {

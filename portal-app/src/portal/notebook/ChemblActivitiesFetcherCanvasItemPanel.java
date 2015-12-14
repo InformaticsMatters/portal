@@ -1,8 +1,6 @@
 package portal.notebook;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -21,21 +19,10 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
 
     public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
         super(id, cell, callbackHandler);
-        addHeader();
         addForm();
         addListeners();
         load();
         setOutputMarkupId(true);
-    }
-
-    private void addHeader() {
-        add(new Label("cellName", getCellModel().getName().toLowerCase()));
-        add(new AjaxLink("remove") {
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.removeCell(getCellModel());
-            }
-        });
     }
 
     private void addListeners() {

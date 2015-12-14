@@ -102,7 +102,7 @@ public class NotebookCanvasPage extends WebPage {
         cellCallbackHandler = new CanvasItemPanel.CallbackHandler() {
             @Override
             public void onRemove(CellModel cellModel) {
-
+                notebookSession.removeCell(cellModel);
             }
 
             @Override

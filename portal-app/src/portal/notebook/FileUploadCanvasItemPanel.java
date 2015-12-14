@@ -2,7 +2,6 @@ package portal.notebook;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -30,21 +29,9 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
     public FileUploadCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
         super(id, cell, callbackHandler);
         setOutputMarkupId(true);
-        addHeader();
         addForm();
         load();
     }
-
-    private void addHeader() {
-        add(new Label("cellName", getCellModel().getName().toLowerCase()));
-        add(new AjaxLink("remove") {
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.removeCell(getCellModel());
-            }
-        });
-    }
-
 
     private void addForm() {
         form = new Form<>("form");
