@@ -114,15 +114,17 @@ public class ConnectionPanel extends SemanticModalPanel {
                 final BindingModel bindingModel = listItem.getModelObject();
                 listItem.add(new Label("targetName", bindingModel.getDisplayName()));
                 VariableModel variableModel = bindingModel.getVariableModel();
-                String sourceDisplayName = variableModel == null ? null : variableModel.getDisplayName();
+                String sourceDisplayName = variableModel == null ? null : (variableModel.getProducerCellModel().getName() + " " + variableModel.getDisplayName());
                 listItem.add(new Label("variableName", sourceDisplayName));
-                listItem.add(new AjaxLink("unassign") {
+                AjaxLink unassignLink = new AjaxLink("unassign") {
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         bindingModel.setVariableModel(null);
                         ajaxRequestTarget.add(bindingListContainer);
                     }
-                });
+                };
+                unassignLink.setVisible(sourceDisplayName != null);
+                listItem.add(unassignLink);
             }
         };
         bindingListContainer.add(listView);

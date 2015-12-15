@@ -70,6 +70,7 @@ public class ExampleCellService {
         cellType = new CellType();
         cellType.setName("ChemblActivitiesFetcher");
         cellType.setDescription("Chembl activities fetcher");
+        cellType.setExecutable(Boolean.TRUE);
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("results");
         variableDefinition.setDisplayName("Results");
@@ -105,6 +106,7 @@ public class ExampleCellService {
         cellType = new CellType();
         cellType.setName("Script");
         cellType.setDescription("Script");
+        cellType.setExecutable(Boolean.TRUE);
         optionDefinition = new OptionDefinition();
         optionDefinition.setName("code");
         optionDefinition.setDisplayName("Code");
@@ -126,6 +128,7 @@ public class ExampleCellService {
         cellType = new CellType();
         cellType.setName("SdfUploader");
         cellType.setDescription("SDF upload");
+        cellType.setExecutable(Boolean.TRUE);
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("fileContent");
         variableDefinition.setDisplayName("File content");
@@ -146,6 +149,7 @@ public class ExampleCellService {
         cellType = new CellType();
         cellType.setName("CsvUploader");
         cellType.setDescription("CSV upload");
+        cellType.setExecutable(Boolean.TRUE);
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("fileContent");
         variableDefinition.setDisplayName("File content");
@@ -171,6 +175,7 @@ public class ExampleCellService {
         cellType = new CellType();
         cellType.setName("DatasetMerger");
         cellType.setDescription("Dataset merger");
+        cellType.setExecutable(Boolean.TRUE);
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("results");
         variableDefinition.setDisplayName("Results");
