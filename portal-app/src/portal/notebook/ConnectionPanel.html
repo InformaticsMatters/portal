@@ -2,35 +2,10 @@
     <div wicket:id="modalElement" class="modal ui hidden">
 
         <div class="header">
-            Modal
+            Bindings
         </div>
 
-        <div>
-            <form wicket:id="form" class="ui form">
-                <div class="content">
-                    <div class="two fields">
-                        <div class="field">
-                            <label>Source variable</label>
-                            <input type="hidden" wicket:id="source">
-                        </div>
-
-                        <div class="field">
-                            <label>Target binding</label>
-                            <input type="hidden" wicket:id="target">
-                        </div>
-                    </div>
-                </div>
-                <div class="actions">
-                    <div wicket:id="submit" style="width: 78px;" class="ui small green button">
-                        Ok
-                    </div>
-                    <div wicket:id="cancel" style="width: 78px;" class="ui small black button">
-                        Cancel
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div wicket:id="bindingListContainer">
+        <div wicket:id="bindingListContainer" style="padding: 16px; margin: 16px">
             <table class="ui small very basic table">
                 <thead>
                 <tr>
@@ -49,5 +24,30 @@
             </table>
         </div>
 
+        <div>
+            <form wicket:id="form" class="ui form">
+                <div class="content" style="padding: 16px; margin: 16px">
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Source variable</label>
+                            <input type="hidden" wicket:id="source">
+                        </div>
+
+                        <div class="field">
+                            <label>Target binding</label>
+                            <input type="hidden" wicket:id="target">
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <div wicket:id="submit" style="width: 78px;" class="ui small green button">
+                        Bind
+                    </div>
+                    <div wicket:id="cancel" style="width: 78px;" class="ui small black button">
+                        Cancel
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </wicket:panel>
