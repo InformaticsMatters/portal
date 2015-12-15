@@ -109,7 +109,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
 
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        notebookSession.reloadCurrentNotebook();
+        //notebookSession.reloadCurrentNotebook();
 
         form.getModelObject().load();
     }
