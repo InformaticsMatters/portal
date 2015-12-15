@@ -21,12 +21,11 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.notebook.api.CellType;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PortalHomePage;
 import portal.notebook.service.NotebookInfo;
-import portal.notebook.service.UpdateNotebookData;
-import org.squonk.notebook.api.CellType;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -70,6 +69,7 @@ public class NotebookCanvasPage extends WebPage {
     private NotebookSession notebookSession;
     private int initialItemCount;
     private CanvasItemPanel.CallbackHandler cellCallbackHandler;
+    private EditNotebookPanel editNotebookPanel;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -193,6 +193,21 @@ public class NotebookCanvasPage extends WebPage {
             }
         });
         plumbContainer.add(connectionPanel);
+        editNotebookPanel = new EditNotebookPanel("editNotebookPanel", "modalElement");
+        add(editNotebookPanel);
+        editNotebookPanel.setCallbacks(new EditNotebookPanel.Callbacks() {
+            @Override
+            public void onSubmit() {
+                notebookListPanel.refreshNotebookList();
+                AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
+                ajaxRequestTarget.add(notebookListPanel);
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
     }
 
     private Component findItemComponent(CellModel targetCellModel) {
@@ -215,10 +230,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                UpdateNotebookData data = new UpdateNotebookData();
-                data.setName("New notebook");
-                notebookSession.createNotebook(data);
-                notebookListPanel.refreshNotebookList();
+                editNotebookPanel.showModal();
             }
         });
 

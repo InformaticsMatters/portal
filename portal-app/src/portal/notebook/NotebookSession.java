@@ -1,10 +1,10 @@
 package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
-import portal.dataset.*;
-import portal.notebook.service.*;
 import org.squonk.notebook.api.CellType;
 import org.squonk.notebook.client.CellClient;
+import portal.dataset.*;
+import portal.notebook.service.*;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;
@@ -34,7 +34,7 @@ public class NotebookSession implements Serializable {
     public NotebookInfo preparePocNotebook() {
         List<NotebookInfo> list = notebookService.listNotebookInfo();
         if (list.isEmpty()) {
-            UpdateNotebookData notebookData = new UpdateNotebookData();
+            EditNotebookData notebookData = new EditNotebookData();
             notebookData.setName("POC");
             notebookService.createNotebook(notebookData);
             notebookInfo = notebookService.listNotebookInfo().get(0);
@@ -52,12 +52,16 @@ public class NotebookSession implements Serializable {
         return notebookService.listNotebookInfo();
     }
 
-    public void createNotebook(UpdateNotebookData updateNotebookData) {
-        notebookService.createNotebook(updateNotebookData);
+    public NotebookInfo retrieveNotebookInfo(Long id) {
+        return notebookService.retrieveNotebookInfo(id);
     }
 
-    public void updateNotebook(UpdateNotebookData updateNotebookData) {
-        notebookService.updateNotebook(updateNotebookData);
+    public void createNotebook(EditNotebookData editNotebookData) {
+        notebookService.createNotebook(editNotebookData);
+    }
+
+    public void updateNotebook(EditNotebookData editNotebookData) {
+        notebookService.updateNotebook(editNotebookData);
     }
 
     public void removeNotebook(Long notebookId) {

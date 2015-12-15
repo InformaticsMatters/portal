@@ -51,10 +51,11 @@ public class NotebookService {
         }
     }
 
-    public void createNotebook(UpdateNotebookData updateNotebookData) {
+    public void createNotebook(EditNotebookData editNotebookData) {
         try {
             Notebook notebook = new Notebook();
-            notebook.setName(updateNotebookData.getName());
+            notebook.setName(editNotebookData.getName());
+            notebook.setDescription(editNotebookData.getDescription());
             notebook.setData(new NotebookContents().toBytes());
             entityManager.persist(notebook);
         } catch (Exception e) {
@@ -62,9 +63,10 @@ public class NotebookService {
         }
     }
 
-    public void updateNotebook(UpdateNotebookData updateNotebookData) {
-        Notebook notebook = entityManager.find(Notebook.class, updateNotebookData.getId());
-        notebook.setName(updateNotebookData.getName());
+    public void updateNotebook(EditNotebookData editNotebookData) {
+        Notebook notebook = entityManager.find(Notebook.class, editNotebookData.getId());
+        notebook.setName(editNotebookData.getName());
+        notebook.setDescription(editNotebookData.getDescription());
     }
 
     public void removeNotebook(Long id) {

@@ -1,0 +1,28 @@
+<wicket:panel>
+    <div wicket:id="modalElement" class="modal ui hidden">
+
+        <div class="header">
+            Notebook
+        </div>
+        <form wicket:id="form" class="ui form">
+            <div class="content">
+                <div>
+                    <label>Name</label>
+                    <input type="text" wicket:id="name">
+                </div>
+                <div>
+                    <label>Description</label>
+                    <input type="text" wicket:id="description">
+                </div>
+            </div>
+            <div class="actions">
+                <div wicket:id="submit" style="width: 78px;" class="ui small green button">
+                    Accept
+                </div>
+                <div wicket:id="cancel" style="width: 78px;" class="ui small black button">
+                    Cancel
+                </div>
+            </div>
+        </form>
+    </div>
+</wicket:panel>

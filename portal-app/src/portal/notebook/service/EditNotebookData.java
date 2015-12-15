@@ -2,9 +2,10 @@ package portal.notebook.service;
 
 import java.io.Serializable;
 
-public class UpdateNotebookData implements Serializable {
+public class EditNotebookData implements Serializable {
     private Long id;
     private String name;
+    private String description;
 
     public Long getId() {
         return id;
@@ -20,5 +21,13 @@ public class UpdateNotebookData implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

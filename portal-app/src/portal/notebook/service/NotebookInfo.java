@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 public class NotebookInfo implements Serializable {
     private String name;
+    private String description;
     private Long id;
 
     public String getName() {
@@ -21,5 +22,13 @@ public class NotebookInfo implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
