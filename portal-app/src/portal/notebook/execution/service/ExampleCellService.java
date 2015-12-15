@@ -30,6 +30,7 @@ public class ExampleCellService {
         CellType cellType = new CellType();
         cellType.setName("FileUpload");
         cellType.setDescription("File upload");
+        cellType.setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
         variableDefinition.setName("file");
         variableDefinition.setDisplayName("Uploaded file");
@@ -46,6 +47,7 @@ public class ExampleCellService {
         cellType = new CellType();
         cellType.setName("PropertyCalculate");
         cellType.setDescription("Property calc.");
+        cellType.setExecutable(Boolean.TRUE);
         variableDefinition = new VariableDefinition();
         variableDefinition.setName("outputFile");
         variableDefinition.setDisplayName("Output file");
@@ -92,6 +94,7 @@ public class ExampleCellService {
         cellType = new CellType();
         cellType.setName("TableDisplay");
         cellType.setDescription("Table display");
+        cellType.setExecutable(Boolean.FALSE);
         bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input file");
         bindingDefinition.setName("input");
