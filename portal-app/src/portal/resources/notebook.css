@@ -183,6 +183,14 @@ div.ui-resizable-handle.ui-resizable-s {
     font-size: 13px;
 }
 
+.nbListTable .icon {
+    visibility: hidden;
+}
+
+.nbListTable tr:hover .icon {
+    visibility: visible;
+}
+
 .plumbContainer {
     height: initial;
 }
