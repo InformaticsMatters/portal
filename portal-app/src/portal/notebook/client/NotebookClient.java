@@ -1,6 +1,6 @@
 package portal.notebook.client;
 
-import com.squonk.notebook.client.CallbackClient;
+import org.squonk.notebook.client.CallbackClient;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.squonk.notebook.api.NotebookDTO;
 import toolkit.services.AbstractServiceClient;

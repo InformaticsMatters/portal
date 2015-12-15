@@ -1,6 +1,6 @@
 package portal.notebook.service;
 
-import com.squonk.notebook.client.CellClient;
+import org.squonk.notebook.client.CellClient;
 import portal.notebook.client.CellData;
 import portal.notebook.client.NotebookData;
 import portal.notebook.client.VariableData;

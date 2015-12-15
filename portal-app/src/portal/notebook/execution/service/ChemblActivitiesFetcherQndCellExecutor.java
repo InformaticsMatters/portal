@@ -1,11 +1,11 @@
 package portal.notebook.execution.service;
 
-import com.im.lac.job.jobdef.StepDefinition;
-import com.im.lac.job.jobdef.StepDefinitionConstants;
 import com.im.lac.types.MoleculeObject;
 import com.squonk.dataset.Dataset;
 import com.squonk.dataset.DatasetMetadata;
 import com.squonk.types.io.JsonHandler;
+import org.squonk.execution.steps.StepDefinition;
+import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.CellDTO;
 import org.squonk.notebook.api.CellType;
 import org.squonk.notebook.client.CallbackClient;
