@@ -99,6 +99,7 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onEditBindings(CellModel cellModel) {
                 connectionPanel.configure(null, cellModel);
+                connectionPanel.setCanAddBindings(false);
                 connectionPanel.showModal();
             }
         };
@@ -397,6 +398,7 @@ public class NotebookCanvasPage extends WebPage {
                     }
                 }
                 connectionPanel.configure(sourceCellModel, targetCellModel);
+                connectionPanel.setCanAddBindings(true);
                 connectionPanel.showModal();
             }
 

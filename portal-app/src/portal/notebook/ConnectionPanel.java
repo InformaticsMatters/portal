@@ -31,6 +31,9 @@ public class ConnectionPanel extends SemanticModalPanel {
     private CellModel targetCellModel;
     private Select2Choice<VariableModel> sourceChoice;
     private Select2Choice<BindingModel> targetChoice;
+    private AjaxSubmitLink bindAction;
+    private Label sourceLabel;
+    private Label targetLabel;
 
     public ConnectionPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -44,6 +47,11 @@ public class ConnectionPanel extends SemanticModalPanel {
         getModalRootComponent().add(connectionForm);
         connectionForm.setModel(new CompoundPropertyModel<>(new ConnectionPanelData()));
 
+        sourceLabel = new Label("sourceLabel", "Source variable");
+        connectionForm.add(sourceLabel);
+        targetLabel = new Label("targetLabel", "Target binding");
+        connectionForm.add(targetLabel);
+
         sourceChoice = new Select2Choice<>("source");
         sourceChoice.getSettings().setMinimumInputLength(0);
         sourceChoice.setOutputMarkupId(true);
@@ -56,7 +64,7 @@ public class ConnectionPanel extends SemanticModalPanel {
         targetChoice.setProvider(new TargetBindingProvider(null));
         connectionForm.add(targetChoice);
 
-        final AjaxSubmitLink submit = new AjaxSubmitLink("submit") {
+        bindAction = new AjaxSubmitLink("submit") {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -66,8 +74,8 @@ public class ConnectionPanel extends SemanticModalPanel {
                 callbacks.onSubmit();
             }
         };
-        submit.setOutputMarkupId(true);
-        connectionForm.add(submit);
+        bindAction.setOutputMarkupId(true);
+        connectionForm.add(bindAction);
 
         AjaxLink cancelAction = new AjaxLink("cancel") {
 
@@ -146,6 +154,14 @@ public class ConnectionPanel extends SemanticModalPanel {
 
     public CellModel getTargetCellModel() {
         return targetCellModel;
+    }
+
+    public void setCanAddBindings(boolean value) {
+        sourceLabel.setVisible(value);
+        targetLabel.setVisible(value);
+        sourceChoice.setVisible(value);
+        targetChoice.setVisible(value);
+        bindAction.setVisible(value);
     }
 
     public interface Callbacks extends Serializable {
