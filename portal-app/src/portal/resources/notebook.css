@@ -28,7 +28,7 @@
 }
 
 .notebook-canvas-item-content > .titleBar {
-  background: none;
+  background: #eeeeee;
   margin-bottom: 5px;
   padding: 5px 3px 5px 10px;
   box-shadow: none;
