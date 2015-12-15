@@ -1,7 +1,7 @@
 package portal.notebook;
 
 import portal.notebook.service.Variable;
-import tmp.squonk.notebook.api.VariableType;
+import org.squonk.notebook.api.VariableType;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package portal.notebook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import tmp.squonk.notebook.api.*;
+import org.squonk.notebook.api.*;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.ApplicationScoped;

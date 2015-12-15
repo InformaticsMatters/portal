@@ -1,8 +1,8 @@
 package portal.notebook.execution.service;
 
-import tmp.squonk.notebook.api.*;
-import tmp.squonk.notebook.client.CallbackClient;
-import tmp.squonk.notebook.client.CallbackContext;
+import org.squonk.notebook.api.*;
+import org.squonk.notebook.client.CallbackClient;
+import org.squonk.notebook.client.CallbackContext;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

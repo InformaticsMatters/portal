@@ -1,12 +1,12 @@
-package tmp.squonk.notebook.client;
+package org.squonk.notebook.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
-import tmp.squonk.notebook.api.CellDTO;
-import tmp.squonk.notebook.api.NotebookDTO;
+import org.squonk.notebook.api.CellDTO;
+import org.squonk.notebook.api.NotebookDTO;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;

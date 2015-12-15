@@ -4,7 +4,7 @@ import portal.notebook.service.Binding;
 import portal.notebook.service.Cell;
 import portal.notebook.service.Option;
 import portal.notebook.service.Variable;
-import tmp.squonk.notebook.api.CellType;
+import org.squonk.notebook.api.CellType;
 
 import java.io.Serializable;
 import java.util.HashMap;

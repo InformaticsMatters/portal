@@ -6,9 +6,9 @@ import com.im.lac.types.MoleculeObject;
 import com.squonk.dataset.Dataset;
 import com.squonk.dataset.DatasetMetadata;
 import com.squonk.types.io.JsonHandler;
-import tmp.squonk.notebook.api.CellDTO;
-import tmp.squonk.notebook.api.CellType;
-import tmp.squonk.notebook.client.CallbackClient;
+import org.squonk.notebook.api.CellDTO;
+import org.squonk.notebook.api.CellType;
+import org.squonk.notebook.client.CallbackClient;
 
 import javax.inject.Inject;
 import java.io.InputStream;

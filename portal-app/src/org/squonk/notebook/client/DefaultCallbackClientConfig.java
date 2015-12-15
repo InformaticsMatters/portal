@@ -1,4 +1,4 @@
-package tmp.squonk.notebook.client;
+package org.squonk.notebook.client;
 
 import com.squonk.util.IOUtils;
 import javax.enterprise.inject.Default;

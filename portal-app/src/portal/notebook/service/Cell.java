@@ -1,6 +1,6 @@
 package portal.notebook.service;
 
-import tmp.squonk.notebook.api.CellType;
+import org.squonk.notebook.api.CellType;
 
 import java.io.Serializable;
 import java.util.HashMap;

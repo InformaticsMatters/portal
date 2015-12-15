@@ -1,7 +1,7 @@
 package portal.notebook;
 
 import portal.notebook.service.Option;
-import tmp.squonk.notebook.api.OptionType;
+import org.squonk.notebook.api.OptionType;
 
 import java.io.Serializable;
 import java.util.List;

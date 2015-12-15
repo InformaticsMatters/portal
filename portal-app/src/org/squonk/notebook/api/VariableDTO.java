@@ -1,4 +1,4 @@
-package tmp.squonk.notebook.api;
+package org.squonk.notebook.api;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

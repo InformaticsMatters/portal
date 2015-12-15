@@ -6,7 +6,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.dataset.IDatasetDescriptor;
 import portal.notebook.service.Strings;
-import tmp.squonk.notebook.api.VariableType;
+import org.squonk.notebook.api.VariableType;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;

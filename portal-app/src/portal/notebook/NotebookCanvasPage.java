@@ -26,7 +26,7 @@ import portal.MenuPanel;
 import portal.PortalHomePage;
 import portal.notebook.service.NotebookInfo;
 import portal.notebook.service.UpdateNotebookData;
-import tmp.squonk.notebook.api.CellType;
+import org.squonk.notebook.api.CellType;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

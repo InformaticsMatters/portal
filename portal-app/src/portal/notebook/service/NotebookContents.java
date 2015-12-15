@@ -1,10 +1,10 @@
 package portal.notebook.service;
 
 
-import tmp.squonk.notebook.api.BindingDefinition;
-import tmp.squonk.notebook.api.CellType;
-import tmp.squonk.notebook.api.OptionDefinition;
-import tmp.squonk.notebook.api.VariableDefinition;
+import org.squonk.notebook.api.BindingDefinition;
+import org.squonk.notebook.api.CellType;
+import org.squonk.notebook.api.OptionDefinition;
+import org.squonk.notebook.api.VariableDefinition;
 
 import java.io.*;
 import java.util.ArrayList;

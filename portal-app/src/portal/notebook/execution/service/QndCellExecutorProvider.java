@@ -1,6 +1,6 @@
 package portal.notebook.execution.service;
 
-import tmp.squonk.notebook.api.CellType;
+import org.squonk.notebook.api.CellType;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
