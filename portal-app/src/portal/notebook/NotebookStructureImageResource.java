@@ -70,8 +70,10 @@ public class NotebookStructureImageResource extends DynamicImageResource {
 
     protected Molecule getMolecule(String datasetIdAsString, String rowIdAsString) throws Exception {
         String structureAsString = loadStructureData(datasetIdAsString, rowIdAsString);
+        if (structureAsString == null || structureAsString.length() == 0) {
+            return null;
+        }
         Molecule molecule = MolImporter.importMol(structureAsString);
-        molecule.dearomatize();
         return molecule;
     }
 
