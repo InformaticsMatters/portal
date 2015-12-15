@@ -108,6 +108,12 @@ public class EditNotebookPanel extends SemanticModalPanel {
         this.callbacks = callbacks;
     }
 
+    public void configureForCreate() {
+        this.notebookId = null;
+        form.setModelObject(new EditNotebookData());
+        forRemove = false;
+    }
+
     public void configureForEdit(Long id) {
         this.notebookId = id;
         NotebookInfo notebookInfo = notebookSession.retrieveNotebookInfo(id);
