@@ -5,7 +5,7 @@
             Bindings
         </div>
 
-        <div wicket:id="bindingListContainer" style="padding: 16px; margin: 16px">
+        <div wicket:id="bindingListContainer" class="content">
             <table class="ui small very basic table">
                 <thead>
                 <tr>
@@ -24,30 +24,28 @@
             </table>
         </div>
 
-        <div>
-            <form wicket:id="form" class="ui form">
-                <div class="content" style="padding: 16px; margin: 16px">
-                    <div class="two fields">
-                        <div class="field">
-                            <label><span wicket:id="sourceLabel">Source variable</span></label>
-                            <input type="hidden" wicket:id="source">
-                        </div>
+        <form wicket:id="form" class="ui form">
+            <div class="content">
+                <div class="two fields">
+                    <div class="field">
+                        <label><span wicket:id="sourceLabel">Source variable</span></label>
+                        <input type="hidden" wicket:id="source">
+                    </div>
 
-                        <div class="field">
-                            <label><span wicket:id="targetLabel">Target binding</span></label>
-                            <input type="hidden" wicket:id="target">
-                        </div>
+                    <div class="field">
+                        <label><span wicket:id="targetLabel">Target binding</span></label>
+                        <input type="hidden" wicket:id="target">
                     </div>
                 </div>
-                <div class="actions">
-                    <div wicket:id="submit" style="width: 78px;" class="ui small green button">
-                        Bind
-                    </div>
-                    <div wicket:id="cancel" style="width: 78px;" class="ui small black button">
-                        Cancel
-                    </div>
+            </div>
+            <div class="actions">
+                <div wicket:id="submit" style="width: 78px;" class="ui small green button">
+                    Bind
                 </div>
-            </form>
-        </div>
+                <div wicket:id="cancel" style="width: 78px;" class="ui small black button">
+                    Cancel
+                </div>
+            </div>
+        </form>
     </div>
 </wicket:panel>
