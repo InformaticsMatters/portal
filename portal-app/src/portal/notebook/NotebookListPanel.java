@@ -1,6 +1,7 @@
 package portal.notebook;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -18,12 +19,14 @@ import java.util.List;
 public class NotebookListPanel extends Panel {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookListPanel.class);
+    private final EditNotebookPanel editNotebookPanel;
     @Inject
     private NotebookSession notebooksSession;
     private ListView<NotebookInfo> listView;
 
-    public NotebookListPanel(String id) {
+    public NotebookListPanel(String id, EditNotebookPanel editNotebookPanel) {
         super(id);
+        this.editNotebookPanel = editNotebookPanel;
         addNotebookList();
     }
 
@@ -38,6 +41,23 @@ public class NotebookListPanel extends Panel {
             protected void populateItem(ListItem<NotebookInfo> listItem) {
                 NotebookInfo notebookInfo = listItem.getModelObject();
                 listItem.add(new Label("name", notebookInfo.getName()));
+                AjaxLink editLink = new AjaxLink("edit") {
+                    @Override
+                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                        editNotebookPanel.configureForEdit(listItem.getModelObject().getId());
+                        editNotebookPanel.showModal();
+                    }
+                };
+                listItem.add(editLink);
+                AjaxLink removeLink = new AjaxLink("remove") {
+                    @Override
+                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                        editNotebookPanel.configureForRemove(listItem.getModelObject().getId());
+                        editNotebookPanel.showModal();
+                    }
+                };
+                listItem.add(removeLink);
+
             }
         };
         add(listView);

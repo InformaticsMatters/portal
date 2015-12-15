@@ -125,9 +125,6 @@ public class NotebookCanvasPage extends WebPage {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-        notebookListPanel = new NotebookListPanel("nbList");
-        add(notebookListPanel);
-        notebookListPanel.setOutputMarkupPlaceholderTag(true);
 
         notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
         add(notebookCellTypesPanel);
@@ -208,6 +205,9 @@ public class NotebookCanvasPage extends WebPage {
 
             }
         });
+        notebookListPanel = new NotebookListPanel("nbList", editNotebookPanel);
+        add(notebookListPanel);
+        notebookListPanel.setOutputMarkupPlaceholderTag(true);
     }
 
     private Component findItemComponent(CellModel targetCellModel) {

@@ -9,6 +9,7 @@ import toolkit.services.PU;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class NotebookService {
             NotebookInfo notebookInfo = new NotebookInfo();
             notebookInfo.setId(notebook.getId());
             notebookInfo.setName(notebook.getName());
+            notebookInfo.setDescription(notebook.getDescription());
             list.add(notebookInfo);
         }
         return list;
@@ -38,6 +40,7 @@ public class NotebookService {
         NotebookInfo notebookInfo = new NotebookInfo();
         notebookInfo.setId(notebook.getId());
         notebookInfo.setName(notebook.getName());
+        notebookInfo.setDescription(notebook.getDescription());
         return notebookInfo;
     }
 
@@ -71,6 +74,11 @@ public class NotebookService {
 
     public void removeNotebook(Long id) {
         Notebook notebook = entityManager.find(Notebook.class, id);
+        TypedQuery<NotebookHistory> historyQuery = entityManager.createQuery("select o from NotebookHistory o where o.notebook = :notebook", NotebookHistory.class);
+        historyQuery.setParameter("notebook", notebook);
+        for (NotebookHistory notebookHistory : historyQuery.getResultList()) {
+            entityManager.remove(notebookHistory);
+        }
         entityManager.remove(notebook);
     }
 

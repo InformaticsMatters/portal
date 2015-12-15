@@ -3,9 +3,11 @@ package portal.notebook;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.notebook.service.EditNotebookData;
@@ -26,6 +28,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
     private TextField<String> nameField;
     private TextField<String> descriptionField;
     private boolean forRemove;
+    private Long notebookId;
 
     public EditNotebookPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -33,6 +36,31 @@ public class EditNotebookPanel extends SemanticModalPanel {
     }
 
     private void addForm() {
+
+        Label titleLabel = new Label("title", new IModel<String>() {
+            @Override
+            public void detach() {
+
+            }
+
+            @Override
+            public String getObject() {
+                if (notebookId == null) {
+                    return "New notebook";
+                } else if (forRemove) {
+                    return "Remove notebook";
+                } else {
+                    return "Edit notebook";
+                }
+            }
+
+            @Override
+            public void setObject(String s) {
+
+            }
+        });
+        getModalRootComponent().add(titleLabel);
+
         form = new Form<>("form");
         form.setOutputMarkupId(true);
         getModalRootComponent().add(form);
@@ -81,6 +109,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
     }
 
     public void configureForEdit(Long id) {
+        this.notebookId = id;
         NotebookInfo notebookInfo = notebookSession.retrieveNotebookInfo(id);
         EditNotebookData editNotebookData = new EditNotebookData();
         editNotebookData.setId(notebookInfo.getId());
@@ -91,6 +120,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
     }
 
     public void configureForRemove(Long id) {
+        this.notebookId = id;
         NotebookInfo notebookInfo = notebookSession.retrieveNotebookInfo(id);
         EditNotebookData editNotebookData = new EditNotebookData();
         editNotebookData.setId(notebookInfo.getId());
