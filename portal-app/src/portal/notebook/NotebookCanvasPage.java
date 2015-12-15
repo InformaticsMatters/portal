@@ -90,7 +90,7 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onRemove(CellModel cellModel) {
                 notebookSession.removeCell(cellModel);
-                RequestCycle.get().find(AjaxRequestTarget.class).add(plumbContainer);
+                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
                 RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("addCellsPaletteDragAndDropSupport();");
                 RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');");
                 RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript(buildConnectionsJS());
@@ -177,11 +177,13 @@ public class NotebookCanvasPage extends WebPage {
             public void onSubmit() {
                 notebookSession.storeCurrentNotebook();
                 if (connectionPanel.getSourceCellModel() != null) {
+                    AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
+                    ajaxRequestTarget.add(NotebookCanvasPage.this);
                     String sourceMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getSourceCellModel().getId();
                     String targetMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getTargetCellModel().getId();
                     String js = "addConnection('" + sourceMarkupId + "', '" + targetMarkupId + "');";
-                    getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(js);
-                    getRequestCycle().find(AjaxRequestTarget.class).add(findItemComponent(connectionPanel.getTargetCellModel()));
+                    ajaxRequestTarget.appendJavaScript(js);
+                    // getRequestCycle().find(AjaxRequestTarget.class).add(findItemComponent(connectionPanel.getTargetCellModel()));
                 }
             }
 
