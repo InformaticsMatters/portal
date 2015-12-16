@@ -21,9 +21,9 @@ public class NotebookListPanel extends Panel {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookListPanel.class);
     private final EditNotebookPanel editNotebookPanel;
+    private ListView<NotebookInfo> listView;
     @Inject
     private NotebookSession notebooksSession;
-    private ListView<NotebookInfo> listView;
 
     public NotebookListPanel(String id, EditNotebookPanel editNotebookPanel) {
         super(id);
@@ -43,6 +43,7 @@ public class NotebookListPanel extends Panel {
                 NotebookInfo notebookInfo = listItem.getModelObject();
                 listItem.add(new Label("name", notebookInfo.getName()));
                 AjaxLink editLink = new AjaxLink("edit") {
+
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         editNotebookPanel.configureForEdit(listItem.getModelObject().getId());
@@ -51,6 +52,7 @@ public class NotebookListPanel extends Panel {
                 };
                 listItem.add(editLink);
                 AjaxLink removeLink = new AjaxLink("remove") {
+
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         editNotebookPanel.configureForRemove(listItem.getModelObject().getId());
@@ -62,9 +64,10 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     protected void onEvent(AjaxRequestTarget target) {
+                        notebooksSession.loadCurrentNotebook(notebookInfo.getId());
+                        target.add(getPage());
                         target.appendJavaScript("makeNbTrActive('" + listItem.getMarkupId() + "')");
                     }
-
                 });
             }
         };

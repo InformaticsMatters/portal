@@ -89,6 +89,7 @@ public class ConnectionPanel extends SemanticModalPanel {
 
     private void addBindingList() {
         IModel<List<BindingModel>> listModel = new IModel<List<BindingModel>>() {
+
             @Override
             public void detach() {
 
@@ -117,6 +118,7 @@ public class ConnectionPanel extends SemanticModalPanel {
                 String sourceDisplayName = variableModel == null ? null : (variableModel.getProducerCellModel().getName() + " " + variableModel.getDisplayName());
                 listItem.add(new Label("variableName", sourceDisplayName));
                 AjaxLink unassignLink = new AjaxLink("unassign") {
+
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         bindingModel.setVariableModel(null);

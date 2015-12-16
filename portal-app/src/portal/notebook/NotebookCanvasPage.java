@@ -87,6 +87,7 @@ public class NotebookCanvasPage extends WebPage {
 
     private void addListeners() {
         cellCallbackHandler = new CanvasItemPanel.CallbackHandler() {
+
             @Override
             public void onRemove(CellModel cellModel) {
                 notebookSession.removeCell(cellModel);
@@ -136,6 +137,7 @@ public class NotebookCanvasPage extends WebPage {
         add(plumbContainer);
 
         IModel<List<CellModel>> listModel = new IModel<List<CellModel>>() {
+
             @Override
             public List<CellModel> getObject() {
                 return Arrays.asList(notebookSession.getCurrentNotebookModel().getCellModels());
@@ -193,6 +195,7 @@ public class NotebookCanvasPage extends WebPage {
         editNotebookPanel = new EditNotebookPanel("editNotebookPanel", "modalElement");
         add(editNotebookPanel);
         editNotebookPanel.setCallbacks(new EditNotebookPanel.Callbacks() {
+
             @Override
             public void onSubmit() {
                 notebookListPanel.refreshNotebookList();
@@ -443,7 +446,7 @@ public class NotebookCanvasPage extends WebPage {
         BindingModel bindingModel = targetCellModel.getBindingModelMap().values().iterator().next();
         VariableModel variableModel = sourceCellModel.getOutputVariableModelMap().values().iterator().next();
         bindingModel.setVariableModel(variableModel);
-        logger.info("Applied default binding");
+        logger.info("Auto-binding applied");
         notebookSession.storeCurrentNotebook();
         getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
     }
@@ -454,6 +457,7 @@ public class NotebookCanvasPage extends WebPage {
 
     private void addConnectionsRenderBehavior() {
         AbstractDefaultAjaxBehavior behavior = new AbstractDefaultAjaxBehavior() {
+
             @Override
             protected void respond(AjaxRequestTarget ajaxRequestTarget) {
 
