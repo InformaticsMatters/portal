@@ -192,11 +192,19 @@ div.ui-resizable-handle.ui-resizable-s {
 }
 
 .nbListTable tr:hover {
+    background-color: #f6f6f6;
+}
+
+.nbListTable tr.selected {
     background-color: #eee;
 }
 
-.nbListTable tr.active {
-    background-color: #ddd;
+.nbListTable td {
+    padding: .6em .4em!important;
+}
+
+.nbListTable tr:last-child td {
+    padding-bottom: .4em!important;
 }
 
 .plumbContainer {

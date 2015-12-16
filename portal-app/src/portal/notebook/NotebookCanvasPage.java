@@ -395,26 +395,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void respond(AjaxRequestTarget target) {
-                String sourceMarkupId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
-                String targetMarkupId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
-                System.out.println(sourceMarkupId + ", " + targetMarkupId);
-
-                CellModel sourceCellModel = null;
-                CellModel targetCellModel = null;
-
-                Iterator<Component> iterator = canvasItemRepeater.iterator();
-                while (iterator.hasNext()) {
-                    Component component = iterator.next();
-                    if (sourceMarkupId.equals(component.getMarkupId())) {
-                        sourceCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
-                    }
-                    if (targetMarkupId.equals(component.getMarkupId())) {
-                        targetCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
-                    }
-                }
-                connectionPanel.configure(sourceCellModel, targetCellModel);
-                connectionPanel.setCanAddBindings(true);
-                connectionPanel.showModal();
+                onNewCanvasConnection();
             }
 
             @Override
@@ -428,6 +409,47 @@ public class NotebookCanvasPage extends WebPage {
             }
         };
         add(onNotebookCanvasNewConnectionBehavior);
+    }
+
+    private void onNewCanvasConnection() {
+        String sourceMarkupId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
+        String targetMarkupId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
+        System.out.println(sourceMarkupId + ", " + targetMarkupId);
+
+        CellModel sourceCellModel = null;
+        CellModel targetCellModel = null;
+
+        Iterator<Component> iterator = canvasItemRepeater.iterator();
+        while (iterator.hasNext()) {
+            Component component = iterator.next();
+            if (sourceMarkupId.equals(component.getMarkupId())) {
+                sourceCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
+            }
+            if (targetMarkupId.equals(component.getMarkupId())) {
+                targetCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
+            }
+        }
+
+        if (canApplyAutoBinding(sourceCellModel, targetCellModel)) {
+            applyAutoBinding(sourceCellModel, targetCellModel);
+        } else {
+            connectionPanel.configure(sourceCellModel, targetCellModel);
+            connectionPanel.setCanAddBindings(true);
+            connectionPanel.showModal();
+        }
+    }
+
+    private void applyAutoBinding(CellModel sourceCellModel, CellModel targetCellModel) {
+        BindingModel bindingModel = targetCellModel.getBindingModelMap().values().iterator().next();
+        VariableModel variableModel = sourceCellModel.getOutputVariableModelMap().values().iterator().next();
+        bindingModel.setVariableModel(variableModel);
+        logger.info("Applied default binding");
+        notebookSession.storeCurrentNotebook();
+        getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
+    }
+
+    private boolean canApplyAutoBinding(CellModel sourceCellModel, CellModel targetCellModel) {
+        return (sourceCellModel != null) && (targetCellModel != null) && (sourceCellModel.getOutputVariableModelMap().size() == 1) && (targetCellModel.getBindingModelMap().size() == 1);
     }
 
     private void addConnectionsRenderBehavior() {
