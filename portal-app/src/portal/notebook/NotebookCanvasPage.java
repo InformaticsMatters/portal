@@ -12,6 +12,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -126,10 +127,26 @@ public class NotebookCanvasPage extends WebPage {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-
         notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
         add(notebookCellTypesPanel);
         notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
+
+        add(new Label("notebookName", new IModel<String>() {
+            @Override
+            public void detach() {
+
+            }
+
+            @Override
+            public String getObject() {
+                return notebookSession.getCurrentNotebookInfo() == null ? "" : notebookSession.getCurrentNotebookInfo().getName();
+            }
+
+            @Override
+            public void setObject(String s) {
+
+            }
+        }));
 
         plumbContainer = new WebMarkupContainer("plumbContainer");
         plumbContainer.setOutputMarkupId(true);
