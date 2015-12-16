@@ -191,6 +191,14 @@ div.ui-resizable-handle.ui-resizable-s {
     visibility: visible;
 }
 
+.nbListTable tr:hover {
+    background-color: #eee;
+}
+
+.nbListTable tr.active {
+    background-color: #ddd;
+}
+
 .plumbContainer {
     height: initial;
 }

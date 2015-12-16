@@ -204,3 +204,8 @@ function initJsPlumb() {
             });
 }
 
+function makeNbTrActive(itemId) {
+    $('.nbTr').removeClass("active");
+    $('#' + itemId).addClass("active");
+}
+
