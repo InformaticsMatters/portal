@@ -233,20 +233,9 @@ public class NotebookCanvasPage extends WebPage {
 
             }
         });
-        notebookListPanel = new NotebookListPanel("nbList", editNotebookPanel);
+        notebookListPanel = new NotebookListPanel("notebookList", editNotebookPanel);
         add(notebookListPanel);
         notebookListPanel.setOutputMarkupPlaceholderTag(true);
-    }
-
-    private Component findItemComponent(CellModel targetCellModel) {
-        Iterator<Component> iterator = canvasItemRepeater.iterator();
-        while (iterator.hasNext()) {
-            Component component = iterator.next();
-            if (component.getMarkupId().equals(CANVAS_ITEM_PREFIX + targetCellModel.getId())) {
-                return component;
-            }
-        }
-        return null;
     }
 
     private void refreshPanelsVisibility(AjaxRequestTarget target) {

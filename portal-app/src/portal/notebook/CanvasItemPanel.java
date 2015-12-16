@@ -7,11 +7,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 import java.io.Serializable;
 
-public abstract class CanvasItemPanel<T extends CellModel> extends Panel {
-    private transient final T cellModel;
+public abstract class CanvasItemPanel extends Panel {
+    private final CellModel cellModel;
     private final CallbackHandler callbackHandler;
 
-    public CanvasItemPanel(String id, T cellModel, CallbackHandler callbackHandler) {
+    public CanvasItemPanel(String id, CellModel cellModel, CallbackHandler callbackHandler) {
         super(id);
         this.cellModel = cellModel;
         this.callbackHandler = callbackHandler;
@@ -19,23 +19,27 @@ public abstract class CanvasItemPanel<T extends CellModel> extends Panel {
     }
 
     private void addHeader() {
-        add(new Label("cellName", getCellModel().getName().toLowerCase()));
+        add(new Label("cellName", cellModel.getName().toLowerCase()));
         add(new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getCallbackHandler().onRemove(getCellModel());
+                getCallbackHandler().onRemove(cellModel);
             }
         });
-        add(new AjaxLink("bindings") {
+        AjaxLink bindingsAction = new AjaxLink("bindings") {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getCallbackHandler().onEditBindings(getCellModel());
+                getCallbackHandler().onEditBindings(cellModel);
             }
-        });
+        };
+        add(bindingsAction);
+        if (cellModel.getBindingModelMap().isEmpty()) {
+            bindingsAction.setVisible(false);
+        }
     }
 
 
-    public T getCellModel() {
+    public CellModel getCellModel() {
         return cellModel;
     }
 
