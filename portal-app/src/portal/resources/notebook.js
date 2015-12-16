@@ -205,7 +205,7 @@ function initJsPlumb() {
 }
 
 function makeNbTrActive(itemId) {
-    $('.nbTr').removeClass("active");
-    $('#' + itemId).addClass("active");
+    $('.nbTr').removeClass("selected");
+    $('#' + itemId).addClass("selected");
 }
 
