@@ -3,9 +3,7 @@ package portal.notebook;
 import com.vaynberg.wicket.select2.Response;
 import com.vaynberg.wicket.select2.TextChoiceProvider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author simetrias
@@ -30,7 +28,14 @@ public class SourceVariableProvider extends TextChoiceProvider<VariableModel> {
 
     @Override
     public void query(String s, int i, Response<VariableModel> response) {
-        response.addAll(outputVariableModelMap.values());
+        ArrayList<VariableModel> list = new ArrayList<VariableModel>(outputVariableModelMap.values());
+        Collections.sort(list, new Comparator<VariableModel>() {
+            @Override
+            public int compare(VariableModel o1, VariableModel o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        response.addAll(list);
         response.setHasMore(false);
     }
 
