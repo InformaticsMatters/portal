@@ -505,8 +505,12 @@ public class NotebookCanvasPage extends WebPage {
     private String buildConnectionsJS() {
         StringBuilder stringBuilder = new StringBuilder();
         for (CellModel cellModel : canvasItemRepeater.getList()) {
-            stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellModel.getId() + "');\r\n");
-            stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellModel.getId() + "');\r\n");
+            if (!cellModel.getOutputVariableModelMap().isEmpty()) {
+                stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellModel.getId() + "');\r\n");
+            }
+            if (!cellModel.getBindingModelMap().isEmpty()) {
+                stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellModel.getId() + "');\r\n");
+            }
         }
 
         for (CellModel cellModel : canvasItemRepeater.getList()) {
