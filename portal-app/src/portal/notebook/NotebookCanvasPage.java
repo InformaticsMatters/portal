@@ -430,8 +430,8 @@ public class NotebookCanvasPage extends WebPage {
             }
         }
 
-        if (canApplyDefaultBinding(sourceCellModel, targetCellModel)) {
-            applyDefaultBinding(sourceCellModel, targetCellModel);
+        if (canApplyAutoBinding(sourceCellModel, targetCellModel)) {
+            applyAutoBinding(sourceCellModel, targetCellModel);
         } else {
             connectionPanel.configure(sourceCellModel, targetCellModel);
             connectionPanel.setCanAddBindings(true);
@@ -439,7 +439,7 @@ public class NotebookCanvasPage extends WebPage {
         }
     }
 
-    private void applyDefaultBinding(CellModel sourceCellModel, CellModel targetCellModel) {
+    private void applyAutoBinding(CellModel sourceCellModel, CellModel targetCellModel) {
         BindingModel bindingModel = targetCellModel.getBindingModelMap().values().iterator().next();
         VariableModel variableModel = sourceCellModel.getOutputVariableModelMap().values().iterator().next();
         bindingModel.setVariableModel(variableModel);
@@ -448,7 +448,7 @@ public class NotebookCanvasPage extends WebPage {
         getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
     }
 
-    private boolean canApplyDefaultBinding(CellModel sourceCellModel, CellModel targetCellModel) {
+    private boolean canApplyAutoBinding(CellModel sourceCellModel, CellModel targetCellModel) {
         return (sourceCellModel != null) && (targetCellModel != null) && (sourceCellModel.getOutputVariableModelMap().size() == 1) && (targetCellModel.getBindingModelMap().size() == 1);
     }
 
