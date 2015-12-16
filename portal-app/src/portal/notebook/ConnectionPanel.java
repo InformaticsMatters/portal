@@ -18,6 +18,8 @@ import toolkit.wicket.semantic.SemanticModalPanel;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -101,7 +103,7 @@ public class ConnectionPanel extends SemanticModalPanel {
 
             @Override
             public List<BindingModel> getObject() {
-                return targetCellModel == null ? new ArrayList<BindingModel>() : new ArrayList<BindingModel>(targetCellModel.getBindingModelMap().values());
+                return buildBindingModelList();
             }
 
             @Override
@@ -137,6 +139,21 @@ public class ConnectionPanel extends SemanticModalPanel {
         };
         bindingListContainer.add(listView);
         getModalRootComponent().add(bindingListContainer);
+    }
+
+    private List<BindingModel> buildBindingModelList() {
+        if (targetCellModel == null) {
+            return new ArrayList<BindingModel>();
+        } else {
+            ArrayList<BindingModel> list = new ArrayList<BindingModel>(targetCellModel.getBindingModelMap().values());
+            Collections.sort(list, new Comparator<BindingModel>() {
+                @Override
+                public int compare(BindingModel o1, BindingModel o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            });
+            return list;
+        }
     }
 
     public void setCallbacks(Callbacks callbacks) {
