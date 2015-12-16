@@ -230,6 +230,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                editNotebookPanel.configureForCreate();
                 editNotebookPanel.showModal();
             }
         });
