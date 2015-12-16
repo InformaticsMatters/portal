@@ -161,6 +161,7 @@ function addSourceEndpoint(itemId) {
     var sourceEndpointOptions = {
         anchor: 'BottomCenter',
         isSource:true,
+        maxConnections: -1,
         paintStyle: {
             fillStyle: "#7AB02C",
             radius: 10
@@ -178,7 +179,7 @@ function addTargetEndpoint(itemId) {
     var targetEndpointOptions = {
         endpoint: 'Dot',
         anchor: 'TopCenter',
-        maxConnections: 2,
+        maxConnections: -1,
         isTarget:true,
         paintStyle : {
             strokeStyle: "#7AB02C",
