@@ -204,3 +204,8 @@ function initJsPlumb() {
             });
 }
 
+function makeNbTrActive(itemId) {
+    $('.nbTr').removeClass("selected");
+    $('#' + itemId).addClass("selected");
+}
+

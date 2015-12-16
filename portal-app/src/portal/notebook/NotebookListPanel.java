@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -57,7 +58,14 @@ public class NotebookListPanel extends Panel {
                     }
                 };
                 listItem.add(removeLink);
+                listItem.add(new AjaxEventBehavior("onclick") {
 
+                    @Override
+                    protected void onEvent(AjaxRequestTarget target) {
+                        target.appendJavaScript("makeNbTrActive('" + listItem.getMarkupId() + "')");
+                    }
+
+                });
             }
         };
         add(listView);
