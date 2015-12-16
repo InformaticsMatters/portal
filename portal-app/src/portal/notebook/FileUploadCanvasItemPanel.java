@@ -52,7 +52,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     processUpload(fileUploadField.getFileUpload());
-                    target.add(FileUploadCanvasItemPanel.this.form);
+                    target.add(form);
                 } catch (Throwable t) {
                     logger.error(null, t);
                 }
@@ -77,8 +77,8 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
             getCellModel().getOptionModelMap().get("fileName").setValue(fileName);
             notebookSession.storeCurrentNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
-            notebookSession.reloadCurrentNotebook();
             form.getModelObject().setFileName(upload.getClientFileName());
+            getCallbackHandler().onContentChanged();
         }
 
     }

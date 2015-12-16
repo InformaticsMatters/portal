@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
+import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,9 @@ public class ConnectionPanel extends SemanticModalPanel {
     private AjaxSubmitLink bindAction;
     private Label sourceLabel;
     private Label targetLabel;
+    @Inject
+    private NotebookSession notebookSession;
+    private boolean dirty;
 
     public ConnectionPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -81,7 +85,7 @@ public class ConnectionPanel extends SemanticModalPanel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                callbacks.onCancel();
+                callbacks.onClose();
             }
         };
         connectionForm.add(cancelAction);
@@ -122,7 +126,9 @@ public class ConnectionPanel extends SemanticModalPanel {
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         bindingModel.setVariableModel(null);
+                        notebookSession.storeCurrentNotebook();
                         ajaxRequestTarget.add(bindingListContainer);
+                        dirty = true;
                     }
                 };
                 unassignLink.setVisible(sourceDisplayName != null);
@@ -150,6 +156,7 @@ public class ConnectionPanel extends SemanticModalPanel {
         }
 
         connectionForm.setModelObject(new ConnectionPanelData());
+        dirty = false;
     }
 
     public CellModel getSourceCellModel() {
@@ -168,11 +175,15 @@ public class ConnectionPanel extends SemanticModalPanel {
         bindAction.setVisible(value);
     }
 
+    public boolean isDirty() {
+        return dirty;
+    }
+
     public interface Callbacks extends Serializable {
 
         void onSubmit();
 
-        void onCancel();
+        void onClose();
 
     }
 

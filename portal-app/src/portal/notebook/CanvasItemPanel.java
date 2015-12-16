@@ -47,6 +47,8 @@ public abstract class CanvasItemPanel<T extends CellModel> extends Panel {
         void onRemove(CellModel cellModel);
 
         void onEditBindings(CellModel cellModel);
+
+        void onContentChanged();
     }
 
 }

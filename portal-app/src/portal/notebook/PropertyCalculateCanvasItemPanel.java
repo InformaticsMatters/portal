@@ -5,7 +5,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import portal.notebook.execution.service.CalculatorsClient;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -24,30 +23,8 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
         super(id, cell, callbackHandler);
         addForm();
-        addListeners();
         load();
         setOutputMarkupId(true);
-    }
-
-    private void addListeners() {
-        notebookSession.getCurrentNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
-            @Override
-            public void onCellRemoved(CellModel cellModel) {
-                if (cellModel != getCellModel()) {
-                    for (BindingModel bindingModel : getCellModel().getBindingModelMap().values()) {
-                        if (bindingModel.getVariableModel() != null && bindingModel.getVariableModel().getProducerCellModel() == cellModel) {
-                            bindingModel.setVariableModel(null);
-                        }
-                    }
-                    RequestCycle.get().find(AjaxRequestTarget.class).add(form);
-                }
-            }
-
-            @Override
-            public void onCellAdded(CellModel cellModel) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(form);
-            }
-        });
     }
 
     private void load() {
@@ -60,7 +37,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
     private void addForm() {
         form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
-        DropDownChoice<String> serviceNameChoice = new DropDownChoice<String>("serviceName", getCellModel().getOptionModelMap().get("serviceName").getPicklistValueList());
+        DropDownChoice<Object> serviceNameChoice = new DropDownChoice<Object>("serviceName", getCellModel().getOptionModelMap().get("serviceName").getPicklistValueList());
         form.add(serviceNameChoice);
         TextField<String> outputFileNameField = new TextField<String>("outputFileName");
         form.add(outputFileNameField);
@@ -81,7 +58,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
             outputVariableModel.setValue(form.getModelObject().getOutputFileName());
             notebookSession.storeCurrentNotebook();
             notebookSession.executeCell(getCellModel().getName());
-            notebookSession.reloadCurrentNotebook();
+            getCallbackHandler().onContentChanged();
         }
     }
 

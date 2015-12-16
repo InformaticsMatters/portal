@@ -5,7 +5,6 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -21,25 +20,8 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     public DatasetMergerCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
         super(id, cell, callbackHandler);
         addForm();
-        addListeners();
         load();
         setOutputMarkupId(true);
-    }
-
-    private void addListeners() {
-        notebookSession.getCurrentNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
-            @Override
-            public void onCellRemoved(CellModel cellModel) {
-                if (cellModel != getCellModel()) {
-                    RequestCycle.get().find(AjaxRequestTarget.class).add(form);
-                }
-            }
-
-            @Override
-            public void onCellAdded(CellModel cellModel) {
-                RequestCycle.get().find(AjaxRequestTarget.class).add(form);
-            }
-        });
     }
 
     private void load() {
@@ -70,7 +52,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         outputVariableModel.setValue(null);
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        notebookSession.reloadCurrentNotebook();
+        getCallbackHandler().onContentChanged();
     }
 
 

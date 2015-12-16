@@ -12,7 +12,6 @@ import java.util.Map;
 public class NotebookModel implements Serializable {
     private final NotebookContents notebookContents;
     private final Map<String, CellModel> cellModelMap = new HashMap<>();
-    private final List<NotebookChangeListener> notebookChangeListenerList = new ArrayList<>();
 
     public NotebookModel(NotebookContents notebookContents) {
         this.notebookContents = notebookContents;
@@ -42,25 +41,19 @@ public class NotebookModel implements Serializable {
         CellModel cellModel = new CellModel(cell, this);
         cellModel.loadBindings();
         cellModelMap.put(cell.getName(), cellModel);
-        notifyCellAdded(cellModel);
         return cellModel;
     }
 
-    private void notifyCellAdded(CellModel cellModel) {
-        for (NotebookChangeListener listener : notebookChangeListenerList) {
-            listener.onCellAdded(cellModel);
-        }
-    }
-
-    private void notifyCellRemoved(CellModel cellModel) {
-        for (NotebookChangeListener listener : notebookChangeListenerList) {
-            listener.onCellRemoved(cellModel);
-        }
-    }
-
     public void removeCellModel(CellModel cellModel) {
+        for (CellModel targetCellModel : getCellModels()) {
+            for (BindingModel bindingModel : targetCellModel.getBindingModelMap().values()) {
+                if (bindingModel.getVariableModel() != null && bindingModel.getVariableModel().getProducerCellModel() == cellModel) {
+                    bindingModel.setVariableModel(null);
+                }
+            }
+        }
         cellModelMap.remove(cellModel.getName());
-        notifyCellRemoved(cellModel);
+        notebookContents.removeCell(cellModel.getName());
     }
 
     public CellModel findCellModel(String name) {
@@ -70,10 +63,6 @@ public class NotebookModel implements Serializable {
     public VariableModel findVariableModel(String cellName, String name) {
         CellModel cellModel = findCellModel(cellName);
         return cellModel == null ? null : cellModel.findVariableModel(name);
-    }
-
-    public void addNotebookChangeListener(NotebookChangeListener notebookChangeListener) {
-        notebookChangeListenerList.add(notebookChangeListener);
     }
 
     public List<VariableModel> buildVariableModelList() {

@@ -1,16 +1,13 @@
 package portal.notebook;
 
-import portal.notebook.service.Variable;
 import org.squonk.notebook.api.VariableType;
+import portal.notebook.service.Variable;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class VariableModel implements Serializable {
     private final CellModel producerCellModel;
     private final Variable variable;
-    private final List<VariableChangeListener> variableChangeListenerList = new ArrayList<>();
 
     public VariableModel(CellModel producerCellModel, Variable variable) {
         this.producerCellModel = producerCellModel;
@@ -30,18 +27,7 @@ public class VariableModel implements Serializable {
     }
 
     public void setValue(Object value) {
-        Object oldValue = variable.getValue();
         variable.setValue(value);
-        if ((oldValue == null && value != null) || (oldValue != null && !oldValue.equals(value))) {
-            notifyValueChanged(oldValue);
-        }
-
-    }
-
-    private void notifyValueChanged(Object oldValue) {
-        for (VariableChangeListener listener : variableChangeListenerList) {
-            listener.onValueChanged(this, oldValue);
-        }
     }
 
     public VariableType getVariableType() {
@@ -54,14 +40,6 @@ public class VariableModel implements Serializable {
 
     public CellModel getProducerCellModel() {
         return producerCellModel;
-    }
-
-    public void removeChangeListener(VariableChangeListener variableChangeListener) {
-        variableChangeListenerList.remove(variableChangeListener);
-    }
-
-    public void addChangeListener(VariableChangeListener variableChangeListener) {
-        variableChangeListenerList.add(variableChangeListener);
     }
 
     public String toString() {

@@ -97,46 +97,24 @@ public class NotebookSession implements Serializable {
         Cell cell = notebookModel.getNotebookContents().addCell(cellType);
         cell.setPositionTop(y);
         cell.setPositionLeft(x);
+        CellModel cellModel = notebookModel.addCellModel(cell);
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
         updateNotebookContentsData.setId(notebookInfo.getId());
         updateNotebookContentsData.setNotebookContents(notebookModel.getNotebookContents());
         notebookService.updateNotebookContents(updateNotebookContentsData);
-        return notebookModel.addCellModel(cell);
+        return cellModel;
     }
 
     public void removeCell(CellModel cellModel) {
-        notebookModel.getNotebookContents().removeCell(cellModel.getName());
+        notebookModel.removeCellModel(cellModel);
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
         updateNotebookContentsData.setId(notebookInfo.getId());
         updateNotebookContentsData.setNotebookContents(notebookModel.getNotebookContents());
         notebookService.updateNotebookContents(updateNotebookContentsData);
-        notebookModel.removeCellModel(cellModel);
     }
 
     public List<CellType> listCellType() {
         return cellClient.listCellType();
-    }
-
-
-    public List<VariableModel> listAvailableInputVariablesFor(CellModel excludedCellModel, BindingModel bindingModel, NotebookModel notebookModel) {
-        List<VariableModel> list = new ArrayList<>();
-        for (CellModel cellModel : notebookModel.getCellModels()) {
-            if (cellModel != excludedCellModel) {
-                for (VariableModel variableModel : cellModel.getOutputVariableModelMap().values()) {
-                    if (bindingModel.getAcceptedVariableTypeList().contains(variableModel.getVariableType())) {
-                        list.add(variableModel);
-                    }
-                }
-            }
-        }
-
-        Collections.sort(list, new Comparator<VariableModel>() {
-            @Override
-            public int compare(VariableModel o1, VariableModel o2) {
-                return o2.getName().compareTo(o1.getName());
-            }
-        });
-        return list;
     }
 
 

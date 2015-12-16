@@ -93,9 +93,9 @@ public class NotebookCanvasPage extends WebPage {
             public void onRemove(CellModel cellModel) {
                 notebookSession.removeCell(cellModel);
                 RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
-                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("addCellsPaletteDragAndDropSupport();");
-                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');");
-                RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript(buildConnectionsJS());
+                // RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("addCellsPaletteDragAndDropSupport();");
+                //RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');");
+                //RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript(buildConnectionsJS());
             }
 
             @Override
@@ -103,6 +103,12 @@ public class NotebookCanvasPage extends WebPage {
                 connectionPanel.configure(null, cellModel);
                 connectionPanel.setCanAddBindings(false);
                 connectionPanel.showModal();
+            }
+
+            @Override
+            public void onContentChanged() {
+                notebookSession.reloadCurrentNotebook();
+                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
             }
         };
     }
@@ -199,13 +205,15 @@ public class NotebookCanvasPage extends WebPage {
                     String targetMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getTargetCellModel().getId();
                     String js = "addConnection('" + sourceMarkupId + "', '" + targetMarkupId + "');";
                     ajaxRequestTarget.appendJavaScript(js);
-                    // getRequestCycle().find(AjaxRequestTarget.class).add(findItemComponent(connectionPanel.getTargetCellModel()));
                 }
             }
 
             @Override
-            public void onCancel() {
-
+            public void onClose() {
+                if (connectionPanel.isDirty()) {
+                    notebookSession.reloadCurrentNotebook();
+                    RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
+                }
             }
         });
         plumbContainer.add(connectionPanel);

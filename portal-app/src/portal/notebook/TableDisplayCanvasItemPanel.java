@@ -4,9 +4,9 @@ import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.squonk.notebook.api.VariableType;
 import portal.dataset.IDatasetDescriptor;
 import portal.notebook.service.Strings;
-import org.squonk.notebook.api.VariableType;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -26,7 +26,6 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         super(id, cell, callbackHandler);
         addInput();
         addGrid();
-        addListeners();
         load();
         setOutputMarkupId(true);
     }
@@ -45,49 +44,6 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     private void addGrid() {
         addOrReplaceTreeGridVisualizer(new TableDisplayDatasetDescriptor(0l, "", 0));
-    }
-
-    private void addListeners() {
-        VariableChangeListener variableChangeListener = new VariableChangeListener() {
-
-            @Override
-            public void onValueChanged(VariableModel source, Object oldValue) {
-                refresh();
-            }
-
-            @Override
-            public void onVariableRemoved(VariableModel source) {
-                source.removeChangeListener(this);
-                refresh();
-            }
-        };
-        for (VariableModel variableModel : notebookSession.getCurrentNotebookModel().buildVariableModelList()) {
-            variableModel.removeChangeListener(variableChangeListener);
-            variableModel.addChangeListener(variableChangeListener);
-        }
-        notebookSession.getCurrentNotebookModel().addNotebookChangeListener(new NotebookChangeListener() {
-            @Override
-            public void onCellRemoved(CellModel cellModel) {
-                if (cellModel != getCellModel()) {
-                    for (BindingModel bindingModel : getCellModel().getBindingModelMap().values()) {
-                        if (bindingModel.getVariableModel() != null && bindingModel.getVariableModel().getProducerCellModel() == cellModel) {
-                            bindingModel.setVariableModel(null);
-                        }
-                    }
-                    refresh();
-                }
-            }
-
-            @Override
-            public void onCellAdded(CellModel cellModel) {
-                refresh();
-            }
-        });
-    }
-
-    private void refresh() {
-        getRequestCycle().find(AjaxRequestTarget.class).add(form);
-        load();
     }
 
     private void load() {
