@@ -223,3 +223,7 @@ div.ui-resizable-handle.ui-resizable-s {
     margin-bottom: 0!important;
     float: left;
 }
+
+.cellPopup {
+    width: 200px;
+}

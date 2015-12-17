@@ -10,12 +10,15 @@ import java.io.Serializable;
 public abstract class CanvasItemPanel extends Panel {
     private final CellModel cellModel;
     private final CallbackHandler callbackHandler;
+    private AjaxLink openPopupLink;
+    private CellPopupPanel cellPopupPanel;
 
     public CanvasItemPanel(String id, CellModel cellModel, CallbackHandler callbackHandler) {
         super(id);
         this.cellModel = cellModel;
         this.callbackHandler = callbackHandler;
         addHeader();
+        createCellPopupPanel();
     }
 
     private void addHeader() {
@@ -36,6 +39,25 @@ public abstract class CanvasItemPanel extends Panel {
         if (cellModel.getBindingModelMap().isEmpty()) {
             bindingsAction.setVisible(false);
         }
+        openPopupLink = new AjaxLink("openPopup") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                // popupContainerProvider.setPopupContentForPage(getPage(), popupPanel);
+                // popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
+                String js = "$('#:link')" +
+                        ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
+                        ".popup('toggle').popup('destroy')";
+                js = js.replace(":link", openPopupLink.getMarkupId()).replace(":content", cellPopupPanel.getMarkupId());
+                System.out.println(js);
+                ajaxRequestTarget.appendJavaScript(js);
+            }
+        };
+        add(openPopupLink);
+    }
+
+    private void createCellPopupPanel() {
+        cellPopupPanel = new CellPopupPanel("content");
     }
 
 
