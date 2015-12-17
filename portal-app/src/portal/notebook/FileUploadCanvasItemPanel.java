@@ -2,6 +2,7 @@ package portal.notebook;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -25,12 +26,34 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
     private NotebookSession notebookSession;
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
+    private AjaxLink openPopupLink;
+    private CellPopupPanel cellPopupPanel;
 
     public FileUploadCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
         super(id, cell, callbackHandler);
         setOutputMarkupId(true);
         addForm();
+        addPopup();
         load();
+    }
+
+    private void addPopup() {
+        cellPopupPanel = new CellPopupPanel("content");
+        openPopupLink = new AjaxLink("openPopup") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                // popupContainerProvider.setPopupContentForPage(getPage(), popupPanel);
+                // popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
+                String js = "$('#:link')" +
+                        ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
+                        ".popup('toggle').popup('destroy')";
+                js = js.replace(":link", openPopupLink.getMarkupId()).replace(":content", cellPopupPanel.getMarkupId());
+                System.out.println(js);
+                ajaxRequestTarget.appendJavaScript(js);
+            }
+        };
+        add(openPopupLink);
     }
 
     private void addForm() {
