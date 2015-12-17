@@ -66,7 +66,7 @@ public class NotebookListPanel extends Panel {
                     protected void onEvent(AjaxRequestTarget target) {
                         notebooksSession.loadCurrentNotebook(notebookInfo.getId());
                         target.add(getPage());
-                        target.appendJavaScript("makeNbTrActive('" + listItem.getMarkupId() + "')");
+                        target.appendJavaScript("makeNbTrActive('" + listItem.getMarkupId() + "');");
                     }
                 });
             }
