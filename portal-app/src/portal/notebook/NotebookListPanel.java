@@ -3,6 +3,8 @@ package portal.notebook;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -24,11 +26,21 @@ public class NotebookListPanel extends Panel {
     private ListView<NotebookInfo> listView;
     @Inject
     private NotebookSession notebooksSession;
+    private String selectedMarkupId;
 
     public NotebookListPanel(String id, EditNotebookPanel editNotebookPanel) {
         super(id);
         this.editNotebookPanel = editNotebookPanel;
         addNotebookList();
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        if (selectedMarkupId != null) {
+            String js = "makeNbTrActive('" + selectedMarkupId + "');";
+            response.render(OnDomReadyHeaderItem.forScript(js));
+        }
     }
 
     private void addNotebookList() {
@@ -66,9 +78,13 @@ public class NotebookListPanel extends Panel {
                     protected void onEvent(AjaxRequestTarget target) {
                         notebooksSession.loadCurrentNotebook(notebookInfo.getId());
                         target.add(getPage());
-                        target.appendJavaScript("makeNbTrActive('" + listItem.getMarkupId() + "');");
                     }
                 });
+
+                Long currentId = notebooksSession.getCurrentNotebookInfo() == null ? null : notebooksSession.getCurrentNotebookInfo().getId();
+                if (listItem.getModelObject().getId().equals(currentId)) {
+                    selectedMarkupId = listItem.getMarkupId();
+                }
             }
         };
         add(listView);
