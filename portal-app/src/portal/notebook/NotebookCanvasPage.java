@@ -31,6 +31,7 @@ import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -163,7 +164,11 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public List<CellModel> getObject() {
-                return Arrays.asList(notebookSession.getCurrentNotebookModel().getCellModels());
+                if (notebookSession.getCurrentNotebookModel() == null) {
+                    return new ArrayList<>();
+                } else {
+                    return Arrays.asList(notebookSession.getCurrentNotebookModel().getCellModels());
+                }
             }
 
             @Override
@@ -225,7 +230,7 @@ public class NotebookCanvasPage extends WebPage {
             public void onSubmit() {
                 notebookListPanel.refreshNotebookList();
                 AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
-                ajaxRequestTarget.add(notebookListPanel);
+                ajaxRequestTarget.add(NotebookCanvasPage.this);
             }
 
             @Override
@@ -326,7 +331,7 @@ public class NotebookCanvasPage extends WebPage {
 
         List<CellModel> cellModelList = Arrays.asList(notebookModel.getCellModels());
         String markupId = CANVAS_ITEM_PREFIX + cellModel.getId();
-        ListItem listItem = new ListItem(markupId, cellModelList.size());
+        ListItem<CellModel> listItem = new ListItem<CellModel>(markupId, cellModelList.size());
         listItem.setMarkupId(markupId);
         listItem.setOutputMarkupId(true);
         listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
@@ -343,8 +348,12 @@ public class NotebookCanvasPage extends WebPage {
 
         // activate jsPlumb dragging on new canvas item
         target.appendJavaScript("makeCanvasItemPlumbDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
-        target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
-        target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
+        if (!cellModel.getOutputVariableModelMap().isEmpty()) {
+            target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
+        }
+        if (!cellModel.getBindingModelMap().isEmpty()) {
+            target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
+        }
 
         target.appendJavaScript("makeCanvasItemPlumbResizable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
 

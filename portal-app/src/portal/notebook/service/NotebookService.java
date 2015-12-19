@@ -54,13 +54,14 @@ public class NotebookService {
         }
     }
 
-    public void createNotebook(EditNotebookData editNotebookData) {
+    public Long createNotebook(EditNotebookData editNotebookData) {
         try {
             Notebook notebook = new Notebook();
             notebook.setName(editNotebookData.getName());
             notebook.setDescription(editNotebookData.getDescription());
             notebook.setData(new NotebookContents().toBytes());
             entityManager.persist(notebook);
+            return notebook.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

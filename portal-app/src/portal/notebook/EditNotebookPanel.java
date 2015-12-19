@@ -96,7 +96,8 @@ public class EditNotebookPanel extends SemanticModalPanel {
     private void store() {
         EditNotebookData editNotebookData = form.getModelObject();
         if (editNotebookData.getId() == null) {
-            notebookSession.createNotebook(editNotebookData);
+            Long id = notebookSession.createNotebook(editNotebookData);
+            notebookSession.loadCurrentNotebook(id);
         } else if (forRemove) {
             notebookSession.removeNotebook(editNotebookData.getId());
         } else {
@@ -111,6 +112,8 @@ public class EditNotebookPanel extends SemanticModalPanel {
     public void configureForCreate() {
         this.notebookId = null;
         form.setModelObject(new EditNotebookData());
+        nameField.setEnabled(true);
+        descriptionField.setEnabled(true);
         forRemove = false;
     }
 
@@ -122,6 +125,8 @@ public class EditNotebookPanel extends SemanticModalPanel {
         editNotebookData.setName(notebookInfo.getName());
         editNotebookData.setDescription(notebookInfo.getDescription());
         form.setModelObject(editNotebookData);
+        nameField.setEnabled(true);
+        descriptionField.setEnabled(true);
         forRemove = false;
     }
 

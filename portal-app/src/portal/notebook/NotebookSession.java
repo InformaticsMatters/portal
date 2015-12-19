@@ -24,8 +24,8 @@ public class NotebookSession implements Serializable {
     private NotebookService notebookService;
     @Inject
     private CellClient cellClient;
-    private NotebookModel notebookModel;
-    private NotebookInfo notebookInfo;
+    private NotebookModel currentNotebookModel;
+    private NotebookInfo currentNotebookInfo;
 
     public NotebookSession() {
         fileObjectsMap.put(0l, new HashMap<>());
@@ -37,10 +37,10 @@ public class NotebookSession implements Serializable {
             EditNotebookData notebookData = new EditNotebookData();
             notebookData.setName("POC");
             notebookService.createNotebook(notebookData);
-            notebookInfo = notebookService.listNotebookInfo().get(0);
+            currentNotebookInfo = notebookService.listNotebookInfo().get(0);
             NotebookContents notebookContents = new NotebookContents();
             UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-            updateNotebookContentsData.setId(notebookInfo.getId());
+            updateNotebookContentsData.setId(currentNotebookInfo.getId());
             updateNotebookContentsData.setNotebookContents(notebookContents);
             notebookService.updateNotebookContents(updateNotebookContentsData);
             list = notebookService.listNotebookInfo();
@@ -56,8 +56,8 @@ public class NotebookSession implements Serializable {
         return notebookService.retrieveNotebookInfo(id);
     }
 
-    public void createNotebook(EditNotebookData editNotebookData) {
-        notebookService.createNotebook(editNotebookData);
+    public Long createNotebook(EditNotebookData editNotebookData) {
+        return notebookService.createNotebook(editNotebookData);
     }
 
     public void updateNotebook(EditNotebookData editNotebookData) {
@@ -66,50 +66,54 @@ public class NotebookSession implements Serializable {
 
     public void removeNotebook(Long notebookId) {
         notebookService.removeNotebook(notebookId);
+        if (currentNotebookInfo != null && notebookId.equals(currentNotebookInfo.getId())) {
+            currentNotebookInfo = null;
+            currentNotebookModel = null;
+        }
     }
 
     public void loadCurrentNotebook(Long id) {
-        notebookInfo = notebookService.retrieveNotebookInfo(id);
+        currentNotebookInfo = notebookService.retrieveNotebookInfo(id);
         NotebookContents notebookContents = notebookService.retrieveNotebookContents(id);
-        notebookModel = new NotebookModel(notebookContents);
+        currentNotebookModel = new NotebookModel(notebookContents);
     }
 
     public void reloadCurrentNotebook() {
-        loadCurrentNotebook(notebookInfo.getId());
+        loadCurrentNotebook(currentNotebookInfo.getId());
     }
 
     public NotebookModel getCurrentNotebookModel() {
-        return notebookModel;
+        return currentNotebookModel;
     }
 
     public NotebookInfo getCurrentNotebookInfo() {
-        return notebookInfo;
+        return currentNotebookInfo;
     }
 
     public void storeCurrentNotebook() {
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-        updateNotebookContentsData.setId(notebookInfo.getId());
-        updateNotebookContentsData.setNotebookContents(notebookModel.getNotebookContents());
+        updateNotebookContentsData.setId(currentNotebookInfo.getId());
+        updateNotebookContentsData.setNotebookContents(currentNotebookModel.getNotebookContents());
         notebookService.updateNotebookContents(updateNotebookContentsData);
     }
 
     public CellModel addCell(CellType cellType, int x, int y) {
-        Cell cell = notebookModel.getNotebookContents().addCell(cellType);
+        Cell cell = currentNotebookModel.getNotebookContents().addCell(cellType);
         cell.setPositionTop(y);
         cell.setPositionLeft(x);
-        CellModel cellModel = notebookModel.addCellModel(cell);
+        CellModel cellModel = currentNotebookModel.addCellModel(cell);
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-        updateNotebookContentsData.setId(notebookInfo.getId());
-        updateNotebookContentsData.setNotebookContents(notebookModel.getNotebookContents());
+        updateNotebookContentsData.setId(currentNotebookInfo.getId());
+        updateNotebookContentsData.setNotebookContents(currentNotebookModel.getNotebookContents());
         notebookService.updateNotebookContents(updateNotebookContentsData);
         return cellModel;
     }
 
     public void removeCell(CellModel cellModel) {
-        notebookModel.removeCellModel(cellModel);
+        currentNotebookModel.removeCellModel(cellModel);
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-        updateNotebookContentsData.setId(notebookInfo.getId());
-        updateNotebookContentsData.setNotebookContents(notebookModel.getNotebookContents());
+        updateNotebookContentsData.setId(currentNotebookInfo.getId());
+        updateNotebookContentsData.setNotebookContents(currentNotebookModel.getNotebookContents());
         notebookService.updateNotebookContents(updateNotebookContentsData);
     }
 
@@ -171,7 +175,7 @@ public class NotebookSession implements Serializable {
 
     public IDatasetDescriptor loadDatasetFromSquonkDataset(VariableModel inputVariableModel) {
         try {
-            List<MoleculeObject> list = notebookService.squonkDatasetAsMolecules(notebookInfo.getId(), inputVariableModel.getProducerCellModel().getName(), inputVariableModel.getName());
+            List<MoleculeObject> list = notebookService.squonkDatasetAsMolecules(currentNotebookInfo.getId(), inputVariableModel.getProducerCellModel().getName(), inputVariableModel.getName());
             return createDatasetFromMolecules(list, inputVariableModel.getProducerCellModel().getName() + "." + inputVariableModel.getName());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -228,8 +232,8 @@ public class NotebookSession implements Serializable {
 
 
     public void executeCell(String cellName) {
-        if (notebookModel.findCellModel(cellName).getCellType().getExecutable()) {
-            cellClient.executeCell(notebookInfo.getId(), cellName);
+        if (currentNotebookModel.findCellModel(cellName).getCellType().getExecutable()) {
+            cellClient.executeCell(currentNotebookInfo.getId(), cellName);
         }
     }
 
@@ -238,9 +242,9 @@ public class NotebookSession implements Serializable {
     }
 
     public void writeVariableFileContents(VariableModel variableModel, InputStream inputStream) {
-        NotebookContents notebookContents = notebookService.retrieveNotebookContents(notebookInfo.getId());
+        NotebookContents notebookContents = notebookService.retrieveNotebookContents(currentNotebookInfo.getId());
         Variable variable = notebookContents.findVariable(variableModel.getProducerCellModel().getName(), variableModel.getName());
-        notebookService.storeStreamingContents(notebookInfo.getId(), variable, inputStream);
+        notebookService.storeStreamingContents(currentNotebookInfo.getId(), variable, inputStream);
     }
 }
 
