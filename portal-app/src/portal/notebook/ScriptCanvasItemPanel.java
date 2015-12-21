@@ -17,14 +17,14 @@ import java.util.Collection;
 
 public class ScriptCanvasItemPanel extends CanvasItemPanel {
 
-    @Inject
-    private NotebookSession notebookSession;
     private Form<ModelObject> form;
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
+    @Inject
+    private NotebookSession notebookSession;
 
-    public ScriptCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
-        super(id, cell, callbackHandler);
+    public ScriptCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+        super(id, cell);
         setOutputMarkupId(true);
         addForm();
         addOutcome();

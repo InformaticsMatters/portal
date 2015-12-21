@@ -19,14 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
+
     private static final Logger logger = LoggerFactory.getLogger(SDFUploadCanvasItemPanel.class.getName());
-    @Inject
-    private NotebookSession notebookSession;
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
+    @Inject
+    private NotebookSession notebookSession;
 
-    public SDFUploadCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
-        super(id, cell, callbackHandler);
+    public SDFUploadCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+        super(id, cell);
         setOutputMarkupId(true);
         addForm();
         load();

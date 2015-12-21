@@ -9,19 +9,20 @@ import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.logging.Logger;
 
 public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
-    private static final Logger LOGGER = Logger.getLogger(DatasetMergerCanvasItemPanel.class.getName());
+
+    private final CellCallbackHandler callbackHandler;
+    private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
-    private Form<ModelObject> form;
 
-    public DatasetMergerCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
-        super(id, cell, callbackHandler);
+    public DatasetMergerCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+        super(id, cell);
         addForm();
         load();
         setOutputMarkupId(true);
+        this.callbackHandler = callbackHandler;
     }
 
     private void load() {
@@ -52,11 +53,12 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         outputVariableModel.setValue(null);
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        getCallbackHandler().onContentChanged();
+        callbackHandler.onContentChanged();
     }
 
 
     class ModelObject implements Serializable {
+
         private String mergeFieldName;
         private Boolean keepFirst;
 

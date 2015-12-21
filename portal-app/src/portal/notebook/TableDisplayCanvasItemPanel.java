@@ -17,13 +17,14 @@ import java.util.List;
  * @author simetrias
  */
 public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
-    @Inject
-    private NotebookSession notebookSession;
+
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
+    @Inject
+    private NotebookSession notebookSession;
 
-    public TableDisplayCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
-        super(id, cell, callbackHandler);
+    public TableDisplayCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+        super(id, cell);
         addForm();
         addGrid();
         load();

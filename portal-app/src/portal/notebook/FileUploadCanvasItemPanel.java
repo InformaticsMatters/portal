@@ -21,20 +21,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUploadCanvasItemPanel extends CanvasItemPanel {
+
     private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
-    @Inject
-    private NotebookSession notebookSession;
+    private final CellCallbackHandler callbackHandler;
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
     private AjaxLink openPopupLink;
     private CellPopupPanel cellPopupPanel;
+    @Inject
+    private NotebookSession notebookSession;
 
-    public FileUploadCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
-        super(id, cell, callbackHandler);
+    public FileUploadCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+        super(id, cell);
         setOutputMarkupId(true);
         addForm();
         addPopup();
         load();
+        this.callbackHandler = callbackHandler;
     }
 
     private void addPopup() {
@@ -101,7 +104,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
             notebookSession.storeCurrentNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
             form.getModelObject().setFileName(upload.getClientFileName());
-            getCallbackHandler().onContentChanged();
+            callbackHandler.onContentChanged();
         }
 
     }

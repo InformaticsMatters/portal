@@ -5,19 +5,17 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import java.io.Serializable;
-
 /**
  * @author simetrias
  */
 public class CellTitleBarPanel extends Panel {
 
     private final CellModel cellModel;
-    private final CallbackHandler callbackHandler;
+    private final CellCallbackHandler callbackHandler;
     private AjaxLink openPopupLink;
     private CellPopupPanel cellPopupPanel;
 
-    public CellTitleBarPanel(String id, CellModel cellModel, CallbackHandler callbackHandler) {
+    public CellTitleBarPanel(String id, CellModel cellModel, CellCallbackHandler callbackHandler) {
         super(id);
         this.cellModel = cellModel;
         this.callbackHandler = callbackHandler;
@@ -27,13 +25,17 @@ public class CellTitleBarPanel extends Panel {
 
     private void addActions() {
         add(new Label("cellName", cellModel.getName().toLowerCase()));
+
         add(new AjaxLink("remove") {
+
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 getCallbackHandler().onRemove(cellModel);
             }
         });
+
         AjaxLink bindingsAction = new AjaxLink("bindings") {
+
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 getCallbackHandler().onEditBindings(cellModel);
@@ -49,7 +51,7 @@ public class CellTitleBarPanel extends Panel {
         return cellModel;
     }
 
-    public CallbackHandler getCallbackHandler() {
+    public CellCallbackHandler getCallbackHandler() {
         return callbackHandler;
     }
 
@@ -72,11 +74,4 @@ public class CellTitleBarPanel extends Panel {
         add(openPopupLink);
     }
 
-    public interface CallbackHandler extends Serializable {
-        void onRemove(CellModel cellModel);
-
-        void onEditBindings(CellModel cellModel);
-
-        void onContentChanged();
-    }
 }
