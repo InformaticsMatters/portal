@@ -21,21 +21,21 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
+
     private static final Logger logger = LoggerFactory.getLogger(CSVUploadCanvasItemPanel.class.getName());
-    @Inject
-    private NotebookSession notebookSession;
+    private static final List<String> CSV_FORMATS = Arrays.asList("DEFAULT", "RFC4180", "EXCEL", "MYSQL", "TDF");
+    private final CellTitleBarPanel.CallbackHandler callbackHandler;
     private Form<ModelObject> form;
     private FileUploadField fileUploadField;
+    @Inject
+    private NotebookSession notebookSession;
 
-    private static final List<String> CSV_FORMATS = Arrays.asList(new String[]{
-            "DEFAULT", "RFC4180", "EXCEL", "MYSQL", "TDF"
-    });
-
-    public CSVUploadCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
-        super(id, cell, callbackHandler);
+    public CSVUploadCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+        super(id, cell);
         setOutputMarkupId(true);
         addForm();
         load();
+        this.callbackHandler = callbackHandler;
     }
 
     private void addForm() {
@@ -109,14 +109,13 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
 
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        getCallbackHandler().onContentChanged();
+        callbackHandler.onContentChanged();
 
     }
 
     private void load() {
         form.getModelObject().load();
     }
-
 
     private class ModelObject implements Serializable {
         public static final String OPTION_FILE_TYPE = "csvFormatType";

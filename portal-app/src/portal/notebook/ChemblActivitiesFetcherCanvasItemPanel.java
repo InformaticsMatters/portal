@@ -8,19 +8,20 @@ import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.logging.Logger;
 
 public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
-    private static final Logger LOGGER = Logger.getLogger(PropertyCalculateCanvasItemPanel.class.getName());
+
+    private final CellTitleBarPanel.CallbackHandler callbackHandler;
+    private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
-    private Form<ModelObject> form;
 
-    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
-        super(id, cell, callbackHandler);
+    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+        super(id, cell);
         addForm();
         load();
         setOutputMarkupId(true);
+        this.callbackHandler = callbackHandler;
     }
 
     private void load() {
@@ -35,6 +36,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         TextField<String> prefixField = new TextField<String>("prefix");
         form.add(prefixField);
         IndicatingAjaxSubmitLink executeLink = new IndicatingAjaxSubmitLink("submit", form) {
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 execute();
@@ -51,11 +53,11 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         outputVariableModel.setValue(null);
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        getCallbackHandler().onContentChanged();
+        callbackHandler.onContentChanged();
     }
 
-
     class ModelObject implements Serializable {
+
         private String assayId;
         private String prefix;
 

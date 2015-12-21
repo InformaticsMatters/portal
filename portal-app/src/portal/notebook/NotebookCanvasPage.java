@@ -65,13 +65,13 @@ public class NotebookCanvasPage extends WebPage {
 
     private ListView<CellModel> canvasItemRepeater;
 
+    private CellTitleBarPanel.CallbackHandler cellCallbackHandler;
+    private EditNotebookPanel editNotebookPanel;
+
     @Inject
     private NotifierProvider notifierProvider;
     @Inject
     private NotebookSession notebookSession;
-    private int initialItemCount;
-    private CanvasItemPanel.CallbackHandler cellCallbackHandler;
-    private EditNotebookPanel editNotebookPanel;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -88,7 +88,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addListeners() {
-        cellCallbackHandler = new CanvasItemPanel.CallbackHandler() {
+        cellCallbackHandler = new CellTitleBarPanel.CallbackHandler() {
 
             @Override
             public void onRemove(CellModel cellModel) {

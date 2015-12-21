@@ -14,17 +14,19 @@ import java.util.logging.Logger;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     private static final Logger LOGGER = Logger.getLogger(PropertyCalculateCanvasItemPanel.class.getName());
+    private final CellTitleBarPanel.CallbackHandler callbackHandler;
     @Inject
     private NotebookSession notebookSession;
     @Inject
     private transient CalculatorsClient calculatorsClient;
     private Form<ModelObject> form;
 
-    public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
-        super(id, cell, callbackHandler);
+    public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+        super(id, cell);
         addForm();
         load();
         setOutputMarkupId(true);
+        this.callbackHandler = callbackHandler;
     }
 
     private void load() {
@@ -36,12 +38,13 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addForm() {
-        form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
+        form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
         DropDownChoice<Object> serviceNameChoice = new DropDownChoice<Object>("serviceName", getCellModel().getOptionModelMap().get("serviceName").getPicklistValueList());
         form.add(serviceNameChoice);
         TextField<String> outputFileNameField = new TextField<String>("outputFileName");
         form.add(outputFileNameField);
         IndicatingAjaxSubmitLink calculateLink = new IndicatingAjaxSubmitLink("submit", form) {
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 calculateAndSave();
@@ -58,7 +61,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
             outputVariableModel.setValue(form.getModelObject().getOutputFileName());
             notebookSession.storeCurrentNotebook();
             notebookSession.executeCell(getCellModel().getName());
-            getCallbackHandler().onContentChanged();
+            callbackHandler.onContentChanged();
         }
     }
 
@@ -68,6 +71,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
 
     class ModelObject implements Serializable {
+
         private String serviceName;
         private String outputFileName;
 
