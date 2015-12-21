@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileUploadCanvasItemPanel extends CanvasItemPanel implements CellCallbackHandler {
+public class FileUploadCanvasItemPanel extends CanvasItemPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
     private Form<UploadData> form;
@@ -74,28 +74,12 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel implements CellCa
             notebookSession.storeCurrentNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
             form.getModelObject().setFileName(upload.getClientFileName());
-            onContentChanged();
+            fireContentChanged();
         }
-
     }
 
     private void load() {
         form.getModelObject().load();
-    }
-
-    @Override
-    public void onRemove(CellModel cellModel) {
-
-    }
-
-    @Override
-    public void onEditBindings(CellModel cellModel) {
-
-    }
-
-    @Override
-    public void onContentChanged() {
-
     }
 
     @Override

@@ -53,7 +53,17 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         outputVariableModel.setValue(null);
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        callbackHandler.onContentChanged();
+        fireContentChanged();
+    }
+
+    @Override
+    public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public void onExecute() {
+
     }
 
     class ModelObject implements Serializable {

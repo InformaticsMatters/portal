@@ -108,6 +108,16 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         form.getModelObject().load();
     }
 
+    @Override
+    public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public void onExecute() {
+
+    }
+
 
     private class UploadData implements Serializable {
 

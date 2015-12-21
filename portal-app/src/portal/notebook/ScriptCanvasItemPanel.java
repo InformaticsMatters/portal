@@ -112,6 +112,16 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         }
     }
 
+    @Override
+    public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public void onExecute() {
+
+    }
+
     public class ModelObject implements Serializable {
         private String code;
 

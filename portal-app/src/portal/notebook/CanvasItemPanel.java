@@ -1,3 +1,4 @@
+
 package portal.notebook;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -5,7 +6,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 import javax.inject.Inject;
 
-public abstract class CanvasItemPanel extends Panel {
+public abstract class CanvasItemPanel extends Panel implements CellCallbackHandler {
 
     private final CellModel cellModel;
     @Inject
@@ -23,5 +24,20 @@ public abstract class CanvasItemPanel extends Panel {
     public void fireContentChanged() {
         notebookSession.reloadCurrentNotebook();
         getRequestCycle().find(AjaxRequestTarget.class).add(getPage());
+    }
+
+    @Override
+    public void onRemove(CellModel cellModel) {
+        notebookSession.removeCell(cellModel);
+        fireContentChanged();
+    }
+
+    @Override
+    public void onEditBindings(CellModel cellModel) {
+        /*
+        connectionPanel.configure(null, cellModel);
+        connectionPanel.setCanAddBindings(false);
+        connectionPanel.showModal();
+        */
     }
 }

@@ -13,11 +13,8 @@ public interface CellCallbackHandler extends Serializable {
 
     void onEditBindings(CellModel cellModel);
 
-    void onContentChanged();
-
     Form getExecuteFormComponent();
 
     void onExecute();
-
 
 }
