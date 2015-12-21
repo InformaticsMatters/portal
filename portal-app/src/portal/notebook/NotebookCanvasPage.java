@@ -364,7 +364,7 @@ public class NotebookCanvasPage extends WebPage {
         CellType cellType = cellModel.getCellType();
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("FileUpload".equals(cellType.getName())) {
-            return new FileUploadCanvasItemPanel("item", cellModel, cellCallbackHandler);
+            return new FileUploadCanvasItemPanel("item", cellModel);
         } else if ("Script".equals(cellType.getName())) {
             return new ScriptCanvasItemPanel("item", cellModel, cellCallbackHandler);
         } else if ("PropertyCalculate".equals(cellType.getName())) {
