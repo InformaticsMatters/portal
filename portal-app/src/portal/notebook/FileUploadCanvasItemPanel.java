@@ -11,7 +11,6 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -27,6 +26,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel implements CellCa
     private FileUploadField fileUploadField;
     private AjaxLink openPopupLink;
     private CellPopupPanel cellPopupPanel;
+    private CellTitleBarPanel cellTitleBarPanel;
     @Inject
     private NotebookSession notebookSession;
 
@@ -34,27 +34,13 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel implements CellCa
         super(id, cell);
         setOutputMarkupId(true);
         addForm();
-        addPopup();
         load();
+        addTitleBar();
     }
 
-    private void addPopup() {
-        cellPopupPanel = new CellPopupPanel("content");
-        openPopupLink = new AjaxLink("openPopup") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                // popupContainerProvider.setPopupContentForPage(getPage(), popupPanel);
-                // popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
-                String js = "$('#:link')" +
-                        ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
-                        ".popup('toggle').popup('destroy')";
-                js = js.replace(":link", openPopupLink.getMarkupId()).replace(":content", cellPopupPanel.getMarkupId());
-                System.out.println(js);
-                ajaxRequestTarget.appendJavaScript(js);
-            }
-        };
-        add(openPopupLink);
+    private void addTitleBar() {
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
+        add(cellTitleBarPanel);
     }
 
     private void addForm() {
@@ -70,20 +56,6 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel implements CellCa
 
         form.add(new Image("appender", AbstractDefaultAjaxBehavior.INDICATOR));
 
-        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit", form) {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                try {
-                    processUpload(fileUploadField.getFileUpload());
-                    target.add(form);
-                } catch (Throwable t) {
-                    logger.error(null, t);
-                }
-            }
-        };
-        submit.setOutputMarkupId(true);
-        add(submit);
         form.setOutputMarkupId(true);
         add(form);
 
@@ -128,12 +100,17 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel implements CellCa
 
     @Override
     public Form getExecuteFormComponent() {
-        return null;
+        return form;
     }
 
     @Override
     public void onExecute() {
-
+        try {
+            processUpload(fileUploadField.getFileUpload());
+            getRequestCycle().find(AjaxRequestTarget.class).add(form);
+        } catch (Throwable t) {
+            logger.error(null, t);
+        }
     }
 
     private class UploadData implements Serializable {
