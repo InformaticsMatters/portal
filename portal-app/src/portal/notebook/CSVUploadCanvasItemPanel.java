@@ -109,12 +109,22 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
 
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
-        callbackHandler.onContentChanged();
+        fireContentChanged();
 
     }
 
     private void load() {
         form.getModelObject().load();
+    }
+
+    @Override
+    public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public void onExecute() {
+
     }
 
     private class ModelObject implements Serializable {

@@ -81,6 +81,16 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         addOrReplace(treeGridNavigation);
     }
 
+    @Override
+    public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public void onExecute() {
+
+    }
+
     class ModelObject implements Serializable {
 
     }

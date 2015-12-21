@@ -9,15 +9,12 @@ import java.io.Serializable;
  */
 public interface CellCallbackHandler extends Serializable {
 
-    abstract void onRemove(CellModel cellModel);
+    void onRemove(CellModel cellModel);
 
-    abstract void onEditBindings(CellModel cellModel);
-
-    void onContentChanged();
+    void onEditBindings(CellModel cellModel);
 
     Form getExecuteFormComponent();
 
     void onExecute();
-
 
 }

@@ -10,16 +10,15 @@ import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.logging.Logger;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
-    private static final Logger LOGGER = Logger.getLogger(PropertyCalculateCanvasItemPanel.class.getName());
+
     private final CellCallbackHandler callbackHandler;
+    private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
     @Inject
     private transient CalculatorsClient calculatorsClient;
-    private Form<ModelObject> form;
 
     public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
         super(id, cell);
@@ -61,7 +60,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
             outputVariableModel.setValue(form.getModelObject().getOutputFileName());
             notebookSession.storeCurrentNotebook();
             notebookSession.executeCell(getCellModel().getName());
-            callbackHandler.onContentChanged();
+            fireContentChanged();
         }
     }
 
@@ -69,6 +68,15 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
         return getCellModel().getBindingModelMap().get("input").getVariableModel() != null && form.getModelObject().getServiceName() != null && form.getModelObject().getOutputFileName() != null;
     }
 
+    @Override
+    public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public void onExecute() {
+
+    }
 
     class ModelObject implements Serializable {
 
