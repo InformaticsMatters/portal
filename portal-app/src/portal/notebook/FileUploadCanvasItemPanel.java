@@ -20,10 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileUploadCanvasItemPanel extends CanvasItemPanel {
+public class FileUploadCanvasItemPanel extends CanvasItemPanel implements CellCallbackHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
-    private final CellCallbackHandler callbackHandler;
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
     private AjaxLink openPopupLink;
@@ -31,13 +30,12 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public FileUploadCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+    public FileUploadCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();
         addPopup();
         load();
-        this.callbackHandler = callbackHandler;
     }
 
     private void addPopup() {
@@ -104,7 +102,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
             notebookSession.storeCurrentNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
             form.getModelObject().setFileName(upload.getClientFileName());
-            callbackHandler.onContentChanged();
+            onContentChanged();
         }
 
     }
@@ -113,7 +111,30 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
         form.getModelObject().load();
     }
 
+    @Override
+    public void onRemove(CellModel cellModel) {
 
+    }
+
+    @Override
+    public void onEditBindings(CellModel cellModel) {
+
+    }
+
+    @Override
+    public void onContentChanged() {
+
+    }
+
+    @Override
+    public Form getExecuteFormComponent() {
+        return null;
+    }
+
+    @Override
+    public void onExecute() {
+
+    }
 
     private class UploadData implements Serializable {
 
