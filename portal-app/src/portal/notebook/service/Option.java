@@ -48,4 +48,9 @@ public class Option<T> implements Serializable {
     public String getDisplayName() {
         return displayName;
     }
+
+    public void addPickListValue(T value) {
+        picklistValueList.add(value);
+    }
+
 }

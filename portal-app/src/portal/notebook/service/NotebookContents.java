@@ -104,11 +104,13 @@ public class NotebookContents implements Serializable {
             cell.getBindingMap().put(bindingDefinition.getName(), binding);
         }
         for (OptionDefinition optionDefinition : cellType.getOptionDefinitionList()) {
-            Option option = new Option();
+            Option<Object> option = new Option<>();
             option.setName(optionDefinition.getName());
             option.setDisplayName(optionDefinition.getDisplayName());
             option.setValue(optionDefinition.getDefaultValue());
-            option.getPicklistValueList().addAll(optionDefinition.getPicklistValueList());
+            for (Object value : optionDefinition.getPicklistValueList()) {
+                option.addPickListValue(value);
+            }
             cell.getOptionMap().put(option.getName(), option);
         }
         return cell;

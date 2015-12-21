@@ -1,13 +1,13 @@
 package portal.notebook;
 
-import portal.notebook.service.Option;
 import org.squonk.notebook.api.OptionType;
+import portal.notebook.service.Option;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class OptionModel implements Serializable {
-    private final Option option;
+public class OptionModel<T> implements Serializable {
+    private final Option<T> option;
 
     public String getName() {
         return option.getName();
@@ -17,7 +17,7 @@ public class OptionModel implements Serializable {
         return option.getOptionType();
     }
 
-    public List getPicklistValueList() {
+    public List<T> getPicklistValueList() {
         return option.getPicklistValueList();
     }
 
@@ -33,7 +33,7 @@ public class OptionModel implements Serializable {
         return option.getDisplayName();
     }
 
-    public OptionModel(Option option) {
+    public OptionModel(Option<T> option) {
         this.option = option;
     }
 }

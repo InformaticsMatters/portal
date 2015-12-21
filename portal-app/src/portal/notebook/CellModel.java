@@ -1,10 +1,10 @@
 package portal.notebook;
 
+import org.squonk.notebook.api.CellType;
 import portal.notebook.service.Binding;
 import portal.notebook.service.Cell;
 import portal.notebook.service.Option;
 import portal.notebook.service.Variable;
-import org.squonk.notebook.api.CellType;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -64,8 +64,8 @@ public class CellModel implements Serializable {
     }
 
     private void loadOptions() {
-        for (Option option : cell.getOptionMap().values()) {
-            OptionModel optionModel = new OptionModel(option);
+        for (Option<?> option : cell.getOptionMap().values()) {
+            OptionModel<?> optionModel = new OptionModel<>(option);
             optionModelMap.put(option.getName(), optionModel);
         }
     }
