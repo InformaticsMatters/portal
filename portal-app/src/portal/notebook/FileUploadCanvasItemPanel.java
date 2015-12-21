@@ -30,8 +30,8 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel implements CellCa
     @Inject
     private NotebookSession notebookSession;
 
-    public FileUploadCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public FileUploadCanvasItemPanel(String id, CellModel cellModel) {
+        super(id, cellModel);
         setOutputMarkupId(true);
         addForm();
         load();
