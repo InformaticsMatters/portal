@@ -146,14 +146,17 @@ public class NotebookSession implements Serializable {
         rowDescriptor.setStructurePropertyId(structurePropertyDescriptor.getId());
         rowDescriptor.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
         long propertyCount = 1;
-        MoleculeObject moleculeObject = list.isEmpty() ? null : list.get(0);
-        if (moleculeObject != null) {
+        Set<String> keySet = new HashSet<>();
+        for (MoleculeObject moleculeObject : list) {
             for (String key : moleculeObject.getValues().keySet()) {
-                propertyCount++;
-                PropertyDescriptor plainPropertyDescriptor = new PropertyDescriptor();
-                plainPropertyDescriptor.setDescription(key);
-                plainPropertyDescriptor.setId(propertyCount);
-                rowDescriptor.addPropertyDescriptor(plainPropertyDescriptor);
+                if (!keySet.contains(key)) {
+                    propertyCount++;
+                    PropertyDescriptor plainPropertyDescriptor = new PropertyDescriptor();
+                    plainPropertyDescriptor.setDescription(key);
+                    plainPropertyDescriptor.setId(propertyCount);
+                    rowDescriptor.addPropertyDescriptor(plainPropertyDescriptor);
+                    keySet.add(key);
+                }
             }
         }
         datasetDescriptor.addRowDescriptor(rowDescriptor);

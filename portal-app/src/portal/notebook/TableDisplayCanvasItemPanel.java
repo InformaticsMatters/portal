@@ -24,13 +24,13 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     public TableDisplayCanvasItemPanel(String id, CellModel cell, CallbackHandler callbackHandler) {
         super(id, cell, callbackHandler);
-        addInput();
+        addForm();
         addGrid();
         load();
         setOutputMarkupId(true);
     }
 
-    private void addInput() {
+    private void addForm() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
         add(new IndicatingAjaxSubmitLink("display", form) {
             @Override
