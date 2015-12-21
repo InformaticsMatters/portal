@@ -84,9 +84,9 @@ public class NotebookCanvasPage extends WebPage {
         addConnectionsRenderBehavior();
         NotebookInfo notebookInfo = notebookSession.preparePocNotebook();
         notebookSession.loadCurrentNotebook(notebookInfo.getId());
-        addListeners();
     }
 
+    /*
     private void addListeners() {
         cellCallbackHandler = new CellCallbackHandler() {
 
@@ -113,6 +113,7 @@ public class NotebookCanvasPage extends WebPage {
             }
         };
     }
+    */
 
     @Override
     public void renderHead(IHeaderResponse response) {
