@@ -11,12 +11,12 @@ import java.io.Serializable;
 
 public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
 
-    private final CellTitleBarPanel.CallbackHandler callbackHandler;
+    private final CellCallbackHandler callbackHandler;
     private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
 
-    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
         super(id, cell);
         addForm();
         load();

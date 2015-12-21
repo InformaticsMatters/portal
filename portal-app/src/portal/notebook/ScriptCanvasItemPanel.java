@@ -23,7 +23,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public ScriptCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+    public ScriptCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();

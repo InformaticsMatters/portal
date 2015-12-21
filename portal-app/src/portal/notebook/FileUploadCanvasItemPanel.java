@@ -23,7 +23,7 @@ import java.util.List;
 public class FileUploadCanvasItemPanel extends CanvasItemPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
-    private final CellTitleBarPanel.CallbackHandler callbackHandler;
+    private final CellCallbackHandler callbackHandler;
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
     private AjaxLink openPopupLink;
@@ -31,7 +31,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public FileUploadCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+    public FileUploadCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();

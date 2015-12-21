@@ -26,7 +26,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public SDFUploadCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+    public SDFUploadCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();

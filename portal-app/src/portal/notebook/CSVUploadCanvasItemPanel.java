@@ -24,13 +24,13 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(CSVUploadCanvasItemPanel.class.getName());
     private static final List<String> CSV_FORMATS = Arrays.asList("DEFAULT", "RFC4180", "EXCEL", "MYSQL", "TDF");
-    private final CellTitleBarPanel.CallbackHandler callbackHandler;
+    private final CellCallbackHandler callbackHandler;
     private Form<ModelObject> form;
     private FileUploadField fileUploadField;
     @Inject
     private NotebookSession notebookSession;
 
-    public CSVUploadCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+    public CSVUploadCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();

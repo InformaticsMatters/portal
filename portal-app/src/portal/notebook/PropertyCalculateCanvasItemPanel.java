@@ -14,14 +14,14 @@ import java.util.logging.Logger;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     private static final Logger LOGGER = Logger.getLogger(PropertyCalculateCanvasItemPanel.class.getName());
-    private final CellTitleBarPanel.CallbackHandler callbackHandler;
+    private final CellCallbackHandler callbackHandler;
     @Inject
     private NotebookSession notebookSession;
     @Inject
     private transient CalculatorsClient calculatorsClient;
     private Form<ModelObject> form;
 
-    public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+    public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
         super(id, cell);
         addForm();
         load();

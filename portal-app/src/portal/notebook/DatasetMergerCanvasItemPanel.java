@@ -12,12 +12,12 @@ import java.io.Serializable;
 
 public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
 
-    private final CellTitleBarPanel.CallbackHandler callbackHandler;
+    private final CellCallbackHandler callbackHandler;
     private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
 
-    public DatasetMergerCanvasItemPanel(String id, CellModel cell, CellTitleBarPanel.CallbackHandler callbackHandler) {
+    public DatasetMergerCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
         super(id, cell);
         addForm();
         load();

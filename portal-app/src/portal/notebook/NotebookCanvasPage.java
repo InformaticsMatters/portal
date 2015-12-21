@@ -65,7 +65,7 @@ public class NotebookCanvasPage extends WebPage {
 
     private ListView<CellModel> canvasItemRepeater;
 
-    private CellTitleBarPanel.CallbackHandler cellCallbackHandler;
+    private CellCallbackHandler cellCallbackHandler;
     private EditNotebookPanel editNotebookPanel;
 
     @Inject
@@ -88,7 +88,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addListeners() {
-        cellCallbackHandler = new CellTitleBarPanel.CallbackHandler() {
+        cellCallbackHandler = new CellCallbackHandler() {
 
             @Override
             public void onRemove(CellModel cellModel) {
