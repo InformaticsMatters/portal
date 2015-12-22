@@ -17,7 +17,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.slf4j.Logger;
@@ -62,7 +61,6 @@ public class NotebookCanvasPage extends WebPage {
     private NotebookListPanel notebookListPanel;
     private NotebookCellTypesPanel notebookCellTypesPanel;
     private WebMarkupContainer plumbContainer;
-    private ConnectionPanel connectionPanel;
 
     private ListView<CellModel> canvasItemRepeater;
 
@@ -172,31 +170,6 @@ public class NotebookCanvasPage extends WebPage {
         canvasItemRepeater.setOutputMarkupId(true);
         plumbContainer.add(canvasItemRepeater);
 
-        connectionPanel = new ConnectionPanel("connectionPanel", "modalElement");
-        connectionPanel.setCallbacks(new ConnectionPanel.Callbacks() {
-
-            @Override
-            public void onSubmit() {
-                notebookSession.storeCurrentNotebook();
-                if (connectionPanel.getSourceCellModel() != null) {
-                    AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
-                    ajaxRequestTarget.add(NotebookCanvasPage.this);
-                    String sourceMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getSourceCellModel().getId();
-                    String targetMarkupId = CANVAS_ITEM_PREFIX + connectionPanel.getTargetCellModel().getId();
-                    String js = "addConnection('" + sourceMarkupId + "', '" + targetMarkupId + "');";
-                    ajaxRequestTarget.appendJavaScript(js);
-                }
-            }
-
-            @Override
-            public void onClose() {
-                if (connectionPanel.isDirty()) {
-                    notebookSession.reloadCurrentNotebook();
-                    RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
-                }
-            }
-        });
-        plumbContainer.add(connectionPanel);
         editNotebookPanel = new EditNotebookPanel("editNotebookPanel", "modalElement");
         add(editNotebookPanel);
         editNotebookPanel.setCallbacks(new EditNotebookPanel.Callbacks() {
@@ -419,24 +392,25 @@ public class NotebookCanvasPage extends WebPage {
 
         CellModel sourceCellModel = null;
         CellModel targetCellModel = null;
+        CanvasItemPanel targetCanvasItemPanel = null;
 
         Iterator<Component> iterator = canvasItemRepeater.iterator();
         while (iterator.hasNext()) {
             Component component = iterator.next();
+            CanvasItemPanel canvasItemPanel = (CanvasItemPanel) ((ListItem) component).get(0);
             if (sourceMarkupId.equals(component.getMarkupId())) {
-                sourceCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
+                sourceCellModel = canvasItemPanel.getCellModel();
             }
             if (targetMarkupId.equals(component.getMarkupId())) {
-                targetCellModel = ((CanvasItemPanel) ((ListItem) component).get(0)).getCellModel();
+                targetCanvasItemPanel = canvasItemPanel;
+                targetCellModel = canvasItemPanel.getCellModel();
             }
         }
 
         if (canApplyAutoBinding(sourceCellModel, targetCellModel)) {
             applyAutoBinding(sourceCellModel, targetCellModel);
         } else {
-            connectionPanel.configure(sourceCellModel, targetCellModel);
-            connectionPanel.setCanAddBindings(true);
-            connectionPanel.showModal();
+            targetCanvasItemPanel.editBindings(sourceCellModel, targetCellModel, true);
         }
     }
 

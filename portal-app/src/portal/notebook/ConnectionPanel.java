@@ -160,7 +160,7 @@ public class ConnectionPanel extends SemanticModalPanel {
         this.callbacks = callbacks;
     }
 
-    public void configure(CellModel sourceCellModel, CellModel targetCellModel) {
+    public void configure(CellModel sourceCellModel, CellModel targetCellModel, boolean canAddBindings) {
         this.sourceCellModel = sourceCellModel;
         this.targetCellModel = targetCellModel;
 
@@ -174,6 +174,12 @@ public class ConnectionPanel extends SemanticModalPanel {
 
         connectionForm.setModelObject(new ConnectionPanelData());
         dirty = false;
+
+        sourceLabel.setVisible(canAddBindings);
+        targetLabel.setVisible(canAddBindings);
+        sourceChoice.setVisible(canAddBindings);
+        targetChoice.setVisible(canAddBindings);
+        bindAction.setVisible(canAddBindings);
     }
 
     public CellModel getSourceCellModel() {
@@ -182,14 +188,6 @@ public class ConnectionPanel extends SemanticModalPanel {
 
     public CellModel getTargetCellModel() {
         return targetCellModel;
-    }
-
-    public void setCanAddBindings(boolean value) {
-        sourceLabel.setVisible(value);
-        targetLabel.setVisible(value);
-        sourceChoice.setVisible(value);
-        targetChoice.setVisible(value);
-        bindAction.setVisible(value);
     }
 
     public boolean isDirty() {
