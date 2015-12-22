@@ -31,8 +31,8 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
         super(id, cellModel);
         setOutputMarkupId(true);
         addForm();
-        load();
         addTitleBar();
+        load();
     }
 
     private void addTitleBar() {
