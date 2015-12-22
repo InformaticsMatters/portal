@@ -156,6 +156,7 @@ public class NotebookService {
             for (int h = 0; h < headers.length; h++) {
                 headers[h] = trim(headers[h]);
             }
+            line = bufferedReader.readLine();
             while (line != null) {
                 line = line.trim();
                 String[] columns = line.split("\t");

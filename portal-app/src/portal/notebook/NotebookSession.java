@@ -17,7 +17,8 @@ import java.util.*;
 @Transactional
 public class NotebookSession implements Serializable {
 
-    private final Map<Long, Map<UUID, MoleculeObject>> fileObjectsMap = new HashMap<>();
+    private final Map<Long, Map<UUID, MoleculeObject>> moleculeObjectMapMap = new HashMap<>();
+    private final Map<Long, List<UUID>> uuidListMap = new HashMap<>();
     private final Map<Long, IDatasetDescriptor> datasetDescriptorMap = new HashMap<>();
     private long lastDatasetId = 0;
     @Inject
@@ -28,7 +29,7 @@ public class NotebookSession implements Serializable {
     private NotebookInfo currentNotebookInfo;
 
     public NotebookSession() {
-        fileObjectsMap.put(0l, new HashMap<>());
+        moleculeObjectMapMap.put(0l, new HashMap<>());
     }
 
     public NotebookInfo preparePocNotebook() {
@@ -123,17 +124,24 @@ public class NotebookSession implements Serializable {
 
 
     public List<UUID> listAllUuids(IDatasetDescriptor datasetDescriptor) {
-        Map<UUID, MoleculeObject> map = fileObjectsMap.get(datasetDescriptor.getId());
-        return new ArrayList<>(map.keySet());
+        List<UUID> list = uuidListMap.get(datasetDescriptor.getId());
+        if (list == null) {
+            return new ArrayList<>();
+        } else {
+            return list;
+        }
     }
 
     public IDatasetDescriptor createDatasetFromMolecules(List<MoleculeObject> list, String name) {
         Map<UUID, MoleculeObject> objectMap = new HashMap<>();
+        List<UUID> uuidList = new ArrayList<>();
         for (MoleculeObject moleculeObject : list) {
             objectMap.put(moleculeObject.getUUID(), moleculeObject);
+            uuidList.add(moleculeObject.getUUID());
         }
         Long datasetId = nextDatasetId();
-        fileObjectsMap.put(datasetId, objectMap);
+        moleculeObjectMapMap.put(datasetId, objectMap);
+        uuidListMap.put(datasetId, uuidList);
 
         TableDisplayDatasetDescriptor datasetDescriptor = new TableDisplayDatasetDescriptor(datasetId, name, list.size());
 
@@ -201,7 +209,7 @@ public class NotebookSession implements Serializable {
     }
 
     public List<IRow> listRow(IDatasetDescriptor datasetDescriptor, List<UUID> uuidList) {
-        Map<UUID, MoleculeObject> datasetContents = fileObjectsMap.get(datasetDescriptor.getId());
+        Map<UUID, MoleculeObject> datasetContents = moleculeObjectMapMap.get(datasetDescriptor.getId());
 
         if (datasetContents.isEmpty()) {
             return new ArrayList<>();
