@@ -23,7 +23,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public TableDisplayCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+    public TableDisplayCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addForm();
         addGrid();

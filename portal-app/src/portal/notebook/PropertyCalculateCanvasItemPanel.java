@@ -13,19 +13,17 @@ import java.io.Serializable;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
-    private final CellCallbackHandler callbackHandler;
     private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
     @Inject
     private transient CalculatorsClient calculatorsClient;
 
-    public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+    public PropertyCalculateCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addForm();
         load();
         setOutputMarkupId(true);
-        this.callbackHandler = callbackHandler;
     }
 
     private void load() {

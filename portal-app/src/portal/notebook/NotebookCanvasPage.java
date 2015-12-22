@@ -65,7 +65,6 @@ public class NotebookCanvasPage extends WebPage {
 
     private ListView<CellModel> canvasItemRepeater;
 
-    private CellCallbackHandler cellCallbackHandler;
     private EditNotebookPanel editNotebookPanel;
 
     @Inject
@@ -85,35 +84,6 @@ public class NotebookCanvasPage extends WebPage {
         NotebookInfo notebookInfo = notebookSession.preparePocNotebook();
         notebookSession.loadCurrentNotebook(notebookInfo.getId());
     }
-
-    /*
-    private void addListeners() {
-        cellCallbackHandler = new CellCallbackHandler() {
-
-            @Override
-            public void onRemove(CellModel cellModel) {
-                notebookSession.removeCell(cellModel);
-                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
-                // RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("addCellsPaletteDragAndDropSupport();");
-                //RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');");
-                //RequestCycle.get().find(AjaxRequestTarget.class).appendJavaScript(buildConnectionsJS());
-            }
-
-            @Override
-            public void onEditBindings(CellModel cellModel) {
-                connectionPanel.configure(null, cellModel);
-                connectionPanel.setCanAddBindings(false);
-                connectionPanel.showModal();
-            }
-
-            @Override
-            public void onContentChanged() {
-                notebookSession.reloadCurrentNotebook();
-                RequestCycle.get().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
-            }
-        };
-    }
-    */
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -140,6 +110,7 @@ public class NotebookCanvasPage extends WebPage {
         notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
 
         add(new Label("notebookName", new IModel<String>() {
+
             @Override
             public void detach() {
 
@@ -366,19 +337,19 @@ public class NotebookCanvasPage extends WebPage {
         if ("FileUpload".equals(cellType.getName())) {
             return new FileUploadCanvasItemPanel("item", cellModel);
         } else if ("Script".equals(cellType.getName())) {
-            return new ScriptCanvasItemPanel("item", cellModel, cellCallbackHandler);
+            return new ScriptCanvasItemPanel("item", cellModel);
         } else if ("PropertyCalculate".equals(cellType.getName())) {
-            return new PropertyCalculateCanvasItemPanel("item", cellModel, cellCallbackHandler);
+            return new PropertyCalculateCanvasItemPanel("item", cellModel);
         } else if ("TableDisplay".equals(cellType.getName())) {
-            return new TableDisplayCanvasItemPanel("item", cellModel, cellCallbackHandler);
+            return new TableDisplayCanvasItemPanel("item", cellModel);
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
-            return new ChemblActivitiesFetcherCanvasItemPanel("item", cellModel, cellCallbackHandler);
+            return new ChemblActivitiesFetcherCanvasItemPanel("item", cellModel);
         } else if ("SdfUploader".equals(cellType.getName())) {
-            return new SDFUploadCanvasItemPanel("item", cellModel, cellCallbackHandler);
+            return new SDFUploadCanvasItemPanel("item", cellModel);
         } else if ("CsvUploader".equals(cellType.getName())) {
-            return new CSVUploadCanvasItemPanel("item", cellModel, cellCallbackHandler);
+            return new CSVUploadCanvasItemPanel("item", cellModel);
         } else if ("DatasetMerger".equals(cellType.getName())) {
-            return new DatasetMergerCanvasItemPanel("item", cellModel, cellCallbackHandler);
+            return new DatasetMergerCanvasItemPanel("item", cellModel);
         } else {
             return null;
         }

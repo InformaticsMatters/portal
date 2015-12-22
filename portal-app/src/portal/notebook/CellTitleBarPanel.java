@@ -7,17 +7,19 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
+import java.io.Serializable;
+
 /**
  * @author simetrias
  */
 public class CellTitleBarPanel extends Panel {
 
     private final CellModel cellModel;
-    private final CellCallbackHandler callbackHandler;
+    private final CallbackHandler callbackHandler;
     private AjaxLink openPopupLink;
     private CellPopupPanel cellPopupPanel;
 
-    public CellTitleBarPanel(String id, CellModel cellModel, CellCallbackHandler callbackHandler) {
+    public CellTitleBarPanel(String id, CellModel cellModel, CallbackHandler callbackHandler) {
         super(id);
         this.cellModel = cellModel;
         this.callbackHandler = callbackHandler;
@@ -63,7 +65,7 @@ public class CellTitleBarPanel extends Panel {
         return cellModel;
     }
 
-    public CellCallbackHandler getCallbackHandler() {
+    public CallbackHandler getCallbackHandler() {
         return callbackHandler;
     }
 
@@ -86,4 +88,15 @@ public class CellTitleBarPanel extends Panel {
         add(openPopupLink);
     }
 
+    public interface CallbackHandler extends Serializable {
+
+        void onRemove(CellModel cellModel);
+
+        void onEditBindings(CellModel cellModel);
+
+        Form getExecuteFormComponent();
+
+        void onExecute();
+
+    }
 }
