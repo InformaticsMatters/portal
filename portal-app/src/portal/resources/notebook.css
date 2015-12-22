@@ -227,3 +227,7 @@ div.ui-resizable-handle.ui-resizable-s {
 .cellPopup {
     width: 200px;
 }
+
+.icon.grey.remove {
+    color: #777!important;
+}
