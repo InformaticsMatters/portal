@@ -25,9 +25,9 @@ import java.util.List;
 /**
  * @author simetrias
  */
-public class ConnectionPanel extends SemanticModalPanel {
+public class BindingsModalPanel extends SemanticModalPanel {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConnectionPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(BindingsModalPanel.class);
     private Callbacks callbacks;
     private Form<ConnectionPanelData> connectionForm;
     private CellModel sourceCellModel;
@@ -41,7 +41,7 @@ public class ConnectionPanel extends SemanticModalPanel {
     private NotebookSession notebookSession;
     private boolean dirty;
 
-    public ConnectionPanel(String id, String modalElementWicketId) {
+    public BindingsModalPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
         addForm();
         addBindingList();

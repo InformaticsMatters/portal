@@ -15,7 +15,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
-    private ConnectionPanel connectionPanel;
+    private BindingsModalPanel bindingsModalPanel;
 
     public CanvasItemPanel(String id, CellModel cellModel) {
         super(id);
@@ -24,17 +24,17 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     private void addBindingsPanel() {
-        connectionPanel = new ConnectionPanel("content", "modalElement");
-        connectionPanel.setCallbacks(new ConnectionPanel.Callbacks() {
+        bindingsModalPanel = new BindingsModalPanel("content", "modalElement");
+        bindingsModalPanel.setCallbacks(new BindingsModalPanel.Callbacks() {
 
             @Override
             public void onSubmit() {
                 notebookSession.storeCurrentNotebook();
-                if (connectionPanel.getSourceCellModel() != null) {
+                if (bindingsModalPanel.getSourceCellModel() != null) {
                     AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
                     ajaxRequestTarget.add(getPage());
-                    String sourceMarkupId = NotebookCanvasPage.CANVAS_ITEM_PREFIX + connectionPanel.getSourceCellModel().getId();
-                    String targetMarkupId = NotebookCanvasPage.CANVAS_ITEM_PREFIX + connectionPanel.getTargetCellModel().getId();
+                    String sourceMarkupId = NotebookCanvasPage.CANVAS_ITEM_PREFIX + bindingsModalPanel.getSourceCellModel().getId();
+                    String targetMarkupId = NotebookCanvasPage.CANVAS_ITEM_PREFIX + bindingsModalPanel.getTargetCellModel().getId();
                     String js = "addConnection('" + sourceMarkupId + "', '" + targetMarkupId + "');";
                     ajaxRequestTarget.appendJavaScript(js);
                 }
@@ -42,7 +42,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
             @Override
             public void onClose() {
-                if (connectionPanel.isDirty()) {
+                if (bindingsModalPanel.isDirty()) {
                     notebookSession.reloadCurrentNotebook();
                     RequestCycle.get().find(AjaxRequestTarget.class).add(getPage());
                 }
@@ -76,9 +76,9 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     public void editBindings(CellModel sourceCellModel, CellModel targetCellModel, boolean canAddBindings) {
-        connectionPanel.configure(sourceCellModel, targetCellModel, canAddBindings);
-        popupContainerProvider.setPopupContentForPage(getPage(), connectionPanel);
+        bindingsModalPanel.configure(sourceCellModel, targetCellModel, canAddBindings);
+        popupContainerProvider.setPopupContentForPage(getPage(), bindingsModalPanel);
         popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
-        connectionPanel.showModal();
+        bindingsModalPanel.showModal();
     }
 }

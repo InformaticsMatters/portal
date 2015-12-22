@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 public class EditNotebookPanel extends SemanticModalPanel {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConnectionPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(BindingsModalPanel.class);
     private Callbacks callbacks;
     private Form<EditNotebookData> form;
     private AjaxSubmitLink submitAction;
