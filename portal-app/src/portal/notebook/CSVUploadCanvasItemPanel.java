@@ -26,6 +26,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
     private static final List<String> CSV_FORMATS = Arrays.asList("DEFAULT", "RFC4180", "EXCEL", "MYSQL", "TDF");
     private Form<ModelObject> form;
     private FileUploadField fileUploadField;
+    private CellTitleBarPanel cellTitleBarPanel;
     @Inject
     private NotebookSession notebookSession;
 
@@ -34,6 +35,12 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         setOutputMarkupId(true);
         addForm();
         load();
+        addTitleBar();
+    }
+
+    private void addTitleBar() {
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
+        add(cellTitleBarPanel);
     }
 
     private void addForm() {
@@ -66,21 +73,6 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
             }
         };
         form.add(uploadLink);
-
-        IndicatingAjaxSubmitLink executeLink = new IndicatingAjaxSubmitLink("execute", form) {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                try {
-                    execute();
-                    target.add(CSVUploadCanvasItemPanel.this.form);
-                } catch (Throwable t) {
-                    logger.error(null, t);
-                }
-            }
-        };
-        executeLink.setOutputMarkupId(true);
-        add(executeLink);
         form.setOutputMarkupId(true);
         add(form);
 
@@ -122,7 +114,12 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
-
+        try {
+            execute();
+            getRequestCycle().find(AjaxRequestTarget.class).add(CSVUploadCanvasItemPanel.this.form);
+        } catch (Throwable t) {
+            logger.error(null, t);
+        }
     }
 
     private class ModelObject implements Serializable {

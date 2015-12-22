@@ -2,13 +2,11 @@ package portal.notebook;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -17,6 +15,7 @@ import java.util.Collection;
 
 public class ScriptCanvasItemPanel extends CanvasItemPanel {
 
+    private CellTitleBarPanel cellTitleBarPanel;
     private Form<ModelObject> form;
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
@@ -28,16 +27,12 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         setOutputMarkupId(true);
         addForm();
         addOutcome();
+        addTitleBar();
     }
 
-    private void addHeader() {
-        add(new Label("cellName", getCellModel().getName().toLowerCase()));
-        add(new AjaxLink("remove") {
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                notebookSession.removeCell(getCellModel());
-            }
-        });
+    private void addTitleBar() {
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
+        add(cellTitleBarPanel);
     }
 
     private void addOutcome() {
@@ -75,16 +70,8 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         ModelObject modelObject = new ModelObject();
         modelObject.load();
         TextArea<String> codeArea = new TextArea<String>("code");
-        IndicatingAjaxSubmitLink runLink = new IndicatingAjaxSubmitLink("submit", form) {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                processRun(target);
-            }
-        };
         form.setModel(new CompoundPropertyModel<ModelObject>(modelObject));
         form.add(codeArea);
-        add(runLink);
         add(form);
     }
 
@@ -119,7 +106,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
-
+        processRun(getRequestCycle().find(AjaxRequestTarget.class));
     }
 
     public class ModelObject implements Serializable {

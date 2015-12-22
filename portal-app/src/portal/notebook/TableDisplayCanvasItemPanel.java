@@ -1,13 +1,11 @@
 package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.notebook.api.VariableType;
 import portal.dataset.IDatasetDescriptor;
 import portal.notebook.service.Strings;
-import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -18,6 +16,7 @@ import java.util.List;
  */
 public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
+    private CellTitleBarPanel cellTitleBarPanel;
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
     @Inject
@@ -29,17 +28,16 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         addGrid();
         load();
         setOutputMarkupId(true);
+        addTitleBar();
+    }
+
+    private void addTitleBar() {
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
+        add(cellTitleBarPanel);
     }
 
     private void addForm() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
-        add(new IndicatingAjaxSubmitLink("display", form) {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                load();
-            }
-        });
-
         add(form);
     }
 
@@ -88,7 +86,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
-
+        load();
     }
 
     class ModelObject implements Serializable {

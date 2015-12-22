@@ -62,14 +62,14 @@
 }
 
 .notebook-canvas-item-content .icon.remove,
-.notebook-canvas-item-content .icon.checkmark,
+.notebook-canvas-item-content .icon.play,
 .notebook-canvas-item-content .icon.linkify {
     visibility: hidden;
     margin-right: 0 !important;
 }
 
 .notebook-canvas-item-content:hover .icon.remove,
-.notebook-canvas-item-content:hover .icon.checkmark,
+.notebook-canvas-item-content:hover .icon.play,
 .notebook-canvas-item-content:hover .icon.linkify {
     visibility: visible;
     margin-right: 0 !important;
