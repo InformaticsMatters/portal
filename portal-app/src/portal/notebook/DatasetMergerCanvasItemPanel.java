@@ -42,15 +42,6 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         add(form);
     }
 
-    private void execute() {
-        form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "results");
-        outputVariableModel.setValue(null);
-        notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getName());
-        fireContentChanged();
-    }
-
     @Override
     public Form getExecuteFormComponent() {
         return form;
@@ -58,7 +49,12 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
-
+        form.getModelObject().store();
+        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "results");
+        outputVariableModel.setValue(null);
+        notebookSession.storeCurrentNotebook();
+        notebookSession.executeCell(getCellModel().getName());
+        fireContentChanged();
     }
 
     class ModelObject implements Serializable {
