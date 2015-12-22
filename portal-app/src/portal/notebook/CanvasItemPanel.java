@@ -6,7 +6,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 import javax.inject.Inject;
 
-public abstract class CanvasItemPanel extends Panel implements CellCallbackHandler {
+public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
     private final CellModel cellModel;
     @Inject

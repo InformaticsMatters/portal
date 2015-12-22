@@ -7,22 +7,25 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
+import java.io.Serializable;
+
 /**
  * @author simetrias
  */
 public class CellTitleBarPanel extends Panel {
 
     private final CellModel cellModel;
-    private final CellCallbackHandler callbackHandler;
+    private final CallbackHandler callbackHandler;
     private AjaxLink openPopupLink;
     private CellPopupPanel cellPopupPanel;
 
-    public CellTitleBarPanel(String id, CellModel cellModel, CellCallbackHandler callbackHandler) {
+    public CellTitleBarPanel(String id, CellModel cellModel, CallbackHandler callbackHandler) {
         super(id);
         this.cellModel = cellModel;
         this.callbackHandler = callbackHandler;
         addPopup();
         addActions();
+        createCellPopupPanel();
     }
 
     private void addActions() {
@@ -63,7 +66,7 @@ public class CellTitleBarPanel extends Panel {
         return cellModel;
     }
 
-    public CellCallbackHandler getCallbackHandler() {
+    public CallbackHandler getCallbackHandler() {
         return callbackHandler;
     }
 
@@ -73,7 +76,7 @@ public class CellTitleBarPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                // popupContainerProvider.setPopupContentForPage(getPage(), popupPanel);
+                //popupContainerProvider.setPopupContentForPage(getPage(), cellPpopupPanel);
                 // popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
                 String js = "$('#:link')" +
                         ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
@@ -86,4 +89,19 @@ public class CellTitleBarPanel extends Panel {
         add(openPopupLink);
     }
 
+    private void createCellPopupPanel() {
+        cellPopupPanel = new CellPopupPanel("content");
+    }
+
+    public interface CallbackHandler extends Serializable {
+
+        void onRemove(CellModel cellModel);
+
+        void onEditBindings(CellModel cellModel);
+
+        Form getExecuteFormComponent();
+
+        void onExecute();
+
+    }
 }

@@ -1,15 +1,7 @@
 <wicket:panel>
     <div class="notebook-canvas-item-content" style="width: auto;">
-        <div class="titleBar" style="margin-bottom: 0px;">
-            <div class="name left floated">
-                <label wicket:id="cellName"/>
-            </div>
-            <div style="float: right;"><a wicket:id="remove"><i class="icon red remove"></i></a></div>
-            <div style="float: right;"><a wicket:id="display"><i class="icon green checkmark"></i></a></div>
-            <div style="float: right;"><a wicket:id="bindings"><i
-                    class="icon blue small horizontally flipped linkify"></i></a></div>
-            <div style="clear: both;"></div>
-        </div>
+        <div wicket:id="titleBar" class="titleBar"></div>
+
         <div class="tableCell">
             <form wicket:id="form" class="ui form content">
             </form>

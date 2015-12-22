@@ -1,31 +1,29 @@
 package portal.notebook;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.notebook.execution.service.CalculatorsClient;
-import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
-    private final CellCallbackHandler callbackHandler;
+    private CellTitleBarPanel cellTitleBarPanel;
     private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
     @Inject
     private transient CalculatorsClient calculatorsClient;
 
-    public PropertyCalculateCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+    public PropertyCalculateCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addForm();
         load();
         setOutputMarkupId(true);
-        this.callbackHandler = callbackHandler;
+        addTitleBar();
     }
 
     private void load() {
@@ -36,20 +34,17 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
         form.getModelObject().load();
     }
 
+    private void addTitleBar() {
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
+        add(cellTitleBarPanel);
+    }
+
     private void addForm() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
         DropDownChoice<Object> serviceNameChoice = new DropDownChoice<Object>("serviceName", getCellModel().getOptionModelMap().get("serviceName").getPicklistValueList());
         form.add(serviceNameChoice);
         TextField<String> outputFileNameField = new TextField<String>("outputFileName");
         form.add(outputFileNameField);
-        IndicatingAjaxSubmitLink calculateLink = new IndicatingAjaxSubmitLink("submit", form) {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                calculateAndSave();
-            }
-        };
-        add(calculateLink);
         add(form);
     }
 
@@ -75,7 +70,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
-
+        calculateAndSave();
     }
 
     class ModelObject implements Serializable {

@@ -23,14 +23,21 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
     private static final Logger logger = LoggerFactory.getLogger(SDFUploadCanvasItemPanel.class.getName());
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
+    private CellTitleBarPanel cellTitleBarPanel;
     @Inject
     private NotebookSession notebookSession;
 
-    public SDFUploadCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+    public SDFUploadCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();
         load();
+        addTitleBar();
+    }
+
+    private void addTitleBar() {
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
+        add(cellTitleBarPanel);
     }
 
     private void addForm() {
@@ -60,21 +67,6 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
             }
         };
         form.add(uploadLink);
-
-        IndicatingAjaxSubmitLink executeLink = new IndicatingAjaxSubmitLink("execute", form) {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                try {
-                    execute();
-                    target.add(SDFUploadCanvasItemPanel.this.form);
-                } catch (Throwable t) {
-                    logger.error(null, t);
-                }
-            }
-        };
-        executeLink.setOutputMarkupId(true);
-        add(executeLink);
         form.setOutputMarkupId(true);
         add(form);
 
@@ -115,7 +107,12 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
-
+        try {
+            execute();
+            getRequestCycle().find(AjaxRequestTarget.class).add(SDFUploadCanvasItemPanel.this.form);
+        } catch (Throwable t) {
+            logger.error(null, t);
+        }
     }
 
 

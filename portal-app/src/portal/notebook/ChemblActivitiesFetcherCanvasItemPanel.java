@@ -1,31 +1,34 @@
 package portal.notebook;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
 
 public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
 
-    private final CellCallbackHandler callbackHandler;
+    private CellTitleBarPanel cellTitleBarPanel;
     private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
 
-    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell, CellCallbackHandler callbackHandler) {
+    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addForm();
         load();
         setOutputMarkupId(true);
-        this.callbackHandler = callbackHandler;
+        addTitleBar();
     }
 
     private void load() {
         form.getModelObject().load();
+    }
+
+    private void addTitleBar() {
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
+        add(cellTitleBarPanel);
     }
 
     private void addForm() {
@@ -35,15 +38,6 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         form.add(assayIdField);
         TextField<String> prefixField = new TextField<String>("prefix");
         form.add(prefixField);
-        IndicatingAjaxSubmitLink executeLink = new IndicatingAjaxSubmitLink("submit", form) {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                execute();
-            }
-        };
-        executeLink.setOutputMarkupId(true);
-        add(executeLink);
         add(form);
     }
 
@@ -63,7 +57,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
-
+        execute();
     }
 
     class ModelObject implements Serializable {
