@@ -1,11 +1,9 @@
 package portal.notebook;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -41,14 +39,6 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         form.add(mergeFieldName);
         CheckBox keepFirstField = new CheckBox("keepFirst");
         form.add(keepFirstField);
-        IndicatingAjaxSubmitLink executeLink = new IndicatingAjaxSubmitLink("submit", form) {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                execute();
-            }
-        };
-        executeLink.setOutputMarkupId(true);
-        add(executeLink);
         add(form);
     }
 
