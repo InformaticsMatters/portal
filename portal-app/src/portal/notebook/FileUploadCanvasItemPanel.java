@@ -2,7 +2,6 @@ package portal.notebook;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -24,8 +23,6 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
     private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
-    private AjaxLink openPopupLink;
-    private CellPopupPanel cellPopupPanel;
     private CellTitleBarPanel cellTitleBarPanel;
     @Inject
     private NotebookSession notebookSession;
@@ -60,6 +57,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
         add(form);
 
     }
+
 
     private void processUpload(FileUpload upload) throws IOException {
         if (upload == null) {

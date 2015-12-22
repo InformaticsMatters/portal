@@ -25,6 +25,7 @@ public class CellTitleBarPanel extends Panel {
         this.callbackHandler = callbackHandler;
         addPopup();
         addActions();
+        createCellPopupPanel();
     }
 
     private void addActions() {
@@ -75,7 +76,7 @@ public class CellTitleBarPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                // popupContainerProvider.setPopupContentForPage(getPage(), popupPanel);
+                //popupContainerProvider.setPopupContentForPage(getPage(), cellPpopupPanel);
                 // popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
                 String js = "$('#:link')" +
                         ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
@@ -86,6 +87,10 @@ public class CellTitleBarPanel extends Panel {
             }
         };
         add(openPopupLink);
+    }
+
+    private void createCellPopupPanel() {
+        cellPopupPanel = new CellPopupPanel("content");
     }
 
     public interface CallbackHandler extends Serializable {
