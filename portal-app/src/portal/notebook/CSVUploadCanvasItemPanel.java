@@ -26,7 +26,6 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
     private static final List<String> CSV_FORMATS = Arrays.asList("DEFAULT", "RFC4180", "EXCEL", "MYSQL", "TDF");
     private Form<ModelObject> form;
     private FileUploadField fileUploadField;
-    private CellTitleBarPanel cellTitleBarPanel;
     @Inject
     private NotebookSession notebookSession;
 
@@ -34,13 +33,8 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();
-        load();
         addTitleBar();
-    }
-
-    private void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
-        add(cellTitleBarPanel);
+        load();
     }
 
     private void addForm() {

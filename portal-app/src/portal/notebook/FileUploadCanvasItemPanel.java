@@ -23,7 +23,6 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
     private static final Logger logger = LoggerFactory.getLogger(FileUploadCanvasItemPanel.class.getName());
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
-    private CellTitleBarPanel cellTitleBarPanel;
     @Inject
     private NotebookSession notebookSession;
 
@@ -33,11 +32,6 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
         addForm();
         addTitleBar();
         load();
-    }
-
-    private void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
-        add(cellTitleBarPanel);
     }
 
     private void addForm() {
@@ -55,7 +49,6 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
 
         form.setOutputMarkupId(true);
         add(form);
-
     }
 
 

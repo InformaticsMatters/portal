@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
-    private CellTitleBarPanel cellTitleBarPanel;
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
     @Inject
@@ -25,15 +24,10 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     public TableDisplayCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addForm();
+        addTitleBar();
         addGrid();
         load();
         setOutputMarkupId(true);
-        addTitleBar();
-    }
-
-    private void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
-        add(cellTitleBarPanel);
     }
 
     private void addForm() {

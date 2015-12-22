@@ -15,7 +15,6 @@ import java.util.Collection;
 
 public class ScriptCanvasItemPanel extends CanvasItemPanel {
 
-    private CellTitleBarPanel cellTitleBarPanel;
     private Form<ModelObject> form;
     private Label outcomeLabel;
     private IModel<String> outcomeModel;
@@ -26,13 +25,8 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();
-        addOutcome();
         addTitleBar();
-    }
-
-    private void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
-        add(cellTitleBarPanel);
+        addOutcome();
     }
 
     private void addOutcome() {

@@ -17,6 +17,11 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         this.cellModel = cellModel;
     }
 
+    protected void addTitleBar() {
+        CellTitleBarPanel cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
+        add(cellTitleBarPanel);
+    }
+
     public CellModel getCellModel() {
         return cellModel;
     }

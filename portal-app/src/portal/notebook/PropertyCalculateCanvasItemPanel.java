@@ -11,7 +11,6 @@ import java.io.Serializable;
 
 public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
-    private CellTitleBarPanel cellTitleBarPanel;
     private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
@@ -21,9 +20,9 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     public PropertyCalculateCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
         addForm();
+        addTitleBar();
         load();
         setOutputMarkupId(true);
-        addTitleBar();
     }
 
     private void load() {
@@ -32,11 +31,6 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
             form.getModelObject().setOutputFileName((String) outputVariableModel.getValue());
         }
         form.getModelObject().load();
-    }
-
-    private void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
-        add(cellTitleBarPanel);
     }
 
     private void addForm() {

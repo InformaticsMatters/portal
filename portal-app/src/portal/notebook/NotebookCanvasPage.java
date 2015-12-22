@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.squonk.notebook.api.CellType;
 import portal.FooterPanel;
 import portal.MenuPanel;
+import portal.PopupContainerProvider;
 import portal.PortalHomePage;
 import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.NotifierProvider;
@@ -71,9 +72,12 @@ public class NotebookCanvasPage extends WebPage {
     private NotifierProvider notifierProvider;
     @Inject
     private NotebookSession notebookSession;
+    @Inject
+    private PopupContainerProvider popupContainerProvider;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
+        popupContainerProvider.createPopupContainerForPage(this, "modalPopupContainer");
         setOutputMarkupId(true);
         addPanels();
         addActions();
@@ -98,7 +102,6 @@ public class NotebookCanvasPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
         response.render(OnDomReadyHeaderItem.forScript("initJsPlumb(); addCellsPaletteDragAndDropSupport();"));
         response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item'); makeCanvasItemPlumbDraggable();"));
-
     }
 
     private void addPanels() {

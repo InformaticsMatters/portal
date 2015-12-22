@@ -13,7 +13,6 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
-    private CellTitleBarPanel cellTitleBarPanel;
 
     public DatasetMergerCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
@@ -21,11 +20,6 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         addForm();
         addTitleBar();
         load();
-    }
-
-    private void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
-        add(cellTitleBarPanel);
     }
 
     private void load() {

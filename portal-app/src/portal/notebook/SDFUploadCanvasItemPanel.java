@@ -23,7 +23,6 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
     private static final Logger logger = LoggerFactory.getLogger(SDFUploadCanvasItemPanel.class.getName());
     private Form<UploadData> form;
     private FileUploadField fileUploadField;
-    private CellTitleBarPanel cellTitleBarPanel;
     @Inject
     private NotebookSession notebookSession;
 
@@ -31,13 +30,8 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();
-        load();
         addTitleBar();
-    }
-
-    private void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
-        add(cellTitleBarPanel);
+        load();
     }
 
     private void addForm() {
