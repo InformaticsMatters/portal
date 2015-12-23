@@ -55,7 +55,7 @@ public class BindingsModalPanel extends SemanticModalPanel {
 
         sourceLabel = new Label("sourceLabel", "Source variable");
         connectionForm.add(sourceLabel);
-        targetLabel = new Label("targetLabel", "Target binding");
+        targetLabel = new Label("targetLabel", "Target input");
         connectionForm.add(targetLabel);
 
         sourceChoice = new Select2Choice<>("source");
