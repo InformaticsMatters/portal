@@ -75,6 +75,10 @@
     margin-right: 0 !important;
 }
 
+.notebook-canvas-item-content .small.input > input[type=text] {
+    padding: .5em 1em!important;
+}
+
 .notebook-canvas-item-content > .extra {
   max-width: 100%;
   min-height: 0em !important;
@@ -139,7 +143,7 @@ div.imxt-vista div.imxt-body-container1 {
     padding: 10px;
     width: 500px;
     min-width: 325px!important;
-    min-height: 300px!important;
+    min-height: 270px!important;
 }
 
 div.ui-resizable-handle.ui-resizable-e,
