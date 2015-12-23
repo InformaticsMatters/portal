@@ -5,8 +5,10 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.PopupContainerProvider;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
+import javax.inject.Inject;
 import java.io.Serializable;
 
 /**
@@ -18,6 +20,8 @@ public class CellTitleBarPanel extends Panel {
     private final CallbackHandler callbackHandler;
     private AjaxLink openPopupLink;
     private CellPopupPanel cellPopupPanel;
+    @Inject
+    private PopupContainerProvider popupContainerProvider;
 
     public CellTitleBarPanel(String id, CellModel cellModel, CallbackHandler callbackHandler) {
         super(id);
@@ -76,8 +80,8 @@ public class CellTitleBarPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                //popupContainerProvider.setPopupContentForPage(getPage(), cellPpopupPanel);
-                // popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
+                popupContainerProvider.setPopupContentForPage(getPage(), cellPopupPanel);
+                popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
                 String js = "$('#:link')" +
                         ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
                         ".popup('toggle').popup('destroy')";
