@@ -1,6 +1,7 @@
 package portal.notebook;
 
 import com.inmethod.grid.IGridColumn;
+import com.inmethod.grid.common.ColumnsState;
 import com.inmethod.grid.treegrid.TreeGrid;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
@@ -96,6 +97,22 @@ public class TableDisplayVisualizer extends TreeGrid<DefaultTreeModel, DefaultMu
         return result;
     }
 
+    @Override
+    protected void onJunctionLinkClicked(AjaxRequestTarget target, Object node) {
+        if (getTreeState().isNodeExpanded(node)) {
+            getTree().invalidateAll();
+        }
+    }
+
+    @Override
+    public void onColumnStateChanged() {
+        super.onColumnStateChanged();
+        ColumnsState states = getColumnState();
+        for (ColumnsState.Entry entry : states.getColumnStates()) {
+            System.out.println(entry.getColumnId() + " - " + entry.getCurrentWidth());
+        }
+    }
+
     private void buildNodeHierarchy(DefaultMutableTreeNode parentNode, List<IRow> rowList) {
         for (IRow row : rowList) {
             DefaultMutableTreeNode childNode = new DefaultMutableTreeNode();
@@ -104,13 +121,6 @@ public class TableDisplayVisualizer extends TreeGrid<DefaultTreeModel, DefaultMu
             if (row.getChildren() != null && row.getChildren().size() > 0) {
                 buildNodeHierarchy(childNode, row.getChildren());
             }
-        }
-    }
-
-    @Override
-    protected void onJunctionLinkClicked(AjaxRequestTarget target, Object node) {
-        if (getTreeState().isNodeExpanded(node)) {
-            getTree().invalidateAll();
         }
     }
 }
