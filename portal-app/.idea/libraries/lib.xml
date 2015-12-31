@@ -18,10 +18,10 @@
       <root url="file://$PROJECT_DIR$/../lib/eclipselink/2.5.2" />
       <root url="file://$PROJECT_DIR$/../lib/jchem/6.2.0_b787" />
       <root url="file://$PROJECT_DIR$/../lib/groovy-all/2.2.2" />
-      <root url="file://$PROJECT_DIR$/../lib/jackson/2.5.3" />
       <root url="file://$PROJECT_DIR$/../lib/core-services-client" />
       <root url="file://$PROJECT_DIR$/../lib/derby/10.8" />
       <root url="file://$PROJECT_DIR$/../lib/asm/3.1" />
+      <root url="file://$PROJECT_DIR$/../lib/jackson/2.6.4" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
@@ -34,7 +34,7 @@
     <jarDirectory url="file://$PROJECT_DIR$/../lib/el-api/2.2" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/groovy-all/2.2.2" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/inmethod/6.9.0" recursive="false" />
-    <jarDirectory url="file://$PROJECT_DIR$/../lib/jackson/2.5.3" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/jackson/2.6.4" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jchem/6.2.0_b787" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jersey/1.5" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jetty/8.1.15" recursive="false" />

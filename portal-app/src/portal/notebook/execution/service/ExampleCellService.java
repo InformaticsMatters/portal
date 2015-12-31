@@ -50,6 +50,11 @@ public class ExampleCellService {
 
         cellType = createDatasetMergerCellType();
         list.add(cellType);
+
+        list.add(createConvertBasicToMoleculeObjectCellType());
+        list.add(createValueTransformerCellType());
+        list.add(createGroovyScriptTrustedCellType());
+
         return list;
     }
 
@@ -241,6 +246,88 @@ public class ExampleCellService {
         optionDefinition.setOptionType(OptionType.SIMPLE);
         cellType.getOptionDefinitionList().add(optionDefinition);
         cellType.setExecutable(Boolean.FALSE);
+        return cellType;
+    }
+
+    private static CellType createConvertBasicToMoleculeObjectCellType() {
+        CellType cellType = new CellType();
+        cellType.setName("BasicObjectToMoleculeObject");
+        cellType.setDescription("Convert Dataset from BasicObjects to MoleculeObjects");
+        cellType.setExecutable(Boolean.TRUE);
+        VariableDefinition variableDefinition = new VariableDefinition();
+        variableDefinition.setName("output");
+        variableDefinition.setDisplayName("Output");
+        variableDefinition.setVariableType(VariableType.DATASET);
+        cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName("input");
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellType.getBindingDefinitionList().add(bindingDefinition);
+        OptionDefinition structFieldptionDefinition = new OptionDefinition();
+        structFieldptionDefinition.setName("structureFieldName");
+        structFieldptionDefinition.setDisplayName("Structure Field Name");
+        structFieldptionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(structFieldptionDefinition);
+        OptionDefinition structFormatOptionDefinition = new OptionDefinition();
+        structFormatOptionDefinition.setName("structureFormat");
+        structFormatOptionDefinition.setDisplayName("Structure Format");
+        structFormatOptionDefinition.setOptionType(OptionType.SIMPLE); // should be picklist
+        cellType.getOptionDefinitionList().add(structFormatOptionDefinition);
+        OptionDefinition preserveUuidOptionDefinition = new OptionDefinition();
+        preserveUuidOptionDefinition.setName("preserveUuid");
+        preserveUuidOptionDefinition.setDisplayName("PreserveUUID");
+        preserveUuidOptionDefinition.setOptionType(OptionType.SIMPLE); // should be boolean
+        cellType.getOptionDefinitionList().add(preserveUuidOptionDefinition);
+        cellType.setExecutable(Boolean.TRUE);
+        return cellType;
+    }
+
+    private static CellType createValueTransformerCellType() {
+        CellType cellType = new CellType();
+        cellType.setName("TransformValues");
+        cellType.setDescription("Transform dataset values");
+        cellType.setExecutable(Boolean.TRUE);
+        VariableDefinition variableDefinition = new VariableDefinition();
+        variableDefinition.setName("output");
+        variableDefinition.setDisplayName("Output");
+        variableDefinition.setVariableType(VariableType.DATASET);
+        cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName("input");
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellType.getBindingDefinitionList().add(bindingDefinition);
+        OptionDefinition optionDefinition = new OptionDefinition();
+        optionDefinition.setName("transformDefinitions");
+        optionDefinition.setDisplayName("Transform Definitions");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
+        cellType.setExecutable(Boolean.TRUE);
+        return cellType;
+    }
+
+    private static CellType createGroovyScriptTrustedCellType() {
+        CellType cellType = new CellType();
+        cellType.setName("TrustedGroovyDatasetScript");
+        cellType.setDescription("Groovy Script (trusted)");
+        cellType.setExecutable(Boolean.TRUE);
+        VariableDefinition variableDefinition = new VariableDefinition();
+        variableDefinition.setName("output");
+        variableDefinition.setDisplayName("Output");
+        variableDefinition.setVariableType(VariableType.DATASET);
+        cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName("input");
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellType.getBindingDefinitionList().add(bindingDefinition);
+        OptionDefinition optionDefinition = new OptionDefinition();
+        optionDefinition.setName("script");
+        optionDefinition.setDisplayName("Groovy Script");
+        optionDefinition.setOptionType(OptionType.SIMPLE);
+        cellType.getOptionDefinitionList().add(optionDefinition);
+        cellType.setExecutable(Boolean.TRUE);
         return cellType;
     }
 

@@ -326,7 +326,14 @@ public class NotebookCanvasPage extends WebPage {
             return new CSVUploadCanvasItemPanel("item", cellModel);
         } else if ("DatasetMerger".equals(cellType.getName())) {
             return new DatasetMergerCanvasItemPanel("item", cellModel);
+        } else if ("BasicObjectToMoleculeObject".equals(cellType.getName())) {
+            return new BasicObjectToMoleculeObjectConverterCanvasItemPanel("item", cellModel);
+        } else if ("TransformValues".equals(cellType.getName())) {
+            return new TransformValuesCanvasItemPanel("item", cellModel);
+        } else if ("TrustedGroovyDatasetScript".equals(cellType.getName())) {
+            return new GroovyScriptTrustedCanvasItemPanel("item", cellModel);
         } else {
+            logger.warn("cell type " + cellType.getName() + " not recognised");
             return null;
         }
     }

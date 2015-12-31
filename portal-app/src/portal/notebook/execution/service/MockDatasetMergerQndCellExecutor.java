@@ -1,9 +1,9 @@
 package portal.notebook.execution.service;
 
 import com.im.lac.types.BasicObject;
-import com.squonk.dataset.Dataset;
-import com.squonk.dataset.DatasetMetadata;
-import com.squonk.types.io.JsonHandler;
+import org.squonk.dataset.Dataset;
+import org.squonk.dataset.DatasetMetadata;
+import org.squonk.types.io.JsonHandler;
 import org.squonk.notebook.api.BindingDTO;
 import org.squonk.notebook.api.CellDTO;
 import org.squonk.notebook.api.CellType;

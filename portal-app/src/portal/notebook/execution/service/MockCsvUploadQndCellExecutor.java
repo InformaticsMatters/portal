@@ -1,22 +1,23 @@
 package portal.notebook.execution.service;
 
 import com.im.lac.types.BasicObject;
-import com.squonk.dataset.Dataset;
-import com.squonk.dataset.DatasetMetadata;
-import com.squonk.types.io.JsonHandler;
-import com.squonk.util.IOUtils;
+import org.squonk.dataset.Dataset;
+import org.squonk.util.IOUtils;
 import org.squonk.notebook.api.CellDTO;
 import org.squonk.notebook.api.CellType;
-import org.squonk.notebook.api.OptionDTO;
 import org.squonk.notebook.client.CallbackClient;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class MockCsvUploadQndCellExecutor implements QndCellExecutor {
+public class MockCsvUploadQndCellExecutor extends AbstractDatasetExecutor {
+
+    private static Logger LOG = Logger.getLogger(AbstractDatasetExecutor.class.getName());
+
     @Inject
     private CallbackClient callbackClient;
 
@@ -30,17 +31,14 @@ public class MockCsvUploadQndCellExecutor implements QndCellExecutor {
     public void execute(String cellName) {
         CellDTO cellDTO = callbackClient.retrieveCell(cellName);
 
-        for (Map.Entry<String, OptionDTO> e : cellDTO.getOptionMap().entrySet()) {
-            System.out.println("CSV OPTS: " + e.getKey() + " -> " + e.getValue().getValue());
-        }
+        dumpOptions(cellDTO, Level.INFO);
 
         try (InputStream is = callbackClient.readStreamValue(cellName, "fileContent")) {
             byte[] bytes = IOUtils.convertStreamToBytes(is, 1000);
-            System.out.println("Read " + bytes.length + " bytes");
+            LOG.info("Read " + bytes.length + " bytes");
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-
 
         List<BasicObject> mols = new ArrayList<>();
         mols.add(new BasicObject(createMap()));
@@ -54,14 +52,7 @@ public class MockCsvUploadQndCellExecutor implements QndCellExecutor {
 
         // write to Results
         try {
-            // As it´s a DATASET variable type we write metatada to value and contents as any stream-based variable(like FILE)
-            Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
-            try (Stream stream = generator.getAsStream()) {
-                InputStream dataInputStream = generator.getAsInputStream(stream, true);
-                callbackClient.writeStreamContents(cellName, "results", dataInputStream);
-            }
-            DatasetMetadata metadata = generator.getDatasetMetadata();
-            callbackClient.writeTextValue(cellName, "results", JsonHandler.getInstance().objectToJson(metadata));
+            writeDataset(cellDTO, "results", dataset);
         } catch (Exception e) {
             throw new RuntimeException("Failed to write dataset", e);
         }
@@ -71,9 +62,16 @@ public class MockCsvUploadQndCellExecutor implements QndCellExecutor {
     Map createMap() {
         Random r = new Random();
         Map map = new HashMap();
+        int i = r.nextInt();
         map.put("A", r.nextFloat());
-        map.put("B", r.nextInt());
-        map.put("C", "Hello " + r.nextInt());
+        map.put("B", i);
+        map.put("C", "Hello " + i);
+        StringBuilder b = new StringBuilder();
+
+        for (int j=-1; j<Math.abs(i%5); j++) {
+            b.append("C");
+        }
+        map.put("S", b.toString());
         return map;
     }
 
