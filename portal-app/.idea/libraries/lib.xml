@@ -22,6 +22,7 @@
       <root url="file://$PROJECT_DIR$/../lib/derby/10.8" />
       <root url="file://$PROJECT_DIR$/../lib/asm/3.1" />
       <root url="file://$PROJECT_DIR$/../lib/jackson/2.6.4" />
+      <root url="file://$PROJECT_DIR$/../lib/squonk-security/core" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
@@ -44,6 +45,7 @@
     <jarDirectory url="file://$PROJECT_DIR$/../lib/seam-conversation/3.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/servlet-api/3.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/slf4j/1.7.10" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/squonk-security/core" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/weld/2.2.9" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/wicket-select2/2.3" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/wicket/6.18.0" recursive="false" />
