@@ -1,8 +1,14 @@
 package toolkit.jetty;
 
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.util.security.Constraint;
+import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +62,31 @@ public class WebContainer {
         server.addConnector(connector);
         String webapp = properties.getProperty(WEBCONTAINER_WEBAPP, DEFAULT_WEBAPP);
         WebAppContext wac = new WebAppContext(webapp, "/");
+
+        HashLoginService loginService = new HashLoginService();
+        loginService.setName("lac");
+        loginService.setConfig("realm.properties");
+
+        loginService.putUser("user1", Credential.getCredential("user1"), new String[]{"user"});
+        loginService.putUser("user2", Credential.getCredential("user2"), new String[]{"user"});
+
+        Constraint constraint = new Constraint();
+        constraint.setName(Constraint.__BASIC_AUTH);
+        constraint.setRoles(new String[]{"user"});
+        constraint.setAuthenticate(true);
+
+        ConstraintMapping constraintMapping = new ConstraintMapping();
+        constraintMapping.setConstraint(constraint);
+        constraintMapping.setPathSpec("/*");
+
+        ConstraintSecurityHandler securityHandler = new ConstraintSecurityHandler();
+        securityHandler.setAuthenticator(new BasicAuthenticator());
+        securityHandler.setRealmName("myrealm");
+        securityHandler.addConstraintMapping(constraintMapping);
+        securityHandler.setLoginService(loginService);
+
+
+        wac.setSecurityHandler(securityHandler);
         server.setHandler(wac);
         server.setStopAtShutdown(true);
         server.start();
