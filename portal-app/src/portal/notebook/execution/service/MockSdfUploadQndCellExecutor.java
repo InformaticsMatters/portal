@@ -4,10 +4,8 @@ import com.im.lac.types.MoleculeObject;
 import org.squonk.dataset.Dataset;
 import org.squonk.notebook.api.CellDTO;
 import org.squonk.notebook.api.CellType;
-import org.squonk.notebook.client.CallbackClient;
 import org.squonk.util.IOUtils;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,9 +17,6 @@ import java.util.logging.Logger;
 public class MockSdfUploadQndCellExecutor extends AbstractDatasetExecutor {
 
     private static final Logger LOG = Logger.getLogger(MockSdfUploadQndCellExecutor.class.getName());
-
-    @Inject
-    private CallbackClient callbackClient;
 
     @Override
     public boolean handles(CellType cellType) {

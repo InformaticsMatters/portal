@@ -1,6 +1,5 @@
 package portal.notebook.client;
 
-import org.squonk.notebook.client.CallbackClient;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.squonk.notebook.api.NotebookDTO;
 import toolkit.services.AbstractServiceClient;
@@ -10,7 +9,7 @@ import java.io.Serializable;
 import java.util.logging.Logger;
 
 public class NotebookClient extends AbstractServiceClient implements Serializable {
-    private static final Logger LOGGER = Logger.getLogger(CallbackClient.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(NotebookClient.class.getName());
 
     private final String url;
 

@@ -2,22 +2,17 @@ package portal.notebook.execution.service;
 
 import com.im.lac.types.BasicObject;
 import org.squonk.dataset.Dataset;
-import org.squonk.dataset.DatasetMetadata;
-import org.squonk.types.io.JsonHandler;
 import org.squonk.notebook.api.BindingDTO;
 import org.squonk.notebook.api.CellDTO;
 import org.squonk.notebook.api.CellType;
 import org.squonk.notebook.api.VariableKey;
-import org.squonk.notebook.client.CallbackClient;
 
-import javax.inject.Inject;
+
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class MockDatasetMergerQndCellExecutor implements QndCellExecutor {
-    @Inject
-    private CallbackClient callbackClient;
+public class MockDatasetMergerQndCellExecutor extends AbstractDatasetExecutor {
 
     @Override
     public boolean handles(CellType cellType) {
@@ -47,16 +42,9 @@ public class MockDatasetMergerQndCellExecutor implements QndCellExecutor {
 
         // write to Results
         try {
-            // As it´s a DATASET variable type we write metatada to value and contents as any stream-based variable(like FILE)
-            Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
-            try (Stream stream = generator.getAsStream()) {
-                InputStream dataInputStream = generator.getAsInputStream(stream, true);
-                callbackClient.writeStreamContents(cellName, "results", dataInputStream);
-            }
-            DatasetMetadata metadata = generator.getDatasetMetadata();
-            callbackClient.writeTextValue(cellName, "results", JsonHandler.getInstance().objectToJson(metadata));
+            writeDataset(cellDTO, "results", dataset);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to write dataset", e);
+            throw new RuntimeException(e);
         }
 
     }

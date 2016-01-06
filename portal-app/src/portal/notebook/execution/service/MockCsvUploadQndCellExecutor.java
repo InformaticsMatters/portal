@@ -18,9 +18,6 @@ public class MockCsvUploadQndCellExecutor extends AbstractDatasetExecutor {
 
     private static Logger LOG = Logger.getLogger(AbstractDatasetExecutor.class.getName());
 
-    @Inject
-    private CallbackClient callbackClient;
-
     @Override
     public boolean handles(CellType cellType) {
         return "CsvUploader".equals(cellType.getName());

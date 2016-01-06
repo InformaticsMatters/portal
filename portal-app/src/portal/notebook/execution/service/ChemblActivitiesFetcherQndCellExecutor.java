@@ -4,7 +4,6 @@ import com.im.lac.types.MoleculeObject;
 import org.squonk.dataset.Dataset;
 import org.squonk.notebook.api.CellDTO;
 import org.squonk.notebook.api.CellType;
-import org.squonk.notebook.client.CallbackClient;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -18,9 +17,6 @@ import java.util.logging.Level;
  * Created by timbo on 10/11/15.
  */
 public class ChemblActivitiesFetcherQndCellExecutor extends AbstractDatasetExecutor {
-    @Inject
-    private CallbackClient callbackClient;
-
 
     @Override
     public boolean handles(CellType cellType) {
