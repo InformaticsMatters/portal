@@ -70,19 +70,28 @@ public class WebContainer {
         loginService.putUser("user1", Credential.getCredential("user1"), new String[]{"user"});
         loginService.putUser("user2", Credential.getCredential("user2"), new String[]{"user"});
 
+        ConstraintSecurityHandler securityHandler = new ConstraintSecurityHandler();
+        securityHandler.setAuthenticator(new BasicAuthenticator());
+        securityHandler.setRealmName("lac");
+
         Constraint constraint = new Constraint();
+        constraint.setName(Constraint.NONE);
+        constraint.setAuthenticate(false);
+        ConstraintMapping constraintMapping = new ConstraintMapping();
+        constraintMapping.setConstraint(constraint);
+        constraintMapping.setPathSpec("/ws/*");
+        securityHandler.addConstraintMapping(constraintMapping);
+
+        constraint = new Constraint();
         constraint.setName(Constraint.__BASIC_AUTH);
         constraint.setRoles(new String[]{"user"});
         constraint.setAuthenticate(true);
 
-        ConstraintMapping constraintMapping = new ConstraintMapping();
+        constraintMapping = new ConstraintMapping();
         constraintMapping.setConstraint(constraint);
         constraintMapping.setPathSpec("/*");
-
-        ConstraintSecurityHandler securityHandler = new ConstraintSecurityHandler();
-        securityHandler.setAuthenticator(new BasicAuthenticator());
-        securityHandler.setRealmName("myrealm");
         securityHandler.addConstraintMapping(constraintMapping);
+
         securityHandler.setLoginService(loginService);
 
 

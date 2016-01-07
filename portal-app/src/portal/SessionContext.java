@@ -1,6 +1,11 @@
 package portal;
 
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.squonk.security.DefaultUserDetailsManager;
+import org.squonk.security.UserDetails;
+
 import javax.enterprise.context.SessionScoped;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 /**
@@ -9,17 +14,10 @@ import java.io.Serializable;
 @SessionScoped
 public class SessionContext implements Serializable {
 
-    private String loggedInUser;
+    private final DefaultUserDetailsManager defaultUserDetailsManager = new DefaultUserDetailsManager();
 
-    public String getLoggedInUser() {
-        return loggedInUser;
+    public UserDetails getLoggedInUserDetails() {
+        return defaultUserDetailsManager.getAuthenticatedUser((HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest());
     }
 
-    public boolean isLoggedInUser() {
-        return loggedInUser != null;
-    }
-
-    public void setLoggedInUser(String loggedInUser) {
-        this.loggedInUser = loggedInUser;
-    }
 }

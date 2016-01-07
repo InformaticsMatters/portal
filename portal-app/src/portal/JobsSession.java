@@ -30,7 +30,7 @@ public class JobsSession implements Serializable {
 
     public List<JobStatus> listJobStatuses() {
         try {
-            return jobClient.getJobStatuses(sessionContext.getLoggedInUser(), 0, null, null, null, null, null);
+            return jobClient.getJobStatuses(sessionContext.getLoggedInUserDetails().getUserid(), 0, null, null, null, null, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -38,7 +38,7 @@ public class JobsSession implements Serializable {
 
     public void submitJob(JobDefinition jobDefinition) {
         try {
-            jobClient.submitJob(sessionContext.getLoggedInUser(), jobDefinition);
+            jobClient.submitJob(sessionContext.getLoggedInUserDetails().getUserid(), jobDefinition);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

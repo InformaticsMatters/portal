@@ -32,7 +32,7 @@ public class ServicesSession implements Serializable {
 
     public List<ServiceDescriptor> listServiceDescriptors() {
         try {
-            serviceDescriptors = servicesClient.getServiceDefinitions(sessionContext.getLoggedInUser());
+            serviceDescriptors = servicesClient.getServiceDefinitions(sessionContext.getLoggedInUserDetails().getUserid());
         } catch (IOException e) {
             serviceDescriptors = new ArrayList<>();
             logger.error(null, e);

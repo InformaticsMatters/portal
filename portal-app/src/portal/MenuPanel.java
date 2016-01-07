@@ -8,10 +8,13 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import portal.notebook.NotebookCanvasPage;
 import portal.workflow.WorkflowPage;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class MenuPanel extends Panel {
 
@@ -71,16 +74,20 @@ public class MenuPanel extends Panel {
 
             @Override
             public void onClick() {
-                sessionContext.setLoggedInUser(null);
-                setResponsePage(getApplication().getHomePage());
+                HttpServletResponse response = (HttpServletResponse) RequestCycle.get().getResponse().getContainerResponse();
+                try {
+                    response.sendError(401);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
-        add(new Label("username", new PropertyModel<String>(this, "getUserName")));
+        add(new Label("username", new PropertyModel<String>(this, "getUserDisplayName")));
     }
 
-    public String getUserName() {
-        return sessionContext.getLoggedInUser();
+    public String getUserDisplayName() {
+        return sessionContext.getLoggedInUserDetails().getFirstName();
     }
 
     public void setLeftSideItemVisible(boolean value) {

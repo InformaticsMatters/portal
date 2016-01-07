@@ -5,8 +5,8 @@ import com.im.lac.dataset.client.DatasetClient;
 import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import portal.dataset.*;
 import portal.SessionContext;
+import portal.dataset.*;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -38,7 +38,7 @@ public class DatasetsSession implements Serializable {
     public List<IDatasetDescriptor> listDatasetDescriptors(DatasetFilterData datasetFilterData) {
         datasetMap = new HashMap<>();
         try {
-            Stream<DataItem> all = datasetClient.getAll(sessionContext.getLoggedInUser());
+            Stream<DataItem> all = datasetClient.getAll(sessionContext.getLoggedInUserDetails().getUserid());
             all.forEach(dataItem -> {
                 DatasetDescriptor datasetDescriptor = new DatasetDescriptor(dataItem);
 
@@ -74,7 +74,7 @@ public class DatasetsSession implements Serializable {
 
     public void createDataset(String name, InputStream content) {
         try {
-            datasetClient.create(sessionContext.getLoggedInUser(), name, content);
+            datasetClient.create(sessionContext.getLoggedInUserDetails().getUserid(), name, content);
         } catch (IOException e) {
             logger.error(null, e);
         }
@@ -83,7 +83,7 @@ public class DatasetsSession implements Serializable {
     public void deleteDataset(IDatasetDescriptor datasetDescriptor) {
         try {
             DatasetDescriptor dataset = (DatasetDescriptor) datasetDescriptor;
-            datasetClient.delete(sessionContext.getLoggedInUser(), dataset.getDataItem().getId());
+            datasetClient.delete(sessionContext.getLoggedInUserDetails().getUserid(), dataset.getDataItem().getId());
         } catch (IOException e) {
             logger.error(null, e);
         }
@@ -96,7 +96,7 @@ public class DatasetsSession implements Serializable {
     public void loadDatasetContents(IDatasetDescriptor datasetDescriptor) {
         try {
             DatasetDescriptor dataset = (DatasetDescriptor) datasetDescriptor;
-            Stream<MoleculeObject> objects = datasetClient.getContentsAsObjects(sessionContext.getLoggedInUser(), dataset.getDataItem(), MoleculeObject.class);
+            Stream<MoleculeObject> objects = datasetClient.getContentsAsObjects(sessionContext.getLoggedInUserDetails().getUserid(), dataset.getDataItem(), MoleculeObject.class);
             HashMap<UUID, MoleculeObject> datasetContents = new HashMap<>();
             objects.forEach(moleculeObject -> {
                 datasetContents.put(moleculeObject.getUUID(), moleculeObject);

@@ -15,7 +15,6 @@ public class ComponentInstantiationListener implements IComponentInstantiationLi
 
     @Override
     public void onInstantiation(Component component) {
-
     }
 
 }
