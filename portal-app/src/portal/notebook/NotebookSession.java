@@ -1,14 +1,20 @@
 package portal.notebook;
 
+import com.im.lac.services.ServiceDescriptor;
+import com.im.lac.services.client.ServicesClient;
 import com.im.lac.types.MoleculeObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squonk.notebook.api.CellType;
 import org.squonk.notebook.client.CellClient;
+import portal.SessionContext;
 import portal.dataset.*;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
@@ -17,19 +23,23 @@ import java.util.*;
 @Transactional
 public class NotebookSession implements Serializable {
 
+    private static final Logger logger = LoggerFactory.getLogger(NotebookSession.class);
     private final Map<Long, Map<UUID, MoleculeObject>> moleculeObjectMapMap = new HashMap<>();
     private final Map<Long, List<UUID>> uuidListMap = new HashMap<>();
     private final Map<Long, IDatasetDescriptor> datasetDescriptorMap = new HashMap<>();
     private long lastDatasetId = 0;
+    private NotebookModel currentNotebookModel;
+    private NotebookInfo currentNotebookInfo;
+    private List<CellType> cellTypeList;
+
     @Inject
     private NotebookService notebookService;
     @Inject
     private CellClient cellClient;
-    private NotebookModel currentNotebookModel;
-    private NotebookInfo currentNotebookInfo;
-
+    @Inject
+    private SessionContext sessionContext;
     public NotebookSession() {
-        moleculeObjectMapMap.put(0l, new HashMap<>());
+        moleculeObjectMapMap.put(0L, new HashMap<>());
     }
 
     public NotebookInfo preparePocNotebook() {
@@ -119,9 +129,11 @@ public class NotebookSession implements Serializable {
     }
 
     public List<CellType> listCellType() {
-        return cellClient.listCellType();
+        List<CellType> cellTypes = cellClient.listCellType();
+        addServiceCellTypes(cellTypes);
+        this.cellTypeList = cellTypes;
+        return cellTypes;
     }
-
 
     public List<UUID> listAllUuids(IDatasetDescriptor datasetDescriptor) {
         List<UUID> list = uuidListMap.get(datasetDescriptor.getId());
@@ -168,10 +180,7 @@ public class NotebookSession implements Serializable {
             }
         }
         datasetDescriptor.addRowDescriptor(rowDescriptor);
-
         datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
-
-
         return datasetDescriptor;
     }
 
@@ -248,8 +257,15 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public CellType findCellType(String dropDataId) {
-        return cellClient.retrieveCellType(dropDataId);
+    public CellType findCellType(String cellName) {
+        CellType result = null;
+        for (CellType cellType : cellTypeList) {
+            if (cellType.getName().equals(cellName)) {
+                result = cellType;
+                break;
+            }
+        }
+        return result;
     }
 
     public void writeVariableFileContents(VariableModel variableModel, InputStream inputStream) {
@@ -257,5 +273,33 @@ public class NotebookSession implements Serializable {
         Variable variable = notebookContents.findVariable(variableModel.getProducerCellModel().getName(), variableModel.getName());
         notebookService.storeStreamingContents(currentNotebookInfo.getId(), variable, inputStream);
     }
+
+
+    private void addServiceCellTypes(List<CellType> cellTypes) {
+        for (ServiceDescriptor serviceDescriptor : listServiceDescriptors()) {
+            cellTypes.add(buildCellTypeForServiceDescriptor(serviceDescriptor));
+        }
+    }
+
+    private List<ServiceDescriptor> listServiceDescriptors() {
+        ServicesClient servicesClient = new ServicesClient();
+        List<ServiceDescriptor> serviceDescriptors;
+        try {
+            serviceDescriptors = servicesClient.getServiceDefinitions(sessionContext.getLoggedInUserDetails().getUserid());
+        } catch (IOException e) {
+            serviceDescriptors = new ArrayList<>();
+            logger.error(null, e);
+        }
+        return serviceDescriptors;
+    }
+
+    private CellType buildCellTypeForServiceDescriptor(ServiceDescriptor serviceDescriptor) {
+        CellType result = new CellType();
+        result.setExecutable(true);
+        result.setName(serviceDescriptor.getName());
+        result.setDescription(serviceDescriptor.getDescription());
+        return result;
+    }
+
 }
 

@@ -21,16 +21,16 @@ import java.util.Map;
 /**
  * @author simetrias
  */
-public class ServiceCanvasItemPopupPanel extends Panel {
+public class WFServiceCanvasItemPopupPanel extends Panel {
 
-    private final ServiceCanvasItemData serviceCanvasItemData;
+    private final WFServiceCanvasItemData serviceCanvasItemData;
     private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
     private Form form;
     private Callbacks callbacks;
     private String outputFileName;
     private Boolean createOutputFile = true;
 
-    public ServiceCanvasItemPopupPanel(String id, ServiceCanvasItemData serviceCanvasItemData, Callbacks callbacks) {
+    public WFServiceCanvasItemPopupPanel(String id, WFServiceCanvasItemData serviceCanvasItemData, Callbacks callbacks) {
         super(id);
         this.callbacks = callbacks;
         this.serviceCanvasItemData = serviceCanvasItemData;

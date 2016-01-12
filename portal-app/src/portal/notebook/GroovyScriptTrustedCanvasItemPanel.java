@@ -26,7 +26,7 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addForm() {
-        form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
+        form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
         form.setOutputMarkupId(true);
         TextArea<String> scriptTextArea = new TextArea<String>("script");
         form.add(scriptTextArea);

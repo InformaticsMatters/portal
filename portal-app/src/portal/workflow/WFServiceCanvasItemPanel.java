@@ -12,16 +12,16 @@ import java.io.Serializable;
 /**
  * @author simetrias
  */
-public class ServiceCanvasItemPanel extends Panel {
+public class WFServiceCanvasItemPanel extends Panel {
 
-    private final ServiceCanvasItemData data;
+    private final WFServiceCanvasItemData data;
     private final AjaxLink openPopupLink;
-    private ServiceCanvasItemPopupPanel popupPanel;
+    private WFServiceCanvasItemPopupPanel popupPanel;
     private Callbacks callbacks;
     @Inject
     private PopupContainerProvider popupContainerProvider;
 
-    public ServiceCanvasItemPanel(String id, ServiceCanvasItemData data, Callbacks callbacks) {
+    public WFServiceCanvasItemPanel(String id, WFServiceCanvasItemData data, Callbacks callbacks) {
         super(id);
         this.callbacks = callbacks;
         this.data = data;
@@ -57,14 +57,14 @@ public class ServiceCanvasItemPanel extends Panel {
     }
 
     private void createPopupPanel() {
-        popupPanel = new ServiceCanvasItemPopupPanel("content", data, () -> {
+        popupPanel = new WFServiceCanvasItemPopupPanel("content", data, () -> {
             callbacks.onServiceCanvasItemSave();
             String js = "$('#" + openPopupLink.getMarkupId() + "').popup({simetriasPatch: true, popup: $('#" + popupPanel.getMarkupId() + "').find('.ui.serviceCanvasItemPopup.popup'), on : 'click'}).popup('toggle')";
             getRequestCycle().find(AjaxRequestTarget.class).appendJavaScript(js);
         });
     }
 
-    public ServiceCanvasItemData getData() {
+    public WFServiceCanvasItemData getData() {
         return data;
     }
 

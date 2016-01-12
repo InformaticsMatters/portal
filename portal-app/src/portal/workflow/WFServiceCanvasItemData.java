@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author simetrias
  */
-public class ServiceCanvasItemData extends AbstractCanvasItemData {
+public class WFServiceCanvasItemData extends AbstractCanvasItemData {
 
     private ServiceDescriptor serviceDescriptor;
     private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;

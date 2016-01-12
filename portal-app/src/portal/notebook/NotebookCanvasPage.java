@@ -279,7 +279,7 @@ public class NotebookCanvasPage extends WebPage {
 
         List<CellModel> cellModelList = Arrays.asList(notebookModel.getCellModels());
         String markupId = CANVAS_ITEM_PREFIX + cellModel.getId();
-        ListItem<CellModel> listItem = new ListItem<CellModel>(markupId, cellModelList.size());
+        ListItem<CellModel> listItem = new ListItem<>(markupId, cellModelList.size());
         listItem.setMarkupId(markupId);
         listItem.setOutputMarkupId(true);
         listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
@@ -332,6 +332,8 @@ public class NotebookCanvasPage extends WebPage {
             return new TransformValuesCanvasItemPanel("item", cellModel);
         } else if ("TrustedGroovyDatasetScript".equals(cellType.getName())) {
             return new GroovyScriptTrustedCanvasItemPanel("item", cellModel);
+        } else if ("RDKit Lipinski".equals(cellType.getName())) {
+            return new ServiceCanvasItemPanel("item", cellModel);
         } else {
             logger.warn("cell type " + cellType.getName() + " not recognised");
             return null;

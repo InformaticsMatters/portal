@@ -60,11 +60,11 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addForm() {
-        form = new Form<ModelObject>("form");
+        form = new Form<>("form");
         ModelObject modelObject = new ModelObject();
         modelObject.load();
         TextArea<String> codeArea = new TextArea<String>("code");
-        form.setModel(new CompoundPropertyModel<ModelObject>(modelObject));
+        form.setModel(new CompoundPropertyModel<>(modelObject));
         form.add(codeArea);
         add(form);
     }

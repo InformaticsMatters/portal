@@ -221,11 +221,11 @@ public class WorkflowPage extends WebPage {
         Panel canvasItemPanel = null;
 
         if (ServicesPanel.DROP_DATA_TYPE_VALUE.equals(dropDataType)) {
-            ServiceCanvasItemData serviceCanvasItemData = new ServiceCanvasItemData();
+            WFServiceCanvasItemData serviceCanvasItemData = new WFServiceCanvasItemData();
             serviceCanvasItemData.setServiceDescriptor(servicesSession.findServiceDescriptorById(dropDataId));
             serviceCanvasItemData.setPositionX(x);
             serviceCanvasItemData.setPositionY(y);
-            ServiceCanvasItemPanel serviceCanvasItemPanel = createServiceCanvasItemPanel(serviceCanvasItemData);
+            WFServiceCanvasItemPanel serviceCanvasItemPanel = createServiceCanvasItemPanel(serviceCanvasItemData);
             canvasItemDataList.add(serviceCanvasItemData);
             data = serviceCanvasItemData;
             canvasItemPanel = serviceCanvasItemPanel;
@@ -264,8 +264,8 @@ public class WorkflowPage extends WebPage {
         return new DatasetCanvasItemPanel("item", datasetCanvasItemData, () -> removeCanvasItem(datasetCanvasItemData));
     }
 
-    private ServiceCanvasItemPanel createServiceCanvasItemPanel(final ServiceCanvasItemData serviceCanvasItemData) {
-        return new ServiceCanvasItemPanel("item", serviceCanvasItemData, new ServiceCanvasItemPanel.Callbacks() {
+    private WFServiceCanvasItemPanel createServiceCanvasItemPanel(final WFServiceCanvasItemData serviceCanvasItemData) {
+        return new WFServiceCanvasItemPanel("item", serviceCanvasItemData, new WFServiceCanvasItemPanel.Callbacks() {
 
             @Override
             public void onServiceCanvasItemDelete() {
@@ -382,7 +382,7 @@ public class WorkflowPage extends WebPage {
                 String targetId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
 
                 DatasetCanvasItemData sourceData = null;
-                ServiceCanvasItemData targetData = null;
+                WFServiceCanvasItemData targetData = null;
                 for (Component li : canvasItemRepeater) {
                     ListItem item = (ListItem) li;
                     Component panel = item.get(0);
@@ -395,8 +395,8 @@ public class WorkflowPage extends WebPage {
                     }
 
                     if (item.getMarkupId().equals(targetId)) {
-                        if (panel instanceof ServiceCanvasItemPanel) {
-                            ServiceCanvasItemPanel datasetCanvasItemPanel = (ServiceCanvasItemPanel) panel;
+                        if (panel instanceof WFServiceCanvasItemPanel) {
+                            WFServiceCanvasItemPanel datasetCanvasItemPanel = (WFServiceCanvasItemPanel) panel;
                             targetData = datasetCanvasItemPanel.getData();
                         }
                     }
@@ -423,7 +423,7 @@ public class WorkflowPage extends WebPage {
         add(onCanvasNewConnectionBehavior);
     }
 
-    private void postJob(DatasetCanvasItemData sourceData, ServiceCanvasItemData targetData) {
+    private void postJob(DatasetCanvasItemData sourceData, WFServiceCanvasItemData targetData) {
         ServiceDescriptor service = targetData.getServiceDescriptor();
         IDatasetDescriptor dataset = sourceData.getDatasetDescriptor();
         Class<? extends JobDefinition> jobDefinitionClass = service.getAccessModes()[0].getJobType();
