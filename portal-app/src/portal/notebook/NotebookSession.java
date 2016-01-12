@@ -132,8 +132,7 @@ public class NotebookSession implements Serializable {
     }
 
     public List<CellType> listCellType() {
-        // List<CellType> cellTypes = cellClient.listCellType();
-        List<CellType> cellTypes = new ArrayList<>();
+        List<CellType> cellTypes = cellClient.listCellType();
         addServiceCellTypes(cellTypes);
         this.cellTypeList = cellTypes;
         return cellTypes;
