@@ -238,3 +238,11 @@ div.ui-resizable-handle.ui-resizable-s {
 .icon.grey.remove {
     color: #777!important;
 }
+
+.notebook-canvas-item-content > .ui.form.content > ul {
+    padding: 0;
+}
+
+.sketcher-thumb {
+    width: 215px;
+}
