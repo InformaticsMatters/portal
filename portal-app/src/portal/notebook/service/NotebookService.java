@@ -19,6 +19,7 @@ import java.util.zip.GZIPInputStream;
 
 @RequestScoped
 public class NotebookService {
+
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
     private EntityManager entityManager;

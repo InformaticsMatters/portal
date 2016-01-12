@@ -1,9 +1,9 @@
 package portal.notebook;
 
 import org.apache.wicket.markup.html.form.Form;
-import portal.PopupContainerProvider;
+import org.squonk.notebook.api.OptionDefinition;
 
-import javax.inject.Inject;
+import java.util.List;
 
 /**
  * @author simetrias
@@ -11,8 +11,6 @@ import javax.inject.Inject;
 public class ServiceCanvasItemPanel extends CanvasItemPanel {
 
     private Form form;
-    @Inject
-    private PopupContainerProvider popupContainerProvider;
 
     public ServiceCanvasItemPanel(String id, CellModel cellModel) {
         super(id, cellModel);
@@ -22,6 +20,12 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addForm() {
+        List<OptionDefinition> options = getCellModel().getCellType().getOptionDefinitionList();
+
+        for (OptionDefinition optionDefinition : options) {
+            System.out.println("Option definition: " + optionDefinition.getDisplayName());
+        }
+
         form = new Form("form");
         add(form);
     }

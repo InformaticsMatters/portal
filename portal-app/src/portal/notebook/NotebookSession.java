@@ -1,11 +1,14 @@
 package portal.notebook;
 
 import com.im.lac.services.ServiceDescriptor;
+import com.im.lac.services.ServicePropertyDescriptor;
 import com.im.lac.services.client.ServicesClient;
 import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.notebook.api.CellType;
+import org.squonk.notebook.api.OptionDefinition;
+import org.squonk.notebook.api.OptionType;
 import org.squonk.notebook.client.CellClient;
 import portal.SessionContext;
 import portal.dataset.*;
@@ -129,7 +132,8 @@ public class NotebookSession implements Serializable {
     }
 
     public List<CellType> listCellType() {
-        List<CellType> cellTypes = cellClient.listCellType();
+        // List<CellType> cellTypes = cellClient.listCellType();
+        List<CellType> cellTypes = new ArrayList<>();
         addServiceCellTypes(cellTypes);
         this.cellTypeList = cellTypes;
         return cellTypes;
@@ -298,6 +302,26 @@ public class NotebookSession implements Serializable {
         result.setExecutable(true);
         result.setName(serviceDescriptor.getName());
         result.setDescription(serviceDescriptor.getDescription());
+
+        ServicePropertyDescriptor[] properties = serviceDescriptor.getAccessModes()[0].getParameters();
+        if (properties != null) {
+
+            System.out.println(properties.length + " properties found for service " + serviceDescriptor.getName());
+
+            for (ServicePropertyDescriptor spd : properties) {
+
+                System.out.println("property type: " + spd.getType());
+
+                if (spd.getType().equals(ServicePropertyDescriptor.Type.STRING)) {
+                    OptionDefinition<String> fieldNameOptionDefinition = new OptionDefinition<>();
+                    fieldNameOptionDefinition.setName("missing.property.name");
+                    fieldNameOptionDefinition.setDisplayName(spd.getLabel());
+                    fieldNameOptionDefinition.setOptionType(OptionType.SIMPLE);
+                    result.getOptionDefinitionList().add(fieldNameOptionDefinition);
+                }
+            }
+        }
+
         return result;
     }
 

@@ -332,11 +332,9 @@ public class NotebookCanvasPage extends WebPage {
             return new TransformValuesCanvasItemPanel("item", cellModel);
         } else if ("TrustedGroovyDatasetScript".equals(cellType.getName())) {
             return new GroovyScriptTrustedCanvasItemPanel("item", cellModel);
-        } else if ("RDKit Lipinski".equals(cellType.getName())) {
-            return new ServiceCanvasItemPanel("item", cellModel);
         } else {
             logger.warn("cell type " + cellType.getName() + " not recognised");
-            return null;
+            return new ServiceCanvasItemPanel("item", cellModel);
         }
     }
 

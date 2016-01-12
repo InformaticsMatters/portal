@@ -1,6 +1,5 @@
 package portal.notebook.service;
 
-
 import org.squonk.notebook.api.BindingDefinition;
 import org.squonk.notebook.api.CellType;
 import org.squonk.notebook.api.OptionDefinition;
@@ -13,8 +12,14 @@ import java.util.List;
 import java.util.Set;
 
 public class NotebookContents implements Serializable {
-    private Long lastCellId;
     private final List<Cell> cellList = new ArrayList<>();
+    private Long lastCellId;
+
+    public static NotebookContents fromBytes(byte[] bytes) throws Exception {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+        return (NotebookContents) objectInputStream.readObject();
+    }
 
     public List<Cell> getCellList() {
         return cellList;
@@ -34,9 +39,9 @@ public class NotebookContents implements Serializable {
         cell.setName(calculateCellName(cell));
         cellList.add(cell);
         if (lastCellId == null) {
-            cell.setId(1l);
+            cell.setId(1L);
         } else {
-            cell.setId(lastCellId + 1l);
+            cell.setId(lastCellId + 1L);
         }
         lastCellId = cell.getId();
         return cell;
@@ -58,12 +63,6 @@ public class NotebookContents implements Serializable {
             newName = cell.getCellType().getName() + suffix;
         }
         return newName;
-    }
-
-    public static NotebookContents fromBytes(byte[] bytes) throws Exception {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-        return (NotebookContents)objectInputStream.readObject();
     }
 
     public byte[] toBytes() throws Exception {

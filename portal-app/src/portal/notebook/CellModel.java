@@ -11,11 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CellModel implements Serializable {
+
     private final Cell cell;
-    private NotebookModel notebookModel;
     private final Map<String, VariableModel> variableModelMap = new HashMap<>();
     private final Map<String, BindingModel> bindingModelMap = new HashMap<>();
     private final Map<String, OptionModel> optionModelMap = new HashMap<>();
+    private NotebookModel notebookModel;
 
     public CellModel(Cell cell, NotebookModel notebookModel) {
         this.cell = cell;
@@ -36,16 +37,16 @@ public class CellModel implements Serializable {
         return cell.getPositionLeft();
     }
 
+    public void setPositionLeft(int positionLeft) {
+        cell.setPositionLeft(positionLeft);
+    }
+
     public int getPositionTop() {
         return cell.getPositionTop();
     }
 
     public void setPositionTop(int positionTop) {
         cell.setPositionTop(positionTop);
-    }
-
-    public void setPositionLeft(int positionLeft) {
-        cell.setPositionLeft(positionLeft);
     }
 
     private void loadOutputVariables() {
@@ -60,7 +61,6 @@ public class CellModel implements Serializable {
             BindingModel bindingModel = new BindingModel(binding, notebookModel);
             bindingModelMap.put(binding.getName(), bindingModel);
         }
-
     }
 
     private void loadOptions() {
@@ -69,7 +69,6 @@ public class CellModel implements Serializable {
             optionModelMap.put(option.getName(), optionModel);
         }
     }
-
 
     public VariableModel findVariableModel(String name) {
         return variableModelMap.get(name);

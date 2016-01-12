@@ -6,17 +6,16 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Cell implements Serializable {
-    private Long id;
-    private String name;
-    private CellType cellType;
+
     private final Map<String, Binding> bindingMap = new HashMap<>();
     private final Map<String, Variable> outputVariableMap = new HashMap<>();
     private final Map<String, Option> optionMap = new HashMap<>();
+    private Long id;
+    private String name;
+    private CellType cellType;
     private int positionLeft;
     private int positionTop;
-
 
     public String getName() {
         return name;
