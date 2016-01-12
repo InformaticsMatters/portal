@@ -324,6 +324,5 @@ public class NotebookSession implements Serializable {
 
         return result;
     }
-
 }
 
