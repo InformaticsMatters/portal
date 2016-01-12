@@ -63,6 +63,13 @@ public class NotebookListPanel extends Panel {
                     }
                 };
                 listItem.add(editLink);
+                AjaxLink shareLink = new AjaxLink("share") {
+
+                    @Override
+                    public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                    }
+                };
+                listItem.add(shareLink);
                 AjaxLink removeLink = new AjaxLink("remove") {
 
                     @Override
