@@ -60,6 +60,8 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
         OptionModel optionModel = new OptionModel(optionDefinition);
         if (OptionType.SIMPLE == optionDefinition.getOptionType()) {
             listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel));
+        } else if (OptionType.PICKLIST == optionDefinition.getOptionType()) {
+            listItem.add(new StructureOptionEditorPanel("editor", "canvasMarvinEditor", optionDefinition, optionModel));
         }
     }
 
@@ -85,7 +87,4 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
         public void detach() {
         }
     }
-
-
-
 }

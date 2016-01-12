@@ -308,16 +308,22 @@ public class NotebookSession implements Serializable {
 
             System.out.println(properties.length + " properties found for service " + serviceDescriptor.getName());
 
-            for (ServicePropertyDescriptor spd : properties) {
+            for (ServicePropertyDescriptor propertyDescriptor : properties) {
 
-                System.out.println("property type: " + spd.getType());
+                System.out.println("property type: " + propertyDescriptor.getType());
 
-                if (spd.getType().equals(ServicePropertyDescriptor.Type.STRING)) {
-                    OptionDefinition<String> fieldNameOptionDefinition = new OptionDefinition<>();
-                    fieldNameOptionDefinition.setName("missing.property.name");
-                    fieldNameOptionDefinition.setDisplayName(spd.getLabel());
-                    fieldNameOptionDefinition.setOptionType(OptionType.SIMPLE);
-                    result.getOptionDefinitionList().add(fieldNameOptionDefinition);
+                if (propertyDescriptor.getType().equals(ServicePropertyDescriptor.Type.STRING)) {
+                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
+                    optionDefinition.setName("missing.property.name");
+                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
+                    optionDefinition.setOptionType(OptionType.SIMPLE);
+                    result.getOptionDefinitionList().add(optionDefinition);
+                } else if (propertyDescriptor.getType().equals(ServicePropertyDescriptor.Type.STRUCTURE)) {
+                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
+                    optionDefinition.setName("missing.property.name");
+                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
+                    optionDefinition.setOptionType(OptionType.PICKLIST);
+                    result.getOptionDefinitionList().add(optionDefinition);
                 }
             }
         }
