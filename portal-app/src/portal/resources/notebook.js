@@ -137,10 +137,13 @@ function makeCanvasItemPlumbDraggable(selector) {
 }
 
 function makeCanvasItemResizable(id) {
-    $("#" + id).find(".tableCell").resizable({
+    $("#" + id).resizable({
+        minHeight: 270,
+        minWidth: 325,
         resize : function(event, ui) {
             jsPlumb.repaintEverything();
             updateTableDisplayHeight(id);
+            $('#' + id).find('.tableCell').css({"width":"auto"});
         },
 
         stop: function(event, ui) {
@@ -152,7 +155,7 @@ function makeCanvasItemResizable(id) {
 }
 
 function updateTableDisplayHeight(id) {
-    var $tableCell = $('#' + id).find(".tableCell");
+    var $tableCell = $('#' + id);
     var containerh = $tableCell.outerHeight();
 
     var $grid = $tableCell.find(".imxt-vista .imxt-body-container1");
