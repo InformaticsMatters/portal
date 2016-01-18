@@ -4,6 +4,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -365,7 +366,14 @@ public class NotebookCanvasPage extends WebPage {
                         CallbackParameter.explicit(POSITION_LEFT),
                         CallbackParameter.explicit(POSITION_TOP));
                 callBackScript = "onNotebookCanvasItemDragged=" + callBackScript + ";";
+                logger.info("Dragged callback script: " + callBackScript);
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
+            }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setWicketAjaxResponse(false);
             }
         };
         add(onCanvasItemDragStopBehavior);
@@ -411,7 +419,7 @@ public class NotebookCanvasPage extends WebPage {
                 notebookSession.storeCurrentNotebook();
                 String js = "updateTableDisplayHeight('" + canvasItemRepeater.get(i).getMarkupId() + "');";
                 logger.info(js);
-                target.appendJavaScript(js);
+                // target.appendJavaScript(js);
             }
 
             @Override
@@ -424,6 +432,12 @@ public class NotebookCanvasPage extends WebPage {
                 callBackScript = "onNotebookCanvasItemResized=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setWicketAjaxResponse(false);
+            }
         };
         add(onNotebookCanvasItemResizedBehavior);
     }
@@ -431,7 +445,6 @@ public class NotebookCanvasPage extends WebPage {
     private void onNewCanvasConnection() {
         String sourceMarkupId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
         String targetMarkupId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
-        System.out.println(sourceMarkupId + ", " + targetMarkupId);
 
         CellModel sourceCellModel = null;
         CellModel targetCellModel = null;

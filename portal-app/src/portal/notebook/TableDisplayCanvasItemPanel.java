@@ -35,7 +35,6 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("makeCanvasItemResizable('" + getMarkupId() + "')"));
-        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("alert('rendering')"));
     }
 
     private void addForm() {
