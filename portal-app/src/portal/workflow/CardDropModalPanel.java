@@ -1,7 +1,6 @@
 package portal.workflow;
 
 import com.im.lac.services.ServiceDescriptor;
-import com.im.lac.services.ServicePropertyDescriptor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -11,6 +10,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.squonk.options.OptionDescriptor;
+import org.squonk.options.types.AbstractStructure;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import java.io.Serializable;
@@ -25,7 +26,7 @@ public class CardDropModalPanel extends SemanticModalPanel {
 
     private final ServiceDescriptor serviceDescriptor;
     private Callbacks callbacks;
-    private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
+    private Map<OptionDescriptor, String> servicePropertyValueMap;
     private Form form;
     private String outputFileName;
     private Boolean createOutputFile = true;
@@ -64,35 +65,35 @@ public class CardDropModalPanel extends SemanticModalPanel {
     }
 
     private void addServiceProperties() {
-        ServicePropertyDescriptor[] parameters = serviceDescriptor.getAccessModes()[0].getParameters();
+        OptionDescriptor[] parameters = serviceDescriptor.getAccessModes()[0].getParameters();
         createServicePropertyValueMap(parameters);
-        ArrayList<ServicePropertyDescriptor> servicePropertyDescriptorList = new ArrayList<>(servicePropertyValueMap.keySet());
+        ArrayList<OptionDescriptor> servicePropertyDescriptorList = new ArrayList<>(servicePropertyValueMap.keySet());
 
-        ListView<ServicePropertyDescriptor> listView = new ListView<ServicePropertyDescriptor>("property", servicePropertyDescriptorList) {
+        ListView<OptionDescriptor> listView = new ListView<OptionDescriptor>("property", servicePropertyDescriptorList) {
 
             @Override
-            protected void populateItem(ListItem<ServicePropertyDescriptor> listItem) {
+            protected void populateItem(ListItem<OptionDescriptor> listItem) {
                 addServiceProperty(listItem);
             }
         };
         form.add(listView);
     }
 
-    private void createServicePropertyValueMap(ServicePropertyDescriptor[] descriptors) {
+    private void createServicePropertyValueMap(OptionDescriptor[] descriptors) {
         servicePropertyValueMap = new HashMap<>();
         if (descriptors != null && descriptors.length > 0) {
-            for (ServicePropertyDescriptor descriptor : descriptors) {
+            for (OptionDescriptor descriptor : descriptors) {
                 servicePropertyValueMap.put(descriptor, null);
             }
         }
     }
 
-    private void addServiceProperty(ListItem<ServicePropertyDescriptor> listItem) {
-        ServicePropertyDescriptor servicePropertyDescriptor = listItem.getModelObject();
+    private void addServiceProperty(ListItem<OptionDescriptor> listItem) {
+        OptionDescriptor servicePropertyDescriptor = listItem.getModelObject();
         ServicePropertyModel servicePropertyModel = new ServicePropertyModel(servicePropertyDescriptor);
-        if (ServicePropertyDescriptor.Type.STRING == servicePropertyDescriptor.getType()) {
+        if (servicePropertyDescriptor.getTypeDescriptor().getType() == String.class) {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
-        } else if (ServicePropertyDescriptor.Type.STRUCTURE == servicePropertyDescriptor.getType()) {
+        } else if (servicePropertyDescriptor.getTypeDescriptor().getType().isAssignableFrom(AbstractStructure.class) ) {
             listItem.add(new StructurePropertyEditorPanel("editor", "cardDropMarvinEditor", servicePropertyDescriptor, servicePropertyModel));
         } else {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
@@ -107,9 +108,9 @@ public class CardDropModalPanel extends SemanticModalPanel {
 
     private class ServicePropertyModel implements IModel<String> {
 
-        private final ServicePropertyDescriptor servicePropertyDescriptor;
+        private final OptionDescriptor servicePropertyDescriptor;
 
-        public ServicePropertyModel(ServicePropertyDescriptor servicePropertyDescriptor) {
+        public ServicePropertyModel(OptionDescriptor servicePropertyDescriptor) {
             this.servicePropertyDescriptor = servicePropertyDescriptor;
         }
 

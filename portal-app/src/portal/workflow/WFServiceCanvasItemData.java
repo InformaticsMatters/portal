@@ -1,7 +1,7 @@
 package portal.workflow;
 
-import com.im.lac.services.ServiceDescriptor;
-import com.im.lac.services.ServicePropertyDescriptor;
+import com.im.lac.services.ServiceDescriptor;;
+import org.squonk.options.OptionDescriptor;
 
 import java.util.Map;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 public class WFServiceCanvasItemData extends AbstractCanvasItemData {
 
     private ServiceDescriptor serviceDescriptor;
-    private Map<ServicePropertyDescriptor, String> servicePropertyValueMap;
+    private Map<OptionDescriptor, String> servicePropertyValueMap;
     private Boolean createOutputFile;
     private String outputFileName;
 
@@ -23,11 +23,11 @@ public class WFServiceCanvasItemData extends AbstractCanvasItemData {
         this.serviceDescriptor = serviceDescriptor;
     }
 
-    public Map<ServicePropertyDescriptor, String> getServicePropertyValueMap() {
+    public Map<OptionDescriptor, String> getServicePropertyValueMap() {
         return servicePropertyValueMap;
     }
 
-    public void setServicePropertyValueMap(Map<ServicePropertyDescriptor, String> servicePropertyValueMap) {
+    public void setServicePropertyValueMap(Map<OptionDescriptor, String> servicePropertyValueMap) {
         this.servicePropertyValueMap = servicePropertyValueMap;
     }
 

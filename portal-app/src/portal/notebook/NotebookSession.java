@@ -1,17 +1,16 @@
 package portal.notebook;
 
 import com.im.lac.services.ServiceDescriptor;
-import com.im.lac.services.ServicePropertyDescriptor;
 import com.im.lac.services.client.ServicesClient;
 import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.notebook.api.CellType;
-import org.squonk.notebook.api.OptionDefinition;
-import org.squonk.notebook.api.OptionType;
 import org.squonk.notebook.client.CellClient;
+import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
 import portal.dataset.*;
+import portal.notebook.execution.service.CellRegistry;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
 
@@ -41,6 +40,9 @@ public class NotebookSession implements Serializable {
     private CellClient cellClient;
     @Inject
     private SessionContext sessionContext;
+    @Inject
+    private CellRegistry cellRegistry;
+
     public NotebookSession() {
         moleculeObjectMapMap.put(0L, new HashMap<>());
     }
@@ -132,8 +134,15 @@ public class NotebookSession implements Serializable {
     }
 
     public List<CellType> listCellType() {
-        List<CellType> cellTypes = cellClient.listCellType();
-        addServiceCellTypes(cellTypes);
+//        List<CellType> cellTypes = cellClient.listCellType();
+//        addServiceCellTypes(cellTypes);
+//        this.cellTypeList = cellTypes;
+//        return cellTypes;
+
+        List<CellType> cellTypes = new ArrayList<>();
+        cellTypes.addAll(cellRegistry.listCellType());
+        // TODO - better to add these to the registry in the first place?
+        //addServiceCellTypes(cellTypes);
         this.cellTypeList = cellTypes;
         return cellTypes;
     }
@@ -302,28 +311,30 @@ public class NotebookSession implements Serializable {
         result.setName(serviceDescriptor.getName());
         result.setDescription(serviceDescriptor.getDescription());
 
-        ServicePropertyDescriptor[] properties = serviceDescriptor.getAccessModes()[0].getParameters();
+        OptionDescriptor[] properties = serviceDescriptor.getAccessModes()[0].getParameters();
         if (properties != null) {
 
             System.out.println(properties.length + " properties found for service " + serviceDescriptor.getName());
 
-            for (ServicePropertyDescriptor propertyDescriptor : properties) {
+            for (OptionDescriptor propertyDescriptor : properties) {
 
-                System.out.println("property type: " + propertyDescriptor.getType());
+                System.out.println("property type: " + propertyDescriptor.getTypeDescriptor().getType());
+                result.getOptionDefinitionList().add(propertyDescriptor);
 
-                if (propertyDescriptor.getType().equals(ServicePropertyDescriptor.Type.STRING)) {
-                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
-                    optionDefinition.setName("missing.property.name");
-                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
-                    optionDefinition.setOptionType(OptionType.SIMPLE);
-                    result.getOptionDefinitionList().add(optionDefinition);
-                } else if (propertyDescriptor.getType().equals(ServicePropertyDescriptor.Type.STRUCTURE)) {
-                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
-                    optionDefinition.setName("missing.property.name");
-                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
-                    optionDefinition.setOptionType(OptionType.PICKLIST);
-                    result.getOptionDefinitionList().add(optionDefinition);
-                }
+//                if (propertyDescriptor.getTypeDescriptor().getType() == String.class) {
+//                    OptionDescriptor optionDescriptor = new OptionDescriptor()
+//                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
+//                    optionDefinition.setName("missing.property.name");
+//                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
+//                    optionDefinition.setOptionType(OptionType.SIMPLE);
+//                    result.getOptionDefinitionList().add(optionDefinition);
+//                } else if (propertyDescriptor.getType().equals(ServicePropertyDescriptor.Type.STRUCTURE)) {
+//                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
+//                    optionDefinition.setName("missing.property.name");
+//                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
+//                    optionDefinition.setOptionType(OptionType.PICKLIST);
+//                    result.getOptionDefinitionList().add(optionDefinition);
+//                }
             }
         }
 

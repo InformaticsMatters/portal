@@ -5,7 +5,6 @@ import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
-import com.im.lac.services.ServicePropertyDescriptor;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -14,6 +13,7 @@ import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.squonk.options.OptionDescriptor;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 
 import java.awt.*;
@@ -29,14 +29,14 @@ public class StructurePropertyEditorPanel extends Panel {
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
 
-    public StructurePropertyEditorPanel(String id, String uniqueMarvinName, ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
+    public StructurePropertyEditorPanel(String id, String uniqueMarvinName, OptionDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         super(id);
         this.uniqueMarvinName = uniqueMarvinName;
         this.servicePropertyModel = servicePropertyModel;
         addComponents(servicePropertyDescriptor, servicePropertyModel);
     }
 
-    private void addComponents(ServicePropertyDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
+    private void addComponents(OptionDescriptor servicePropertyDescriptor, IModel<String> servicePropertyModel) {
         add(new Label("label", servicePropertyDescriptor.getLabel()));
 
 

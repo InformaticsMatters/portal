@@ -1,11 +1,13 @@
 package toolkit.services;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.security.UserDetailsManager;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.MultivaluedMap;
@@ -22,6 +24,7 @@ public abstract class AbstractServiceClient {
     private static final Logger logger = LoggerFactory.getLogger(AbstractServiceClient.class.getName());
     @Inject
     private ServiceContext serviceContext;
+
     private Client client;
 
     protected WebResource.Builder newResourceBuilder(String context, MultivaluedMap<String, String> queryParams) {
@@ -43,6 +46,19 @@ public abstract class AbstractServiceClient {
             prepareClient();
         }
         WebResource resource = client.resource(uri);
+
+        /* check this - sets the authorization header that will be passed through to other ws requests
+
+        UserDetailsManager userDetailsManager = ...; // Injected?
+        HttpServletRequest request = ...; // where does this come from?
+        Map<String,String> headers = userDetailsManager.getSecurityHeaders(request);
+        for (Map.Entry<String,String> e : headers.entrySet()) {
+            resource.header(e.getKey(), e.getValue());
+        }
+
+        end check this */
+
+
         return serviceContext.copyContextToHeaders(resource);
     }
 

@@ -1,5 +1,7 @@
 package portal.notebook.execution.service;
 
+import org.squonk.execution.steps.StepDefinition;
+import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.*;
 import org.squonk.notebook.client.CallbackClient;
 import org.squonk.notebook.client.CallbackContext;
@@ -10,34 +12,30 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @ApplicationScoped
-@Path("cell")
-public class ExampleCellService {
-    private static final List<CellType> CELL_TYPE_LIST = createDefinitions();
+public class CellRegistry {
+    private final Map<String,CellType> CELL_TYPES = new LinkedHashMap<>();
     public static final String OPTION_FILE_TYPE = "csvFormatType";
     public static final String OPTION_FIRST_LINE_IS_HEADER = "firstLineIsHeader";
-    @Inject
-    private QndCellExecutorProvider qndCellExecutorProvider;
-    @Inject
-    private CallbackClient callbackClient;
-    @Inject
-    private CallbackContext callbackContext;
 
-    private static List<CellType> createDefinitions() {
-        List<CellType> list = new ArrayList<>();
-        list.add(createChemblActivitiesFetcherCellType());
-        list.add(createTableDisplayCellType());
-        list.add(createSdfUploaderCellType());
-        list.add(createCsvUploaderCellType());
-        list.add(createDatasetMergerCellType());
-        list.add(createConvertBasicToMoleculeObjectCellType());
-        list.add(createValueTransformerCellType());
-        list.add(createGroovyScriptTrustedCellType());
 
-        return list;
+    public CellRegistry() {
+
+        registerCell(createChemblActivitiesFetcherCellType());
+        registerCell(createTableDisplayCellType());
+        registerCell(createSdfUploaderCellType());
+        registerCell(createCsvUploaderCellType());
+        registerCell(createDatasetMergerCellType());
+        registerCell(createConvertBasicToMoleculeObjectCellType());
+        registerCell(createValueTransformerCellType());
+        registerCell(createGroovyScriptTrustedCellType());
+
+    }
+
+    public void registerCell(CellType cell) {
+        CELL_TYPES.put(cell.getName(), cell);
     }
 
     private static CellType createDatasetMergerCellType() {
@@ -136,54 +134,14 @@ public class ExampleCellService {
         cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, "assayId", "Assay ID", "ChEBML Asssay ID"));
         cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, "prefix", "Prefix", "Prefix for result fields"));
         cellType.setExecutable(Boolean.TRUE);
+
+//        StepDefinition step1 = new  StepDefinition(StepDefinitionConstants.STEP_CHEMBL_ACTIVITIES_FETCHER)
+//                .withOutputVariableMapping()
+//                .withOption()
+
         return cellType;
     }
 
-//    private static CellType createPropertyCalculateCellType() {
-//        CellType cellType = new CellType();
-//        cellType.setName("PropertyCalculate");
-//        cellType.setDescription("Property calc.");
-//        cellType.setExecutable(Boolean.TRUE);
-//        VariableDefinition variableDefinition = new VariableDefinition();
-//        variableDefinition.setName("outputFile");
-//        variableDefinition.setDisplayName("Output file");
-//        variableDefinition.setVariableType(VariableType.FILE);
-//        cellType.getOutputVariableDefinitionList().add(variableDefinition);
-//        BindingDefinition bindingDefinition = new BindingDefinition();
-//        bindingDefinition.setDisplayName("Input file");
-//        bindingDefinition.setName("input");
-//        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
-//        cellType.getBindingDefinitionList().add(bindingDefinition);
-//        OptionDefinition<String> optionDefinition = new OptionDefinition<String>();
-//        optionDefinition.setName("serviceName");
-//        optionDefinition.setDisplayName("Service");
-//        optionDefinition.setOptionType(OptionType.PICKLIST);
-//        for (String serviceName : CalculatorsClient.getServiceNames()) {
-//            optionDefinition.getPicklistValueList().add(serviceName);
-//        }
-//        cellType.getOptionDefinitionList().add(optionDefinition);
-//        cellType.setExecutable(Boolean.TRUE);
-//        return cellType;
-//    }
-//
-//    private static CellType createFileUploadCellType() {
-//        CellType cellType = new CellType();
-//        cellType.setName("FileUpload");
-//        cellType.setDescription("File upload");
-//        cellType.setExecutable(Boolean.TRUE);
-//        VariableDefinition variableDefinition = new VariableDefinition();
-//        variableDefinition.setName("file");
-//        variableDefinition.setDisplayName("Uploaded file");
-//        variableDefinition.setVariableType(VariableType.FILE);
-//        cellType.getOutputVariableDefinitionList().add(variableDefinition);
-//        OptionDefinition<String> optionDefinition = new OptionDefinition<String>();
-//        optionDefinition.setName("fileName");
-//        optionDefinition.setDisplayName("Output file name");
-//        optionDefinition.setOptionType(OptionType.SIMPLE);
-//        cellType.getOptionDefinitionList().add(optionDefinition);
-//        cellType.setExecutable(Boolean.FALSE);
-//        return cellType;
-//    }
 
     private static CellType createConvertBasicToMoleculeObjectCellType() {
         CellType cellType = new CellType();
@@ -255,30 +213,12 @@ public class ExampleCellService {
         return cellType;
     }
 
-    @Path("listCellType")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<CellType> listCellType() {
-        return CELL_TYPE_LIST;
+    public Collection<CellType> listCellType() {
+        return CELL_TYPES.values();
     }
 
-    @Path("executeCell")
-    @POST
-    public void executeCell(@QueryParam("notebookId") Long notebookId, @QueryParam("cellName") String cellName) {
-        callbackContext.setNotebookId(notebookId);
-        CellDTO cell = callbackClient.retrieveCell(cellName);
-        qndCellExecutorProvider.resolveCellHandler(cell.getCellType()).execute(cellName);
-    }
 
-    @Path("retrieveCellType")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public CellType retrieveCellType(@QueryParam("name") String name) {
-        for (CellType cellType : CELL_TYPE_LIST) {
-            if (cellType.getName().equals(name)) {
-                return cellType;
-            }
-        }
-        return null;
+    public CellType retrieveCellType(String name) {
+        return CELL_TYPES.get(name);
     }
 }

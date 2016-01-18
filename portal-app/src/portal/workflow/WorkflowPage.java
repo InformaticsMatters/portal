@@ -4,7 +4,6 @@ import com.im.lac.job.jobdef.AbstractAsyncProcessDatasetJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.job.jobdef.ProcessDatasetJobDefinition;
 import com.im.lac.services.ServiceDescriptor;
-import com.im.lac.services.ServicePropertyDescriptor;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
@@ -27,6 +26,7 @@ import org.apache.wicket.resource.JQueryResourceReference;
 import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.options.OptionDescriptor;
 import portal.*;
 import portal.dataset.IDatasetDescriptor;
 import portal.visualizers.VisualizersPanel;
@@ -439,8 +439,8 @@ public class WorkflowPage extends WebPage {
                         new HashMap<>());
 
                 Map<String, Object> parameters = definition.getParameters();
-                Map<ServicePropertyDescriptor, String> propertyDescriptorMap = targetData.getServicePropertyValueMap();
-                for (ServicePropertyDescriptor servicePropertyDescriptor : propertyDescriptorMap.keySet()) {
+                Map<OptionDescriptor, String> propertyDescriptorMap = targetData.getServicePropertyValueMap();
+                for (OptionDescriptor servicePropertyDescriptor : propertyDescriptorMap.keySet()) {
                     parameters.put(servicePropertyDescriptor.getkey(), propertyDescriptorMap.get(servicePropertyDescriptor));
                 }
             }

@@ -2,6 +2,7 @@ package portal.notebook.client;
 
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.squonk.notebook.api.NotebookDTO;
+import org.squonk.util.IOUtils;
 import toolkit.services.AbstractServiceClient;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -14,14 +15,8 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
     private final String url;
 
     public NotebookClient() {
-        String s = System.getenv("SERVICE_NOTEBOOK");
-        if (s == null) {
-            url = "http://localhost:8080/ws/notebook";
-        } else {
-            url = s;
-        }
+        url = IOUtils.getConfiguration("SERVICE_NOTEBOOK", "http://localhost:8080/ws/notebook");
     }
-
 
     public NotebookData retrieveNotebook(Long notebookId) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
