@@ -1,7 +1,9 @@
 var onNotebookCanvasPaletteDrop;
 var onNotebookCanvasItemDragged;
+var onNotebookCanvasItemResized;
 
 function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbListVisibility) {
+
     var nbListVisible = (nbListVisibility === 'true');
     var cellsVisible = (cellsVisibility === 'true');
     var canvasVisible = (canvasVisibility === 'true');
@@ -61,7 +63,6 @@ function addCellsPaletteDragAndDropSupport() {
     droptarget.addEventListener('dragover', dragOver, false);
     droptarget.addEventListener('dragleave', dragLeave, false);
     droptarget.addEventListener('drop', drop, false);
-
 
     function dragEnter(event) {
     }
@@ -135,32 +136,36 @@ function makeCanvasItemPlumbDraggable(selector) {
     });
 }
 
-function makeCanvasItemPlumbResizable() {
-     $(".tableCell").resizable({
+function makeCanvasItemResizable(id) {
+    $("#" + id).find(".tableCell").resizable({
         resize : function(event, ui) {
-             jsPlumb.repaintEverything();
+            jsPlumb.repaintEverything();
+            updateTableDisplayHeight(id);
+        },
 
-             var containerh = $('.tableCell').outerHeight();
-             var upperh = $(".imxt-vista .imxt-body-container1").position().top;
-             var h = containerh - upperh - 12;
-             $(".imxt-vista .imxt-body-container1").css("height", h);
-         },
-         stop: function guardarHeight() {
-                 window.height = $(".imxt-vista .imxt-body-container1").height();
-         }
-     });
-
+        stop: function(event, ui) {
+            var index = $('#' + id).parent().index();
+            console.log(index + " - " + ui.size.width + " - " + ui.size.height);
+            onNotebookCanvasItemResized(index, ui.size.width, ui.size.height);
+        }
+    });
 }
 
-function addTableLastHeight() {
-    $(".imxt-vista .imxt-body-container1").css("height", window.height);
+function updateTableDisplayHeight(id) {
+    var $tableCell = $('#' + id).find(".tableCell");
+    var containerh = $tableCell.outerHeight();
 
+    var $grid = $tableCell.find(".imxt-vista .imxt-body-container1");
+    var gridTop = $grid.position().top;
+
+    var h = containerh - gridTop - 12;
+    $grid.css("height", h);
 }
 
 function addSourceEndpoint(itemId) {
     var sourceEndpointOptions = {
         anchor: 'BottomCenter',
-        isSource:true,
+        isSource: true,
         maxConnections: -1,
         paintStyle: {
             fillStyle: "#7AB02C",
@@ -197,12 +202,12 @@ function addConnection(sourceMarkupId, targetMarkupId) {
 function initJsPlumb() {
     jsPlumb.setContainer($('#plumbContainer'));
 
-     jsPlumb.bind("beforeDrop", function (i, c) {
-                var sourceId = i.connection.sourceId;
-                var targetId = i.connection.targetId;
-                onNotebookCanvasNewConnection(sourceId, targetId);
-                return false;
-            });
+    jsPlumb.bind("beforeDrop", function (i, c) {
+        var sourceId = i.connection.sourceId;
+        var targetId = i.connection.targetId;
+        onNotebookCanvasNewConnection(sourceId, targetId);
+        return false;
+    });
 }
 
 function makeNbTrActive(itemId) {
