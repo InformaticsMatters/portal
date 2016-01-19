@@ -35,6 +35,14 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("makeCanvasItemResizable('" + getMarkupId() + "')"));
+        String js = "initTableDisplaySizeAndPosition(':id', :top, :left, :width, :height)";
+        CellModel model = getCellModel();
+        js = js.replace(":id", getMarkupId());
+        js = js.replace(":top", Integer.toString(model.getPositionTop()));
+        js = js.replace(":left", Integer.toString(model.getPositionLeft()));
+        js = js.replace(":width", Integer.toString(model.getSizeWidth()));
+        js = js.replace(":height", Integer.toString(model.getSizeHeight()));
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
 
     private void addForm() {

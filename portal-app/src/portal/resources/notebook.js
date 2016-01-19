@@ -142,7 +142,7 @@ function makeCanvasItemResizable(id) {
         minWidth: 325,
         resize : function(event, ui) {
             jsPlumb.repaintEverything();
-            updateTableDisplayHeight(id);
+            fitTableDisplayGrid(id);
             $('#' + id).find('.tableCell').css({"width":"auto"});
         },
 
@@ -154,7 +154,7 @@ function makeCanvasItemResizable(id) {
     });
 }
 
-function updateTableDisplayHeight(id) {
+function fitTableDisplayGrid(id) {
     var $tableCell = $('#' + id);
     var containerh = $tableCell.outerHeight();
 
@@ -163,6 +163,20 @@ function updateTableDisplayHeight(id) {
 
     var h = containerh - gridTop - 12;
     $grid.css("height", h);
+}
+
+function initTableDisplaySizeAndPosition(id, top, left, width, height) {
+    $id = $(id);
+    if (top != 0) {
+        $parent = $id.parent();
+        $parent.css('top', top + 'px');
+        $parent.css('left', left + 'px');
+    }
+    if (width != 0) {
+        $id.width(width);
+        $id.height(height);
+    }
+    fitTableDisplayGrid(id);
 }
 
 function addSourceEndpoint(itemId) {
