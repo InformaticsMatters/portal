@@ -83,7 +83,6 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void execute() throws IOException {
-        //System.out.println("SDFUploadCanvasItemPanel.execute() " + form.getModelObject().getNameFieldName());
         form.getModelObject().store();
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());

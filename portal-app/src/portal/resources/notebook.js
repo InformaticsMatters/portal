@@ -147,8 +147,8 @@ function makeCanvasItemResizable(id) {
         },
 
         stop: function(event, ui) {
-            var index = $('#' + id).parent().index();
-            console.log(index + " - " + ui.size.width + " - " + ui.size.height);
+            $element = $(ui.element);
+            var index = $element.parent().index();
             onNotebookCanvasItemResized(index, ui.size.width, ui.size.height);
         }
     });

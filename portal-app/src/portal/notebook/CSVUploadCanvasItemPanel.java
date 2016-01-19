@@ -87,8 +87,6 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void execute() throws IOException {
-        //System.out.println("File type is " + form.getModelObject().getCsvFormatType());
-        //System.out.println("First line header " + form.getModelObject().isFirstLineIsHeader());
         form.getModelObject().store();
 
         notebookSession.storeCurrentNotebook();

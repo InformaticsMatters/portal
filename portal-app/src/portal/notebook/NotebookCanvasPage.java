@@ -366,7 +366,6 @@ public class NotebookCanvasPage extends WebPage {
                         CallbackParameter.explicit(POSITION_LEFT),
                         CallbackParameter.explicit(POSITION_TOP));
                 callBackScript = "onNotebookCanvasItemDragged=" + callBackScript + ";";
-                logger.info("Dragged callback script: " + callBackScript);
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
 
@@ -417,9 +416,6 @@ public class NotebookCanvasPage extends WebPage {
                 model.setSizeWidth(Integer.parseInt(width));
                 model.setSizeHeight(Integer.parseInt(height));
                 notebookSession.storeCurrentNotebook();
-                String js = "updateTableDisplayHeight('" + canvasItemRepeater.get(i).getMarkupId() + "');";
-                logger.info(js);
-                // target.appendJavaScript(js);
             }
 
             @Override

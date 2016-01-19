@@ -6,6 +6,8 @@ import com.inmethod.grid.treegrid.TreeGrid;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IPropertyDescriptor;
 import portal.dataset.IRow;
@@ -20,6 +22,7 @@ import java.util.UUID;
 
 public class TableDisplayVisualizer extends TreeGrid<DefaultTreeModel, DefaultMutableTreeNode, String> implements IPageable {
 
+    private static final Logger logger = LoggerFactory.getLogger(TableDisplayVisualizer.class);
     private static final int ROWS_PER_PAGE = 50;
     private long currentPage = 0;
     private IDatasetDescriptor datasetDescriptor;
@@ -109,7 +112,7 @@ public class TableDisplayVisualizer extends TreeGrid<DefaultTreeModel, DefaultMu
         super.onColumnStateChanged();
         ColumnsState states = getColumnState();
         for (ColumnsState.Entry entry : states.getColumnStates()) {
-            System.out.println(entry.getColumnId() + " - " + entry.getCurrentWidth());
+            logger.info(entry.getColumnId() + " - " + entry.getCurrentWidth());
         }
     }
 

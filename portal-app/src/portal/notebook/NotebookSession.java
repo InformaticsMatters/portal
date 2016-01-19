@@ -305,11 +305,11 @@ public class NotebookSession implements Serializable {
         ServicePropertyDescriptor[] properties = serviceDescriptor.getAccessModes()[0].getParameters();
         if (properties != null) {
 
-            System.out.println(properties.length + " properties found for service " + serviceDescriptor.getName());
+            logger.info(properties.length + " properties found for service " + serviceDescriptor.getName());
 
             for (ServicePropertyDescriptor propertyDescriptor : properties) {
 
-                System.out.println("property type: " + propertyDescriptor.getType());
+                logger.info("property type: " + propertyDescriptor.getType());
 
                 if (propertyDescriptor.getType().equals(ServicePropertyDescriptor.Type.STRING)) {
                     OptionDefinition<String> optionDefinition = new OptionDefinition<>();
