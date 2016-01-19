@@ -16,6 +16,8 @@ public class Cell implements Serializable {
     private CellType cellType;
     private int positionLeft;
     private int positionTop;
+    private int sizeWidth;
+    private int sizeHeight;
 
     public String getName() {
         return name;
@@ -67,5 +69,21 @@ public class Cell implements Serializable {
 
     public void setPositionTop(int positionTop) {
         this.positionTop = positionTop;
+    }
+
+    public int getSizeWidth() {
+        return sizeWidth;
+    }
+
+    public void setSizeWidth(int sizeWidth) {
+        this.sizeWidth = sizeWidth;
+    }
+
+    public int getSizeHeight() {
+        return sizeHeight;
+    }
+
+    public void setSizeHeight(int sizeHeight) {
+        this.sizeHeight = sizeHeight;
     }
 }

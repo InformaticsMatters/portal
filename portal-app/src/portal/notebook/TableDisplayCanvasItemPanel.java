@@ -1,7 +1,9 @@
 package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.notebook.api.VariableType;
 import portal.dataset.IDatasetDescriptor;
@@ -23,11 +25,16 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     public TableDisplayCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
+        setOutputMarkupId(true);
         addForm();
         addTitleBar();
         addGrid();
         load();
-        setOutputMarkupId(true);
+    }
+
+    @Override
+    public void renderHead(HtmlHeaderContainer container) {
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("makeCanvasItemResizable('" + getMarkupId() + "')"));
     }
 
     private void addForm() {
@@ -36,7 +43,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addGrid() {
-        addOrReplaceTreeGridVisualizer(new TableDisplayDatasetDescriptor(0l, "", 0));
+        addOrReplaceTreeGridVisualizer(new TableDisplayDatasetDescriptor(0L, "", 0));
     }
 
     private void load() {
@@ -45,7 +52,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         boolean assigned = variableModel != null && variableModel.getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
-            descriptor = new TableDisplayDatasetDescriptor(0l, "", 0);
+            descriptor = new TableDisplayDatasetDescriptor(0L, "", 0);
         }
         addOrReplaceTreeGridVisualizer(descriptor);
     }
@@ -86,5 +93,4 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     class ModelObject implements Serializable {
 
     }
-
 }

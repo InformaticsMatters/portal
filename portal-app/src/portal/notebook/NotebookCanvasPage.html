@@ -23,7 +23,7 @@
         </div>
 
         <div class="column flex-column-1 left-column">
-            <div style="height: 15px; margin-top: 6px;">
+            <div style="height: 18px; margin-top: 6px; margin-bottom: -3px;">
                 <div class="ui menu text nbListMenu">
                     <a wicket:id="createNotebook" class="item">
                         <i class="blue plus icon"></i>New
@@ -36,17 +36,12 @@
         </div>
 
         <div class="column flex-column-2 right-column">
-            <div style="height: 15px; margin-top: 6px;">
-                <div class="ui tiny nbName">
-                    <label wicket:id="notebookName"></label>
-                    <span> - </span>
-                    <label>Ownername</label>
-                </div>
+            <div style="height: 18px; margin-top: 6px; margin-bottom: -3px;">
+                <label class="nbName" wicket:id="notebookName"></label>
+                <span> - </span>
+                <label class="nbOwner">Ownername</label>
 
                 <div class="ui menu text notebookMenu">
-                    <a class="item">
-                        <i class="blue plus icon"></i>Add
-                    </a>
                     <a class="item">
                         <i class="green small play icon"></i>Run
                     </a>

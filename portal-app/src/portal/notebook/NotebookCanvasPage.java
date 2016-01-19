@@ -4,6 +4,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -47,6 +48,8 @@ public class NotebookCanvasPage extends WebPage {
     public static final String TARGET_ID = "targetId";
     public static final String POSITION_LEFT = "positionX";
     public static final String POSITION_TOP = "positionY";
+    public static final String SIZE_WIDTH = "sizeWidth";
+    public static final String SIZE_HEIGHT = "sizeHeight";
     public static final String CANVAS_ITEM_PREFIX = "canvasItem";
     public static final String CANVASITEM_INDEX = "index";
     private static final Logger logger = LoggerFactory.getLogger(NotebookCanvasPage.class);
@@ -83,6 +86,7 @@ public class NotebookCanvasPage extends WebPage {
         addCanvasItemDraggedBehavior();
         addCanvasNewConnectionBehavior();
         addConnectionsRenderBehavior();
+        addResizeBehavior();
         NotebookInfo notebookInfo = notebookSession.preparePocNotebook();
         notebookSession.loadCurrentNotebook(notebookInfo.getId());
     }
@@ -99,7 +103,7 @@ public class NotebookCanvasPage extends WebPage {
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/notebook.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
         response.render(OnDomReadyHeaderItem.forScript("initJsPlumb(); addCellsPaletteDragAndDropSupport();"));
-        response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item'); makeCanvasItemPlumbResizable();"));
+        response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');"));
     }
 
     private void addPanels() {
@@ -302,9 +306,6 @@ public class NotebookCanvasPage extends WebPage {
         if (!cellModel.getBindingModelMap().isEmpty()) {
             target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
         }
-
-        target.appendJavaScript("makeCanvasItemPlumbResizable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
-
     }
 
     private Panel createCanvasItemPanel(CellModel cellModel) {
@@ -365,7 +366,14 @@ public class NotebookCanvasPage extends WebPage {
                         CallbackParameter.explicit(POSITION_LEFT),
                         CallbackParameter.explicit(POSITION_TOP));
                 callBackScript = "onNotebookCanvasItemDragged=" + callBackScript + ";";
+                logger.info("Dragged callback script: " + callBackScript);
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
+            }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setWicketAjaxResponse(false);
             }
         };
         add(onCanvasItemDragStopBehavior);
@@ -392,10 +400,51 @@ public class NotebookCanvasPage extends WebPage {
         add(onNotebookCanvasNewConnectionBehavior);
     }
 
+    private void addResizeBehavior() {
+        AbstractDefaultAjaxBehavior onNotebookCanvasItemResizedBehavior = new AbstractDefaultAjaxBehavior() {
+
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
+                String width = getRequest().getRequestParameters().getParameterValue(SIZE_WIDTH).toString();
+                String height = getRequest().getRequestParameters().getParameterValue(SIZE_HEIGHT).toString();
+
+                logger.info("Item index " + index + " resized to: " + SIZE_WIDTH + ": " + width + " and " + SIZE_HEIGHT + ": " + height);
+
+                NotebookModel notebookModel = notebookSession.getCurrentNotebookModel();
+                int i = Integer.parseInt(index);
+                CellModel model = notebookModel.getCellModels()[i];
+                model.setSizeWidth(Integer.parseInt(width));
+                model.setSizeHeight(Integer.parseInt(height));
+                notebookSession.storeCurrentNotebook();
+                String js = "updateTableDisplayHeight('" + canvasItemRepeater.get(i).getMarkupId() + "');";
+                logger.info(js);
+                // target.appendJavaScript(js);
+            }
+
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                super.renderHead(component, response);
+                CharSequence callBackScript = getCallbackFunction(
+                        CallbackParameter.explicit(CANVASITEM_INDEX),
+                        CallbackParameter.explicit(SIZE_WIDTH),
+                        CallbackParameter.explicit(SIZE_HEIGHT));
+                callBackScript = "onNotebookCanvasItemResized=" + callBackScript + ";";
+                response.render(OnDomReadyHeaderItem.forScript(callBackScript));
+            }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setWicketAjaxResponse(false);
+            }
+        };
+        add(onNotebookCanvasItemResizedBehavior);
+    }
+
     private void onNewCanvasConnection() {
         String sourceMarkupId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
         String targetMarkupId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
-        System.out.println(sourceMarkupId + ", " + targetMarkupId);
 
         CellModel sourceCellModel = null;
         CellModel targetCellModel = null;
@@ -417,7 +466,9 @@ public class NotebookCanvasPage extends WebPage {
         if (canApplyAutoBinding(sourceCellModel, targetCellModel)) {
             applyAutoBinding(sourceCellModel, targetCellModel);
         } else {
-            targetCanvasItemPanel.editBindings(sourceCellModel, targetCellModel, true);
+            if (targetCanvasItemPanel != null) {
+                targetCanvasItemPanel.editBindings(sourceCellModel, targetCellModel, true);
+            }
         }
     }
 
