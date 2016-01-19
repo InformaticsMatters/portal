@@ -165,6 +165,9 @@ public class NotebookCanvasPage extends WebPage {
                 CellModel cellModel = listItem.getModelObject();
                 String markupId = CANVAS_ITEM_PREFIX + cellModel.getId();
                 Panel canvasItemPanel = createCanvasItemPanel(cellModel);
+                if (cellModel.getSizeHeight() != 0 || cellModel.getSizeWidth() != 0) {
+                    canvasItemPanel.add(new AttributeModifier("style", "width:" + cellModel.getSizeWidth() + "px; height:" + cellModel.getSizeHeight() + "px;"));
+                }
                 listItem.setOutputMarkupId(true);
                 listItem.setMarkupId(markupId);
                 listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));

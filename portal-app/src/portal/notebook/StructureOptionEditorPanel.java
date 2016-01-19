@@ -25,9 +25,8 @@ import java.awt.*;
  */
 public class StructureOptionEditorPanel extends Panel {
 
-    private static final Logger logger = LoggerFactory.getLogger(StructureOptionEditorPanel.class);
-    private static final Logger logger = LoggerFactory.getLogger(StructureOptionEditorPanel.class);
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
+    private static final Logger logger = LoggerFactory.getLogger(StructureOptionEditorPanel.class);
     private final IModel<String> optionModel;
     private final String uniqueMarvinName;
     private MarvinSketcher marvinSketcherPanel;
