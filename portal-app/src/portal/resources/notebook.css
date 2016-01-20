@@ -197,12 +197,12 @@ div.ui-resizable-handle.ui-resizable-s {
     visibility: hidden;
 }
 
-.nbListTable tr:hover .icon {
-    visibility: visible;
-}
-
 .nbListTable tr:hover {
     background-color: #f7f7f7;
+}
+
+.nbListTable tr:hover td {
+    font-weight: bold;
 }
 
 .nbListTable tr.selected .icon {
