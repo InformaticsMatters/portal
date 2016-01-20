@@ -31,6 +31,8 @@ public class NotebookService {
             notebookInfo.setId(notebook.getId());
             notebookInfo.setName(notebook.getName());
             notebookInfo.setDescription(notebook.getDescription());
+            notebookInfo.setOwner(notebook.getOwner());
+            notebookInfo.setShared(notebook.getShared());
             list.add(notebookInfo);
         }
         return list;
@@ -42,6 +44,8 @@ public class NotebookService {
         notebookInfo.setId(notebook.getId());
         notebookInfo.setName(notebook.getName());
         notebookInfo.setDescription(notebook.getDescription());
+        notebookInfo.setOwner(notebook.getOwner());
+        notebookInfo.setShared(notebook.getShared());
         return notebookInfo;
     }
 
@@ -60,6 +64,8 @@ public class NotebookService {
             Notebook notebook = new Notebook();
             notebook.setName(editNotebookData.getName());
             notebook.setDescription(editNotebookData.getDescription());
+            notebook.setOwner(editNotebookData.getOwner());
+            notebook.setShared(editNotebookData.getShared());
             notebook.setData(new NotebookContents().toBytes());
             entityManager.persist(notebook);
             return notebook.getId();

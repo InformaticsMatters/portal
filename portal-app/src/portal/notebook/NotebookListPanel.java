@@ -24,9 +24,9 @@ public class NotebookListPanel extends Panel {
     private static final Logger logger = LoggerFactory.getLogger(NotebookListPanel.class);
     private final EditNotebookPanel editNotebookPanel;
     private ListView<NotebookInfo> listView;
-    @Inject
-    private NotebookSession notebooksSession;
     private String selectedMarkupId;
+    @Inject
+    private NotebookSession notebookSession;
 
     public NotebookListPanel(String id, EditNotebookPanel editNotebookPanel) {
         super(id);
@@ -44,7 +44,7 @@ public class NotebookListPanel extends Panel {
     }
 
     private void addNotebookList() {
-        List<NotebookInfo> notebookList = notebooksSession.listNotebookInfo();
+        List<NotebookInfo> notebookList = notebookSession.listNotebookInfo();
 
         logger.info(notebookList.size() + " notebook/s found.");
 
@@ -54,6 +54,7 @@ public class NotebookListPanel extends Panel {
             protected void populateItem(ListItem<NotebookInfo> listItem) {
                 NotebookInfo notebookInfo = listItem.getModelObject();
                 listItem.add(new Label("name", notebookInfo.getName()));
+                listItem.add(new Label("owner", notebookInfo.getOwner()));
                 AjaxLink editLink = new AjaxLink("edit") {
 
                     @Override
@@ -83,12 +84,12 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     protected void onEvent(AjaxRequestTarget target) {
-                        notebooksSession.loadCurrentNotebook(notebookInfo.getId());
+                        notebookSession.loadCurrentNotebook(notebookInfo.getId());
                         target.add(getPage());
                     }
                 });
 
-                Long currentId = notebooksSession.getCurrentNotebookInfo() == null ? null : notebooksSession.getCurrentNotebookInfo().getId();
+                Long currentId = notebookSession.getCurrentNotebookInfo() == null ? null : notebookSession.getCurrentNotebookInfo().getId();
                 if (listItem.getModelObject().getId().equals(currentId)) {
                     selectedMarkupId = listItem.getMarkupId();
                 }
@@ -98,7 +99,7 @@ public class NotebookListPanel extends Panel {
     }
 
     public void refreshNotebookList() {
-        listView.setList(notebooksSession.listNotebookInfo());
+        listView.setList(notebookSession.listNotebookInfo());
         getRequestCycle().find(AjaxRequestTarget.class).add(this);
     }
 }

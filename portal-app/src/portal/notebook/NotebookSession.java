@@ -45,12 +45,14 @@ public class NotebookSession implements Serializable {
         moleculeObjectMapMap.put(0L, new HashMap<>());
     }
 
-    public NotebookInfo preparePocNotebook() {
+    public NotebookInfo prepareDefaultNotebook() {
         List<NotebookInfo> list = notebookService.listNotebookInfo();
         if (list.isEmpty()) {
-            EditNotebookData notebookData = new EditNotebookData();
-            notebookData.setName("POC");
-            notebookService.createNotebook(notebookData);
+            EditNotebookData data = new EditNotebookData();
+            data.setName("Default notebook");
+            data.setOwner(sessionContext.getLoggedInUserDetails().getUserid());
+            data.setShared(false);
+            notebookService.createNotebook(data);
             currentNotebookInfo = notebookService.listNotebookInfo().get(0);
             NotebookContents notebookContents = new NotebookContents();
             UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();

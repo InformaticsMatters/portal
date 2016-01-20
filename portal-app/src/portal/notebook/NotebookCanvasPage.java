@@ -17,6 +17,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.slf4j.Logger;
@@ -86,7 +87,7 @@ public class NotebookCanvasPage extends WebPage {
         addCanvasNewConnectionBehavior();
         addConnectionsRenderBehavior();
         addResizeBehavior();
-        NotebookInfo notebookInfo = notebookSession.preparePocNotebook();
+        NotebookInfo notebookInfo = notebookSession.prepareDefaultNotebook();
         notebookSession.loadCurrentNotebook(notebookInfo.getId());
     }
 
@@ -113,23 +114,8 @@ public class NotebookCanvasPage extends WebPage {
         add(notebookCellTypesPanel);
         notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
 
-        add(new Label("notebookName", new IModel<String>() {
-
-            @Override
-            public void detach() {
-
-            }
-
-            @Override
-            public String getObject() {
-                return notebookSession.getCurrentNotebookInfo() == null ? "" : notebookSession.getCurrentNotebookInfo().getName();
-            }
-
-            @Override
-            public void setObject(String s) {
-
-            }
-        }));
+        add(new Label("notebookName", new PropertyModel(notebookSession, "currentNotebookInfo.name")));
+        add(new Label("notebookOwner", new PropertyModel(notebookSession, "currentNotebookInfo.owner")));
 
         plumbContainer = new WebMarkupContainer("plumbContainer");
         plumbContainer.setOutputMarkupId(true);

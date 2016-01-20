@@ -4,9 +4,12 @@ package portal.notebook.service;
 import java.io.Serializable;
 
 public class NotebookInfo implements Serializable {
+
+    private Long id;
     private String name;
     private String description;
-    private Long id;
+    private String owner;
+    private Boolean shared;
 
     public String getName() {
         return name;
@@ -16,12 +19,12 @@ public class NotebookInfo implements Serializable {
         this.name = name;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescription() {
@@ -30,5 +33,21 @@ public class NotebookInfo implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public Boolean getShared() {
+        return shared;
+    }
+
+    public void setShared(Boolean shared) {
+        this.shared = shared;
     }
 }
