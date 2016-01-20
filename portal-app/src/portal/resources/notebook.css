@@ -236,7 +236,7 @@ div.ui-resizable-handle.ui-resizable-s {
     margin: 0!important;
     text-overflow: ellipsis;
     overflow: hidden;
-    height: 15px;
+    height: 17px;
     white-space: nowrap;
     display: inline-flex;
     max-width: 30%;

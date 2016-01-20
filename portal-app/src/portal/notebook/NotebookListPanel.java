@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -93,6 +94,12 @@ public class NotebookListPanel extends Panel {
                 if (listItem.getModelObject().getId().equals(currentId)) {
                     selectedMarkupId = listItem.getMarkupId();
                 }
+                Label shared = new Label("shared");
+                if (notebookInfo.getShared()) {
+                    shared.add(new AttributeModifier("class", "ui small green empty circular label"));
+                }
+                listItem.add(shared);
+
             }
         };
         add(listView);
