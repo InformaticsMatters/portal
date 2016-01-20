@@ -2,6 +2,8 @@
 package portal.notebook;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import portal.PopupContainerProvider;
@@ -21,6 +23,19 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         super(id);
         this.cellModel = cellModel;
         addBindingsPanel();
+    }
+
+    @Override
+    public void renderHead(HtmlHeaderContainer container) {
+        super.renderHead(container);
+        String js = "initCellSizeAndPosition(':id', :top, :left, :width, :height)";
+        CellModel model = getCellModel();
+        js = js.replace(":id", getMarkupId());
+        js = js.replace(":top", Integer.toString(model.getPositionTop()));
+        js = js.replace(":left", Integer.toString(model.getPositionLeft()));
+        js = js.replace(":width", Integer.toString(model.getSizeWidth()));
+        js = js.replace(":height", Integer.toString(model.getSizeHeight()));
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
 
     private void addBindingsPanel() {

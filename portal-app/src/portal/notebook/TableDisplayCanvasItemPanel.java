@@ -25,6 +25,9 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     public TableDisplayCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
+        if (cell.getSizeWidth() == 0) {
+            cell.setSizeWidth(500);
+        }
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
@@ -34,15 +37,9 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void renderHead(HtmlHeaderContainer container) {
+        super.renderHead(container);
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("fitTableDisplayGrid('" + getMarkupId() + "')"));
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("makeCanvasItemResizable('" + getMarkupId() + "')"));
-        String js = "initTableDisplaySizeAndPosition(':id', :top, :left, :width, :height)";
-        CellModel model = getCellModel();
-        js = js.replace(":id", getMarkupId());
-        js = js.replace(":top", Integer.toString(model.getPositionTop()));
-        js = js.replace(":left", Integer.toString(model.getPositionLeft()));
-        js = js.replace(":width", Integer.toString(model.getSizeWidth()));
-        js = js.replace(":height", Integer.toString(model.getSizeHeight()));
-        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
 
     private void addForm() {

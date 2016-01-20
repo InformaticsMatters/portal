@@ -111,7 +111,6 @@ function makeCanvasItemPlumbDraggable(selector) {
             var containerWidth = $('#plumbContainer').outerWidth();
             var newWidth = containerWidth + cellWidth;
 
-
             if(borderRight == containerWidth) {
                $('#plumbContainer').css("min-width", newWidth);
             }
@@ -129,6 +128,7 @@ function makeCanvasItemPlumbDraggable(selector) {
                $('#plumbContainer').css("height", newHeight);
             }
         },
+
         stop: function(params) {
             var index = $('#' + params.el.id).index('.notebook-canvas-item');
             onNotebookCanvasItemDragged(index, params.pos[0], params.pos[1]);
@@ -155,28 +155,30 @@ function makeCanvasItemResizable(id) {
 }
 
 function fitTableDisplayGrid(id) {
-    var $tableCell = $('#' + id);
-    var containerh = $tableCell.outerHeight();
+    var $id = $('#' + id);
+    var containerh = $id.outerHeight();
 
-    var $grid = $tableCell.find(".imxt-vista .imxt-body-container1");
+    var $grid = $id.find(".imxt-vista .imxt-body-container1");
     var gridTop = $grid.position().top;
 
     var h = containerh - gridTop - 12;
     $grid.css("height", h);
 }
 
-function initTableDisplaySizeAndPosition(id, top, left, width, height) {
-    $id = $(id);
+function initCellSizeAndPosition(id, top, left, width, height) {
+    $id = $('#' + id);
+    if (width != 0) {
+        $id.width(width);
+    }
+    if (height != 0) {
+        $id.height(height);
+    }
+
     if (top != 0) {
         $parent = $id.parent();
         $parent.css('top', top + 'px');
         $parent.css('left', left + 'px');
     }
-    if (width != 0) {
-        $id.width(width);
-        $id.height(height);
-    }
-    fitTableDisplayGrid(id);
 }
 
 function addSourceEndpoint(itemId) {
