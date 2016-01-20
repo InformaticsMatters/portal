@@ -12,6 +12,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.SessionContext;
 import portal.notebook.service.EditNotebookData;
 import portal.notebook.service.NotebookInfo;
 
@@ -29,6 +30,8 @@ public class NotebookListPanel extends Panel {
     private String selectedMarkupId;
     @Inject
     private NotebookSession notebookSession;
+    @Inject
+    private SessionContext sessionContext;
 
     public NotebookListPanel(String id, EditNotebookPanel editNotebookPanel) {
         super(id);
@@ -55,8 +58,13 @@ public class NotebookListPanel extends Panel {
             @Override
             protected void populateItem(ListItem<NotebookInfo> listItem) {
                 NotebookInfo notebookInfo = listItem.getModelObject();
+
+                boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookInfo.getOwner());
+
                 listItem.add(new Label("name", notebookInfo.getName()));
                 listItem.add(new Label("owner", notebookInfo.getOwner()));
+
+
                 AjaxLink editLink = new AjaxLink("edit") {
 
                     @Override
@@ -66,6 +74,8 @@ public class NotebookListPanel extends Panel {
                     }
                 };
                 listItem.add(editLink);
+                editLink.setVisible(isOwner);
+
                 AjaxLink shareLink = new AjaxLink("share") {
 
                     @Override
@@ -81,6 +91,8 @@ public class NotebookListPanel extends Panel {
                     }
                 };
                 listItem.add(shareLink);
+                shareLink.setVisible(isOwner);
+
                 AjaxLink removeLink = new AjaxLink("remove") {
 
                     @Override
@@ -90,6 +102,8 @@ public class NotebookListPanel extends Panel {
                     }
                 };
                 listItem.add(removeLink);
+                removeLink.setVisible(isOwner);
+
                 listItem.add(new AjaxEventBehavior("onclick") {
 
                     @Override
@@ -108,6 +122,7 @@ public class NotebookListPanel extends Panel {
                     shared.add(new AttributeModifier("class", "ui small green empty circular label"));
                 }
                 listItem.add(shared);
+                shared.setVisible(isOwner);
 
             }
         };
