@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 public class Notebook extends AbstractEntity {
     private String name;
     private String description;
+    private String owner;
+    private Boolean shared;
     private byte[] data;
 
     @Column(nullable = false)
@@ -38,5 +40,21 @@ public class Notebook extends AbstractEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public Boolean getShared() {
+        return shared;
+    }
+
+    public void setShared(Boolean shared) {
+        this.shared = shared;
     }
 }
