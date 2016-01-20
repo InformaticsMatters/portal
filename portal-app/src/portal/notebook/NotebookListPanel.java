@@ -12,6 +12,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.notebook.service.EditNotebookData;
 import portal.notebook.service.NotebookInfo;
 
 import javax.inject.Inject;
@@ -69,6 +70,14 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                        EditNotebookData data = new EditNotebookData();
+                        data.setOwner(notebookInfo.getOwner());
+                        data.setName(notebookInfo.getName());
+                        data.setDescription(notebookInfo.getDescription());
+                        data.setId(notebookInfo.getId());
+                        data.setShared(!notebookInfo.getShared());
+                        notebookSession.updateNotebook(data);
+                        refreshNotebookList();
                     }
                 };
                 listItem.add(shareLink);

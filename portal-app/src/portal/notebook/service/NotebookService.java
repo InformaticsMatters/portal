@@ -78,6 +78,8 @@ public class NotebookService {
         Notebook notebook = entityManager.find(Notebook.class, editNotebookData.getId());
         notebook.setName(editNotebookData.getName());
         notebook.setDescription(editNotebookData.getDescription());
+        notebook.setOwner(editNotebookData.getOwner());
+        notebook.setShared(editNotebookData.getShared());
     }
 
     public void removeNotebook(Long id) {
