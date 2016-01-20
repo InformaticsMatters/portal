@@ -62,7 +62,6 @@ public class NotebookCanvasPage extends WebPage {
     private AjaxLink canvasToggle;
 
     private NotebookListPanel notebookListPanel;
-    private NotebookCellTypesPanel notebookCellTypesPanel;
     private WebMarkupContainer plumbContainer;
 
     private ListView<CellModel> canvasItemRepeater;
@@ -165,7 +164,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addNotebookCellTypesPanel() {
-        notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
+        NotebookCellTypesPanel notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
         add(notebookCellTypesPanel);
         notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
     }
@@ -177,6 +176,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onSubmit() {
+                System.out.println(notebookSession.getCurrentNotebookInfo().getName());
                 notebookListPanel.refreshNotebookList();
                 AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
                 ajaxRequestTarget.add(NotebookCanvasPage.this);

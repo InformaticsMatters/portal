@@ -78,6 +78,7 @@ public class NotebookSession implements Serializable {
 
     public void updateNotebook(EditNotebookData editNotebookData) {
         notebookService.updateNotebook(editNotebookData);
+        currentNotebookInfo = notebookService.retrieveNotebookInfo(editNotebookData.getId());
     }
 
     public void removeNotebook(Long notebookId) {
