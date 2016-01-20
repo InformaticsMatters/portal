@@ -176,7 +176,6 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onSubmit() {
-                System.out.println(notebookSession.getCurrentNotebookInfo().getName());
                 notebookListPanel.refreshNotebookList();
                 AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
                 ajaxRequestTarget.add(NotebookCanvasPage.this);

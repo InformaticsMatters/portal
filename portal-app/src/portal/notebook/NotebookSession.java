@@ -46,26 +46,26 @@ public class NotebookSession implements Serializable {
     }
 
     public NotebookInfo prepareDefaultNotebook() {
-        List<NotebookInfo> list = notebookService.listNotebookInfo();
+        List<NotebookInfo> list = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
         if (list.isEmpty()) {
             EditNotebookData data = new EditNotebookData();
             data.setName("Default notebook");
             data.setOwner(sessionContext.getLoggedInUserDetails().getUserid());
             data.setShared(false);
             notebookService.createNotebook(data);
-            currentNotebookInfo = notebookService.listNotebookInfo().get(0);
+            currentNotebookInfo = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid()).get(0);
             NotebookContents notebookContents = new NotebookContents();
             UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
             updateNotebookContentsData.setId(currentNotebookInfo.getId());
             updateNotebookContentsData.setNotebookContents(notebookContents);
             notebookService.updateNotebookContents(updateNotebookContentsData);
-            list = notebookService.listNotebookInfo();
+            list = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
         }
         return list.get(0);
     }
 
     public List<NotebookInfo> listNotebookInfo() {
-        return notebookService.listNotebookInfo();
+        return notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
     }
 
     public NotebookInfo retrieveNotebookInfo(Long id) {
