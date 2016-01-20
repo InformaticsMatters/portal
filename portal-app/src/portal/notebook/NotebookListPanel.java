@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.SessionContext;
@@ -48,22 +49,19 @@ public class NotebookListPanel extends Panel {
         }
     }
 
+    public List<NotebookInfo> getNotebookInfoList() {
+        return notebookSession.listNotebookInfo();
+    }
+
     private void addNotebookList() {
-        List<NotebookInfo> notebookList = notebookSession.listNotebookInfo();
-
-        logger.info(notebookList.size() + " notebook/s found.");
-
-        listView = new ListView<NotebookInfo>("notebook", notebookList) {
+        listView = new ListView<NotebookInfo>("notebook", new PropertyModel<List<NotebookInfo>>(this, "notebookInfoList")) {
 
             @Override
             protected void populateItem(ListItem<NotebookInfo> listItem) {
                 NotebookInfo notebookInfo = listItem.getModelObject();
-
                 boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookInfo.getOwner());
-
                 listItem.add(new Label("name", notebookInfo.getName()));
                 listItem.add(new Label("owner", notebookInfo.getOwner()));
-
 
                 AjaxLink editLink = new AjaxLink("edit") {
 
@@ -123,7 +121,6 @@ public class NotebookListPanel extends Panel {
                 }
                 listItem.add(shared);
                 shared.setVisible(isOwner);
-
             }
         };
         add(listView);
