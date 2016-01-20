@@ -80,7 +80,9 @@ public class NotebookCanvasPage extends WebPage {
         notifierProvider.createNotifier(this, "notifier");
         popupContainerProvider.createPopupContainerForPage(this, "modalPopupContainer");
         setOutputMarkupId(true);
-        addPanels();
+        addMenuAndFooter();
+        addPlumbContainer();
+        addCanvasItemRepeater();
         addActions();
         addCanvasPaletteDropBehavior();
         addCanvasItemDraggedBehavior();
@@ -88,6 +90,9 @@ public class NotebookCanvasPage extends WebPage {
         addConnectionsRenderBehavior();
         addResizeBehavior();
         NotebookInfo notebookInfo = notebookSession.prepareDefaultNotebook();
+        addEditNotebookPanel();
+        addNotebookListPanel();
+        addNotebookCellTypesPanel();
         notebookSession.loadCurrentNotebook(notebookInfo.getId());
     }
 
@@ -106,22 +111,22 @@ public class NotebookCanvasPage extends WebPage {
         response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');"));
     }
 
-    private void addPanels() {
+    private void addMenuAndFooter() {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-        notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
-        add(notebookCellTypesPanel);
-        notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
-
         add(new Label("notebookName", new PropertyModel(notebookSession, "currentNotebookInfo.name")));
         add(new Label("notebookOwner", new PropertyModel(notebookSession, "currentNotebookInfo.owner")));
+    }
 
+    private void addPlumbContainer() {
         plumbContainer = new WebMarkupContainer("plumbContainer");
         plumbContainer.setOutputMarkupId(true);
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
+    }
 
+    private void addCanvasItemRepeater() {
         IModel<List<CellModel>> listModel = new IModel<List<CellModel>>() {
 
             @Override
@@ -157,7 +162,15 @@ public class NotebookCanvasPage extends WebPage {
         };
         canvasItemRepeater.setOutputMarkupId(true);
         plumbContainer.add(canvasItemRepeater);
+    }
 
+    private void addNotebookCellTypesPanel() {
+        notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
+        add(notebookCellTypesPanel);
+        notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
+    }
+
+    private void addEditNotebookPanel() {
         editNotebookPanel = new EditNotebookPanel("editNotebookPanel", "modalElement");
         add(editNotebookPanel);
         editNotebookPanel.setCallbacks(new EditNotebookPanel.Callbacks() {
@@ -174,6 +187,9 @@ public class NotebookCanvasPage extends WebPage {
 
             }
         });
+    }
+
+    private void addNotebookListPanel() {
         notebookListPanel = new NotebookListPanel("notebookList", editNotebookPanel);
         add(notebookListPanel);
         notebookListPanel.setOutputMarkupPlaceholderTag(true);
