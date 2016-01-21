@@ -33,7 +33,7 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("fitScriptTextArea('" + getMarkupId() + "')"));
-        makeCanvasItemResizable(container, "fitScriptTextArea");
+        makeCanvasItemResizable(container, "fitScriptTextArea", 300, 200);
     }
 
     private void load() {

@@ -136,10 +136,10 @@ function makeCanvasItemPlumbDraggable(selector) {
     });
 }
 
-function makeCanvasItemResizable(id, fitCallback) {
+function makeCanvasItemResizable(width, height, id, fitCallback) {
     $("#" + id).resizable({
-        minHeight: 270,
-        minWidth: 325,
+        minWidth: width,
+        minHeight: height,
         resize : function(event, ui) {
             jsPlumb.repaintEverything();
             fitCallback(id);

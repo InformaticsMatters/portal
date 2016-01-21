@@ -70,9 +70,9 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         add(cellTitleBarPanel);
     }
 
-    protected void makeCanvasItemResizable(HtmlHeaderContainer container, String fitCallbackFunction) {
-        String js = "makeCanvasItemResizable(':id', :fitCallback)";
-        js = js.replace(":id", getMarkupId());
+    protected void makeCanvasItemResizable(HtmlHeaderContainer container, String fitCallbackFunction, int minWidth, int minHeight) {
+        String js = "makeCanvasItemResizable(:minWidth, :minHeight, ':id', :fitCallback)";
+        js = js.replace(":id", getMarkupId()).replace(":minWidth", Integer.toString(minWidth)).replace(":minHeight", Integer.toString(minHeight));
         js = js.replace(":fitCallback", "function(id) {" + fitCallbackFunction + "(id)}");
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }

@@ -39,7 +39,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("fitTableDisplayGrid('" + getMarkupId() + "')"));
-        makeCanvasItemResizable(container, "fitTableDisplayGrid");
+        makeCanvasItemResizable(container, "fitTableDisplayGrid", 325, 270);
     }
 
     private void addForm() {

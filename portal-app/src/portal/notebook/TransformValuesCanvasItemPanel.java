@@ -33,7 +33,7 @@ public class TransformValuesCanvasItemPanel extends CanvasItemPanel {
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("fitDefinitionsArea('" + getMarkupId() + "')"));
-        makeCanvasItemResizable(container, "fitDefinitionsArea");
+        makeCanvasItemResizable(container, "fitDefinitionsArea", 300, 200);
     }
 
     private void load() {
