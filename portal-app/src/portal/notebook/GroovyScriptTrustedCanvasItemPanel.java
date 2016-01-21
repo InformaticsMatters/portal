@@ -17,6 +17,12 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
 
     public GroovyScriptTrustedCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
+        if (cell.getSizeWidth() == 0) {
+            cell.setSizeWidth(300);
+        }
+        if (cell.getSizeHeight() == 0) {
+            cell.setSizeHeight(200);
+        }
         setOutputMarkupId(true);
         addForm();
         addTitleBar();

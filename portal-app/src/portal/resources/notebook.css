@@ -270,3 +270,7 @@ div.ui-resizable-handle.ui-resizable-s {
 .nbListTable td.iconTd {
     padding-right: 0!important;
 }
+
+.resizableCellContent {
+    width: auto;
+}
