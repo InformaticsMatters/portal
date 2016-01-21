@@ -167,22 +167,26 @@ function fitTableDisplayGrid(id) {
 function fitScriptTextArea(id) {
     var $id = $('#' + id);
     var containerh = $id.outerHeight();
+    var containerOffset = $id.offset().top;
 
     var $textarea = $id.find("textarea");
-    var $textareaContainer = $id.find(".groovyTextarea");
-    var textareaTop = $textareaContainer.position().top;
+    var textareaOffset = $id.find("textarea").offset().top;
+    var textareaPosition = textareaOffset - containerOffset;
 
-    var h = containerh - 63 - 12;
+    var h = containerh - textareaPosition - 12;
     $textarea.css("height", h);
 }
 
 function fitDefinitionsArea(id) {
     var $id = $('#' + id);
     var containerh = $id.outerHeight();
+    var containerOffset = $id.offset().top;
 
     var $textarea = $id.find("textarea");
+    var textareaOffset = $id.find("textarea").offset().top;
+    var textareaPosition = textareaOffset - containerOffset;
 
-    var h = containerh - 63 - 12;
+    var h = containerh - textareaPosition - 12;
     $textarea.css("height", h);
 }
 
