@@ -1,7 +1,9 @@
 package portal.notebook;
 
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
 
 import javax.inject.Inject;
@@ -15,6 +17,8 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
 
     public GroovyScriptTrustedCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
+        cell.setSizeWidth(300);
+        cell.setSizeHeight(250);
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
@@ -23,6 +27,12 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
 
     private void load() {
         form.getModelObject().load();
+    }
+
+    @Override
+    public void renderHead(HtmlHeaderContainer container) {
+        super.renderHead(container);
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("makeCanvasItemResizable('" + getMarkupId() + "')"));
     }
 
     private void addForm() {

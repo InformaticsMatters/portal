@@ -126,7 +126,7 @@
     <fileset dir="${basedir}/../lib/wicket/6.18.0">
       <patternset refid="library.patterns"/>
     </fileset>
-    <fileset dir="${basedir}/../lib/squonk-security/core">
+    <fileset dir="${basedir}/../lib/squonk-security">
       <patternset refid="library.patterns"/>
     </fileset>
   </path>
