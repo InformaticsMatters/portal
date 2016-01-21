@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
-    private final CellModel cellModel;
+    private CellModel cellModel;
     @Inject
     private NotebookSession notebookSession;
     @Inject
@@ -75,6 +75,10 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         js = js.replace(":id", getMarkupId());
         js = js.replace(":fitCallback", "function(id) {" + fitCallbackFunction + "(id)}");
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
+    }
+
+    public void updateCellModel() {
+        this.cellModel = notebookSession.getCurrentNotebookModel().findCellModel(cellModel.getName());
     }
 
     public CellModel getCellModel() {
