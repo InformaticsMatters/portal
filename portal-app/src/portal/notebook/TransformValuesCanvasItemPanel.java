@@ -1,8 +1,9 @@
 package portal.notebook;
 
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
 
 import javax.inject.Inject;
@@ -16,10 +17,23 @@ public class TransformValuesCanvasItemPanel extends CanvasItemPanel {
 
     public TransformValuesCanvasItemPanel(String id, CellModel cell) {
         super(id, cell);
+        if (cell.getSizeWidth() == 0) {
+            cell.setSizeWidth(300);
+        }
+        if (cell.getSizeHeight() == 0) {
+            cell.setSizeHeight(200);
+        }
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
         load();
+    }
+
+    @Override
+    public void renderHead(HtmlHeaderContainer container) {
+        super.renderHead(container);
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("fitDefinitionsArea('" + getMarkupId() + "')"));
+        makeCanvasItemResizable(container, "fitDefinitionsArea");
     }
 
     private void load() {

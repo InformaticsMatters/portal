@@ -176,6 +176,16 @@ function fitScriptTextArea(id) {
     $textarea.css("height", h);
 }
 
+function fitDefinitionsArea(id) {
+    var $id = $('#' + id);
+    var containerh = $id.outerHeight();
+
+    var $textarea = $id.find("textarea");
+
+    var h = containerh - 63 - 12;
+    $textarea.css("height", h);
+}
+
 function initCellSizeAndPosition(id, top, left, width, height) {
     $id = $('#' + id);
     if (width != 0) {
