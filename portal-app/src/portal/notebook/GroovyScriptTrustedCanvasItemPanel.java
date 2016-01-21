@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
@@ -32,7 +31,7 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
-        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("makeCanvasItemResizable('" + getMarkupId() + "')"));
+        makeCanvasItemResizable(container, "fitScriptTextArea");
     }
 
     private void load() {

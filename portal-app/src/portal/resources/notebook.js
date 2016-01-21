@@ -164,6 +164,17 @@ function fitTableDisplayGrid(id) {
     $grid.css("height", h);
 }
 
+function fitScriptTextArea(id) {
+    var $id = $('#' + id);
+    var containerh = $id.outerHeight();
+
+    var $textarea = $id.find("textarea");
+    var textareaTop = $textarea.position().top;
+
+    var h = containerh - textareaTop - 12;
+    $textarea.css("height", h);
+}
+
 function initCellSizeAndPosition(id, top, left, width, height) {
     $id = $('#' + id);
     if (width != 0) {
