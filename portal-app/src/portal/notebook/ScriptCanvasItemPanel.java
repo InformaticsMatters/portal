@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -10,8 +9,6 @@ import org.apache.wicket.model.IModel;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class ScriptCanvasItemPanel extends CanvasItemPanel {
 
@@ -33,7 +30,7 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         outcomeModel = new IModel<String>() {
             @Override
             public String getObject() {
-                String errorMessage = (String) getCellModel().getOptionModelMap().get("errorMessage").getValue();
+                String errorMessage = (String) getCellModel().getOutputVariableModelMap().get("errorMessage").getValue();
                 if (errorMessage != null) {
                     return errorMessage;
                 } else {
@@ -74,23 +71,8 @@ public class ScriptCanvasItemPanel extends CanvasItemPanel {
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getName());
         notebookSession.reloadCurrentNotebook();
+        updateCellModel();
         ajaxRequestTarget.add(outcomeLabel);
-    }
-
-    private Object scriptToVm(Object o) {
-        if (o == null) {
-            return null;
-        } else if (o instanceof ScriptObjectMirror) {
-            ScriptObjectMirror scriptObjectMirror = (ScriptObjectMirror)o;
-            Collection<Object> result = new ArrayList<Object>();
-            Collection<Object> values = scriptObjectMirror.values();
-            for (Object value : values) {
-                result.add(scriptToVm(value));
-            }
-            return result;
-        } else {
-            return o;
-        }
     }
 
     @Override
