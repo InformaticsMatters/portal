@@ -136,14 +136,13 @@ function makeCanvasItemPlumbDraggable(selector) {
     });
 }
 
-function makeCanvasItemResizable(id) {
+function makeCanvasItemResizable(id, fitCallback) {
     $("#" + id).resizable({
         minHeight: 270,
         minWidth: 325,
         resize : function(event, ui) {
             jsPlumb.repaintEverything();
-            fitTableDisplayGrid(id);
-            $('#' + id).find('.tableCell').css({"width":"auto"});
+            fitCallback(id);
         },
 
         stop: function(event, ui) {
