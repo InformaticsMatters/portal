@@ -169,9 +169,10 @@ function fitScriptTextArea(id) {
     var containerh = $id.outerHeight();
 
     var $textarea = $id.find("textarea");
-    var textareaTop = $textarea.position().top;
+    var $textareaContainer = $id.find(".groovyTextarea");
+    var textareaTop = $textareaContainer.position().top;
 
-    var h = containerh - textareaTop - 12;
+    var h = containerh - 63 - 12;
     $textarea.css("height", h);
 }
 
