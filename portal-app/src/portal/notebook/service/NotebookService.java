@@ -6,7 +6,7 @@ import com.im.lac.types.MoleculeObject;
 import org.squonk.notebook.api.VariableType;
 import toolkit.services.PU;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -17,20 +17,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-@RequestScoped
+@ApplicationScoped
 public class NotebookService {
 
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
     private EntityManager entityManager;
 
-    public List<NotebookInfo> listNotebookInfo() {
+    public List<NotebookInfo> listNotebookInfo(String userId) {
         List<NotebookInfo> list = new ArrayList<>();
-        for (Notebook notebook : entityManager.createQuery("select o from Notebook o order by o.name", Notebook.class).getResultList()) {
+        TypedQuery<Notebook> query = entityManager.createQuery("select o from Notebook o where o.owner = :owner or o.shared = :shared order by o.name", Notebook.class);
+        query.setParameter("owner", userId);
+        query.setParameter("shared", true);
+        for (Notebook notebook : query.getResultList()) {
             NotebookInfo notebookInfo = new NotebookInfo();
             notebookInfo.setId(notebook.getId());
             notebookInfo.setName(notebook.getName());
             notebookInfo.setDescription(notebook.getDescription());
+            notebookInfo.setOwner(notebook.getOwner());
+            notebookInfo.setShared(notebook.getShared());
             list.add(notebookInfo);
         }
         return list;
@@ -42,6 +47,8 @@ public class NotebookService {
         notebookInfo.setId(notebook.getId());
         notebookInfo.setName(notebook.getName());
         notebookInfo.setDescription(notebook.getDescription());
+        notebookInfo.setOwner(notebook.getOwner());
+        notebookInfo.setShared(notebook.getShared());
         return notebookInfo;
     }
 
@@ -60,6 +67,8 @@ public class NotebookService {
             Notebook notebook = new Notebook();
             notebook.setName(editNotebookData.getName());
             notebook.setDescription(editNotebookData.getDescription());
+            notebook.setOwner(editNotebookData.getOwner());
+            notebook.setShared(editNotebookData.getShared());
             notebook.setData(new NotebookContents().toBytes());
             entityManager.persist(notebook);
             return notebook.getId();
@@ -72,6 +81,8 @@ public class NotebookService {
         Notebook notebook = entityManager.find(Notebook.class, editNotebookData.getId());
         notebook.setName(editNotebookData.getName());
         notebook.setDescription(editNotebookData.getDescription());
+        notebook.setOwner(editNotebookData.getOwner());
+        notebook.setShared(editNotebookData.getShared());
     }
 
     public void removeNotebook(Long id) {

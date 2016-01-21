@@ -145,7 +145,6 @@ div.imxt-vista div.imxt-body-container1 {
 .tableCell {
     overflow: auto;
     padding: 10px;
-    width: 500px;
     min-width: 325px!important;
     min-height: 270px!important;
 }
@@ -198,10 +197,6 @@ div.ui-resizable-handle.ui-resizable-s {
     visibility: hidden;
 }
 
-.nbListTable tr:hover .icon {
-    visibility: visible;
-}
-
 .nbListTable tr:hover {
     background-color: #f7f7f7;
 }
@@ -237,7 +232,7 @@ div.ui-resizable-handle.ui-resizable-s {
     margin: 0!important;
     text-overflow: ellipsis;
     overflow: hidden;
-    height: 15px;
+    height: 17px;
     white-space: nowrap;
     display: inline-flex;
     max-width: 30%;

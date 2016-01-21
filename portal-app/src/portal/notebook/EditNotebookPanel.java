@@ -10,6 +10,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.SessionContext;
 import portal.notebook.service.EditNotebookData;
 import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.SemanticModalPanel;
@@ -23,12 +24,14 @@ public class EditNotebookPanel extends SemanticModalPanel {
     private Callbacks callbacks;
     private Form<EditNotebookData> form;
     private AjaxSubmitLink submitAction;
-    @Inject
-    private NotebookSession notebookSession;
     private TextField<String> nameField;
     private TextField<String> descriptionField;
     private boolean forRemove;
     private Long notebookId;
+    @Inject
+    private NotebookSession notebookSession;
+    @Inject
+    private SessionContext sessionContext;
 
     public EditNotebookPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -96,6 +99,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
     private void store() {
         EditNotebookData editNotebookData = form.getModelObject();
         if (editNotebookData.getId() == null) {
+            editNotebookData.setOwner(sessionContext.getLoggedInUserDetails().getUserid());
             Long id = notebookSession.createNotebook(editNotebookData);
             notebookSession.loadCurrentNotebook(id);
         } else if (forRemove) {
@@ -111,7 +115,10 @@ public class EditNotebookPanel extends SemanticModalPanel {
 
     public void configureForCreate() {
         this.notebookId = null;
-        form.setModelObject(new EditNotebookData());
+        EditNotebookData data = new EditNotebookData();
+        data.setShared(false);
+        data.setOwner(sessionContext.getLoggedInUserDetails().getUserid());
+        form.setModelObject(data);
         nameField.setEnabled(true);
         descriptionField.setEnabled(true);
         forRemove = false;
@@ -124,6 +131,8 @@ public class EditNotebookPanel extends SemanticModalPanel {
         editNotebookData.setId(notebookInfo.getId());
         editNotebookData.setName(notebookInfo.getName());
         editNotebookData.setDescription(notebookInfo.getDescription());
+        editNotebookData.setOwner(notebookInfo.getOwner());
+        editNotebookData.setShared(notebookInfo.getShared());
         form.setModelObject(editNotebookData);
         nameField.setEnabled(true);
         descriptionField.setEnabled(true);
@@ -137,6 +146,8 @@ public class EditNotebookPanel extends SemanticModalPanel {
         editNotebookData.setId(notebookInfo.getId());
         editNotebookData.setName(notebookInfo.getName());
         editNotebookData.setDescription(notebookInfo.getDescription());
+        editNotebookData.setOwner(notebookInfo.getOwner());
+        editNotebookData.setShared(notebookInfo.getShared());
         form.setModelObject(editNotebookData);
         nameField.setEnabled(false);
         descriptionField.setEnabled(false);

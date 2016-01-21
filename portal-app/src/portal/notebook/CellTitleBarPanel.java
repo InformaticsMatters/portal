@@ -86,7 +86,6 @@ public class CellTitleBarPanel extends Panel {
                         ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
                         ".popup('toggle').popup('destroy')";
                 js = js.replace(":link", openPopupLink.getMarkupId()).replace(":content", cellPopupPanel.getMarkupId());
-                System.out.println(js);
                 ajaxRequestTarget.appendJavaScript(js);
             }
         };

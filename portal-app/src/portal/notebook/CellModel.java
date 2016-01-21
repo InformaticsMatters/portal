@@ -90,8 +90,16 @@ public class CellModel implements Serializable {
         return cell.getId();
     }
 
+    public int getSizeWidth() {
+        return cell.getSizeWidth();
+    }
+
     public void setSizeWidth(int sizeWidth) {
         cell.setSizeWidth(sizeWidth);
+    }
+
+    public int getSizeHeight() {
+        return cell.getSizeHeight();
     }
 
     public void setSizeHeight(int height) {

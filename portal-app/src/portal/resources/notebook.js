@@ -111,7 +111,6 @@ function makeCanvasItemPlumbDraggable(selector) {
             var containerWidth = $('#plumbContainer').outerWidth();
             var newWidth = containerWidth + cellWidth;
 
-
             if(borderRight == containerWidth) {
                $('#plumbContainer').css("min-width", newWidth);
             }
@@ -129,6 +128,7 @@ function makeCanvasItemPlumbDraggable(selector) {
                $('#plumbContainer').css("height", newHeight);
             }
         },
+
         stop: function(params) {
             var index = $('#' + params.el.id).index('.notebook-canvas-item');
             onNotebookCanvasItemDragged(index, params.pos[0], params.pos[1]);
@@ -142,27 +142,43 @@ function makeCanvasItemResizable(id) {
         minWidth: 325,
         resize : function(event, ui) {
             jsPlumb.repaintEverything();
-            updateTableDisplayHeight(id);
+            fitTableDisplayGrid(id);
             $('#' + id).find('.tableCell').css({"width":"auto"});
         },
 
         stop: function(event, ui) {
-            var index = $('#' + id).parent().index();
-            console.log(index + " - " + ui.size.width + " - " + ui.size.height);
+            $element = $(ui.element);
+            var index = $element.parent().index();
             onNotebookCanvasItemResized(index, ui.size.width, ui.size.height);
         }
     });
 }
 
-function updateTableDisplayHeight(id) {
-    var $tableCell = $('#' + id);
-    var containerh = $tableCell.outerHeight();
+function fitTableDisplayGrid(id) {
+    var $id = $('#' + id);
+    var containerh = $id.outerHeight();
 
-    var $grid = $tableCell.find(".imxt-vista .imxt-body-container1");
+    var $grid = $id.find(".imxt-vista .imxt-body-container1");
     var gridTop = $grid.position().top;
 
     var h = containerh - gridTop - 12;
     $grid.css("height", h);
+}
+
+function initCellSizeAndPosition(id, top, left, width, height) {
+    $id = $('#' + id);
+    if (width != 0) {
+        $id.width(width);
+    }
+    if (height != 0) {
+        $id.height(height);
+    }
+
+    if (top != 0) {
+        $parent = $id.parent();
+        $parent.css('top', top + 'px');
+        $parent.css('left', left + 'px');
+    }
 }
 
 function addSourceEndpoint(itemId) {

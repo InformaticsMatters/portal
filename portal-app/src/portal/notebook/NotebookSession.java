@@ -47,25 +47,27 @@ public class NotebookSession implements Serializable {
         moleculeObjectMapMap.put(0L, new HashMap<>());
     }
 
-    public NotebookInfo preparePocNotebook() {
-        List<NotebookInfo> list = notebookService.listNotebookInfo();
+    public NotebookInfo prepareDefaultNotebook() {
+        List<NotebookInfo> list = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
         if (list.isEmpty()) {
-            EditNotebookData notebookData = new EditNotebookData();
-            notebookData.setName("POC");
-            notebookService.createNotebook(notebookData);
-            currentNotebookInfo = notebookService.listNotebookInfo().get(0);
+            EditNotebookData data = new EditNotebookData();
+            data.setName("Default notebook");
+            data.setOwner(sessionContext.getLoggedInUserDetails().getUserid());
+            data.setShared(false);
+            notebookService.createNotebook(data);
+            currentNotebookInfo = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid()).get(0);
             NotebookContents notebookContents = new NotebookContents();
             UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
             updateNotebookContentsData.setId(currentNotebookInfo.getId());
             updateNotebookContentsData.setNotebookContents(notebookContents);
             notebookService.updateNotebookContents(updateNotebookContentsData);
-            list = notebookService.listNotebookInfo();
+            list = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
         }
         return list.get(0);
     }
 
     public List<NotebookInfo> listNotebookInfo() {
-        return notebookService.listNotebookInfo();
+        return notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
     }
 
     public NotebookInfo retrieveNotebookInfo(Long id) {
@@ -78,6 +80,7 @@ public class NotebookSession implements Serializable {
 
     public void updateNotebook(EditNotebookData editNotebookData) {
         notebookService.updateNotebook(editNotebookData);
+        currentNotebookInfo = notebookService.retrieveNotebookInfo(editNotebookData.getId());
     }
 
     public void removeNotebook(Long notebookId) {
@@ -314,7 +317,7 @@ public class NotebookSession implements Serializable {
         OptionDescriptor[] properties = serviceDescriptor.getAccessModes()[0].getParameters();
         if (properties != null) {
 
-            System.out.println(properties.length + " properties found for service " + serviceDescriptor.getName());
+            logger.info(properties.length + " properties found for service " + serviceDescriptor.getName());
 
             for (OptionDescriptor propertyDescriptor : properties) {
 
@@ -335,6 +338,7 @@ public class NotebookSession implements Serializable {
 //                    optionDefinition.setOptionType(OptionType.PICKLIST);
 //                    result.getOptionDefinitionList().add(optionDefinition);
 //                }
+
             }
         }
 

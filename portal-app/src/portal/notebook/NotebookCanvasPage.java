@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -18,6 +17,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.slf4j.Logger;
@@ -62,7 +62,6 @@ public class NotebookCanvasPage extends WebPage {
     private AjaxLink canvasToggle;
 
     private NotebookListPanel notebookListPanel;
-    private NotebookCellTypesPanel notebookCellTypesPanel;
     private WebMarkupContainer plumbContainer;
 
     private ListView<CellModel> canvasItemRepeater;
@@ -80,14 +79,19 @@ public class NotebookCanvasPage extends WebPage {
         notifierProvider.createNotifier(this, "notifier");
         popupContainerProvider.createPopupContainerForPage(this, "modalPopupContainer");
         setOutputMarkupId(true);
-        addPanels();
+        addMenuAndFooter();
+        addPlumbContainer();
+        addCanvasItemRepeater();
         addActions();
         addCanvasPaletteDropBehavior();
         addCanvasItemDraggedBehavior();
         addCanvasNewConnectionBehavior();
         addConnectionsRenderBehavior();
         addResizeBehavior();
-        NotebookInfo notebookInfo = notebookSession.preparePocNotebook();
+        NotebookInfo notebookInfo = notebookSession.prepareDefaultNotebook();
+        addEditNotebookPanel();
+        addNotebookListPanel();
+        addNotebookCellTypesPanel();
         notebookSession.loadCurrentNotebook(notebookInfo.getId());
     }
 
@@ -106,37 +110,22 @@ public class NotebookCanvasPage extends WebPage {
         response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');"));
     }
 
-    private void addPanels() {
+    private void addMenuAndFooter() {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-        notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
-        add(notebookCellTypesPanel);
-        notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
+        add(new Label("notebookName", new PropertyModel(notebookSession, "currentNotebookInfo.name")));
+        add(new Label("notebookOwner", new PropertyModel(notebookSession, "currentNotebookInfo.owner")));
+    }
 
-        add(new Label("notebookName", new IModel<String>() {
-
-            @Override
-            public void detach() {
-
-            }
-
-            @Override
-            public String getObject() {
-                return notebookSession.getCurrentNotebookInfo() == null ? "" : notebookSession.getCurrentNotebookInfo().getName();
-            }
-
-            @Override
-            public void setObject(String s) {
-
-            }
-        }));
-
+    private void addPlumbContainer() {
         plumbContainer = new WebMarkupContainer("plumbContainer");
         plumbContainer.setOutputMarkupId(true);
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
+    }
 
+    private void addCanvasItemRepeater() {
         IModel<List<CellModel>> listModel = new IModel<List<CellModel>>() {
 
             @Override
@@ -167,13 +156,20 @@ public class NotebookCanvasPage extends WebPage {
                 Panel canvasItemPanel = createCanvasItemPanel(cellModel);
                 listItem.setOutputMarkupId(true);
                 listItem.setMarkupId(markupId);
-                listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
                 listItem.add(canvasItemPanel);
             }
         };
         canvasItemRepeater.setOutputMarkupId(true);
         plumbContainer.add(canvasItemRepeater);
+    }
 
+    private void addNotebookCellTypesPanel() {
+        NotebookCellTypesPanel notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
+        add(notebookCellTypesPanel);
+        notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
+    }
+
+    private void addEditNotebookPanel() {
         editNotebookPanel = new EditNotebookPanel("editNotebookPanel", "modalElement");
         add(editNotebookPanel);
         editNotebookPanel.setCallbacks(new EditNotebookPanel.Callbacks() {
@@ -190,6 +186,9 @@ public class NotebookCanvasPage extends WebPage {
 
             }
         });
+    }
+
+    private void addNotebookListPanel() {
         notebookListPanel = new NotebookListPanel("notebookList", editNotebookPanel);
         add(notebookListPanel);
         notebookListPanel.setOutputMarkupPlaceholderTag(true);
@@ -286,7 +285,6 @@ public class NotebookCanvasPage extends WebPage {
         ListItem<CellModel> listItem = new ListItem<>(markupId, cellModelList.size());
         listItem.setMarkupId(markupId);
         listItem.setOutputMarkupId(true);
-        listItem.add(new AttributeModifier("style", "left:" + cellModel.getPositionLeft() + "px; top:" + cellModel.getPositionTop() + "px;"));
         listItem.add(canvasItemPanel);
         canvasItemRepeater.add(listItem);
 
@@ -366,7 +364,6 @@ public class NotebookCanvasPage extends WebPage {
                         CallbackParameter.explicit(POSITION_LEFT),
                         CallbackParameter.explicit(POSITION_TOP));
                 callBackScript = "onNotebookCanvasItemDragged=" + callBackScript + ";";
-                logger.info("Dragged callback script: " + callBackScript);
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
 
@@ -417,9 +414,6 @@ public class NotebookCanvasPage extends WebPage {
                 model.setSizeWidth(Integer.parseInt(width));
                 model.setSizeHeight(Integer.parseInt(height));
                 notebookSession.storeCurrentNotebook();
-                String js = "updateTableDisplayHeight('" + canvasItemRepeater.get(i).getMarkupId() + "');";
-                logger.info(js);
-                // target.appendJavaScript(js);
             }
 
             @Override

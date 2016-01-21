@@ -13,6 +13,8 @@ import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squonk.notebook.api.OptionDefinition;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 
@@ -24,6 +26,7 @@ import java.awt.*;
 public class StructureOptionEditorPanel extends Panel {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
+    private static final Logger logger = LoggerFactory.getLogger(StructureOptionEditorPanel.class);
     private final IModel<String> optionModel;
     private final String uniqueMarvinName;
     private MarvinSketcher marvinSketcherPanel;
@@ -91,7 +94,7 @@ public class StructureOptionEditorPanel extends Panel {
             Molecule molecule = MolImporter.importMol(sketchData);
             String smiles = MolExporter.exportToFormat(molecule, "smiles");
             optionModel.setObject(smiles);
-            System.out.println(smiles);
+            logger.info(smiles);
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
