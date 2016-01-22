@@ -198,7 +198,8 @@ div.ui-resizable-handle.ui-resizable-s {
 }
 
 .nbListTable tr:hover {
-    background-color: #f7f7f7;
+   /* background-color: #f7f7f7; */
+    background-color: #EFFAFF;
 }
 
 .nbListTable tr.selected .icon {
