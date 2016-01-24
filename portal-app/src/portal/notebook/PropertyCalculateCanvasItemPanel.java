@@ -35,7 +35,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
 
     private void addForm() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
-        DropDownChoice<Object> serviceNameChoice = new DropDownChoice<Object>("serviceName", getCellModel().getOptionModelMap().get("serviceName").getPicklistValueList());
+        DropDownChoice<Object> serviceNameChoice = new DropDownChoice<>("serviceName", getCellModel().getOptionModelMap().get("serviceName").getPicklistValueList());
         form.add(serviceNameChoice);
         TextField<String> outputFileNameField = new TextField<String>("outputFileName");
         form.add(outputFileNameField);

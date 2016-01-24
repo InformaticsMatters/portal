@@ -159,6 +159,11 @@ public class ExampleCellService {
         variableDefinition.setDisplayName("Outcome");
         variableDefinition.setVariableType(VariableType.VALUE);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
+        variableDefinition = new VariableDefinition();
+        variableDefinition.setName("errorMessage");
+        variableDefinition.setDisplayName("Error message");
+        variableDefinition.setVariableType(VariableType.VALUE);
+        cellType.getOutputVariableDefinitionList().add(variableDefinition);
         return cellType;
 
     }

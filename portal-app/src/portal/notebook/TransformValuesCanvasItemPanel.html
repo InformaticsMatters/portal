@@ -1,5 +1,5 @@
 <wicket:panel>
-    <div class="notebook-canvas-item-content">
+    <div class="notebook-canvas-item-content resizableCellContent">
         <div wicket:id="titleBar" class="titleBar"></div>
 
         <form wicket:id="form" class="ui form content">
@@ -7,7 +7,8 @@
                 <label>Transform definitions</label>
 
                 <div class="ui small input">
-                    <textarea wicket:id="transformDefinitions" rows="6" cols="50"/>
+                    <textarea wicket:id="transformDefinitions" cols="50"
+                              style="resize: none; max-height: none;min-height: none;"/>
                 </div>
             </div>
 
