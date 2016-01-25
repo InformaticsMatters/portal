@@ -24,11 +24,22 @@ public class ChemblCellExecute {
 
     // This would be an abstract method to be overridden by each cell definition.
     // For now this serves as an example of how it it would look
-    public void execute(Long notebookId, CellModel cell) throws Exception {
+    public JobStatus execute(Long notebookId, CellModel cell) throws Exception {
 
-        String cellName = cell.getName(); // get the cell name from somewhere
         String username = "curentuser"; // get the user
         Integer workunits = null; // null means "I don't know", but we can probably get the number from the dataset metadata
+
+        // create the job
+        JobDefinition jobdef = buildJobDefinition(notebookId, cell);
+        // execute the job
+        JobStatusClient client = new JobStatusRestClient(); // presumably this is injected or obtained from somewhere
+        JobStatus status = client.submit(jobdef, username, workunits);
+        // job is now running. we can either poll the JobStatusRestClient for its status or listen on the message queue for updates
+        return status;
+    }
+
+    JobDefinition buildJobDefinition(Long notebookId, CellModel cell) {
+        String cellName = cell.getName(); // get the cell name from somewhere
 
         // Get the options as a simple name/value map
         Map<String,Object> options = cell.getOptionModelMap().entrySet().stream().collect(
@@ -48,12 +59,7 @@ public class ChemblCellExecute {
         StepsCellExecutorJobDefinition jobdef = new ExecuteCellUsingStepsJobDefinition();
         jobdef.configureCellAndSteps(notebookId, cellName, step1);
 
-        // execute the job
-        JobStatusClient client = new JobStatusRestClient(); // presumably this is injected or obrained from somewhere
-        JobStatus status = client.submit(jobdef, username, workunits);
-
-        // job is now running. we can either poll the JobStatusRestClient for its status or listen on the message queue for updates
-
+        return jobdef;
     }
 
 }
