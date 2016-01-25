@@ -82,7 +82,7 @@ public class NotebookCellTypesPanel extends Panel {
       /*  CellFilterData cellFilterData = new CellFilterData();
         SearchCellData searchCellData = searchForm.getModelObject();
         cellFilterData.setPattern(searchCellData.getPattern());
-        descriptorRepeater.setList(notebookSession.listNotebookInfo());
+        descriptorRepeater.setList(notebookSession.listCellType());
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
             target.add(descriptorssContainer);
