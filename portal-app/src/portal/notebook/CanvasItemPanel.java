@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
-    private final CellModel cellModel;
+    private CellModel cellModel;
     @Inject
     private NotebookSession notebookSession;
     @Inject
@@ -68,6 +68,17 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     protected void addTitleBar() {
         CellTitleBarPanel cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellModel(), this);
         add(cellTitleBarPanel);
+    }
+
+    protected void makeCanvasItemResizable(HtmlHeaderContainer container, String fitCallbackFunction, int minWidth, int minHeight) {
+        String js = "makeCanvasItemResizable(:minWidth, :minHeight, ':id', :fitCallback)";
+        js = js.replace(":id", getMarkupId()).replace(":minWidth", Integer.toString(minWidth)).replace(":minHeight", Integer.toString(minHeight));
+        js = js.replace(":fitCallback", "function(id) {" + fitCallbackFunction + "(id)}");
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
+    }
+
+    public void updateCellModel() {
+        this.cellModel = notebookSession.getCurrentNotebookModel().findCellModel(cellModel.getName());
     }
 
     public CellModel getCellModel() {

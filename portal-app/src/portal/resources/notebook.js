@@ -136,14 +136,13 @@ function makeCanvasItemPlumbDraggable(selector) {
     });
 }
 
-function makeCanvasItemResizable(id) {
+function makeCanvasItemResizable(width, height, id, fitCallback) {
     $("#" + id).resizable({
-        minHeight: 270,
-        minWidth: 325,
+        minWidth: width,
+        minHeight: height,
         resize : function(event, ui) {
             jsPlumb.repaintEverything();
-            fitTableDisplayGrid(id);
-            $('#' + id).find('.tableCell').css({"width":"auto"});
+            fitCallback(id);
         },
 
         stop: function(event, ui) {
@@ -163,6 +162,32 @@ function fitTableDisplayGrid(id) {
 
     var h = containerh - gridTop - 12;
     $grid.css("height", h);
+}
+
+function fitScriptTextArea(id) {
+    var $id = $('#' + id);
+    var containerh = $id.outerHeight();
+    var containerOffset = $id.offset().top;
+
+    var $textarea = $id.find("textarea");
+    var textareaOffset = $id.find("textarea").offset().top;
+    var textareaPosition = textareaOffset - containerOffset;
+
+    var h = containerh - textareaPosition - 12;
+    $textarea.css("height", h);
+}
+
+function fitDefinitionsArea(id) {
+    var $id = $('#' + id);
+    var containerh = $id.outerHeight();
+    var containerOffset = $id.offset().top;
+
+    var $textarea = $id.find("textarea");
+    var textareaOffset = $id.find("textarea").offset().top;
+    var textareaPosition = textareaOffset - containerOffset;
+
+    var h = containerh - textareaPosition - 12;
+    $textarea.css("height", h);
 }
 
 function initCellSizeAndPosition(id, top, left, width, height) {

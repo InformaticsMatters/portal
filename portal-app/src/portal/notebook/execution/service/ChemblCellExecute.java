@@ -7,6 +7,7 @@ import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.CellType;
 import org.squonk.notebook.api.VariableKey;
+import portal.notebook.CellModel;
 import portal.notebook.NotebookSession;
 import portal.notebook.service.Cell;
 import portal.notebook.service.Option;
@@ -19,29 +20,28 @@ import java.util.stream.Collectors;
 /**
  * Created by timbo on 16/01/16.
  */
-public abstract class CellDefinition extends CellType {
+public class ChemblCellExecute {
 
     // This would be an abstract method to be overridden by each cell definition.
     // For now this serves as an example of how it it would look
-    public void execute(NotebookSession session, Cell cell) throws Exception {
+    public void execute(Long notebookId, CellModel cell) throws Exception {
 
-        Long notebookId = session.getCurrentNotebookInfo().getId();
-        String cellName = null; // get the cell name from somewhere
+        String cellName = cell.getName(); // get the cell name from somewhere
         String username = "curentuser"; // get the user
         Integer workunits = null; // null means "I don't know", but we can probably get the number from the dataset metadata
 
         // Get the options as a simple name/value map
-        Map<String,Object> options = cell.getOptionMap().entrySet().stream().collect(
+        Map<String,Object> options = cell.getOptionModelMap().entrySet().stream().collect(
                 Collectors.toMap(e -> e.getKey(), e -> e.getValue().getValue()));
 
         // get the name for the output variable. Just one in this case.
-        String outputVarName = cell.getOutputVariableMap().get("output").getName();
+        //String outputVarName = cell.getOutputVariableModelMap().get("results").getName();
 
         // build the step definition(s). If there is only one step then this is easy.
         // if multiple steps then the cell will know how to manage the bindings and options
         StepDefinition step1 = new StepDefinition("org.squonk.execution.steps.impl.ChemblActivitiesFetcherStep")
                 //.withInputVariableMapping("cellsKey", inputBindingMappings.get("nbvariable") ) // this cell has no inputs, but others do
-                .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, outputVarName)
+                .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, "results")
                 .withOptions(options);
 
         // create the job definition

@@ -11,6 +11,7 @@ import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
 import portal.dataset.*;
 import portal.notebook.execution.service.CellRegistry;
+import portal.notebook.execution.service.ChemblCellExecute;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
 
@@ -268,7 +269,21 @@ public class NotebookSession implements Serializable {
 
     public void executeCell(String cellName) {
         if (currentNotebookModel.findCellModel(cellName).getCellType().getExecutable()) {
-            cellClient.executeCell(currentNotebookInfo.getId(), cellName);
+            //cellClient.executeCell(currentNotebookInfo.getId(), cellName);
+
+
+
+            CellModel cell = currentNotebookModel.findCellModel(cellName);
+
+
+            ChemblCellExecute executor = new ChemblCellExecute();
+            try {
+                executor.execute(currentNotebookInfo.getId(), cell);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to execute cell", e);
+            }
+
+
         }
     }
 

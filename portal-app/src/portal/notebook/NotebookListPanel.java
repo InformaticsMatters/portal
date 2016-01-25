@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,7 +118,8 @@ public class NotebookListPanel extends Panel {
                 }
                 Label shared = new Label("shared");
                 if (notebookInfo.getShared()) {
-                    shared.add(new AttributeModifier("class", "ui small green empty circular label"));
+                    shared.setDefaultModel(Model.of("public"));
+                    shared.add(new AttributeModifier("class", "ui tiny blue label"));
                 }
                 listItem.add(shared);
                 shared.setVisible(isOwner);

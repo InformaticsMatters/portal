@@ -104,6 +104,7 @@ public class ExampleCellService {
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, "nameFieldName", "Name field´s name",
                 "Field name to use for the molecule name (the part before the CTAB block").withMinValues(0));
+
         return cellType;
     }
 
@@ -138,52 +139,6 @@ public class ExampleCellService {
         cellType.setExecutable(Boolean.TRUE);
         return cellType;
     }
-
-//    private static CellType createPropertyCalculateCellType() {
-//        CellType cellType = new CellType();
-//        cellType.setName("PropertyCalculate");
-//        cellType.setDescription("Property calc.");
-//        cellType.setExecutable(Boolean.TRUE);
-//        VariableDefinition variableDefinition = new VariableDefinition();
-//        variableDefinition.setName("outputFile");
-//        variableDefinition.setDisplayName("Output file");
-//        variableDefinition.setVariableType(VariableType.FILE);
-//        cellType.getOutputVariableDefinitionList().add(variableDefinition);
-//        BindingDefinition bindingDefinition = new BindingDefinition();
-//        bindingDefinition.setDisplayName("Input file");
-//        bindingDefinition.setName("input");
-//        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
-//        cellType.getBindingDefinitionList().add(bindingDefinition);
-//        OptionDefinition<String> optionDefinition = new OptionDefinition<String>();
-//        optionDefinition.setName("serviceName");
-//        optionDefinition.setDisplayName("Service");
-//        optionDefinition.setOptionType(OptionType.PICKLIST);
-//        for (String serviceName : CalculatorsClient.getServiceNames()) {
-//            optionDefinition.getPicklistValueList().add(serviceName);
-//        }
-//        cellType.getOptionDefinitionList().add(optionDefinition);
-//        cellType.setExecutable(Boolean.TRUE);
-//        return cellType;
-//    }
-//
-//    private static CellType createFileUploadCellType() {
-//        CellType cellType = new CellType();
-//        cellType.setName("FileUpload");
-//        cellType.setDescription("File upload");
-//        cellType.setExecutable(Boolean.TRUE);
-//        VariableDefinition variableDefinition = new VariableDefinition();
-//        variableDefinition.setName("file");
-//        variableDefinition.setDisplayName("Uploaded file");
-//        variableDefinition.setVariableType(VariableType.FILE);
-//        cellType.getOutputVariableDefinitionList().add(variableDefinition);
-//        OptionDefinition<String> optionDefinition = new OptionDefinition<String>();
-//        optionDefinition.setName("fileName");
-//        optionDefinition.setDisplayName("Output file name");
-//        optionDefinition.setOptionType(OptionType.SIMPLE);
-//        cellType.getOptionDefinitionList().add(optionDefinition);
-//        cellType.setExecutable(Boolean.FALSE);
-//        return cellType;
-//    }
 
     private static CellType createConvertBasicToMoleculeObjectCellType() {
         CellType cellType = new CellType();

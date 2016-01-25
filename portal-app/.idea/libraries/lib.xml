@@ -20,13 +20,13 @@
       <root url="file://$PROJECT_DIR$/../lib/groovy-all/2.2.2" />
       <root url="file://$PROJECT_DIR$/../lib/core-services-client" />
       <root url="file://$PROJECT_DIR$/../lib/derby/10.8" />
-      <root url="file://$PROJECT_DIR$/../lib/asm/3.1" />
       <root url="file://$PROJECT_DIR$/../lib/jackson/2.6.4" />
       <root url="file://$PROJECT_DIR$/../lib/squonk-security" />
+      <root url="file://$PROJECT_DIR$/../lib/asm/5.0.4" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
-    <jarDirectory url="file://$PROJECT_DIR$/../lib/asm/3.1" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/asm/5.0.4" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/cdi-api/1.2.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/core-services" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/core-services-client" recursive="false" />
