@@ -11,7 +11,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.notebook.api.CellType;
-import portal.workflow.SearchDatasetData;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -24,7 +23,7 @@ public class NotebookCellTypesPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "cellDescriptor";
 
-    private Form<SearchDatasetData> searchForm;
+    private Form<SearchCellData> searchForm;
 
     private WebMarkupContainer descriptorssContainer;
     private ListView<CellType> descriptorRepeater;
@@ -40,7 +39,7 @@ public class NotebookCellTypesPanel extends Panel {
 
     private void addSearchForm() {
         searchForm = new Form<>("form");
-        searchForm.setModel(new CompoundPropertyModel<>(new SearchDatasetData()));
+        searchForm.setModel(new CompoundPropertyModel<>(new SearchCellData()));
         searchForm.setOutputMarkupId(true);
         add(searchForm);
 
@@ -79,14 +78,14 @@ public class NotebookCellTypesPanel extends Panel {
     }
 
     public void refreshCells() {
-      /*  CellFilterData cellFilterData = new CellFilterData();
+        CellFilterData cellFilterData = new CellFilterData();
         SearchCellData searchCellData = searchForm.getModelObject();
         cellFilterData.setPattern(searchCellData.getPattern());
         descriptorRepeater.setList(notebookSession.listCellType());
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
             target.add(descriptorssContainer);
-        } */
+        }
     }
 
 }
