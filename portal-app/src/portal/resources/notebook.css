@@ -275,3 +275,7 @@ div.ui-resizable-handle.ui-resizable-s {
 .resizableCellContent {
     width: auto;
 }
+
+.cells {
+    margin-top: 20px;
+}

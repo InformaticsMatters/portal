@@ -1,5 +1,19 @@
 <wicket:panel>
-    <div class="cellsList" id="cellsDraggablesContainer">
+    <form class="ui form" wicket:id="form">
+        <div class="fields">
+            <div class="field">
+                <div class="ui action small input">
+                    <input type="text" wicket:id="pattern">
+
+                    <div class="ui small icon button" wicket:id="search">
+                        <i class="search icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="cells" id="cellsDraggablesContainer">
         <ul class="ui cards" wicket:id="descriptorsContainer">
             <li wicket:id="descriptor" class="card" draggable="true">
                 <div wicket:id="descriptorItem"></div>
