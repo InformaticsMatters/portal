@@ -279,3 +279,8 @@ div.ui-resizable-handle.ui-resizable-s {
 .cells {
     margin-top: 20px;
 }
+
+.cells ul {
+    -webkit-padding-start: 0;
+    padding-left: 0;
+}
