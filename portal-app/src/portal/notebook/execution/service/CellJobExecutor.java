@@ -11,6 +11,7 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,15 @@ public abstract class CellJobExecutor implements CellExecutor {
         return jobdef;
     }
 
+    public static class MockExecutor1 implements CellExecutor {
+
+        @Override
+        public JobStatus execute(Long notebookId, CellInstance cell) throws Exception {
+            // do something to set the output variable(s)
+            // create a fake jobstatus
+            return JobStatus.create(null /* JobDefinition */, "username", new Date(), null).withStatus(JobStatus.Status.COMPLETED, 0, 0, null);
+        }
+    }
 
     public static class ChemblActivitiesFetcher extends CellJobExecutor {
 
