@@ -5,15 +5,8 @@ import com.im.lac.job.jobdef.*;
 import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.api.CellType;
-import org.squonk.notebook.api.VariableKey;
 import portal.notebook.CellModel;
-import portal.notebook.NotebookSession;
-import portal.notebook.service.Cell;
-import portal.notebook.service.Option;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 

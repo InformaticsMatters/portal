@@ -1,21 +1,21 @@
 package portal.notebook;
 
-import portal.notebook.service.Binding;
-import portal.notebook.service.Variable;
-import org.squonk.notebook.api.VariableType;
+import portal.notebook.api.BindingInstance;
+import portal.notebook.api.VariableInstance;
+import portal.notebook.api.VariableType;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class BindingModel implements Serializable {
-    private final Binding binding;
+    private final BindingInstance binding;
     private NotebookModel notebookModel;
     private VariableModel variableModel;
 
-    public BindingModel(Binding binding, NotebookModel notebookModel) {
+    public BindingModel(BindingInstance binding, NotebookModel notebookModel) {
         this.binding = binding;
         this.notebookModel = notebookModel;
-        Variable variable = binding.getVariable();
+        VariableInstance variable = binding.getVariable();
         if (variable != null) {
             variableModel = notebookModel.findVariableModel(variable.getProducerCell().getName(), variable.getName());
         }

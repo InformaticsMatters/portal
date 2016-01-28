@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import org.squonk.notebook.api.VariableType;
+import portal.notebook.api.NotebookInstance;
+import portal.notebook.api.VariableInstance;
 import toolkit.services.PU;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,34 +31,34 @@ public class NotebookService {
         TypedQuery<Notebook> query = entityManager.createQuery("select o from Notebook o where o.owner = :owner or o.shared = :shared order by o.name", Notebook.class);
         query.setParameter("owner", userId);
         query.setParameter("shared", true);
-        for (Notebook notebook : query.getResultList()) {
+        for (Notebook notebookHeader : query.getResultList()) {
             NotebookInfo notebookInfo = new NotebookInfo();
-            notebookInfo.setId(notebook.getId());
-            notebookInfo.setName(notebook.getName());
-            notebookInfo.setDescription(notebook.getDescription());
-            notebookInfo.setOwner(notebook.getOwner());
-            notebookInfo.setShared(notebook.getShared());
+            notebookInfo.setId(notebookHeader.getId());
+            notebookInfo.setName(notebookHeader.getName());
+            notebookInfo.setDescription(notebookHeader.getDescription());
+            notebookInfo.setOwner(notebookHeader.getOwner());
+            notebookInfo.setShared(notebookHeader.getShared());
             list.add(notebookInfo);
         }
         return list;
     }
 
     public NotebookInfo retrieveNotebookInfo(Long id) {
-        Notebook notebook = entityManager.find(Notebook.class, id);
+        Notebook notebookHeader = entityManager.find(Notebook.class, id);
         NotebookInfo notebookInfo = new NotebookInfo();
-        notebookInfo.setId(notebook.getId());
-        notebookInfo.setName(notebook.getName());
-        notebookInfo.setDescription(notebook.getDescription());
-        notebookInfo.setOwner(notebook.getOwner());
-        notebookInfo.setShared(notebook.getShared());
+        notebookInfo.setId(notebookHeader.getId());
+        notebookInfo.setName(notebookHeader.getName());
+        notebookInfo.setDescription(notebookHeader.getDescription());
+        notebookInfo.setOwner(notebookHeader.getOwner());
+        notebookInfo.setShared(notebookHeader.getShared());
         return notebookInfo;
     }
 
-    public NotebookContents retrieveNotebookContents(Long id) {
+    public NotebookInstance retrieveNotebookContents(Long id) {
         try {
-            Notebook notebook = entityManager.find(Notebook.class, id);
-            entityManager.refresh(notebook);
-            return NotebookContents.fromBytes(notebook.getData());
+            Notebook notebookHeader = entityManager.find(Notebook.class, id);
+            entityManager.refresh(notebookHeader);
+            return NotebookInstance.fromBytes(notebookHeader.getData());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -64,41 +66,41 @@ public class NotebookService {
 
     public Long createNotebook(EditNotebookData editNotebookData) {
         try {
-            Notebook notebook = new Notebook();
-            notebook.setName(editNotebookData.getName());
-            notebook.setDescription(editNotebookData.getDescription());
-            notebook.setOwner(editNotebookData.getOwner());
-            notebook.setShared(editNotebookData.getShared());
-            notebook.setData(new NotebookContents().toBytes());
-            entityManager.persist(notebook);
-            return notebook.getId();
+            Notebook notebookHeader = new Notebook();
+            notebookHeader.setName(editNotebookData.getName());
+            notebookHeader.setDescription(editNotebookData.getDescription());
+            notebookHeader.setOwner(editNotebookData.getOwner());
+            notebookHeader.setShared(editNotebookData.getShared());
+            notebookHeader.setData(new NotebookInstance().toBytes());
+            entityManager.persist(notebookHeader);
+            return notebookHeader.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public void updateNotebook(EditNotebookData editNotebookData) {
-        Notebook notebook = entityManager.find(Notebook.class, editNotebookData.getId());
-        notebook.setName(editNotebookData.getName());
-        notebook.setDescription(editNotebookData.getDescription());
-        notebook.setOwner(editNotebookData.getOwner());
-        notebook.setShared(editNotebookData.getShared());
+        Notebook notebookHeader = entityManager.find(Notebook.class, editNotebookData.getId());
+        notebookHeader.setName(editNotebookData.getName());
+        notebookHeader.setDescription(editNotebookData.getDescription());
+        notebookHeader.setOwner(editNotebookData.getOwner());
+        notebookHeader.setShared(editNotebookData.getShared());
     }
 
     public void removeNotebook(Long id) {
-        Notebook notebook = entityManager.find(Notebook.class, id);
+        Notebook notebookHeader = entityManager.find(Notebook.class, id);
         TypedQuery<NotebookHistory> historyQuery = entityManager.createQuery("select o from NotebookHistory o where o.notebook = :notebook", NotebookHistory.class);
-        historyQuery.setParameter("notebook", notebook);
+        historyQuery.setParameter("notebook", notebookHeader);
         for (NotebookHistory notebookHistory : historyQuery.getResultList()) {
             entityManager.remove(notebookHistory);
         }
-        entityManager.remove(notebook);
+        entityManager.remove(notebookHeader);
     }
 
     public Long updateNotebookContents(UpdateNotebookContentsData updateNotebookContentsData) {
-        try {
+        try {                  
             Notebook notebook = entityManager.find(Notebook.class, updateNotebookContentsData.getId());
-            doStoreNotebookContents(updateNotebookContentsData.getNotebookContents(), notebook);
+            doStoreNotebookContents(updateNotebookContentsData.getNotebookInstance(), notebook);
             return notebook.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -106,10 +108,10 @@ public class NotebookService {
 
     }
 
-    private void doStoreNotebookContents(NotebookContents notebookContents, Notebook notebook) throws Exception {
-        notebook.setData(notebookContents.toBytes());
+
+    private void doStoreNotebookContents(NotebookInstance notebookInstance, Notebook notebook) throws Exception {
+        notebook.setData(notebookInstance.toBytes());
         NotebookHistory notebookHistory = new NotebookHistory();
-        notebookHistory.setNotebook(notebook);
         notebookHistory.setData(notebook.getData());
         notebookHistory.setRevisionDate(new Date());
         notebookHistory.setRevisionTime(new Date());
@@ -118,8 +120,8 @@ public class NotebookService {
 
     public List<MoleculeObject> squonkDatasetAsMolecules(Long notebookId, String cellName, String variableName) {
         try {
-            NotebookContents notebookContents = retrieveNotebookContents(notebookId);
-            Variable variable = notebookContents.findVariable(cellName, variableName);
+            NotebookInstance notebookInstance = retrieveNotebookContents(notebookId);
+            VariableInstance variable = notebookInstance.findVariable(cellName, variableName);
             File file = resolveContentsFile(notebookId, variable);
             FileInputStream fileInputStream = new FileInputStream(file);
             try {
@@ -212,16 +214,16 @@ public class NotebookService {
     }
 
 
-    public void storeNotebookContents(Long notebookId, NotebookContents notebookContents) {
+    public void storeNotebookContents(Long notebookId, NotebookInstance notebookInstance) {
         Notebook notebook = entityManager.find(Notebook.class, notebookId);
         try {
-            doStoreNotebookContents(notebookContents, notebook);
+            doStoreNotebookContents(notebookInstance, notebook);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public File resolveContentsFile(Long notebookId, Variable variable) throws Exception {
+    public File resolveContentsFile(Long notebookId, VariableInstance variable) throws Exception {
         File parent = new File(System.getProperty("user.home"), "notebook-files");
         if (!parent.exists() && !parent.mkdirs()) {
             throw new Exception("Couled not create " + parent.getAbsolutePath());
@@ -237,7 +239,7 @@ public class NotebookService {
         }
     }
 
-    public void storeStreamingContents(Long notebookId, Variable variable, InputStream inputStream) {
+    public void storeStreamingContents(Long notebookId, VariableInstance variable, InputStream inputStream) {
         try {
             File file = resolveContentsFile(notebookId, variable);
             OutputStream outputStream = new FileOutputStream(file);
@@ -257,7 +259,7 @@ public class NotebookService {
         }
     }
 
-    public void outputStreamingContents(Long notebookId, Variable variable, OutputStream outputStream) {
+    public void outputStreamingContents(Long notebookId, VariableInstance variable, OutputStream outputStream) {
         try {
             File file = resolveContentsFile(notebookId, variable);
             if (file.exists()) {

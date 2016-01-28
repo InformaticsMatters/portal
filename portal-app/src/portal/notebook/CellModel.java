@@ -1,10 +1,6 @@
 package portal.notebook;
 
-import org.squonk.notebook.api.CellType;
-import portal.notebook.service.Binding;
-import portal.notebook.service.Cell;
-import portal.notebook.service.Option;
-import portal.notebook.service.Variable;
+import portal.notebook.api.*;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -12,13 +8,13 @@ import java.util.Map;
 
 public class CellModel implements Serializable {
 
-    private final Cell cell;
+    private final CellInstance cell;
     private final Map<String, VariableModel> variableModelMap = new HashMap<>();
     private final Map<String, BindingModel> bindingModelMap = new HashMap<>();
     private final Map<String, OptionModel> optionModelMap = new HashMap<>();
     private NotebookModel notebookModel;
 
-    public CellModel(Cell cell, NotebookModel notebookModel) {
+    public CellModel(CellInstance cell, NotebookModel notebookModel) {
         this.cell = cell;
         this.notebookModel = notebookModel;
         loadOptions();
@@ -29,8 +25,8 @@ public class CellModel implements Serializable {
         return cell.getName();
     }
 
-    public CellType getCellType() {
-        return cell.getCellType();
+    public CellDefinition getCellDefinition() {
+        return cell.getCellDefinition();
     }
 
     public int getPositionLeft() {
@@ -50,21 +46,21 @@ public class CellModel implements Serializable {
     }
 
     private void loadOutputVariables() {
-        for (Variable variable : cell.getOutputVariableMap().values()) {
+        for (VariableInstance variable : cell.getOutputVariableMap().values()) {
             VariableModel variableModel = new VariableModel(this, variable);
             variableModelMap.put(variable.getName(), variableModel);
         }
     }
 
     public void loadBindings() {
-        for (Binding binding : cell.getBindingMap().values()) {
+        for (BindingInstance binding : cell.getBindingMap().values()) {
             BindingModel bindingModel = new BindingModel(binding, notebookModel);
             bindingModelMap.put(binding.getName(), bindingModel);
         }
     }
 
     private void loadOptions() {
-        for (Option<?> option : cell.getOptionMap().values()) {
+        for (OptionInstance<?> option : cell.getOptionMap().values()) {
             OptionModel<?> optionModel = new OptionModel<>(option);
             optionModelMap.put(option.getName(), optionModel);
         }

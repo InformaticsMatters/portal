@@ -1,20 +1,20 @@
 package portal.notebook;
 
-import org.squonk.notebook.api.VariableType;
-import portal.notebook.service.Variable;
+import portal.notebook.api.VariableInstance;
+import portal.notebook.api.VariableType;
 
 import java.io.Serializable;
 
 public class VariableModel implements Serializable {
     private final CellModel producerCellModel;
-    private final Variable variable;
+    private final VariableInstance variable;
 
-    public VariableModel(CellModel producerCellModel, Variable variable) {
+    public VariableModel(CellModel producerCellModel, VariableInstance variable) {
         this.producerCellModel = producerCellModel;
         this.variable = variable;
     }
 
-    public Variable getVariable() {
+    public VariableInstance getVariable() {
         return variable;
     }
 

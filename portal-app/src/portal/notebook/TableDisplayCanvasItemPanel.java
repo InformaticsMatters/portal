@@ -7,7 +7,7 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.notebook.api.VariableType;
 import portal.dataset.IDatasetDescriptor;
-import portal.notebook.service.Strings;
+import portal.notebook.api.Strings;
 
 import javax.inject.Inject;
 import java.io.Serializable;

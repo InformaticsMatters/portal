@@ -1,45 +1,40 @@
 package portal.notebook.execution.service;
 
-import org.squonk.execution.steps.StepDefinition;
-import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.api.*;
-import org.squonk.notebook.client.CallbackClient;
-import org.squonk.notebook.client.CallbackContext;
+
 import org.squonk.options.MultiLineTextTypeDescriptor;
-import org.squonk.options.OptionDescriptor;
+import portal.notebook.api.*;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @ApplicationScoped
 public class CellRegistry {
-    private final Map<String,CellType> CELL_TYPES = new LinkedHashMap<>();
+    private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
     public static final String OPTION_FILE_TYPE = "csvFormatType";
     public static final String OPTION_FIRST_LINE_IS_HEADER = "firstLineIsHeader";
 
 
     public CellRegistry() {
 
-        registerCell(createChemblActivitiesFetcherCellType());
-        registerCell(createTableDisplayCellType());
-        registerCell(createSdfUploaderCellType());
-        registerCell(createCsvUploaderCellType());
-        registerCell(createDatasetMergerCellType());
-        registerCell(createConvertBasicToMoleculeObjectCellType());
-        registerCell(createValueTransformerCellType());
-        registerCell(createGroovyScriptTrustedCellType());
+        registerCell(createChemblActivitiesFetcherCellDefinition());
+        registerCell(createTableDisplayCellDefinition());
+        registerCell(createSdfUploaderCellDefinition());
+        registerCell(createCsvUploaderCellDefinition());
+        registerCell(createDatasetMergerCellDefinition());
+        registerCell(createConvertBasicToMoleculeObjectCellDefinition());
+        registerCell(createValueTransformerCellDefinition());
+        registerCell(createGroovyScriptTrustedCellDefinition());
 
     }
 
-    public void registerCell(CellType cell) {
-        CELL_TYPES.put(cell.getName(), cell);
+    public void registerCell(CellDefinition cell) {
+        cellDefinitionMap.put(cell.getName(), cell);
     }
 
-    private static CellType createDatasetMergerCellType() {
-        CellType cellType = new CellType();
+    private static CellDefinition createDatasetMergerCellDefinition() {
+        CellDefinition cellType = new SimpleCellDefinition();
         cellType.setName("DatasetMerger");
         cellType.setDescription("Dataset merger");
         cellType.setExecutable(Boolean.TRUE);
@@ -48,9 +43,9 @@ public class CellRegistry {
         variableDefinition.setDisplayName("Results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, "mergeFieldName", "Merge field name",
+        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "mergeFieldName", "Merge field name",
                 "Name of field to use to match items"));
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(Boolean.class, "keepFirst", "Keep first",
+        cellType.getOptionDefinitionList().add(new OptionDefinition(Boolean.class, "keepFirst", "Keep first",
                 "When merging keep the original value (or the new one)"));
         for (int i = 0; i < 5; i++) {
             BindingDefinition bindingDefinition = new BindingDefinition();
@@ -62,8 +57,8 @@ public class CellRegistry {
         return cellType;
     }
 
-    private static CellType createCsvUploaderCellType() {
-        CellType cellType = new CellType();
+    private static CellDefinition createCsvUploaderCellDefinition() {
+        CellDefinition cellType = new SimpleCellDefinition();
         cellType.setName("CsvUploader");
         cellType.setDescription("CSV upload");
         cellType.setExecutable(Boolean.TRUE);
@@ -77,16 +72,16 @@ public class CellRegistry {
         variableDefinition.setDisplayName("Results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, OPTION_FILE_TYPE, "File type",
+        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, OPTION_FILE_TYPE, "File type",
                 "Type of CSV or TAB file")
-                .withValues(new String [] {"TDF", "EXCEL", "MYSQL", "RFC4180", "DEFAULT"}).withDefaultValue("DEFAULT"));
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(Boolean.class, OPTION_FIRST_LINE_IS_HEADER, "First line is header",
+                .withValues(new String[]{"TDF", "EXCEL", "MYSQL", "RFC4180", "DEFAULT"}).withDefaultValue("DEFAULT"));
+        cellType.getOptionDefinitionList().add(new OptionDefinition(Boolean.class, OPTION_FIRST_LINE_IS_HEADER, "First line is header",
                 "First line contains field names"));
         return cellType;
     }
 
-    private static CellType createSdfUploaderCellType() {
-        CellType cellType = new CellType();
+    private static CellDefinition createSdfUploaderCellDefinition() {
+        CellDefinition cellType = new SimpleCellDefinition();
         cellType.setName("SdfUploader");
         cellType.setDescription("SDF upload");
         cellType.setExecutable(Boolean.TRUE);
@@ -100,13 +95,13 @@ public class CellRegistry {
         variableDefinition.setDisplayName("Results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, "nameFieldName", "Name field´s name",
+        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "nameFieldName", "Name field´s name",
                 "Field name to use for the molecule name (the part before the CTAB block").withMinValues(0));
         return cellType;
     }
 
-    private static CellType createTableDisplayCellType() {
-        CellType cellType = new CellType();
+    private static CellDefinition createTableDisplayCellDefinition() {
+        CellDefinition cellType = new SimpleCellDefinition();
         cellType.setName("TableDisplay");
         cellType.setDescription("Table display");
         cellType.setExecutable(Boolean.FALSE);
@@ -121,8 +116,8 @@ public class CellRegistry {
         return cellType;
     }
 
-    private static CellType createChemblActivitiesFetcherCellType() {
-        CellType cellType = new CellType();
+    private static CellDefinition createChemblActivitiesFetcherCellDefinition() {
+        CellDefinition cellType = new SimpleCellDefinition();
         cellType.setName("ChemblActivitiesFetcher");
         cellType.setDescription("Chembl activities fetcher");
         cellType.setExecutable(Boolean.TRUE);
@@ -131,8 +126,8 @@ public class CellRegistry {
         variableDefinition.setDisplayName("Results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, "assayId", "Assay ID", "ChEBML Asssay ID"));
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, "prefix", "Prefix", "Prefix for result fields"));
+        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "assayId", "Assay ID", "ChEBML Asssay ID"));
+        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "prefix", "Prefix", "Prefix for result fields"));
         cellType.setExecutable(Boolean.TRUE);
 
 //        StepDefinition step1 = new  StepDefinition(StepDefinitionConstants.STEP_CHEMBL_ACTIVITIES_FETCHER)
@@ -143,8 +138,8 @@ public class CellRegistry {
     }
 
 
-    private static CellType createConvertBasicToMoleculeObjectCellType() {
-        CellType cellType = new CellType();
+    private static CellDefinition createConvertBasicToMoleculeObjectCellDefinition() {
+        CellDefinition cellType = new SimpleCellDefinition();
         cellType.setName("BasicObjectToMoleculeObject");
         cellType.setDescription("Convert Dataset from BasicObjects to MoleculeObjects");
         cellType.setExecutable(Boolean.TRUE);
@@ -158,19 +153,19 @@ public class CellRegistry {
         bindingDefinition.setName("input");
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellType.getBindingDefinitionList().add(bindingDefinition);
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, "structureFieldName", "Structure Field Name",
+        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "structureFieldName", "Structure Field Name",
                 "Name of property to use for the structure"));
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(String.class, "structureFormat",
+        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "structureFormat",
                 "Structure Format", "Format of the structures e.g. smiles, mol")
-                .withValues(new String[] {"smiles", "mol"}));
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(Boolean.class, "preserveUuid", "Preserve UUID", "Keep the existing UUID or generate a new one").withMinValues(1));
+                .withValues(new String[]{"smiles", "mol"}));
+        cellType.getOptionDefinitionList().add(new OptionDefinition(Boolean.class, "preserveUuid", "Preserve UUID", "Keep the existing UUID or generate a new one").withMinValues(1));
 
         cellType.setExecutable(Boolean.TRUE);
         return cellType;
     }
 
-    private static CellType createValueTransformerCellType() {
-        CellType cellType = new CellType();
+    private static CellDefinition createValueTransformerCellDefinition() {
+        CellDefinition cellType = new SimpleCellDefinition();
         cellType.setName("TransformValues");
         cellType.setDescription("Transform dataset values");
         cellType.setExecutable(Boolean.TRUE);
@@ -184,15 +179,15 @@ public class CellRegistry {
         bindingDefinition.setName("input");
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellType.getBindingDefinitionList().add(bindingDefinition);
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(new MultiLineTextTypeDescriptor(10, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
+        cellType.getOptionDefinitionList().add(new OptionDefinition(new MultiLineTextTypeDescriptor(10, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
                 "transformDefinitions", "Transform Definitions",
                 "Definition of the transforms to perform"));
         cellType.setExecutable(Boolean.TRUE);
         return cellType;
     }
 
-    private static CellType createGroovyScriptTrustedCellType() {
-        CellType cellType = new CellType();
+    private static CellDefinition createGroovyScriptTrustedCellDefinition() {
+        CellDefinition cellType = new SimpleCellDefinition();
         cellType.setName("TrustedGroovyDatasetScript");
         cellType.setDescription("Groovy Script (trusted)");
         cellType.setExecutable(Boolean.TRUE);
@@ -206,19 +201,19 @@ public class CellRegistry {
         bindingDefinition.setName("input");
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellType.getBindingDefinitionList().add(bindingDefinition);
-        cellType.getOptionDefinitionList().add(new OptionDescriptor(
+        cellType.getOptionDefinitionList().add(new OptionDefinition(
                 new MultiLineTextTypeDescriptor(20, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
                 "script", "Groovy Script", "Groovy script to execute"));
         cellType.setExecutable(Boolean.TRUE);
         return cellType;
     }
 
-    public Collection<CellType> listCellType() {
-        return CELL_TYPES.values();
+    public Collection<CellDefinition> listCellDefinition() {
+        return cellDefinitionMap.values();
     }
 
 
-    public CellType retrieveCellType(String name) {
-        return CELL_TYPES.get(name);
+    public CellDefinition retrieveCellDefinition(String name) {
+        return cellDefinitionMap.get(name);
     }
 }

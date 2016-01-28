@@ -1,4 +1,4 @@
-package portal.notebook.service;
+package portal.notebook.api;
 
 import org.squonk.notebook.api.OptionType;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Option<T> implements Serializable {
+public class OptionInstance<T> implements Serializable {
     private String name;
     private OptionType optionType;
     private final List<T> picklistValueList = new ArrayList<>();

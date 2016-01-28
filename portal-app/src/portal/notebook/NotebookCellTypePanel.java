@@ -2,7 +2,7 @@ package portal.notebook;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.squonk.notebook.api.CellType;
+import portal.notebook.api.CellDefinition;
 
 import javax.inject.Inject;
 
@@ -11,12 +11,12 @@ import javax.inject.Inject;
  */
 public class NotebookCellTypePanel extends Panel {
 
-    private final CellType cellType;
+    private final CellDefinition cellType;
 
     @Inject
     private NotebookSession notebookSession;
 
-    public NotebookCellTypePanel(String id, CellType cellType) {
+    public NotebookCellTypePanel(String id, CellDefinition cellType) {
         super(id);
         this.cellType = cellType;
         addComponents();

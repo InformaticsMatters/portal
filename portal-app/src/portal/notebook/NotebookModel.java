@@ -1,7 +1,7 @@
 package portal.notebook;
 
-import portal.notebook.service.Cell;
-import portal.notebook.service.NotebookContents;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.NotebookInstance;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,21 +10,21 @@ import java.util.List;
 import java.util.Map;
 
 public class NotebookModel implements Serializable {
-    private final NotebookContents notebookContents;
+    private final NotebookInstance notebookInstance;
     private final Map<String, CellModel> cellModelMap = new HashMap<>();
 
-    public NotebookModel(NotebookContents notebookContents) {
-        this.notebookContents = notebookContents;
+    public NotebookModel(NotebookInstance notebookInstance) {
+        this.notebookInstance = notebookInstance;
         loadCells();
     }
 
-    public NotebookContents getNotebookContents() {
-        return notebookContents;
+    public NotebookInstance getNotebookInstance() {
+        return notebookInstance;
     }
 
     private void loadCells() {
         cellModelMap.clear();
-        for (Cell cell : notebookContents.getCellList()) {
+        for (CellInstance cell : notebookInstance.getCellList()) {
             CellModel cellModel = new CellModel(cell, this);
             cellModelMap.put(cell.getName(), cellModel);
         }
@@ -37,7 +37,7 @@ public class NotebookModel implements Serializable {
         return cellModelMap.values().toArray(new CellModel[0]);
     }
 
-    public CellModel addCellModel(Cell cell) {
+    public CellModel addCellModel(CellInstance cell) {
         CellModel cellModel = new CellModel(cell, this);
         cellModel.loadBindings();
         cellModelMap.put(cell.getName(), cellModel);
@@ -53,7 +53,7 @@ public class NotebookModel implements Serializable {
             }
         }
         cellModelMap.remove(cellModel.getName());
-        notebookContents.removeCell(cellModel.getName());
+        notebookInstance.removeCell(cellModel.getName());
     }
 
     public CellModel findCellModel(String name) {

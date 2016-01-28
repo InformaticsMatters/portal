@@ -1,17 +1,19 @@
 package portal.notebook.service;
 
+import portal.notebook.api.NotebookInstance;
+
 import java.io.Serializable;
 
 public class UpdateNotebookContentsData implements Serializable {
     private Long id;
-    private NotebookContents notebookContents;
+    private NotebookInstance notebookInstance;
 
-    public NotebookContents getNotebookContents() {
-        return notebookContents;
+    public NotebookInstance getNotebookInstance() {
+        return notebookInstance;
     }
 
-    public void setNotebookContents(NotebookContents notebookContents) {
-        this.notebookContents = notebookContents;
+    public void setNotebookInstance(NotebookInstance notebookInstance) {
+        this.notebookInstance = notebookInstance;
     }
 
     public Long getId() {

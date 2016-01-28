@@ -210,7 +210,7 @@ public class ExampleCellService {
         return cellType;
     }
 
-    @Path("listCellType")
+    @Path("listCellDefinition")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<CellType> listCellType() {

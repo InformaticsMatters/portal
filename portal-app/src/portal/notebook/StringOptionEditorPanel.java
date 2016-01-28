@@ -4,7 +4,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.squonk.notebook.api.OptionDefinition;
+import portal.notebook.api.OptionDefinition;
 
 /**
  * @author simetrias

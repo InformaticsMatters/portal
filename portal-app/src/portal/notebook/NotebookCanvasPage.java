@@ -27,6 +27,7 @@ import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PopupContainerProvider;
 import portal.PortalHomePage;
+import portal.notebook.api.CellDefinition;
 import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -273,8 +274,8 @@ public class NotebookCanvasPage extends WebPage {
 
         logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-        CellType cellType = notebookSession.findCellType(dropDataId);
-        CellModel cellModel = notebookSession.addCell(cellType, Integer.parseInt(x), Integer.parseInt(y));
+        CellDefinition cellDefinition = notebookSession.findCellType(dropDataId);
+        CellModel cellModel = notebookSession.addCell(cellDefinition, Integer.parseInt(x), Integer.parseInt(y));
 
         NotebookModel notebookModel = notebookSession.getCurrentNotebookModel();
 
@@ -307,7 +308,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private Panel createCanvasItemPanel(CellModel cellModel) {
-        CellType cellType = cellModel.getCellType();
+        CellDefinition cellType = cellModel.getCellDefinition();
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("FileUpload".equals(cellType.getName())) {
             return new FileUploadCanvasItemPanel("item", cellModel);

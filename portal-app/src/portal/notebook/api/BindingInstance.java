@@ -1,17 +1,14 @@
-package portal.notebook.service;
-
-
-import org.squonk.notebook.api.VariableType;
+package portal.notebook.api;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Binding implements Serializable {
+public class BindingInstance implements Serializable {
     private String name;
     private String displayName;
     private final List<VariableType> acceptedVariableTypeList = new ArrayList<>();
-    private Variable variable;
+    private VariableInstance variable;
 
     public String getName() {
         return name;
@@ -29,11 +26,11 @@ public class Binding implements Serializable {
         this.displayName = displayName;
     }
 
-    public Variable getVariable() {
+    public VariableInstance getVariable() {
         return variable;
     }
 
-    public void setVariable(Variable variable) {
+    public void setVariable(VariableInstance variable) {
         this.variable = variable;
     }
 

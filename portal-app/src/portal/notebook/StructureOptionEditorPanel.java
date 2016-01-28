@@ -15,7 +15,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.notebook.api.OptionDefinition;
+import portal.notebook.api.OptionDefinition;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 
 import java.awt.*;

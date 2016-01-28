@@ -1,19 +1,17 @@
-package portal.notebook.service;
-
-import org.squonk.notebook.api.CellType;
+package portal.notebook.api;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Cell implements Serializable {
+public class CellInstance implements Serializable {
 
-    private final Map<String, Binding> bindingMap = new HashMap<>();
-    private final Map<String, Variable> outputVariableMap = new HashMap<>();
-    private final Map<String, Option> optionMap = new HashMap<>();
+    private final Map<String, BindingInstance> bindingMap = new HashMap<>();
+    private final Map<String, VariableInstance> outputVariableMap = new HashMap<>();
+    private final Map<String, OptionInstance> optionMap = new HashMap<>();
     private Long id;
     private String name;
-    private CellType cellType;
+    private CellDefinition cellDefinition;
     private int positionLeft;
     private int positionTop;
     private int sizeWidth;
@@ -27,19 +25,19 @@ public class Cell implements Serializable {
         this.name = name;
     }
 
-    public CellType getCellType() {
-        return cellType;
+    public CellDefinition getCellDefinition() {
+        return cellDefinition;
     }
 
-    public void setCellType(CellType cellType) {
-        this.cellType = cellType;
+    public void setCellDefinition(CellDefinition cellDefinition) {
+        this.cellDefinition = cellDefinition;
     }
 
-    public Map<String, Binding> getBindingMap() {
+    public Map<String, BindingInstance> getBindingMap() {
         return bindingMap;
     }
 
-    public Map<String, Variable> getOutputVariableMap() {
+    public Map<String, VariableInstance> getOutputVariableMap() {
         return outputVariableMap;
     }
 
@@ -51,7 +49,7 @@ public class Cell implements Serializable {
         this.id = id;
     }
 
-    public Map<String, Option> getOptionMap() {
+    public Map<String, OptionInstance> getOptionMap() {
         return optionMap;
     }
 

@@ -1,21 +1,19 @@
-package portal.notebook.service;
-
-import org.squonk.notebook.api.VariableType;
+package portal.notebook.api;
 
 import java.io.Serializable;
 
-public class Variable implements Serializable {
-    private Cell producerCell;
+public class VariableInstance implements Serializable {
+    private CellInstance producerCell;
     private String name;
     private String displayName;
     private VariableType variableType;
     private Object value;
 
-    public Cell getProducerCell() {
+    public CellInstance getProducerCell() {
         return producerCell;
     }
 
-    public void setProducerCell(Cell producerCell) {
+    public void setProducerCell(CellInstance producerCell) {
         this.producerCell = producerCell;
     }
 

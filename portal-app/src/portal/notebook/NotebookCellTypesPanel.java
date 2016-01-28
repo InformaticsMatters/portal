@@ -10,7 +10,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.squonk.notebook.api.CellType;
+import portal.notebook.api.CellDefinition;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -26,7 +26,7 @@ public class NotebookCellTypesPanel extends Panel {
     private Form<SearchCellData> searchForm;
 
     private WebMarkupContainer descriptorssContainer;
-    private ListView<CellType> descriptorRepeater;
+    private ListView<CellDefinition> descriptorRepeater;
 
     @Inject
     private NotebookSession notebookSession;
@@ -60,12 +60,12 @@ public class NotebookCellTypesPanel extends Panel {
         descriptorssContainer = new WebMarkupContainer("descriptorsContainer");
         descriptorssContainer.setOutputMarkupId(true);
 
-        List<CellType> cells = notebookSession.listCellType();
-        descriptorRepeater = new ListView<CellType>("descriptor", cells) {
+        List<CellDefinition> cells = notebookSession.listCellDefinition();
+        descriptorRepeater = new ListView<CellDefinition>("descriptor", cells) {
 
             @Override
-            protected void populateItem(ListItem<CellType> listItem) {
-                CellType cellType = listItem.getModelObject();
+            protected void populateItem(ListItem<CellDefinition> listItem) {
+                CellDefinition cellType = listItem.getModelObject();
                 listItem.add(new NotebookCellTypePanel("descriptorItem", cellType));
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
@@ -81,7 +81,7 @@ public class NotebookCellTypesPanel extends Panel {
         CellFilterData cellFilterData = new CellFilterData();
         SearchCellData searchCellData = searchForm.getModelObject();
         cellFilterData.setPattern(searchCellData.getPattern());
-        descriptorRepeater.setList(notebookSession.listCellType());
+        descriptorRepeater.setList(notebookSession.listCellDefinition());
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
             target.add(descriptorssContainer);
