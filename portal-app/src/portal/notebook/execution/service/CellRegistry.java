@@ -14,6 +14,10 @@ public class CellRegistry {
     private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
     public static final String OPTION_FILE_TYPE = "csvFormatType";
     public static final String OPTION_FIRST_LINE_IS_HEADER = "firstLineIsHeader";
+    public static final String VAR_NAME_RESULTS = "results";
+    public static final String VAR_NAME_INPUT = "input";
+    public static final String VAR_NAME_OUTPUT = "output";
+    public static final String VAR_NAME_FILECONTENT = "fileContent";
 
 
     public CellRegistry() {
@@ -39,7 +43,7 @@ public class CellRegistry {
         cellType.setDescription("Dataset merger");
         cellType.setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName("results");
+        variableDefinition.setName(VAR_NAME_RESULTS);
         variableDefinition.setDisplayName("Results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
@@ -63,12 +67,12 @@ public class CellRegistry {
         cellType.setDescription("CSV upload");
         cellType.setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName("fileContent");
+        variableDefinition.setName(VAR_NAME_FILECONTENT);
         variableDefinition.setDisplayName("File content");
         variableDefinition.setVariableType(VariableType.FILE);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         variableDefinition = new VariableDefinition();
-        variableDefinition.setName("results");
+        variableDefinition.setName(VAR_NAME_RESULTS);
         variableDefinition.setDisplayName("Results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
@@ -86,12 +90,12 @@ public class CellRegistry {
         cellType.setDescription("SDF upload");
         cellType.setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName("fileContent");
+        variableDefinition.setName(VAR_NAME_FILECONTENT);
         variableDefinition.setDisplayName("File content");
         variableDefinition.setVariableType(VariableType.FILE);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         variableDefinition = new VariableDefinition();
-        variableDefinition.setName("results");
+        variableDefinition.setName(VAR_NAME_RESULTS);
         variableDefinition.setDisplayName("Results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
@@ -107,7 +111,7 @@ public class CellRegistry {
         cellType.setExecutable(Boolean.FALSE);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName("input");
+        bindingDefinition.setName(VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.VALUE);
@@ -122,17 +126,13 @@ public class CellRegistry {
         cellType.setDescription("Chembl activities fetcher");
         cellType.setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName("results");
+        variableDefinition.setName(VAR_NAME_RESULTS);
         variableDefinition.setDisplayName("Results");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "assayId", "Assay ID", "ChEBML Asssay ID"));
         cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "prefix", "Prefix", "Prefix for result fields"));
         cellType.setExecutable(Boolean.TRUE);
-
-//        StepDefinition step1 = new  StepDefinition(StepDefinitionConstants.STEP_CHEMBL_ACTIVITIES_FETCHER)
-//                .withOutputVariableMapping()
-//                .withOption()
 
         return cellType;
     }
@@ -144,13 +144,13 @@ public class CellRegistry {
         cellType.setDescription("Convert Dataset from BasicObjects to MoleculeObjects");
         cellType.setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName("output");
+        variableDefinition.setName(VAR_NAME_OUTPUT);
         variableDefinition.setDisplayName("Output");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName("input");
+        bindingDefinition.setName(VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellType.getBindingDefinitionList().add(bindingDefinition);
         cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "structureFieldName", "Structure Field Name",
@@ -170,13 +170,13 @@ public class CellRegistry {
         cellType.setDescription("Transform dataset values");
         cellType.setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName("output");
+        variableDefinition.setName(VAR_NAME_OUTPUT);
         variableDefinition.setDisplayName("Output");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName("input");
+        bindingDefinition.setName(VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellType.getBindingDefinitionList().add(bindingDefinition);
         cellType.getOptionDefinitionList().add(new OptionDefinition(new MultiLineTextTypeDescriptor(10, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
@@ -192,13 +192,13 @@ public class CellRegistry {
         cellType.setDescription("Groovy Script (trusted)");
         cellType.setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName("output");
+        variableDefinition.setName(VAR_NAME_OUTPUT);
         variableDefinition.setDisplayName("Output");
         variableDefinition.setVariableType(VariableType.DATASET);
         cellType.getOutputVariableDefinitionList().add(variableDefinition);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName("input");
+        bindingDefinition.setName(VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellType.getBindingDefinitionList().add(bindingDefinition);
         cellType.getOptionDefinitionList().add(new OptionDefinition(

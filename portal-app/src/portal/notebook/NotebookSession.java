@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.services.ServiceDescriptor;
 import com.im.lac.services.client.ServicesClient;
 import com.im.lac.types.MoleculeObject;
@@ -12,7 +13,7 @@ import portal.SessionContext;
 import portal.dataset.*;
 import portal.notebook.api.*;
 import portal.notebook.execution.service.CellRegistry;
-import portal.notebook.execution.service.ChemblCellExecute;
+import portal.notebook.execution.service.CellJobExecutor;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
 
@@ -270,21 +271,15 @@ public class NotebookSession implements Serializable {
 
     public void executeCell(String cellName) {
         if (currentNotebookModel.findCellModel(cellName).getCellDefinition().getExecutable()) {
-            //cellClient.executeCell(currentNotebookInfo.getId(), cellName);
-
-
-
-            CellModel cell = currentNotebookModel.findCellModel(cellName);
-
-
-            ChemblCellExecute executor = new ChemblCellExecute();
+            CellInstance cell = currentNotebookModel.getNotebookInstance().findCell(cellName);
+            CellDefinition celldef = cell.getCellDefinition();
             try {
-                executor.execute(currentNotebookInfo.getId(), cell);
+                JobStatus status = celldef.getExecutor().execute(currentNotebookInfo.getId(), cell);
+                // TODO - do something with the status
             } catch (Exception e) {
+                // TODO - handle nicely
                 throw new RuntimeException("Failed to execute cell", e);
             }
-
-
         }
     }
 
