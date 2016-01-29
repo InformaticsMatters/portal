@@ -9,6 +9,6 @@ public class SimpleCellDefinition extends CellDefinition {
 
     @Override
     public CellExecutor getCellExecutor() {
-        return new DummyJobCellExecutor();
+        return new DummyCellExecutor();
     }
 }
