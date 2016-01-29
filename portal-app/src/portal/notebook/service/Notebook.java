@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 
 
 @Entity
-@Cacheable(value = false)
 public class Notebook extends AbstractEntity {
     private String name;
     private String description;

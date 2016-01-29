@@ -66,14 +66,14 @@ public class NotebookService {
 
     public Long createNotebook(EditNotebookData editNotebookData) {
         try {
-            Notebook notebookHeader = new Notebook();
-            notebookHeader.setName(editNotebookData.getName());
-            notebookHeader.setDescription(editNotebookData.getDescription());
-            notebookHeader.setOwner(editNotebookData.getOwner());
-            notebookHeader.setShared(editNotebookData.getShared());
-            notebookHeader.setData(new NotebookInstance().toBytes());
-            entityManager.persist(notebookHeader);
-            return notebookHeader.getId();
+            Notebook notebook = new Notebook();
+            notebook.setName(editNotebookData.getName());
+            notebook.setDescription(editNotebookData.getDescription());
+            notebook.setOwner(editNotebookData.getOwner());
+            notebook.setShared(editNotebookData.getShared());
+            notebook.setData(new NotebookInstance().toBytes());
+            entityManager.persist(notebook);
+            return notebook.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -112,6 +112,7 @@ public class NotebookService {
     private void doStoreNotebookContents(NotebookInstance notebookInstance, Notebook notebook) throws Exception {
         notebook.setData(notebookInstance.toBytes());
         NotebookHistory notebookHistory = new NotebookHistory();
+        notebookHistory.setNotebook(notebook);
         notebookHistory.setData(notebook.getData());
         notebookHistory.setRevisionDate(new Date());
         notebookHistory.setRevisionTime(new Date());

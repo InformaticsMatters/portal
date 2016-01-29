@@ -1,7 +1,6 @@
 package portal.notebook.api;
 
 import com.im.lac.job.jobdef.JobDefinition;
-import portal.notebook.execution.service.CellExecutor;
 
 /**
  * temporary
@@ -9,4 +8,8 @@ import portal.notebook.execution.service.CellExecutor;
 public class SimpleCellDefinition extends CellDefinition {
 
 
+    @Override
+    public CellExecutor getCellExecutor() {
+        return new DummyJobCellExecutor();
+    }
 }

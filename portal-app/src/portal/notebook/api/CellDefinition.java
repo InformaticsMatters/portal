@@ -1,8 +1,5 @@
 package portal.notebook.api;
 
-import com.im.lac.job.jobdef.JobDefinition;
-import portal.notebook.execution.service.CellExecutor;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -73,6 +70,6 @@ public abstract class CellDefinition implements Serializable {
         this.name = name;
     }
 
-    public CellExecutor getExecutor() { return null; }
+    public abstract CellExecutor getCellExecutor();
 
 }

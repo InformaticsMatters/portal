@@ -1,4 +1,4 @@
-package portal.notebook.execution.service;
+package portal.notebook.api;
 
 import com.im.lac.job.client.JobStatusRestClient;
 import com.im.lac.job.jobdef.*;
@@ -6,10 +6,7 @@ import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.VariableKey;
-import portal.notebook.CellModel;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
+import portal.notebook.execution.service.CellRegistry;
 
 import java.util.Date;
 import java.util.Map;
@@ -18,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Created by timbo on 16/01/16.
  */
-public abstract class CellJobExecutor implements CellExecutor {
+public abstract class JobCellExecutor implements CellExecutor {
 
 
     public JobStatus execute(Long notebookId, CellInstance cell) throws Exception {
@@ -89,7 +86,7 @@ public abstract class CellJobExecutor implements CellExecutor {
         }
     }
 
-    public static class ChemblActivitiesFetcher extends CellJobExecutor {
+    public static class ChemblActivitiesFetcher extends JobCellExecutor {
 
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
@@ -101,7 +98,7 @@ public abstract class CellJobExecutor implements CellExecutor {
         }
     }
 
-    public static class DatasetMerger extends CellJobExecutor {
+    public static class DatasetMerger extends JobCellExecutor {
 
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
@@ -121,7 +118,7 @@ public abstract class CellJobExecutor implements CellExecutor {
         }
     }
 
-    public static class BasicObjectToMoleculeObjectConvertor extends CellJobExecutor {
+    public static class BasicObjectToMoleculeObjectConvertor extends JobCellExecutor {
 
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_BASICOBJECT_TO_MOLECULEOBJECT)
@@ -133,7 +130,7 @@ public abstract class CellJobExecutor implements CellExecutor {
         }
     }
 
-    public static class CSVFileUploader extends CellJobExecutor {
+    public static class CSVFileUploader extends JobCellExecutor {
 
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
@@ -146,7 +143,7 @@ public abstract class CellJobExecutor implements CellExecutor {
         }
     }
 
-    public static class SDFileUploader extends CellJobExecutor {
+    public static class SDFileUploader extends JobCellExecutor {
 
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
@@ -159,7 +156,7 @@ public abstract class CellJobExecutor implements CellExecutor {
         }
     }
 
-    public static class ValueTransformer extends CellJobExecutor {
+    public static class ValueTransformer extends JobCellExecutor {
 
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
@@ -172,7 +169,7 @@ public abstract class CellJobExecutor implements CellExecutor {
         }
     }
 
-    public static class GroovyScriptTrusted extends CellJobExecutor {
+    public static class GroovyScriptTrusted extends JobCellExecutor {
 
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 

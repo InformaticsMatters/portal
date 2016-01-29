@@ -13,7 +13,6 @@ import portal.SessionContext;
 import portal.dataset.*;
 import portal.notebook.api.*;
 import portal.notebook.execution.service.CellRegistry;
-import portal.notebook.execution.service.CellJobExecutor;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
 
@@ -274,7 +273,7 @@ public class NotebookSession implements Serializable {
             CellInstance cell = currentNotebookModel.getNotebookInstance().findCell(cellName);
             CellDefinition celldef = cell.getCellDefinition();
             try {
-                JobStatus status = celldef.getExecutor().execute(currentNotebookInfo.getId(), cell);
+                JobStatus status = celldef.getCellExecutor().execute(currentNotebookInfo.getId(), cell);
                 // TODO - do something with the status
             } catch (Exception e) {
                 // TODO - handle nicely
