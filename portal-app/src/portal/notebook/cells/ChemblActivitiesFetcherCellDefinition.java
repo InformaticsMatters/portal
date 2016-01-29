@@ -10,9 +10,9 @@ import portal.notebook.execution.service.CellRegistry;
 /**
  * Created by timbo on 29/01/16.
  */
-public class ChemblActivitiesFetcherCell extends CellDefinition {
+public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
 
-    public ChemblActivitiesFetcherCell() {
+    public ChemblActivitiesFetcherCellDefinition() {
         setName("ChemblActivitiesFetcher");
         setDescription("Chembl activities fetcher");
         setExecutable(Boolean.TRUE);

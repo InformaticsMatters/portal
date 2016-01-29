@@ -3,7 +3,7 @@ package portal.notebook.execution.service;
 
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import portal.notebook.api.*;
-import portal.notebook.cells.ChemblActivitiesFetcherCell;
+import portal.notebook.cells.ChemblActivitiesFetcherCellDefinition;
 import portal.notebook.cells.SimpleCellDefinition;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,7 +24,7 @@ public class CellRegistry {
 
     public CellRegistry() {
 
-        registerCell(new ChemblActivitiesFetcherCell());
+        registerCell(new ChemblActivitiesFetcherCellDefinition());
         registerCell(createTableDisplayCellDefinition());
         registerCell(createSdfUploaderCellDefinition());
         registerCell(createCsvUploaderCellDefinition());
