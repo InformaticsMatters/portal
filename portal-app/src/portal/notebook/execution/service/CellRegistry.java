@@ -3,6 +3,7 @@ package portal.notebook.execution.service;
 
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import portal.notebook.api.*;
+import portal.notebook.cells.ChemblActivitiesFetcherCell;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Collection;
@@ -22,7 +23,7 @@ public class CellRegistry {
 
     public CellRegistry() {
 
-        registerCell(createChemblActivitiesFetcherCellDefinition());
+        registerCell(new ChemblActivitiesFetcherCell());
         registerCell(createTableDisplayCellDefinition());
         registerCell(createSdfUploaderCellDefinition());
         registerCell(createCsvUploaderCellDefinition());
@@ -120,22 +121,22 @@ public class CellRegistry {
         return cellType;
     }
 
-    private static CellDefinition createChemblActivitiesFetcherCellDefinition() {
-        CellDefinition cellType = new SimpleCellDefinition();
-        cellType.setName("ChemblActivitiesFetcher");
-        cellType.setDescription("Chembl activities fetcher");
-        cellType.setExecutable(Boolean.TRUE);
-        VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName(VAR_NAME_RESULTS);
-        variableDefinition.setDisplayName("Results");
-        variableDefinition.setVariableType(VariableType.DATASET);
-        cellType.getOutputVariableDefinitionList().add(variableDefinition);
-        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "assayId", "Assay ID", "ChEBML Asssay ID"));
-        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "prefix", "Prefix", "Prefix for result fields"));
-        cellType.setExecutable(Boolean.TRUE);
-
-        return cellType;
-    }
+//    private static CellDefinition createChemblActivitiesFetcherCellDefinition() {
+//        CellDefinition cellType = new SimpleCellDefinition();
+//        cellType.setName("ChemblActivitiesFetcher");
+//        cellType.setDescription("Chembl activities fetcher");
+//        cellType.setExecutable(Boolean.TRUE);
+//        VariableDefinition variableDefinition = new VariableDefinition();
+//        variableDefinition.setName(VAR_NAME_RESULTS);
+//        variableDefinition.setDisplayName("Results");
+//        variableDefinition.setVariableType(VariableType.DATASET);
+//        cellType.getOutputVariableDefinitionList().add(variableDefinition);
+//        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "assayId", "Assay ID", "ChEBML Asssay ID"));
+//        cellType.getOptionDefinitionList().add(new OptionDefinition(String.class, "prefix", "Prefix", "Prefix for result fields"));
+//        cellType.setExecutable(Boolean.TRUE);
+//
+//        return cellType;
+//    }
 
 
     private static CellDefinition createConvertBasicToMoleculeObjectCellDefinition() {

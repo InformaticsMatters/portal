@@ -8,12 +8,19 @@ import java.util.List;
 
 @XmlRootElement
 public abstract class CellDefinition implements Serializable {
+
+    public static final String VAR_NAME_INPUT = "input";
+    public static final String VAR_NAME_OUTPUT = "output";
+    public static final String VAR_NAME_FILECONTENT = "fileContent";
+
     private String name;
     private String description;
     private Boolean executable;
+    private CellExecutor cellExecutor;
     private final List<BindingDefinition> bindingDefinitionList = new ArrayList();
     private final List<VariableDefinition> outputVariableDefinitionList = new ArrayList();
     private final List<OptionDefinition> optionDefinitionList = new ArrayList();
+
 
     public CellDefinition(String name, String description, Boolean executable) {
         this.name = name;
@@ -70,6 +77,12 @@ public abstract class CellDefinition implements Serializable {
         this.name = name;
     }
 
-    public abstract CellExecutor getCellExecutor();
+    public CellExecutor getCellExecutor() {
+        return cellExecutor;
+    }
+
+    public void setCellExecutor(CellExecutor cellExecutor) {
+        this.cellExecutor = cellExecutor;
+    }
 
 }
