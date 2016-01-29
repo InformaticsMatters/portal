@@ -4,6 +4,7 @@ package portal.notebook.execution.service;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import portal.notebook.api.*;
 import portal.notebook.cells.ChemblActivitiesFetcherCell;
+import portal.notebook.cells.SimpleCellDefinition;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Collection;
