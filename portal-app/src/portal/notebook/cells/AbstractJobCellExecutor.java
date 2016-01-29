@@ -34,7 +34,7 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         return status;
     }
 
-    private JobStatusClient createJobStatusClient() {
+    protected JobStatusClient createJobStatusClient() {
         Instance<JobStatusClient> instance = CDI.current().select(JobStatusClient.class);
         return instance.get();
     }
