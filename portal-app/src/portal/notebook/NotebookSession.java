@@ -12,7 +12,7 @@ import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
 import portal.dataset.*;
 import portal.notebook.api.*;
-import portal.notebook.execution.service.CellRegistry;
+import portal.notebook.api.CellDefinitionRegistry;
 import portal.notebook.service.*;
 import toolkit.services.Transactional;
 
@@ -43,7 +43,7 @@ public class NotebookSession implements Serializable {
     @Inject
     private SessionContext sessionContext;
     @Inject
-    private CellRegistry cellRegistry;
+    private CellDefinitionRegistry cellDefinitionRegistry;
 
     public NotebookSession() {
         moleculeObjectMapMap.put(0L, new HashMap<>());
@@ -145,7 +145,7 @@ public class NotebookSession implements Serializable {
 //        return cellTypes;
 
         List<CellDefinition> list = new ArrayList<>();
-        list.addAll(cellRegistry.listCellDefinition());
+        list.addAll(cellDefinitionRegistry.listCellDefinition());
         // TODO - better to add these to the registry in the first place?
         //addServiceCellTypes(cellTypes);
         this.cellDefinitionList = list;
