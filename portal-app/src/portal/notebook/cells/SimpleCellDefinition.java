@@ -1,5 +1,9 @@
-package portal.notebook.api;
+package portal.notebook.cells;
 
+
+import portal.notebook.api.CellDefinition;
+import portal.notebook.api.CellExecutor;
+import portal.notebook.cells.DummyCellExecutor;
 
 /**
  * temporary

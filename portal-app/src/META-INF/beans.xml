@@ -1,6 +1,8 @@
 <beans>
     <alternatives>
         <class>portal.notebook.service.IdeDerbyNotebookConfig</class>
+        <class>portal.notebook.cells.DefaultCellDefinitionRegistry</class>
+        <class>portal.notebook.cells.MockJobStatusClient</class>
     </alternatives>
     <interceptors>
         <class>portal.notebook.NotebookTransactionalInterceptor</class>

@@ -1,6 +1,7 @@
 package portal.notebook.api;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,6 @@ public abstract class CellDefinition implements Serializable {
     private String name;
     private String description;
     private Boolean executable;
-    private CellExecutor cellExecutor;
     private final List<BindingDefinition> bindingDefinitionList = new ArrayList();
     private final List<VariableDefinition> outputVariableDefinitionList = new ArrayList();
     private final List<OptionDefinition> optionDefinitionList = new ArrayList();
@@ -80,12 +80,7 @@ public abstract class CellDefinition implements Serializable {
         this.name = name;
     }
 
-    public CellExecutor getCellExecutor() {
-        return cellExecutor;
-    }
-
-    public void setCellExecutor(CellExecutor cellExecutor) {
-        this.cellExecutor = cellExecutor;
-    }
+    @XmlTransient
+    public abstract CellExecutor getCellExecutor();
 
 }

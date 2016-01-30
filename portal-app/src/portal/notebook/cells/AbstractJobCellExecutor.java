@@ -6,12 +6,10 @@ import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.VariableKey;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellExecutor;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
-import portal.notebook.execution.service.CellRegistry;
+import portal.notebook.api.*;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.CDI;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
@@ -30,10 +28,15 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         // create the job
         JobDefinition jobdef = buildJobDefinition(notebookId, cell);
         // execute the job
-        JobStatusClient client = new JobStatusRestClient(); // presumably this is injected or obtained from somewhere
+        JobStatusClient client = createJobStatusClient();
         JobStatus status = client.submit(jobdef, username, workunits);
         // job is now running. we can either poll the JobStatusRestClient for its status or listen on the message queue for updates
         return status;
+    }
+
+    protected JobStatusClient createJobStatusClient() {
+        Instance<JobStatusClient> instance = CDI.current().select(JobStatusClient.class);
+        return instance.get();
     }
 
     /**
@@ -96,7 +99,7 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_CHEMBL_ACTIVITIES_FETCHER)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellRegistry.VAR_NAME_RESULTS)
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
                     .withOptions(collectAllOptions(cell));
 
             return buildJobDefinition(notebookId, cell, step1);
@@ -108,7 +111,7 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_DATASET_MERGER)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellRegistry.VAR_NAME_RESULTS)
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
                     .withOptions(collectAllOptions(cell));
 
             for (int i = 1; i <= 5; i++) {
@@ -127,8 +130,8 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
 
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_BASICOBJECT_TO_MOLECULEOBJECT)
-                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, createVariableKeyRequired(cell, CellRegistry.VAR_NAME_INPUT))
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellRegistry.VAR_NAME_RESULTS)
+                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, createVariableKeyRequired(cell, DefaultCellDefinitionRegistry.VAR_NAME_INPUT))
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
                     .withOptions(collectAllOptions(cell));
 
             return buildJobDefinition(notebookId, cell, step1);
@@ -140,8 +143,8 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_CSV_READER)
-                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, new VariableKey(cell.getName(), CellRegistry.VAR_NAME_FILECONTENT))
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellRegistry.VAR_NAME_RESULTS)
+                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, new VariableKey(cell.getName(), DefaultCellDefinitionRegistry.VAR_NAME_FILECONTENT))
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
                     .withOptions(collectAllOptions(cell));
 
             return buildJobDefinition(notebookId, cell, step1);
@@ -153,8 +156,8 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_SDF_READER)
-                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, new VariableKey(cell.getName(), CellRegistry.VAR_NAME_FILECONTENT))
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellRegistry.VAR_NAME_RESULTS)
+                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, new VariableKey(cell.getName(), DefaultCellDefinitionRegistry.VAR_NAME_FILECONTENT))
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
                     .withOptions(collectAllOptions(cell));
 
             return buildJobDefinition(notebookId, cell, step1);
@@ -166,8 +169,8 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_VALUE_TRANSFORMER)
-                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, createVariableKeyRequired(cell, CellRegistry.VAR_NAME_INPUT))
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellRegistry.VAR_NAME_OUTPUT)
+                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, createVariableKeyRequired(cell, DefaultCellDefinitionRegistry.VAR_NAME_INPUT))
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cell));
 
             return buildJobDefinition(notebookId, cell, step1);
@@ -179,8 +182,8 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_TRUSTED_GROOVY_DATASET_SCRIPT)
-                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, createVariableKeyRequired(cell, CellRegistry.VAR_NAME_INPUT))
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellRegistry.VAR_NAME_OUTPUT)
+                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, createVariableKeyRequired(cell, DefaultCellDefinitionRegistry.VAR_NAME_INPUT))
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cell));
 
             return buildJobDefinition(notebookId, cell, step1);
