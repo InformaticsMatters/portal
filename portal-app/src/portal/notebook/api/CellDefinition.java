@@ -12,6 +12,9 @@ public abstract class CellDefinition implements Serializable {
     public static final String VAR_NAME_INPUT = "input";
     public static final String VAR_NAME_OUTPUT = "output";
     public static final String VAR_NAME_FILECONTENT = "fileContent";
+    public static final String VAR_DISPLAYNAME_INPUT = "Input";
+    public static final String VAR_DISPLAYNAME_OUTPUT = "Output";
+    public static final String VAR_DISPLAYNAME_FILECONTENT = "File Content";
 
     private String name;
     private String description;

@@ -1,7 +1,6 @@
 package portal.notebook.cells;
 
 import com.im.lac.job.jobdef.JobDefinition;
-import com.im.lac.job.jobdef.JobStatus;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import portal.notebook.api.*;
@@ -12,17 +11,26 @@ import portal.notebook.execution.service.CellRegistry;
  */
 public class ChemblActivitiesFetcherCell extends CellDefinition {
 
+    public static final String CELL_NAME = "ChemblActivitiesFetcher";
+    public static final String CELL_DESCRIPTION = "ChEMBL activities fetcher";
+    public static final String OPT_NAME_ASSAY_ID = "assayId";
+    public static final String OPT_DISPLAYNAME_ASSAY_ID = "Assay ID";
+    public static final String OPT_DESCRIPTION_ASSAY_ID = "ChEBML Asssay ID";
+    public static final String OPT_NAME_PREFIX = "prefix";
+    public static final String OPT_DISPLAYNAME_PREFIX = "Prefix";
+    public static final String OPT_DESCRIPTION_PREFIX = "Prefix for result fields";
+
     public ChemblActivitiesFetcherCell() {
-        setName("ChemblActivitiesFetcher");
-        setDescription("Chembl activities fetcher");
+        setName(CELL_NAME);
+        setDescription(CELL_DESCRIPTION);
         setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
         variableDefinition.setName(VAR_NAME_OUTPUT);
-        variableDefinition.setDisplayName("Output");
+        variableDefinition.setDisplayName(VAR_DISPLAYNAME_OUTPUT);
         variableDefinition.setVariableType(VariableType.DATASET);
         getOutputVariableDefinitionList().add(variableDefinition);
-        getOptionDefinitionList().add(new OptionDefinition(String.class, "assayId", "Assay ID", "ChEBML Asssay ID"));
-        getOptionDefinitionList().add(new OptionDefinition(String.class, "prefix", "Prefix", "Prefix for result fields"));
+        getOptionDefinitionList().add(new OptionDefinition(String.class, OPT_NAME_ASSAY_ID, OPT_DISPLAYNAME_ASSAY_ID, OPT_DESCRIPTION_ASSAY_ID));
+        getOptionDefinitionList().add(new OptionDefinition(String.class, OPT_NAME_PREFIX, OPT_DISPLAYNAME_PREFIX, OPT_DESCRIPTION_PREFIX));
         setCellExecutor(new Executor());
     }
 
