@@ -2,9 +2,10 @@ package portal.notebook.service;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Default;
 import java.util.Properties;
 
-@Alternative
+@Default
 @ApplicationScoped
 public class IdeDerbyNotebookConfig implements NotebookConfig {
 

@@ -12,7 +12,9 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractJobCellExecutor implements CellExecutor, Serializable {
 
+    private static final Logger LOG = Logger.getLogger(AbstractJobCellExecutor.class.getName());
 
     public JobStatus execute(Long notebookId, CellInstance cell) throws Exception {
         String username = "curentuser"; // get the user
@@ -29,6 +32,7 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         JobDefinition jobdef = buildJobDefinition(notebookId, cell);
         // execute the job
         JobStatusClient client = createJobStatusClient();
+        LOG.info("Executing job using client " + client);
         JobStatus status = client.submit(jobdef, username, workunits);
         // job is now running. we can either poll the JobStatusRestClient for its status or listen on the message queue for updates
         return status;
@@ -46,9 +50,19 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
 
 
     protected Map<String, Object> collectAllOptions(CellInstance cell) {
-        return cell.getOptionMap().entrySet().stream().collect(Collectors.toMap(
-                e -> e.getKey(),
-                e -> e.getValue() == null ? null : e.getValue().getValue()));
+
+        Map<String, Object> result = new HashMap<>();
+        for (Map.Entry<String,OptionInstance> e :cell.getOptionMap().entrySet()) {
+            String key = e.getKey();
+            OptionInstance i = e.getValue();
+            LOG.fine("checking option " + key);
+            if (i != null && i.getValue() != null) {
+                result.put(key, i.getValue());
+                LOG.info("value for option: " + key + " -> " + i.getValue());
+            }
+        }
+        return result;
+
     }
 
     protected VariableKey createVariableKey(CellInstance cell, String varName) {
@@ -94,17 +108,17 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         }
     }
 
-    public static class ChemblActivitiesFetcher extends AbstractJobCellExecutor {
-
-        protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
-
-            StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_CHEMBL_ACTIVITIES_FETCHER)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
-                    .withOptions(collectAllOptions(cell));
-
-            return buildJobDefinition(notebookId, cell, step1);
-        }
-    }
+//    public static class ChemblActivitiesFetcher extends AbstractJobCellExecutor {
+//
+//        protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
+//
+//            StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)
+//                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
+//                    .withOptions(collectAllOptions(cell));
+//
+//            return buildJobDefinition(notebookId, cell, step1);
+//        }
+//    }
 
     public static class DatasetMerger extends AbstractJobCellExecutor {
 

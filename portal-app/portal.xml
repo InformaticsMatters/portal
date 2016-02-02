@@ -323,7 +323,7 @@
     </target>
 
     <target name="build-portal-app-zip" depends="all, copylibs-new" description="build portal-app zip">
-        <copy file="${module.portal-app.basedir}/src/META-INF/beans.xml"
+      <copy file="${module.portal-app.basedir}/src/META-INF//beans.xml"
               tofile="${portal-app.output.dir}/META-INF/beans.xml" overwrite="true"/>
 
       <copy file="${module.portal-app.basedir}/src/META-INF/persistence.xml"

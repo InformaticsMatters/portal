@@ -8,6 +8,7 @@ import toolkit.test.TestCase;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -19,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-@Alternative
+@Default
 @ApplicationScoped
 public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
