@@ -58,7 +58,7 @@ public class FileUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "file");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "file");
             variableModel.setValue(fileName);
             form.getModelObject().store();
             getCellModel().getOptionModelMap().get("fileName").setValue(fileName);

@@ -268,12 +268,16 @@ public class NotebookSession implements Serializable {
     }
 
 
-    public void executeCell(String cellName) {
-        if (currentNotebookModel.findCellModel(cellName).getCellDefinition().getExecutable()) {
-            CellInstance cell = currentNotebookModel.getNotebookInstance().findCell(cellName);
+    public void executeCell(Long cellId) {
+        if (currentNotebookModel.findCellModelById(cellId).getCellDefinition().getExecutable()) {
+            CellInstance cell = currentNotebookModel.getNotebookInstance().findCellById(cellId);
             CellDefinition celldef = cell.getCellDefinition();
             try {
-                JobStatus status = celldef.getCellExecutor().execute(currentNotebookInfo.getId(), cell);
+                CellExecutionData cellExecutionData = new CellExecutionData();
+                cellExecutionData.setCellId(cellId);
+                cellExecutionData.setNotebookId(currentNotebookInfo.getId());
+                cellExecutionData.setNotebookInstance(currentNotebookModel.getNotebookInstance());
+                JobStatus status = celldef.getCellExecutor().execute(cellExecutionData);
                 // TODO - do something with the status
             } catch (Exception e) {
                 // TODO - handle nicely

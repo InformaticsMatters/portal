@@ -3,19 +3,11 @@ package portal.notebook.api;
 import java.io.Serializable;
 
 public class VariableInstance implements Serializable {
-    private CellInstance producerCell;
+    private Long cellId;
     private String name;
     private String displayName;
     private VariableType variableType;
     private Object value;
-
-    public CellInstance getProducerCell() {
-        return producerCell;
-    }
-
-    public void setProducerCell(CellInstance producerCell) {
-        this.producerCell = producerCell;
-    }
 
     public String getName() {
         return name;
@@ -47,5 +39,13 @@ public class VariableInstance implements Serializable {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public Long getCellId() {
+        return cellId;
+    }
+
+    public void setCellId(Long cellId) {
+        this.cellId = cellId;
     }
 }

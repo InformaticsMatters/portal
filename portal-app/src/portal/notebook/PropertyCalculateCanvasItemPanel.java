@@ -26,7 +26,7 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
+        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "outputFile");
         if (outputVariableModel != null) {
             form.getModelObject().setOutputFileName((String) outputVariableModel.getValue());
         }
@@ -45,10 +45,10 @@ public class PropertyCalculateCanvasItemPanel extends CanvasItemPanel {
     private void calculateAndSave() {
         if (isValidInput()) {
             form.getModelObject().store();
-            VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "outputFile");
+            VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "outputFile");
             outputVariableModel.setValue(form.getModelObject().getOutputFileName());
             notebookSession.storeCurrentNotebook();
-            notebookSession.executeCell(getCellModel().getName());
+            notebookSession.executeCell(getCellModel().getId());
             fireContentChanged();
         }
     }

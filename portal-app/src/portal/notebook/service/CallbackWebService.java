@@ -2,7 +2,6 @@ package portal.notebook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import org.squonk.notebook.api.*;
 import portal.notebook.api.*;
 import toolkit.services.Transactional;
 
@@ -37,7 +36,7 @@ public class CallbackWebService {
     @Produces(MediaType.APPLICATION_JSON)
     public CellInstance retrieveCell(@QueryParam("notebookId") Long notebookId, @QueryParam("cellName") String cellName) {
         NotebookInstance notebookDTO = retrieveNotebook(notebookId);
-        return notebookDTO.findCell(cellName);
+        return notebookDTO.findCellByName(cellName);
     }
 
 

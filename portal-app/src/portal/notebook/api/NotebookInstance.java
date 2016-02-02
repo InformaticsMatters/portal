@@ -1,11 +1,13 @@
 package portal.notebook.api;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@XmlRootElement
 public class NotebookInstance implements Serializable {
     private final List<CellInstance> cellList = new ArrayList<>();
     private Long lastCellId;
@@ -54,9 +56,18 @@ public class NotebookInstance implements Serializable {
         return newName;
     }
 
-    public CellInstance findCell(String name) {
+    public CellInstance findCellByName(String name) {
         for (CellInstance cell : cellList) {
             if (cell.getName().equals(name)) {
+                return cell;
+            }
+        }
+        return null;
+    }
+
+    public CellInstance findCellById(Long id) {
+        for (CellInstance cell : cellList) {
+            if (cell.getId().equals(id)) {
                 return cell;
             }
         }
@@ -72,7 +83,7 @@ public class NotebookInstance implements Serializable {
             variable.setDisplayName(variableDefinition.getDisplayName());
             variable.setVariableType(variableDefinition.getVariableType());
             variable.setValue(variableDefinition.getDefaultValue());
-            variable.setProducerCell(cell);
+            variable.setCellId(cell.getId());
             cell.getOutputVariableMap().put(variableDefinition.getName(), variable);
         }
         for (BindingDefinition bindingDefinition : cellDefinition.getBindingDefinitionList()) {

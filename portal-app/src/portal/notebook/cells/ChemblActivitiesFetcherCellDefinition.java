@@ -42,12 +42,14 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
+        protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
+
+            CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_CHEMBL_ACTIVITIES_FETCHER)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
-                    .withOptions(collectAllOptions(cell));
+                    .withOptions(collectAllOptions(cellInstance));
 
-            return buildJobDefinition(notebookId, cell, step1);
+            return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
         }
     }
 
