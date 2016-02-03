@@ -233,7 +233,7 @@ public class NotebookService {
             return new File(parent, variable.getValue().toString());
         }
         if (variable.getVariableType().equals(VariableType.STREAM) || variable.getVariableType().equals(VariableType.DATASET)) {
-            String fileName = URLEncoder.encode(variable.getProducerCell().getName() + "_" + variable.getName(), "US-ASCII");
+            String fileName = URLEncoder.encode(variable.getCellId() + "_" + variable.getName(), "US-ASCII");
             return new File(parent, fileName);
         } else {
             return null;

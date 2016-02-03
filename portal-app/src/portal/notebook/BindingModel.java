@@ -17,7 +17,7 @@ public class BindingModel implements Serializable {
         this.notebookModel = notebookModel;
         VariableInstance variable = binding.getVariable();
         if (variable != null) {
-            variableModel = notebookModel.findVariableModel(variable.getProducerCell().getName(), variable.getName());
+            variableModel = notebookModel.findVariableModel(variable.getCellId(), variable.getName());
         }
     }
 

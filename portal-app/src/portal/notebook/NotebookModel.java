@@ -56,12 +56,17 @@ public class NotebookModel implements Serializable {
         notebookInstance.removeCell(cellModel.getName());
     }
 
-    public CellModel findCellModel(String name) {
-        return cellModelMap.get(name);
+    public CellModel findCellModelById(Long id) {
+        for (CellModel cellModel : cellModelMap.values()) {
+            if (cellModel.getId().equals(id)) {
+                return cellModel;
+            }
+        }
+        return null;
     }
 
-    public VariableModel findVariableModel(String cellName, String name) {
-        CellModel cellModel = findCellModel(cellName);
+    public VariableModel findVariableModel(Long cellId, String name) {
+        CellModel cellModel = findCellModelById(cellId);
         return cellModel == null ? null : cellModel.findVariableModel(name);
     }
 

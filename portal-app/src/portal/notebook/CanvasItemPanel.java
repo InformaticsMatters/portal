@@ -78,7 +78,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     public void updateCellModel() {
-        this.cellModel = notebookSession.getCurrentNotebookModel().findCellModel(cellModel.getName());
+        this.cellModel = notebookSession.getCurrentNotebookModel().findCellModelById(cellModel.getId());
     }
 
     public CellModel getCellModel() {

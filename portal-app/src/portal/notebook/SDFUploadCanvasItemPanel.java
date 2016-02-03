@@ -72,7 +72,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
             variableModel.setValue(fileName);
             form.getModelObject().store();
             notebookSession.storeCurrentNotebook();
@@ -85,7 +85,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
     private void execute() throws IOException {
         form.getModelObject().store();
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getName());
+        notebookSession.executeCell(getCellModel().getId());
         notebookSession.reloadCurrentNotebook();
     }
 
@@ -153,7 +153,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
             fileName = variableModel == null ? null : (String) variableModel.getValue();
             nameFieldName = (String) getCellModel().getOptionModelMap().get("nameFieldName").getValue();
         }

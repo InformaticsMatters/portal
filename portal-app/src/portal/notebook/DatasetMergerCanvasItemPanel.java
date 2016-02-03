@@ -44,10 +44,10 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void onExecute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "results");
+        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "results");
         outputVariableModel.setValue(null);
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getName());
+        notebookSession.executeCell(getCellModel().getId());
         fireContentChanged();
     }
 

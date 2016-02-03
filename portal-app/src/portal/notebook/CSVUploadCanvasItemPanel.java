@@ -78,7 +78,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
             variableModel.setValue(fileName);
             notebookSession.storeCurrentNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
@@ -90,7 +90,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         form.getModelObject().store();
 
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getName());
+        notebookSession.executeCell(getCellModel().getId());
         fireContentChanged();
 
     }
@@ -165,7 +165,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
             fileName = (String) variableModel.getValue();
             csvFormatType = (String) getCellModel().getOptionModelMap().get(OPTION_FILE_TYPE).getValue();
             firstLineIsHeader = (Boolean) getCellModel().getOptionModelMap().get(OPTION_FIRST_LINE_IS_HEADER).getValue();

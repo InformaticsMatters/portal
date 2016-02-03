@@ -20,7 +20,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
         variableDefinition.setDisplayName(VAR_DISPLAYNAME_OUTPUT);
         variableDefinition.setVariableType(VariableType.DATASET);
         getOutputVariableDefinitionList().add(variableDefinition);
-        getOptionDefinitionList().add(new OptionDefinition(String.class, OPTION_ASSAY_ID, "Assay ID", "ChEBML Asssay ID"));
+        getOptionDefinitionList().add(new OptionDefinition(String.class, OPTION_ASSAY_ID, "Assay ID", "ChEMBL Asssay ID"));
         getOptionDefinitionList().add(new OptionDefinition(String.class, OPTION_PREFIX, "Prefix", "Prefix for result fields"));
     }
 
@@ -32,12 +32,14 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(Long notebookId, CellInstance cell) {
+
+        protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
+            CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
-                    .withOptions(collectAllOptions(cell));
+                    .withOptions(collectAllOptions(cellInstance));
 
-            return buildJobDefinition(notebookId, cell, step1);
+            return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
         }
     }
 

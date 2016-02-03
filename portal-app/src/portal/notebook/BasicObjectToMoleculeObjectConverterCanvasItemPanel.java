@@ -42,10 +42,10 @@ public class BasicObjectToMoleculeObjectConverterCanvasItemPanel extends CanvasI
     @Override
     public void onExecute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getName(), "output");
+        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "output");
         outputVariableModel.setValue(null);
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getName());
+        notebookSession.executeCell(getCellModel().getId());
         fireContentChanged();
     }
 
