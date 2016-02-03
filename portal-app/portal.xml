@@ -66,9 +66,9 @@
   <!-- Project Libraries -->
 
   <path id="library.lib.classpath">
-    <fileset dir="${basedir}/../lib/asm/5.0.4">
+    <!--fileset dir="${basedir}/../lib/asm/5.0.4">
       <patternset refid="library.patterns"/>
-    </fileset>
+    </fileset-->
     <fileset dir="${basedir}/../lib/cdi-api/1.2.0">
       <patternset refid="library.patterns"/>
     </fileset>
@@ -93,7 +93,7 @@
     <fileset dir="${basedir}/../lib/jchem/6.2.0_b787">
       <patternset refid="library.patterns"/>
     </fileset>
-    <fileset dir="${basedir}/../lib/jersey/1.5">
+    <fileset dir="${basedir}/../lib/jersey/1.19">
       <patternset refid="library.patterns"/>
     </fileset>
     <fileset dir="${basedir}/../lib/jetty/8.1.15">

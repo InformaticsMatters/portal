@@ -10,8 +10,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
-import org.squonk.options.types.AbstractStructure;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import java.io.Serializable;
@@ -93,7 +93,7 @@ public class CardDropModalPanel extends SemanticModalPanel {
         ServicePropertyModel servicePropertyModel = new ServicePropertyModel(servicePropertyDescriptor);
         if (servicePropertyDescriptor.getTypeDescriptor().getType() == String.class) {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
-        } else if (servicePropertyDescriptor.getTypeDescriptor().getType().isAssignableFrom(AbstractStructure.class) ) {
+        } else if (servicePropertyDescriptor.getTypeDescriptor().getType() == MoleculeTypeDescriptor.class) {
             listItem.add(new StructurePropertyEditorPanel("editor", "cardDropMarvinEditor", servicePropertyDescriptor, servicePropertyModel));
         } else {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));

@@ -10,8 +10,8 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
-import org.squonk.options.types.AbstractStructure;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import java.io.Serializable;
@@ -100,7 +100,7 @@ public class WFServiceCanvasItemPopupPanel extends Panel {
         ServicePropertyModel servicePropertyModel = new ServicePropertyModel(servicePropertyDescriptor);
         if (servicePropertyDescriptor.getTypeDescriptor().getType() == String.class) {
             listItem.add(new StringPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));
-        } else if (servicePropertyDescriptor.getTypeDescriptor().getType().isAssignableFrom(AbstractStructure.class)) {
+        } else if (servicePropertyDescriptor.getTypeDescriptor().getType() == MoleculeTypeDescriptor.class) {
             listItem.add(new StructurePropertyEditorPanel("editor", "canvasMarvinEditor", servicePropertyDescriptor, servicePropertyModel));
         } else if (servicePropertyDescriptor.getTypeDescriptor().getType() == Boolean.class) {
             listItem.add(new BooleanPropertyEditorPanel("editor", servicePropertyDescriptor, servicePropertyModel));

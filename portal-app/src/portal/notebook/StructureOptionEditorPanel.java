@@ -15,7 +15,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import portal.notebook.api.OptionDefinition;
+import org.squonk.options.OptionDescriptor;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 
 import java.awt.*;
@@ -32,14 +32,14 @@ public class StructureOptionEditorPanel extends Panel {
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
 
-    public StructureOptionEditorPanel(String id, String uniqueMarvinName, OptionDefinition optionDefinition, IModel<String> optionModel) {
+    public StructureOptionEditorPanel(String id, String uniqueMarvinName, OptionDescriptor optionDefinition, IModel<String> optionModel) {
         super(id);
         this.uniqueMarvinName = uniqueMarvinName;
         this.optionModel = optionModel;
         addComponents(optionDefinition, optionModel);
     }
 
-    private void addComponents(OptionDefinition optionDefinition, IModel<String> optionModel) {
+    private void addComponents(OptionDescriptor optionDefinition, IModel<String> optionModel) {
         add(new Label("label", optionDefinition.getDisplayName()));
 
 

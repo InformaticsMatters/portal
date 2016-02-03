@@ -4,7 +4,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
-import portal.notebook.api.OptionDefinition;
+import org.squonk.options.MoleculeTypeDescriptor;
+import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.OptionType;
 
 import java.util.HashMap;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class ServiceCanvasItemPanel extends CanvasItemPanel {
 
     private Form form;
-    private Map<OptionDefinition, String> optionValueMap;
+    private Map<OptionDescriptor, String> optionValueMap;
 
     public ServiceCanvasItemPanel(String id, CellModel cellModel) {
         super(id, cellModel);
@@ -30,16 +31,16 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
         form = new Form("form");
         add(form);
 
-        List<OptionDefinition> optionDefinitionList = getCellModel().getCellDefinition().getOptionDefinitionList();
+        List<OptionDescriptor> optionDefinitionList = getCellModel().getCellDefinition().getOptionDefinitionList();
         optionValueMap = new HashMap<>();
-        for (OptionDefinition optionDefinition : optionDefinitionList) {
+        for (OptionDescriptor optionDefinition : optionDefinitionList) {
             optionValueMap.put(optionDefinition, null);
         }
 
-        ListView<OptionDefinition> listView = new ListView<OptionDefinition>("option", optionDefinitionList) {
+        ListView<OptionDescriptor> listView = new ListView<OptionDescriptor>("option", optionDefinitionList) {
 
             @Override
-            protected void populateItem(ListItem<OptionDefinition> listItem) {
+            protected void populateItem(ListItem<OptionDescriptor> listItem) {
                 addOptionEditor(listItem);
             }
         };
@@ -55,21 +56,28 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
     public void onExecute() {
     }
 
-    private void addOptionEditor(ListItem<OptionDefinition> listItem) {
-        OptionDefinition optionDefinition = listItem.getModelObject();
+    private void addOptionEditor(ListItem<OptionDescriptor> listItem) {
+        OptionDescriptor optionDefinition = listItem.getModelObject();
         OptionModel optionModel = new OptionModel(optionDefinition);
-        if (OptionType.SIMPLE == optionDefinition.getOptionType()) {
-            listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel));
-        } else if (OptionType.PICKLIST == optionDefinition.getOptionType()) {
+
+        // TODO Gustavo - review this. The commented out code was the original buyt looks wrong
+//        if (OptionType.SIMPLE == optionDefinition.getOptionType()) {
+//            listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel));
+//        } else if (OptionType.PICKLIST == optionDefinition.getOptionType()) {
+//            listItem.add(new StructureOptionEditorPanel("editor", "canvasMarvinEditor", optionDefinition, optionModel));
+//        }
+        if (optionDefinition.getTypeDescriptor().getType() == MoleculeTypeDescriptor.class) {
             listItem.add(new StructureOptionEditorPanel("editor", "canvasMarvinEditor", optionDefinition, optionModel));
+        } else {
+            listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel));
         }
     }
 
     private class OptionModel implements IModel<String> {
 
-        private final OptionDefinition optionDefinition;
+        private final OptionDescriptor optionDefinition;
 
-        public OptionModel(OptionDefinition optionDefinition) {
+        public OptionModel(OptionDescriptor optionDefinition) {
             this.optionDefinition = optionDefinition;
         }
 

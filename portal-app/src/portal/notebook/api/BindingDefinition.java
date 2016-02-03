@@ -9,7 +9,7 @@ import java.util.List;
 public class BindingDefinition implements Serializable {
     private String name;
     private String displayName;
-    private final List<VariableType> acceptedVariableTypeList = new ArrayList();
+    private final List<VariableType> acceptedVariableTypeList = new ArrayList<>();
 
     public BindingDefinition() {
     }

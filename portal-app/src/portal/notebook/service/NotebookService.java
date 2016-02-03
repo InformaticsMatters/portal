@@ -17,10 +17,13 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 @ApplicationScoped
 public class NotebookService {
+
+    private static final Logger LOG = Logger.getLogger(NotebookService.class.getName());
 
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
@@ -225,24 +228,30 @@ public class NotebookService {
     }
 
     public File resolveContentsFile(Long notebookId, VariableInstance variable) throws Exception {
+
         File parent = new File(System.getProperty("user.home"), "notebook-files");
         if (!parent.exists() && !parent.mkdirs()) {
-            throw new Exception("Couled not create " + parent.getAbsolutePath());
+            throw new Exception("Could not create " + parent.getAbsolutePath());
         }
-        if (variable.getVariableType().equals(VariableType.FILE)) {
-            return new File(parent, variable.getValue().toString());
-        }
-        if (variable.getVariableType().equals(VariableType.STREAM) || variable.getVariableType().equals(VariableType.DATASET)) {
-            String fileName = URLEncoder.encode(variable.getCellId() + "_" + variable.getName(), "US-ASCII");
-            return new File(parent, fileName);
-        } else {
-            return null;
+
+        switch (variable.getVariableType()) {
+            case FILE:
+                return new File(parent, variable.getValue().toString());
+            case STREAM: // fallthrough intended
+            case DATASET:
+                String fileName = URLEncoder.encode(variable.getCellId() + "_" + variable.getName(), "US-ASCII");
+                return new File(parent, fileName);
+            default:
+                LOG.warning("Invalid variable type for file storage: " + variable.getVariableType());
+                return null;
         }
     }
 
     public void storeStreamingContents(Long notebookId, VariableInstance variable, InputStream inputStream) {
+        LOG.info("storeStreamingContents for " + notebookId + "/" + variable.getName() + "/" + variable.getVariableType());
         try {
             File file = resolveContentsFile(notebookId, variable);
+            LOG.info("File is " + file);
             OutputStream outputStream = new FileOutputStream(file);
             try {
                 byte[] buffer = new byte[4096];

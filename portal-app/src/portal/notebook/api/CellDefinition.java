@@ -1,5 +1,7 @@
 package portal.notebook.api;
 
+import org.squonk.options.OptionDescriptor;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
@@ -20,9 +22,9 @@ public abstract class CellDefinition implements Serializable {
     private String name;
     private String description;
     private Boolean executable;
-    private final List<BindingDefinition> bindingDefinitionList = new ArrayList();
-    private final List<VariableDefinition> outputVariableDefinitionList = new ArrayList();
-    private final List<OptionDefinition> optionDefinitionList = new ArrayList();
+    private final List<BindingDefinition> bindingDefinitionList = new ArrayList<>();
+    private final List<VariableDefinition> outputVariableDefinitionList = new ArrayList<>();
+    private final List<OptionDescriptor> optionDefinitionList = new ArrayList<>();
 
 
     public CellDefinition(String name, String description, Boolean executable) {
@@ -34,13 +36,13 @@ public abstract class CellDefinition implements Serializable {
     public CellDefinition() {
     }
 
-    public CellDefinition withOutputVariable(String name, VariableType variableType, Object defaultValue) {
-        this.outputVariableDefinitionList.add(new VariableDefinition(name, variableType, defaultValue));
+    public CellDefinition withOutputVariable(String name, String description, VariableType variableType, Object defaultValue) {
+        this.outputVariableDefinitionList.add(new VariableDefinition(name, description, variableType, defaultValue));
         return this;
     }
 
-    public CellDefinition withOutputVariable(String name, VariableType variableType) {
-        this.outputVariableDefinitionList.add(new VariableDefinition(name, variableType));
+    public CellDefinition withOutputVariable(String name, String description, VariableType variableType) {
+        this.outputVariableDefinitionList.add(new VariableDefinition(name, description, variableType));
         return this;
     }
 
@@ -52,7 +54,7 @@ public abstract class CellDefinition implements Serializable {
         return this.outputVariableDefinitionList;
     }
 
-    public List<OptionDefinition> getOptionDefinitionList() {
+    public List<OptionDescriptor> getOptionDefinitionList() {
         return this.optionDefinitionList;
     }
 

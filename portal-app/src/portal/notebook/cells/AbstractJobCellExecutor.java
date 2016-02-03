@@ -107,26 +107,26 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         }
     }
 
-    public static class DatasetMerger extends AbstractJobCellExecutor {
-
-        protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
-
-            CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
-            StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_DATASET_MERGER)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
-                    .withOptions(collectAllOptions(cellInstance));
-
-            for (int i = 1; i <= 5; i++) {
-                VariableKey key = createVariableKey(cellInstance, "input" + i);
-                if (key != null) {
-                    step1.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET + i, key);
-                } else {
-                    break;
-                }
-            }
-            return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
-        }
-    }
+//    public static class DatasetMerger extends AbstractJobCellExecutor {
+//
+//        protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
+//
+//            CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
+//            StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_DATASET_MERGER)
+//                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
+//                    .withOptions(collectAllOptions(cellInstance));
+//
+//            for (int i = 1; i <= 5; i++) {
+//                VariableKey key = createVariableKey(cellInstance, "input" + i);
+//                if (key != null) {
+//                    step1.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET + i, key);
+//                } else {
+//                    break;
+//                }
+//            }
+//            return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
+//        }
+//    }
 
     public static class BasicObjectToMoleculeObjectConvertor extends AbstractJobCellExecutor {
 
@@ -135,7 +135,7 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
             CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_BASICOBJECT_TO_MOLECULEOBJECT)
                     .withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, createVariableKeyRequired(cellInstance, DefaultCellDefinitionRegistry.VAR_NAME_INPUT))
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cellInstance));
 
             return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
@@ -149,26 +149,26 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
             CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_CSV_READER)
                     .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, new VariableKey(cellInstance.getName(), DefaultCellDefinitionRegistry.VAR_NAME_FILECONTENT))
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cellInstance));
 
             return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
         }
     }
 
-    public static class SDFileUploader extends AbstractJobCellExecutor {
-
-        protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
-
-            CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
-            StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_SDF_READER)
-                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, new VariableKey(cellInstance.getName(), DefaultCellDefinitionRegistry.VAR_NAME_FILECONTENT))
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
-                    .withOptions(collectAllOptions(cellInstance));
-
-            return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
-        }
-    }
+//    public static class SDFileUploader extends AbstractJobCellExecutor {
+//
+//        protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
+//
+//            CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
+//            StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_SDF_READER)
+//                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, new VariableKey(cellInstance.getName(), DefaultCellDefinitionRegistry.VAR_NAME_FILECONTENT))
+//                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_RESULTS)
+//                    .withOptions(collectAllOptions(cellInstance));
+//
+//            return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
+//        }
+//    }
 
     public static class ValueTransformer extends AbstractJobCellExecutor {
 

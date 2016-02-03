@@ -1,5 +1,6 @@
 package portal.notebook.execution.service;
 
+import com.im.lac.types.BasicObject;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.notebook.api.CellDTO;
@@ -33,9 +34,10 @@ public abstract class AbstractDatasetExecutor implements QndCellExecutor {
         }
     }
 
-    protected void writeDataset(CellDTO cellDTO, String name, Dataset dataset) throws IOException {
+    protected <T extends BasicObject> void writeDataset(CellDTO cellDTO, String name, Dataset<T> dataset) throws IOException {
+
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
-        try (Stream stream = generator.getAsStream()) {
+        try (Stream<T> stream = generator.getAsStream()) {
             InputStream dataInputStream = generator.getAsInputStream(stream, true);
             callbackClient.writeStreamContents(cellDTO.getName(), name, dataInputStream);
         }
@@ -44,10 +46,10 @@ public abstract class AbstractDatasetExecutor implements QndCellExecutor {
         LOG.info("Wrote dataset. Metadata: " + metadata);
     }
 
-    protected Dataset readDataset(VariableKey variableKey) throws IOException {
+    protected <T extends BasicObject> Dataset<T> readDataset(VariableKey variableKey) throws IOException {
         String json = callbackClient.readTextValue(variableKey.getProducerName(), variableKey.getName());
         LOG.fine("Read meatadata json: " + json);
-        DatasetMetadata meta = JsonHandler.getInstance().objectFromJson(json, DatasetMetadata.class);
+        DatasetMetadata<T> meta = JsonHandler.getInstance().objectFromJson(json, DatasetMetadata.class);
         if (meta == null) {
             return null;
         }

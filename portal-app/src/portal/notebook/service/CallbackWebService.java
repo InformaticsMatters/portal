@@ -14,11 +14,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Path("callback")
 @ApplicationScoped
 @Transactional
 public class CallbackWebService {
+
+    private static final Logger LOG = Logger.getLogger(CallbackWebService.class.getName());
 
     @Inject
     private NotebookService notebookService;
@@ -27,6 +30,7 @@ public class CallbackWebService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public NotebookInstance retrieveNotebook(@QueryParam("notebookId") Long notebookId) {
+        LOG.info("retrieveNotebook " + notebookId);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         return notebookInstance;
     }
@@ -35,6 +39,7 @@ public class CallbackWebService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public CellInstance retrieveCell(@QueryParam("notebookId") Long notebookId, @QueryParam("cellName") String cellName) {
+        LOG.info("retrieveCell " + notebookId + " " + cellName);
         NotebookInstance notebookDTO = retrieveNotebook(notebookId);
         return notebookDTO.findCellByName(cellName);
     }
@@ -43,6 +48,7 @@ public class CallbackWebService {
     @Path("readTextValue")
     @GET
     public String readTextValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName) {
+        LOG.info("readTextValue " + notebookId + " " + producerName + ":" + variableName);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
         return variable.getValue() == null ? null : variable.getValue().toString();
@@ -53,6 +59,7 @@ public class CallbackWebService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Object readObjectValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName) {
+        LOG.info("readObjectValue " + notebookId + " " + producerName + ":" + variableName);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
         return variable.getValue() == null ? null : variable.getValue();
@@ -61,6 +68,7 @@ public class CallbackWebService {
     @Path("readStreamValue")
     @GET
     public StreamingOutput readStreamValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName) {
+        LOG.info("readStreamValue " + notebookId + " " + producerName + ":" + variableName);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
         return new StreamingOutput() {
@@ -75,6 +83,7 @@ public class CallbackWebService {
     @Path("writeTextValue")
     @POST
     public void writeValueAsText(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") String value) {
+        LOG.info("writeValueAsText " + notebookId + " " + producerName + ":" + variableName);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
         variable.setValue(value);
@@ -84,6 +93,7 @@ public class CallbackWebService {
     @Path("writeIntegerValue")
     @POST
     public void writeIntegerValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") Integer value) {
+        LOG.info("writeIntegerValue " + notebookId + " " + producerName + ":" + variableName);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
         variable.setValue(value);
@@ -94,6 +104,7 @@ public class CallbackWebService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void writeObjectValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, Object value) {
+        LOG.info("writeObjectValue " + notebookId + " " + producerName + ":" + variableName);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
         variable.setValue(value);
@@ -103,6 +114,7 @@ public class CallbackWebService {
     @Path("writeStreamContents")
     @POST
     public void writeStreamContents(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, InputStream inputStream) {
+        LOG.info("writeStreamContents " + notebookId + " " + producerName + ":" + variableName);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
         notebookService.storeStreamingContents(notebookId, variable, inputStream);
@@ -111,6 +123,7 @@ public class CallbackWebService {
     @Path("readFileValueAsMolecules")
     @GET
     public StreamingOutput readFileValueAsMolecules(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName) {
+        LOG.info("readFileValueAsMolecules " + notebookId + " " + producerName + ":" + variableName);
         return new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {

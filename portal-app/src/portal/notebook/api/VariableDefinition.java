@@ -13,14 +13,14 @@ public class VariableDefinition implements Serializable {
     public VariableDefinition() {
     }
 
-    public VariableDefinition(String name, VariableType variableType) {
+    public VariableDefinition(String name, String displayName, VariableType variableType) {
         this.name = name;
         this.variableType = variableType;
+        this.displayName = displayName;
     }
 
-    public VariableDefinition(String name, VariableType variableType, Object defaultValue) {
-        this.name = name;
-        this.variableType = variableType;
+    public VariableDefinition(String name, String displayName, VariableType variableType, Object defaultValue) {
+        this(name, displayName, variableType);
         this.defaultValue = defaultValue;
     }
 

@@ -1,14 +1,20 @@
 package portal.notebook.api;
 
+import org.squonk.options.OptionDescriptor;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @XmlRootElement
 public class NotebookInstance implements Serializable {
+
+    private static final Logger LOG = Logger.getLogger(NotebookInstance.class.getName());
+
     private final List<CellInstance> cellList = new ArrayList<>();
     private Long lastCellId;
 
@@ -18,7 +24,9 @@ public class NotebookInstance implements Serializable {
 
     public VariableInstance findVariable(String producerName, String name) {
         for (CellInstance cell : cellList) {
+            LOG.info("testing " + cell.getName() + " = " + producerName);
             if (cell.getName().equals(producerName)) {
+                LOG.info("Found " + cell + " var = " + cell.getOutputVariableMap().get(name));
                 return cell.getOutputVariableMap().get(name);
             }
         }
@@ -93,7 +101,7 @@ public class NotebookInstance implements Serializable {
             binding.setName(bindingDefinition.getName());
             cell.getBindingMap().put(bindingDefinition.getName(), binding);
         }
-        for (OptionDefinition optionDefinition : cellDefinition.getOptionDefinitionList()) {
+        for (OptionDescriptor optionDefinition : cellDefinition.getOptionDefinitionList()) {
             OptionInstance<Object> option = new OptionInstance<>();
             option.setName(optionDefinition.getName());
             option.setDisplayName(optionDefinition.getDisplayName());
