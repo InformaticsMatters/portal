@@ -2,4 +2,7 @@
     <interceptors>
         <class>portal.notebook.NotebookTransactionalInterceptor</class>
     </interceptors>
+    <alternatives>
+        <class>portal.notebook.cells.MockJobStatusClient</class>
+    </alternatives>
 </beans>
