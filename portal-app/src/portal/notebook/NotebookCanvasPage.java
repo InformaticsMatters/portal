@@ -310,13 +310,7 @@ public class NotebookCanvasPage extends WebPage {
     private Panel createCanvasItemPanel(CellModel cellModel) {
         CellDefinition cellType = cellModel.getCellDefinition();
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
-        if ("FileUpload".equals(cellType.getName())) {
-            return new FileUploadCanvasItemPanel("item", cellModel);
-        } else if ("Script".equals(cellType.getName())) {
-            return new ScriptCanvasItemPanel("item", cellModel);
-        } else if ("PropertyCalculate".equals(cellType.getName())) {
-            return new PropertyCalculateCanvasItemPanel("item", cellModel);
-        } else if ("TableDisplay".equals(cellType.getName())) {
+        if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCanvasItemPanel("item", cellModel);
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
             return new ChemblActivitiesFetcherCanvasItemPanel("item", cellModel);

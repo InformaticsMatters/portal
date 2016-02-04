@@ -60,7 +60,7 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
         OptionDescriptor optionDefinition = listItem.getModelObject();
         OptionModel optionModel = new OptionModel(optionDefinition);
 
-        // TODO Gustavo - review this. The commented out code was the original buyt looks wrong
+        // TODO Gustavo - review this. The commented out code was the original but looks wrong
 //        if (OptionType.SIMPLE == optionDefinition.getOptionType()) {
 //            listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel));
 //        } else if (OptionType.PICKLIST == optionDefinition.getOptionType()) {
