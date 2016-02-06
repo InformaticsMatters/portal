@@ -18,6 +18,12 @@ public class NotebookInstance implements Serializable {
     private final List<CellInstance> cellList = new ArrayList<>();
     private Long lastCellId;
 
+    public static NotebookInstance fromBytes(byte[] bytes) throws Exception {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+        return (NotebookInstance) objectInputStream.readObject();
+    }
+
     public List<CellInstance> getCellList() {
         return cellList;
     }
@@ -37,12 +43,6 @@ public class NotebookInstance implements Serializable {
         CellInstance cell = createCell(cellType);
         cell.setName(calculateCellName(cell));
         cellList.add(cell);
-        if (lastCellId == null) {
-            cell.setId(1L);
-        } else {
-            cell.setId(lastCellId + 1L);
-        }
-        lastCellId = cell.getId();
         return cell;
     }
 
@@ -85,6 +85,8 @@ public class NotebookInstance implements Serializable {
     private CellInstance createCell(CellDefinition cellDefinition) {
         CellInstance cell = new CellInstance();
         cell.setCellDefinition(cellDefinition);
+        cell.setId(lastCellId == null ? 1L : lastCellId + 1L);
+        lastCellId = cell.getId();
         for (VariableDefinition variableDefinition : cellDefinition.getOutputVariableDefinitionList()) {
             VariableInstance variable = new VariableInstance();
             variable.setName(variableDefinition.getName());
@@ -132,12 +134,6 @@ public class NotebookInstance implements Serializable {
         objectOutputStream.flush();
         byteArrayOutputStream.flush();
         return  byteArrayOutputStream.toByteArray();
-    }
-
-    public static NotebookInstance fromBytes(byte[] bytes) throws Exception {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-        return (NotebookInstance) objectInputStream.readObject();
     }
 
 }
