@@ -18,7 +18,7 @@ public class DatasetMergerCellDefinition extends CellDefinition {
 
     public DatasetMergerCellDefinition() {
         setName(CELL_NAME);
-        setDescription("Merge mulitple datasets into one");
+        setDescription("Merge datasets into one");
         setExecutable(Boolean.TRUE);
         VariableDefinition variableDefinition = new VariableDefinition();
         variableDefinition.setName(VAR_NAME_OUTPUT);
@@ -46,20 +46,21 @@ public class DatasetMergerCellDefinition extends CellDefinition {
         @Override
         protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
 
-            CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
+            NotebookInstance notebook = cellExecutionData.getNotebookInstance();
+            CellInstance cell = notebook.findCellById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.DatasetMerger.CLASSNAME)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
-                    .withOptions(collectAllOptions(cellInstance));
+                    .withOptions(collectAllOptions(cell));
 
             for (int i = 1; i <= 5; i++) {
-                VariableKey key = createVariableKey(cellInstance, "input" + i);
+                VariableKey key = createVariableKey(notebook, cell, "input" + i);
                 if (key != null) {
                     step1.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET + i, key);
                 } else {
                     break;
                 }
             }
-            return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
+            return buildJobDefinition(cellExecutionData.getNotebookId(), cell, step1);
         }
     }
 

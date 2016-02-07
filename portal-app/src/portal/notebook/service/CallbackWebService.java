@@ -51,6 +51,7 @@ public class CallbackWebService {
         LOG.info("readTextValue " + notebookId + " " + producerName + ":" + variableName);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
+        LOG.info("Found for variable " + variable + " -> " + variable.getValue());
         return variable.getValue() == null ? null : variable.getValue().toString();
     }
 
@@ -83,7 +84,7 @@ public class CallbackWebService {
     @Path("writeTextValue")
     @POST
     public void writeValueAsText(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") String value) {
-        LOG.info("writeValueAsText " + notebookId + " " + producerName + ":" + variableName);
+        LOG.info("writeValueAsText " + notebookId + " " + producerName + ":" + variableName + " -> " + value);
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
         variable.setValue(value);

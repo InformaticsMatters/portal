@@ -57,9 +57,9 @@ public class NotebookSession implements Serializable {
             data.setOwner(sessionContext.getLoggedInUserDetails().getUserid());
             data.setShared(false);
             Long id = notebookService.createNotebook(data);
-            System.out.println("Created notebook " + id);
+            //System.out.println("Created notebook " + id);
             List<NotebookInfo> list2 = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
-            System.out.println("Now have " + list2.size() + "  notebooks");
+            //System.out.println("Now have " + list2.size() + "  notebooks");
             currentNotebookInfo = list2.get(0);
             NotebookInstance notebookInstance = new NotebookInstance();
             UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();

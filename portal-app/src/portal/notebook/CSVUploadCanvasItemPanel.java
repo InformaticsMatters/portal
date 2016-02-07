@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.notebook.cells.CsvUploadCellDefinition;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -19,6 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static portal.notebook.api.CellDefinition.VAR_NAME_FILECONTENT;
 
 public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
 
@@ -48,10 +51,10 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         fileUploadField = new FileUploadField("fileInput");
         form.add(fileUploadField);
 
-        DropDownChoice<String> csvFormatChoice = new DropDownChoice<String>("csvFormatType", CSV_FORMATS);
+        DropDownChoice<String> csvFormatChoice = new DropDownChoice<String>(CsvUploadCellDefinition.OPT_FILE_TYPE, CSV_FORMATS);
         form.add(csvFormatChoice);
 
-        CheckBox firstLineIsHeaderField = new CheckBox("firstLineIsHeader");
+        CheckBox firstLineIsHeaderField = new CheckBox(CsvUploadCellDefinition.OPT_FIRST_LINE_IS_HEADER);
         form.add(firstLineIsHeaderField);
 
         IndicatingAjaxSubmitLink uploadLink = new IndicatingAjaxSubmitLink("upload", form) {
@@ -78,7 +81,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_FILECONTENT);
             variableModel.setValue(fileName);
             notebookSession.storeCurrentNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
@@ -115,8 +118,6 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
     }
 
     private class ModelObject implements Serializable {
-        public static final String OPTION_FILE_TYPE = "csvFormatType";
-        public static final String OPTION_FIRST_LINE_IS_HEADER = "firstLineIsHeader";
 
         private String fileName;
         private List<FileUpload> fileInput = new ArrayList<FileUpload>();
@@ -165,15 +166,15 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_FILECONTENT);
             fileName = (String) variableModel.getValue();
-            csvFormatType = (String) getCellModel().getOptionModelMap().get(OPTION_FILE_TYPE).getValue();
-            firstLineIsHeader = (Boolean) getCellModel().getOptionModelMap().get(OPTION_FIRST_LINE_IS_HEADER).getValue();
+            csvFormatType = (String) getCellModel().getOptionModelMap().get(CsvUploadCellDefinition.OPT_FILE_TYPE).getValue();
+            firstLineIsHeader = (Boolean) getCellModel().getOptionModelMap().get(CsvUploadCellDefinition.OPT_FIRST_LINE_IS_HEADER).getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get(OPTION_FILE_TYPE).setValue(csvFormatType);
-            getCellModel().getOptionModelMap().get(OPTION_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
+            getCellModel().getOptionModelMap().get(CsvUploadCellDefinition.OPT_FILE_TYPE).setValue(csvFormatType);
+            getCellModel().getOptionModelMap().get(CsvUploadCellDefinition.OPT_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
         }
 
     }

@@ -4,6 +4,7 @@ import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.CsvUpload;
+import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
 
@@ -13,6 +14,8 @@ import portal.notebook.api.*;
 public class CsvUploadCellDefinition extends CellDefinition {
 
     public static final String CELL_NAME = "CsvUpload";
+    public static final String OPT_FILE_TYPE = CsvUpload.OPTION_CSV_FORMAT_TYPE;
+    public static final String OPT_FIRST_LINE_IS_HEADER = CsvUpload.OPTION_NAME_FIRST_LINE_IS_HEADER;
 
     public CsvUploadCellDefinition() {
         setName(CELL_NAME);
@@ -20,11 +23,11 @@ public class CsvUploadCellDefinition extends CellDefinition {
         setExecutable(Boolean.TRUE);
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_FILECONTENT, "File content", VariableType.FILE));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
-        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, CsvUpload.OPTION_NAME_FILE_TYPE, "File type",
+        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, OPT_FILE_TYPE, "File type",
                 "Type of CSV or TAB file")
                 .withValues(new String[]{"TDF", "EXCEL", "MYSQL", "RFC4180", "DEFAULT"})
                 .withDefaultValue("DEFAULT"));
-        getOptionDefinitionList().add(new OptionDescriptor<Boolean>(Boolean.class,  CsvUpload.OPTION_NAME_FIRST_LINE_IS_HEADER, "First line is header",
+        getOptionDefinitionList().add(new OptionDescriptor<Boolean>(Boolean.class, OPT_FIRST_LINE_IS_HEADER, "First line is header",
                 "First line contains field names"));
 
     }
@@ -38,12 +41,15 @@ public class CsvUploadCellDefinition extends CellDefinition {
 
         @Override
         protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
-            CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
-            StepDefinition step1 = new StepDefinition(CsvUpload.CLASSNAME)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
-                    .withOptions(collectAllOptions(cellInstance));
+            CellInstance cell = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
+            VariableKey key = new VariableKey(cell.getName(), VAR_NAME_FILECONTENT); // we are the producer
 
-            return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
+            StepDefinition step1 = new StepDefinition(CsvUpload.CLASSNAME)
+                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, key) // maps the input to our own file contents
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
+                    .withOptions(collectAllOptions(cell));
+
+            return buildJobDefinition(cellExecutionData.getNotebookId(), cell, step1);
         }
     }
 

@@ -9,6 +9,9 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.notebook.cells.SdfUploadCellDefinition;
+import static portal.notebook.cells.SdfUploadCellDefinition.OPT_NAME_FIELD_NAME;
+import static portal.notebook.api.CellDefinition.VAR_NAME_FILECONTENT;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -45,7 +48,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         fileUploadField = new FileUploadField("fileInput");
         form.add(fileUploadField);
 
-        TextField<String> nameFieldNameField = new TextField<String>("nameFieldName");
+        TextField<String> nameFieldNameField = new TextField<String>(OPT_NAME_FIELD_NAME);
         form.add(nameFieldNameField);
 
         IndicatingAjaxSubmitLink uploadLink = new IndicatingAjaxSubmitLink("upload", form) {
@@ -72,7 +75,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_FILECONTENT);
             variableModel.setValue(fileName);
             form.getModelObject().store();
             notebookSession.storeCurrentNotebook();
@@ -149,13 +152,13 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get("nameFieldName").setValue(nameFieldName);
+            getCellModel().getOptionModelMap().get(OPT_NAME_FIELD_NAME).setValue(nameFieldName);
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
+            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_FILECONTENT);
             fileName = variableModel == null ? null : (String) variableModel.getValue();
-            nameFieldName = (String) getCellModel().getOptionModelMap().get("nameFieldName").getValue();
+            nameFieldName = (String) getCellModel().getOptionModelMap().get(OPT_NAME_FIELD_NAME).getValue();
         }
     }
 

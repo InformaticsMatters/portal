@@ -4,11 +4,16 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.squonk.execution.steps.StepDefinitionConstants;
+import portal.notebook.api.CellDefinition;
 
 import javax.inject.Inject;
 import java.io.Serializable;
 
 public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
+
+    private static final String OPT_MERGE_FIELD_NAME = StepDefinitionConstants.DatasetMerger.OPTION_MERGE_FIELD_NAME;
+    private static final String OPT_KEEP_FIRST = StepDefinitionConstants.DatasetMerger.OPTION_KEEP_FIRST;
 
     private Form<ModelObject> form;
     @Inject
@@ -29,9 +34,9 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     private void addForm() {
         form = new Form<ModelObject>("form", new CompoundPropertyModel<ModelObject>(new ModelObject()));
         form.setOutputMarkupId(true);
-        TextField<String> mergeFieldName = new TextField<String>("mergeFieldName");
+        TextField<String> mergeFieldName = new TextField<String>(OPT_MERGE_FIELD_NAME);
         form.add(mergeFieldName);
-        CheckBox keepFirstField = new CheckBox("keepFirst");
+        CheckBox keepFirstField = new CheckBox(OPT_KEEP_FIRST);
         form.add(keepFirstField);
         add(form);
     }
@@ -44,7 +49,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void onExecute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "results");
+        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), CellDefinition.VAR_NAME_OUTPUT);
         outputVariableModel.setValue(null);
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getId());
@@ -73,13 +78,13 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            keepFirst = (Boolean) getCellModel().getOptionModelMap().get("keepFirst").getValue();
-            mergeFieldName = (String) getCellModel().getOptionModelMap().get("mergeFieldName").getValue();
+            keepFirst = (Boolean) getCellModel().getOptionModelMap().get(OPT_KEEP_FIRST).getValue();
+            mergeFieldName = (String) getCellModel().getOptionModelMap().get(OPT_MERGE_FIELD_NAME).getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get("keepFirst").setValue(keepFirst);
-            getCellModel().getOptionModelMap().get("mergeFieldName").setValue(mergeFieldName);
+            getCellModel().getOptionModelMap().get(OPT_KEEP_FIRST).setValue(keepFirst);
+            getCellModel().getOptionModelMap().get(OPT_MERGE_FIELD_NAME).setValue(mergeFieldName);
         }
     }
 

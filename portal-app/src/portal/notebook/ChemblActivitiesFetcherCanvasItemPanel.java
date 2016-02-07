@@ -4,14 +4,15 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import static portal.notebook.api.CellDefinition.VAR_NAME_OUTPUT;
+import static portal.notebook.cells.ChemblActivitiesFetcherCellDefinition.OPT_ASSAY_ID;
+import static portal.notebook.cells.ChemblActivitiesFetcherCellDefinition.OPT_PREFIX;
 
 import javax.inject.Inject;
 import java.io.Serializable;
 
 public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
 
-    private static final String OPT_ASSAY_ID = StepDefinitionConstants.ChemblActivitiesFetcher.OPTION_ASSAY_ID;
-    private static final String OPT_PREFIX = StepDefinitionConstants.ChemblActivitiesFetcher.OPTION_PREFIX;
 
     private Form<ModelObject> form;
     @Inject
@@ -41,7 +42,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
 
     private void execute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "output");
+        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_OUTPUT);
         outputVariableModel.setValue(null);
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellModel().getId());

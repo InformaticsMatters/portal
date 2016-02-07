@@ -13,6 +13,8 @@ import org.squonk.execution.steps.StepDefinitionConstants.ChemblActivitiesFetche
 public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
 
     public static final String CELL_NAME = "ChemblActivitiesFetcher";
+    public static final String OPT_ASSAY_ID = StepDefinitionConstants.ChemblActivitiesFetcher.OPTION_ASSAY_ID;
+    public static final String OPT_PREFIX = StepDefinitionConstants.ChemblActivitiesFetcher.OPTION_PREFIX;
 
     public ChemblActivitiesFetcherCellDefinition() {
         setName(CELL_NAME);
@@ -23,8 +25,8 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
         variableDefinition.setDisplayName(VAR_DISPLAYNAME_OUTPUT);
         variableDefinition.setVariableType(VariableType.DATASET);
         getOutputVariableDefinitionList().add(variableDefinition);
-        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, ChemblActivitiesFetcher.OPTION_ASSAY_ID, "Assay ID", "ChEMBL Asssay ID"));
-        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, ChemblActivitiesFetcher.OPTION_PREFIX, "Prefix", "Prefix for result fields"));
+        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, OPT_ASSAY_ID, "Assay ID", "ChEMBL Asssay ID"));
+        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, OPT_PREFIX, "Prefix", "Prefix for result fields"));
     }
 
     @Override

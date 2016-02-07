@@ -28,6 +28,10 @@ import portal.MenuPanel;
 import portal.PopupContainerProvider;
 import portal.PortalHomePage;
 import portal.notebook.api.CellDefinition;
+import portal.notebook.cells.ChemblActivitiesFetcherCellDefinition;
+import portal.notebook.cells.CsvUploadCellDefinition;
+import portal.notebook.cells.DatasetMergerCellDefinition;
+import portal.notebook.cells.SdfUploadCellDefinition;
 import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -312,13 +316,13 @@ public class NotebookCanvasPage extends WebPage {
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCanvasItemPanel("item", cellModel);
-        } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
+        } else if (ChemblActivitiesFetcherCellDefinition.CELL_NAME.equals(cellType.getName())) {
             return new ChemblActivitiesFetcherCanvasItemPanel("item", cellModel);
-        } else if ("SdfUploader".equals(cellType.getName())) {
+        } else if (SdfUploadCellDefinition.CELL_NAME.equals(cellType.getName())) {
             return new SDFUploadCanvasItemPanel("item", cellModel);
-        } else if ("CsvUploader".equals(cellType.getName())) {
+        } else if (CsvUploadCellDefinition.CELL_NAME.equals(cellType.getName())) {
             return new CSVUploadCanvasItemPanel("item", cellModel);
-        } else if ("DatasetMerger".equals(cellType.getName())) {
+        } else if (DatasetMergerCellDefinition.CELL_NAME.equals(cellType.getName())) {
             return new DatasetMergerCanvasItemPanel("item", cellModel);
         } else if ("BasicObjectToMoleculeObject".equals(cellType.getName())) {
             return new BasicObjectToMoleculeObjectConverterCanvasItemPanel("item", cellModel);
