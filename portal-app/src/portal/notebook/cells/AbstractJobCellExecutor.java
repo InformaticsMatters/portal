@@ -1,10 +1,13 @@
 package portal.notebook.cells;
 
-import com.im.lac.job.jobdef.*;
-import org.squonk.notebook.api.VariableKey;
+import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
+import com.im.lac.job.jobdef.JobDefinition;
+import com.im.lac.job.jobdef.JobStatus;
+import com.im.lac.job.jobdef.StepsCellExecutorJobDefinition;
 import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.notebook.api.VariableKey;
 import portal.notebook.api.*;
 
 import javax.enterprise.inject.Instance;
@@ -14,7 +17,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Created by timbo on 16/01/16.
@@ -187,14 +189,14 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
     public static class GroovyScriptTrusted extends AbstractJobCellExecutor {
 
         protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
-
             CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.STEP_TRUSTED_GROOVY_DATASET_SCRIPT)
                     .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, createVariableKeyRequired(cellInstance, DefaultCellDefinitionRegistry.VAR_NAME_INPUT))
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cellInstance));
-
             return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
         }
+
     }
+
 }

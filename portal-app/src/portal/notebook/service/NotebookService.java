@@ -3,7 +3,6 @@ package portal.notebook.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
-import org.squonk.notebook.api.VariableType;
 import portal.notebook.api.NotebookInstance;
 import portal.notebook.api.VariableInstance;
 import toolkit.services.PU;
@@ -17,13 +16,14 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 @ApplicationScoped
 public class NotebookService {
 
-    private static final Logger LOG = Logger.getLogger(NotebookService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(NotebookService.class.getName());
 
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
@@ -126,6 +126,8 @@ public class NotebookService {
         try {
             NotebookInstance notebookInstance = retrieveNotebookContents(notebookId);
             VariableInstance variable = notebookInstance.findVariable(cellName, variableName);
+            Object metadataString = variable.getValue();
+            LOGGER.log(Level.INFO, metadataString == null ?  null : metadataString.toString());
             File file = resolveContentsFile(notebookId, variable);
             FileInputStream fileInputStream = new FileInputStream(file);
             try {
@@ -242,16 +244,16 @@ public class NotebookService {
                 String fileName = URLEncoder.encode(variable.getCellId() + "_" + variable.getName(), "US-ASCII");
                 return new File(parent, fileName);
             default:
-                LOG.warning("Invalid variable type for file storage: " + variable.getVariableType());
+                LOGGER.warning("Invalid variable type for file storage: " + variable.getVariableType());
                 return null;
         }
     }
 
     public void storeStreamingContents(Long notebookId, VariableInstance variable, InputStream inputStream) {
-        LOG.info("storeStreamingContents for " + notebookId + "/" + variable.getName() + "/" + variable.getVariableType());
+        LOGGER.info("storeStreamingContents for " + notebookId + "/" + variable.getName() + "/" + variable.getVariableType());
         try {
             File file = resolveContentsFile(notebookId, variable);
-            LOG.info("File is " + file);
+            LOGGER.info("File is " + file);
             OutputStream outputStream = new FileOutputStream(file);
             try {
                 byte[] buffer = new byte[4096];

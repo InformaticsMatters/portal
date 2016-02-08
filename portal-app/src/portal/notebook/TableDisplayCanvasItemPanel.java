@@ -5,9 +5,9 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.squonk.notebook.api.VariableType;
 import portal.dataset.IDatasetDescriptor;
 import portal.notebook.api.Strings;
+import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -65,9 +65,10 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     private IDatasetDescriptor loadDescriptor() {
         CellModel cellModel = getCellModel();
         VariableModel variableModel = cellModel.getBindingModelMap().get("input").getVariableModel();
-        if (variableModel.getVariableType().equals(VariableType.FILE)) {
+        VariableType variableType = variableModel.getVariableType();
+        if (variableType.equals(VariableType.FILE)) {
             return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());
-        } else if (variableModel.getVariableType().equals(VariableType.DATASET)) {
+        } else if (variableType.equals(VariableType.DATASET)) {
             return notebookSession.loadDatasetFromSquonkDataset(variableModel);
         } else if (variableModel.getValue() instanceof Strings) {
             return notebookSession.createDatasetFromStrings((Strings) variableModel.getValue(), variableModel.getName());
