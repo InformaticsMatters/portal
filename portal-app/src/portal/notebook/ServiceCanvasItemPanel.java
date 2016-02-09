@@ -4,9 +4,9 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
+import org.squonk.notebook.api.OptionType;
 import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
-import portal.notebook.api.OptionType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,17 +59,12 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
     private void addOptionEditor(ListItem<OptionDescriptor> listItem) {
         OptionDescriptor optionDefinition = listItem.getModelObject();
         OptionModel optionModel = new OptionModel(optionDefinition);
-
-        // TODO Gustavo - review this. The commented out code was the original but looks wrong
-//        if (OptionType.SIMPLE == optionDefinition.getOptionType()) {
-//            listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel));
-//        } else if (OptionType.PICKLIST == optionDefinition.getOptionType()) {
-//            listItem.add(new StructureOptionEditorPanel("editor", "canvasMarvinEditor", optionDefinition, optionModel));
-//        }
-        if (optionDefinition.getTypeDescriptor().getType() == MoleculeTypeDescriptor.class) {
-            listItem.add(new StructureOptionEditorPanel("editor", "canvasMarvinEditor", optionDefinition, optionModel));
-        } else {
-            listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel));
+        if (OptionType.SIMPLE.equals(optionDefinition.getOptionType())) {
+            if (optionDefinition.getTypeDescriptor().getType() == String.class) {
+                listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel));
+            } else if (optionDefinition.getTypeDescriptor().getType() == MoleculeTypeDescriptor.class) {
+                listItem.add(new StructureOptionEditorPanel("editor", "canvasMarvinEditor", optionDefinition, optionModel));
+            }
         }
     }
 
