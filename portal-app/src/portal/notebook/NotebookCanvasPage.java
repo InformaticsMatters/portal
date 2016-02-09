@@ -22,7 +22,6 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.notebook.api.CellType;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PopupContainerProvider;
@@ -314,9 +313,9 @@ public class NotebookCanvasPage extends WebPage {
             return new TableDisplayCanvasItemPanel("item", cellModel);
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
             return new ChemblActivitiesFetcherCanvasItemPanel("item", cellModel);
-        } else if ("SdfUploader".equals(cellType.getName())) {
+        } else if ("SdfUpload".equals(cellType.getName())) {
             return new SDFUploadCanvasItemPanel("item", cellModel);
-        } else if ("CsvUploader".equals(cellType.getName())) {
+        } else if ("CsvUpload".equals(cellType.getName())) {
             return new CSVUploadCanvasItemPanel("item", cellModel);
         } else if ("DatasetMerger".equals(cellType.getName())) {
             return new DatasetMergerCanvasItemPanel("item", cellModel);
