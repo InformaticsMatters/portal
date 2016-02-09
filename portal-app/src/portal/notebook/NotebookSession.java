@@ -1,24 +1,21 @@
 package portal.notebook;
 
 import com.im.lac.job.jobdef.JobStatus;
-import com.im.lac.services.ServiceDescriptor;
-import com.im.lac.services.client.ServicesClient;
 import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.notebook.api.CellType;
 import org.squonk.notebook.client.CellClient;
-import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
 import portal.dataset.*;
 import portal.notebook.api.*;
-import portal.notebook.api.CellDefinitionRegistry;
-import portal.notebook.service.*;
+import portal.notebook.service.EditNotebookData;
+import portal.notebook.service.NotebookInfo;
+import portal.notebook.service.NotebookService;
+import portal.notebook.service.UpdateNotebookContentsData;
 import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
@@ -142,15 +139,8 @@ public class NotebookSession implements Serializable {
     }
 
     public List<CellDefinition> listCellDefinition() {
-//        List<CellType> cellTypes = cellClient.listCellDefinition();
-//        addServiceCellTypes(cellTypes);
-//        this.cellDefinitionList = cellTypes;
-//        return cellTypes;
-
         List<CellDefinition> list = new ArrayList<>();
         list.addAll(cellDefinitionRegistry.listCellDefinition());
-        // TODO - better to add these to the registry in the first place?
-        //addServiceCellTypes(cellTypes);
         this.cellDefinitionList = list;
         return list;
     }
@@ -304,62 +294,6 @@ public class NotebookSession implements Serializable {
         NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(currentNotebookInfo.getId());
         VariableInstance variable = notebookInstance.findVariable(variableModel.getProducerCellModel().getName(), variableModel.getName());
         notebookService.storeStreamingContents(currentNotebookInfo.getId(), variable, inputStream);
-    }
-
-
-    private void addServiceCellTypes(List<CellType> cellTypes) {
-        for (ServiceDescriptor serviceDescriptor : listServiceDescriptors()) {
-            cellTypes.add(buildCellTypeForServiceDescriptor(serviceDescriptor));
-        }
-    }
-
-    private List<ServiceDescriptor> listServiceDescriptors() {
-        ServicesClient servicesClient = new ServicesClient();
-        List<ServiceDescriptor> serviceDescriptors;
-        try {
-            serviceDescriptors = servicesClient.getServiceDefinitions(sessionContext.getLoggedInUserDetails().getUserid());
-        } catch (IOException e) {
-            serviceDescriptors = new ArrayList<>();
-            logger.error(null, e);
-        }
-        return serviceDescriptors;
-    }
-
-    private CellType buildCellTypeForServiceDescriptor(ServiceDescriptor serviceDescriptor) {
-        CellType result = new CellType();
-        result.setExecutable(true);
-        result.setName(serviceDescriptor.getName());
-        result.setDescription(serviceDescriptor.getDescription());
-
-        OptionDescriptor[] properties = serviceDescriptor.getAccessModes()[0].getParameters();
-        if (properties != null) {
-
-            logger.info(properties.length + " properties found for service " + serviceDescriptor.getName());
-
-            for (OptionDescriptor propertyDescriptor : properties) {
-
-                System.out.println("property type: " + propertyDescriptor.getTypeDescriptor().getType());
-                result.getOptionDefinitionList().add(propertyDescriptor);
-
-//                if (propertyDescriptor.getTypeDescriptor().getType() == String.class) {
-//                    OptionDescriptor optionDescriptor = new OptionDescriptor()
-//                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
-//                    optionDefinition.setName("missing.property.name");
-//                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
-//                    optionDefinition.setOptionType(OptionType.SIMPLE);
-//                    result.getOptionDefinitionList().add(optionDefinition);
-//                } else if (propertyDescriptor.getType().equals(ServicePropertyDescriptor.Type.STRUCTURE)) {
-//                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
-//                    optionDefinition.setName("missing.property.name");
-//                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
-//                    optionDefinition.setOptionType(OptionType.PICKLIST);
-//                    result.getOptionDefinitionList().add(optionDefinition);
-//                }
-
-            }
-        }
-
-        return result;
     }
 }
 

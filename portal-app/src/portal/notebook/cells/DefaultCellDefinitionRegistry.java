@@ -1,25 +1,31 @@
 package portal.notebook.cells;
 
 
+import com.im.lac.services.ServiceDescriptor;
+import com.im.lac.services.client.ServicesClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
+import portal.SessionContext;
 import portal.notebook.api.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import javax.inject.Inject;
+import java.util.*;
 
 @Default
 @ApplicationScoped
 public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
-    private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
-
     public static final String VAR_NAME_INPUT = "input";
     public static final String VAR_NAME_OUTPUT = "output";
     public static final String VAR_NAME_FILECONTENT = "fileContent";
+    private static final Logger logger = LoggerFactory.getLogger(DefaultCellDefinitionRegistry.class);
+    private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
+    @Inject
+    private SessionContext sessionContext;
 
     public DefaultCellDefinitionRegistry() {
 
@@ -33,8 +39,20 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(createGroovyScriptTrustedCellDefinition());
     }
 
-    public void registerCellDefinition(CellDefinition cellDefinition) {
-        cellDefinitionMap.put(cellDefinition.getName(), cellDefinition);
+    private static CellDefinition createTableDisplayCellDefinition() {
+        CellDefinition cellDefinition = new SimpleCellDefinition();
+        cellDefinition.setName("TableDisplay");
+        cellDefinition.setDescription("Table display");
+        cellDefinition.setExecutable(Boolean.FALSE);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName(VAR_NAME_INPUT);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.VALUE);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        return cellDefinition;
     }
 
 //    private static CellDefinition createDatasetMergerCellDefinition() {
@@ -104,40 +122,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 //        return cellDefinition;
 //    }
 
-    private static CellDefinition createTableDisplayCellDefinition() {
-        CellDefinition cellDefinition = new SimpleCellDefinition();
-        cellDefinition.setName("TableDisplay");
-        cellDefinition.setDescription("Table display");
-        cellDefinition.setExecutable(Boolean.FALSE);
-        BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName(VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.VALUE);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
-        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
-        return cellDefinition;
-    }
-
-//    private static CellDefinition createChemblActivitiesFetcherCellDefinition() {
-//        CellDefinition cellDefinition = new SimpleCellDefinition();
-//        cellDefinition.setName("ChemblActivitiesFetcher");
-//        cellDefinition.setDescription("Chembl activities fetcher");
-//        cellDefinition.setExecutable(Boolean.TRUE);
-//        VariableDefinition variableDefinition = new VariableDefinition();
-//        variableDefinition.setName(VAR_NAME_RESULTS);
-//        variableDefinition.setDisplayName("Results");
-//        variableDefinition.setVariableType(VariableType.DATASET);
-//        cellDefinition.getOutputVariableDefinitionList().add(variableDefinition);
-//        cellDefinition.getOptionDefinitionList().add(new OptionDefinition(String.class, "assayId", "Assay ID", "ChEBML Asssay ID"));
-//        cellDefinition.getOptionDefinitionList().add(new OptionDefinition(String.class, "prefix", "Prefix", "Prefix for result fields"));
-//        cellDefinition.setExecutable(Boolean.TRUE);
-//
-//        return cellDefinition;
-//    }
-
-
     private static CellDefinition createConvertBasicToMoleculeObjectCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition();
         cellDefinition.setName("BasicObjectToMoleculeObject");
@@ -163,6 +147,23 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.setExecutable(Boolean.TRUE);
         return cellDefinition;
     }
+
+//    private static CellDefinition createChemblActivitiesFetcherCellDefinition() {
+//        CellDefinition cellDefinition = new SimpleCellDefinition();
+//        cellDefinition.setName("ChemblActivitiesFetcher");
+//        cellDefinition.setDescription("Chembl activities fetcher");
+//        cellDefinition.setExecutable(Boolean.TRUE);
+//        VariableDefinition variableDefinition = new VariableDefinition();
+//        variableDefinition.setName(VAR_NAME_RESULTS);
+//        variableDefinition.setDisplayName("Results");
+//        variableDefinition.setVariableType(VariableType.DATASET);
+//        cellDefinition.getOutputVariableDefinitionList().add(variableDefinition);
+//        cellDefinition.getOptionDefinitionList().add(new OptionDefinition(String.class, "assayId", "Assay ID", "ChEBML Asssay ID"));
+//        cellDefinition.getOptionDefinitionList().add(new OptionDefinition(String.class, "prefix", "Prefix", "Prefix for result fields"));
+//        cellDefinition.setExecutable(Boolean.TRUE);
+//
+//        return cellDefinition;
+//    }
 
     private static CellDefinition createValueTransformerCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition();
@@ -208,12 +209,53 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         return cellDefinition;
     }
 
-    public Collection<CellDefinition> listCellDefinition() {
-        return cellDefinitionMap.values();
+    public void registerCellDefinition(CellDefinition cellDefinition) {
+        cellDefinitionMap.put(cellDefinition.getName(), cellDefinition);
     }
 
+    public Collection<CellDefinition> listCellDefinition() {
+        Collection<CellDefinition> definitionList = cellDefinitionMap.values();
+        addServiceCellDefinitionList(definitionList);
+        return definitionList;
+    }
 
-    public CellDefinition retrieveCellDefinition(String name) {
+    public CellDefinition findCellDefinition(String name) {
         return cellDefinitionMap.get(name);
+    }
+
+    private void addServiceCellDefinitionList(Collection<CellDefinition> cellDefinitionList) {
+        for (ServiceDescriptor serviceDescriptor : listServiceDescriptors()) {
+            cellDefinitionList.add(buildCellDefinitionForServiceDescriptor(serviceDescriptor));
+        }
+    }
+
+    private List<ServiceDescriptor> listServiceDescriptors() {
+        ServicesClient servicesClient = new ServicesClient();
+        List<ServiceDescriptor> serviceDescriptors;
+        try {
+            serviceDescriptors = servicesClient.getServiceDefinitions(sessionContext.getLoggedInUserDetails().getUserid());
+        } catch (Throwable e) {
+            serviceDescriptors = new ArrayList<>();
+            logger.error(null, e);
+        }
+        return serviceDescriptors;
+    }
+
+    private ServiceCellDefinition buildCellDefinitionForServiceDescriptor(ServiceDescriptor serviceDescriptor) {
+        ServiceCellDefinition result = new ServiceCellDefinition();
+        result.setExecutable(true);
+        result.setName(serviceDescriptor.getName());
+        result.setDescription(serviceDescriptor.getDescription());
+
+        OptionDescriptor[] parameters = serviceDescriptor.getAccessModes()[0].getParameters();
+        if (parameters != null) {
+            logger.info(parameters.length + " parameters found for service " + serviceDescriptor.getName());
+            for (OptionDescriptor parameter : parameters) {
+                logger.info("property type: " + parameter.getTypeDescriptor().getType());
+                result.getOptionDefinitionList().add(parameter);
+            }
+        }
+
+        return result;
     }
 }
