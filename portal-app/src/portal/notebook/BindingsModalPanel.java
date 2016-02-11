@@ -123,9 +123,8 @@ public class BindingsModalPanel extends SemanticModalPanel {
             protected void populateItem(ListItem<BindingInstance> listItem) {
                 final BindingInstance bindingModel = listItem.getModelObject();
                 listItem.add(new Label("targetName", bindingModel.getDisplayName()));
-                VariableInstance variableModel = bindingModel.getVariable();
-                CellInstance producerCell = notebookSession.getCurrentNotebookInstance().findCellById(variableModel.getCellId());
-                String sourceDisplayName = variableModel == null ? null : (producerCell.getName() + " " + variableModel.getDisplayName());
+                VariableInstance variableInstance = bindingModel.getVariable();
+                String sourceDisplayName = resolveDisplayNameFor(variableInstance);
                 listItem.add(new Label("variableName", sourceDisplayName));
                 AjaxLink unassignLink = new AjaxLink("unassign") {
 
@@ -143,6 +142,14 @@ public class BindingsModalPanel extends SemanticModalPanel {
         };
         bindingListContainer.add(listView);
         getModalRootComponent().add(bindingListContainer);
+    }
+
+    private String resolveDisplayNameFor(VariableInstance variableInstance) {
+        if (variableInstance == null) {
+            return null;
+        }
+        CellInstance producerCellInstance = notebookSession.getCurrentNotebookInstance().findCellById(variableInstance.getCellId());
+        return producerCellInstance.getName() + " " + variableInstance.getDisplayName();
     }
 
     private List<BindingInstance> buildBindingInstanceList() {

@@ -46,6 +46,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         outputVariableInstance.setValue(null);
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellInstance().getId());
+        notebookSession.reloadCurrentNotebook();
         fireContentChanged();
     }
 

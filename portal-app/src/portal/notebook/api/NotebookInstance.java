@@ -126,11 +126,15 @@ public class NotebookInstance implements Serializable {
     }
 
     public void removeCell(Long id) {
-        for (CellInstance cell : cellList) {
-            if (cell.getId().equals(id)) {
-                cellList.remove(cell);
-                removedCellIdList.add(id);
-                break;
+        CellInstance cellInstance = findCellById(id);
+        cellList.remove(cellInstance);
+        removedCellIdList.add(id);
+        for (CellInstance otherCellInstance : cellList) {
+            for (BindingInstance bindingInstance : otherCellInstance.getBindingMap().values()) {
+                VariableInstance variableInstance = bindingInstance.getVariable();
+                if (variableInstance != null && variableInstance.getCellId().equals(id)) {
+                    bindingInstance.setVariable(null);
+                }
             }
         }
     }

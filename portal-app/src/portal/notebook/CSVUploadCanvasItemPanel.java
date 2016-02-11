@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.execution.steps.StepDefinitionConstants;
 import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -168,13 +169,13 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         public void load() {
             VariableInstance variableModel = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), "fileContent");
             fileName = (String) variableModel.getValue();
-            csvFormatType = (String) getCellInstance().getOptionMap().get(OPTION_FILE_TYPE).getValue();
-            firstLineIsHeader = (Boolean) getCellInstance().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).getValue();
+            csvFormatType = (String) getCellInstance().getOptionMap().get(StepDefinitionConstants.CsvUpload.OPTION_NAME_FILE_TYPE).getValue();
+            firstLineIsHeader = (Boolean) getCellInstance().getOptionMap().get(StepDefinitionConstants.CsvUpload.OPTION_NAME_FIRST_LINE_IS_HEADER).getValue();
         }
 
         public void store() {
-            getCellInstance().getOptionMap().get(OPTION_FILE_TYPE).setValue(csvFormatType);
-            getCellInstance().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
+            getCellInstance().getOptionMap().get(OPTION_FILE_TYPE).setValue(StepDefinitionConstants.CsvUpload.OPTION_NAME_FILE_TYPE);
+            getCellInstance().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).setValue(StepDefinitionConstants.CsvUpload.OPTION_NAME_FIRST_LINE_IS_HEADER);
         }
 
     }
