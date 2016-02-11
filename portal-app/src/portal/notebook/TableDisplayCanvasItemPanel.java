@@ -6,8 +6,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.dataset.IDatasetDescriptor;
-import portal.notebook.api.Strings;
-import portal.notebook.api.VariableType;
+import portal.notebook.api.*;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -23,7 +22,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public TableDisplayCanvasItemPanel(String id, CellModel cell) {
+    public TableDisplayCanvasItemPanel(String id, CellInstance cell) {
         super(id, cell);
         if (cell.getSizeWidth() == 0) {
             cell.setSizeWidth(500);
@@ -52,8 +51,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        BindingModel bindingModel = getCellModel().getBindingModelMap().get("input");
-        VariableModel variableModel = bindingModel == null ? null : bindingModel.getVariableModel();
+        BindingInstance bindingModel = getCellInstance().getBindingMap().get("input");
+        VariableInstance variableModel = bindingModel == null ? null : bindingModel.getVariable();
         boolean assigned = variableModel != null && variableModel.getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
@@ -63,8 +62,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private IDatasetDescriptor loadDescriptor() {
-        CellModel cellModel = getCellModel();
-        VariableModel variableModel = cellModel.getBindingModelMap().get("input").getVariableModel();
+        CellInstance cellModel = getCellInstance();
+        VariableInstance variableModel = cellModel.getBindingMap().get("input").getVariable();
         VariableType variableType = variableModel.getVariableType();
         if (variableType.equals(VariableType.FILE)) {
             return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());

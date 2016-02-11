@@ -2,36 +2,37 @@ package portal.notebook;
 
 import com.vaynberg.wicket.select2.Response;
 import com.vaynberg.wicket.select2.TextChoiceProvider;
+import portal.notebook.api.BindingInstance;
 
 import java.util.*;
 
 /**
  * @author simetrias
  */
-public class TargetBindingProvider extends TextChoiceProvider<BindingModel> {
+public class TargetBindingProvider extends TextChoiceProvider<BindingInstance> {
 
-    private final Map<String, BindingModel> bindingModelMap;
+    private final Map<String, BindingInstance> bindingModelMap;
 
-    public TargetBindingProvider(Map<String, BindingModel> bindingModelMap) {
+    public TargetBindingProvider(Map<String, BindingInstance> bindingModelMap) {
         this.bindingModelMap = bindingModelMap;
     }
 
     @Override
-    protected String getDisplayText(BindingModel bindingModel) {
+    protected String getDisplayText(BindingInstance bindingModel) {
         return bindingModel.getDisplayName();
     }
 
     @Override
-    protected Object getId(BindingModel bindingModel) {
+    protected Object getId(BindingInstance bindingModel) {
         return bindingModel.getName();
     }
 
     @Override
-    public void query(String s, int i, Response<BindingModel> response) {
-        ArrayList<BindingModel> list = new ArrayList<BindingModel>(bindingModelMap.values());
-        Collections.sort(list, new Comparator<BindingModel>() {
+    public void query(String s, int i, Response<BindingInstance> response) {
+        ArrayList<BindingInstance> list = new ArrayList<BindingInstance>(bindingModelMap.values());
+        Collections.sort(list, new Comparator<BindingInstance>() {
             @Override
-            public int compare(BindingModel o1, BindingModel o2) {
+            public int compare(BindingInstance o1, BindingInstance o2) {
                 return o1.getName().compareTo(o2.getName());
             }
         });
@@ -39,11 +40,11 @@ public class TargetBindingProvider extends TextChoiceProvider<BindingModel> {
     }
 
     @Override
-    public Collection<BindingModel> toChoices(Collection<String> collection) {
+    public Collection<BindingInstance> toChoices(Collection<String> collection) {
         String firstKey = collection.iterator().next();
-        BindingModel firstBindingModel = bindingModelMap.get(firstKey);
-        ArrayList<BindingModel> result = new ArrayList<>();
-        result.add(firstBindingModel);
+        BindingInstance firstBindingInstance = bindingModelMap.get(firstKey);
+        ArrayList<BindingInstance> result = new ArrayList<>();
+        result.add(firstBindingInstance);
         return result;
     }
 }

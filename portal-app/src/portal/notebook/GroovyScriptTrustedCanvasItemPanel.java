@@ -5,6 +5,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -15,7 +17,7 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public GroovyScriptTrustedCanvasItemPanel(String id, CellModel cell) {
+    public GroovyScriptTrustedCanvasItemPanel(String id, CellInstance cell) {
         super(id, cell);
         cell.setSizeWidth(300);
         cell.setSizeHeight(250);
@@ -51,10 +53,10 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void onExecute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "output");
-        outputVariableModel.setValue(null);
+        VariableInstance outputVariableInstance = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), "output");
+        outputVariableInstance.setValue(null);
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getId());
+        notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }
 
@@ -71,11 +73,11 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            script = (String) getCellModel().getOptionModelMap().get("script").getValue();
+            script = (String) getCellInstance().getOptionMap().get("script").getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get("script").setValue(script);
+            getCellInstance().getOptionMap().get("script").setValue(script);
         }
     }
 

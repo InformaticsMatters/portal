@@ -4,6 +4,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -17,7 +19,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell) {
+    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellInstance cell) {
         super(id, cell);
         addForm();
         addTitleBar();
@@ -41,10 +43,10 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
 
     private void execute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "output");
-        outputVariableModel.setValue(null);
+        VariableInstance outputVariableInstance = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), "output");
+        outputVariableInstance.setValue(null);
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getId());
+        notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }
 
@@ -80,13 +82,13 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            assayId = (String) getCellModel().getOptionModelMap().get(OPT_ASSAY_ID).getValue();
-            prefix = (String) getCellModel().getOptionModelMap().get(OPT_PREFIX).getValue();
+            assayId = (String) getCellInstance().getOptionMap().get(OPT_ASSAY_ID).getValue();
+            prefix = (String) getCellInstance().getOptionMap().get(OPT_PREFIX).getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get(OPT_ASSAY_ID).setValue(assayId);
-            getCellModel().getOptionModelMap().get(OPT_PREFIX).setValue(prefix);
+            getCellInstance().getOptionMap().get(OPT_ASSAY_ID).setValue(assayId);
+            getCellInstance().getOptionMap().get(OPT_PREFIX).setValue(prefix);
         }
 
     }

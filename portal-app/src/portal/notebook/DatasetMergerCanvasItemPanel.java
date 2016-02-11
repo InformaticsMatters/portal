@@ -4,6 +4,8 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -14,7 +16,7 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public DatasetMergerCanvasItemPanel(String id, CellModel cell) {
+    public DatasetMergerCanvasItemPanel(String id, CellInstance cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();
@@ -44,10 +46,10 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void onExecute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "results");
-        outputVariableModel.setValue(null);
+        VariableInstance outputVariableInstance = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getName(), "results");
+        outputVariableInstance.setValue(null);
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getId());
+        notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }
 
@@ -73,13 +75,13 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            keepFirst = (Boolean) getCellModel().getOptionModelMap().get("keepFirst").getValue();
-            mergeFieldName = (String) getCellModel().getOptionModelMap().get("mergeFieldName").getValue();
+            keepFirst = (Boolean) getCellInstance().getOptionMap().get("keepFirst").getValue();
+            mergeFieldName = (String) getCellInstance().getOptionMap().get("mergeFieldName").getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get("keepFirst").setValue(keepFirst);
-            getCellModel().getOptionModelMap().get("mergeFieldName").setValue(mergeFieldName);
+            getCellInstance().getOptionMap().get("keepFirst").setValue(keepFirst);
+            getCellInstance().getOptionMap().get("mergeFieldName").setValue(mergeFieldName);
         }
     }
 

@@ -24,7 +24,8 @@ import java.util.zip.GZIPInputStream;
 public class NotebookService {
 
     private static final Logger LOGGER = Logger.getLogger(NotebookService.class.getName());
-
+    @Inject
+    private NotebookInstances notebookInstances;
     @Inject
     @PU(puName = NotebookConstants.PU_NAME)
     private EntityManager entityManager;
@@ -57,11 +58,15 @@ public class NotebookService {
         return notebookInfo;
     }
 
-    public NotebookInstance retrieveNotebookContents(Long id) {
+    public NotebookInstance findNotebookInstance(Long id) {
         try {
-            Notebook notebookHeader = entityManager.find(Notebook.class, id);
-            entityManager.refresh(notebookHeader);
-            return NotebookInstance.fromBytes(notebookHeader.getData());
+            NotebookInstance notebookInstance = notebookInstances.findNotebookInstance(id);
+            if (notebookInstance == null) {
+                Notebook notebook = entityManager.find(Notebook.class, id);
+                notebookInstance = NotebookInstance.fromBytes(notebook.getData());
+                notebookInstances.registerNotebookInstance(id, notebookInstance);
+            }
+            return notebookInstance;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -83,21 +88,22 @@ public class NotebookService {
     }
 
     public void updateNotebook(EditNotebookData editNotebookData) {
-        Notebook notebookHeader = entityManager.find(Notebook.class, editNotebookData.getId());
-        notebookHeader.setName(editNotebookData.getName());
-        notebookHeader.setDescription(editNotebookData.getDescription());
-        notebookHeader.setOwner(editNotebookData.getOwner());
-        notebookHeader.setShared(editNotebookData.getShared());
+        Notebook notebook = entityManager.find(Notebook.class, editNotebookData.getId());
+        notebook.setName(editNotebookData.getName());
+        notebook.setDescription(editNotebookData.getDescription());
+        notebook.setOwner(editNotebookData.getOwner());
+        notebook.setShared(editNotebookData.getShared());
     }
 
     public void removeNotebook(Long id) {
-        Notebook notebookHeader = entityManager.find(Notebook.class, id);
+        Notebook notebook = entityManager.find(Notebook.class, id);
         TypedQuery<NotebookHistory> historyQuery = entityManager.createQuery("select o from NotebookHistory o where o.notebook = :notebook", NotebookHistory.class);
-        historyQuery.setParameter("notebook", notebookHeader);
+        historyQuery.setParameter("notebook", notebook);
         for (NotebookHistory notebookHistory : historyQuery.getResultList()) {
             entityManager.remove(notebookHistory);
         }
-        entityManager.remove(notebookHeader);
+        entityManager.remove(notebook);
+        notebookInstances.unregisterNotebookInstance(id);
     }
 
     public Long updateNotebookContents(UpdateNotebookContentsData updateNotebookContentsData) {
@@ -124,7 +130,7 @@ public class NotebookService {
 
     public List<MoleculeObject> squonkDatasetAsMolecules(Long notebookId, String cellName, String variableName) {
         try {
-            NotebookInstance notebookInstance = retrieveNotebookContents(notebookId);
+            NotebookInstance notebookInstance = findNotebookInstance(notebookId);
             VariableInstance variable = notebookInstance.findVariable(cellName, variableName);
             Object metadataString = variable.getValue();
             LOGGER.log(Level.INFO, metadataString == null ?  null : metadataString.toString());

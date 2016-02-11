@@ -7,6 +7,7 @@ import org.apache.wicket.model.IModel;
 import org.squonk.notebook.api.OptionType;
 import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
+import portal.notebook.api.CellInstance;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
     private Form form;
     private Map<OptionDescriptor, String> optionValueMap;
 
-    public ServiceCanvasItemPanel(String id, CellModel cellModel) {
+    public ServiceCanvasItemPanel(String id, CellInstance cellModel) {
         super(id, cellModel);
         setOutputMarkupId(true);
         addForm();
@@ -31,7 +32,7 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
         form = new Form("form");
         add(form);
 
-        List<OptionDescriptor> optionDefinitionList = getCellModel().getCellDefinition().getOptionDefinitionList();
+        List<OptionDescriptor> optionDefinitionList = getCellInstance().getCellDefinition().getOptionDefinitionList();
         optionValueMap = new HashMap<>();
         for (OptionDescriptor optionDefinition : optionDefinitionList) {
             optionValueMap.put(optionDefinition, null);

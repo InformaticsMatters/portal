@@ -1,9 +1,10 @@
 package portal.notebook;
 
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -14,7 +15,7 @@ public class BasicObjectToMoleculeObjectConverterCanvasItemPanel extends CanvasI
     @Inject
     private NotebookSession notebookSession;
 
-    public BasicObjectToMoleculeObjectConverterCanvasItemPanel(String id, CellModel cell) {
+    public BasicObjectToMoleculeObjectConverterCanvasItemPanel(String id, CellInstance cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();
@@ -42,10 +43,10 @@ public class BasicObjectToMoleculeObjectConverterCanvasItemPanel extends CanvasI
     @Override
     public void onExecute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "output");
-        outputVariableModel.setValue(null);
+        VariableInstance outputVariableInstance = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), "output");
+        outputVariableInstance.setValue(null);
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getId());
+        notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }
 
@@ -62,11 +63,11 @@ public class BasicObjectToMoleculeObjectConverterCanvasItemPanel extends CanvasI
         }
 
         public void load() {
-            structureFieldName = (String) getCellModel().getOptionModelMap().get("structureFieldName").getValue();
+            structureFieldName = (String) getCellInstance().getOptionMap().get("structureFieldName").getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get("structureFieldName").setValue(structureFieldName);
+            getCellInstance().getOptionMap().get("structureFieldName").setValue(structureFieldName);
         }
     }
 

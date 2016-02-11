@@ -29,10 +29,9 @@ public class NotebookSession implements Serializable {
     private final Map<Long, List<UUID>> uuidListMap = new HashMap<>();
     private final Map<Long, IDatasetDescriptor> datasetDescriptorMap = new HashMap<>();
     private long lastDatasetId = 0;
-    private NotebookModel currentNotebookModel;
+    private NotebookInstance currentNotebookInstance;
     private NotebookInfo currentNotebookInfo;
     private List<CellDefinition> cellDefinitionList;
-
     @Inject
     private NotebookService notebookService;
     @Inject
@@ -89,22 +88,21 @@ public class NotebookSession implements Serializable {
         notebookService.removeNotebook(notebookId);
         if (currentNotebookInfo != null && notebookId.equals(currentNotebookInfo.getId())) {
             currentNotebookInfo = null;
-            currentNotebookModel = null;
+            currentNotebookInstance = null;
         }
     }
 
     public void loadCurrentNotebook(Long id) {
         currentNotebookInfo = notebookService.retrieveNotebookInfo(id);
-        NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(id);
-        currentNotebookModel = new NotebookModel(notebookInstance);
+        currentNotebookInstance = notebookService.findNotebookInstance(id);
     }
 
     public void reloadCurrentNotebook() {
         loadCurrentNotebook(currentNotebookInfo.getId());
     }
 
-    public NotebookModel getCurrentNotebookModel() {
-        return currentNotebookModel;
+    public NotebookInstance getCurrentNotebookInstance() {
+        return currentNotebookInstance;
     }
 
     public NotebookInfo getCurrentNotebookInfo() {
@@ -114,27 +112,26 @@ public class NotebookSession implements Serializable {
     public void storeCurrentNotebook() {
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
         updateNotebookContentsData.setId(currentNotebookInfo.getId());
-        updateNotebookContentsData.setNotebookInstance(currentNotebookModel.getNotebookInstance());
+        updateNotebookContentsData.setNotebookInstance(currentNotebookInstance);
         notebookService.updateNotebookContents(updateNotebookContentsData);
     }
 
-    public CellModel addCell(CellDefinition cellDefinition, int x, int y) {
-        CellInstance cell = currentNotebookModel.getNotebookInstance().addCell(cellDefinition);
+    public CellInstance addCell(CellDefinition cellDefinition, int x, int y) {
+        CellInstance cell = currentNotebookInstance.addCell(cellDefinition);
         cell.setPositionTop(y);
         cell.setPositionLeft(x);
-        CellModel cellModel = currentNotebookModel.addCellModel(cell);
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
         updateNotebookContentsData.setId(currentNotebookInfo.getId());
-        updateNotebookContentsData.setNotebookInstance(currentNotebookModel.getNotebookInstance());
+        updateNotebookContentsData.setNotebookInstance(currentNotebookInstance);
         notebookService.updateNotebookContents(updateNotebookContentsData);
-        return cellModel;
+        return cell;
     }
 
-    public void removeCell(CellModel cellModel) {
-        currentNotebookModel.removeCellModel(cellModel);
+    public void removeCell(CellInstance cellInstance) {
+        currentNotebookInstance.removeCell(cellInstance.getId());
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
         updateNotebookContentsData.setId(currentNotebookInfo.getId());
-        updateNotebookContentsData.setNotebookInstance(currentNotebookModel.getNotebookInstance());
+        updateNotebookContentsData.setNotebookInstance(currentNotebookInstance);
         notebookService.updateNotebookContents(updateNotebookContentsData);
     }
 
@@ -203,10 +200,11 @@ public class NotebookSession implements Serializable {
         return createDatasetFromMolecules(list, name);
     }
 
-    public IDatasetDescriptor loadDatasetFromSquonkDataset(VariableModel inputVariableModel) {
+    public IDatasetDescriptor loadDatasetFromSquonkDataset(VariableInstance inputVariableInstance) {
         try {
-            List<MoleculeObject> list = notebookService.squonkDatasetAsMolecules(currentNotebookInfo.getId(), inputVariableModel.getProducerCellModel().getName(), inputVariableModel.getName());
-            return createDatasetFromMolecules(list, inputVariableModel.getProducerCellModel().getName() + "." + inputVariableModel.getName());
+            CellInstance producerCell = currentNotebookInstance.findCellById(inputVariableInstance.getCellId());
+            List<MoleculeObject> list = notebookService.squonkDatasetAsMolecules(currentNotebookInfo.getId(), producerCell.getName(), inputVariableInstance.getName());
+            return createDatasetFromMolecules(list, producerCell.getName() + "." + inputVariableInstance.getName());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -262,14 +260,14 @@ public class NotebookSession implements Serializable {
 
 
     public void executeCell(Long cellId) {
-        if (currentNotebookModel.findCellModelById(cellId).getCellDefinition().getExecutable()) {
-            CellInstance cell = currentNotebookModel.getNotebookInstance().findCellById(cellId);
+        CellInstance cell = currentNotebookInstance.findCellById(cellId);
+        if (cell.getCellDefinition().getExecutable()) {
             CellDefinition celldef = cell.getCellDefinition();
             try {
                 CellExecutionData cellExecutionData = new CellExecutionData();
                 cellExecutionData.setCellId(cellId);
                 cellExecutionData.setNotebookId(currentNotebookInfo.getId());
-                cellExecutionData.setNotebookInstance(currentNotebookModel.getNotebookInstance());
+                cellExecutionData.setNotebookInstance(currentNotebookInstance);
                 JobStatus status = celldef.getCellExecutor().execute(cellExecutionData);
                 // TODO - do something with the status
             } catch (Exception e) {
@@ -290,9 +288,10 @@ public class NotebookSession implements Serializable {
         return result;
     }
 
-    public void writeVariableFileContents(VariableModel variableModel, InputStream inputStream) {
-        NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(currentNotebookInfo.getId());
-        VariableInstance variable = notebookInstance.findVariable(variableModel.getProducerCellModel().getName(), variableModel.getName());
+    public void writeVariableFileContents(VariableInstance variableInstance, InputStream inputStream) {
+        CellInstance cellInstance = currentNotebookInstance.findCellById(variableInstance.getCellId());
+        NotebookInstance notebookInstance = notebookService.findNotebookInstance(currentNotebookInfo.getId());
+        VariableInstance variable = notebookInstance.findVariable(cellInstance.getName(), variableInstance.getName());
         notebookService.storeStreamingContents(currentNotebookInfo.getId(), variable, inputStream);
     }
 }

@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.PopupContainerProvider;
+import portal.notebook.api.CellInstance;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -16,14 +17,14 @@ import java.io.Serializable;
  */
 public class CellTitleBarPanel extends Panel {
 
-    private final CellModel cellModel;
+    private final CellInstance cellModel;
     private final CallbackHandler callbackHandler;
     private AjaxLink openPopupLink;
     private CellPopupPanel cellPopupPanel;
     @Inject
     private PopupContainerProvider popupContainerProvider;
 
-    public CellTitleBarPanel(String id, CellModel cellModel, CallbackHandler callbackHandler) {
+    public CellTitleBarPanel(String id, CellInstance cellModel, CallbackHandler callbackHandler) {
         super(id);
         this.cellModel = cellModel;
         this.callbackHandler = callbackHandler;
@@ -51,7 +52,7 @@ public class CellTitleBarPanel extends Panel {
             }
         };
         add(bindingsAction);
-        if (cellModel.getBindingModelMap().isEmpty()) {
+        if (cellModel.getBindingMap().isEmpty()) {
             bindingsAction.setVisible(false);
         }
 
@@ -66,7 +67,7 @@ public class CellTitleBarPanel extends Panel {
         add(submit);
     }
 
-    public CellModel getCellModel() {
+    public CellInstance getCellInstance() {
         return cellModel;
     }
 
@@ -98,9 +99,9 @@ public class CellTitleBarPanel extends Panel {
 
     public interface CallbackHandler extends Serializable {
 
-        void onRemove(CellModel cellModel);
+        void onRemove(CellInstance cellModel);
 
-        void onEditBindings(CellModel cellModel);
+        void onEditBindings(CellInstance cellModel);
 
         Form getExecuteFormComponent();
 

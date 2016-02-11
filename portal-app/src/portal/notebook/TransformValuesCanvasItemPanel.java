@@ -5,6 +5,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -15,7 +17,7 @@ public class TransformValuesCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public TransformValuesCanvasItemPanel(String id, CellModel cell) {
+    public TransformValuesCanvasItemPanel(String id, CellInstance cell) {
         super(id, cell);
         if (cell.getSizeWidth() == 0) {
             cell.setSizeWidth(300);
@@ -56,10 +58,10 @@ public class TransformValuesCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void onExecute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "output");
-        outputVariableModel.setValue(null);
+        VariableInstance outputVariableInstance = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getName(), "output");
+        outputVariableInstance.setValue(null);
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getId());
+        notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }
 
@@ -76,11 +78,11 @@ public class TransformValuesCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            transformDefinitions = (String) getCellModel().getOptionModelMap().get("transformDefinitions").getValue();
+            transformDefinitions = (String) getCellInstance().getOptionMap().get("transformDefinitions").getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get("transformDefinitions").setValue(transformDefinitions);
+            getCellInstance().getOptionMap().get("transformDefinitions").setValue(transformDefinitions);
         }
     }
 

@@ -30,9 +30,16 @@ public class NotebookInstance implements Serializable {
 
     public VariableInstance findVariable(String producerName, String name) {
         for (CellInstance cell : cellList) {
-            LOG.info("testing " + cell.getName() + " = " + producerName);
             if (cell.getName().equals(producerName)) {
-                LOG.info("Found " + cell + " var = " + cell.getOutputVariableMap().get(name));
+                return cell.getOutputVariableMap().get(name);
+            }
+        }
+        return null;
+    }
+
+    public VariableInstance findVariable(Long producerId, String name) {
+        for (CellInstance cell : cellList) {
+            if (cell.getId().equals(producerId)) {
                 return cell.getOutputVariableMap().get(name);
             }
         }
@@ -118,9 +125,9 @@ public class NotebookInstance implements Serializable {
         return cell;
     }
 
-    public void removeCell(String name) {
+    public void removeCell(Long id) {
         for (CellInstance cell : cellList) {
-            if (cell.getName().equals(name)) {
+            if (cell.getId().equals(id)) {
                 cellList.remove(cell);
                 break;
             }

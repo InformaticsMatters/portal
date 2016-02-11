@@ -10,6 +10,8 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -29,7 +31,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public CSVUploadCanvasItemPanel(String id, CellModel cell) {
+    public CSVUploadCanvasItemPanel(String id, CellInstance cell) {
         super(id, cell);
         setOutputMarkupId(true);
         addForm();
@@ -78,7 +80,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
+            VariableInstance variableModel = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), "fileContent");
             variableModel.setValue(fileName);
             notebookSession.storeCurrentNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
@@ -90,7 +92,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         form.getModelObject().store();
 
         notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getId());
+        notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
 
     }
@@ -165,15 +167,15 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), "fileContent");
+            VariableInstance variableModel = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), "fileContent");
             fileName = (String) variableModel.getValue();
-            csvFormatType = (String) getCellModel().getOptionModelMap().get(OPTION_FILE_TYPE).getValue();
-            firstLineIsHeader = (Boolean) getCellModel().getOptionModelMap().get(OPTION_FIRST_LINE_IS_HEADER).getValue();
+            csvFormatType = (String) getCellInstance().getOptionMap().get(OPTION_FILE_TYPE).getValue();
+            firstLineIsHeader = (Boolean) getCellInstance().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get(OPTION_FILE_TYPE).setValue(csvFormatType);
-            getCellModel().getOptionModelMap().get(OPTION_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
+            getCellInstance().getOptionMap().get(OPTION_FILE_TYPE).setValue(csvFormatType);
+            getCellInstance().getOptionMap().get(OPTION_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
         }
 
     }
