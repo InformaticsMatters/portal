@@ -12,7 +12,7 @@ public class OptionInstance<T> implements Serializable {
     private final List<T> picklistValueList = new ArrayList<>();
     private Object value;
     private String displayName;
-    private transient boolean dirty = true;
+    private boolean dirty = true;
 
     public Object getValue() {
         return value;
@@ -57,5 +57,9 @@ public class OptionInstance<T> implements Serializable {
 
     public boolean isDirty() {
         return dirty;
+    }
+
+    public void resetDirty() {
+        dirty = false;
     }
 }

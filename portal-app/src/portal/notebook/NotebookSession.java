@@ -114,6 +114,7 @@ public class NotebookSession implements Serializable {
         updateNotebookContentsData.setId(currentNotebookInfo.getId());
         updateNotebookContentsData.setNotebookInstance(currentNotebookInstance);
         notebookService.updateNotebookContents(updateNotebookContentsData);
+        reloadCurrentNotebook();
     }
 
     public CellInstance addCell(CellDefinition cellDefinition, int x, int y) {

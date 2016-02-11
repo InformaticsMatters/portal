@@ -16,7 +16,7 @@ public class CellInstance implements Serializable {
     private int positionTop;
     private int sizeWidth;
     private int sizeHeight;
-    private transient boolean dirty = false;
+    private boolean dirty = false;
 
     public String getName() {
         return name;
@@ -94,32 +94,16 @@ public class CellInstance implements Serializable {
         return dirty;
     }
 
-    public void applyChangesFrom(CellInstance cellInstance) {
-        if (cellInstance.isDirty()) {
-            setPositionLeft(cellInstance.getPositionLeft());
-            setPositionTop(cellInstance.getPositionTop());
-            setSizeHeight(cellInstance.getSizeHeight());
-            setSizeWidth(cellInstance.getSizeWidth());
+    public void resetDirty() {
+        dirty = false;
+        for (VariableInstance variableInstance : outputVariableMap.values()) {
+            variableInstance.resetDirty();
         }
-        for (OptionInstance optionInstance : cellInstance.getOptionMap().values()) {
-            if (optionInstance.isDirty()) {
-                optionMap.get(optionInstance.getName()).setValue(optionInstance.getValue());
-            }
+        for (OptionInstance optionInstance : optionMap.values()) {
+            optionInstance.resetDirty();
         }
-        for (VariableInstance variableInstance : cellInstance.getOutputVariableMap().values()) {
-            if (variableInstance.isDirty()) {
-                outputVariableMap.get(variableInstance.getName()).setValue(variableInstance.getValue());
-            }
-        }
-        for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
-            if (bindingInstance.isDirty()) {
-                if (bindingInstance.getVariable() == null) {
-                    bindingMap.get(bindingInstance.getName()).setVariable(null);
-                } else {
-                    VariableInstance variableInstance = outputVariableMap.get(bindingInstance.getVariable().getName());
-                    bindingMap.get(bindingInstance.getName()).setVariable(variableInstance);
-                }
-            }
+        for (BindingInstance bindingInstance : bindingMap.values()) {
+            bindingInstance.resetDirty();
         }
     }
 }

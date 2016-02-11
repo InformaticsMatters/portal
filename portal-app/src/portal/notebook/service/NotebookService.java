@@ -113,6 +113,7 @@ public class NotebookService {
     private void doStoreNotebookContents(NotebookInstance notebookInstance, Notebook notebook) throws Exception {
         NotebookInstance currentNotebookInstance = NotebookInstance.fromBytes(notebook.getData());
         currentNotebookInstance.applyChangesFrom(notebookInstance);
+        currentNotebookInstance.resetDirty();
         notebook.setData(currentNotebookInstance.toBytes());
         NotebookHistory notebookHistory = new NotebookHistory();
         notebookHistory.setNotebook(notebook);

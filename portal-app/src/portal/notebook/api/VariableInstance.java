@@ -8,7 +8,7 @@ public class VariableInstance implements Serializable {
     private String displayName;
     private VariableType variableType;
     private Object value;
-    private transient boolean dirty = false;
+    private boolean dirty = false;
 
     public String getName() {
         return name;
@@ -53,5 +53,9 @@ public class VariableInstance implements Serializable {
 
     public boolean isDirty() {
         return dirty;
+    }
+
+    public void resetDirty() {
+        dirty = false;
     }
 }

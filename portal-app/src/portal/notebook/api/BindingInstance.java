@@ -9,7 +9,7 @@ public class BindingInstance implements Serializable {
     private String displayName;
     private final List<VariableType> acceptedVariableTypeList = new ArrayList<>();
     private VariableInstance variable;
-    private transient boolean dirty = true;
+    private boolean dirty = true;
 
     public String getName() {
         return name;
@@ -42,5 +42,9 @@ public class BindingInstance implements Serializable {
 
     public boolean isDirty() {
         return dirty;
+    }
+
+    public void resetDirty() {
+        dirty = false;
     }
 }

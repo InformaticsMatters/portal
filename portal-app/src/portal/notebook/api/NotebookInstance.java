@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class NotebookInstance implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(NotebookInstance.class.getName());
-    private transient final List<Long> removedCellIdList = new ArrayList<>();
+    private final List<Long> removedCellIdList = new ArrayList<>();
     private final List<CellInstance> cellList = new ArrayList<>();
     private Long lastCellId;
 
@@ -159,8 +159,44 @@ public class NotebookInstance implements Serializable {
                 cellList.add(cellInstance);
                 lastCellId = cellInstance.getId();
             }  else {
-                localCellInstance.applyChangesFrom(cellInstance);
+                applyCellChanges(cellInstance, localCellInstance);
             }
+        }
+    }
+
+    private void applyCellChanges(CellInstance cellInstance, CellInstance localCellInstance) {
+        if (cellInstance.isDirty()) {
+           localCellInstance.setPositionLeft(cellInstance.getPositionLeft());
+           localCellInstance.setPositionTop(cellInstance.getPositionTop());
+           localCellInstance.setSizeHeight(cellInstance.getSizeHeight());
+           localCellInstance.setSizeWidth(cellInstance.getSizeWidth());
+        }
+        for (OptionInstance optionInstance : cellInstance.getOptionMap().values()) {
+            if (optionInstance.isDirty()) {
+                localCellInstance.getOptionMap().get(optionInstance.getName()).setValue(optionInstance.getValue());
+            }
+        }
+        for (VariableInstance variableInstance : cellInstance.getOutputVariableMap().values()) {
+            if (variableInstance.isDirty()) {
+                localCellInstance.getOutputVariableMap().get(variableInstance.getName()).setValue(variableInstance.getValue());
+            }
+        }
+        for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
+            if (bindingInstance.isDirty()) {
+                if (bindingInstance.getVariable() == null) {
+                    localCellInstance.getBindingMap().get(bindingInstance.getName()).setVariable(null);
+                } else {
+                    VariableInstance variableInstance = findVariable(bindingInstance.getVariable().getCellId(), bindingInstance.getVariable().getName());
+                    localCellInstance.getBindingMap().get(bindingInstance.getName()).setVariable(variableInstance);
+                }
+            }
+        }
+    }
+
+    public void resetDirty() {
+        removedCellIdList.clear();
+        for (CellInstance cellInstance : cellList) {
+            cellInstance.resetDirty();
         }
     }
 
