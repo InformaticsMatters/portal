@@ -10,7 +10,6 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -31,8 +30,8 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public CSVUploadCanvasItemPanel(String id, CellInstance cell) {
-        super(id, cell);
+    public CSVUploadCanvasItemPanel(String id, Long cellId) {
+        super(id, cellId);
         setOutputMarkupId(true);
         addForm();
         addTitleBar();

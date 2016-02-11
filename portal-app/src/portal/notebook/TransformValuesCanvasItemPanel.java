@@ -17,13 +17,14 @@ public class TransformValuesCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public TransformValuesCanvasItemPanel(String id, CellInstance cell) {
-        super(id, cell);
-        if (cell.getSizeWidth() == 0) {
-            cell.setSizeWidth(300);
+    public TransformValuesCanvasItemPanel(String id, Long cellId) {
+        super(id, cellId);
+        CellInstance cellInstance = getCellInstance();
+        if (cellInstance.getSizeWidth() == 0) {
+            cellInstance.setSizeWidth(300);
         }
-        if (cell.getSizeHeight() == 0) {
-            cell.setSizeHeight(200);
+        if (cellInstance.getSizeHeight() == 0) {
+            cellInstance.setSizeHeight(200);
         }
         setOutputMarkupId(true);
         addForm();

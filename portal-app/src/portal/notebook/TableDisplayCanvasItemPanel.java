@@ -22,10 +22,11 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public TableDisplayCanvasItemPanel(String id, CellInstance cell) {
-        super(id, cell);
-        if (cell.getSizeWidth() == 0) {
-            cell.setSizeWidth(500);
+    public TableDisplayCanvasItemPanel(String id, Long cellId) {
+        super(id, cellId);
+        CellInstance cellInstance = getCellInstance();
+        if (cellInstance.getSizeWidth() == 0) {
+            cellInstance.setSizeWidth(500);
         }
         setOutputMarkupId(true);
         addForm();

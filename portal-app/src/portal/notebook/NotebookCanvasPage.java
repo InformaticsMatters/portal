@@ -305,28 +305,28 @@ public class NotebookCanvasPage extends WebPage {
         }
     }
 
-    private Panel createCanvasItemPanel(CellInstance cellModel) {
-        CellDefinition cellType = cellModel.getCellDefinition();
+    private Panel createCanvasItemPanel(CellInstance cellInstance) {
+        CellDefinition cellType = cellInstance.getCellDefinition();
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("TableDisplay".equals(cellType.getName())) {
-            return new TableDisplayCanvasItemPanel("item", cellModel);
+            return new TableDisplayCanvasItemPanel("item", cellInstance.getId());
         } else if ("ChemblActivitiesFetcher".equals(cellType.getName())) {
-            return new ChemblActivitiesFetcherCanvasItemPanel("item", cellModel);
+            return new ChemblActivitiesFetcherCanvasItemPanel("item", cellInstance.getId());
         } else if ("SdfUpload".equals(cellType.getName())) {
-            return new SDFUploadCanvasItemPanel("item", cellModel);
+            return new SDFUploadCanvasItemPanel("item", cellInstance.getId());
         } else if ("CsvUpload".equals(cellType.getName())) {
-            return new CSVUploadCanvasItemPanel("item", cellModel);
+            return new CSVUploadCanvasItemPanel("item", cellInstance.getId());
         } else if ("DatasetMerger".equals(cellType.getName())) {
-            return new DatasetMergerCanvasItemPanel("item", cellModel);
+            return new DatasetMergerCanvasItemPanel("item", cellInstance.getId());
         } else if ("BasicObjectToMoleculeObject".equals(cellType.getName())) {
-            return new BasicObjectToMoleculeObjectConverterCanvasItemPanel("item", cellModel);
+            return new BasicObjectToMoleculeObjectConverterCanvasItemPanel("item", cellInstance.getId());
         } else if ("TransformValues".equals(cellType.getName())) {
-            return new TransformValuesCanvasItemPanel("item", cellModel);
+            return new TransformValuesCanvasItemPanel("item", cellInstance.getId());
         } else if ("TrustedGroovyDatasetScript".equals(cellType.getName())) {
-            return new GroovyScriptTrustedCanvasItemPanel("item", cellModel);
+            return new GroovyScriptTrustedCanvasItemPanel("item", cellInstance.getId());
         } else {
             logger.warn("cell type " + cellType.getName() + " not recognised");
-            return new ServiceCanvasItemPanel("item", cellModel);
+            return new ServiceCanvasItemPanel("item", cellInstance.getId());
         }
     }
 

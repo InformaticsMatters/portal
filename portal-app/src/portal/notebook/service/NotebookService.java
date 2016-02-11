@@ -25,8 +25,6 @@ public class NotebookService {
 
     private static final Logger LOGGER = Logger.getLogger(NotebookService.class.getName());
     @Inject
-    private NotebookInstances notebookInstances;
-    @Inject
     @PU(puName = NotebookConstants.PU_NAME)
     private EntityManager entityManager;
 
@@ -60,13 +58,8 @@ public class NotebookService {
 
     public NotebookInstance findNotebookInstance(Long id) {
         try {
-            NotebookInstance notebookInstance = notebookInstances.findNotebookInstance(id);
-            if (notebookInstance == null) {
-                Notebook notebook = entityManager.find(Notebook.class, id);
-                notebookInstance = NotebookInstance.fromBytes(notebook.getData());
-                notebookInstances.registerNotebookInstance(id, notebookInstance);
-            }
-            return notebookInstance;
+            Notebook notebook = entityManager.find(Notebook.class, id);
+            return NotebookInstance.fromBytes(notebook.getData());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -103,7 +96,6 @@ public class NotebookService {
             entityManager.remove(notebookHistory);
         }
         entityManager.remove(notebook);
-        notebookInstances.unregisterNotebookInstance(id);
     }
 
     public Long updateNotebookContents(UpdateNotebookContentsData updateNotebookContentsData) {
@@ -119,7 +111,9 @@ public class NotebookService {
 
 
     private void doStoreNotebookContents(NotebookInstance notebookInstance, Notebook notebook) throws Exception {
-        notebook.setData(notebookInstance.toBytes());
+        NotebookInstance currentNotebookInstance = NotebookInstance.fromBytes(notebook.getData());
+        currentNotebookInstance.applyChangesFrom(notebookInstance);
+        notebook.setData(currentNotebookInstance.toBytes());
         NotebookHistory notebookHistory = new NotebookHistory();
         notebookHistory.setNotebook(notebook);
         notebookHistory.setData(notebook.getData());

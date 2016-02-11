@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class NotebookInstance implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(NotebookInstance.class.getName());
-
+    private transient final List<Long> removedCellIdList = new ArrayList<>();
     private final List<CellInstance> cellList = new ArrayList<>();
     private Long lastCellId;
 
@@ -129,6 +129,7 @@ public class NotebookInstance implements Serializable {
         for (CellInstance cell : cellList) {
             if (cell.getId().equals(id)) {
                 cellList.remove(cell);
+                removedCellIdList.add(id);
                 break;
             }
         }
@@ -141,6 +142,26 @@ public class NotebookInstance implements Serializable {
         objectOutputStream.flush();
         byteArrayOutputStream.flush();
         return  byteArrayOutputStream.toByteArray();
+    }
+
+    public List<Long> getRemovedCellIdList() {
+        return removedCellIdList;
+    }
+
+
+    public void applyChangesFrom(NotebookInstance notebookInstance) {
+        for (Long cellId : notebookInstance.removedCellIdList) {
+            removeCell(cellId);
+        }
+        for (CellInstance cellInstance : notebookInstance.cellList) {
+            CellInstance localCellInstance = findCellById(cellInstance.getId());
+            if (localCellInstance == null) {
+                cellList.add(cellInstance);
+                lastCellId = cellInstance.getId();
+            }  else {
+                localCellInstance.applyChangesFrom(cellInstance);
+            }
+        }
     }
 
 }

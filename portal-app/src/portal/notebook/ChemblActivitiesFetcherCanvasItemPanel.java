@@ -4,7 +4,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
@@ -19,8 +18,8 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellInstance cell) {
-        super(id, cell);
+    public ChemblActivitiesFetcherCanvasItemPanel(String id, Long cellId) {
+        super(id, cellId);
         addForm();
         addTitleBar();
         load();

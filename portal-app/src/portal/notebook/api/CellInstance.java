@@ -16,6 +16,7 @@ public class CellInstance implements Serializable {
     private int positionTop;
     private int sizeWidth;
     private int sizeHeight;
+    private transient boolean dirty = false;
 
     public String getName() {
         return name;
@@ -58,6 +59,7 @@ public class CellInstance implements Serializable {
     }
 
     public void setPositionLeft(int positionLeft) {
+        dirty = true;
         this.positionLeft = positionLeft;
     }
 
@@ -66,6 +68,7 @@ public class CellInstance implements Serializable {
     }
 
     public void setPositionTop(int positionTop) {
+        dirty = true;
         this.positionTop = positionTop;
     }
 
@@ -74,6 +77,7 @@ public class CellInstance implements Serializable {
     }
 
     public void setSizeWidth(int sizeWidth) {
+        dirty = true;
         this.sizeWidth = sizeWidth;
     }
 
@@ -82,6 +86,40 @@ public class CellInstance implements Serializable {
     }
 
     public void setSizeHeight(int sizeHeight) {
+        dirty = true;
         this.sizeHeight = sizeHeight;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void applyChangesFrom(CellInstance cellInstance) {
+        if (cellInstance.isDirty()) {
+            setPositionLeft(cellInstance.getPositionLeft());
+            setPositionTop(cellInstance.getPositionTop());
+            setSizeHeight(cellInstance.getSizeHeight());
+            setSizeWidth(cellInstance.getSizeWidth());
+        }
+        for (OptionInstance optionInstance : cellInstance.getOptionMap().values()) {
+            if (optionInstance.isDirty()) {
+                optionMap.get(optionInstance.getName()).setValue(optionInstance.getValue());
+            }
+        }
+        for (VariableInstance variableInstance : cellInstance.getOutputVariableMap().values()) {
+            if (variableInstance.isDirty()) {
+                outputVariableMap.get(variableInstance.getName()).setValue(variableInstance.getValue());
+            }
+        }
+        for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
+            if (bindingInstance.isDirty()) {
+                if (bindingInstance.getVariable() == null) {
+                    bindingMap.get(bindingInstance.getName()).setVariable(null);
+                } else {
+                    VariableInstance variableInstance = outputVariableMap.get(bindingInstance.getVariable().getName());
+                    bindingMap.get(bindingInstance.getName()).setVariable(variableInstance);
+                }
+            }
+        }
     }
 }

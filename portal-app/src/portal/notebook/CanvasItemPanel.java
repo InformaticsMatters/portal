@@ -13,16 +13,16 @@ import javax.inject.Inject;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
-    private CellInstance cellInstance;
+    private final Long cellId;
     @Inject
     private NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
     private BindingsModalPanel bindingsModalPanel;
 
-    public CanvasItemPanel(String id, CellInstance cellInstance) {
+    public CanvasItemPanel(String id, Long cellId) {
         super(id);
-        this.cellInstance = cellInstance;
+        this.cellId = cellId;
         addBindingsPanel();
     }
 
@@ -78,12 +78,8 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
 
-    public void updateCellInstance() {
-        this.cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellInstance.getId());
-    }
-
     public CellInstance getCellInstance() {
-        return cellInstance;
+        return notebookSession.getCurrentNotebookInstance().findCellById(cellId);
     }
 
     public void fireContentChanged() {

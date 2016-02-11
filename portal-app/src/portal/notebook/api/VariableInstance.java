@@ -8,6 +8,7 @@ public class VariableInstance implements Serializable {
     private String displayName;
     private VariableType variableType;
     private Object value;
+    private transient boolean dirty = false;
 
     public String getName() {
         return name;
@@ -22,6 +23,7 @@ public class VariableInstance implements Serializable {
     }
 
     public void setValue(Object value) {
+        dirty = true;
         this.value = value;
     }
 
@@ -47,5 +49,9 @@ public class VariableInstance implements Serializable {
 
     public void setCellId(Long cellId) {
         this.cellId = cellId;
+    }
+
+    public boolean isDirty() {
+        return dirty;
     }
 }

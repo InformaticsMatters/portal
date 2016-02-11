@@ -5,7 +5,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
@@ -17,10 +16,10 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public GroovyScriptTrustedCanvasItemPanel(String id, CellInstance cell) {
-        super(id, cell);
-        cell.setSizeWidth(300);
-        cell.setSizeHeight(250);
+    public GroovyScriptTrustedCanvasItemPanel(String id, Long cellId) {
+        super(id, cellId);
+        getCellInstance().setSizeWidth(300);
+        getCellInstance().setSizeHeight(250);
         setOutputMarkupId(true);
         addForm();
         addTitleBar();

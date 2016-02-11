@@ -3,7 +3,6 @@ package portal.notebook;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
@@ -15,8 +14,8 @@ public class BasicObjectToMoleculeObjectConverterCanvasItemPanel extends CanvasI
     @Inject
     private NotebookSession notebookSession;
 
-    public BasicObjectToMoleculeObjectConverterCanvasItemPanel(String id, CellInstance cell) {
-        super(id, cell);
+    public BasicObjectToMoleculeObjectConverterCanvasItemPanel(String id, Long cellId) {
+        super(id, cellId);
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
