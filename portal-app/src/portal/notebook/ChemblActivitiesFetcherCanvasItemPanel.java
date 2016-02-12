@@ -43,7 +43,7 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
     private void execute() {
         form.getModelObject().store();
         VariableInstance outputVariableInstance = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), "output");
-        outputVariableInstance.setValue(null);
+        //outputVariableInstance.setValue(null);
         notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }

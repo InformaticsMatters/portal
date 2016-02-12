@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 @ApplicationScoped
 @Path("jobs")
 public class MockJobStatusService {
+    private static final Logger LOGGER = Logger.getLogger(MockJobStatusService.class.getName());
     @Inject
     private NotebookClient notebookClient;
 
@@ -43,6 +45,7 @@ public class MockJobStatusService {
             ExecuteCellUsingStepsJobDefinition executeCellUsingStepsJobDefinition = (ExecuteCellUsingStepsJobDefinition) jobDefinition;
             processStepsJobDefinition(executeCellUsingStepsJobDefinition);
         }
+        LOGGER.info("Job definition processed");
     }
 
     private JobStatus processStepsJobDefinition(ExecuteCellUsingStepsJobDefinition jobDefinition) {
