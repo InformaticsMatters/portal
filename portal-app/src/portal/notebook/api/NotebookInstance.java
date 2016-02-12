@@ -148,11 +148,6 @@ public class NotebookInstance implements Serializable {
         return  byteArrayOutputStream.toByteArray();
     }
 
-    public List<Long> getRemovedCellIdList() {
-        return removedCellIdList;
-    }
-
-
     public void applyChangesFrom(NotebookInstance notebookInstance) {
         for (Long cellId : notebookInstance.removedCellIdList) {
             removeCell(cellId);
