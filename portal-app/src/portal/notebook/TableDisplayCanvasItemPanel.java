@@ -93,6 +93,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
+        notebookSession.reloadCurrentNotebook();
         load();
     }
 
