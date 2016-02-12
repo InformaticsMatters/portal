@@ -84,7 +84,7 @@ public class MockJobStatusService {
 
     Dataset<MoleculeObject> createMockDataset(String prefix) {
         List<MoleculeObject> mols = new ArrayList<>();
-        Map values = new HashMap();
+        Map<String,Object> values = new HashMap<>();
         values.put("ID", 1);
         values.put(prefix, 1.1);
         mols.add(new MoleculeObject("C", "smiles", values));

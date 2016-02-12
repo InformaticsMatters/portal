@@ -74,7 +74,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            return (List) objectMapper.readValue(json, new TypeReference() {
+            return objectMapper.readValue(json, new TypeReference<List<MoleculeObject>>() {
             });
         } catch (IOException var8) {
             throw new RuntimeException(var8);
