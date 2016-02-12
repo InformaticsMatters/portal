@@ -3,14 +3,19 @@ package portal.notebook.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
+import portal.notebook.api.CellInstance;
 import portal.notebook.api.NotebookInstance;
 import portal.notebook.api.VariableInstance;
 import toolkit.services.PU;
+import toolkit.services.Transactional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -21,6 +26,8 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 @ApplicationScoped
+@Transactional
+@Path("notebook")
 public class NotebookService {
 
     private static final Logger LOGGER = Logger.getLogger(NotebookService.class.getName());
@@ -293,4 +300,107 @@ public class NotebookService {
             throw new RuntimeException(e);
         }
     }
+
+    @Path("retrieveNotebookInstance")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public NotebookInstance retrieveNotebookInstance(@QueryParam("notebookId") Long notebookId) {
+        NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+        return notebookInstance;
+    }
+
+    @Path("retrieveCellInstance")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public CellInstance retrieveCellInstance(@QueryParam("notebookId") Long notebookId, @QueryParam("cellName") String cellName) {
+        NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+        return notebookInstance.findCellByName(cellName);
+    }
+
+
+    @Path("readTextValue")
+    @GET
+    public String readTextValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName) {
+        NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+        VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
+        return variable.getValue() == null ? null : variable.getValue().toString();
+    }
+
+
+    @Path("readObjectValue")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Object readObjectValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName) {
+        NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+        VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
+        return variable.getValue() == null ? null : variable.getValue();
+    }
+
+    @Path("readStreamValue")
+    @GET
+    public StreamingOutput readStreamValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName) {
+        NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+        VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
+        return new StreamingOutput() {
+            @Override
+            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                outputStreamingContents(notebookId, variable, outputStream);
+            }
+        };
+
+    }
+
+    @Path("writeTextValue")
+    @POST
+    public void writeValueAsText(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") String value) {
+        NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+        VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
+        variable.setValue(value);
+        storeNotebookContents(notebookId, notebookInstance);
+    }
+
+    @Path("writeIntegerValue")
+    @POST
+    public void writeIntegerValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") Integer value) {
+        NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+        VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
+        variable.setValue(value);
+        storeNotebookContents(notebookId, notebookInstance);
+    }
+
+    @Path("writeObjectValue")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void writeObjectValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, Object value) {
+        NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+        VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
+        variable.setValue(value);
+        storeNotebookContents(notebookId, notebookInstance);
+    }
+
+    @Path("writeStreamContents")
+    @POST
+    public void writeStreamContents(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, InputStream inputStream) {
+        NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+        VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
+        storeStreamingContents(notebookId, variable, inputStream);
+    }
+
+    @Path("readFileValueAsMolecules")
+    @GET
+    public StreamingOutput readFileValueAsMolecules(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName) {
+        return new StreamingOutput() {
+            @Override
+            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                NotebookInstance notebookInstance = findNotebookInstance(notebookId);
+                VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
+                List<MoleculeObject> list = retrieveFileContentAsMolecules(variable.getValue().toString());
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.writeValue(outputStream, list);
+                outputStream.flush();
+            }
+        };
+
+    }
+
 }

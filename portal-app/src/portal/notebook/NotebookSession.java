@@ -12,7 +12,6 @@ import portal.notebook.service.EditNotebookData;
 import portal.notebook.service.NotebookInfo;
 import portal.notebook.service.NotebookService;
 import portal.notebook.service.UpdateNotebookContentsData;
-import toolkit.services.Transactional;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -21,7 +20,6 @@ import java.io.Serializable;
 import java.util.*;
 
 @SessionScoped
-@Transactional
 public class NotebookSession implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookSession.class);
@@ -115,25 +113,6 @@ public class NotebookSession implements Serializable {
         updateNotebookContentsData.setNotebookInstance(currentNotebookInstance);
         notebookService.updateNotebookContents(updateNotebookContentsData);
         reloadCurrentNotebook();
-    }
-
-    public CellInstance addCell(CellDefinition cellDefinition, int x, int y) {
-        CellInstance cell = currentNotebookInstance.addCell(cellDefinition);
-        cell.setPositionTop(y);
-        cell.setPositionLeft(x);
-        UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-        updateNotebookContentsData.setId(currentNotebookInfo.getId());
-        updateNotebookContentsData.setNotebookInstance(currentNotebookInstance);
-        notebookService.updateNotebookContents(updateNotebookContentsData);
-        return cell;
-    }
-
-    public void removeCell(CellInstance cellInstance) {
-        currentNotebookInstance.removeCell(cellInstance.getId());
-        UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-        updateNotebookContentsData.setId(currentNotebookInfo.getId());
-        updateNotebookContentsData.setNotebookInstance(currentNotebookInstance);
-        notebookService.updateNotebookContents(updateNotebookContentsData);
     }
 
     public List<CellDefinition> listCellDefinition() {
@@ -261,6 +240,7 @@ public class NotebookSession implements Serializable {
 
 
     public void executeCell(Long cellId) {
+        storeCurrentNotebook();
         CellInstance cell = currentNotebookInstance.findCellById(cellId);
         if (cell.getCellDefinition().getExecutable()) {
             CellDefinition celldef = cell.getCellDefinition();
@@ -291,8 +271,7 @@ public class NotebookSession implements Serializable {
 
     public void writeVariableFileContents(VariableInstance variableInstance, InputStream inputStream) {
         CellInstance cellInstance = currentNotebookInstance.findCellById(variableInstance.getCellId());
-        NotebookInstance notebookInstance = notebookService.findNotebookInstance(currentNotebookInfo.getId());
-        VariableInstance variable = notebookInstance.findVariable(cellInstance.getName(), variableInstance.getName());
+        VariableInstance variable = currentNotebookInstance.findVariable(cellInstance.getName(), variableInstance.getName());
         notebookService.storeStreamingContents(currentNotebookInfo.getId(), variable, inputStream);
     }
 }

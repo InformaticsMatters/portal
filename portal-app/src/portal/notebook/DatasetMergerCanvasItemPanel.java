@@ -47,7 +47,6 @@ public class DatasetMergerCanvasItemPanel extends CanvasItemPanel {
         form.getModelObject().store();
         VariableInstance outputVariableInstance = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getName(), "results");
         outputVariableInstance.setValue(null);
-        notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }

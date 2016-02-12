@@ -90,8 +90,6 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
 
     private void execute() throws IOException {
         form.getModelObject().store();
-
-        notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
 

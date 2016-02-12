@@ -54,7 +54,6 @@ public class GroovyScriptTrustedCanvasItemPanel extends CanvasItemPanel {
         form.getModelObject().store();
         VariableInstance outputVariableInstance = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), "output");
         outputVariableInstance.setValue(null);
-        notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }

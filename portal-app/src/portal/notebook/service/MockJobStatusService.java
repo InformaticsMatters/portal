@@ -1,45 +1,47 @@
-package portal.notebook.cells;
+package portal.notebook.service;
 
 import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
-import com.im.lac.job.jobdef.JobQuery;
 import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.types.MoleculeObject;
-import org.squonk.client.JobStatusClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.client.CallbackClient;
-import org.squonk.notebook.client.CallbackContext;
 import org.squonk.types.io.JsonHandler;
+import portal.notebook.api.NotebookClient;
 
-import javax.enterprise.inject.Alternative;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-@Alternative
-public class MockJobStatusClient implements JobStatusClient, Serializable {
+@ApplicationScoped
+@Path("jobs")
+public class MockJobStatusService {
     @Inject
-    private CallbackClient callbackClient;
-    @Inject
-    private CallbackContext callbackContext;
+    private NotebookClient notebookClient;
 
-
-    @Override
-    public JobStatus submit(JobDefinition jobDefinition, String s, Integer integer) throws IOException {
+    @Path("execute")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void execute(JobDefinition jobDefinition) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         if (jobDefinition instanceof ExecuteCellUsingStepsJobDefinition) {
-            ExecuteCellUsingStepsJobDefinition executeCellUsingStepsJobDefinition = (ExecuteCellUsingStepsJobDefinition)jobDefinition;
-            callbackContext.setNotebookId(executeCellUsingStepsJobDefinition.getNotebookId());
-            return processStepsJobDefinition(executeCellUsingStepsJobDefinition);
-        } else {
-            return null;
+            ExecuteCellUsingStepsJobDefinition executeCellUsingStepsJobDefinition = (ExecuteCellUsingStepsJobDefinition) jobDefinition;
+            processStepsJobDefinition(executeCellUsingStepsJobDefinition);
         }
     }
 
@@ -51,16 +53,16 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
         }
     }
 
-    protected void writeDataset(String cellName, String name, Dataset dataset) throws IOException {
+    protected void writeDataset(Long notebookId, String cellName, String name, Dataset dataset) throws IOException {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
         try (Stream stream = generator.getAsStream()) {
             InputStream dataInputStream = generator.getAsInputStream(stream, true);
-            callbackClient.writeStreamContents(cellName, name, dataInputStream);
+            notebookClient.writeStreamContents(notebookId, cellName, name, dataInputStream);
         }
         DatasetMetadata metadata = generator.getDatasetMetadata();
         String jsonTring = JsonHandler.getInstance().objectToJson(metadata);
-        callbackClient.writeTextValue(cellName, name, jsonTring);
-        String storedValue = callbackClient.readTextValue(cellName, name);
+        notebookClient.writeTextValue(notebookId, cellName, name, jsonTring);
+        String storedValue = notebookClient.readTextValue(notebookId, cellName, name);
         if (!storedValue.equals(jsonTring)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }
@@ -69,7 +71,7 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
     private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) {
         Dataset<MoleculeObject> dataset = createMockDataset("mock");
         try {
-            writeDataset(jobDefinition.getCellName(), "output", dataset);
+            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellName(), "output", dataset);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -92,25 +94,4 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
         return new Dataset<>(MoleculeObject.class, mols);
     }
 
-
-
-    @Override
-    public JobStatus get(String s) throws IOException {
-        return null;
-    }
-
-    @Override
-    public List<JobStatus> list(JobQuery jobQuery) throws IOException {
-        return null;
-    }
-
-    @Override
-    public JobStatus updateStatus(String s, JobStatus.Status status, String s1, Integer integer, Integer integer1) throws IOException {
-        return null;
-    }
-
-    @Override
-    public JobStatus incrementCounts(String s, int i, int i1) throws IOException {
-        return null;
-    }
 }

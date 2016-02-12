@@ -3,6 +3,7 @@
         <class>portal.notebook.NotebookTransactionalInterceptor</class>
     </interceptors>
     <alternatives>
-        <class>portal.notebook.cells.MockJobStatusClient</class>
+        <class>portal.notebook.service.MockJobStatusClient</class>
+        <class>portal.notebook.service.IdeNotebookClientConfig</class>
     </alternatives>
 </beans>

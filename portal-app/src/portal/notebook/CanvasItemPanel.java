@@ -88,8 +88,9 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     @Override
-    public void onRemove(CellInstance cellModel) {
-        notebookSession.removeCell(cellModel);
+    public void onRemove(CellInstance cellInstance) {
+        notebookSession.getCurrentNotebookInstance().removeCell(cellInstance.getId());
+        notebookSession.storeCurrentNotebook();
         fireContentChanged();
     }
 
