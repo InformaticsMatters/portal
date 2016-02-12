@@ -12,12 +12,14 @@ public class OptionInstance<T> implements Serializable {
     private final List<T> picklistValueList = new ArrayList<>();
     private Object value;
     private String displayName;
+    private boolean dirty = true;
 
     public Object getValue() {
         return value;
     }
 
     public void setValue(Object value) {
+        dirty = true;
         this.value = value;
     }
 
@@ -53,4 +55,11 @@ public class OptionInstance<T> implements Serializable {
         picklistValueList.add(value);
     }
 
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void resetDirty() {
+        dirty = false;
+    }
 }

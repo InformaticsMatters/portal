@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.notebook.api.VariableInstance;
 import portal.notebook.cells.CsvUploadCellDefinition;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -32,8 +33,8 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public CSVUploadCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public CSVUploadCanvasItemPanel(String id, Long cellId) {
+        super(id, cellId);
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
@@ -81,7 +82,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_FILECONTENT);
+            VariableInstance variableModel = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), VAR_NAME_FILECONTENT);
             variableModel.setValue(fileName);
             notebookSession.storeCurrentNotebook();
             notebookSession.writeVariableFileContents(variableModel, inputStream);
@@ -91,9 +92,7 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
 
     private void execute() throws IOException {
         form.getModelObject().store();
-
-        notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getId());
+        notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
 
     }
@@ -166,15 +165,15 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_FILECONTENT);
+            VariableInstance variableModel = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), VAR_NAME_FILECONTENT);
             fileName = (String) variableModel.getValue();
-            csvFormatType = (String) getCellModel().getOptionModelMap().get(CsvUploadCellDefinition.OPT_FILE_TYPE).getValue();
-            firstLineIsHeader = (Boolean) getCellModel().getOptionModelMap().get(CsvUploadCellDefinition.OPT_FIRST_LINE_IS_HEADER).getValue();
+            csvFormatType = (String) getCellInstance().getOptionMap().get(CsvUploadCellDefinition.OPT_FILE_TYPE).getValue();
+            firstLineIsHeader = (Boolean) getCellInstance().getOptionMap().get(CsvUploadCellDefinition.OPT_FIRST_LINE_IS_HEADER).getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get(CsvUploadCellDefinition.OPT_FILE_TYPE).setValue(csvFormatType);
-            getCellModel().getOptionModelMap().get(CsvUploadCellDefinition.OPT_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
+            getCellInstance().getOptionMap().get(CsvUploadCellDefinition.OPT_FILE_TYPE).setValue(csvFormatType);
+            getCellInstance().getOptionMap().get(CsvUploadCellDefinition.OPT_FIRST_LINE_IS_HEADER).setValue(firstLineIsHeader);
         }
 
     }

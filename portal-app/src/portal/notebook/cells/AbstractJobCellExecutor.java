@@ -1,10 +1,12 @@
 package portal.notebook.cells;
 
-import com.im.lac.job.jobdef.*;
-import org.squonk.notebook.api.VariableKey;
+import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
+import com.im.lac.job.jobdef.JobDefinition;
+import com.im.lac.job.jobdef.JobStatus;
+import com.im.lac.job.jobdef.StepsCellExecutorJobDefinition;
 import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
-import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.notebook.api.VariableKey;
 import portal.notebook.api.*;
 
 import javax.enterprise.inject.Instance;
@@ -14,7 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Created by timbo on 16/01/16.

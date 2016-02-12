@@ -1,30 +1,25 @@
 package portal.notebook;
 
 import com.im.lac.job.jobdef.JobStatus;
-import com.im.lac.services.ServiceDescriptor;
-import com.im.lac.services.client.ServicesClient;
 import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.notebook.api.CellType;
 import org.squonk.notebook.client.CellClient;
-import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
 import portal.dataset.*;
 import portal.notebook.api.*;
-import portal.notebook.api.CellDefinitionRegistry;
-import portal.notebook.service.*;
-import toolkit.services.Transactional;
+import portal.notebook.service.EditNotebookData;
+import portal.notebook.service.NotebookInfo;
+import portal.notebook.service.NotebookService;
+import portal.notebook.service.UpdateNotebookContentsData;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
 
 @SessionScoped
-@Transactional
 public class NotebookSession implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookSession.class);
@@ -32,10 +27,9 @@ public class NotebookSession implements Serializable {
     private final Map<Long, List<UUID>> uuidListMap = new HashMap<>();
     private final Map<Long, IDatasetDescriptor> datasetDescriptorMap = new HashMap<>();
     private long lastDatasetId = 0;
-    private NotebookModel currentNotebookModel;
+    private NotebookInstance currentNotebookInstance;
     private NotebookInfo currentNotebookInfo;
     private List<CellDefinition> cellDefinitionList;
-
     @Inject
     private NotebookService notebookService;
     @Inject
@@ -92,22 +86,21 @@ public class NotebookSession implements Serializable {
         notebookService.removeNotebook(notebookId);
         if (currentNotebookInfo != null && notebookId.equals(currentNotebookInfo.getId())) {
             currentNotebookInfo = null;
-            currentNotebookModel = null;
+            currentNotebookInstance = null;
         }
     }
 
     public void loadCurrentNotebook(Long id) {
         currentNotebookInfo = notebookService.retrieveNotebookInfo(id);
-        NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(id);
-        currentNotebookModel = new NotebookModel(notebookInstance);
+        currentNotebookInstance = notebookService.findNotebookInstance(id);
     }
 
     public void reloadCurrentNotebook() {
         loadCurrentNotebook(currentNotebookInfo.getId());
     }
 
-    public NotebookModel getCurrentNotebookModel() {
-        return currentNotebookModel;
+    public NotebookInstance getCurrentNotebookInstance() {
+        return currentNotebookInstance;
     }
 
     public NotebookInfo getCurrentNotebookInfo() {
@@ -117,40 +110,14 @@ public class NotebookSession implements Serializable {
     public void storeCurrentNotebook() {
         UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
         updateNotebookContentsData.setId(currentNotebookInfo.getId());
-        updateNotebookContentsData.setNotebookInstance(currentNotebookModel.getNotebookInstance());
+        updateNotebookContentsData.setNotebookInstance(currentNotebookInstance);
         notebookService.updateNotebookContents(updateNotebookContentsData);
-    }
-
-    public CellModel addCell(CellDefinition cellDefinition, int x, int y) {
-        CellInstance cell = currentNotebookModel.getNotebookInstance().addCell(cellDefinition);
-        cell.setPositionTop(y);
-        cell.setPositionLeft(x);
-        CellModel cellModel = currentNotebookModel.addCellModel(cell);
-        UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-        updateNotebookContentsData.setId(currentNotebookInfo.getId());
-        updateNotebookContentsData.setNotebookInstance(currentNotebookModel.getNotebookInstance());
-        notebookService.updateNotebookContents(updateNotebookContentsData);
-        return cellModel;
-    }
-
-    public void removeCell(CellModel cellModel) {
-        currentNotebookModel.removeCellModel(cellModel);
-        UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-        updateNotebookContentsData.setId(currentNotebookInfo.getId());
-        updateNotebookContentsData.setNotebookInstance(currentNotebookModel.getNotebookInstance());
-        notebookService.updateNotebookContents(updateNotebookContentsData);
+        reloadCurrentNotebook();
     }
 
     public List<CellDefinition> listCellDefinition() {
-//        List<CellType> cellTypes = cellClient.listCellDefinition();
-//        addServiceCellTypes(cellTypes);
-//        this.cellDefinitionList = cellTypes;
-//        return cellTypes;
-
         List<CellDefinition> list = new ArrayList<>();
         list.addAll(cellDefinitionRegistry.listCellDefinition());
-        // TODO - better to add these to the registry in the first place?
-        //addServiceCellTypes(cellTypes);
         this.cellDefinitionList = list;
         return list;
     }
@@ -213,10 +180,11 @@ public class NotebookSession implements Serializable {
         return createDatasetFromMolecules(list, name);
     }
 
-    public IDatasetDescriptor loadDatasetFromSquonkDataset(VariableModel inputVariableModel) {
+    public IDatasetDescriptor loadDatasetFromSquonkDataset(VariableInstance inputVariableInstance) {
         try {
-            List<MoleculeObject> list = notebookService.squonkDatasetAsMolecules(currentNotebookInfo.getId(), inputVariableModel.getProducerCellModel().getName(), inputVariableModel.getName());
-            return createDatasetFromMolecules(list, inputVariableModel.getProducerCellModel().getName() + "." + inputVariableModel.getName());
+            CellInstance producerCell = currentNotebookInstance.findCellById(inputVariableInstance.getCellId());
+            List<MoleculeObject> list = notebookService.squonkDatasetAsMolecules(currentNotebookInfo.getId(), producerCell.getName(), inputVariableInstance.getName());
+            return createDatasetFromMolecules(list, producerCell.getName() + "." + inputVariableInstance.getName());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -272,14 +240,15 @@ public class NotebookSession implements Serializable {
 
 
     public void executeCell(Long cellId) {
-        if (currentNotebookModel.findCellModelById(cellId).getCellDefinition().getExecutable()) {
-            CellInstance cell = currentNotebookModel.getNotebookInstance().findCellById(cellId);
+        storeCurrentNotebook();
+        CellInstance cell = currentNotebookInstance.findCellById(cellId);
+        if (cell.getCellDefinition().getExecutable()) {
             CellDefinition celldef = cell.getCellDefinition();
             try {
                 CellExecutionData cellExecutionData = new CellExecutionData();
                 cellExecutionData.setCellId(cellId);
                 cellExecutionData.setNotebookId(currentNotebookInfo.getId());
-                cellExecutionData.setNotebookInstance(currentNotebookModel.getNotebookInstance());
+                cellExecutionData.setNotebookInstance(currentNotebookInstance);
                 JobStatus status = celldef.getCellExecutor().execute(cellExecutionData);
                 // TODO - do something with the status
             } catch (Exception e) {
@@ -300,66 +269,10 @@ public class NotebookSession implements Serializable {
         return result;
     }
 
-    public void writeVariableFileContents(VariableModel variableModel, InputStream inputStream) {
-        NotebookInstance notebookInstance = notebookService.retrieveNotebookContents(currentNotebookInfo.getId());
-        VariableInstance variable = notebookInstance.findVariable(variableModel.getProducerCellModel().getName(), variableModel.getName());
+    public void writeVariableFileContents(VariableInstance variableInstance, InputStream inputStream) {
+        CellInstance cellInstance = currentNotebookInstance.findCellById(variableInstance.getCellId());
+        VariableInstance variable = currentNotebookInstance.findVariable(cellInstance.getName(), variableInstance.getName());
         notebookService.storeStreamingContents(currentNotebookInfo.getId(), variable, inputStream);
-    }
-
-
-    private void addServiceCellTypes(List<CellType> cellTypes) {
-        for (ServiceDescriptor serviceDescriptor : listServiceDescriptors()) {
-            cellTypes.add(buildCellTypeForServiceDescriptor(serviceDescriptor));
-        }
-    }
-
-    private List<ServiceDescriptor> listServiceDescriptors() {
-        ServicesClient servicesClient = new ServicesClient();
-        List<ServiceDescriptor> serviceDescriptors;
-        try {
-            serviceDescriptors = servicesClient.getServiceDefinitions(sessionContext.getLoggedInUserDetails().getUserid());
-        } catch (IOException e) {
-            serviceDescriptors = new ArrayList<>();
-            logger.error(null, e);
-        }
-        return serviceDescriptors;
-    }
-
-    private CellType buildCellTypeForServiceDescriptor(ServiceDescriptor serviceDescriptor) {
-        CellType result = new CellType();
-        result.setExecutable(true);
-        result.setName(serviceDescriptor.getName());
-        result.setDescription(serviceDescriptor.getDescription());
-
-        OptionDescriptor[] properties = serviceDescriptor.getAccessModes()[0].getParameters();
-        if (properties != null) {
-
-            logger.info(properties.length + " properties found for service " + serviceDescriptor.getName());
-
-            for (OptionDescriptor propertyDescriptor : properties) {
-
-                System.out.println("property type: " + propertyDescriptor.getTypeDescriptor().getType());
-                result.getOptionDefinitionList().add(propertyDescriptor);
-
-//                if (propertyDescriptor.getTypeDescriptor().getType() == String.class) {
-//                    OptionDescriptor optionDescriptor = new OptionDescriptor()
-//                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
-//                    optionDefinition.setName("missing.property.name");
-//                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
-//                    optionDefinition.setOptionType(OptionType.SIMPLE);
-//                    result.getOptionDefinitionList().add(optionDefinition);
-//                } else if (propertyDescriptor.getType().equals(ServicePropertyDescriptor.Type.STRUCTURE)) {
-//                    OptionDefinition<String> optionDefinition = new OptionDefinition<>();
-//                    optionDefinition.setName("missing.property.name");
-//                    optionDefinition.setDisplayName(propertyDescriptor.getLabel());
-//                    optionDefinition.setOptionType(OptionType.PICKLIST);
-//                    result.getOptionDefinitionList().add(optionDefinition);
-//                }
-
-            }
-        }
-
-        return result;
     }
 }
 

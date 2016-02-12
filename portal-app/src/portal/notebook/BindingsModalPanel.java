@@ -13,6 +13,9 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.notebook.api.BindingInstance;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
@@ -30,10 +33,10 @@ public class BindingsModalPanel extends SemanticModalPanel {
     private static final Logger logger = LoggerFactory.getLogger(BindingsModalPanel.class);
     private Callbacks callbacks;
     private Form<ConnectionPanelData> connectionForm;
-    private CellModel sourceCellModel;
-    private CellModel targetCellModel;
-    private Select2Choice<VariableModel> sourceChoice;
-    private Select2Choice<BindingModel> targetChoice;
+    private CellInstance sourceCellInstance;
+    private CellInstance targetCellInstance;
+    private Select2Choice<VariableInstance> sourceChoice;
+    private Select2Choice<BindingInstance> targetChoice;
     private AjaxSubmitLink bindAction;
     private Label sourceLabel;
     private Label targetLabel;
@@ -75,7 +78,7 @@ public class BindingsModalPanel extends SemanticModalPanel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (targetChoice.getModelObject() != null) {
-                    targetChoice.getModelObject().setVariableModel(sourceChoice.getModelObject());
+                    targetChoice.getModelObject().setVariable(sourceChoice.getModelObject());
                 }
                 callbacks.onSubmit();
             }
@@ -94,7 +97,7 @@ public class BindingsModalPanel extends SemanticModalPanel {
     }
 
     private void addBindingList() {
-        IModel<List<BindingModel>> listModel = new IModel<List<BindingModel>>() {
+        IModel<List<BindingInstance>> listModel = new IModel<List<BindingInstance>>() {
 
             @Override
             public void detach() {
@@ -102,32 +105,32 @@ public class BindingsModalPanel extends SemanticModalPanel {
             }
 
             @Override
-            public List<BindingModel> getObject() {
-                return buildBindingModelList();
+            public List<BindingInstance> getObject() {
+                return buildBindingInstanceList();
             }
 
             @Override
-            public void setObject(List<BindingModel> bindingModels) {
+            public void setObject(List<BindingInstance> bindingModels) {
 
             }
 
         };
         final WebMarkupContainer bindingListContainer = new WebMarkupContainer("bindingListContainer");
         bindingListContainer.setOutputMarkupId(true);
-        ListView<BindingModel> listView = new ListView<BindingModel>("binding", listModel) {
+        ListView<BindingInstance> listView = new ListView<BindingInstance>("binding", listModel) {
 
             @Override
-            protected void populateItem(ListItem<BindingModel> listItem) {
-                final BindingModel bindingModel = listItem.getModelObject();
+            protected void populateItem(ListItem<BindingInstance> listItem) {
+                final BindingInstance bindingModel = listItem.getModelObject();
                 listItem.add(new Label("targetName", bindingModel.getDisplayName()));
-                VariableModel variableModel = bindingModel.getVariableModel();
-                String sourceDisplayName = variableModel == null ? null : (variableModel.getProducerCellModel().getName() + " " + variableModel.getDisplayName());
+                VariableInstance variableInstance = bindingModel.getVariable();
+                String sourceDisplayName = resolveDisplayNameFor(variableInstance);
                 listItem.add(new Label("variableName", sourceDisplayName));
                 AjaxLink unassignLink = new AjaxLink("unassign") {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        bindingModel.setVariableModel(null);
+                        bindingModel.setVariable(null);
                         notebookSession.storeCurrentNotebook();
                         ajaxRequestTarget.add(bindingListContainer);
                         dirty = true;
@@ -141,14 +144,22 @@ public class BindingsModalPanel extends SemanticModalPanel {
         getModalRootComponent().add(bindingListContainer);
     }
 
-    private List<BindingModel> buildBindingModelList() {
-        if (targetCellModel == null) {
-            return new ArrayList<BindingModel>();
+    private String resolveDisplayNameFor(VariableInstance variableInstance) {
+        if (variableInstance == null) {
+            return null;
+        }
+        CellInstance producerCellInstance = notebookSession.getCurrentNotebookInstance().findCellById(variableInstance.getCellId());
+        return producerCellInstance.getName() + " " + variableInstance.getDisplayName();
+    }
+
+    private List<BindingInstance> buildBindingInstanceList() {
+        if (targetCellInstance == null) {
+            return new ArrayList<BindingInstance>();
         } else {
-            ArrayList<BindingModel> list = new ArrayList<BindingModel>(targetCellModel.getBindingModelMap().values());
-            Collections.sort(list, new Comparator<BindingModel>() {
+            ArrayList<BindingInstance> list = new ArrayList<BindingInstance>(targetCellInstance.getBindingMap().values());
+            Collections.sort(list, new Comparator<BindingInstance>() {
                 @Override
-                public int compare(BindingModel o1, BindingModel o2) {
+                public int compare(BindingInstance o1, BindingInstance o2) {
                     return o1.getName().compareTo(o2.getName());
                 }
             });
@@ -160,15 +171,15 @@ public class BindingsModalPanel extends SemanticModalPanel {
         this.callbacks = callbacks;
     }
 
-    public void configure(CellModel sourceCellModel, CellModel targetCellModel, boolean canAddBindings) {
-        this.sourceCellModel = sourceCellModel;
-        this.targetCellModel = targetCellModel;
+    public void configure(CellInstance sourceCellInstance, CellInstance targetCellInstance, boolean canAddBindings) {
+        this.sourceCellInstance = sourceCellInstance;
+        this.targetCellInstance = targetCellInstance;
 
-        if (sourceCellModel != null) {
-            logger.info("Connecting " + sourceCellModel.getName() + " to " + targetCellModel.getName());
-            SourceVariableProvider sourceVariableProvider = new SourceVariableProvider(this.sourceCellModel.getOutputVariableModelMap());
+        if (sourceCellInstance != null) {
+            logger.info("Connecting " + sourceCellInstance.getName() + " to " + targetCellInstance.getName());
+            SourceVariableProvider sourceVariableProvider = new SourceVariableProvider(this.sourceCellInstance.getOutputVariableMap());
             sourceChoice.setProvider(sourceVariableProvider);
-            TargetBindingProvider targetBindingProvider = new TargetBindingProvider(this.targetCellModel.getBindingModelMap());
+            TargetBindingProvider targetBindingProvider = new TargetBindingProvider(this.targetCellInstance.getBindingMap());
             targetChoice.setProvider(targetBindingProvider);
         }
 
@@ -182,12 +193,12 @@ public class BindingsModalPanel extends SemanticModalPanel {
         bindAction.setVisible(canAddBindings);
     }
 
-    public CellModel getSourceCellModel() {
-        return sourceCellModel;
+    public CellInstance getSourceCellInstance() {
+        return sourceCellInstance;
     }
 
-    public CellModel getTargetCellModel() {
-        return targetCellModel;
+    public CellInstance getTargetCellInstance() {
+        return targetCellInstance;
     }
 
     public boolean isDirty() {
@@ -204,22 +215,22 @@ public class BindingsModalPanel extends SemanticModalPanel {
 
     private class ConnectionPanelData implements Serializable {
 
-        private VariableModel source;
-        private BindingModel target;
+        private VariableInstance source;
+        private BindingInstance target;
 
-        public VariableModel getSource() {
+        public VariableInstance getSource() {
             return source;
         }
 
-        public void setSource(VariableModel source) {
+        public void setSource(VariableInstance source) {
             this.source = source;
         }
 
-        public BindingModel getTarget() {
+        public BindingInstance getTarget() {
             return target;
         }
 
-        public void setTarget(BindingModel target) {
+        public void setTarget(BindingInstance target) {
             this.target = target;
         }
     }

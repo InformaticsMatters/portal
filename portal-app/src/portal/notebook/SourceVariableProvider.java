@@ -2,36 +2,37 @@ package portal.notebook;
 
 import com.vaynberg.wicket.select2.Response;
 import com.vaynberg.wicket.select2.TextChoiceProvider;
+import portal.notebook.api.VariableInstance;
 
 import java.util.*;
 
 /**
  * @author simetrias
  */
-public class SourceVariableProvider extends TextChoiceProvider<VariableModel> {
+public class SourceVariableProvider extends TextChoiceProvider<VariableInstance> {
 
-    private final Map<String, VariableModel> outputVariableModelMap;
+    private final Map<String, VariableInstance> outputVariableInstanceMap;
 
-    public SourceVariableProvider(Map<String, VariableModel> outputVariableModelMap) {
-        this.outputVariableModelMap = outputVariableModelMap;
+    public SourceVariableProvider(Map<String, VariableInstance> outputVariableInstanceMap) {
+        this.outputVariableInstanceMap = outputVariableInstanceMap;
     }
 
     @Override
-    protected String getDisplayText(VariableModel variableModel) {
+    protected String getDisplayText(VariableInstance variableModel) {
         return variableModel.getDisplayName();
     }
 
     @Override
-    protected Object getId(VariableModel variableModel) {
+    protected Object getId(VariableInstance variableModel) {
         return variableModel.getName();
     }
 
     @Override
-    public void query(String s, int i, Response<VariableModel> response) {
-        ArrayList<VariableModel> list = new ArrayList<>(outputVariableModelMap.values());
-        Collections.sort(list, new Comparator<VariableModel>() {
+    public void query(String s, int i, Response<VariableInstance> response) {
+        ArrayList<VariableInstance> list = new ArrayList<>(outputVariableInstanceMap.values());
+        Collections.sort(list, new Comparator<VariableInstance>() {
             @Override
-            public int compare(VariableModel o1, VariableModel o2) {
+            public int compare(VariableInstance o1, VariableInstance o2) {
                 return o1.getName().compareTo(o2.getName());
             }
         });
@@ -40,10 +41,10 @@ public class SourceVariableProvider extends TextChoiceProvider<VariableModel> {
     }
 
     @Override
-    public Collection<VariableModel> toChoices(Collection<String> collection) {
+    public Collection<VariableInstance> toChoices(Collection<String> collection) {
         String firstChoiceKey = collection.iterator().next();
-        VariableModel firstChoice = outputVariableModelMap.get(firstChoiceKey);
-        ArrayList<VariableModel> result = new ArrayList<>();
+        VariableInstance firstChoice = outputVariableInstanceMap.get(firstChoiceKey);
+        ArrayList<VariableInstance> result = new ArrayList<>();
         result.add(firstChoice);
         return result;
     }

@@ -16,6 +16,7 @@ public class CellInstance implements Serializable {
     private int positionTop;
     private int sizeWidth;
     private int sizeHeight;
+    private boolean dirty = false;
 
     public String getName() {
         return name;
@@ -58,6 +59,7 @@ public class CellInstance implements Serializable {
     }
 
     public void setPositionLeft(int positionLeft) {
+        dirty = true;
         this.positionLeft = positionLeft;
     }
 
@@ -66,6 +68,7 @@ public class CellInstance implements Serializable {
     }
 
     public void setPositionTop(int positionTop) {
+        dirty = true;
         this.positionTop = positionTop;
     }
 
@@ -74,6 +77,7 @@ public class CellInstance implements Serializable {
     }
 
     public void setSizeWidth(int sizeWidth) {
+        dirty = true;
         this.sizeWidth = sizeWidth;
     }
 
@@ -82,6 +86,24 @@ public class CellInstance implements Serializable {
     }
 
     public void setSizeHeight(int sizeHeight) {
+        dirty = true;
         this.sizeHeight = sizeHeight;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void resetDirty() {
+        dirty = false;
+        for (VariableInstance variableInstance : outputVariableMap.values()) {
+            variableInstance.resetDirty();
+        }
+        for (OptionInstance optionInstance : optionMap.values()) {
+            optionInstance.resetDirty();
+        }
+        for (BindingInstance bindingInstance : bindingMap.values()) {
+            bindingInstance.resetDirty();
+        }
     }
 }

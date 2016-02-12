@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import portal.notebook.cells.SdfUploadCellDefinition;
 import static portal.notebook.cells.SdfUploadCellDefinition.OPT_NAME_FIELD_NAME;
 import static portal.notebook.api.CellDefinition.VAR_NAME_FILECONTENT;
+import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -29,8 +30,8 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public SDFUploadCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public SDFUploadCanvasItemPanel(String id, Long cellId) {
+        super(id, cellId);
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
@@ -75,7 +76,7 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         } else {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_FILECONTENT);
+            VariableInstance variableModel = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getName(), VAR_NAME_FILECONTENT);
             variableModel.setValue(fileName);
             form.getModelObject().store();
             notebookSession.storeCurrentNotebook();
@@ -87,9 +88,8 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
 
     private void execute() throws IOException {
         form.getModelObject().store();
-        notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getId());
-        notebookSession.reloadCurrentNotebook();
+        notebookSession.executeCell(getCellInstance().getId());
+        fireContentChanged();
     }
 
     private void load() {
@@ -152,13 +152,13 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get(OPT_NAME_FIELD_NAME).setValue(nameFieldName);
+            getCellInstance().getOptionMap().get(OPT_NAME_FIELD_NAME).setValue(nameFieldName);
         }
 
         public void load() {
-            VariableModel variableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_FILECONTENT);
+            VariableInstance variableModel = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getName(), "fileContent");
             fileName = variableModel == null ? null : (String) variableModel.getValue();
-            nameFieldName = (String) getCellModel().getOptionModelMap().get(OPT_NAME_FIELD_NAME).getValue();
+            nameFieldName = (String) getCellInstance().getOptionMap().get(OPT_NAME_FIELD_NAME).getValue();
         }
     }
 

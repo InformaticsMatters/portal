@@ -5,6 +5,7 @@ import java.util.Collection;
 public interface CellDefinitionRegistry {
 
     Collection<CellDefinition> listCellDefinition();
-    CellDefinition retrieveCellDefinition(String name);
+
+    CellDefinition findCellDefinition(String name);
 
 }

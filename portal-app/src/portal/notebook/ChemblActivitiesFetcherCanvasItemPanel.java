@@ -3,13 +3,14 @@ package portal.notebook;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.squonk.execution.steps.StepDefinitionConstants;
-import static portal.notebook.api.CellDefinition.VAR_NAME_OUTPUT;
-import static portal.notebook.cells.ChemblActivitiesFetcherCellDefinition.OPT_ASSAY_ID;
-import static portal.notebook.cells.ChemblActivitiesFetcherCellDefinition.OPT_PREFIX;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+
+import static portal.notebook.api.CellDefinition.VAR_NAME_OUTPUT;
+import static portal.notebook.cells.ChemblActivitiesFetcherCellDefinition.OPT_ASSAY_ID;
+import static portal.notebook.cells.ChemblActivitiesFetcherCellDefinition.OPT_PREFIX;
 
 public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
 
@@ -18,8 +19,8 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
 
-    public ChemblActivitiesFetcherCanvasItemPanel(String id, CellModel cell) {
-        super(id, cell);
+    public ChemblActivitiesFetcherCanvasItemPanel(String id, Long cellId) {
+        super(id, cellId);
         addForm();
         addTitleBar();
         load();
@@ -42,10 +43,9 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
 
     private void execute() {
         form.getModelObject().store();
-        VariableModel outputVariableModel = notebookSession.getCurrentNotebookModel().findVariableModel(getCellModel().getId(), VAR_NAME_OUTPUT);
-        outputVariableModel.setValue(null);
-        notebookSession.storeCurrentNotebook();
-        notebookSession.executeCell(getCellModel().getId());
+        VariableInstance outputVariableInstance = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), VAR_NAME_OUTPUT);
+        //outputVariableInstance.setValue(null);
+        notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }
 
@@ -81,13 +81,13 @@ public class ChemblActivitiesFetcherCanvasItemPanel extends CanvasItemPanel {
         }
 
         public void load() {
-            assayId = (String) getCellModel().getOptionModelMap().get(OPT_ASSAY_ID).getValue();
-            prefix = (String) getCellModel().getOptionModelMap().get(OPT_PREFIX).getValue();
+            assayId = (String) getCellInstance().getOptionMap().get(OPT_ASSAY_ID).getValue();
+            prefix = (String) getCellInstance().getOptionMap().get(OPT_PREFIX).getValue();
         }
 
         public void store() {
-            getCellModel().getOptionModelMap().get(OPT_ASSAY_ID).setValue(assayId);
-            getCellModel().getOptionModelMap().get(OPT_PREFIX).setValue(prefix);
+            getCellInstance().getOptionMap().get(OPT_ASSAY_ID).setValue(assayId);
+            getCellInstance().getOptionMap().get(OPT_PREFIX).setValue(prefix);
         }
 
     }
