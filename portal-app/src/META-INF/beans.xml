@@ -5,5 +5,6 @@
     <alternatives>
         <class>portal.notebook.service.MockJobStatusClient</class>
         <class>portal.notebook.service.IdeNotebookClientConfig</class>
+        <class>portal.notebook.service.PropertiesFileNotebookConfig</class>
     </alternatives>
 </beans>
