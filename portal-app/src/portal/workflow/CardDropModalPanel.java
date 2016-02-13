@@ -1,6 +1,6 @@
 package portal.workflow;
 
-import com.im.lac.services.ServiceDescriptor;
+import org.squonk.core.ServiceDescriptor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.CheckBox;

@@ -3,7 +3,7 @@ package portal.workflow;
 import com.im.lac.job.jobdef.AbstractAsyncProcessDatasetJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.job.jobdef.ProcessDatasetJobDefinition;
-import com.im.lac.services.ServiceDescriptor;
+import org.squonk.core.ServiceDescriptor;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;

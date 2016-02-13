@@ -1,7 +1,7 @@
 package portal.workflow;
 
-import com.im.lac.services.ServiceDescriptor;
-import com.im.lac.services.client.ServicesClient;
+import org.squonk.core.ServiceDescriptor;
+import org.squonk.core.client.ServicesClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.SessionContext;

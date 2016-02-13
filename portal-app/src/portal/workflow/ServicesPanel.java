@@ -1,6 +1,6 @@
 package portal.workflow;
 
-import com.im.lac.services.ServiceDescriptor;
+import org.squonk.core.ServiceDescriptor;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;

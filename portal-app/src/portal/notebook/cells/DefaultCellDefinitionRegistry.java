@@ -1,8 +1,8 @@
 package portal.notebook.cells;
 
 
-import com.im.lac.services.ServiceDescriptor;
-import com.im.lac.services.client.ServicesClient;
+import org.squonk.core.ServiceDescriptor;
+import org.squonk.core.client.ServicesClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.options.MultiLineTextTypeDescriptor;
@@ -214,7 +214,8 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     public Collection<CellDefinition> listCellDefinition() {
-        Collection<CellDefinition> definitionList = cellDefinitionMap.values();
+        List<CellDefinition> definitionList = new ArrayList<>();
+        definitionList.addAll(cellDefinitionMap.values());
         addServiceCellDefinitionList(definitionList);
         return definitionList;
     }

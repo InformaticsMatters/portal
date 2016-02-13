@@ -1,8 +1,8 @@
 package portal.workflow;
 
 import com.im.lac.dataset.Metadata;
-import com.im.lac.services.AccessMode;
-import com.im.lac.services.ServiceDescriptor;
+import org.squonk.core.AccessMode;
+import org.squonk.core.ServiceDescriptor;
 
 /**
  * @author simetrias
