@@ -244,11 +244,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private ServiceCellDefinition buildCellDefinitionForServiceDescriptor(ServiceDescriptor serviceDescriptor) {
-        ServiceCellDefinition result = new ServiceCellDefinition();
-        result.setExecutable(true);
-        result.setName(serviceDescriptor.getName());
-        result.setDescription(serviceDescriptor.getDescription());
-
+        ServiceCellDefinition result = new ServiceCellDefinition(serviceDescriptor);
         OptionDescriptor[] parameters = serviceDescriptor.getAccessModes()[0].getParameters();
         if (parameters != null) {
             logger.info(parameters.length + " parameters found for service " + serviceDescriptor.getName());

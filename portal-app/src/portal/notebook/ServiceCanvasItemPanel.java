@@ -7,6 +7,7 @@ import org.apache.wicket.model.IModel;
 import org.squonk.notebook.api.OptionType;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
+import portal.notebook.cells.ServiceCellDefinition;
 
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,8 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
+        ServiceCellDefinition cellDefinition = (ServiceCellDefinition) getCellInstance().getCellDefinition();
+        System.out.println(cellDefinition.getServiceDescriptor().getDescription());
     }
 
     private void addOptionEditor(ListItem<OptionDescriptor> listItem) {
