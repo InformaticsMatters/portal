@@ -5,8 +5,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.squonk.notebook.api.OptionType;
-import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.types.Structure;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,9 +62,13 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
         if (OptionType.SIMPLE.equals(optionDefinition.getOptionType())) {
             if (optionDefinition.getTypeDescriptor().getType() == String.class) {
                 listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel));
-            } else if (optionDefinition.getTypeDescriptor().getType() == MoleculeTypeDescriptor.class) {
+            } else if (optionDefinition.getTypeDescriptor().getType() == Structure.class) {
                 listItem.add(new StructureOptionEditorPanel("editor", "canvasMarvinEditor", optionDefinition, optionModel));
+            } else {
+                listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel)); // for now
             }
+        } else {
+            listItem.add(new StringOptionEditorPanel("editor", optionDefinition, optionModel)); // for now
         }
     }
 

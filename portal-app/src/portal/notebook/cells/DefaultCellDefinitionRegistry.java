@@ -1,10 +1,10 @@
 package portal.notebook.cells;
 
 
-import org.squonk.core.ServiceDescriptor;
-import org.squonk.core.client.ServicesClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.core.ServiceDescriptor;
+import org.squonk.core.client.ServicesClient;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
@@ -23,6 +23,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     public static final String VAR_NAME_OUTPUT = "output";
     public static final String VAR_NAME_FILECONTENT = "fileContent";
     private static final Logger logger = LoggerFactory.getLogger(DefaultCellDefinitionRegistry.class);
+    private static final String SERVICES_BASE_URL = "http://demos.informaticsmatters.com:8091/coreservices/rest/v1/services";
     private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
     @Inject
     private SessionContext sessionContext;
@@ -231,7 +232,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private List<ServiceDescriptor> listServiceDescriptors() {
-        ServicesClient servicesClient = new ServicesClient();
+        ServicesClient servicesClient = new ServicesClient(SERVICES_BASE_URL);
         List<ServiceDescriptor> serviceDescriptors;
         try {
             serviceDescriptors = servicesClient.getServiceDefinitions(sessionContext.getLoggedInUserDetails().getUserid());
