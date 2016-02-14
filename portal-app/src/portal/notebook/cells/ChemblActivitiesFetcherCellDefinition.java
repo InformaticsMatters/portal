@@ -17,16 +17,10 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
     public static final String OPT_PREFIX = StepDefinitionConstants.ChemblActivitiesFetcher.OPTION_PREFIX;
 
     public ChemblActivitiesFetcherCellDefinition() {
-        setName(CELL_NAME);
-        setDescription("ChEMBL activities fetcher");
-        setExecutable(Boolean.TRUE);
-        VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName(VAR_NAME_OUTPUT);
-        variableDefinition.setDisplayName(VAR_DISPLAYNAME_OUTPUT);
-        variableDefinition.setVariableType(VariableType.DATASET);
-        getOutputVariableDefinitionList().add(variableDefinition);
-        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, OPT_ASSAY_ID, "Assay ID", "ChEMBL Asssay ID"));
-        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, OPT_PREFIX, "Prefix", "Prefix for result fields"));
+        super(CELL_NAME, "ChEMBL activities fetcher");
+        getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_ASSAY_ID, "Assay ID", "ChEMBL Asssay ID"));
+        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_PREFIX, "Prefix", "Prefix for result fields"));
     }
 
     @Override

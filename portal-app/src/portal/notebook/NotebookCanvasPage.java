@@ -27,10 +27,7 @@ import portal.MenuPanel;
 import portal.PopupContainerProvider;
 import portal.PortalHomePage;
 import portal.notebook.api.*;
-import portal.notebook.cells.ChemblActivitiesFetcherCellDefinition;
-import portal.notebook.cells.CsvUploadCellDefinition;
-import portal.notebook.cells.DatasetMergerCellDefinition;
-import portal.notebook.cells.SdfUploadCellDefinition;
+import portal.notebook.cells.*;
 import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -328,8 +325,8 @@ public class NotebookCanvasPage extends WebPage {
             return new CSVUploadCanvasItemPanel("item", cellInstance.getId());
         } else if (DatasetMergerCellDefinition.CELL_NAME.equals(cellType.getName())) {
             return new DatasetMergerCanvasItemPanel("item", cellInstance.getId());
-        } else if ("BasicObjectToMoleculeObject".equals(cellType.getName())) {
-            return new BasicObjectToMoleculeObjectConverterCanvasItemPanel("item", cellInstance.getId());
+        } else if (ConvertToMoleculesCellDefinition.CELL_NAME.equals(cellType.getName())) {
+            return new ConvertToMoleculesCanvasItemPanel("item", cellInstance.getId());
         } else if ("TransformValues".equals(cellType.getName())) {
             return new TransformValuesCanvasItemPanel("item", cellInstance.getId());
         } else if ("TrustedGroovyDatasetScript".equals(cellType.getName())) {

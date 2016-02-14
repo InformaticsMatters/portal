@@ -1,6 +1,12 @@
 package portal.notebook.api;
 
+import com.im.lac.job.jobdef.JobDefinition;
+import org.squonk.execution.steps.StepDefinition;
+import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
+import portal.notebook.cells.AbstractJobCellExecutor;
+import portal.notebook.cells.DefaultCellDefinitionRegistry;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -31,6 +37,12 @@ public abstract class CellDefinition implements Serializable {
         this.name = name;
         this.description = description;
         this.executable = executable;
+    }
+
+    public CellDefinition(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.executable = true;
     }
 
     public CellDefinition() {

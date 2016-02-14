@@ -65,6 +65,13 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
 
     }
 
+    /** Creates a VariableKey for this variable, looking up the producer cell from the notebook
+     *
+     * @param notebook
+     * @param cell
+     * @param varName
+     * @return
+     */
     protected VariableKey createVariableKey(NotebookInstance notebook, CellInstance cell, String varName) {
         BindingInstance binding = cell.getBindingMap().get(varName);
         if (binding != null) {

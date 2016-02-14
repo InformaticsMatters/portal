@@ -18,16 +18,14 @@ public class CsvUploadCellDefinition extends CellDefinition {
     public static final String OPT_FIRST_LINE_IS_HEADER = CsvUpload.OPTION_NAME_FIRST_LINE_IS_HEADER;
 
     public CsvUploadCellDefinition() {
-        setName(CELL_NAME);
-        setDescription("CSV upload");
-        setExecutable(Boolean.TRUE);
-        getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_FILECONTENT, "File content", VariableType.FILE));
+        super(CELL_NAME, "CSV upload");
+        getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, OPT_FILE_TYPE, "File type",
                 "Type of CSV or TAB file")
                 .withValues(new String[]{"TDF", "EXCEL", "MYSQL", "RFC4180", "DEFAULT"})
                 .withDefaultValue("DEFAULT"));
-        getOptionDefinitionList().add(new OptionDescriptor<Boolean>(Boolean.class, OPT_FIRST_LINE_IS_HEADER, "First line is header",
+        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, OPT_FIRST_LINE_IS_HEADER, "First line is header",
                 "First line contains field names"));
 
     }

@@ -17,22 +17,12 @@ public class DatasetMergerCellDefinition extends CellDefinition {
     public static final String CELL_NAME = "DatasetMerger";
 
     public DatasetMergerCellDefinition() {
-        setName(CELL_NAME);
-        setDescription("Merge datasets into one");
-        setExecutable(Boolean.TRUE);
-        VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName(VAR_NAME_OUTPUT);
-        variableDefinition.setDisplayName(VAR_DISPLAYNAME_OUTPUT);
-        variableDefinition.setVariableType(VariableType.DATASET);
-        getOutputVariableDefinitionList().add(variableDefinition);
-        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, DatasetMerger.OPTION_MERGE_FIELD_NAME, "Merge field name", "Name of value field which identifies equivalent entries"));
-        getOptionDefinitionList().add(new OptionDescriptor<String>(String.class, DatasetMerger.OPTION_KEEP_FIRST, "Prefix", "Prefix for result fields"));
+        super(CELL_NAME, "Merge datasets into one");
+        getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, DatasetMerger.OPTION_MERGE_FIELD_NAME, "Merge field name", "Name of value field which identifies equivalent entries"));
+        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, DatasetMerger.OPTION_KEEP_FIRST, "Prefix", "Prefix for result fields"));
         for (int i = 0; i < 5; i++) {
-            BindingDefinition bindingDefinition = new BindingDefinition();
-            bindingDefinition.setDisplayName("Input dataset " + (i + 1));
-            bindingDefinition.setName(VAR_NAME_INPUT + (i + 1));
-            bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
-            getBindingDefinitionList().add(bindingDefinition);
+            getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT + (i + 1), "Input dataset " + (i + 1), VariableType.DATASET));
         }
     }
 

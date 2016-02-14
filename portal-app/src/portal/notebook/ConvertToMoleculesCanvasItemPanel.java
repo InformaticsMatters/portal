@@ -8,13 +8,13 @@ import portal.notebook.api.VariableInstance;
 import javax.inject.Inject;
 import java.io.Serializable;
 
-public class BasicObjectToMoleculeObjectConverterCanvasItemPanel extends CanvasItemPanel {
+public class ConvertToMoleculesCanvasItemPanel extends CanvasItemPanel {
 
     private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
 
-    public BasicObjectToMoleculeObjectConverterCanvasItemPanel(String id, Long cellId) {
+    public ConvertToMoleculesCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
         setOutputMarkupId(true);
         addForm();

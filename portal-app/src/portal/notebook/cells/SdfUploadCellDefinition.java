@@ -15,16 +15,13 @@ public class SdfUploadCellDefinition extends CellDefinition {
 
     public static final String OPT_NAME_FIELD_NAME = SdfUpload.OPTION_NAME_FIELD_NAME;
 
-
     public static final String CELL_NAME = "SdfUpload";
 
     public SdfUploadCellDefinition() {
-        setName(CELL_NAME);
-        setDescription("SDF upload");
-        setExecutable(Boolean.TRUE);
-        getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_FILECONTENT, "File content", VariableType.FILE));
+        super(CELL_NAME, "SDF upload");
+        getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
-        getOptionDefinitionList().add(new OptionDescriptor<String>(
+        getOptionDefinitionList().add(new OptionDescriptor<>(
                 String.class, OPT_NAME_FIELD_NAME,
                 "Name field name", "Name of the field to use for the molecule name (the part before the CTAB block)")
                 .withMinValues(0));

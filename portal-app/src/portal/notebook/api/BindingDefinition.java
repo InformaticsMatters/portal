@@ -3,6 +3,7 @@ package portal.notebook.api;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @XmlRootElement
@@ -13,6 +14,16 @@ public class BindingDefinition implements Serializable {
 
     public BindingDefinition() {
     }
+
+    public BindingDefinition(String name, String displayName, VariableType... acceptedVariableTypes) {
+        this.name = name;
+        this.displayName = displayName;
+        if (acceptedVariableTypes != null) {
+            this.acceptedVariableTypeList.addAll(Arrays.asList(acceptedVariableTypes));
+        }
+    }
+
+
 
     public String getName() {
         return this.name;
