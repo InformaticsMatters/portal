@@ -125,7 +125,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         ServicesClient servicesClient = new ServicesClient(CommonConstants.HOST_CORE_SERVICES_SERVICES);
         List<ServiceDescriptor> serviceDescriptors;
         try {
-            serviceDescriptors = servicesClient.getServiceDefinitions(sessionContext.getLoggedInUserDetails().getUserid());
+            serviceDescriptors = servicesClient.getServiceDescriptors(sessionContext.getLoggedInUserDetails().getUserid());
         } catch (Throwable e) {
             serviceDescriptors = new ArrayList<>();
             logger.error(null, e);
