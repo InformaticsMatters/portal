@@ -42,6 +42,7 @@ public class PropertiesFileNotebookConfig implements NotebookConfig {
         } else {
             loadDefaultPersistenceProperties(persistenceProperties);
         }
+        logger.info("Using database " + persistenceProperties.getProperty("javax.persistence.jdbc.url"));
     }
 
     private void loadDefaultPersistenceProperties(Properties properties) {

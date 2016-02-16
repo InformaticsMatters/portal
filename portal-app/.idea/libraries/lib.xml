@@ -4,7 +4,6 @@
       <root url="file://$PROJECT_DIR$/../lib/wicket/6.18.0" />
       <root url="file://$PROJECT_DIR$/../lib/cdi-api/1.2.0" />
       <root url="file://$PROJECT_DIR$/../lib/jetty/8.1.15" />
-      <root url="file://$PROJECT_DIR$/../lib/postgresql/9.2" />
       <root url="file://$PROJECT_DIR$/../lib/servlet-api/3.0" />
       <root url="file://$PROJECT_DIR$/../lib/weld/2.2.9" />
       <root url="file://$PROJECT_DIR$/../lib/inmethod/6.9.0" />
@@ -22,6 +21,7 @@
       <root url="file://$PROJECT_DIR$/../lib/jackson/2.6.4" />
       <root url="file://$PROJECT_DIR$/../lib/squonk-security" />
       <root url="file://$PROJECT_DIR$/../lib/jersey/1.19" />
+      <root url="file://$PROJECT_DIR$/../lib/postgresql/9.4.1207.jre7" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
@@ -39,7 +39,7 @@
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jetty/8.1.15" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jpa/2.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/jsp-api/2.1" recursive="false" />
-    <jarDirectory url="file://$PROJECT_DIR$/../lib/postgresql/9.2" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/postgresql/9.4.1207.jre7" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/seam-conversation/3.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/servlet-api/3.0" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../lib/slf4j/1.7.10" recursive="false" />

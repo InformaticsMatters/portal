@@ -25,7 +25,8 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
     private static final Logger LOG = Logger.getLogger(AbstractJobCellExecutor.class.getName());
 
     public JobStatus execute(CellExecutionData data) throws Exception {
-        String username = "curentuser"; // get the user
+        // TODO - get the real username
+        String username = "squonkuser"; // get the user
         Integer workunits = null; // null means "I don't know", but we can probably get the number from the dataset metadata
 
         // create the job
