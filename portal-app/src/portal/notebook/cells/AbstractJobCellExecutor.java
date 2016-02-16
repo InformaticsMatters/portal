@@ -7,6 +7,7 @@ import com.im.lac.job.jobdef.StepsCellExecutorJobDefinition;
 import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.notebook.api.VariableKey;
+import portal.SessionContext;
 import portal.notebook.api.*;
 
 import javax.enterprise.inject.Instance;
@@ -25,8 +26,9 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
     private static final Logger LOG = Logger.getLogger(AbstractJobCellExecutor.class.getName());
 
     public JobStatus execute(CellExecutionData data) throws Exception {
-        // TODO - get the real username
-        String username = "squonkuser"; // get the user
+        Instance<SessionContext> sessionContextInstance = CDI.current().select(SessionContext.class);
+        SessionContext sessionContext = sessionContextInstance.get();
+        String username = sessionContext.getLoggedInUserDetails().getUserid();
         Integer workunits = null; // null means "I don't know", but we can probably get the number from the dataset metadata
 
         // create the job
