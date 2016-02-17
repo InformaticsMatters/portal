@@ -7,7 +7,7 @@ import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Default;
 
 
-@Alternative
+@Default
 @ApplicationScoped
 public class IdeNotebookClientConfig implements NotebookClientConfig {
     @Override
