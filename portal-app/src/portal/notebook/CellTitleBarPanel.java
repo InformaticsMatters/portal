@@ -7,6 +7,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
+import portal.notebook.service.Execution;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -17,30 +18,34 @@ import java.io.Serializable;
  */
 public class CellTitleBarPanel extends Panel {
 
-    private final CellInstance cellModel;
+    private final CellInstance cellInstance;
     private final CallbackHandler callbackHandler;
     private AjaxLink openPopupLink;
     private CellPopupPanel cellPopupPanel;
     @Inject
     private PopupContainerProvider popupContainerProvider;
+    @Inject
+    private NotebookSession notebookSession;
 
-    public CellTitleBarPanel(String id, CellInstance cellModel, CallbackHandler callbackHandler) {
+    public CellTitleBarPanel(String id, CellInstance cellInstance, CallbackHandler callbackHandler) {
         super(id);
-        this.cellModel = cellModel;
+        this.cellInstance = cellInstance;
         this.callbackHandler = callbackHandler;
         addPopup();
         addActions();
         createCellPopupPanel();
+        Execution execution = notebookSession.findExecution(cellInstance.getId());
+        System.out.println(execution);
     }
 
     private void addActions() {
-        add(new Label("cellName", cellModel.getName().toLowerCase()));
+        add(new Label("cellName", cellInstance.getName().toLowerCase()));
 
         add(new AjaxLink("remove") {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getCallbackHandler().onRemove(cellModel);
+                getCallbackHandler().onRemove(cellInstance);
             }
         });
 
@@ -48,11 +53,11 @@ public class CellTitleBarPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getCallbackHandler().onEditBindings(cellModel);
+                getCallbackHandler().onEditBindings(cellInstance);
             }
         };
         add(bindingsAction);
-        if (cellModel.getBindingMap().isEmpty()) {
+        if (cellInstance.getBindingMap().isEmpty()) {
             bindingsAction.setVisible(false);
         }
 
@@ -68,7 +73,7 @@ public class CellTitleBarPanel extends Panel {
     }
 
     public CellInstance getCellInstance() {
-        return cellModel;
+        return cellInstance;
     }
 
     public CallbackHandler getCallbackHandler() {

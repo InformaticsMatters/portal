@@ -36,11 +36,6 @@ public class MockJobStatusService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void execute(JobDefinition jobDefinition) {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         if (jobDefinition instanceof ExecuteCellUsingStepsJobDefinition) {
             ExecuteCellUsingStepsJobDefinition executeCellUsingStepsJobDefinition = (ExecuteCellUsingStepsJobDefinition) jobDefinition;
             processStepsJobDefinition(executeCellUsingStepsJobDefinition);

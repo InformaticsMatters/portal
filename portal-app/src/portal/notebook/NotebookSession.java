@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,10 +7,7 @@ import org.squonk.notebook.client.CellClient;
 import portal.SessionContext;
 import portal.dataset.*;
 import portal.notebook.api.*;
-import portal.notebook.service.EditNotebookData;
-import portal.notebook.service.NotebookInfo;
-import portal.notebook.service.NotebookService;
-import portal.notebook.service.UpdateNotebookContentsData;
+import portal.notebook.service.*;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -243,18 +239,7 @@ public class NotebookSession implements Serializable {
         storeCurrentNotebook();
         CellInstance cell = currentNotebookInstance.findCellById(cellId);
         if (cell.getCellDefinition().getExecutable()) {
-            CellDefinition celldef = cell.getCellDefinition();
-            try {
-                CellExecutionData cellExecutionData = new CellExecutionData();
-                cellExecutionData.setCellId(cellId);
-                cellExecutionData.setNotebookId(currentNotebookInfo.getId());
-                cellExecutionData.setNotebookInstance(currentNotebookInstance);
-                JobStatus status = celldef.getCellExecutor().execute(cellExecutionData);
-                // TODO - do something with the status
-            } catch (Exception e) {
-                // TODO - handle nicely
-                throw new RuntimeException("Failed to execute cell", e);
-            }
+            notebookService.executeCell(currentNotebookInfo.getId(), cellId);
         }
     }
 
@@ -273,6 +258,10 @@ public class NotebookSession implements Serializable {
         CellInstance cellInstance = currentNotebookInstance.findCellById(variableInstance.getCellId());
         VariableInstance variable = currentNotebookInstance.findVariable(cellInstance.getName(), variableInstance.getName());
         notebookService.storeStreamingContents(currentNotebookInfo.getId(), variable, inputStream);
+    }
+
+    public Execution findExecution(Long cellId) {
+        return notebookService.findExecution(currentNotebookInfo.getId(), cellId);
     }
 }
 
