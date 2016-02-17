@@ -1,0 +1,5 @@
+<beans>
+    <alternatives>
+        <class>portal.notebook.service.MockJobStatusClient</class>
+    </alternatives>
+</beans>

@@ -5,7 +5,7 @@ import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Default;
 import java.util.Properties;
 
-@Default
+@Alternative
 @ApplicationScoped
 public class IdeDerbyNotebookConfig implements NotebookConfig {
 

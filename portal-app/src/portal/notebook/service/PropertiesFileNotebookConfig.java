@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import java.io.File;
@@ -16,7 +16,7 @@ import java.util.Properties;
 /**
  * @author simetrias
  */
-@Alternative
+@Default
 @ApplicationScoped
 public class PropertiesFileNotebookConfig implements NotebookConfig {
 

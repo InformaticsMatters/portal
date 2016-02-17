@@ -3,10 +3,10 @@ package portal.notebook.service;
 import portal.notebook.api.NotebookClientConfig;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Default;
 
 
-@Alternative
+@Default
 @ApplicationScoped
 public class IdeNotebookClientConfig implements NotebookClientConfig {
     @Override
