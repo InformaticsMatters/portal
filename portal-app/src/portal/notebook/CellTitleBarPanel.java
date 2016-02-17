@@ -1,10 +1,13 @@
 package portal.notebook;
 
+import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.util.time.Duration;
 import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
@@ -26,6 +29,7 @@ public class CellTitleBarPanel extends Panel {
     private PopupContainerProvider popupContainerProvider;
     @Inject
     private NotebookSession notebookSession;
+    private IndicatingAjaxSubmitLink submit;
 
     public CellTitleBarPanel(String id, CellInstance cellInstance, CallbackHandler callbackHandler) {
         super(id);
@@ -33,9 +37,23 @@ public class CellTitleBarPanel extends Panel {
         this.callbackHandler = callbackHandler;
         addPopup();
         addActions();
+        addBehaviors();
         createCellPopupPanel();
-        Execution execution = notebookSession.findExecution(cellInstance.getId());
-        System.out.println(execution);
+    }
+
+    private void addBehaviors() {
+        add(new AbstractAjaxTimerBehavior(Duration.seconds(2)){
+            @Override
+            protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
+                Execution execution = notebookSession.findExecution(cellInstance.getId());
+                if (execution != null && execution.getJobActive()) {
+                   submit.setEnabled(false);
+                } else {
+                    submit.setEnabled(true);
+                }
+                ajaxRequestTarget.add(submit);
+            }
+        });
     }
 
     private void addActions() {
@@ -61,13 +79,16 @@ public class CellTitleBarPanel extends Panel {
             bindingsAction.setVisible(false);
         }
 
-        IndicatingAjaxSubmitLink submit = new IndicatingAjaxSubmitLink("submit", callbackHandler.getExecuteFormComponent()) {
+        submit = new IndicatingAjaxSubmitLink("submit", callbackHandler.getExecuteFormComponent()) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                submit.setEnabled(false);
+                target.add(submit);
                 callbackHandler.onExecute();
             }
         };
+        submit.setEnabled(false);
         submit.setOutputMarkupId(true);
         add(submit);
     }
