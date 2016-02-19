@@ -6,9 +6,7 @@ import com.im.lac.job.jobdef.JobQuery;
 import com.im.lac.job.jobdef.JobStatus;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
-import javafx.animation.Animation;
 import org.squonk.client.JobStatusClient;
-import portal.notebook.api.NotebookClient;
 import portal.notebook.api.NotebookClientConfig;
 
 import javax.enterprise.context.ApplicationScoped;
