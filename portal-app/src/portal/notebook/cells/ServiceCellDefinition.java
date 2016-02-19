@@ -66,11 +66,12 @@ public class ServiceCellDefinition extends CellDefinition {
             CellInstance cell = notebook.findCellById(cellExecutionData.getCellId());
             VariableKey key = createVariableKey(notebook, cell, VAR_NAME_INPUT);
 
+            // TODO - the step type will need to be defined at the ServiceDescriptor level. For now we use MoleculeServiceThinExecutorStep for everything
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ServiceExecutor.CLASSNAME)
                     .withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
                     .withOption(OPT_SERVICE_ENDPOINT, serviceDescriptor.getAccessModes()[0].getExecutionEndpoint())
-                    .withOption(OPT_SERVICE_PRESERVE_STRUCTURE, true) // TODO - this will need to be deined at the ServiceDescriptor level
+                    .withOption(OPT_SERVICE_PRESERVE_STRUCTURE, true) // TODO - this will need to be defined at the ServiceDescriptor level
                     .withOption(OPT_SERVICE_PARAMS, collectAllOptions(cell));
 
             return buildJobDefinition(cellExecutionData.getNotebookId(), cell, step1);

@@ -55,51 +55,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         return cellDefinition;
     }
 
-
-//    private static CellDefinition createValueTransformerCellDefinition() {
-//        CellDefinition cellDefinition = new SimpleCellDefinition();
-//        cellDefinition.setName("TransformValues");
-//        cellDefinition.setDescription("Transform dataset values");
-//        cellDefinition.setExecutable(Boolean.TRUE);
-//        VariableDefinition variableDefinition = new VariableDefinition();
-//        variableDefinition.setName(VAR_NAME_OUTPUT);
-//        variableDefinition.setDisplayName("Output");
-//        variableDefinition.setVariableType(VariableType.DATASET);
-//        cellDefinition.getOutputVariableDefinitionList().add(variableDefinition);
-//        BindingDefinition bindingDefinition = new BindingDefinition();
-//        bindingDefinition.setDisplayName("Input");
-//        bindingDefinition.setName(VAR_NAME_INPUT);
-//        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
-//        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
-//        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<String>(new MultiLineTextTypeDescriptor(10, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
-//                "transformDefinitions", "Transform Definitions",
-//                "Definition of the transforms to perform"));
-//        cellDefinition.setExecutable(Boolean.TRUE);
-//        return cellDefinition;
-//    }
-
-//    private static CellDefinition createGroovyScriptTrustedCellDefinition() {
-//        CellDefinition cellDefinition = new SimpleCellDefinition();
-//        cellDefinition.setName("TrustedGroovyDatasetScript");
-//        cellDefinition.setDescription("Groovy Script (trusted)");
-//        cellDefinition.setExecutable(Boolean.TRUE);
-//        VariableDefinition variableDefinition = new VariableDefinition();
-//        variableDefinition.setName(VAR_NAME_OUTPUT);
-//        variableDefinition.setDisplayName("Output");
-//        variableDefinition.setVariableType(VariableType.DATASET);
-//        cellDefinition.getOutputVariableDefinitionList().add(variableDefinition);
-//        BindingDefinition bindingDefinition = new BindingDefinition();
-//        bindingDefinition.setDisplayName("Input");
-//        bindingDefinition.setName(VAR_NAME_INPUT);
-//        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
-//        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
-//        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<String>(
-//                new MultiLineTextTypeDescriptor(20, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
-//                "script", "Groovy Script", "Groovy script to execute"));
-//        cellDefinition.setExecutable(Boolean.TRUE);
-//        return cellDefinition;
-//    }
-
     public void registerCellDefinition(CellDefinition cellDefinition) {
         cellDefinitionMap.put(cellDefinition.getName(), cellDefinition);
     }
