@@ -10,6 +10,7 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>portal.notebook.service.Notebook</class>
         <class>portal.notebook.service.NotebookHistory</class>
+        <class>portal.notebook.service.Execution</class>
     </persistence-unit>
 
 

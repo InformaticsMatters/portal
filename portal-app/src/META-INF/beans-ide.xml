@@ -1,0 +1,9 @@
+<beans>
+    <alternatives>
+        <class>portal.notebook.service.IdeDerbyNotebookConfig</class>
+        <class>portal.notebook.service.MockJobStatusClient</class>
+    </alternatives>
+    <interceptors>
+        <class>portal.notebook.NotebookTransactionalInterceptor</class>
+    </interceptors>
+</beans>
