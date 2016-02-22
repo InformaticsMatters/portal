@@ -232,12 +232,12 @@ var targetEndpointOptions = {
     }
 };
 
-function addSourceEndpoint(itemId) {
-    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: itemId + "-ep1"});
+function addSourceEndpoint(itemId, endpointId) {
+    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: endpointId + "-ep1"});
 }
 
-function addTargetEndpoint(itemId) {
-    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions, {uuid: itemId + "-ep2"});
+function addTargetEndpoint(itemId, endpointId) {
+    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions, {uuid: endpointId + "-ep2"});
 }
 
 function addConnection(sourceMarkupId, targetMarkupId) {
