@@ -302,14 +302,11 @@ public class NotebookCanvasPage extends WebPage {
         // ajax-update the div
         target.add(listItem);
 
-        // activate jsPlumb dragging on new canvas item
+        // activate jsPlumb dragging on newly created canvas item
         target.appendJavaScript("makeCanvasItemPlumbDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
-        if (!cellInstance.getOutputVariableMap().isEmpty()) {
-            target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
-        }
-        if (!cellInstance.getBindingMap().isEmpty()) {
-            target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
-        }
+
+        // create connection endpoints
+        target.appendJavaScript(buildEndpointsJS(cellInstance));
     }
 
     private Panel createCanvasItemPanel(CellInstance cellInstance) {
@@ -505,24 +502,8 @@ public class NotebookCanvasPage extends WebPage {
         StringBuilder stringBuilder = new StringBuilder();
         for (Long cellId : canvasItemRepeater.getList()) {
             CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellId);
-            if (!cellInstance.getOutputVariableMap().isEmpty()) {
-                // stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
-
-                for (int i = 0; i < cellInstance.getOutputVariableMap().size(); i++) {
-                    stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
-                }
-
-
-            }
-            if (!cellInstance.getBindingMap().isEmpty()) {
-                // stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
-
-                for (int i = 0; i < cellInstance.getOutputVariableMap().size(); i++) {
-                    stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
-                }
-            }
+            stringBuilder.append(buildEndpointsJS(cellInstance));
         }
-
         for (Long cellId : canvasItemRepeater.getList()) {
             CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellId);
             String targetId = CANVAS_ITEM_PREFIX + cellInstance.getId();
@@ -532,6 +513,21 @@ public class NotebookCanvasPage extends WebPage {
                     String js = "addConnection('" + sourceId + "', '" + targetId + "');\r\n";
                     stringBuilder.append(js);
                 }
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    private String buildEndpointsJS(CellInstance cellInstance) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (!cellInstance.getOutputVariableMap().isEmpty()) {
+            for (int i = 0; i < cellInstance.getOutputVariableMap().size(); i++) {
+                stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
+            }
+        }
+        if (!cellInstance.getBindingMap().isEmpty()) {
+            for (int i = 0; i < cellInstance.getBindingMap().size(); i++) {
+                stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
             }
         }
         return stringBuilder.toString();
