@@ -233,16 +233,16 @@ var targetEndpointOptions = {
 };
 
 function addSourceEndpoint(itemId, endpointId) {
-    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: endpointId + "-ep1"});
+    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: endpointId});
 }
 
 function addTargetEndpoint(itemId, endpointId) {
-    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions, {uuid: endpointId + "-ep2"});
+    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions, {uuid: endpointId});
 }
 
-function addConnection(sourceMarkupId, targetMarkupId) {
+function addConnection(sourceEndpointUuid, targetEndpointUuid) {
     jsPlumb.connect({
-        uuids: [sourceMarkupId + "-ep1", targetMarkupId + "-ep2"],
+        uuids: [sourceEndpointUuid, targetEndpointUuid],
         connector: ["Flowchart", {gap: 10, cornerRadius: 5}],
         overlays: [
             ["Arrow", {location: 1, id: "arrow", length: 14, foldback: 0.8}]
@@ -254,8 +254,8 @@ function initJsPlumb() {
     jsPlumb.setContainer($('#plumbContainer'));
 
     jsPlumb.bind("beforeDrop", function (i, c) {
-        var sourceId = i.connection.sourceId;
-        var targetId = i.connection.targetId;
+        var sourceId = i.connection.endpoints[0].getUuid();
+        var targetId = i.dropEndpoint.getUuid();
         onNotebookCanvasNewConnection(sourceId, targetId);
         return false;
     });
