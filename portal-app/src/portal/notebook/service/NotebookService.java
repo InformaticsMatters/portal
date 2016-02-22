@@ -344,7 +344,7 @@ public class NotebookService {
         }
     }
 
-    public void executeCell(Long notebookId, Long cellId) {
+    public Execution executeCell(Long notebookId, Long cellId) {
         try {
             Notebook notebook = entityManager.find(Notebook.class, notebookId);
             Execution execution = findExecution(notebookId, cellId);
@@ -368,6 +368,7 @@ public class NotebookService {
             execution.setJobId(jobStatus.getJobId());
             execution.setJobStatus(jobStatus.getStatus());
             execution.setJobActive(Boolean.TRUE);
+            return execution;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
