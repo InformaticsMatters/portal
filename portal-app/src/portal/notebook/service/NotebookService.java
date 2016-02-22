@@ -323,7 +323,7 @@ public class NotebookService {
                 execution.setJobSuccessful(Boolean.TRUE);
             } else if (status.equals(JobStatus.Status.CANCELLED)) {
                 execution.setJobSuccessful(Boolean.FALSE);
-            } else if (status.equals(JobStatus.Status.FAILED)) {
+            } else if (status.equals(JobStatus.Status.ERROR)) {
                 execution.setJobSuccessful(Boolean.FALSE);
             }
             execution.setJobStatus(jobStatus.getStatus());
@@ -337,7 +337,7 @@ public class NotebookService {
             return Boolean.FALSE;
         } else if (status.equals(JobStatus.Status.COMPLETED)) {
             return Boolean.FALSE;
-        } else if (status.equals(JobStatus.Status.FAILED)) {
+        } else if (status.equals(JobStatus.Status.ERROR)) {
             return Boolean.FALSE;
         } else {
             return Boolean.TRUE;
