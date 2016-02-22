@@ -205,83 +205,49 @@ function initCellSizeAndPosition(id, top, left, width, height) {
         $parent.css('left', left + 'px');
     }
 }
-/*
-function addSourceEndpoint(itemId) {
-    var sourceEndpointOptions = {
-        anchor: 'BottomCenter',
-        isSource: true,
-        maxConnections: -1,
-        paintStyle: {
-            fillStyle: "#7AB02C",
-            radius: 10
-        },
-        connectorStyle : {
-            lineWidth: 4,
-            strokeStyle: "#61B7CF",
-            joinstyle: "round"
-        }
-    };
-    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions,{uuid: itemId + "-ep1"});
-}
-
-function addTargetEndpoint(itemId) {
-    var targetEndpointOptions = {
-        endpoint: 'Dot',
-        anchor: 'TopCenter',
-        maxConnections: -1,
-        isTarget:true,
-        paintStyle : {
-            strokeStyle: "#7AB02C",
-            radius: 9,
-            lineWidth: 3
-        },
-    };
-    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions,{uuid:itemId + "-ep2"});
-}
-*/
 
 var sourceEndpointOptions = {
-        anchor:[ "Perimeter", { shape:"Rectangle" } ],
-        isSource: true,
-        maxConnections: -1,
-        paintStyle: {
-            fillStyle: "#7AB02C",
-            radius: 7
-        },
-        connectorStyle : {
-                            lineWidth: 2,
-                            strokeStyle: "#61B7CF"
-                        }
-    };
+    anchor: ["Continuous", {shape: "Rectangle", faces:["bottom", "right"]}],
+    isSource: true,
+    maxConnections: -1,
+    paintStyle: {
+        fillStyle: "#7AB02C",
+        radius: 9
+    },
+    connectorStyle : {
+        lineWidth: 2,
+        strokeStyle: "#61B7CF"
+    }
+};
 
 var targetEndpointOptions = {
-        endpoint: 'Dot',
-        anchor:[ "Perimeter", { shape:"Rectangle" } ],
-        maxConnections: -1,
-        isTarget:true,
-        paintStyle : {
-            strokeStyle: "#7AB02C",
-            radius: 5,
-            lineWidth: 3
-        }
-    };
+    endpoint: 'Dot',
+    anchor: ["Continuous", {shape: "Rectangle", faces:["top", "left"]}],
+    maxConnections: -1,
+    isTarget: true,
+    paintStyle: {
+        strokeStyle: "#7AB02C",
+        radius: 9,
+        lineWidth: 3
+    }
+};
 
 function addSourceEndpoint(itemId) {
-    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions,{uuid: itemId + "-ep1"});
+    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: itemId + "-ep1"});
 }
 
 function addTargetEndpoint(itemId) {
-    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions,{uuid:itemId + "-ep2"});
+    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions, {uuid: itemId + "-ep2"});
 }
 
 function addConnection(sourceMarkupId, targetMarkupId) {
     jsPlumb.connect({
-        uuids:[sourceMarkupId + "-ep1", targetMarkupId + "-ep2"],
-        connector: [ "Flowchart", { gap: 10, cornerRadius: 5 } ],
+        uuids: [sourceMarkupId + "-ep1", targetMarkupId + "-ep2"],
+        connector: ["Flowchart", {gap: 10, cornerRadius: 5}],
         overlays: [
             ["Arrow", {location: 1, id: "arrow", length: 14, foldback: 0.8}]
         ]
-        });
+    });
 }
 
 function initJsPlumb() {

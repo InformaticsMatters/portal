@@ -506,10 +506,20 @@ public class NotebookCanvasPage extends WebPage {
         for (Long cellId : canvasItemRepeater.getList()) {
             CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellId);
             if (!cellInstance.getOutputVariableMap().isEmpty()) {
-                stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
+                // stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
+
+                for (int i = 0; i < cellInstance.getOutputVariableMap().size(); i++) {
+                    stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
+                }
+
+
             }
             if (!cellInstance.getBindingMap().isEmpty()) {
-                stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
+                // stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
+
+                for (int i = 0; i < cellInstance.getOutputVariableMap().size(); i++) {
+                    stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
+                }
             }
         }
 
