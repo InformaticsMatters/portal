@@ -520,11 +520,11 @@ public class NotebookCanvasPage extends WebPage {
         StringBuilder stringBuilder = new StringBuilder();
         for (VariableInstance variableInstance : cellInstance.getOutputVariableMap().values()) {
             String endpointId = itemId + "-" + variableInstance.getName();
-            stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "');");
+            stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + variableInstance.getName() + "');");
         }
         for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
             String endpointId = itemId + "-" + bindingInstance.getName();
-            stringBuilder.append("addTargetEndpoint('" + itemId + "', '" + endpointId + "');");
+            stringBuilder.append("addTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + bindingInstance.getName() + "');");
         }
         return stringBuilder.toString();
     }

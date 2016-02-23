@@ -207,7 +207,7 @@ function initCellSizeAndPosition(id, top, left, width, height) {
 }
 
 var sourceEndpointOptions = {
-    anchor: ["Continuous", {shape: "Rectangle", faces:["bottom", "right"]}],
+    anchor: ["Continuous", {shape: "Rectangle", faces:["bottom"]}],
     isSource: true,
     maxConnections: -1,
     paintStyle: {
@@ -222,7 +222,7 @@ var sourceEndpointOptions = {
 
 var targetEndpointOptions = {
     endpoint: 'Dot',
-    anchor: ["Continuous", {shape: "Rectangle", faces:["top", "left"]}],
+    anchor: ["Continuous", {shape: "Rectangle", faces:["top"]}],
     maxConnections: -1,
     isTarget: true,
     paintStyle: {
@@ -232,14 +232,24 @@ var targetEndpointOptions = {
     }
 };
 
-function addSourceEndpoint(itemId, endpointId) {
+function addSourceEndpoint(itemId, endpointId, labelText) {
     var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: endpointId});
-    sourceEndpoint.addOverlay(["Label", {label: "foo", id: "label", location: [1.5, 1.5]}]);
+    sourceEndpoint.bind("mouseover", function(sourceEndpoint) {
+        sourceEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [1.5, 1.5]}]);
+    });
+    sourceEndpoint.bind("mouseout", function(sourceEndpoint) {
+        sourceEndpoint.removeOverlay("label");
+    });
 }
 
-function addTargetEndpoint(itemId, endpointId) {
+function addTargetEndpoint(itemId, endpointId, labelText) {
     var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions, {uuid: endpointId});
-    targetEndpoint.addOverlay(["Label", {label: "foo", id: "label", location: [-0.5, -0.5]}]);
+    targetEndpoint.bind("mouseover", function(targetEndpoint) {
+        targetEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [-0.5, -0.5]}]);
+    });
+    targetEndpoint.bind("mouseout", function(targetEndpoint) {
+        targetEndpoint.removeOverlay("label");
+    });
 }
 
 function addConnection(sourceEndpointUuid, targetEndpointUuid) {
