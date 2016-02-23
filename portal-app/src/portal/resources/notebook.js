@@ -214,7 +214,7 @@ var sourceEndpointOptions = {
         fillStyle: "#7AB02C",
         radius: 9
     },
-    connectorStyle : {
+    connectorStyle: {
         lineWidth: 2,
         strokeStyle: "#61B7CF"
     }
@@ -234,10 +234,12 @@ var targetEndpointOptions = {
 
 function addSourceEndpoint(itemId, endpointId) {
     var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: endpointId});
+    sourceEndpoint.addOverlay(["Label", {label: "foo", id: "label", location: [1.5, 1.5]}]);
 }
 
 function addTargetEndpoint(itemId, endpointId) {
     var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions, {uuid: endpointId});
+    targetEndpoint.addOverlay(["Label", {label: "foo", id: "label", location: [-0.5, -0.5]}]);
 }
 
 function addConnection(sourceEndpointUuid, targetEndpointUuid) {
