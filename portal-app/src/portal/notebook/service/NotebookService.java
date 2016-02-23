@@ -323,7 +323,7 @@ public class NotebookService {
                 execution.setJobSuccessful(Boolean.TRUE);
             } else if (status.equals(JobStatus.Status.CANCELLED)) {
                 execution.setJobSuccessful(Boolean.FALSE);
-            } else if (status.equals(JobStatus.Status.FAILED)) {
+            } else if (status.equals(JobStatus.Status.ERROR)) {
                 execution.setJobSuccessful(Boolean.FALSE);
             }
             execution.setJobStatus(jobStatus.getStatus());
@@ -337,14 +337,14 @@ public class NotebookService {
             return Boolean.FALSE;
         } else if (status.equals(JobStatus.Status.COMPLETED)) {
             return Boolean.FALSE;
-        } else if (status.equals(JobStatus.Status.FAILED)) {
+        } else if (status.equals(JobStatus.Status.ERROR)) {
             return Boolean.FALSE;
         } else {
             return Boolean.TRUE;
         }
     }
 
-    public void executeCell(Long notebookId, Long cellId) {
+    public Execution executeCell(Long notebookId, Long cellId) {
         try {
             Notebook notebook = entityManager.find(Notebook.class, notebookId);
             Execution execution = findExecution(notebookId, cellId);
@@ -368,6 +368,7 @@ public class NotebookService {
             execution.setJobId(jobStatus.getJobId());
             execution.setJobStatus(jobStatus.getStatus());
             execution.setJobActive(Boolean.TRUE);
+            return execution;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

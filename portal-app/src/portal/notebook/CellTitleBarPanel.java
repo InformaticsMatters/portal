@@ -1,12 +1,16 @@
 package portal.notebook;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.time.Duration;
 import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
@@ -29,7 +33,9 @@ public class CellTitleBarPanel extends Panel {
     private PopupContainerProvider popupContainerProvider;
     @Inject
     private NotebookSession notebookSession;
-    private IndicatingAjaxSubmitLink submit;
+    private IndicatingAjaxSubmitLink submitLink;
+    private AjaxLink waitLink;
+    private AjaxLink warningLink;
 
     public CellTitleBarPanel(String id, CellInstance cellInstance, CallbackHandler callbackHandler) {
         super(id);
@@ -39,19 +45,16 @@ public class CellTitleBarPanel extends Panel {
         addActions();
         addBehaviors();
         createCellPopupPanel();
+        refreshExecutionStatus();
+        setOutputMarkupId(true);
     }
 
     private void addBehaviors() {
         add(new AbstractAjaxTimerBehavior(Duration.seconds(2)){
             @Override
             protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
-                Execution execution = notebookSession.findExecution(cellInstance.getId());
-                if (execution != null && execution.getJobActive()) {
-                   submit.setEnabled(false);
-                } else {
-                    submit.setEnabled(true);
-                }
-                ajaxRequestTarget.add(submit);
+                refreshExecutionStatus();
+                ajaxRequestTarget.add(CellTitleBarPanel.this);
             }
         });
     }
@@ -79,18 +82,28 @@ public class CellTitleBarPanel extends Panel {
             bindingsAction.setVisible(false);
         }
 
-        submit = new IndicatingAjaxSubmitLink("submit", callbackHandler.getExecuteFormComponent()) {
+        submitLink = new IndicatingAjaxSubmitLink("submit", callbackHandler.getExecuteFormComponent()) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                submit.setEnabled(false);
-                target.add(submit);
                 callbackHandler.onExecute();
+                target.add(CellTitleBarPanel.this);
             }
         };
-        submit.setEnabled(false);
-        submit.setOutputMarkupId(true);
-        add(submit);
+        submitLink.setOutputMarkupId(true);
+        add(submitLink);
+
+        waitLink = new AjaxLink("wait") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+
+            }
+        };
+        waitLink.setEnabled(false);
+        waitLink.setOutputMarkupId(true);
+        add(waitLink);
+
     }
 
     public CellInstance getCellInstance() {
@@ -107,16 +120,40 @@ public class CellTitleBarPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                popupContainerProvider.setPopupContentForPage(getPage(), cellPopupPanel);
-                popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
-                String js = "$('#:link')" +
-                        ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
-                        ".popup('toggle').popup('destroy')";
-                js = js.replace(":link", openPopupLink.getMarkupId()).replace(":content", cellPopupPanel.getMarkupId());
-                ajaxRequestTarget.appendJavaScript(js);
+                decoratePopupLink(this, ajaxRequestTarget);
             }
         };
+        openPopupLink.setOutputMarkupId(true);
         add(openPopupLink);
+        warningLink = new AjaxLink("warning") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                decoratePopupLink(this, ajaxRequestTarget);
+            }
+        };
+        warningLink.setOutputMarkupId(true);
+        add(warningLink);
+    }
+
+    private void decoratePopupLink(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {
+        popupContainerProvider.setPopupContentForPage(getPage(), cellPopupPanel);
+        popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
+        String js = "$('#:link')" +
+                ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
+                ".popup('toggle').popup('destroy')";
+        js = js.replace(":link", link.getMarkupId()).replace(":content", cellPopupPanel.getMarkupId());
+        ajaxRequestTarget.appendJavaScript(js);
+    }
+
+    private void refreshExecutionStatus() {
+        Execution lastExecution = notebookSession.findExecution(cellInstance.getId());
+        boolean active = lastExecution != null && lastExecution.getJobActive();
+        waitLink.setVisible(active);
+        submitLink.setVisible(!active);
+        boolean failed = lastExecution != null && Boolean.FALSE.equals(lastExecution.getJobSuccessful());
+        warningLink.setVisible(failed);
+        openPopupLink.setVisible(!failed);
     }
 
     private void createCellPopupPanel() {

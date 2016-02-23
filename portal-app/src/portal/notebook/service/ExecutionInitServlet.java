@@ -25,7 +25,7 @@ public class ExecutionInitServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         timer = new Timer();
-        timer.schedule(new UpdateExecutionsTask(), 5000, 2000);
+        timer.schedule(new UpdateExecutionsTask(), 5000, 5000);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
