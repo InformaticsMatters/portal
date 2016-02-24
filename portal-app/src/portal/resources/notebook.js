@@ -190,7 +190,7 @@ function fitDefinitionsArea(id) {
     $textarea.css("height", h);
 }
 
-function initCellSizeAndPosition(id, top, left, width, height) {
+function initCellSizeAndPosition(id, left, top, width, height) {
     $id = $('#' + id);
     if (width != 0) {
         $id.width(width);
