@@ -280,8 +280,8 @@ public class NotebookCanvasPage extends WebPage {
 
         CellDefinition cellDefinition = notebookSession.findCellType(dropDataId);
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().addCell(cellDefinition);
-        cellInstance.setPositionTop(Integer.parseInt(x));
-        cellInstance.setPositionLeft(Integer.parseInt(y));
+        cellInstance.setPositionLeft(Integer.parseInt(x));
+        cellInstance.setPositionTop(Integer.parseInt(y));
         notebookSession.storeCurrentNotebook();
 
         Panel canvasItemPanel = createCanvasItemPanel(cellInstance);
