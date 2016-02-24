@@ -11,7 +11,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,25 +22,34 @@ import java.awt.*;
 /**
  * @author simetrias
  */
-public class StructureOptionEditorPanel extends  OptionEditorPanel {
+public class StructureFieldEditorPanel extends FieldEditorPanel {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
-    private static final Logger logger = LoggerFactory.getLogger(StructureOptionEditorPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(StructureFieldEditorPanel.class);
     private final String uniqueMarvinName;
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
     private Model<String> model;
 
-    public StructureOptionEditorPanel(String id, String uniqueMarvinName, OptionInstance optionInstance) {
-        super(id, optionInstance);
+    public StructureFieldEditorPanel(String id, String uniqueMarvinName, FieldEditorModel fieldEditorModel) {
+        super(id, fieldEditorModel);
         this.uniqueMarvinName = uniqueMarvinName;
         addComponents();
     }
 
     private void addComponents() {
-        model = new Model<>();
-        model.setObject((String)getOptionInstance().getValue());
-        add(new Label("label", getOptionInstance().getOptionDescriptor().getDisplayName()));
+        model = new Model<String>(){
+            @Override
+            public String getObject() {
+                return (String)getFieldEditorModel().getValue();
+            }
+
+            @Override
+            public void setObject(String object) {
+                getFieldEditorModel().setValue(object);
+            }
+        };
+        add(new Label("label", getFieldEditorModel().getDisplayName()));
 
 
         RenderedDynamicImageResource renderedDynamicImageResource = new RenderedDynamicImageResource(getRectangle().width, getRectangle().height) {

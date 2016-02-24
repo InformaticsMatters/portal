@@ -96,18 +96,14 @@ public class NotebookInstance implements Serializable {
         lastCellId = cell.getId();
         for (VariableDefinition variableDefinition : cellDefinition.getOutputVariableDefinitionList()) {
             VariableInstance variable = new VariableInstance();
-            variable.setName(variableDefinition.getName());
-            variable.setDisplayName(variableDefinition.getDisplayName());
-            variable.setVariableType(variableDefinition.getVariableType());
+            variable.setVariableDefinition(variableDefinition);
             variable.setValue(variableDefinition.getDefaultValue());
             variable.setCellId(cell.getId());
             cell.getOutputVariableMap().put(variableDefinition.getName(), variable);
         }
         for (BindingDefinition bindingDefinition : cellDefinition.getBindingDefinitionList()) {
             BindingInstance binding = new BindingInstance();
-            binding.getAcceptedVariableTypeList().addAll(bindingDefinition.getAcceptedVariableTypeList());
-            binding.setDisplayName(bindingDefinition.getDisplayName());
-            binding.setName(bindingDefinition.getName());
+            binding.setBindingDefinition(bindingDefinition);
             cell.getBindingMap().put(bindingDefinition.getName(), binding);
         }
         for (OptionDescriptor optionDefinition : cellDefinition.getOptionDefinitionList()) {

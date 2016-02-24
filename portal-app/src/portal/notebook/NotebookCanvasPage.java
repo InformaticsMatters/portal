@@ -333,7 +333,7 @@ public class NotebookCanvasPage extends WebPage {
             return new GroovyScriptTrustedCanvasItemPanel("item", cellInstance.getId());
         } else {
             logger.warn("cell type " + cellType.getName() + " not recognised");
-            return new ServiceCanvasItemPanel("item", cellInstance.getId());
+            return new DefaultCanvasItemPanel("item", cellInstance.getId());
         }
     }
 

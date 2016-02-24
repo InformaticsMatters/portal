@@ -9,6 +9,7 @@ public class VariableDefinition implements Serializable {
     private String displayName;
     private VariableType variableType;
     private Object defaultValue;
+    private boolean editable;
 
     public VariableDefinition() {
     }
@@ -54,5 +55,13 @@ public class VariableDefinition implements Serializable {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

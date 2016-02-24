@@ -4,18 +4,12 @@ import java.io.Serializable;
 
 public class VariableInstance implements Serializable {
     private Long cellId;
-    private String name;
-    private String displayName;
-    private VariableType variableType;
+    private VariableDefinition variableDefinition;
     private Object value;
     private boolean dirty = false;
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return variableDefinition.getName();
     }
 
     public Object getValue() {
@@ -28,19 +22,11 @@ public class VariableInstance implements Serializable {
     }
 
     public VariableType getVariableType() {
-        return variableType;
-    }
-
-    public void setVariableType(VariableType variableType) {
-        this.variableType = variableType;
+        return variableDefinition.getVariableType();
     }
 
     public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        return variableDefinition.getDisplayName();
     }
 
     public Long getCellId() {
@@ -58,4 +44,14 @@ public class VariableInstance implements Serializable {
     public void resetDirty() {
         dirty = false;
     }
+
+    public VariableDefinition getVariableDefinition() {
+        return variableDefinition;
+    }
+
+    public void setVariableDefinition(VariableDefinition variableDefinition) {
+        this.variableDefinition = variableDefinition;
+    }
+
+
 }

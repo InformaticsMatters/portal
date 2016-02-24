@@ -5,26 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BindingInstance implements Serializable {
-    private String name;
-    private String displayName;
-    private final List<VariableType> acceptedVariableTypeList = new ArrayList<>();
+    private BindingDefinition bindingDefinition;
     private VariableInstance variable;
     private boolean dirty = true;
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return bindingDefinition.getName();
     }
 
     public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        return bindingDefinition.getDisplayName();
     }
 
     public VariableInstance getVariable() {
@@ -36,15 +26,19 @@ public class BindingInstance implements Serializable {
         this.variable = variable;
     }
 
-    public List<VariableType> getAcceptedVariableTypeList() {
-        return acceptedVariableTypeList;
-    }
-
     public boolean isDirty() {
         return dirty;
     }
 
     public void resetDirty() {
         dirty = false;
+    }
+
+    public BindingDefinition getBindingDefinition() {
+        return bindingDefinition;
+    }
+
+    public void setBindingDefinition(BindingDefinition bindingDefinition) {
+        this.bindingDefinition = bindingDefinition;
     }
 }
