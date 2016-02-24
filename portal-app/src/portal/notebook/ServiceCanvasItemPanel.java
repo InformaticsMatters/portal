@@ -81,7 +81,7 @@ public class ServiceCanvasItemPanel extends CanvasItemPanel {
 
     private void storeModel() {
         for (OptionEditorPanel optionEditorPanel : editorMap.values()) {
-            optionEditorPanel.storeModel();
+            optionEditorPanel.store(getCellInstance().getOptionMap().get(optionEditorPanel.getOptionInstance().getOptionDescriptor().getName()));
         }
     }
 

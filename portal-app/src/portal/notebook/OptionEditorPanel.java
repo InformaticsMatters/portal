@@ -14,7 +14,7 @@ public abstract class OptionEditorPanel extends Panel {
         this.optionInstance = optionInstance;
     }
 
-    public abstract void storeModel();
+    public abstract void store(OptionInstance optionInstance);
 
     public OptionInstance getOptionInstance() {
         return optionInstance;

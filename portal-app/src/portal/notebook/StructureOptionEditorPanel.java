@@ -101,8 +101,8 @@ public class StructureOptionEditorPanel extends  OptionEditorPanel {
         }
     }
 
-    public void storeModel() {
-        getOptionInstance().setValue(model.getObject());
+    public void store(OptionInstance optionInstance) {
+        optionInstance.setValue(model.getObject());
     }
 
     private void refreshThumbnail() {

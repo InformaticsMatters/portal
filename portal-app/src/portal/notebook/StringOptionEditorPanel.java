@@ -26,8 +26,8 @@ public class StringOptionEditorPanel extends  OptionEditorPanel {
         add(stringTextField);
     }
 
-    public void storeModel() {
-        getOptionInstance().setValue(model.getObject());
+    public void store(OptionInstance optionInstance) {
+        optionInstance.setValue(model.getObject());
     }
 
 }
