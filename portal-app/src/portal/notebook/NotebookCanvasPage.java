@@ -281,7 +281,7 @@ public class NotebookCanvasPage extends WebPage {
         CellDefinition cellDefinition = notebookSession.findCellType(dropDataId);
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().addCell(cellDefinition);
         cellInstance.setPositionTop(Integer.parseInt(x));
-        cellInstance.setPositionLeft( Integer.parseInt(y));
+        cellInstance.setPositionLeft(Integer.parseInt(y));
         notebookSession.storeCurrentNotebook();
 
         Panel canvasItemPanel = createCanvasItemPanel(cellInstance);
@@ -302,14 +302,14 @@ public class NotebookCanvasPage extends WebPage {
         // ajax-update the div
         target.add(listItem);
 
-        // activate jsPlumb dragging on new canvas item
+        // activate jsPlumb dragging on newly created canvas item
         target.appendJavaScript("makeCanvasItemPlumbDraggable(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
-        if (!cellInstance.getOutputVariableMap().isEmpty()) {
-            target.appendJavaScript("addSourceEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
-        }
-        if (!cellInstance.getBindingMap().isEmpty()) {
-            target.appendJavaScript("addTargetEndpoint(':itemId')".replaceAll(":itemId", listItem.getMarkupId()));
-        }
+
+        // create connection endpoints
+        target.appendJavaScript(buildEndpointsJS(cellInstance));
+
+        // repaint everything jsPlumb related for that cell (fixes Continuous anchor issues)
+        target.appendJavaScript("jsPlumb.repaintEverything(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
     }
 
     private Panel createCanvasItemPanel(CellInstance cellInstance) {
@@ -437,46 +437,41 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void onNewCanvasConnection() {
-        String sourceMarkupId = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
-        String targetMarkupId = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
+        String sourceEndpointUuid = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
+        String targetEndpointUuid = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
+        String sourceCellMarkupId = sourceEndpointUuid.substring(0, sourceEndpointUuid.indexOf("-"));
+        String targetCellMarkupId = targetEndpointUuid.substring(0, targetEndpointUuid.indexOf("-"));
+        String sourceVariableName = sourceEndpointUuid.substring(sourceEndpointUuid.indexOf("-") + 1);
+        String targetVariableName = targetEndpointUuid.substring(targetEndpointUuid.indexOf("-") + 1);
 
         CellInstance sourceCellInstance = null;
         CellInstance targetCellInstance = null;
-        CanvasItemPanel targetCanvasItemPanel = null;
+        VariableInstance source = null;
+        BindingInstance target = null;
 
         Iterator<Component> iterator = canvasItemRepeater.iterator();
         while (iterator.hasNext()) {
             Component component = iterator.next();
             CanvasItemPanel canvasItemPanel = (CanvasItemPanel) ((ListItem) component).get(0);
-            if (sourceMarkupId.equals(component.getMarkupId())) {
+            if (sourceCellMarkupId.equals(component.getMarkupId())) {
                 sourceCellInstance = canvasItemPanel.getCellInstance();
+                source = sourceCellInstance.getOutputVariableMap().get(sourceVariableName);
             }
-            if (targetMarkupId.equals(component.getMarkupId())) {
-                targetCanvasItemPanel = canvasItemPanel;
+            if (targetCellMarkupId.equals(component.getMarkupId())) {
                 targetCellInstance = canvasItemPanel.getCellInstance();
+                target = targetCellInstance.getBindingMap().get(targetVariableName);
             }
         }
-
-        if (canApplyAutoBinding(sourceCellInstance, targetCellInstance)) {
-            applyAutoBinding(sourceCellInstance, targetCellInstance);
-        } else {
-            if (targetCanvasItemPanel != null) {
-                targetCanvasItemPanel.editBindings(sourceCellInstance, targetCellInstance, true);
-            }
+        if (source != null && target != null) {
+            applyBinding(source, target);
         }
     }
 
-    private void applyAutoBinding(CellInstance sourceCellInstance, CellInstance targetCellInstance) {
-        BindingInstance bindingInstance = targetCellInstance.getBindingMap().values().iterator().next();
-        VariableInstance variableInstance = sourceCellInstance.getOutputVariableMap().values().iterator().next();
+    private void applyBinding(VariableInstance variableInstance, BindingInstance bindingInstance) {
         bindingInstance.setVariable(variableInstance);
-        logger.info("Auto-binding applied");
+        logger.info("Binding applied");
         notebookSession.storeCurrentNotebook();
         getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
-    }
-
-    private boolean canApplyAutoBinding(CellInstance sourceCellInstance, CellInstance targetCellInstance) {
-        return (sourceCellInstance != null) && (targetCellInstance != null) && (sourceCellInstance.getOutputVariableMap().size() == 1) && (targetCellInstance.getBindingMap().size() == 1);
     }
 
     private void addConnectionsRenderBehavior() {
@@ -498,31 +493,40 @@ public class NotebookCanvasPage extends WebPage {
 
         };
         add(behavior);
-
     }
 
     private String buildConnectionsJS() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Long cellId : canvasItemRepeater.getList()) {
             CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellId);
-            if (!cellInstance.getOutputVariableMap().isEmpty()) {
-                stringBuilder.append("addSourceEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
-            }
-            if (!cellInstance.getBindingMap().isEmpty()) {
-                stringBuilder.append("addTargetEndpoint('" + CANVAS_ITEM_PREFIX + cellInstance.getId() + "');\r\n");
-            }
+            stringBuilder.append(buildEndpointsJS(cellInstance));
         }
-
         for (Long cellId : canvasItemRepeater.getList()) {
-            CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellId);
-            String targetId = CANVAS_ITEM_PREFIX + cellInstance.getId();
-            for (BindingInstance bindingModel : cellInstance.getBindingMap().values()) {
-                if (bindingModel.getVariable() != null) {
-                    String sourceId = CANVAS_ITEM_PREFIX + bindingModel.getVariable().getCellId();
-                    String js = "addConnection('" + sourceId + "', '" + targetId + "');\r\n";
+            CellInstance targetCellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellId);
+            String targetCellMarkupId = CANVAS_ITEM_PREFIX + targetCellInstance.getId();
+            for (BindingInstance bindingInstance : targetCellInstance.getBindingMap().values()) {
+                VariableInstance source = bindingInstance.getVariable();
+                if (source != null) {
+                    String sourceEndpointUuid = CANVAS_ITEM_PREFIX + source.getCellId() + "-" + source.getName();
+                    String targetEndpointUuid = targetCellMarkupId + "-" + bindingInstance.getName();
+                    String js = "addConnection('" + sourceEndpointUuid + "', '" + targetEndpointUuid + "');";
                     stringBuilder.append(js);
                 }
             }
+        }
+        return stringBuilder.toString();
+    }
+
+    private String buildEndpointsJS(CellInstance cellInstance) {
+        String itemId = CANVAS_ITEM_PREFIX + cellInstance.getId();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (VariableInstance variableInstance : cellInstance.getOutputVariableMap().values()) {
+            String endpointId = itemId + "-" + variableInstance.getName();
+            stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + variableInstance.getName() + "');");
+        }
+        for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
+            String endpointId = itemId + "-" + bindingInstance.getName();
+            stringBuilder.append("addTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + bindingInstance.getName() + "');");
         }
         return stringBuilder.toString();
     }

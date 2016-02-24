@@ -190,7 +190,7 @@ function fitDefinitionsArea(id) {
     $textarea.css("height", h);
 }
 
-function initCellSizeAndPosition(id, top, left, width, height) {
+function initCellSizeAndPosition(id, left, top, width, height) {
     $id = $('#' + id);
     if (width != 0) {
         $id.width(width);
@@ -205,91 +205,69 @@ function initCellSizeAndPosition(id, top, left, width, height) {
         $parent.css('left', left + 'px');
     }
 }
-/*
-function addSourceEndpoint(itemId) {
-    var sourceEndpointOptions = {
-        anchor: 'BottomCenter',
-        isSource: true,
-        maxConnections: -1,
-        paintStyle: {
-            fillStyle: "#7AB02C",
-            radius: 10
-        },
-        connectorStyle : {
-            lineWidth: 4,
-            strokeStyle: "#61B7CF",
-            joinstyle: "round"
-        }
-    };
-    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions,{uuid: itemId + "-ep1"});
-}
-
-function addTargetEndpoint(itemId) {
-    var targetEndpointOptions = {
-        endpoint: 'Dot',
-        anchor: 'TopCenter',
-        maxConnections: -1,
-        isTarget:true,
-        paintStyle : {
-            strokeStyle: "#7AB02C",
-            radius: 9,
-            lineWidth: 3
-        },
-    };
-    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions,{uuid:itemId + "-ep2"});
-}
-*/
 
 var sourceEndpointOptions = {
-        anchor:[ "Perimeter", { shape:"Rectangle" } ],
-        isSource: true,
-        maxConnections: -1,
-        paintStyle: {
-            fillStyle: "#7AB02C",
-            radius: 7
-        },
-        connectorStyle : {
-                            lineWidth: 2,
-                            strokeStyle: "#61B7CF"
-                        }
-    };
+    anchor: ["Continuous", {shape: "Rectangle", faces:["bottom"]}],
+    isSource: true,
+    maxConnections: -1,
+    paintStyle: {
+        fillStyle: "#7AB02C",
+        radius: 9
+    },
+    connectorStyle: {
+        lineWidth: 2,
+        strokeStyle: "#61B7CF"
+    }
+};
 
 var targetEndpointOptions = {
-        endpoint: 'Dot',
-        anchor:[ "Perimeter", { shape:"Rectangle" } ],
-        maxConnections: -1,
-        isTarget:true,
-        paintStyle : {
-            strokeStyle: "#7AB02C",
-            radius: 5,
-            lineWidth: 3
-        }
-    };
+    endpoint: 'Dot',
+    anchor: ["Continuous", {shape: "Rectangle", faces:["top"]}],
+    maxConnections: -1,
+    isTarget: true,
+    paintStyle: {
+        strokeStyle: "#7AB02C",
+        radius: 9,
+        lineWidth: 3
+    }
+};
 
-function addSourceEndpoint(itemId) {
-    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions,{uuid: itemId + "-ep1"});
+function addSourceEndpoint(itemId, endpointId, labelText) {
+    var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: endpointId});
+    sourceEndpoint.bind("mouseover", function(sourceEndpoint) {
+        sourceEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [1.5, 1.5]}]);
+    });
+    sourceEndpoint.bind("mouseout", function(sourceEndpoint) {
+        sourceEndpoint.removeOverlay("label");
+    });
 }
 
-function addTargetEndpoint(itemId) {
-    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions,{uuid:itemId + "-ep2"});
+function addTargetEndpoint(itemId, endpointId, labelText) {
+    var targetEndpoint = jsPlumb.addEndpoint(itemId, targetEndpointOptions, {uuid: endpointId});
+    targetEndpoint.bind("mouseover", function(targetEndpoint) {
+        targetEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [-0.5, -0.5]}]);
+    });
+    targetEndpoint.bind("mouseout", function(targetEndpoint) {
+        targetEndpoint.removeOverlay("label");
+    });
 }
 
-function addConnection(sourceMarkupId, targetMarkupId) {
+function addConnection(sourceEndpointUuid, targetEndpointUuid) {
     jsPlumb.connect({
-        uuids:[sourceMarkupId + "-ep1", targetMarkupId + "-ep2"],
-        connector: [ "Flowchart", { gap: 10, cornerRadius: 5 } ],
+        uuids: [sourceEndpointUuid, targetEndpointUuid],
+        connector: ["Flowchart", {gap: 10, cornerRadius: 5}],
         overlays: [
             ["Arrow", {location: 1, id: "arrow", length: 14, foldback: 0.8}]
         ]
-        });
+    });
 }
 
 function initJsPlumb() {
     jsPlumb.setContainer($('#plumbContainer'));
 
     jsPlumb.bind("beforeDrop", function (i, c) {
-        var sourceId = i.connection.sourceId;
-        var targetId = i.connection.targetId;
+        var sourceId = i.connection.endpoints[0].getUuid();
+        var targetId = i.dropEndpoint.getUuid();
         onNotebookCanvasNewConnection(sourceId, targetId);
         return false;
     });
