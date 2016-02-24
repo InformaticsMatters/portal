@@ -307,6 +307,9 @@ public class NotebookCanvasPage extends WebPage {
 
         // create connection endpoints
         target.appendJavaScript(buildEndpointsJS(cellInstance));
+
+        // repaint everything jsPlumb related for that cell (fixes Continuous anchor issues)
+        target.appendJavaScript("jsPlumb.repaintEverything(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
     }
 
     private Panel createCanvasItemPanel(CellInstance cellInstance) {
@@ -466,7 +469,7 @@ public class NotebookCanvasPage extends WebPage {
 
     private void applyBinding(VariableInstance variableInstance, BindingInstance bindingInstance) {
         bindingInstance.setVariable(variableInstance);
-        logger.info("Auto-binding applied");
+        logger.info("Binding applied");
         notebookSession.storeCurrentNotebook();
         getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
     }
@@ -490,7 +493,6 @@ public class NotebookCanvasPage extends WebPage {
 
         };
         add(behavior);
-
     }
 
     private String buildConnectionsJS() {
