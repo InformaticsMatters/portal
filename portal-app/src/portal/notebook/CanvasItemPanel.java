@@ -6,6 +6,8 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
 
@@ -13,6 +15,7 @@ import javax.inject.Inject;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(CanvasItemPanel.class);
     private final Long cellId;
     @Inject
     private NotebookSession notebookSession;
@@ -29,15 +32,15 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
-        String js = "initCellSizeAndPosition(':id', :top, :left, :width, :height)";
+        String js = "initCellSizeAndPosition(':id', :left, :top, :width, :height)";
         CellInstance model = getCellInstance();
         js = js.replace(":id", getMarkupId());
-        js = js.replace(":top", Integer.toString(model.getPositionTop()));
         js = js.replace(":left", Integer.toString(model.getPositionLeft()));
+        js = js.replace(":top", Integer.toString(model.getPositionTop()));
         js = js.replace(":width", Integer.toString(model.getSizeWidth()));
         js = js.replace(":height", Integer.toString(model.getSizeHeight()));
 
-        System.out.println(js);
+        logger.info(js);
 
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
