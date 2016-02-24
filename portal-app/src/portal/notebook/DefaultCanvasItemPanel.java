@@ -12,6 +12,7 @@ import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
 import portal.notebook.api.OptionInstance;
 import portal.notebook.api.VariableInstance;
+import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -119,13 +120,17 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private void addVariableEditor(ListItem<VariableInstance> listItem) {
         VariableInstance variableInstance = listItem.getModelObject();
         FieldEditorPanel fieldEditorPanel = createVariableEditor(variableInstance);
-        listItem.add((Component) fieldEditorPanel);
+        listItem.add(fieldEditorPanel);
     }
 
     private FieldEditorPanel createVariableEditor(VariableInstance variableInstance) {
         VariableFieldEditorModel editorModel = new VariableFieldEditorModel(variableInstance);
         variableEditorModelMap.put(variableInstance.getName(), editorModel);
-        return new DummyFieldEditorPanel("variable", editorModel);
+        if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.VALUE)) {
+            return new StringFieldEditorPanel("variableEditor", editorModel); // for now
+        } else {
+            return new DummyFieldEditorPanel("variableEditor", editorModel);
+        }
     }
 
 
