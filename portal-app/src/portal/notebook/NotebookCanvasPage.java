@@ -318,7 +318,7 @@ public class NotebookCanvasPage extends WebPage {
         if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCanvasItemPanel("item", cellInstance.getId());
         } else if (ChemblActivitiesFetcherCellDefinition.CELL_NAME.equals(cellType.getName())) {
-            return new ChemblActivitiesFetcherCanvasItemPanel("item", cellInstance.getId());
+            return new DefaultCanvasItemPanel("item", cellInstance.getId());
         } else if (SdfUploadCellDefinition.CELL_NAME.equals(cellType.getName())) {
             return new SDFUploadCanvasItemPanel("item", cellInstance.getId());
         } else if (CsvUploadCellDefinition.CELL_NAME.equals(cellType.getName())) {
