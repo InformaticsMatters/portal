@@ -5,8 +5,11 @@ import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.SdfUpload;
 import org.squonk.notebook.api.VariableKey;
+import org.squonk.options.FileTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
+
+import java.io.File;
 
 /**
  * Created by timbo on 29/01/16.
@@ -14,6 +17,7 @@ import portal.notebook.api.*;
 public class SdfUploadCellDefinition extends CellDefinition {
 
     public static final String OPT_NAME_FIELD_NAME = SdfUpload.OPTION_NAME_FIELD_NAME;
+    public static final String OPT_FILE_UPLOAD = SdfUpload.OPTION_FILE_UPLOAD;
 
     public static final String CELL_NAME = "SdfUpload";
 
@@ -21,6 +25,7 @@ public class SdfUploadCellDefinition extends CellDefinition {
         super(CELL_NAME, "SDF upload");
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor<File>(new String[] {"sdf"}), OPT_FILE_UPLOAD, "SD File", "Upload SD file"));
         getOptionDefinitionList().add(new OptionDescriptor<>(
                 String.class, OPT_NAME_FIELD_NAME,
                 "Name field name", "Name of the field to use for the molecule name (the part before the CTAB block)")
