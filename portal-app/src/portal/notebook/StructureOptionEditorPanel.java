@@ -12,10 +12,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.options.OptionDescriptor;
+import portal.notebook.api.OptionInstance;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 
 import java.awt.*;
@@ -23,24 +23,25 @@ import java.awt.*;
 /**
  * @author simetrias
  */
-public class StructureOptionEditorPanel extends Panel {
+public class StructureOptionEditorPanel extends  OptionEditorPanel {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
     private static final Logger logger = LoggerFactory.getLogger(StructureOptionEditorPanel.class);
-    private final IModel<String> optionModel;
     private final String uniqueMarvinName;
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
+    private Model<String> model;
 
-    public StructureOptionEditorPanel(String id, String uniqueMarvinName, OptionDescriptor optionDefinition, IModel<String> optionModel) {
-        super(id);
+    public StructureOptionEditorPanel(String id, String uniqueMarvinName, OptionInstance optionInstance) {
+        super(id, optionInstance);
         this.uniqueMarvinName = uniqueMarvinName;
-        this.optionModel = optionModel;
-        addComponents(optionDefinition, optionModel);
+        addComponents();
     }
 
-    private void addComponents(OptionDescriptor optionDefinition, IModel<String> optionModel) {
-        add(new Label("label", optionDefinition.getDisplayName()));
+    private void addComponents() {
+        model = new Model<>();
+        model.setObject((String)getOptionInstance().getValue());
+        add(new Label("label", getOptionInstance().getOptionDescriptor().getDisplayName()));
 
 
         RenderedDynamicImageResource renderedDynamicImageResource = new RenderedDynamicImageResource(getRectangle().width, getRectangle().height) {
@@ -93,11 +94,15 @@ public class StructureOptionEditorPanel extends Panel {
             }
             Molecule molecule = MolImporter.importMol(sketchData);
             String smiles = MolExporter.exportToFormat(molecule, "smiles");
-            optionModel.setObject(smiles);
+            model.setObject(smiles);
             logger.info(smiles);
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    public void storeModel() {
+        getOptionInstance().setValue(model.getObject());
     }
 
     private void refreshThumbnail() {

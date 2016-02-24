@@ -111,16 +111,9 @@ public class NotebookInstance implements Serializable {
             cell.getBindingMap().put(bindingDefinition.getName(), binding);
         }
         for (OptionDescriptor optionDefinition : cellDefinition.getOptionDefinitionList()) {
-            OptionInstance<Object> option = new OptionInstance<>();
-            option.setName(optionDefinition.getName());
-            option.setDisplayName(optionDefinition.getDisplayName());
-            option.setValue(optionDefinition.getDefaultValue());
-            if (optionDefinition.getPicklistValueList() != null) {
-                for (Object value : optionDefinition.getPicklistValueList()) {
-                    option.addPickListValue(value);
-                }
-            }
-            cell.getOptionMap().put(option.getName(), option);
+            OptionInstance option = new OptionInstance();
+            option.setOptionDescriptor(optionDefinition);
+            cell.getOptionMap().put(optionDefinition.getName(), option);
         }
         return cell;
     }
@@ -172,7 +165,7 @@ public class NotebookInstance implements Serializable {
         }
         for (OptionInstance optionInstance : cellInstance.getOptionMap().values()) {
             if (optionInstance.isDirty()) {
-                localCellInstance.getOptionMap().get(optionInstance.getName()).setValue(optionInstance.getValue());
+                localCellInstance.getOptionMap().get(optionInstance.getOptionDescriptor().getName()).setValue(optionInstance.getValue());
             }
         }
         for (VariableInstance variableInstance : cellInstance.getOutputVariableMap().values()) {
