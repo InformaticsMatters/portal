@@ -15,7 +15,11 @@ import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author simetrias
@@ -23,8 +27,8 @@ import java.util.*;
 public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultCanvasItemPanel.class.getName());
-    private Map<String, OptionFieldEditorModel> optionEditorModelMap;
-    private Map<String, VariableFieldEditorModel> variableEditorModelMap;
+    private Map<String, FieldEditorModel> optionEditorModelMap;
+    private Map<String, FieldEditorModel> variableEditorModelMap;
     private Form form;
     @Inject
     private NotebookSession notebookSession;
@@ -100,32 +104,35 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void storeVariables() {
-        for (VariableFieldEditorModel variableEditorModel : variableEditorModelMap.values()) {
-            VariableInstance variableInstance = getCellInstance().getOutputVariableMap().get(variableEditorModel.getVariableInstance().getName());
-            variableInstance.setValue(variableEditorModel.getValue());
+        for (String name : variableEditorModelMap.keySet()) {
+            FieldEditorModel editorModel = variableEditorModelMap.get(name);
+            VariableInstance variableInstance = getCellInstance().getOutputVariableMap().get(name);
+            variableInstance.setValue(editorModel.getValue());
         }
     }
 
     private void storeOptions() {
-        for (OptionFieldEditorModel optionFieldEditorModel : optionEditorModelMap.values()) {
-            OptionInstance optionInstance = getCellInstance().getOptionMap().get(optionFieldEditorModel.getOptionInstance().getOptionDescriptor().getName());
-            optionInstance.setValue(optionFieldEditorModel.getValue());
+        for (String name : optionEditorModelMap.keySet()) {
+            FieldEditorModel editorModel = optionEditorModelMap.get(name);
+            OptionInstance optionInstance = getCellInstance().getOptionMap().get(name);
+            optionInstance.setValue(editorModel.getValue());
         }
     }
 
     private void addVariableEditor(ListItem<VariableInstance> listItem) {
         VariableInstance variableInstance = listItem.getModelObject();
         FieldEditorPanel fieldEditorPanel = createVariableEditor(variableInstance);
+        variableEditorModelMap.put(variableInstance.getName(), fieldEditorPanel.getFieldEditorModel());
         listItem.add(fieldEditorPanel);
     }
 
     private FieldEditorPanel createVariableEditor(VariableInstance variableInstance) {
-        VariableFieldEditorModel editorModel = new VariableFieldEditorModel(variableInstance);
-        variableEditorModelMap.put(variableInstance.getName(), editorModel);
         if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.STRING)) {
-            return new StringFieldEditorPanel("variableEditor", editorModel); // for now
+            return new StringFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
+        } else if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.INTEGER)) {
+            return new IntegerFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName())); // for now
         } else {
-            return new DummyFieldEditorPanel("variableEditor", editorModel);
+            return new DummyFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
         }
     }
 
@@ -133,23 +140,24 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private void addOptionEditor(ListItem<OptionInstance> listItem) {
         OptionInstance optionInstance = listItem.getModelObject();
         FieldEditorPanel fieldEditorPanel = createOptionEditor(optionInstance);
+        optionEditorModelMap.put(optionInstance.getOptionDescriptor().getName(), fieldEditorPanel.getFieldEditorModel());
         listItem.add(fieldEditorPanel);
     }
 
     private FieldEditorPanel createOptionEditor(OptionInstance optionInstance) {
         OptionDescriptor optionDefinition = optionInstance.getOptionDescriptor();
-        OptionFieldEditorModel optionFieldEditorModel = new OptionFieldEditorModel(optionInstance);
-        optionEditorModelMap.put(optionInstance.getOptionDescriptor().getName(), optionFieldEditorModel);
         if (OptionType.SIMPLE.equals(optionDefinition.getOptionType())) {
-            if (optionDefinition.getTypeDescriptor().getType() == String.class) {
-                return new StringFieldEditorPanel("optionEditor", optionFieldEditorModel);
-            } else if (optionDefinition.getTypeDescriptor().getType() == Structure.class) {
-                return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", optionFieldEditorModel);
+            if (optionDefinition.getTypeDescriptor().getType() == Structure.class) {
+                return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+            } else if (optionDefinition.getTypeDescriptor().getType() == String.class) {
+                return new StringFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+            } else if (optionDefinition.getTypeDescriptor().getType() == Integer.class) {
+                return new IntegerFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else {
-                return new StringFieldEditorPanel("optionEditor", optionFieldEditorModel); // for now
+                return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             }
         } else {
-            return new StringFieldEditorPanel("optionEditor", optionFieldEditorModel); // for now
+            return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
         }
     }
 

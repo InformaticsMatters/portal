@@ -2,9 +2,14 @@ package portal.notebook;
 
 import java.io.Serializable;
 
-public abstract class FieldEditorModel implements Serializable {
+public class FieldEditorModel implements Serializable {
+    private final String displayName;
     private Object value;
 
+    protected FieldEditorModel(Object value, String displayName) {
+        this.value = value;
+        this.displayName = displayName;
+    }
 
     public Object getValue() {
         return value;
@@ -14,6 +19,8 @@ public abstract class FieldEditorModel implements Serializable {
         this.value = value;
     }
 
-    abstract String getDisplayName();
+    public String getDisplayName() {
+        return displayName;
+    }
 
 }
