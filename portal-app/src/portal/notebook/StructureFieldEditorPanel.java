@@ -67,7 +67,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
 
             @Override
             protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
-                String currentSketchData = marvinSketcherPanel.getSketchData();
+                String currentSketchData = model.getObject();
                 if (currentSketchData == null) {
                     currentSketchData = "<cml><MDocument></MDocument></cml>";
                 }
@@ -129,7 +129,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
     private boolean renderThumbnail(Graphics2D graphics2D) {
         try {
             MolPrinter molPrinter = new MolPrinter();
-            String sketchData =model.getObject();
+            String sketchData = model.getObject();
             if (sketchData == null) {
                 sketchData = "<cml><MDocument></MDocument></cml>";
             }

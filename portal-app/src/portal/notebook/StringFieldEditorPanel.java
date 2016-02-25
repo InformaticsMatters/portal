@@ -1,18 +1,11 @@
 package portal.notebook;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
-import portal.notebook.api.OptionInstance;
 
-import java.io.Serializable;
-
-/**
- * @author simetrias
- */
 public class StringFieldEditorPanel extends FieldEditorPanel {
-
-    private Model<String> model;
 
     public StringFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
         super(id, fieldEditorModel);
@@ -20,7 +13,7 @@ public class StringFieldEditorPanel extends FieldEditorPanel {
     }
 
     private void addComponents() {
-        model = new Model<String>(){
+        Model<String> model = new Model<String>() {
             @Override
             public String getObject() {
                 return (String)getFieldEditorModel().getValue();
@@ -32,8 +25,7 @@ public class StringFieldEditorPanel extends FieldEditorPanel {
             }
         };
         add(new Label("label", getFieldEditorModel().getDisplayName()));
-        TextField<String> stringTextField = new TextField<>("value", model);
-        add(stringTextField);
+        TextField<String> textField = new TextField<>("value", model);
+        add(textField);
     }
-
 }
