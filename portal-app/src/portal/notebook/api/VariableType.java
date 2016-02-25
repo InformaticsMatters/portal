@@ -1,7 +1,9 @@
 package portal.notebook.api;
 
 public enum VariableType {
-    VALUE,
+    STRING,
+    INTEGER,
+    REAL,
     DATASET,
     FILE,
     STREAM;

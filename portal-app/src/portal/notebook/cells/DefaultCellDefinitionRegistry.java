@@ -49,7 +49,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         bindingDefinition.setName(VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.VALUE);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         return cellDefinition;

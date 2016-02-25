@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -16,10 +15,7 @@ import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author simetrias
@@ -37,8 +33,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
     public DefaultCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
-        optionEditorModelMap = new HashMap<>();
-        variableEditorModelMap = new HashMap<>();
+        optionEditorModelMap = new LinkedHashMap<>();
+        variableEditorModelMap = new LinkedHashMap<>();
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
@@ -126,7 +122,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private FieldEditorPanel createVariableEditor(VariableInstance variableInstance) {
         VariableFieldEditorModel editorModel = new VariableFieldEditorModel(variableInstance);
         variableEditorModelMap.put(variableInstance.getName(), editorModel);
-        if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.VALUE)) {
+        if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.STRING)) {
             return new StringFieldEditorPanel("variableEditor", editorModel); // for now
         } else {
             return new DummyFieldEditorPanel("variableEditor", editorModel);
