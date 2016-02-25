@@ -82,6 +82,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
 
             @Override
             public void onSubmit() {
+                model.setObject(marvinSketcherPanel.getSketchData());
                 refreshThumbnail();
                 temporarilyConvertToSmiles();
                 marvinSketcherPanel.hideModal();
@@ -128,7 +129,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
     private boolean renderThumbnail(Graphics2D graphics2D) {
         try {
             MolPrinter molPrinter = new MolPrinter();
-            String sketchData = marvinSketcherPanel.getSketchData();
+            String sketchData =model.getObject();
             if (sketchData == null) {
                 sketchData = "<cml><MDocument></MDocument></cml>";
             }
