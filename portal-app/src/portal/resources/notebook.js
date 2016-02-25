@@ -207,7 +207,7 @@ function initCellSizeAndPosition(id, left, top, width, height) {
 }
 
 var sourceEndpointOptions = {
-    anchor: ["Continuous", {shape: "Rectangle", faces:["bottom"]}],
+    anchor: ["Continuous", {shape: "Rectangle", faces:["bottom", "right"]}],
     isSource: true,
     maxConnections: -1,
     paintStyle: {
@@ -222,7 +222,7 @@ var sourceEndpointOptions = {
 
 var targetEndpointOptions = {
     endpoint: 'Dot',
-    anchor: ["Continuous", {shape: "Rectangle", faces:["top"]}],
+    anchor: ["Continuous", {shape: "Rectangle", faces:["top", "left"]}],
     maxConnections: -1,
     isTarget: true,
     paintStyle: {
