@@ -1,3 +1,7 @@
+._jsPlumb_overlay {
+    z-index: 3000;
+}
+
 li {
     list-style-type: none;
 }
