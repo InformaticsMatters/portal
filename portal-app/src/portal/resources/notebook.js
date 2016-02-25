@@ -212,7 +212,7 @@ var sourceEndpointOptions = {
     maxConnections: -1,
     paintStyle: {
         fillStyle: "#7AB02C",
-        radius: 9
+        radius: 10
     },
     connectorStyle: {
         lineWidth: 2,
