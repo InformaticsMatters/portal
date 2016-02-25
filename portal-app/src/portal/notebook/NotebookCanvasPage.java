@@ -487,6 +487,7 @@ public class NotebookCanvasPage extends WebPage {
                 super.renderHead(component, response);
                 String script = "jsPlumb.bind('ready', function() {";
                 script += buildConnectionsJS();
+                script += "; jsPlumb.repaintEverything();";
                 script += "})";
                 response.render(OnDomReadyHeaderItem.forScript(script));
             }
