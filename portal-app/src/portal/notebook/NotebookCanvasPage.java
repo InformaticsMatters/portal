@@ -346,7 +346,7 @@ public class NotebookCanvasPage extends WebPage {
                 String x = getRequest().getRequestParameters().getParameterValue(POSITION_LEFT).toString();
                 String y = getRequest().getRequestParameters().getParameterValue(POSITION_TOP).toString();
 
-                logger.info("Item index " + index + " Dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
+                logger.info("Item index " + index + " dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
                 NotebookInstance notebookModel = notebookSession.getCurrentNotebookInstance();
                 int i = Integer.parseInt(index);

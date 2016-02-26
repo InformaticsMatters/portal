@@ -147,7 +147,7 @@ function makeCanvasItemResizable(width, height, id, fitCallback) {
 
         stop: function(event, ui) {
             $element = $(ui.element);
-            var index = $element.parent().index();
+            var index = $element.parent().index('.notebook-canvas-item');
             onNotebookCanvasItemResized(index, ui.size.width, ui.size.height);
         }
     });
@@ -212,7 +212,7 @@ var sourceEndpointOptions = {
     maxConnections: -1,
     paintStyle: {
         fillStyle: "#7AB02C",
-        radius: 9
+        radius: 10
     },
     connectorStyle: {
         lineWidth: 2,
