@@ -58,7 +58,8 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
 
             @Override
             protected boolean render(Graphics2D graphics2D, Attributes attributes) {
-                return renderThumbnail(graphics2D);
+                renderThumbnail(graphics2D);
+                return true;
             }
         };
 
@@ -71,10 +72,9 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
             protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
                 String mrv = toMrv(model.getObject());
                 LOGGER.info(mrv);
-                if (mrv == null) {
-                    mrv = EMPTY_MRV;
+                if (mrv != null && !mrv.isEmpty()) {
+                    marvinSketcherPanel.setSketchData(ajaxRequestTarget, mrv, "mrv");
                 }
-                marvinSketcherPanel.setSketchData(ajaxRequestTarget, mrv, "mrv");
                 marvinSketcherPanel.showModal();
             }
         });
@@ -109,27 +109,29 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
 
             @Override
             protected boolean render(Graphics2D graphics2D, Attributes attributes) {
-                return renderThumbnail(graphics2D);
+                renderThumbnail(graphics2D);
+                return true;
             }
         };
         sketchThumbnail.setImageResource(renderedDynamicImageResource);
         getRequestCycle().find(AjaxRequestTarget.class).add(sketchThumbnail);
     }
 
-    private boolean renderThumbnail(Graphics2D graphics2D) {
+    private void renderThumbnail(Graphics2D graphics2D) {
         try {
-            MolPrinter molPrinter = new MolPrinter();
-            String smiles = model.getObject();
-            String sketchData = smiles == null ? EMPTY_MRV : toMrv(smiles);
-            Molecule molecule = MolImporter.importMol(sketchData);
-            molecule.dearomatize();
-            molPrinter.setMol(molecule);
             graphics2D.setColor(Color.white);
             graphics2D.fillRect(0, 0, getRectangle().width, getRectangle().height);
-            double scale = molPrinter.maxScale(getRectangle());
-            molPrinter.setScale(scale);
-            molPrinter.paint(graphics2D, getRectangle());
-            return true;
+            String smiles = model.getObject();
+            if (smiles != null && ! smiles.isEmpty()) {
+                String sketchData = toMrv(smiles);
+                Molecule molecule = MolImporter.importMol(sketchData);
+                molecule.dearomatize();
+                MolPrinter molPrinter = new MolPrinter();
+                molPrinter.setMol(molecule);
+                double scale = molPrinter.maxScale(getRectangle());
+                molPrinter.setScale(scale);
+                molPrinter.paint(graphics2D, getRectangle());
+            }
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -137,7 +139,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
 
     private String toSmiles(String mrv) {
         try {
-            if (mrv == null) {
+            if (mrv == null || mrv.isEmpty()) {
                 return null;
             } else {
                 Molecule molecule = MolImporter.importMol(mrv);
@@ -150,7 +152,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
 
     private String toMrv(String smiles) {
         try {
-            if (smiles == null) {
+            if (smiles == null || smiles.isEmpty()) {
                return null;
             } else {
                 Molecule molecule = MolImporter.importMol(smiles);
