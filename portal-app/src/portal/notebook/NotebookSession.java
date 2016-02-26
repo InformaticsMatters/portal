@@ -263,5 +263,6 @@ public class NotebookSession implements Serializable {
     public Execution findExecution(Long cellId) {
         return notebookService.findExecution(currentNotebookInfo.getId(), cellId);
     }
+
 }
 

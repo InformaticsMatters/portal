@@ -9,7 +9,7 @@ public class VariableDefinition implements Serializable {
     private String displayName;
     private VariableType variableType;
     private Object defaultValue;
-    private boolean editable;
+    private boolean editable = false;
 
     public VariableDefinition() {
     }

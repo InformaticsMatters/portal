@@ -241,18 +241,23 @@ public class NotebookService {
 
     public File resolveContentsFile(Long notebookId, VariableInstance variable) throws Exception {
 
-        File parent = new File(System.getProperty("user.home"), "notebook-files");
-        if (!parent.exists() && !parent.mkdirs()) {
-            throw new Exception("Could not create " + parent.getAbsolutePath());
+        File root = new File(System.getProperty("user.home"), "notebook-files");
+        if (!root.exists() && !root.mkdirs()) {
+            throw new Exception("Could not create " + root.getAbsolutePath());
+        }
+
+        File folder = new File(root, "nbk-" + notebookId);
+        if (!folder.exists() && !folder.mkdirs()) {
+            throw new Exception("Could not create " + folder.getAbsolutePath());
         }
 
         switch (variable.getVariableType()) {
             case FILE:
-                return new File(parent, variable.getValue().toString());
+                return new File(folder, variable.getCellId() + "-" + variable.getName());
             case STREAM: // fallthrough intended
             case DATASET:
                 String fileName = URLEncoder.encode(variable.getCellId() + "_" + variable.getName(), "US-ASCII");
-                return new File(parent, fileName);
+                return new File(folder, fileName);
             default:
                 LOGGER.warning("Invalid variable type for file storage: " + variable.getVariableType());
                 return null;

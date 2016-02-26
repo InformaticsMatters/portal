@@ -14,7 +14,9 @@ import portal.notebook.api.VariableInstance;
 import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -131,6 +133,9 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             return new IntegerFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
         } else if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.FLOAT)) {
             return new FloatFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
+        } else if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.FILE)) {
+            VariableUploadCallback callback = new VariableUploadCallback(variableInstance);
+            return new FileFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()), callback);
         } else {
             return new DummyFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
         }
@@ -155,11 +160,41 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
                 return new IntegerFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == Float.class) {
                 return new FloatFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+            } else if (optionDefinition.getTypeDescriptor().getType() == File.class) {
+                OptionUploadCallback callback = new OptionUploadCallback(optionInstance);
+                return new FileFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()), callback);
             } else {
                 return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             }
         } else {
             return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+        }
+    }
+
+    class VariableUploadCallback implements FileFieldEditorPanel.Callback {
+        private final VariableInstance variableInstance;
+
+        VariableUploadCallback(VariableInstance variableInstance) {
+            this.variableInstance = variableInstance;
+        }
+
+        @Override
+        public void onUpload(InputStream inputStream) {
+            //temporarily this should be stored in temp space until the cell is executed
+            notebookSession.writeVariableFileContents(variableInstance, inputStream);
+        }
+    }
+
+    class OptionUploadCallback implements FileFieldEditorPanel.Callback {
+        private final OptionInstance optionInstance;
+
+        OptionUploadCallback(OptionInstance optionInstance) {
+            this.optionInstance = optionInstance;
+        }
+
+        @Override
+        public void onUpload(InputStream inputStream) {
+            // TO-DO
         }
     }
 

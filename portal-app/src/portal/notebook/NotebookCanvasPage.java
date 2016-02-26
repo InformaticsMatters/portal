@@ -320,7 +320,8 @@ public class NotebookCanvasPage extends WebPage {
         } else if (ChemblActivitiesFetcherCellDefinition.CELL_NAME.equals(cellType.getName())) {
             return new DefaultCanvasItemPanel("item", cellInstance.getId());
         } else if (SdfUploadCellDefinition.CELL_NAME.equals(cellType.getName())) {
-            return new SDFUploadCanvasItemPanel("item", cellInstance.getId());
+            //return new SDFUploadCanvasItemPanel("item", cellInstance.getId());
+            return new DefaultCanvasItemPanel("item", cellInstance.getId());
         } else if (CsvUploadCellDefinition.CELL_NAME.equals(cellType.getName())) {
             return new CSVUploadCanvasItemPanel("item", cellInstance.getId());
         } else if (DatasetMergerCellDefinition.CELL_NAME.equals(cellType.getName())) {

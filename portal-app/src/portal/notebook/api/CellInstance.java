@@ -1,14 +1,14 @@
 package portal.notebook.api;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CellInstance implements Serializable {
 
-    private final Map<String, BindingInstance> bindingMap = new HashMap<>();
-    private final Map<String, VariableInstance> outputVariableMap = new HashMap<>();
-    private final Map<String, OptionInstance> optionMap = new HashMap<>();
+    private final Map<String, BindingInstance> bindingMap = new LinkedHashMap<>();
+    private final Map<String, VariableInstance> outputVariableMap = new LinkedHashMap<>();
+    private final Map<String, OptionInstance> optionMap = new LinkedHashMap<>();
     private Long id;
     private String name;
     private CellDefinition cellDefinition;
