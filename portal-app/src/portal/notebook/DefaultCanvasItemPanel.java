@@ -153,6 +153,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
                 return new StringFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == Integer.class) {
                 return new IntegerFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+            } else if (optionDefinition.getTypeDescriptor().getType() == Float.class) {
+                return new FloatFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else {
                 return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             }
