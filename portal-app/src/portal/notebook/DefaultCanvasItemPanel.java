@@ -15,7 +15,6 @@ import portal.notebook.api.VariableType;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
