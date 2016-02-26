@@ -2,6 +2,7 @@
 package portal.notebook;
 
 import chemaxon.formats.MolExporter;
+import chemaxon.formats.MolFormatException;
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
@@ -25,7 +26,8 @@ import java.awt.*;
 public class StructureFieldEditorPanel extends FieldEditorPanel {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
-    private static final Logger logger = LoggerFactory.getLogger(StructureFieldEditorPanel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StructureFieldEditorPanel.class);
+    public static final String EMPTY_MRV = "<cml><MDocument></MDocument></cml>";
     private final String uniqueMarvinName;
     private MarvinSketcher marvinSketcherPanel;
     private NonCachingImage sketchThumbnail;
@@ -67,11 +69,12 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
 
             @Override
             protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
-                String currentSketchData = model.getObject();
-                if (currentSketchData == null) {
-                    currentSketchData = "<cml><MDocument></MDocument></cml>";
+                String mrv = toMrv(model.getObject());
+                LOGGER.info(mrv);
+                if (mrv == null) {
+                    mrv = EMPTY_MRV;
                 }
-                marvinSketcherPanel.setSketchData(ajaxRequestTarget, currentSketchData, "mrv");
+                marvinSketcherPanel.setSketchData(ajaxRequestTarget, mrv, "mrv");
                 marvinSketcherPanel.showModal();
             }
         });
@@ -82,9 +85,11 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
 
             @Override
             public void onSubmit() {
-                model.setObject(marvinSketcherPanel.getSketchData());
+                String mrv = marvinSketcherPanel.getSketchData();
+                LOGGER.info(mrv);
+                String smiles = toSmiles(mrv);
+                model.setObject(smiles);
                 refreshThumbnail();
-                temporarilyConvertToSmiles();
                 marvinSketcherPanel.hideModal();
             }
 
@@ -93,21 +98,6 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
             }
         });
         add(marvinSketcherPanel);
-    }
-
-    private void temporarilyConvertToSmiles() {
-        try {
-            String sketchData = marvinSketcherPanel.getSketchData();
-            if (sketchData == null) {
-                sketchData = "<cml><MDocument></MDocument></cml>";
-            }
-            Molecule molecule = MolImporter.importMol(sketchData);
-            String smiles = MolExporter.exportToFormat(molecule, "smiles");
-            model.setObject(smiles);
-            logger.info(smiles);
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
     }
 
     public void store(OptionInstance optionInstance) {
@@ -129,10 +119,8 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
     private boolean renderThumbnail(Graphics2D graphics2D) {
         try {
             MolPrinter molPrinter = new MolPrinter();
-            String sketchData = model.getObject();
-            if (sketchData == null) {
-                sketchData = "<cml><MDocument></MDocument></cml>";
-            }
+            String smiles = model.getObject();
+            String sketchData = smiles == null ? EMPTY_MRV : toMrv(smiles);
             Molecule molecule = MolImporter.importMol(sketchData);
             molecule.dearomatize();
             molPrinter.setMol(molecule);
@@ -144,6 +132,32 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
             return true;
         } catch (Throwable t) {
             throw new RuntimeException(t);
+        }
+    }
+
+    private String toSmiles(String mrv) {
+        try {
+            if (mrv == null) {
+                return null;
+            } else {
+                Molecule molecule = MolImporter.importMol(mrv);
+                return MolExporter.exportToFormat(molecule, "smiles");
+            }
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
+
+    private String toMrv(String smiles) {
+        try {
+            if (smiles == null) {
+               return null;
+            } else {
+                Molecule molecule = MolImporter.importMol(smiles);
+                return MolExporter.exportToFormat(molecule, "mrv");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
