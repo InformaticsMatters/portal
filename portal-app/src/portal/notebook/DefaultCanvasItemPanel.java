@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultCanvasItemPanel.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCanvasItemPanel.class.getName());
     private Map<String, FieldEditorModel> optionEditorModelMap;
     private Map<String, FieldEditorModel> variableEditorModelMap;
     private Form form;
@@ -85,12 +85,11 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
-        logger.info("Executing service cell " + getCellInstance().getCellDefinition().getDescription());
         try {
             execute();
             getRequestCycle().find(AjaxRequestTarget.class).add(DefaultCanvasItemPanel.this.form);
         } catch (Throwable t) {
-            logger.error("Failed to execute service cell", t);
+            LOGGER.error("Failed to execute cell", t);
         }
     }
 
@@ -129,7 +128,9 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.STRING)) {
             return new StringFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
         } else if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.INTEGER)) {
-            return new IntegerFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName())); // for now
+            return new IntegerFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
+        } else if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.FLOAT)) {
+            return new FloatFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
         } else {
             return new DummyFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
         }
