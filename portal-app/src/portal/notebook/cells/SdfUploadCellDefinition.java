@@ -24,10 +24,8 @@ public class SdfUploadCellDefinition extends CellDefinition {
     public SdfUploadCellDefinition() {
         super(CELL_NAME, "SDF upload");
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
-        variableDefinition.setEditable(true);
         getOutputVariableDefinitionList().add(variableDefinition);
         variableDefinition = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);
-        variableDefinition.setEditable(false);
         getOutputVariableDefinitionList().add(variableDefinition);
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor<File>(new String[] {"sdf"}), OPT_FILE_UPLOAD, "SD File", "Upload SD file"));
         getOptionDefinitionList().add(new OptionDescriptor<>(

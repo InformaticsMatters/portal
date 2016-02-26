@@ -29,7 +29,6 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCanvasItemPanel.class.getName());
     private Map<String, FieldEditorModel> optionEditorModelMap;
-    private Map<String, FieldEditorModel> variableEditorModelMap;
     private Form form;
     @Inject
     private NotebookSession notebookSession;
@@ -39,7 +38,6 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     public DefaultCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
         optionEditorModelMap = new LinkedHashMap<>();
-        variableEditorModelMap = new LinkedHashMap<>();
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
@@ -48,21 +46,6 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private void addForm() {
         form = new Form("form");
         add(form);
-
-        List<VariableInstance> variableList = new ArrayList<>();
-        for (VariableInstance variableInstance : getCellInstance().getOutputVariableMap().values()) {
-            if (variableInstance.getVariableDefinition().isEditable()) {
-                variableList.add(variableInstance);
-            }
-        }
-        variableListView = new ListView<VariableInstance>("variable", variableList) {
-
-            @Override
-            protected void populateItem(ListItem<VariableInstance> listItem) {
-                addVariableEditor(listItem);
-            }
-        };
-        form.add(variableListView);
 
         List<OptionInstance> optionList = new ArrayList<>();
         for (OptionInstance optionInstance : getCellInstance().getOptionMap().values()) {
@@ -96,19 +79,11 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void execute() throws IOException {
-        storeVariables();
         storeOptions();
         notebookSession.storeCurrentNotebook();
+        commitFiles();
         notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
-    }
-
-    private void storeVariables() {
-        for (String name : variableEditorModelMap.keySet()) {
-            FieldEditorModel editorModel = variableEditorModelMap.get(name);
-            VariableInstance variableInstance = getCellInstance().getOutputVariableMap().get(name);
-            variableInstance.setValue(editorModel.getValue());
-        }
     }
 
     private void storeOptions() {
@@ -116,31 +91,22 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             FieldEditorModel editorModel = optionEditorModelMap.get(name);
             OptionInstance optionInstance = getCellInstance().getOptionMap().get(name);
             optionInstance.setValue(editorModel.getValue());
+            if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
+                VariableInstance variableInstance = findVariableInstanceForFileOption();
+                variableInstance.setValue(optionInstance.getValue());
+            }
         }
     }
 
-    private void addVariableEditor(ListItem<VariableInstance> listItem) {
-        VariableInstance variableInstance = listItem.getModelObject();
-        FieldEditorPanel fieldEditorPanel = createVariableEditor(variableInstance);
-        variableEditorModelMap.put(variableInstance.getName(), fieldEditorPanel.getFieldEditorModel());
-        listItem.add(fieldEditorPanel);
-    }
 
-    private FieldEditorPanel createVariableEditor(VariableInstance variableInstance) {
-        if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.STRING)) {
-            return new StringFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
-        } else if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.INTEGER)) {
-            return new IntegerFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
-        } else if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.FLOAT)) {
-            return new FloatFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
-        } else if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.FILE)) {
-            VariableUploadCallback callback = new VariableUploadCallback(variableInstance);
-            return new FileFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()), callback);
-        } else {
-            return new DummyFieldEditorPanel("variableEditor", new FieldEditorModel(variableInstance.getValue(), variableInstance.getDisplayName()));
+    private void commitFiles() {
+        for (OptionInstance optionInstance : getCellInstance().getOptionMap().values()) {
+            if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
+                VariableInstance variableInstance = findVariableInstanceForFileOption();
+                notebookSession.commitFileForVariable(variableInstance);
+            }
         }
     }
-
 
     private void addOptionEditor(ListItem<OptionInstance> listItem) {
         OptionInstance optionInstance = listItem.getModelObject();
@@ -171,20 +137,6 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         }
     }
 
-    class VariableUploadCallback implements FileFieldEditorPanel.Callback {
-        private final VariableInstance variableInstance;
-
-        VariableUploadCallback(VariableInstance variableInstance) {
-            this.variableInstance = variableInstance;
-        }
-
-        @Override
-        public void onUpload(InputStream inputStream) {
-            //temporarily this should be stored in temp space until the cell is executed
-            notebookSession.writeVariableFileContents(variableInstance, inputStream);
-        }
-    }
-
     class OptionUploadCallback implements FileFieldEditorPanel.Callback {
         private final OptionInstance optionInstance;
 
@@ -194,8 +146,21 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
         @Override
         public void onUpload(InputStream inputStream) {
-            // TO-DO
+            VariableInstance variableInstance = findVariableInstanceForFileOption();
+            if (variableInstance == null) {
+                throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getName());
+            }
+            notebookSession.storeTemporaryFileForVariable(variableInstance, inputStream);
         }
+    }
+
+    private VariableInstance findVariableInstanceForFileOption() {
+        for (VariableInstance variableInstance : getCellInstance().getOutputVariableMap().values()) {
+            if (variableInstance.getVariableType().equals(VariableType.FILE)) {
+                return variableInstance;
+            }
+        }
+        return null;
     }
 
 

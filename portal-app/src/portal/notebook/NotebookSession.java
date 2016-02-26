@@ -254,14 +254,17 @@ public class NotebookSession implements Serializable {
         return result;
     }
 
-    public void writeVariableFileContents(VariableInstance variableInstance, InputStream inputStream) {
-        CellInstance cellInstance = currentNotebookInstance.findCellById(variableInstance.getCellId());
-        VariableInstance variable = currentNotebookInstance.findVariable(cellInstance.getName(), variableInstance.getName());
-        notebookService.storeStreamingContents(currentNotebookInfo.getId(), variable, inputStream);
-    }
-
     public Execution findExecution(Long cellId) {
         return notebookService.findExecution(currentNotebookInfo.getId(), cellId);
+    }
+
+    public void storeTemporaryFileForVariable(VariableInstance variableInstance, InputStream inputStream) {
+        notebookService.storeTemporaryFileForVariable(currentNotebookInfo.getId(), variableInstance, inputStream);
+    }
+
+    public void commitFileForVariable(VariableInstance variableInstance) {
+        notebookService.commitFileForVariable(currentNotebookInfo.getId(), variableInstance);
+
     }
 
 }

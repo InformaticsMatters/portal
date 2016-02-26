@@ -83,9 +83,10 @@ public class CSVUploadCanvasItemPanel extends CanvasItemPanel {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
             VariableInstance variableModel = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getId(), VAR_NAME_FILECONTENT);
+            notebookSession.storeTemporaryFileForVariable(variableModel, inputStream);
             variableModel.setValue(fileName);
             notebookSession.storeCurrentNotebook();
-            notebookSession.writeVariableFileContents(variableModel, inputStream);
+            notebookSession.commitFileForVariable(variableModel);
             form.getModelObject().setFileName(upload.getClientFileName());
         }
     }

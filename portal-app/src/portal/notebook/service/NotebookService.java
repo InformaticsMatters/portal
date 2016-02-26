@@ -488,4 +488,40 @@ public class NotebookService {
 
     }
 
+    public void commitFileForVariable(Long notebookId, VariableInstance variable) {
+        try {
+            File file = resolveContentsFile(notebookId, variable);
+            File tempFile = new File(file.getAbsolutePath() + ".tmp");
+            if (!tempFile.exists()) {
+                throw new RuntimeException("Temproary file not found: " + tempFile.getAbsolutePath());
+            }
+            if (!tempFile.renameTo(file)) {
+                throw new RuntimeException("Could not rename to " + file.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void storeTemporaryFileForVariable(Long notebookId, VariableInstance variable, InputStream inputStream) {
+        try {
+            File file = resolveContentsFile(notebookId, variable);
+            File tempFile = new File(file.getAbsolutePath() + ".tmp");
+            OutputStream outputStream = new FileOutputStream(tempFile);
+            try {
+                byte[] buffer = new byte[4096];
+                int r = inputStream.read(buffer);
+                while (r > -1) {
+                    outputStream.write(buffer, 0, r);
+                    r = inputStream.read(buffer);
+                }
+                outputStream.flush();
+            } finally {
+                outputStream.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

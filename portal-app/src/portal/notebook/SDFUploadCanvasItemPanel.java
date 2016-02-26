@@ -9,9 +9,6 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import portal.notebook.cells.SdfUploadCellDefinition;
-import static portal.notebook.cells.SdfUploadCellDefinition.OPT_NAME_FIELD_NAME;
-import static portal.notebook.api.CellDefinition.VAR_NAME_FILECONTENT;
 import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -21,6 +18,9 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static portal.notebook.api.CellDefinition.VAR_NAME_FILECONTENT;
+import static portal.notebook.cells.SdfUploadCellDefinition.OPT_NAME_FIELD_NAME;
 
 public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
 
@@ -77,10 +77,11 @@ public class SDFUploadCanvasItemPanel extends CanvasItemPanel {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
             VariableInstance variableModel = notebookSession.getCurrentNotebookInstance().findVariable(getCellInstance().getName(), VAR_NAME_FILECONTENT);
+            notebookSession.storeTemporaryFileForVariable(variableModel, inputStream);
             variableModel.setValue(fileName);
             form.getModelObject().store();
             notebookSession.storeCurrentNotebook();
-            notebookSession.writeVariableFileContents(variableModel, inputStream);
+            notebookSession.commitFileForVariable(variableModel);
             form.getModelObject().setFileName(upload.getClientFileName());
         }
 
