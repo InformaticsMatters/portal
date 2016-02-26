@@ -147,7 +147,7 @@ function makeCanvasItemResizable(width, height, id, fitCallback) {
 
         stop: function(event, ui) {
             $element = $(ui.element);
-            var index = $element.parent().index();
+            var index = $element.parent().index('.notebook-canvas-item');
             onNotebookCanvasItemResized(index, ui.size.width, ui.size.height);
         }
     });
