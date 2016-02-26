@@ -323,7 +323,8 @@ public class NotebookCanvasPage extends WebPage {
             //return new SDFUploadCanvasItemPanel("item", cellInstance.getId());
             return new DefaultCanvasItemPanel("item", cellInstance.getId());
         } else if (CsvUploadCellDefinition.CELL_NAME.equals(cellType.getName())) {
-            return new CSVUploadCanvasItemPanel("item", cellInstance.getId());
+            //return new CSVUploadCanvasItemPanel("item", cellInstance.getId());
+            return new DefaultCanvasItemPanel("item", cellInstance.getId());
         } else if (DatasetMergerCellDefinition.CELL_NAME.equals(cellType.getName())) {
             return new DatasetMergerCanvasItemPanel("item", cellInstance.getId());
         } else if (ConvertToMoleculesCellDefinition.CELL_NAME.equals(cellType.getName())) {

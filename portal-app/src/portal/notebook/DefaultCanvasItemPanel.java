@@ -34,10 +34,12 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private NotebookSession notebookSession;
     private ListView<OptionInstance> optionListView;
     private ListView<VariableInstance> variableListView;
+    private boolean fileDirty;
 
     public DefaultCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
         optionEditorModelMap = new LinkedHashMap<>();
+        fileDirty = false;
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
@@ -81,7 +83,9 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private void execute() throws IOException {
         storeOptions();
         notebookSession.storeCurrentNotebook();
-        commitFiles();
+        if (fileDirty) {
+            commitFiles();
+        }
         notebookSession.executeCell(getCellInstance().getId());
         fireContentChanged();
     }
@@ -104,6 +108,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
                 notebookSession.commitFileForVariable(variableInstance);
+                fileDirty = false;
             }
         }
     }
@@ -120,12 +125,16 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         if (OptionType.SIMPLE.equals(optionDefinition.getOptionType())) {
             if (optionDefinition.getTypeDescriptor().getType() == Structure.class) {
                 return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+            } else if (optionDefinition.getValues() != null && optionDefinition.getValues().length > 0) {
+                return new PicklistFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()),optionInstance.getOptionDescriptor().getPicklistValueList());
             } else if (optionDefinition.getTypeDescriptor().getType() == String.class) {
                 return new StringFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == Integer.class) {
                 return new IntegerFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == Float.class) {
                 return new FloatFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+            } else if (optionDefinition.getTypeDescriptor().getType() == Boolean.class) {
+                return new BooleanFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == File.class) {
                 OptionUploadCallback callback = new OptionUploadCallback(optionInstance);
                 return new FileFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()), callback);
@@ -151,6 +160,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
                 throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getName());
             }
             notebookSession.storeTemporaryFileForVariable(variableInstance, inputStream);
+            fileDirty = true;
         }
     }
 

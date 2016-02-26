@@ -495,6 +495,9 @@ public class NotebookService {
             if (!tempFile.exists()) {
                 throw new RuntimeException("Temproary file not found: " + tempFile.getAbsolutePath());
             }
+            if (file.exists() && !file.delete() ) {
+                throw new RuntimeException("Could not remove file " + file.getAbsolutePath());
+            }
             if (!tempFile.renameTo(file)) {
                 throw new RuntimeException("Could not rename to " + file.getAbsolutePath());
             }
