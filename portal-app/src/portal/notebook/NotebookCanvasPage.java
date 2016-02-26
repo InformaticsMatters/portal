@@ -27,7 +27,6 @@ import portal.MenuPanel;
 import portal.PopupContainerProvider;
 import portal.PortalHomePage;
 import portal.notebook.api.*;
-import portal.notebook.cells.*;
 import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -317,24 +316,7 @@ public class NotebookCanvasPage extends WebPage {
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCanvasItemPanel("item", cellInstance.getId());
-        } else if (ChemblActivitiesFetcherCellDefinition.CELL_NAME.equals(cellType.getName())) {
-            return new DefaultCanvasItemPanel("item", cellInstance.getId());
-        } else if (SdfUploadCellDefinition.CELL_NAME.equals(cellType.getName())) {
-            //return new SDFUploadCanvasItemPanel("item", cellInstance.getId());
-            return new DefaultCanvasItemPanel("item", cellInstance.getId());
-        } else if (CsvUploadCellDefinition.CELL_NAME.equals(cellType.getName())) {
-            //return new CSVUploadCanvasItemPanel("item", cellInstance.getId());
-            return new DefaultCanvasItemPanel("item", cellInstance.getId());
-        } else if (DatasetMergerCellDefinition.CELL_NAME.equals(cellType.getName())) {
-            return new DatasetMergerCanvasItemPanel("item", cellInstance.getId());
-        } else if (ConvertToMoleculesCellDefinition.CELL_NAME.equals(cellType.getName())) {
-            return new ConvertToMoleculesCanvasItemPanel("item", cellInstance.getId());
-        } else if ("TransformValues".equals(cellType.getName())) {
-            return new TransformValuesCanvasItemPanel("item", cellInstance.getId());
-        } else if ("TrustedGroovyDatasetScript".equals(cellType.getName())) {
-            return new GroovyScriptTrustedCanvasItemPanel("item", cellInstance.getId());
         } else {
-            logger.warn("cell type " + cellType.getName() + " not recognised");
             return new DefaultCanvasItemPanel("item", cellInstance.getId());
         }
     }

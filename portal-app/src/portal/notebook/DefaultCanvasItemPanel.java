@@ -7,6 +7,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.notebook.api.OptionType;
+import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
 import portal.notebook.api.OptionInstance;
@@ -127,6 +128,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
                 return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else if (optionDefinition.getValues() != null && optionDefinition.getValues().length > 0) {
                 return new PicklistFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()),optionInstance.getOptionDescriptor().getPicklistValueList());
+            } else if (optionDefinition.getTypeDescriptor() instanceof MultiLineTextTypeDescriptor) {
+                return new MultilineFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == String.class) {
                 return new StringFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == Integer.class) {
