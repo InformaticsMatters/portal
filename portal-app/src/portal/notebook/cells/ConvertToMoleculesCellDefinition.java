@@ -25,7 +25,9 @@ public class ConvertToMoleculesCellDefinition extends CellDefinition {
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "structureFormat",
                 "Structure Format", "Format of the structures e.g. smiles, mol")
                 .withValues(new String[]{"smiles", "mol"}));
-        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, "preserveUuid", "Preserve UUID", "Keep the existing UUID or generate a new one").withMinValues(1));
+        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, "preserveUuid", "Preserve UUID", "Keep the existing UUID or generate a new one")
+                .withMinValues(1)
+                .withDefaultValue(true));
     }
 
     @Override

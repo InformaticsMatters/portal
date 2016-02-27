@@ -20,7 +20,8 @@ public class DatasetMergerCellDefinition extends CellDefinition {
         super(CELL_NAME, "Merge datasets into one");
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, DatasetMerger.OPTION_MERGE_FIELD_NAME, "Merge field name", "Name of value field which identifies equivalent entries"));
-        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, DatasetMerger.OPTION_KEEP_FIRST, "Prefix", "Prefix for result fields"));
+        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, DatasetMerger.OPTION_KEEP_FIRST, "When duplicate keep first", "When duplicate field name use the existing value rather than the new one")
+        .withDefaultValue(true));
         for (int i = 0; i < 5; i++) {
             getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT + (i + 1), "Input dataset " + (i + 1), VariableType.DATASET));
         }
