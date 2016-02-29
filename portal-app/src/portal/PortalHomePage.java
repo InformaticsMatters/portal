@@ -8,7 +8,6 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.CssResourceReference;
 import portal.notebook.NotebookCanvasPage;
-import portal.workflow.WorkflowPage;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -41,15 +40,6 @@ public class PortalHomePage extends WebPage implements SecuredComponent {
     }
 
     private void addActions() {
-
-        AjaxLink workflowLink = new AjaxLink("workflow") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                setResponsePage(WorkflowPage.class);
-            }
-        };
-        add(workflowLink);
 
         AjaxLink notebookLink = new AjaxLink("notebook") {
 

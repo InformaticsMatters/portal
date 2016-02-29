@@ -10,7 +10,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import portal.notebook.NotebookCanvasPage;
-import portal.workflow.WorkflowPage;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -49,16 +48,6 @@ public class MenuPanel extends Panel {
             }
         };
         add(notebookLink);
-
-        AjaxLink workflowLink = new AjaxLink("workflow") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                setResponsePage(WorkflowPage.class);
-                add(attributeAppender);
-            }
-        };
-        add(workflowLink);
 
         leftSidebarLink = new AjaxLink("leftSidebarLink") {
 
