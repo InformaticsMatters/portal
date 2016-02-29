@@ -33,13 +33,18 @@ public class PropertiesFileNotebookConfig implements NotebookConfig {
     @PostConstruct
     public void loadConfig() {
         persistenceProperties = new Properties();
-        File propertiesFile = new File(servletContext.getRealPath("WEB-INF/persistence.properties"));
+        String path = servletContext.getRealPath("/WEB-INF/persistence.properties");
+        boolean loaded = false;
+        if (path != null) {
+            File propertiesFile = new File(path);
+            logger.info("Looking for config file at " + propertiesFile.getAbsolutePath());
 
-        logger.info("Looking for config file at " + propertiesFile.getAbsolutePath());
-
-        if (propertiesFile.exists()) {
-            loadPersistencePropertiesFile(propertiesFile, persistenceProperties);
-        } else {
+            if (propertiesFile.exists()) {
+                loadPersistencePropertiesFile(propertiesFile, persistenceProperties);
+                loaded = true;
+            }
+        }
+        if (!loaded) {
             loadDefaultPersistenceProperties(persistenceProperties);
         }
         logger.info("Using database " + persistenceProperties.getProperty("javax.persistence.jdbc.url"));
