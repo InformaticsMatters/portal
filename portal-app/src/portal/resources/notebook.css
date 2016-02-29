@@ -288,3 +288,8 @@ div.ui-resizable-handle.ui-resizable-s {
     -webkit-padding-start: 0;
     padding-left: 0;
 }
+
+.checkbox {
+    margin-top: 3px;
+    margin-right: 3px;
+}
