@@ -123,29 +123,30 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
     private FieldEditorPanel createOptionEditor(OptionInstance optionInstance) {
         OptionDescriptor optionDefinition = optionInstance.getOptionDescriptor();
+        Object value = optionInstance.getValue() == null ? optionDefinition.getDefaultValue() : optionInstance.getValue();
         if (OptionType.SIMPLE.equals(optionDefinition.getOptionType())) {
             if (optionDefinition.getTypeDescriptor().getType() == Structure.class) {
-                return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+                return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             } else if (optionDefinition.getValues() != null && optionDefinition.getValues().length > 0) {
-                return new PicklistFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()),optionInstance.getOptionDescriptor().getPicklistValueList());
+                return new PicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()),optionInstance.getOptionDescriptor().getPicklistValueList());
             } else if (optionDefinition.getTypeDescriptor() instanceof MultiLineTextTypeDescriptor) {
-                return new MultilineFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+                return new MultilineFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == String.class) {
-                return new StringFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+                return new StringFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == Integer.class) {
-                return new IntegerFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+                return new IntegerFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == Float.class) {
-                return new FloatFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+                return new FloatFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == Boolean.class) {
-                return new BooleanFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+                return new BooleanFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             } else if (optionDefinition.getTypeDescriptor().getType() == File.class) {
                 OptionUploadCallback callback = new OptionUploadCallback(optionInstance);
-                return new FileFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()), callback);
+                return new FileFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()), callback);
             } else {
-                return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+                return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             }
         } else {
-            return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(optionInstance.getValue(), optionDefinition.getDisplayName()));
+            return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
         }
     }
 
