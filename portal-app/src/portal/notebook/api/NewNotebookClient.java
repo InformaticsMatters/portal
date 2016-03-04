@@ -16,9 +16,9 @@ public interface NewNotebookClient {
 
     // Client API methods
 
-    NotebookDefinition createNotebookDefinition(String username);        // create a new notebook
-    List<NotebookDefinition> listNotebookDefinitions(String username);   // all those you have access to
-    NotebookDefinition fetchNotebookDefinition(Long definitionId);       // optional?
+    NotebookDescriptor createNotebookDefinition(String username);        // create a new notebook
+    List<NotebookDescriptor> listNotebookDefinitions(String username);   // all those you have access to
+    NotebookDescriptor fetchNotebookDefinition(Long definitionId);       // optional?
 
     NotebookEditable getDefaultNotebookEditable(Long definitionId, String username); // typically the last one you had open
     List<NotebookEditable> fetchNotebookEditables(Long definitionId);
@@ -59,12 +59,11 @@ public interface NewNotebookClient {
      * all NotebookEditables and NotebookSavepoints).
      *
      */
-    interface NotebookDefinition {
+    interface NotebookDescriptor {
         String getId();
         String getName();
         String getDescription();
         String getOwner();
-        List<NotebookSavepoint> getSavepoints();
     }
 
     /** A save snapshot of a notebook. Allows user to save a specific version of a notebook and go back to it

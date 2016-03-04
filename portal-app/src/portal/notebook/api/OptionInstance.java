@@ -16,6 +16,10 @@ public class OptionInstance implements Serializable {
         return value;
     }
 
+    public <T> T getValue(Class<T> type) {
+        return (T)getValue();
+    }
+
     public void setValue(Object value) {
         dirty = true;
         this.value = value;

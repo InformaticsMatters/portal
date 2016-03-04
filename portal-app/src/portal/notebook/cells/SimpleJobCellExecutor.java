@@ -10,7 +10,7 @@ import portal.notebook.api.CellInstance;
 import portal.notebook.api.NotebookInstance;
 
 /**
- * Highly opinionated cell executed that expects a single input and out datasets and used all the default names, and does
+ * Highly opinionated cell executer that expects a single input and out datasets and used all the default names, and does
  * not need special treatment of options.
  */
 class SimpleJobCellExecutor extends AbstractJobCellExecutor {
@@ -30,9 +30,21 @@ class SimpleJobCellExecutor extends AbstractJobCellExecutor {
 
         StepDefinition step = new StepDefinition(stepClassName)
                 .withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key)
-                .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
-                .withOptions(collectAllOptions(cell));
+                .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT);
+
+        handleOptions(step, cell);
 
         return buildJobDefinition(cellExecutionData.getNotebookId(), cell, step);
     }
+
+    /** Hook to allow option handling to be customised.
+     * Default is to add all the specified options as they are.
+     *
+     * @param step
+     * @param cell
+     */
+    protected void handleOptions(StepDefinition step, CellInstance cell) {
+        step.withOptions(collectAllOptions(cell));
+    }
+
 }

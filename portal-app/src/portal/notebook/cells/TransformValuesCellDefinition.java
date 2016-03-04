@@ -1,12 +1,11 @@
 package portal.notebook.cells;
 
-import com.im.lac.job.jobdef.JobDefinition;
-import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
+
+import java.util.logging.Logger;
 
 
 /**
@@ -14,14 +13,17 @@ import portal.notebook.api.*;
  */
 public class TransformValuesCellDefinition extends CellDefinition {
 
+    private static final Logger LOG = Logger.getLogger(TransformValuesCellDefinition.class.getName());
+
     public static final String CELL_NAME = "TransformValues";
+    private static final String OPT_TRANSFORMS = StepDefinitionConstants.ValueTransformer.OPTION_TRANSFORMS;
 
     public TransformValuesCellDefinition() {
         super(CELL_NAME, "Transform dataset values");
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(new MultiLineTextTypeDescriptor(10, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
-                "transformDefinitions", "Transform Definitions",
+                OPT_TRANSFORMS, "Transform Definitions",
                 "Definition of the transforms to perform"));
     }
 
