@@ -2,6 +2,8 @@ package portal.notebook;
 
 import org.apache.wicket.AttributeModifier;
 
+import java.io.Serializable;
+
 /**
  * @author simetrias
  */
@@ -23,11 +25,11 @@ public class ToggleCssAttributeModifier extends AttributeModifier {
             if (currentValue == null) {
                 result = css;
             } else {
-                result = css + ";" + currentValue;
+                result = css + " " + currentValue;
             }
         } else {
-            if (currentValue != null && currentValue.contains(css + ";")) {
-                result = currentValue.replace(css + ";", "");
+            if (currentValue != null && currentValue.contains(css + " ")) {
+                result = currentValue.replace(css + " ", "");
             } else {
                 result = currentValue;
             }
@@ -35,7 +37,7 @@ public class ToggleCssAttributeModifier extends AttributeModifier {
         return result;
     }
 
-    public interface Toggler {
+    public interface Toggler extends Serializable {
 
         boolean cssActiveIf();
 

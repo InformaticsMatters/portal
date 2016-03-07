@@ -121,8 +121,13 @@ public class CellTitleBarPanel extends Panel {
         openPopupLink.setOutputMarkupId(true);
         add(openPopupLink);
 
-        this.add(new ToggleCssAttributeModifier("failed-class", () -> isFailed()));
-        //this.add(new AttributeAppender("class", isFailed() ? "failed-class" : ""));
+        this.add(new ToggleCssAttributeModifier("failed-class", new ToggleCssAttributeModifier.Toggler() {
+            @Override
+            public boolean cssActiveIf() {
+                return isFailed();
+            }
+        }));
+
     }
 
     private void decoratePopupLink(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {
