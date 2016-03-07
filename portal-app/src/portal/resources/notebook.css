@@ -44,6 +44,12 @@ li {
   border-bottom: 1px solid #ddd;
 }
 
+.notebook-canvas-item-content > .titleBar.failed-class {
+   box-shadow: 0 0 0 #e0b4b4 inset;
+   background: #fff6f6 !important;
+   color: #9f3a38 !important;
+}
+
 .notebook-canvas-item-content > .content {
   background: none;
   margin: 0em;
@@ -294,6 +300,3 @@ div.ui-resizable-handle.ui-resizable-s {
     margin-right: 3px;
 }
 
-.failed-class {
-    background-color: red;
-}
