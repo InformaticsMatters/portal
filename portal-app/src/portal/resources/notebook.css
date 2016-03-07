@@ -293,3 +293,7 @@ div.ui-resizable-handle.ui-resizable-s {
     margin-top: 3px;
     margin-right: 3px;
 }
+
+.failed-class {
+    background-color: red;
+}
