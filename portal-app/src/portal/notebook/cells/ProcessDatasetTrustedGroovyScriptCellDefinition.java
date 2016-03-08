@@ -14,7 +14,7 @@ public class ProcessDatasetTrustedGroovyScriptCellDefinition extends CellDefinit
     public static final String CELL_NAME = "TrustedGroovyDatasetScript";
 
     public ProcessDatasetTrustedGroovyScriptCellDefinition() {
-        super(CELL_NAME, "Groovy Script (trusted)");
+        super(CELL_NAME, "Groovy Script (trusted)", new String[] {"script", "groovy"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(
