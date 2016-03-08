@@ -22,7 +22,7 @@ public class SdfUploadCellDefinition extends CellDefinition {
     public static final String CELL_NAME = "SdfUpload";
 
     public SdfUploadCellDefinition() {
-        super(CELL_NAME, "SDF upload");
+        super(CELL_NAME, "SDF upload", new String[] {"file", "upload", "sdf"});
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
         getOutputVariableDefinitionList().add(variableDefinition);
         variableDefinition = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);

@@ -8,17 +8,16 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import portal.notebook.NotebookCanvasPage;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class MenuPanel extends Panel {
 
     @Inject
     private SessionContext sessionContext;
+    @Inject
+    private LogoutHandler logoutHandler;
     private AjaxLink leftSidebarLink;
 
     public MenuPanel(String id) {
@@ -63,12 +62,7 @@ public class MenuPanel extends Panel {
 
             @Override
             public void onClick() {
-                HttpServletResponse response = (HttpServletResponse) RequestCycle.get().getResponse().getContainerResponse();
-                try {
-                    response.sendError(401);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                logoutHandler.logout();
             }
         });
 

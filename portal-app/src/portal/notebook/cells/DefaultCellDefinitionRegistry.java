@@ -40,10 +40,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private static CellDefinition createTableDisplayCellDefinition() {
-        CellDefinition cellDefinition = new SimpleCellDefinition();
-        cellDefinition.setName("TableDisplay");
-        cellDefinition.setDescription("Table display");
-        cellDefinition.setExecutable(Boolean.FALSE);
+        CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", new String[] {"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(VAR_NAME_INPUT);

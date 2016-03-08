@@ -111,11 +111,50 @@ public class NotebookSession implements Serializable {
         reloadCurrentNotebook();
     }
 
-    public List<CellDefinition> listCellDefinition() {
+    public List<CellDefinition> listCellDefinition(CellDefinitionFilterData cellDefinitionFilterData) {
         List<CellDefinition> list = new ArrayList<>();
-        list.addAll(cellDefinitionRegistry.listCellDefinition());
+        Collection<CellDefinition> filteredCellDefinitions = listFilteredCellDefinition(cellDefinitionFilterData);
+        list.addAll(filteredCellDefinitions);
         this.cellDefinitionList = list;
         return list;
+    }
+
+    private Collection<CellDefinition> listFilteredCellDefinition(CellDefinitionFilterData filter) {
+        Collection<CellDefinition> filteredList = new ArrayList<>();
+        for (CellDefinition cellDefinition : cellDefinitionRegistry.listCellDefinition()) {
+            if (filter != null && filter.getPattern() != null) {
+                if (cellDefinitionMatchesAllPatterns(cellDefinition, filter)) {
+                    filteredList.add(cellDefinition);
+                }
+            } else {
+                filteredList.add(cellDefinition);
+            }
+        }
+        return filteredList;
+    }
+
+    private boolean cellDefinitionMatchesAllPatterns(CellDefinition cellDefinition, CellDefinitionFilterData filter) {
+        boolean result = true;
+        String[] patternList = filter.getPattern().split(" ");
+        for (String pattern : patternList) {
+            String cleanPattern = pattern.trim();
+            if (!cellDefinitionMatchesPattern(cellDefinition, cleanPattern)) {
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+
+    private boolean cellDefinitionMatchesPattern(CellDefinition cellDefinition, String pattern) {
+        boolean result = false;
+        for (String tag : cellDefinition.getTags()) {
+            if (tag.toLowerCase().startsWith(pattern.toLowerCase())) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 
     public List<UUID> listAllUuids(IDatasetDescriptor datasetDescriptor) {

@@ -51,6 +51,11 @@ public class ServiceCellDefinition extends CellDefinition {
         return true;
     }
 
+    @Override
+    public String[] getTags() {
+        return serviceDescriptor.getTags();
+    }
+
 
     class Executor extends AbstractJobCellExecutor {
 

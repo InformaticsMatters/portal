@@ -7,6 +7,7 @@ import org.squonk.security.impl.KeycloakUserDetailsManager;
 import javax.enterprise.context.SessionScoped;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.net.URI;
 
 /**
  * @author simetrias
@@ -28,5 +29,19 @@ public class SessionContext implements Serializable {
 
     private void runOnce(UserDetails userDetails) {
         // perform tasks needed when this user session first activates
+    }
+
+    public String getLogoutURL() {
+        try {
+            HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+            URI logoutURI = defaultUserDetailsManager.getLogoutUrl(request, "/");
+            if (logoutURI == null) {
+                return null;
+            } else {
+                return logoutURI.toURL().toString();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

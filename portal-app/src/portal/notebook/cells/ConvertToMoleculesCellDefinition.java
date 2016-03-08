@@ -17,7 +17,7 @@ public class ConvertToMoleculesCellDefinition extends CellDefinition {
     public static final String CELL_NAME = "ConvertToMolecules";
 
     public ConvertToMoleculesCellDefinition() {
-        super(CELL_NAME, "Convert to Molecules");
+        super(CELL_NAME, "Convert to Molecules", new String[] {"convert", "transform", "structures", "molecules"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "structureFieldName", "Structure Field Name",
