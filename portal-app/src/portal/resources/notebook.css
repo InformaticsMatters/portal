@@ -44,6 +44,11 @@ li {
   border-bottom: 1px solid #ddd;
 }
 
+.titleBar .wicket-ajax-indicator img {
+    height: 12px;
+    width: 12px;
+}
+
 .notebook-canvas-item-content > .titleBar.failed-class {
    box-shadow: 0 0 0 #e0b4b4 inset;
    background: #fff6f6 !important;

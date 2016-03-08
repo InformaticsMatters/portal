@@ -22,7 +22,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
     public static final String OPT_FIRST_LINE_IS_HEADER = CsvUpload.OPTION_NAME_FIRST_LINE_IS_HEADER;
 
     public CsvUploadCellDefinition() {
-        super(CELL_NAME, "CSV upload");
+        super(CELL_NAME, "CSV upload", new String[] {"file", "upload", "csv", "tab"});
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
         getOutputVariableDefinitionList().add(variableDefinition);
         variableDefinition  = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);

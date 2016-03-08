@@ -25,17 +25,20 @@ public abstract class CellDefinition implements Serializable {
     private final List<BindingDefinition> bindingDefinitionList = new ArrayList<>();
     private final List<VariableDefinition> outputVariableDefinitionList = new ArrayList<>();
     private final List<OptionDescriptor> optionDefinitionList = new ArrayList<>();
+    private String[] tags;
 
 
-    public CellDefinition(String name, String description, Boolean executable) {
+    public CellDefinition(String name, String description, String[] tags, Boolean executable) {
         this.name = name;
         this.description = description;
+        this.tags = tags;
         this.executable = executable;
     }
 
-    public CellDefinition(String name, String description) {
+    public CellDefinition(String name, String description,String[] tags) {
         this.name = name;
         this.description = description;
+        this.tags = tags;
         this.executable = true;
     }
 
@@ -86,6 +89,10 @@ public abstract class CellDefinition implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String[] getTags() {
+        return tags;
     }
 
     @XmlTransient
