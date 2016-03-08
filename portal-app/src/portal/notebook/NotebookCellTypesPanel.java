@@ -2,6 +2,9 @@ package portal.notebook;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
+import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
@@ -10,6 +13,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.util.time.Duration;
 import portal.notebook.api.CellDefinition;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -44,6 +48,19 @@ public class NotebookCellTypesPanel extends Panel {
         add(searchForm);
 
         TextField<String> patternField = new TextField<>("pattern");
+        patternField.add(new AjaxFormSubmitBehavior(searchForm, "keyup") {
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                refreshCells();
+            }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setThrottlingSettings(new ThrottlingSettings(patternField.getMarkupId(), Duration.milliseconds(500), true));
+            }
+        });
         searchForm.add(patternField);
 
         AjaxSubmitLink searchAction = new IndicatingAjaxSubmitLink("search") {
