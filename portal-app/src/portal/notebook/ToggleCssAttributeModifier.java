@@ -21,15 +21,16 @@ public class ToggleCssAttributeModifier extends AttributeModifier {
     @Override
     protected String newValue(String currentValue, String replacementValue) {
         String result = null;
+        String token = css + " ";
         if (toggler.cssActiveIf()) {
             if (currentValue == null) {
                 result = css;
             } else {
-                result = css + " " + currentValue;
+                result = token + currentValue;
             }
         } else {
-            if (currentValue != null && currentValue.contains(css + " ")) {
-                result = currentValue.replace(css + " ", "");
+            if (currentValue != null && currentValue.contains(token)) {
+                result = currentValue.replace(token, "");
             } else {
                 result = currentValue;
             }

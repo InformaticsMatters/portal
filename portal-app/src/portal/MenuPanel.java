@@ -76,7 +76,7 @@ public class MenuPanel extends Panel {
     }
 
     public String getUserDisplayName() {
-        return sessionContext.getLoggedInUserDetails().getFirstName();
+        return sessionContext.getLoggedInUserDetails().getDisplayName();
     }
 
     public void setLeftSideItemVisible(boolean value) {
