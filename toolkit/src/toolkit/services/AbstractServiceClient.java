@@ -1,15 +1,16 @@
 package toolkit.services;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.security.UserDetailsManager;
+import org.squonk.security.impl.KeycloakUserDetailsManager;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
@@ -22,10 +23,12 @@ import java.util.Map;
 public abstract class AbstractServiceClient {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractServiceClient.class.getName());
+    private UserDetailsManager userDetailsManager = new KeycloakUserDetailsManager();
+    private Client jerseyClient;
     @Inject
-    private ServiceContext serviceContext;
-
-    private Client client;
+    private ServiceSecurityContext serviceSecurityContext;
+    @Inject
+    private HttpServletRequest servletRequest;
 
     protected WebResource.Builder newResourceBuilder(String context, MultivaluedMap<String, String> queryParams) {
         String uriString = getServiceBaseUri() + context;
@@ -42,24 +45,12 @@ public abstract class AbstractServiceClient {
 
         logger.debug(uriString);
 
-        if (client == null) {
+        if (jerseyClient == null) {
             prepareClient();
         }
-        WebResource resource = client.resource(uri);
-
-        /* check this - sets the authorization header that will be passed through to other ws requests
-
-        UserDetailsManager userDetailsManager = ...; // Injected?
-        HttpServletRequest request = ...; // where does this come from?
-        Map<String,String> headers = userDetailsManager.getSecurityHeaders(request);
-        for (Map.Entry<String,String> e : headers.entrySet()) {
-            resource.header(e.getKey(), e.getValue());
-        }
-
-        end check this */
-
-
-        return serviceContext.copyContextToHeaders(resource);
+        WebResource resource = jerseyClient.resource(uri);
+        Map<String, String> headers = userDetailsManager.getSecurityHeaders(servletRequest);
+        return serviceSecurityContext.setHeadersToResource(resource, headers);
     }
 
     protected WebResource.Builder newResourceBuilder(String context) {
@@ -67,11 +58,11 @@ public abstract class AbstractServiceClient {
     }
 
     protected synchronized void prepareClient() {
-        if (client == null) {
+        if (jerseyClient == null) {
             DefaultClientConfig clientConfig = new DefaultClientConfig();
             clientConfig.getClasses().add(JacksonJsonProvider.class);
-            client = Client.create(clientConfig);
-            client.setChunkedEncodingSize(4096);
+            jerseyClient = Client.create(clientConfig);
+            jerseyClient.setChunkedEncodingSize(4096);
         }
     }
 

@@ -6,14 +6,14 @@ import java.util.Date;
 
 public class TraceListener {
 
-    private static final ThreadLocal<ServiceContext> CONTEXT_THREAD_LOCAL = new ThreadLocal<ServiceContext>();
+    private static final ThreadLocal<ServiceSecurityContext> CONTEXT_THREAD_LOCAL = new ThreadLocal<ServiceSecurityContext>();
     private static final ThreadLocal<Integer> NESTING_LEVEL_THREAD_LOCAL = new ThreadLocal<Integer>();
 
     public static boolean contextInitialized() {
         return CONTEXT_THREAD_LOCAL.get() != null;
     }
 
-    public static void initContext(ServiceContext context) {
+    public static void initContext(ServiceSecurityContext context) {
         CONTEXT_THREAD_LOCAL.set(context);
     }
 
@@ -36,7 +36,7 @@ public class TraceListener {
 
     @PrePersist
     public void onPersist(Object entity) {
-        ServiceContext context = CONTEXT_THREAD_LOCAL.get();
+        ServiceSecurityContext context = CONTEXT_THREAD_LOCAL.get();
         if (context != null) {
             AbstractTraceableEntity traceableEntity = (AbstractTraceableEntity) entity;
             traceableEntity.setPersistUsername(context.getUsername());
@@ -49,7 +49,7 @@ public class TraceListener {
 
     @PreUpdate
     public void onUpdate(Object entity) {
-        ServiceContext context = CONTEXT_THREAD_LOCAL.get();
+        ServiceSecurityContext context = CONTEXT_THREAD_LOCAL.get();
         if (context != null) {
             AbstractTraceableEntity traceableEntity = (AbstractTraceableEntity) entity;
             traceableEntity.setUpdateUsername(context.getUsername());

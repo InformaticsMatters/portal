@@ -6,7 +6,7 @@ import javax.interceptor.InvocationContext;
 
 public abstract class TraceTransactionalInterceptor extends TransactionalInterceptor {
     @Inject
-    private ServiceContext context;
+    private ServiceSecurityContext context;
 
     @Override
     @AroundInvoke
