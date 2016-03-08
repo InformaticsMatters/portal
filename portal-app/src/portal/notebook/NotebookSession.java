@@ -111,11 +111,26 @@ public class NotebookSession implements Serializable {
         reloadCurrentNotebook();
     }
 
-    public List<CellDefinition> listCellDefinition() {
+    public List<CellDefinition> listCellDefinition(CellDefinitionFilterData cellDefinitionFilterData) {
         List<CellDefinition> list = new ArrayList<>();
-        list.addAll(cellDefinitionRegistry.listCellDefinition());
+        Collection<CellDefinition> filteredCellDefinitions = listFilteredCellDefinition(cellDefinitionFilterData);
+        list.addAll(filteredCellDefinitions);
         this.cellDefinitionList = list;
         return list;
+    }
+
+    private Collection<CellDefinition> listFilteredCellDefinition(CellDefinitionFilterData cellDefinitionFilterData) {
+        Collection<CellDefinition> filteredList = new ArrayList<>();
+        for (CellDefinition cellDefinition : cellDefinitionRegistry.listCellDefinition()) {
+            if (cellDefinitionFilterData != null && cellDefinitionFilterData.getPattern() != null) {
+                if (cellDefinition.getName().contains(cellDefinitionFilterData.getPattern())) {
+                    filteredList.add(cellDefinition);
+                }
+            } else {
+                filteredList.add(cellDefinition);
+            }
+        }
+        return filteredList;
     }
 
     public List<UUID> listAllUuids(IDatasetDescriptor datasetDescriptor) {

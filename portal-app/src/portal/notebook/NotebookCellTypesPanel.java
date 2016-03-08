@@ -25,8 +25,8 @@ public class NotebookCellTypesPanel extends Panel {
 
     private Form<SearchCellData> searchForm;
 
-    private WebMarkupContainer descriptorssContainer;
-    private ListView<CellDefinition> descriptorRepeater;
+    private WebMarkupContainer definitionsContainer;
+    private ListView<CellDefinition> definitionsRepeater;
 
     @Inject
     private NotebookSession notebookSession;
@@ -57,11 +57,11 @@ public class NotebookCellTypesPanel extends Panel {
     }
 
     private void addCells() {
-        descriptorssContainer = new WebMarkupContainer("descriptorsContainer");
-        descriptorssContainer.setOutputMarkupId(true);
+        definitionsContainer = new WebMarkupContainer("descriptorsContainer");
+        definitionsContainer.setOutputMarkupId(true);
 
-        List<CellDefinition> cells = notebookSession.listCellDefinition();
-        descriptorRepeater = new ListView<CellDefinition>("descriptor", cells) {
+        List<CellDefinition> cells = notebookSession.listCellDefinition(null);
+        definitionsRepeater = new ListView<CellDefinition>("descriptor", cells) {
 
             @Override
             protected void populateItem(ListItem<CellDefinition> listItem) {
@@ -72,19 +72,19 @@ public class NotebookCellTypesPanel extends Panel {
                 listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_ID, cellType.getName()));
             }
         };
-        descriptorssContainer.add(descriptorRepeater);
+        definitionsContainer.add(definitionsRepeater);
 
-        add(descriptorssContainer);
+        add(definitionsContainer);
     }
 
     public void refreshCells() {
-        CellFilterData cellFilterData = new CellFilterData();
+        CellDefinitionFilterData cellDefinitionFilterData = new CellDefinitionFilterData();
         SearchCellData searchCellData = searchForm.getModelObject();
-        cellFilterData.setPattern(searchCellData.getPattern());
-        descriptorRepeater.setList(notebookSession.listCellDefinition());
+        cellDefinitionFilterData.setPattern(searchCellData.getPattern());
+        definitionsRepeater.setList(notebookSession.listCellDefinition(cellDefinitionFilterData));
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
-            target.add(descriptorssContainer);
+            target.add(definitionsContainer);
         }
     }
 

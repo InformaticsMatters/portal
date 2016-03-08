@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author simetrias
  */
-public class CellFilterData implements Serializable {
+public class CellDefinitionFilterData implements Serializable {
 
     private String pattern;
 
