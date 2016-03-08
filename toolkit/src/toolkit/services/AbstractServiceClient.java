@@ -28,7 +28,7 @@ public abstract class AbstractServiceClient {
     @Inject
     private ServiceSecurityContext serviceSecurityContext;
     @Inject
-    private HttpServletRequest servletRequest;
+    private HttpServletRequest httpServletRequest;
 
     protected WebResource.Builder newResourceBuilder(String context, MultivaluedMap<String, String> queryParams) {
         String uriString = getServiceBaseUri() + context;
@@ -49,8 +49,7 @@ public abstract class AbstractServiceClient {
             prepareClient();
         }
         WebResource resource = jerseyClient.resource(uri);
-        Map<String, String> headers = userDetailsManager.getSecurityHeaders(servletRequest);
-        return serviceSecurityContext.setHeadersToResource(resource, headers);
+        return serviceSecurityContext.setSecurityHeadersToResource(resource, httpServletRequest);
     }
 
     protected WebResource.Builder newResourceBuilder(String context) {

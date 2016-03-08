@@ -1,17 +1,33 @@
 package toolkit.services;
 
 import com.sun.jersey.api.client.WebResource;
+import org.squonk.security.UserDetailsManager;
+import org.squonk.security.impl.KeycloakUserDetailsManager;
 
 import javax.enterprise.context.RequestScoped;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RequestScoped
 public class ServiceSecurityContext {
 
-    public static final String SERVICE_USERNAME = "Service-Username";
+    public static final String HEADER_USERNAME = "Service-Username";
+    private UserDetailsManager userDetailsManager = new KeycloakUserDetailsManager();
     private String username;
+
+    public void loadSecurityHeadersFromRequest(HttpServletRequest httpServletRequest) {
+        setUsername(httpServletRequest.getHeader(HEADER_USERNAME));
+        // set other properties using known security header keys
+    }
+
+    public WebResource.Builder setSecurityHeadersToResource(WebResource webResource, HttpServletRequest httpServletRequest) {
+        WebResource.Builder result = webResource.getRequestBuilder();
+        Map<String, String> headers = userDetailsManager.getSecurityHeaders(httpServletRequest);
+        for (String key : headers.keySet()) {
+            result = webResource.header(key, headers.get(key));
+        }
+        return result;
+    }
 
     public String getUsername() {
         return username;
@@ -19,20 +35,5 @@ public class ServiceSecurityContext {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public void loadHeadersFromRequest(HttpHeaders httpHeaders) {
-        MultivaluedMap<String, String> rh = httpHeaders.getRequestHeaders();
-        setUsername(rh.getFirst(SERVICE_USERNAME));
-    }
-
-    public WebResource.Builder setHeadersToResource(WebResource webResource, Map<String, String> headers) {
-        WebResource.Builder result = webResource.getRequestBuilder();
-        for (String key : headers.keySet()) {
-            result = webResource.header(key, headers.get(key));
-
-            System.out.println("key: " + key + ", value: " + headers.get(key));
-        }
-        return result;
     }
 }
