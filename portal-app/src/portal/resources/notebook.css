@@ -305,3 +305,16 @@ div.ui-resizable-handle.ui-resizable-s {
     margin-right: 3px;
 }
 
+.nb-cell-name {
+    text-align: center;
+    padding-top: 0.4rem!important;
+    height: 27px!important;
+}
+
+.nb-cell-icon {
+    margin: 10px auto 0 auto;
+    height: 48px;
+    width: 48px;
+    border: 1px solid grey;
+}
+
