@@ -2,6 +2,7 @@
     <alternatives>
         <class>portal.notebook.service.MockJobStatusClient</class>
         <class>portal.notebook.cells.MockServiceCellsProvider</class>
+        <class>portal.IdeLogoutHandler</class>
     </alternatives>
     <interceptors>
         <class>portal.notebook.NotebookTransactionalInterceptor</class>

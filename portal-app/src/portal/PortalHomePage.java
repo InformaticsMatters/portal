@@ -16,7 +16,7 @@ import javax.inject.Inject;
 /**
  * @author simetrias
  */
-public class PortalHomePage extends WebPage implements SecuredComponent {
+public class PortalHomePage extends WebPage {
 
     @Inject
     private NotifierProvider notifierProvider;
