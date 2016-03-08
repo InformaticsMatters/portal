@@ -10,6 +10,11 @@ import portal.notebook.cells.DummyCellExecutor;
  */
 public class SimpleCellDefinition extends CellDefinition {
 
+    public SimpleCellDefinition() {}
+
+    public SimpleCellDefinition(String name, String description, String[] tags, Boolean executable) {
+        super(name, description, tags, executable);
+    }
 
     @Override
     public CellExecutor getCellExecutor() {
