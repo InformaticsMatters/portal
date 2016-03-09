@@ -34,27 +34,40 @@ public class CellTitleBarPanel extends Panel {
 
     public CellTitleBarPanel(String id, CellInstance cellInstance, CallbackHandler callbackHandler) {
         super(id);
+        setOutputMarkupId(true);
         this.cellInstance = cellInstance;
         this.callbackHandler = callbackHandler;
+        addTitleBarCssToggler();
         addPopup();
-        addActions();
-        addBehaviors();
-        createCellPopupPanel();
+        addToolbarControls();
+        addTimerBehavior();
         refreshExecutionStatus();
-        setOutputMarkupId(true);
     }
 
-    private void addBehaviors() {
-        add(new AbstractAjaxTimerBehavior(Duration.seconds(2)){
+    private void addTitleBarCssToggler() {
+        this.add(new ToggleCssAttributeModifier("failed-class", new ToggleCssAttributeModifier.Toggler() {
+
             @Override
-            protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
-                refreshExecutionStatus();
-                ajaxRequestTarget.add(CellTitleBarPanel.this);
+            public boolean cssActiveIf() {
+                return isFailed();
             }
-        });
+        }));
     }
 
-    private void addActions() {
+    private void addPopup() {
+        cellPopupPanel = new CellPopupPanel("content");
+        openPopupLink = new AjaxLink("openPopup") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                decoratePopupLink(this, ajaxRequestTarget);
+            }
+        };
+        openPopupLink.setOutputMarkupId(true);
+        add(openPopupLink);
+    }
+
+    private void addToolbarControls() {
         add(new Label("cellName", cellInstance.getName().toLowerCase()));
 
         add(new AjaxLink("remove") {
@@ -98,36 +111,6 @@ public class CellTitleBarPanel extends Panel {
         waitLink.setEnabled(false);
         waitLink.setOutputMarkupId(true);
         add(waitLink);
-
-    }
-
-    public CellInstance getCellInstance() {
-        return cellInstance;
-    }
-
-    public CallbackHandler getCallbackHandler() {
-        return callbackHandler;
-    }
-
-    private void addPopup() {
-        cellPopupPanel = new CellPopupPanel("content");
-        openPopupLink = new AjaxLink("openPopup") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                decoratePopupLink(this, ajaxRequestTarget);
-            }
-        };
-        openPopupLink.setOutputMarkupId(true);
-        add(openPopupLink);
-
-        this.add(new ToggleCssAttributeModifier("failed-class", new ToggleCssAttributeModifier.Toggler() {
-            @Override
-            public boolean cssActiveIf() {
-                return isFailed();
-            }
-        }));
-
     }
 
     private void decoratePopupLink(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {
@@ -138,6 +121,17 @@ public class CellTitleBarPanel extends Panel {
                 ".popup('toggle').popup('destroy')";
         js = js.replace(":link", link.getMarkupId()).replace(":content", cellPopupPanel.getMarkupId());
         ajaxRequestTarget.appendJavaScript(js);
+    }
+
+    private void addTimerBehavior() {
+        add(new AbstractAjaxTimerBehavior(Duration.seconds(2)) {
+
+            @Override
+            protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
+                refreshExecutionStatus();
+                ajaxRequestTarget.add(CellTitleBarPanel.this);
+            }
+        });
     }
 
     private void refreshExecutionStatus() {
@@ -153,8 +147,12 @@ public class CellTitleBarPanel extends Panel {
         return lastExecution != null && Boolean.FALSE.equals(lastExecution.getJobSuccessful());
     }
 
-    private void createCellPopupPanel() {
-        cellPopupPanel = new CellPopupPanel("content");
+    public CellInstance getCellInstance() {
+        return cellInstance;
+    }
+
+    public CallbackHandler getCallbackHandler() {
+        return callbackHandler;
     }
 
     public interface CallbackHandler extends Serializable {
