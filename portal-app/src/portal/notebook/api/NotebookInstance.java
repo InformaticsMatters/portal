@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.squonk.options.OptionDescriptor;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -186,6 +187,14 @@ public class NotebookInstance implements Serializable {
         for (CellInstance cellInstance : cellList) {
             cellInstance.resetDirty();
         }
+    }
+
+    public String toJsonString() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        objectMapper.writeValue(byteArrayOutputStream, this);
+        byteArrayOutputStream.flush();
+        return new String(byteArrayOutputStream.toByteArray());
     }
 
 }

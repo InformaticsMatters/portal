@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.squonk.options.OptionDescriptor;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -96,6 +97,7 @@ public abstract class CellDefinition implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public abstract CellExecutor getCellExecutor();
 
 }

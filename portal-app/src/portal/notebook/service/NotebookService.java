@@ -130,6 +130,7 @@ public class NotebookService {
         notebookHistory.setRevisionDate(new Date());
         notebookHistory.setRevisionTime(new Date());
         entityManager.persist(notebookHistory);
+        LOGGER.log(Level.INFO, notebookInstance.toJsonString());
     }
 
     public List<MoleculeObject> squonkDatasetAsMolecules(Long notebookId, String cellName, String variableName) {
