@@ -30,7 +30,6 @@ public class CellTitleBarPanel extends Panel {
     private NotebookSession notebookSession;
     private IndicatingAjaxSubmitLink submitLink;
     private AjaxLink waitLink;
-    private AjaxLink warningLink;
 
     public CellTitleBarPanel(String id, CellInstance cellInstance, CallbackHandler callbackHandler) {
         super(id);
