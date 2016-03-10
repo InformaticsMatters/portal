@@ -8,6 +8,7 @@ import java.util.List;
 
 @XmlRootElement
 public class BindingDefinition implements Serializable {
+    private final static long serialVersionUID = 1l;
     private String name;
     private String displayName;
     private final List<VariableType> acceptedVariableTypeList = new ArrayList<>();

@@ -15,6 +15,7 @@ import java.io.File;
  * Created by timbo on 29/01/16.
  */
 public class CsvUploadCellDefinition extends CellDefinition {
+    private final static long serialVersionUID = 1l;
 
     public static final String CELL_NAME = "CsvUpload";
     public static final String OPT_FILE_UPLOAD = CsvUpload.OPTION_FILE_UPLOAD;

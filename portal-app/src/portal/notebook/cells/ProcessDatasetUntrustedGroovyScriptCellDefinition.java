@@ -1,6 +1,5 @@
 package portal.notebook.cells;
 
-import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
@@ -10,6 +9,7 @@ import portal.notebook.api.*;
  * Created by timbo on 29/01/16.
  */
 public class ProcessDatasetUntrustedGroovyScriptCellDefinition extends CellDefinition {
+    private final static long serialVersionUID = 1l;
 
     public static final String CELL_NAME = "UntrustedGroovyDatasetScript";
 

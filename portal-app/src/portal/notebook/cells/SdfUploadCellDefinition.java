@@ -15,6 +15,7 @@ import java.io.File;
  * Created by timbo on 29/01/16.
  */
 public class SdfUploadCellDefinition extends CellDefinition {
+    private final static long serialVersionUID = 1l;
 
     public static final String OPT_NAME_FIELD_NAME = SdfUpload.OPTION_NAME_FIELD_NAME;
     public static final String OPT_FILE_UPLOAD = SdfUpload.OPTION_FILE_UPLOAD;

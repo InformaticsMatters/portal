@@ -13,6 +13,7 @@ import portal.notebook.api.*;
  * Created by timbo on 29/01/16.
  */
 public class DatasetMergerCellDefinition extends CellDefinition {
+    private final static long serialVersionUID = 1l;
 
     public static final String CELL_NAME = "DatasetMerger";
 

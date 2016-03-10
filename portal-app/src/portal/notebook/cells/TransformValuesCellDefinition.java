@@ -12,6 +12,7 @@ import java.util.logging.Logger;
  * Created by timbo on 29/01/16.
  */
 public class TransformValuesCellDefinition extends CellDefinition {
+    private final static long serialVersionUID = 1l;
 
     private static final Logger LOG = Logger.getLogger(TransformValuesCellDefinition.class.getName());
 

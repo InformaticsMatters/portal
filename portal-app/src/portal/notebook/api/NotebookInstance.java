@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 @XmlRootElement
 public class NotebookInstance implements Serializable {
+    private final static long serialVersionUID = 1l;
 
     private static final Logger LOG = Logger.getLogger(NotebookInstance.class.getName());
     private final List<Long> removedCellIdList = new ArrayList<>();

@@ -1,13 +1,11 @@
 package portal.notebook.api;
 
-import org.squonk.notebook.api.OptionType;
 import org.squonk.options.OptionDescriptor;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class OptionInstance implements Serializable {
+    private final static long serialVersionUID = 1l;
     private OptionDescriptor optionDescriptor;
     private Object value;
     private boolean dirty = true;

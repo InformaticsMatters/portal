@@ -3,12 +3,12 @@ package portal.notebook.cells;
 
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellExecutor;
-import portal.notebook.cells.DummyCellExecutor;
 
 /**
  * temporary
  */
 public class SimpleCellDefinition extends CellDefinition {
+    private final static long serialVersionUID = 1l;
 
     public SimpleCellDefinition() {}
 

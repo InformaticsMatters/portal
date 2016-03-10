@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  * @author simetrias
  */
 public class ServiceCellDefinition extends CellDefinition {
+    private final static long serialVersionUID = 1l;
 
     public static final String OPT_SERVICE_ENDPOINT = StepDefinitionConstants.ServiceExecutor.OPTION_SERVICE_ENDPOINT;
     public static final String OPT_SERVICE_PARAMS = StepDefinitionConstants.ServiceExecutor.OPTION_SERVICE_PARAMS;

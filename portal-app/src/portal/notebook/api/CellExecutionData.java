@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 @XmlRootElement
 public class CellExecutionData implements Serializable {
+    private final static long serialVersionUID = 1l;
     private Long notebookId;
     private NotebookInstance notebookInstance;
     private Long cellId;

@@ -3,6 +3,7 @@ package portal.notebook.api;
 import java.io.Serializable;
 
 public class VariableInstance implements Serializable {
+    private final static long serialVersionUID = 1l;
     private Long cellId;
     private VariableDefinition variableDefinition;
     private Object value;

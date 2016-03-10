@@ -12,6 +12,7 @@ import java.util.List;
 
 @XmlRootElement
 public abstract class CellDefinition implements Serializable {
+    private final static long serialVersionUID = 1l;
 
     public static final String VAR_NAME_INPUT = "input";
     public static final String VAR_NAME_OUTPUT = "output";

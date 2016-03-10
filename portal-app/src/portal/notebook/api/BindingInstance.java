@@ -1,10 +1,9 @@
 package portal.notebook.api;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BindingInstance implements Serializable {
+    private final static long serialVersionUID = 1l;
     private BindingDefinition bindingDefinition;
     private VariableInstance variable;
     private boolean dirty = true;

@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CellInstance implements Serializable {
+    private final static long serialVersionUID = 1l;
 
     private final Map<String, BindingInstance> bindingMap = new LinkedHashMap<>();
     private final Map<String, VariableInstance> outputVariableMap = new LinkedHashMap<>();

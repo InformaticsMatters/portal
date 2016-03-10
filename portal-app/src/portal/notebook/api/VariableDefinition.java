@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 @XmlRootElement
 public class VariableDefinition implements Serializable {
+    private final static long serialVersionUID = 1l;
     private String name;
     private String displayName;
     private VariableType variableType;

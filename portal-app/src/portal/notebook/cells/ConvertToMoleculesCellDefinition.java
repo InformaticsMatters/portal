@@ -1,10 +1,6 @@
 package portal.notebook.cells;
 
-import com.im.lac.job.jobdef.JobDefinition;
-import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.execution.steps.StepDefinitionConstants.DatasetMerger;
-import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
 
@@ -13,6 +9,7 @@ import portal.notebook.api.*;
  * Created by timbo on 29/01/16.
  */
 public class ConvertToMoleculesCellDefinition extends CellDefinition {
+    private final static long serialVersionUID = 1l;
 
     public static final String CELL_NAME = "ConvertToMolecules";
 
