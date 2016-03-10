@@ -37,6 +37,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
         registerCellDefinition(new TransformValuesCellDefinition());
         registerCellDefinition(new ProcessDatasetTrustedGroovyScriptCellDefinition());
+        registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
     }
 
     private static CellDefinition createTableDisplayCellDefinition() {

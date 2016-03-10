@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
+import org.squonk.security.UserDetails;
 import portal.notebook.NotebookCanvasPage;
 
 import javax.inject.Inject;
@@ -70,7 +71,12 @@ public class MenuPanel extends Panel {
     }
 
     public String getUserDisplayName() {
-        return sessionContext.getLoggedInUserDetails().getDisplayName();
+        UserDetails userDetails = sessionContext.getLoggedInUserDetails();
+        if (userDetails == null) {
+            return "";
+        } else {
+            return userDetails.getDisplayName();
+        }
     }
 
     public void setLeftSideItemVisible(boolean value) {

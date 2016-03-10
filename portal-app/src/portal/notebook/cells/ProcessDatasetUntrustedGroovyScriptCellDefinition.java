@@ -9,13 +9,13 @@ import portal.notebook.api.*;
 /**
  * Created by timbo on 29/01/16.
  */
-public class ProcessDatasetTrustedGroovyScriptCellDefinition extends CellDefinition {
+public class ProcessDatasetUntrustedGroovyScriptCellDefinition extends CellDefinition {
 
-    public static final String CELL_NAME = "TrustedGroovyDatasetScript";
+    public static final String CELL_NAME = "UntrustedGroovyDatasetScript";
 
 
-    public ProcessDatasetTrustedGroovyScriptCellDefinition() {
-        super(CELL_NAME, "Groovy Script (trusted)", new String[] {"script", "groovy"});
+    public ProcessDatasetUntrustedGroovyScriptCellDefinition() {
+        super(CELL_NAME, "Groovy Script (untrusted)", new String[] {"script", "groovy"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(
@@ -25,7 +25,8 @@ public class ProcessDatasetTrustedGroovyScriptCellDefinition extends CellDefinit
 
     @Override
     public CellExecutor getCellExecutor() {
-        return new SimpleJobCellExecutor(StepDefinitionConstants.TrustedGroovyDataset.CLASSNAME);
+        //return new SimpleJobCellExecutor(StepDefinitionConstants.UntrustedGroovyDataset.CLASSNAME);
+        return new SimpleJobCellExecutor("org.squonk.execution.steps.impl.UntrustedGroovyDatasetScriptStep");
     }
 
 }
