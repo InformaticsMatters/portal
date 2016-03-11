@@ -10,6 +10,7 @@ import org.squonk.notebook.api.OptionType;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
+import portal.notebook.api.DatasetFieldOptionDescriptor;
 import portal.notebook.api.OptionInstance;
 import portal.notebook.api.VariableInstance;
 import portal.notebook.api.VariableType;
@@ -125,7 +126,9 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         OptionDescriptor optionDefinition = optionInstance.getOptionDescriptor();
         Object value = optionInstance.getValue() == null ? optionDefinition.getDefaultValue() : optionInstance.getValue();
         if (OptionType.SIMPLE.equals(optionDefinition.getOptionType())) {
-            if (optionDefinition.getTypeDescriptor().getType() == Structure.class) {
+            if (optionDefinition instanceof DatasetFieldOptionDescriptor) {
+                return new DatasetFieldsPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()), getCellInstance(), optionInstance);
+            } else if (optionDefinition.getTypeDescriptor().getType() == Structure.class) {
                 return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             } else if (optionDefinition.getValues() != null && optionDefinition.getValues().length > 0) {
                 return new PicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()),optionInstance.getOptionDescriptor().getPicklistValueList());

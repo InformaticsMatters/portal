@@ -5,12 +5,12 @@ import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
-import org.squonk.execution.steps.StepDefinitionConstants.ChemblActivitiesFetcher;
 
 /**
  * Created by timbo on 29/01/16.
  */
 public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
+    public static final long serialVersionUID = 1l;
 
     public static final String CELL_NAME = "ChemblActivitiesFetcher";
     public static final String OPT_ASSAY_ID = StepDefinitionConstants.ChemblActivitiesFetcher.OPTION_ASSAY_ID;
