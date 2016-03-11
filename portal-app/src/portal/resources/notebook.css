@@ -318,7 +318,7 @@ div.ui-resizable-handle.ui-resizable-s {
 }
 
 .nb-cell-icon img {
-    width: 46px;
-    height: 46px;
+    max-width: 48px;
+    max-height: 48px;
 }
 
