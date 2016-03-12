@@ -71,13 +71,11 @@ public class DatasetFieldsPicklistFieldEditorPanel extends FieldEditorPanel {
 
     @Override
     public boolean processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-        System.out.println("source cell changed");
         CellInstance thisCellInstance = notebookSession.getCurrentNotebookInstance().findCellById(this.cellId);
         BindingInstance bindingInstance = thisCellInstance.getBindingMap().get(CellDefinition.VAR_NAME_INPUT);
         VariableInstance variableInstance = bindingInstance.getVariable();
         if (variableInstance != null && variableInstance.getCellId().equals(changedCellId)) {
             loadPicklist();
-            System.out.println("PICKLIST SIZE: " + picklistItems.size());
             return true;
         } else {
             return false;

@@ -151,15 +151,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         } else if (!oldExecution.getJobId().equals(lastExecution.getJobId())) {
             return true;
         } else {
-            System.out.print(oldExecution == null ? null : oldExecution.getJobId());
-            System.out.print(" - ");
-            System.out.println(lastExecution == null ? null : lastExecution.getJobId());
-            System.out.print(oldExecution == null ? null : oldExecution.getJobActive());
-            System.out.print(" - ");
-            System.out.println(lastExecution == null ? null : lastExecution.getJobActive());
-            System.out.print(oldExecution == null ? null : oldExecution.getJobStatus());
-            System.out.print(" - ");
-            System.out.println(lastExecution == null ? null : lastExecution.getJobStatus());
             return false;
         }
     }
