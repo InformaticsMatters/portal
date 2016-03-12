@@ -73,11 +73,14 @@ public class NotebookCanvasPage extends WebPage {
     private NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
+    @Inject
+    private ExecutionStatusChangeManager executionStatusChangeManager;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
         popupContainerProvider.createPopupContainerForPage(this, "modalPopupContainer");
         setOutputMarkupId(true);
+        configureExecutionStatusListener();
         addMenuAndFooter();
         addPlumbContainer();
         addCanvasItemRepeater();
@@ -92,6 +95,24 @@ public class NotebookCanvasPage extends WebPage {
         addNotebookListPanel();
         addNotebookCellTypesPanel();
         notebookSession.loadCurrentNotebook(notebookInfo.getId());
+    }
+
+    private void configureExecutionStatusListener() {
+        executionStatusChangeManager.setListener(new ExecutionStatusChangeManager.Listener() {
+            @Override
+            public void onExecutionstatusChanged(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
+                processExecutionStatusChange(cellId, ajaxRequestTarget);
+            }
+        });
+    }
+
+    private void processExecutionStatusChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
+        notebookSession.reloadCurrentNotebook();
+        for (int i = 0; i< canvasItemRepeater.size(); i++) {
+            ListItem listItem = (ListItem)canvasItemRepeater.get(i);
+            CanvasItemPanel canvasItemPanel = (CanvasItemPanel)listItem.get(0);
+            canvasItemPanel.processCellChanged(cellId, ajaxRequestTarget);
+        }
     }
 
     @Override
@@ -438,11 +459,11 @@ public class NotebookCanvasPage extends WebPage {
             Component component = iterator.next();
             CanvasItemPanel canvasItemPanel = (CanvasItemPanel) ((ListItem) component).get(0);
             if (sourceCellMarkupId.equals(component.getMarkupId())) {
-                sourceCellInstance = canvasItemPanel.getCellInstance();
+                sourceCellInstance = canvasItemPanel.retrieveCellInstance();
                 source = sourceCellInstance.getOutputVariableMap().get(sourceVariableName);
             }
             if (targetCellMarkupId.equals(component.getMarkupId())) {
-                targetCellInstance = canvasItemPanel.getCellInstance();
+                targetCellInstance = canvasItemPanel.retrieveCellInstance();
                 target = targetCellInstance.getBindingMap().get(targetVariableName);
             }
         }

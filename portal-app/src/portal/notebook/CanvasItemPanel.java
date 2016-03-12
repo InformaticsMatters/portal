@@ -1,15 +1,18 @@
 
 package portal.notebook;
 
+import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
+import portal.notebook.service.Execution;
 
 import javax.inject.Inject;
 
@@ -21,7 +24,11 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
+    @Inject
+    private ExecutionStatusChangeManager executionStatusChangeManager;
     private BindingsModalPanel bindingsModalPanel;
+    private CellTitleBarPanel cellTitleBarPanel;
+    private Execution oldExecution;
 
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
@@ -33,7 +40,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
         String js = "initCellSizeAndPosition(':id', :left, :top, :width, :height)";
-        CellInstance model = getCellInstance();
+        CellInstance model = retrieveCellInstance();
         js = js.replace(":id", getMarkupId());
         js = js.replace(":left", Integer.toString(model.getPositionLeft()));
         js = js.replace(":top", Integer.toString(model.getPositionTop()));
@@ -73,7 +80,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     protected void addTitleBar() {
-        CellTitleBarPanel cellTitleBarPanel = new CellTitleBarPanel("titleBar", getCellInstance(), this);
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", retrieveCellInstance(), this);
         add(cellTitleBarPanel);
     }
 
@@ -84,7 +91,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
 
-    public CellInstance getCellInstance() {
+    public CellInstance retrieveCellInstance() {
         return notebookSession.getCurrentNotebookInstance().findCellById(cellId);
     }
 
@@ -102,7 +109,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
     @Override
     public void onEditBindings(CellInstance cellModel) {
-        editBindings(null, getCellInstance(), false);
+        editBindings(null, retrieveCellInstance(), false);
     }
 
     public void editBindings(CellInstance sourceCellInstance, CellInstance targetCellInstance, boolean canAddBindings) {
@@ -110,5 +117,56 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         popupContainerProvider.setPopupContentForPage(getPage(), bindingsModalPanel);
         popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
         bindingsModalPanel.showModal();
+    }
+
+    public void addExecutionStatusTimerBehavior() {
+        add(new AbstractAjaxTimerBehavior(Duration.seconds(2)) {
+
+            @Override
+            protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
+                refreshExecutionStatus(ajaxRequestTarget);
+            }
+        });
+    }
+
+    protected void refreshExecutionStatus(AjaxRequestTarget ajaxRequestTarget) {
+        Execution lastExecution = notebookSession.findExecution(retrieveCellInstance().getId());
+        boolean changed = executionChanged(lastExecution);
+        if (changed) {
+            cellTitleBarPanel.applyExecutionStatus(lastExecution);
+            ajaxRequestTarget.add(cellTitleBarPanel);
+            executionStatusChangeManager.notifyExecutionStatusChanged(retrieveCellInstance().getId(), ajaxRequestTarget);
+        }
+        oldExecution = lastExecution;
+    }
+
+    private boolean executionChanged(Execution lastExecution) {
+        if (oldExecution == null) {
+            return lastExecution != null;
+        } else if (lastExecution == null) {
+            return oldExecution != null;
+        } else if (oldExecution.getJobId().equals(lastExecution.getJobId())) {
+            return !oldExecution.getJobActive().equals(lastExecution.getJobActive())
+            || !oldExecution.getJobStatus().equals(lastExecution.getJobStatus());
+        } else if (!oldExecution.getJobId().equals(lastExecution.getJobId())) {
+            return true;
+        } else {
+            System.out.print(oldExecution == null ? null : oldExecution.getJobId());
+            System.out.print(" - ");
+            System.out.println(lastExecution == null ? null : lastExecution.getJobId());
+            System.out.print(oldExecution == null ? null : oldExecution.getJobActive());
+            System.out.print(" - ");
+            System.out.println(lastExecution == null ? null : lastExecution.getJobActive());
+            System.out.print(oldExecution == null ? null : oldExecution.getJobStatus());
+            System.out.print(" - ");
+            System.out.println(lastExecution == null ? null : lastExecution.getJobStatus());
+            return false;
+        }
+    }
+
+    public abstract void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget);
+
+    public Long getCellId() {
+        return cellId;
     }
 }
