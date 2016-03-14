@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -10,6 +11,7 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.io.ByteArrayOutputStream;
 import portal.PortalWebApplication;
 import portal.notebook.api.CellInstance;
 
@@ -21,6 +23,7 @@ import java.io.Serializable;
 public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     private Form<ModelObject> form;
+    private int[][] scatterPlotData = {{1, 3}, {2, 8}, {3, 14}, {4, 1}};
 
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -39,7 +42,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3.min.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/scatterplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/scatterplot.css")));
-        response.render(OnDomReadyHeaderItem.forScript("buildSampleScatterPlot()"));
+        response.render(OnDomReadyHeaderItem.forScript("buildScatterPlot('" + getMarkupId() + "', [])"));
     }
 
     @Override
@@ -59,7 +62,21 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
+        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        target.add(this);
+        target.appendJavaScript("buildScatterPlot('" + getMarkupId() + "', " + toJsonString(scatterPlotData) + ")");
+    }
 
+    private String toJsonString(Object object) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            objectMapper.writeValue(outputStream, object);
+            outputStream.flush();
+            return outputStream.toString();
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
 
     class ModelObject implements Serializable {
