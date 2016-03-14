@@ -10,13 +10,12 @@ import portal.notebook.api.*;
  * Created by timbo on 29/01/16.
  */
 public class ProcessDatasetTrustedGroovyScriptCellDefinition extends CellDefinition {
-    private final static long serialVersionUID = 1l;
-
     public static final String CELL_NAME = "TrustedGroovyDatasetScript";
+    private final static long serialVersionUID = 1l;
 
 
     public ProcessDatasetTrustedGroovyScriptCellDefinition() {
-        super(CELL_NAME, "Groovy Script (trusted)", new String[] {"script", "groovy"});
+        super(CELL_NAME, "Groovy Script (trusted)", "default_icon.png", new String[]{"script", "groovy"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(

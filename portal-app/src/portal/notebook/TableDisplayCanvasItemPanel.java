@@ -25,7 +25,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     public TableDisplayCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
-        CellInstance cellInstance = retrieveCellInstance();
+        CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeWidth(500);
         }
@@ -45,7 +45,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-        CellInstance cellInstance = retrieveCellInstance();
+        CellInstance cellInstance = findCellInstance();
         BindingInstance binding = cellInstance.getBindingMap().get("input");
         if (binding.getVariable() != null && binding.getVariable().getCellId().equals(changedCellId)) {
             load();
@@ -64,7 +64,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        BindingInstance bindingModel = retrieveCellInstance().getBindingMap().get("input");
+        BindingInstance bindingModel = findCellInstance().getBindingMap().get("input");
         VariableInstance variableModel = bindingModel == null ? null : bindingModel.getVariable();
         boolean assigned = variableModel != null && variableModel.getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
@@ -75,7 +75,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private IDatasetDescriptor loadDescriptor() {
-        CellInstance cellInstance = retrieveCellInstance();
+        CellInstance cellInstance = findCellInstance();
         VariableInstance variableModel = cellInstance.getBindingMap().get("input").getVariable();
         VariableType variableType = variableModel.getVariableType();
         if (variableType.equals(VariableType.FILE)) {

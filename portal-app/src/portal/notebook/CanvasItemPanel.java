@@ -40,7 +40,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
         String js = "initCellSizeAndPosition(':id', :left, :top, :width, :height)";
-        CellInstance model = retrieveCellInstance();
+        CellInstance model = findCellInstance();
         js = js.replace(":id", getMarkupId());
         js = js.replace(":left", Integer.toString(model.getPositionLeft()));
         js = js.replace(":top", Integer.toString(model.getPositionTop()));
@@ -80,7 +80,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     protected void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", retrieveCellInstance(), this);
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", findCellInstance(), this);
         add(cellTitleBarPanel);
     }
 
@@ -91,7 +91,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
 
-    public CellInstance retrieveCellInstance() {
+    public CellInstance findCellInstance() {
         return notebookSession.getCurrentNotebookInstance().findCellById(cellId);
     }
 
@@ -109,7 +109,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
     @Override
     public void onEditBindings(CellInstance cellModel) {
-        editBindings(null, retrieveCellInstance(), false);
+        editBindings(null, findCellInstance(), false);
     }
 
     public void editBindings(CellInstance sourceCellInstance, CellInstance targetCellInstance, boolean canAddBindings) {
@@ -130,12 +130,12 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     protected void refreshExecutionStatus(AjaxRequestTarget ajaxRequestTarget) {
-        Execution lastExecution = notebookSession.findExecution(retrieveCellInstance().getId());
+        Execution lastExecution = notebookSession.findExecution(findCellInstance().getId());
         boolean changed = executionChanged(lastExecution);
         if (changed) {
             cellTitleBarPanel.applyExecutionStatus(lastExecution);
             ajaxRequestTarget.add(cellTitleBarPanel);
-            executionStatusChangeManager.notifyExecutionStatusChanged(retrieveCellInstance().getId(), ajaxRequestTarget);
+            executionStatusChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), ajaxRequestTarget);
         }
         oldExecution = lastExecution;
     }

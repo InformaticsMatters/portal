@@ -337,6 +337,8 @@ public class NotebookCanvasPage extends WebPage {
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCanvasItemPanel("item", cellInstance.getId());
+        } else if ("ScatterPlot".equals(cellType.getName())) {
+            return new ScatterPlotCanvasItemPanel("item", cellInstance.getId());
         } else {
             return new DefaultCanvasItemPanel("item", cellInstance.getId());
         }
@@ -459,11 +461,11 @@ public class NotebookCanvasPage extends WebPage {
             Component component = iterator.next();
             CanvasItemPanel canvasItemPanel = (CanvasItemPanel) ((ListItem) component).get(0);
             if (sourceCellMarkupId.equals(component.getMarkupId())) {
-                sourceCellInstance = canvasItemPanel.retrieveCellInstance();
+                sourceCellInstance = canvasItemPanel.findCellInstance();
                 source = sourceCellInstance.getOutputVariableMap().get(sourceVariableName);
             }
             if (targetCellMarkupId.equals(component.getMarkupId())) {
-                targetCellInstance = canvasItemPanel.retrieveCellInstance();
+                targetCellInstance = canvasItemPanel.findCellInstance();
                 target = targetCellInstance.getBindingMap().get(targetVariableName);
             }
         }

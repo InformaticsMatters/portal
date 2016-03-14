@@ -13,12 +13,11 @@ import portal.notebook.api.*;
  * Created by timbo on 29/01/16.
  */
 public class DatasetMergerCellDefinition extends CellDefinition {
+    public static final String CELL_NAME = "DatasetMerger";
     private final static long serialVersionUID = 1l;
 
-    public static final String CELL_NAME = "DatasetMerger";
-
     public DatasetMergerCellDefinition() {
-        super(CELL_NAME, "Merge datasets into one", new String[] {"merge", "dataset"});
+        super(CELL_NAME, "Merge datasets into one", "default_icon.png", new String[]{"merge", "dataset"});
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, DatasetMerger.OPTION_MERGE_FIELD_NAME, "Merge field name", "Name of value field which identifies equivalent entries"));
         getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, DatasetMerger.OPTION_KEEP_FIRST, "When duplicate keep first", "When duplicate field name use the existing value rather than the new one")

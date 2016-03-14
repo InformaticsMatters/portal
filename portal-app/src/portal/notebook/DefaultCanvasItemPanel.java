@@ -41,7 +41,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
-        if (retrieveCellInstance().getCellDefinition().getExecutable()) {
+        if (findCellInstance().getCellDefinition().getExecutable()) {
             addExecutionStatusTimerBehavior();
         }
     }
@@ -51,7 +51,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         add(form);
 
         List<OptionInstance> optionList = new ArrayList<>();
-        CellInstance cellInstance = retrieveCellInstance();
+        CellInstance cellInstance = findCellInstance();
         for (OptionInstance optionInstance : cellInstance.getOptionMap().values()) {
             if (optionInstance.getOptionDescriptor().isEditable()) {
                 optionList.add(optionInstance);
@@ -88,14 +88,14 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         if (fileDirty) {
             commitFiles();
         }
-        notebookSession.executeCell(retrieveCellInstance().getId());
+        notebookSession.executeCell(findCellInstance().getId());
         fireContentChanged();
     }
 
     private void storeOptions() {
         for (String name : optionEditorModelMap.keySet()) {
             FieldEditorModel editorModel = optionEditorModelMap.get(name);
-            OptionInstance optionInstance = retrieveCellInstance().getOptionMap().get(name);
+            OptionInstance optionInstance = findCellInstance().getOptionMap().get(name);
             optionInstance.setValue(editorModel.getValue());
             if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
@@ -106,7 +106,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
 
     private void commitFiles() {
-        for (OptionInstance optionInstance : retrieveCellInstance().getOptionMap().values()) {
+        for (OptionInstance optionInstance : findCellInstance().getOptionMap().values()) {
             if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
                 notebookSession.commitFileForVariable(variableInstance);
@@ -153,26 +153,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         }
     }
 
-    class OptionUploadCallback implements FileFieldEditorPanel.Callback {
-        private final OptionInstance optionInstance;
-
-        OptionUploadCallback(OptionInstance optionInstance) {
-            this.optionInstance = optionInstance;
-        }
-
-        @Override
-        public void onUpload(InputStream inputStream) {
-            VariableInstance variableInstance = findVariableInstanceForFileOption();
-            if (variableInstance == null) {
-                throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getName());
-            }
-            notebookSession.storeTemporaryFileForVariable(variableInstance, inputStream);
-            fileDirty = true;
-        }
-    }
-
     private VariableInstance findVariableInstanceForFileOption() {
-        for (VariableInstance variableInstance : retrieveCellInstance().getOutputVariableMap().values()) {
+        for (VariableInstance variableInstance : findCellInstance().getOutputVariableMap().values()) {
             if (variableInstance.getVariableType().equals(VariableType.FILE)) {
                 return variableInstance;
             }
@@ -194,6 +176,24 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             ajaxRequestTarget.add(this);
         }
 
+    }
+
+    class OptionUploadCallback implements FileFieldEditorPanel.Callback {
+        private final OptionInstance optionInstance;
+
+        OptionUploadCallback(OptionInstance optionInstance) {
+            this.optionInstance = optionInstance;
+        }
+
+        @Override
+        public void onUpload(InputStream inputStream) {
+            VariableInstance variableInstance = findVariableInstanceForFileOption();
+            if (variableInstance == null) {
+                throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getName());
+            }
+            notebookSession.storeTemporaryFileForVariable(variableInstance, inputStream);
+            fileDirty = true;
+        }
     }
 
 }
