@@ -27,6 +27,7 @@ public class ServiceCellDefinition extends CellDefinition {
         setExecutable(Boolean.TRUE);
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        LOG.info("Creating service cell " + serviceDescriptor.getName() + " with icon " + serviceDescriptor.getIcon());
     }
 
     public ServiceDescriptor getServiceDescriptor() {
