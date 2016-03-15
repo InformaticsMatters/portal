@@ -18,7 +18,7 @@ public class TransformValuesCellDefinition extends CellDefinition {
     private static final String OPT_TRANSFORMS = StepDefinitionConstants.ValueTransformer.OPTION_TRANSFORMS;
 
     public TransformValuesCellDefinition() {
-        super(CELL_NAME, "Transform dataset values", "default_icon.png", new String[]{"transform", "convert", "dataset"});
+        super(CELL_NAME, "Transform dataset values", "icons/transform.png", new String[]{"transform", "convert", "dataset"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(new MultiLineTextTypeDescriptor(10, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),

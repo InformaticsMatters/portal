@@ -1,9 +1,10 @@
 package portal;
 
-import com.im.lac.user.client.UserClient;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.client.UserClient;
+import org.squonk.core.client.UserRestClient;
 import org.squonk.core.user.User;
 import org.squonk.security.UserDetails;
 import org.squonk.security.impl.KeycloakUserDetailsManager;
@@ -24,7 +25,7 @@ public class SessionContext implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(SessionContext.class);
 
-    private final UserClient client = new UserClient();
+    private final UserClient client = new UserRestClient();
     private final KeycloakUserDetailsManager defaultUserDetailsManager = new KeycloakUserDetailsManager();
     private boolean firstTime = true;
 
@@ -50,11 +51,11 @@ public class SessionContext implements Serializable {
             logger.info("Initial setup for user " + authenticatedUser);
             try {
 
-                User user = client.getUserObject(authenticatedUser);
+                User user = client.getUser(authenticatedUser);
                 if (user != null) {
                     logger.info("User " + user.getUsername() + " has ID " + user.getId());
                 }
-            } catch (IOException ioe) {
+            } catch (Exception ioe) {
                 logger.error("Failed to retrieve user object", ioe);
             }
         }
