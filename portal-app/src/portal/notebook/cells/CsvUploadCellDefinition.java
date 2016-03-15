@@ -15,15 +15,14 @@ import java.io.File;
  * Created by timbo on 29/01/16.
  */
 public class CsvUploadCellDefinition extends CellDefinition {
-    private final static long serialVersionUID = 1l;
-
     public static final String CELL_NAME = "CsvUpload";
     public static final String OPT_FILE_UPLOAD = CsvUpload.OPTION_FILE_UPLOAD;
     public static final String OPT_FILE_TYPE = CsvUpload.OPTION_CSV_FORMAT_TYPE;
     public static final String OPT_FIRST_LINE_IS_HEADER = CsvUpload.OPTION_NAME_FIRST_LINE_IS_HEADER;
+    private final static long serialVersionUID = 1l;
 
     public CsvUploadCellDefinition() {
-        super(CELL_NAME, "CSV upload", new String[] {"file", "upload", "csv", "tab"});
+        super(CELL_NAME, "CSV upload", "default_icon.png", new String[]{"file", "upload", "csv", "tab"});
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
         getOutputVariableDefinitionList().add(variableDefinition);
         variableDefinition  = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);

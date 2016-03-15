@@ -1,12 +1,10 @@
 package portal.notebook;
 
-import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.util.time.Duration;
 import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
@@ -38,8 +36,12 @@ public class CellTitleBarPanel extends Panel {
         this.callbackHandler = callbackHandler;
         addTitleBarCssToggler();
         addToolbarControls();
-        addTimerBehavior();
-        refreshExecutionStatus();
+        initExecutionStatus();
+    }
+
+    private void initExecutionStatus() {
+        Execution lastExecution = notebookSession.findExecution(getCellInstance().getId());
+        applyExecutionStatus(lastExecution);
     }
 
     private void addTitleBarCssToggler() {
@@ -119,20 +121,9 @@ public class CellTitleBarPanel extends Panel {
         ajaxRequestTarget.appendJavaScript(js);
     }
 
-    private void addTimerBehavior() {
-        add(new AbstractAjaxTimerBehavior(Duration.seconds(2)) {
 
-            @Override
-            protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
-                refreshExecutionStatus();
-                ajaxRequestTarget.add(CellTitleBarPanel.this);
-            }
-        });
-    }
-
-    private void refreshExecutionStatus() {
-        Execution lastExecution = notebookSession.findExecution(cellInstance.getId());
-        boolean active = lastExecution != null && lastExecution.getJobActive();
+    public void applyExecutionStatus(Execution execution) {
+        boolean active = execution != null && execution.getJobActive();
         waitLink.setVisible(active);
         submitLink.setVisible(!active);
     }

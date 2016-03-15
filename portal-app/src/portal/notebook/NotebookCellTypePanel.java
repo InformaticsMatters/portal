@@ -8,31 +8,24 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import portal.PortalWebApplication;
 import portal.notebook.api.CellDefinition;
 
-import javax.inject.Inject;
-
 /**
  * @author simetrias
  */
 public class NotebookCellTypePanel extends Panel {
 
-    private final CellDefinition cellType;
+    private static final String APP_RESOURCES_SUBPACKAGE = "resources";
+    private final CellDefinition cellDefinition;
 
-    @Inject
-    private NotebookSession notebookSession;
-
-    public NotebookCellTypePanel(String id, CellDefinition cellType) {
+    public NotebookCellTypePanel(String id, CellDefinition cellDefinition) {
         super(id);
-        this.cellType = cellType;
+        this.cellDefinition = cellDefinition;
         addComponents();
     }
 
     private void addComponents() {
-
-        Label cellName = new Label("description", cellType.getDescription());
+        Label cellName = new Label("description", cellDefinition.getDescription());
         add(cellName);
-
-        cellName.add(new AttributeModifier("title", cellType.getDescription()));
-
-        add(new Image("cellIcon", new PackageResourceReference(PortalWebApplication.class, "resources/img2.png")));
+        cellName.add(new AttributeModifier("title", cellDefinition.getDescription()));
+        add(new Image("cellIcon", new PackageResourceReference(PortalWebApplication.class, APP_RESOURCES_SUBPACKAGE + "/" + cellDefinition.getIcon())));
     }
 }

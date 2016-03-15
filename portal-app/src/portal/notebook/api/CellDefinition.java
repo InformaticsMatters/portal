@@ -12,7 +12,6 @@ import java.util.List;
 
 @XmlRootElement
 public abstract class CellDefinition implements Serializable {
-    private final static long serialVersionUID = 1l;
 
     public static final String VAR_NAME_INPUT = "input";
     public static final String VAR_NAME_OUTPUT = "output";
@@ -20,26 +19,30 @@ public abstract class CellDefinition implements Serializable {
     public static final String VAR_DISPLAYNAME_INPUT = "Input";
     public static final String VAR_DISPLAYNAME_OUTPUT = "Output";
     public static final String VAR_DISPLAYNAME_FILECONTENT = "File Content";
-
-    private String name;
-    private String description;
-    private Boolean executable;
+    private final static long serialVersionUID = 1L;
     private final List<BindingDefinition> bindingDefinitionList = new ArrayList<>();
     private final List<VariableDefinition> outputVariableDefinitionList = new ArrayList<>();
     private final List<OptionDescriptor> optionDefinitionList = new ArrayList<>();
+    private String name;
+    private String description;
+    private String icon;
+    private Boolean executable;
     private String[] tags;
 
 
-    public CellDefinition(String name, String description, String[] tags, Boolean executable) {
+    public CellDefinition(String name, String description, String icon, String[] tags, Boolean executable) {
         this.name = name;
         this.description = description;
+        this.icon = icon;
         this.tags = tags;
         this.executable = executable;
     }
 
-    public CellDefinition(String name, String description,String[] tags) {
+
+    public CellDefinition(String name, String description, String icon, String[] tags) {
         this.name = name;
         this.description = description;
+        this.icon = icon;
         this.tags = tags;
         this.executable = true;
     }
@@ -93,6 +96,9 @@ public abstract class CellDefinition implements Serializable {
         this.name = name;
     }
 
+    public String getIcon() {
+        return icon;
+    }
     public String[] getTags() {
         return tags;
     }

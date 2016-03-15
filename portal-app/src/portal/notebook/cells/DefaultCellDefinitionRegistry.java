@@ -31,6 +31,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     public DefaultCellDefinitionRegistry() {
         registerCellDefinition(new ChemblActivitiesFetcherCellDefinition());
         registerCellDefinition(createTableDisplayCellDefinition());
+        registerCellDefinition(createScatterPlotCellDefinition());
         registerCellDefinition(new CsvUploadCellDefinition());
         registerCellDefinition(new SdfUploadCellDefinition());
         registerCellDefinition(new DatasetMergerCellDefinition());
@@ -41,7 +42,20 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private static CellDefinition createTableDisplayCellDefinition() {
-        CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", new String[] {"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
+        CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "default_icon.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName(VAR_NAME_INPUT);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        return cellDefinition;
+    }
+
+    private static CellDefinition createScatterPlotCellDefinition() {
+        CellDefinition cellDefinition = new SimpleCellDefinition("ScatterPlot", "Scatter plot", "default_icon.png", new String[]{"scatter", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(VAR_NAME_INPUT);

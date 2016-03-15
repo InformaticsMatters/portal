@@ -12,8 +12,8 @@ public class SimpleCellDefinition extends CellDefinition {
 
     public SimpleCellDefinition() {}
 
-    public SimpleCellDefinition(String name, String description, String[] tags, Boolean executable) {
-        super(name, description, tags, executable);
+    public SimpleCellDefinition(String name, String description, String icon, String[] tags, Boolean executable) {
+        super(name, description, icon, tags, executable);
     }
 
     @Override

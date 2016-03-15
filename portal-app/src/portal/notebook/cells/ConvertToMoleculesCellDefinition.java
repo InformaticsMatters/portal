@@ -9,12 +9,11 @@ import portal.notebook.api.*;
  * Created by timbo on 29/01/16.
  */
 public class ConvertToMoleculesCellDefinition extends CellDefinition {
+    public static final String CELL_NAME = "ConvertToMolecules";
     private final static long serialVersionUID = 1l;
 
-    public static final String CELL_NAME = "ConvertToMolecules";
-
     public ConvertToMoleculesCellDefinition() {
-        super(CELL_NAME, "Convert to Molecules", new String[] {"convert", "transform", "structures", "molecules"});
+        super(CELL_NAME, "Convert to Molecules", "default_icon.png", new String[]{"convert", "transform", "structures", "molecules"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         DatasetFieldOptionDescriptor structureOptionDescriptor = new DatasetFieldOptionDescriptor("structureFieldName", "Structure Field Name",

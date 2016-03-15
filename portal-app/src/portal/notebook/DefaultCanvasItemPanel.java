@@ -10,10 +10,7 @@ import org.squonk.notebook.api.OptionType;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
-import portal.notebook.api.DatasetFieldOptionDescriptor;
-import portal.notebook.api.OptionInstance;
-import portal.notebook.api.VariableInstance;
-import portal.notebook.api.VariableType;
+import portal.notebook.api.*;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -35,7 +32,6 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
     private ListView<OptionInstance> optionListView;
-    private ListView<VariableInstance> variableListView;
     private boolean fileDirty;
 
     public DefaultCanvasItemPanel(String id, Long cellId) {
@@ -45,6 +41,9 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
+        if (findCellInstance().getCellDefinition().getExecutable()) {
+            addExecutionStatusTimerBehavior();
+        }
     }
 
     private void addForm() {
@@ -52,7 +51,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         add(form);
 
         List<OptionInstance> optionList = new ArrayList<>();
-        for (OptionInstance optionInstance : getCellInstance().getOptionMap().values()) {
+        CellInstance cellInstance = findCellInstance();
+        for (OptionInstance optionInstance : cellInstance.getOptionMap().values()) {
             if (optionInstance.getOptionDescriptor().isEditable()) {
                 optionList.add(optionInstance);
             }
@@ -88,14 +88,14 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         if (fileDirty) {
             commitFiles();
         }
-        notebookSession.executeCell(getCellInstance().getId());
+        notebookSession.executeCell(findCellInstance().getId());
         fireContentChanged();
     }
 
     private void storeOptions() {
         for (String name : optionEditorModelMap.keySet()) {
             FieldEditorModel editorModel = optionEditorModelMap.get(name);
-            OptionInstance optionInstance = getCellInstance().getOptionMap().get(name);
+            OptionInstance optionInstance = findCellInstance().getOptionMap().get(name);
             optionInstance.setValue(editorModel.getValue());
             if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
@@ -106,7 +106,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
 
     private void commitFiles() {
-        for (OptionInstance optionInstance : getCellInstance().getOptionMap().values()) {
+        for (OptionInstance optionInstance : findCellInstance().getOptionMap().values()) {
             if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
                 notebookSession.commitFileForVariable(variableInstance);
@@ -127,7 +127,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         Object value = optionInstance.getValue() == null ? optionDefinition.getDefaultValue() : optionInstance.getValue();
         if (OptionType.SIMPLE.equals(optionDefinition.getOptionType())) {
             if (optionDefinition instanceof DatasetFieldOptionDescriptor) {
-                return new DatasetFieldsPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()), getCellInstance(), optionInstance);
+                return new DatasetFieldsPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()), getCellId());
             } else if (optionDefinition.getTypeDescriptor().getType() == Structure.class) {
                 return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             } else if (optionDefinition.getValues() != null && optionDefinition.getValues().length > 0) {
@@ -153,6 +153,31 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         }
     }
 
+    private VariableInstance findVariableInstanceForFileOption() {
+        for (VariableInstance variableInstance : findCellInstance().getOutputVariableMap().values()) {
+            if (variableInstance.getVariableType().equals(VariableType.FILE)) {
+                return variableInstance;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
+        boolean refresh = false;
+        for (int i = 0; i < optionListView.size(); i++) {
+            ListItem listItem = (ListItem)optionListView.get(i);
+            FieldEditorPanel fieldEditorPanel = (FieldEditorPanel)listItem.get(0);
+            if (fieldEditorPanel.processCellChanged(changedCellId, ajaxRequestTarget)) {
+                refresh = true;
+            }
+        }
+        if (refresh) {
+            ajaxRequestTarget.add(this);
+        }
+
+    }
+
     class OptionUploadCallback implements FileFieldEditorPanel.Callback {
         private final OptionInstance optionInstance;
 
@@ -170,15 +195,5 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             fileDirty = true;
         }
     }
-
-    private VariableInstance findVariableInstanceForFileOption() {
-        for (VariableInstance variableInstance : getCellInstance().getOutputVariableMap().values()) {
-            if (variableInstance.getVariableType().equals(VariableType.FILE)) {
-                return variableInstance;
-            }
-        }
-        return null;
-    }
-
 
 }

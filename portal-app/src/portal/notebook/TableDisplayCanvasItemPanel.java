@@ -1,6 +1,7 @@
 package portal.notebook;
 
 import com.im.lac.types.MoleculeObject;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
@@ -24,7 +25,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     public TableDisplayCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
-        CellInstance cellInstance = getCellInstance();
+        CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeWidth(500);
         }
@@ -42,6 +43,17 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         makeCanvasItemResizable(container, "fitTableDisplayGrid", 325, 270);
     }
 
+    @Override
+    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
+        CellInstance cellInstance = findCellInstance();
+        BindingInstance binding = cellInstance.getBindingMap().get("input");
+        if (binding.getVariable() != null && binding.getVariable().getCellId().equals(changedCellId)) {
+            load();
+            ajaxRequestTarget.add(this);
+        }
+
+    }
+
     private void addForm() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
         add(form);
@@ -52,7 +64,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        BindingInstance bindingModel = getCellInstance().getBindingMap().get("input");
+        BindingInstance bindingModel = findCellInstance().getBindingMap().get("input");
         VariableInstance variableModel = bindingModel == null ? null : bindingModel.getVariable();
         boolean assigned = variableModel != null && variableModel.getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
@@ -63,8 +75,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private IDatasetDescriptor loadDescriptor() {
-        CellInstance cellModel = getCellInstance();
-        VariableInstance variableModel = cellModel.getBindingMap().get("input").getVariable();
+        CellInstance cellInstance = findCellInstance();
+        VariableInstance variableModel = cellInstance.getBindingMap().get("input").getVariable();
         VariableType variableType = variableModel.getVariableType();
         if (variableType.equals(VariableType.FILE)) {
             return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());

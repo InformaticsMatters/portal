@@ -35,9 +35,6 @@ public class SessionContext implements Serializable {
         logger.debug("Getting UserDetails");
         UserDetails result = defaultUserDetailsManager.getAuthenticatedUser((HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest(), false);
         if (firstTime && result != null) {
-
-            System.out.println("standard-user? " +  ((HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest()).isUserInRole("standard-user"));
-
             runOnce(result);
             firstTime = false;
         }
@@ -51,7 +48,6 @@ public class SessionContext implements Serializable {
     }
 
     private void runOnce(UserDetails userDetails) {
-
 
         String authenticatedUser = userDetails.getUserid();
         if (authenticatedUser != null) {

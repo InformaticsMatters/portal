@@ -13,11 +13,12 @@ import java.util.logging.Logger;
  * @author simetrias
  */
 public class ServiceCellDefinition extends CellDefinition {
-    private final static long serialVersionUID = 1l;
 
     public static final String OPT_SERVICE_ENDPOINT = StepDefinitionConstants.ServiceExecutor.OPTION_SERVICE_ENDPOINT;
     public static final String OPT_SERVICE_PARAMS = StepDefinitionConstants.ServiceExecutor.OPTION_SERVICE_PARAMS;
     public static final String OPT_SERVICE_PRESERVE_STRUCTURE = StepDefinitionConstants.ServiceExecutor.OPTION_PRESERVE_STRUCTURE;
+    private final static long serialVersionUID = 1l;
+    private static final String SERVICE_ICON = "default_icon.png";
     private static final Logger LOG = Logger.getLogger(ServiceCellDefinition.class.getName());
     private ServiceDescriptor serviceDescriptor;
 
@@ -57,6 +58,10 @@ public class ServiceCellDefinition extends CellDefinition {
         return serviceDescriptor.getTags();
     }
 
+    @Override
+    public String getIcon() {
+        return SERVICE_ICON;
+    }
 
     class Executor extends AbstractJobCellExecutor {
 
