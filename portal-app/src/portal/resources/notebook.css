@@ -312,6 +312,11 @@ div.ui-resizable-handle.ui-resizable-s {
     height: 20px!important;
 }
 
+.nb-cell-name.content {
+    padding-left: 0;
+    padding-right: 0;
+}
+
 .nb-cell-icon {
     height: 48px;
     width: 48px;
