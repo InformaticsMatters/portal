@@ -9,10 +9,12 @@ function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbList
     var canvasVisible = (canvasVisibility === 'true');
 
     if (nbListVisible) {
-            $('.notebookListPanel').show();
-        } else if (!nbListVisible) {
-            $('.notebookListPanel').hide();
-        }
+        $('.notebookListPanel').show();
+        $('.nbListMenu').show();
+    } else if (!nbListVisible) {
+        $('.notebookListPanel').hide();
+        $('.nbListMenu').hide();
+    }
 
     if (cellsVisible) {
         $('.notebookCellsPanel').show();
@@ -35,10 +37,9 @@ function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbList
     } else if ((cellsVisible || nbListVisible) && !canvasVisible) {
         $('.left-column').attr('style','margin-right: 20px!important; border-right: 1px solid #ddd;');
         $('.right-column').attr('style','display:none!important;');
-    }/* else if ((!cellsVisible || !nbListVisible) && canvasVisible) {
-        $('.left-column').attr('style','display:none!important;');
-        $('.right-column').attr('style','margin-left: 20px!important; border-left: 1px solid #ddd;');
-    } */
+    }
+
+
 }
 
 function addCellsPaletteDragAndDropSupport() {
