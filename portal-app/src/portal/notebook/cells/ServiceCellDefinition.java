@@ -60,7 +60,7 @@ public class ServiceCellDefinition extends CellDefinition {
 
     @Override
     public String getIcon() {
-        return SERVICE_ICON;
+        return serviceDescriptor.getIcon();
     }
 
     class Executor extends AbstractJobCellExecutor {

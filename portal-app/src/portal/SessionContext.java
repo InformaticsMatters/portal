@@ -4,7 +4,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.client.UserClient;
-import org.squonk.core.CommonConstants;
 import org.squonk.core.user.User;
 import org.squonk.security.UserDetails;
 import org.squonk.security.impl.KeycloakUserDetailsManager;
@@ -14,7 +13,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 
