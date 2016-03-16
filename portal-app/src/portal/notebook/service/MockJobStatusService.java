@@ -8,6 +8,7 @@ import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.types.io.JsonHandler;
+import portal.notebook.api.CellInstance;
 import portal.notebook.api.NotebookClient;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -67,7 +68,8 @@ public class MockJobStatusService {
     }
 
     private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) {
-        Dataset<MoleculeObject> dataset = createMockDataset("mock");
+        CellInstance cellInstance = notebookClient.retrieveCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellName());
+        Dataset<MoleculeObject> dataset = createMockDataset((String)cellInstance.getOptionMap().get("prefix").getValue());
         try {
             writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellName(), "output", dataset);
         } catch (IOException e) {

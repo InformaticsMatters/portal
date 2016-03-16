@@ -77,15 +77,15 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     private IDatasetDescriptor loadDescriptor() {
         CellInstance cellInstance = findCellInstance();
         VariableInstance variableModel = cellInstance.getBindingMap().get("input").getVariable();
-        VariableType variableType = variableModel.getVariableType();
+        VariableType variableType = variableModel.getVariableDefinition().getVariableType();
         if (variableType.equals(VariableType.FILE)) {
             return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());
         } else if (variableType.equals(VariableType.DATASET)) {
             return notebookSession.loadDatasetFromSquonkDataset(variableModel);
         } else if (variableModel.getValue() instanceof Strings) {
-            return notebookSession.createDatasetFromStrings((Strings) variableModel.getValue(), variableModel.getName());
+            return notebookSession.createDatasetFromStrings((Strings) variableModel.getValue(), variableModel.getVariableDefinition().getName());
         } else if (variableModel.getValue() instanceof List) {
-            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>) variableModel.getValue(), variableModel.getName());
+            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>) variableModel.getValue(), variableModel.getVariableDefinition().getName());
         } else {
             return null;
         }

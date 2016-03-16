@@ -133,6 +133,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         Execution lastExecution = notebookSession.findExecution(findCellInstance().getId());
         boolean changed = executionChanged(lastExecution);
         if (changed) {
+            System.out.println("changed");
             cellTitleBarPanel.applyExecutionStatus(lastExecution);
             ajaxRequestTarget.add(cellTitleBarPanel);
             executionStatusChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), ajaxRequestTarget);

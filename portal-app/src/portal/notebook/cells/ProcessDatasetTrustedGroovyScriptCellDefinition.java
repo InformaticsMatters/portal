@@ -5,10 +5,13 @@ import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 
 /**
  * Created by timbo on 29/01/16.
  */
+@XmlRootElement
 public class ProcessDatasetTrustedGroovyScriptCellDefinition extends CellDefinition {
     public static final String CELL_NAME = "TrustedGroovyDatasetScript";
     private final static long serialVersionUID = 1l;

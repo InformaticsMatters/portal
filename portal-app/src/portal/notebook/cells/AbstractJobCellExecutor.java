@@ -83,7 +83,7 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
                 Long cellId = variable.getCellId();
                 CellInstance producer = notebook.findCellById(cellId);
                 if (producer != null) {
-                    return new VariableKey(producer.getName(), variable.getName());
+                    return new VariableKey(producer.getName(), variable.getVariableDefinition().getName());
                 }
             }
         }

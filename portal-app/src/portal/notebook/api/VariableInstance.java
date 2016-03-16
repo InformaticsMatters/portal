@@ -1,17 +1,15 @@
 package portal.notebook.api;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
+@XmlRootElement
 public class VariableInstance implements Serializable {
     private final static long serialVersionUID = 1l;
     private Long cellId;
     private VariableDefinition variableDefinition;
     private Object value;
     private boolean dirty = false;
-
-    public String getName() {
-        return variableDefinition.getName();
-    }
 
     public Object getValue() {
         return value;
@@ -20,14 +18,6 @@ public class VariableInstance implements Serializable {
     public void setValue(Object value) {
         dirty = true;
         this.value = value;
-    }
-
-    public VariableType getVariableType() {
-        return variableDefinition.getVariableType();
-    }
-
-    public String getDisplayName() {
-        return variableDefinition.getDisplayName();
     }
 
     public Long getCellId() {

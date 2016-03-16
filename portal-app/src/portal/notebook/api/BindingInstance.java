@@ -1,7 +1,9 @@
 package portal.notebook.api;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
+@XmlRootElement
 public class BindingInstance implements Serializable {
     private final static long serialVersionUID = 1l;
     private BindingDefinition bindingDefinition;

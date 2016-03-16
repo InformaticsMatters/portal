@@ -9,11 +9,13 @@ import org.squonk.options.FileTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 
 /**
  * Created by timbo on 29/01/16.
  */
+@XmlRootElement
 public class CsvUploadCellDefinition extends CellDefinition {
     public static final String CELL_NAME = "CsvUpload";
     public static final String OPT_FILE_UPLOAD = CsvUpload.OPTION_FILE_UPLOAD;

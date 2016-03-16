@@ -1,9 +1,14 @@
 package portal.notebook.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@XmlRootElement
 public class CellInstance implements Serializable {
     private final static long serialVersionUID = 1l;
 
@@ -27,6 +32,8 @@ public class CellInstance implements Serializable {
         this.name = name;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public CellDefinition getCellDefinition() {
         return cellDefinition;
     }

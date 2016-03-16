@@ -9,10 +9,13 @@ import portal.notebook.api.CellExecutionData;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.NotebookInstance;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Highly opinionated cell executer that expects a single input and out datasets and used all the default names, and does
  * not need special treatment of options.
  */
+@XmlRootElement
 class SimpleJobCellExecutor extends AbstractJobCellExecutor {
 
     private final String stepClassName;

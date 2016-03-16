@@ -515,7 +515,7 @@ public class NotebookCanvasPage extends WebPage {
             for (BindingInstance bindingInstance : targetCellInstance.getBindingMap().values()) {
                 VariableInstance source = bindingInstance.getVariable();
                 if (source != null) {
-                    String sourceEndpointUuid = CANVAS_ITEM_PREFIX + source.getCellId() + "-" + source.getName();
+                    String sourceEndpointUuid = CANVAS_ITEM_PREFIX + source.getCellId() + "-" + source.getVariableDefinition().getName();
                     String targetEndpointUuid = targetCellMarkupId + "-" + bindingInstance.getName();
                     String js = "addConnection('" + sourceEndpointUuid + "', '" + targetEndpointUuid + "');";
                     stringBuilder.append(js);
@@ -529,8 +529,8 @@ public class NotebookCanvasPage extends WebPage {
         String itemId = CANVAS_ITEM_PREFIX + cellInstance.getId();
         StringBuilder stringBuilder = new StringBuilder();
         for (VariableInstance variableInstance : cellInstance.getOutputVariableMap().values()) {
-            String endpointId = itemId + "-" + variableInstance.getName();
-            stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + variableInstance.getName() + "');");
+            String endpointId = itemId + "-" + variableInstance.getVariableDefinition().getName();
+            stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + variableInstance.getVariableDefinition().getName() + "');");
         }
         for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
             String endpointId = itemId + "-" + bindingInstance.getName();

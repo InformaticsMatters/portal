@@ -4,9 +4,12 @@ package portal.notebook.cells;
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellExecutor;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * temporary
  */
+@XmlRootElement
 public class SimpleCellDefinition extends CellDefinition {
     private final static long serialVersionUID = 1l;
 

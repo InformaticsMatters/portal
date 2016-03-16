@@ -19,12 +19,12 @@ public class SourceVariableProvider extends TextChoiceProvider<VariableInstance>
 
     @Override
     protected String getDisplayText(VariableInstance variableModel) {
-        return variableModel.getDisplayName();
+        return variableModel.getVariableDefinition().getDisplayName();
     }
 
     @Override
     protected Object getId(VariableInstance variableModel) {
-        return variableModel.getName();
+        return variableModel.getVariableDefinition().getName();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class SourceVariableProvider extends TextChoiceProvider<VariableInstance>
         Collections.sort(list, new Comparator<VariableInstance>() {
             @Override
             public int compare(VariableInstance o1, VariableInstance o2) {
-                return o1.getName().compareTo(o2.getName());
+                return o1.getVariableDefinition().getName().compareTo(o2.getVariableDefinition().getName());
             }
         });
         response.addAll(list);

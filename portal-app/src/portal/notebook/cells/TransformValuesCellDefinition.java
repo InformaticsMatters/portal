@@ -5,12 +5,14 @@ import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.logging.Logger;
 
 
 /**
  * Created by timbo on 29/01/16.
  */
+@XmlRootElement
 public class TransformValuesCellDefinition extends CellDefinition {
     public static final String CELL_NAME = "TransformValues";
     private final static long serialVersionUID = 1l;

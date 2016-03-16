@@ -7,11 +7,13 @@ import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.VariableKey;
 import portal.notebook.api.*;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
+@XmlRootElement
 public class ServiceCellDefinition extends CellDefinition {
 
     public static final String OPT_SERVICE_ENDPOINT = StepDefinitionConstants.ServiceExecutor.OPTION_SERVICE_ENDPOINT;

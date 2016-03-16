@@ -2,8 +2,10 @@ package portal.notebook.api;
 
 import org.squonk.options.OptionDescriptor;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
+@XmlRootElement
 public class OptionInstance implements Serializable {
     private final static long serialVersionUID = 1l;
     private OptionDescriptor optionDescriptor;

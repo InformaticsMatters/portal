@@ -28,14 +28,19 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
     public NotebookInstance retrieveNotebookInstance(Long notebookId) {
         MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
         queryParams.add("notebookId", notebookId.toString());
-        return (NotebookInstance) this.newResourceBuilder("/retrieveNotebookInstance", queryParams).get(NotebookInstance.class);
+        return newResourceBuilder("/retrieveNotebookInstance", queryParams).get(NotebookInstance.class);
     }
 
     public CellInstance retrieveCellInstance(Long notebookId, String cellName) {
         MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
         queryParams.add("notebookId", notebookId.toString());
         queryParams.add("cellName", cellName);
-        return (CellInstance) this.newResourceBuilder("/retrieveCellInstance", queryParams).get(CellInstance.class);
+        String string = newResourceBuilder("/retrieveCellInstance", queryParams).get(String.class);
+        try {
+            return new ObjectMapper().readValue(string, CellInstance.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String readTextValue(Long notebookId, String producerName, String variableName) {
@@ -43,7 +48,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         queryParams.add("notebookId", notebookId.toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
-        return (String) this.newResourceBuilder("/readTextValue", queryParams).get(String.class);
+        return newResourceBuilder("/readTextValue", queryParams).get(String.class);
     }
 
     public Integer readIntegerValue(Long notebookId, String producerName, String variableName) {
@@ -51,7 +56,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         queryParams.add("notebookId", notebookId.toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
-        String string = (String) this.newResourceBuilder("/readTextValue", queryParams).get(String.class);
+        String string = newResourceBuilder("/readTextValue", queryParams).get(String.class);
         return string == null ? null : new Integer(string);
     }
 
@@ -61,7 +66,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         WebResource.Builder builder = this.newResourceBuilder("/readStreamValue", queryParams);
-        return (InputStream) builder.get(InputStream.class);
+        return builder.get(InputStream.class);
     }
 
     public List<MoleculeObject> readFileValueAsMolecules(Long notebookId, String producerName, String variableName) {
@@ -70,7 +75,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         WebResource.Builder builder = this.newResourceBuilder("/readFileValueAsMolecules", queryParams);
-        String json = (String) builder.get(String.class);
+        String json = builder.get(String.class);
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
@@ -87,7 +92,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
         queryParams.add("value", value);
-        this.newResourceBuilder("/writeTextValue", queryParams).post();
+        newResourceBuilder("/writeTextValue", queryParams).post();
     }
 
     public void writeIntegerValue(Long notebookId, String cellName, String variableName, Integer value) {
@@ -96,7 +101,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         queryParams.add("producerName", cellName);
         queryParams.add("variableName", variableName);
         queryParams.add("value", value == null ? null : value.toString());
-        this.newResourceBuilder("/writeIntegerValue", queryParams).post();
+        newResourceBuilder("/writeIntegerValue", queryParams).post();
     }
 
     public void writeStreamContents(Long notebookId, String producerName, String variableName, final InputStream inputStream) {
@@ -104,7 +109,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         queryParams.add("notebookId", notebookId.toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
-        WebResource.Builder builder = this.newResourceBuilder("/writeStreamContents", queryParams);
+        WebResource.Builder builder = newResourceBuilder("/writeStreamContents", queryParams);
         builder.post(new StreamingOutput() {
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
                 NotebookClient.this.transfer(inputStream, outputStream);
@@ -118,7 +123,7 @@ public class NotebookClient extends AbstractServiceClient implements Serializabl
         queryParams.add("notebookId", notebookId.toString());
         queryParams.add("producerName", producerName);
         queryParams.add("variableName", variableName);
-        WebResource.Builder builder = this.newResourceBuilder("/writeStreamContents", queryParams);
+        WebResource.Builder builder = newResourceBuilder("/writeStreamContents", queryParams);
         builder.post(streamingOutput);
     }
 

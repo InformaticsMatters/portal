@@ -42,7 +42,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         addForm();
         addTitleBar();
         if (findCellInstance().getCellDefinition().getExecutable()) {
-            addExecutionStatusTimerBehavior();
+           addExecutionStatusTimerBehavior();
         }
     }
 
@@ -127,7 +127,9 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         Object value = optionInstance.getValue() == null ? optionDefinition.getDefaultValue() : optionInstance.getValue();
         if (OptionType.SIMPLE.equals(optionDefinition.getOptionType())) {
             if (optionDefinition instanceof DatasetFieldOptionDescriptor) {
-                return new DatasetFieldsPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()), getCellId());
+                return new DatasetFieldPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()), getCellId());
+            } else if (optionDefinition instanceof DatasetsFieldOptionDescriptor) {
+                return new DatasetsFieldPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()), getCellId());
             } else if (optionDefinition.getTypeDescriptor().getType() == Structure.class) {
                 return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(value, optionDefinition.getDisplayName()));
             } else if (optionDefinition.getValues() != null && optionDefinition.getValues().length > 0) {
@@ -155,7 +157,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
     private VariableInstance findVariableInstanceForFileOption() {
         for (VariableInstance variableInstance : findCellInstance().getOutputVariableMap().values()) {
-            if (variableInstance.getVariableType().equals(VariableType.FILE)) {
+            if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.FILE)) {
                 return variableInstance;
             }
         }

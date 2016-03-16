@@ -149,7 +149,7 @@ public class BindingsModalPanel extends SemanticModalPanel {
             return null;
         }
         CellInstance producerCellInstance = notebookSession.getCurrentNotebookInstance().findCellById(variableInstance.getCellId());
-        return producerCellInstance.getName() + " " + variableInstance.getDisplayName();
+        return producerCellInstance.getName() + " " + variableInstance.getVariableDefinition().getDisplayName();
     }
 
     private List<BindingInstance> buildBindingInstanceList() {

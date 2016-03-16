@@ -16,14 +16,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatasetFieldsPicklistFieldEditorPanel extends FieldEditorPanel {
+public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
 
     private final Long cellId;
     private List<String> picklistItems;
     @Inject
     private NotebookSession notebookSession;
 
-    public DatasetFieldsPicklistFieldEditorPanel(String id, FieldEditorModel fieldEditorModel, Long cellId) {
+    public DatasetFieldPicklistFieldEditorPanel(String id, FieldEditorModel fieldEditorModel, Long cellId) {
         super(id, fieldEditorModel);
         this.cellId = cellId;
         loadPicklist();

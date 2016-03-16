@@ -6,9 +6,12 @@ import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.OptionDescriptor;
 import portal.notebook.api.*;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Created by timbo on 29/01/16.
  */
+@XmlRootElement
 public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
     public static final long serialVersionUID = 1l;
 

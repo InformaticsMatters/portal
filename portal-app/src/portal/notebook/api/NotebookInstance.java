@@ -168,7 +168,7 @@ public class NotebookInstance implements Serializable {
         }
         for (VariableInstance variableInstance : cellInstance.getOutputVariableMap().values()) {
             if (variableInstance.isDirty()) {
-                localCellInstance.getOutputVariableMap().get(variableInstance.getName()).setValue(variableInstance.getValue());
+                localCellInstance.getOutputVariableMap().get(variableInstance.getVariableDefinition().getName()).setValue(variableInstance.getValue());
             }
         }
         for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
@@ -176,7 +176,7 @@ public class NotebookInstance implements Serializable {
                 if (bindingInstance.getVariable() == null) {
                     localCellInstance.getBindingMap().get(bindingInstance.getName()).setVariable(null);
                 } else {
-                    VariableInstance variableInstance = findVariable(bindingInstance.getVariable().getCellId(), bindingInstance.getVariable().getName());
+                    VariableInstance variableInstance = findVariable(bindingInstance.getVariable().getCellId(), bindingInstance.getVariable().getVariableDefinition().getName());
                     localCellInstance.getBindingMap().get(bindingInstance.getName()).setVariable(variableInstance);
                 }
             }

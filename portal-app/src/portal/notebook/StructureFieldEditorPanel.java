@@ -2,7 +2,6 @@
 package portal.notebook;
 
 import chemaxon.formats.MolExporter;
-import chemaxon.formats.MolFormatException;
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
@@ -70,7 +69,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
 
             @Override
             protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
-                String mrv = toMrv(model.getObject());
+                String mrv = model.getObject();
                 LOGGER.info(mrv);
                 if (mrv != null && !mrv.isEmpty()) {
                     marvinSketcherPanel.setSketchData(ajaxRequestTarget, mrv, "mrv");
@@ -86,9 +85,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
             @Override
             public void onSubmit() {
                 String mrv = marvinSketcherPanel.getSketchData();
-                LOGGER.info(mrv);
-                String smiles = toSmiles(mrv);
-                model.setObject(smiles);
+                model.setObject(mrv);
                 refreshThumbnail();
                 marvinSketcherPanel.hideModal();
             }
@@ -121,10 +118,9 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
         try {
             graphics2D.setColor(Color.white);
             graphics2D.fillRect(0, 0, getRectangle().width, getRectangle().height);
-            String smiles = model.getObject();
-            if (smiles != null && ! smiles.isEmpty()) {
-                String sketchData = toMrv(smiles);
-                Molecule molecule = MolImporter.importMol(sketchData);
+            String mrv = model.getObject();
+            if (mrv != null && ! mrv.isEmpty()) {
+                Molecule molecule = MolImporter.importMol(mrv);
                 molecule.dearomatize();
                 MolPrinter molPrinter = new MolPrinter();
                 molPrinter.setMol(molecule);

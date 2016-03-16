@@ -252,21 +252,21 @@ public class NotebookService {
             throw new Exception("Could not create " + folder.getAbsolutePath());
         }
 
-        switch (variable.getVariableType()) {
+        switch (variable.getVariableDefinition().getVariableType()) {
             case FILE:
-                return new File(folder, variable.getCellId() + "-" + variable.getName());
+                return new File(folder, variable.getCellId() + "-" + variable.getVariableDefinition().getName());
             case STREAM: // fallthrough intended
             case DATASET:
-                String fileName = URLEncoder.encode(variable.getCellId() + "_" + variable.getName(), "US-ASCII");
+                String fileName = URLEncoder.encode(variable.getCellId() + "_" + variable.getVariableDefinition().getName(), "US-ASCII");
                 return new File(folder, fileName);
             default:
-                LOGGER.warning("Invalid variable type for file storage: " + variable.getVariableType());
+                LOGGER.warning("Invalid variable type for file storage: " + variable.getVariableDefinition().getVariableType());
                 return null;
         }
     }
 
     public void storeStreamingContents(Long notebookId, VariableInstance variable, InputStream inputStream) {
-        LOGGER.info("storeStreamingContents for " + notebookId + "/" + variable.getName() + "/" + variable.getVariableType());
+        LOGGER.info("storeStreamingContents for " + notebookId + "/" + variable.getVariableDefinition().getName() + "/" + variable.getVariableDefinition().getVariableType());
         try {
             File file = resolveContentsFile(notebookId, variable);
             LOGGER.info("File is " + file);
