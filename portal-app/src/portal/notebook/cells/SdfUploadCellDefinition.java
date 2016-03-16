@@ -23,7 +23,7 @@ public class SdfUploadCellDefinition extends CellDefinition {
     private final static long serialVersionUID = 1l;
 
     public SdfUploadCellDefinition() {
-        super(CELL_NAME, "SDF upload", "default_icon.png", new String[]{"file", "upload", "sdf"});
+        super(CELL_NAME, "SDF upload", "icons/molecules_many.png", new String[]{"file", "upload", "sdf"});
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
         getOutputVariableDefinitionList().add(variableDefinition);
         variableDefinition = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);

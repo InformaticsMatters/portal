@@ -15,7 +15,7 @@ public class ConvertToMoleculesCellDefinition extends CellDefinition {
     private final static long serialVersionUID = 1l;
 
     public ConvertToMoleculesCellDefinition() {
-        super(CELL_NAME, "Convert to Molecules", "default_icon.png", new String[]{"convert", "transform", "structures", "molecules"});
+        super(CELL_NAME, "Convert to Molecules", "icons/transform.png", new String[]{"convert", "transform", "structures", "molecules"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         DatasetFieldOptionDescriptor structureOptionDescriptor = new DatasetFieldOptionDescriptor("structureFieldName", "Structure Field Name",

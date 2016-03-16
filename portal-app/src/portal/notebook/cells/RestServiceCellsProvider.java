@@ -35,7 +35,7 @@ public class RestServiceCellsProvider implements ServiceCellsProvider {
     }
 
     private List<ServiceDescriptor> listServiceDescriptors() {
-        ServicesClient servicesClient = new ServicesClient(CommonConstants.HOST_CORE_SERVICES_SERVICES);
+        ServicesClient servicesClient = new ServicesClient();
         List<ServiceDescriptor> serviceDescriptors;
         try {
             serviceDescriptors = servicesClient.getServiceDescriptors(sessionContext.getLoggedInUserDetails().getUserid());

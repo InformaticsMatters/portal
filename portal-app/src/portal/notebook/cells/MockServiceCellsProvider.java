@@ -37,6 +37,7 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                     MoleculeObject.class, // outputClass
                     Metadata.Type.STREAM, // inputTypes
                     Metadata.Type.STREAM, // outputTypes
+                    "default_icon.png",
                     new AccessMode[]{
                             new AccessMode(
                                     "asyncHttp",
@@ -62,6 +63,7 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                     MoleculeObject.class, // outputClass
                     Metadata.Type.STREAM, // inputTypes
                     Metadata.Type.STREAM, // outputTypes
+                    "default_icon.png",
                     new AccessMode[]{
                             new AccessMode(
                                     "asyncHttp",
@@ -90,6 +92,7 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                     MoleculeObject.class, // outputClass
                     Metadata.Type.STREAM, // inputTypes
                     Metadata.Type.STREAM, // outputTypes
+                    "default_icon.png",
                     new AccessMode[]{
                             new AccessMode(
                                     "asyncHttp",
