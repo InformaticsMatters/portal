@@ -208,7 +208,7 @@ public class NotebookSession implements Serializable {
 
     public IDatasetDescriptor createDatasetFromStrings(Strings value, String name) {
         List<MoleculeObject> list = new ArrayList<>();
-        for (String smile : value.getStrings()) {
+        for (String smile : value.getList()) {
             MoleculeObject moleculeObject = new MoleculeObject(smile);
             list.add(moleculeObject);
         }
