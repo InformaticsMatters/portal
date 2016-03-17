@@ -16,7 +16,6 @@ import java.util.List;
 
 public class RestPicklistFieldEditorPanel  extends FieldEditorPanel {
 
-
     private final String queryUri;
 
     public RestPicklistFieldEditorPanel(String id, FieldEditorModel fieldEditorModel, String queryUri) {
@@ -26,7 +25,8 @@ public class RestPicklistFieldEditorPanel  extends FieldEditorPanel {
     }
 
     private void addComponents() {
-        Model model = new Model<String>() {
+        Model<String> model = new Model<String>() {
+
             @Override
             public String getObject() {
                 return (String)getFieldEditorModel().getValue();
@@ -38,7 +38,9 @@ public class RestPicklistFieldEditorPanel  extends FieldEditorPanel {
             }
         };
         add(new Label("label", getFieldEditorModel().getDisplayName()));
+
         TextChoiceProvider<String> provider = new TextChoiceProvider<String>(){
+
             @Override
             protected String getDisplayText(String string) {
                 return string;
@@ -65,6 +67,7 @@ public class RestPicklistFieldEditorPanel  extends FieldEditorPanel {
                 return list;
             }
         };
+
         Select2Choice<String> select2Choice = new Select2Choice<>("picklist", model);
         select2Choice.setProvider(provider);
         select2Choice.getSettings().setMinimumInputLength(1);
