@@ -22,8 +22,8 @@ import java.io.Serializable;
  */
 public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
+    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data)";
     private Form<ModelObject> form;
-    private int[][] scatterPlotData = {{1, 3}, {2, 8}, {3, 14}, {4, 1}};
 
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -33,6 +33,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         }
         addForm();
         addTitleBar();
+        refreshPlotData();
     }
 
     @Override
@@ -42,7 +43,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3.min.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/scatterplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/scatterplot.css")));
-        response.render(OnDomReadyHeaderItem.forScript("buildScatterPlot('" + getMarkupId() + "', [])"));
+        response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
     }
 
     @Override
@@ -62,25 +63,44 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
+        refreshPlotData();
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         target.add(this);
-        target.appendJavaScript("buildScatterPlot('" + getMarkupId() + "', " + toJsonString(scatterPlotData) + ")");
+        target.appendJavaScript(buildPlotJs());
     }
 
-    private String toJsonString(Object object) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            objectMapper.writeValue(outputStream, object);
-            outputStream.flush();
-            return outputStream.toString();
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+    private void refreshPlotData() {
+        ModelObject model = form.getModelObject();
+        model.setPlotData(new int[][]{{1, 1}, {2, 2}, {3, 3}});
+    }
+
+    private String buildPlotJs() {
+        ModelObject model = form.getModelObject();
+        return BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getPlotDataAsJson());
     }
 
     class ModelObject implements Serializable {
 
-    }
+        private int[][] plotData = {};
 
+        public int[][] getPlotData() {
+            return plotData;
+        }
+
+        public void setPlotData(int[][] plotData) {
+            this.plotData = plotData;
+        }
+
+        private String getPlotDataAsJson() {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                objectMapper.writeValue(outputStream, plotData);
+                outputStream.flush();
+                return outputStream.toString();
+            } catch (Throwable t) {
+                throw new RuntimeException(t);
+            }
+        }
+    }
 }
