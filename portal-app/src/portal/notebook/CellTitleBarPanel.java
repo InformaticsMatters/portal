@@ -57,7 +57,7 @@ public class CellTitleBarPanel extends Panel {
     private void addToolbarControls() {
         add(new Label("cellName", cellInstance.getName().toLowerCase()));
 
-        cellPopupPanel = new CellPopupPanel("content");
+        cellPopupPanel = new CellPopupPanel("content", cellInstance);
         openPopupLink = new AjaxLink("openPopup") {
 
             @Override
