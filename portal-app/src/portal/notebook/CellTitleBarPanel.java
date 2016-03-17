@@ -62,7 +62,9 @@ public class CellTitleBarPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+
                 decoratePopupLink(this, ajaxRequestTarget);
+                getCallbackHandler().onEditBindings(cellInstance);
             }
         };
         openPopupLink.setOutputMarkupId(true);

@@ -27,6 +27,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     @Inject
     private ExecutionStatusChangeManager executionStatusChangeManager;
     private BindingsModalPanel bindingsModalPanel;
+    private BindingsPanel bindingsPanel;
     private CellTitleBarPanel cellTitleBarPanel;
     private Execution oldExecution;
 
@@ -77,6 +78,31 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                 }
             }
         });
+
+        bindingsPanel = new BindingsPanel("bindingsPanel");
+        bindingsPanel.setCallbacks(new BindingsPanel.Callbacks() {
+
+            @Override
+            public void onSubmit() {
+                notebookSession.storeCurrentNotebook();
+                if (bindingsPanel.getSourceCellInstance() != null) {
+                    AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
+                    ajaxRequestTarget.add(getPage());
+                    String sourceMarkupId = NotebookCanvasPage.CANVAS_ITEM_PREFIX + bindingsPanel.getSourceCellInstance().getId();
+                    String targetMarkupId = NotebookCanvasPage.CANVAS_ITEM_PREFIX + bindingsPanel.getTargetCellInstance().getId();
+                    String js = "addConnection('" + sourceMarkupId + "', '" + targetMarkupId + "');";
+                    ajaxRequestTarget.appendJavaScript(js);
+                }
+            }
+
+            @Override
+            public void onClose() {
+                if (bindingsPanel.isDirty()) {
+                    notebookSession.reloadCurrentNotebook();
+                    RequestCycle.get().find(AjaxRequestTarget.class).add(getPage());
+                }
+            }
+        });
     }
 
     protected void addTitleBar() {
@@ -114,9 +140,10 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
     public void editBindings(CellInstance sourceCellInstance, CellInstance targetCellInstance, boolean canAddBindings) {
         bindingsModalPanel.configure(sourceCellInstance, targetCellInstance, canAddBindings);
-        popupContainerProvider.setPopupContentForPage(getPage(), bindingsModalPanel);
+        popupContainerProvider.setPopupContentForPage(getPage(), bindingsPanel);
+        // popupContainerProvider.setPopupContentForPage(getPage(), bindingsModalPanel);
         popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
-        bindingsModalPanel.showModal();
+        // bindingsModalPanel.showModal();
     }
 
     public void addExecutionStatusTimerBehavior() {
