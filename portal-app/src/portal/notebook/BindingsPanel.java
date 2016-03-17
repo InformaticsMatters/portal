@@ -10,7 +10,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,54 +45,7 @@ public class BindingsPanel extends Panel {
 
     public BindingsPanel(String id) {
         super(id);
-        addForm();
         addBindingList();
-    }
-
-    private void addForm() {
-        connectionForm = new Form<>("form");
-        connectionForm.setOutputMarkupId(true);
-        add(connectionForm);
-        connectionForm.setModel(new CompoundPropertyModel<>(new ConnectionPanelData()));
-
-        sourceLabel = new Label("sourceLabel", "Source variable");
-        connectionForm.add(sourceLabel);
-        targetLabel = new Label("targetLabel", "Target input");
-        connectionForm.add(targetLabel);
-
-        sourceChoice = new Select2Choice<>("source");
-        sourceChoice.getSettings().setMinimumInputLength(0);
-        sourceChoice.setOutputMarkupId(true);
-        sourceChoice.setProvider(new SourceVariableProvider(null));
-        connectionForm.add(sourceChoice);
-
-        targetChoice = new Select2Choice<>("target");
-        targetChoice.getSettings().setMinimumInputLength(0);
-        targetChoice.setOutputMarkupId(true);
-        targetChoice.setProvider(new TargetBindingProvider(null));
-        connectionForm.add(targetChoice);
-
-        bindAction = new AjaxSubmitLink("submit") {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                if (targetChoice.getModelObject() != null) {
-                    targetChoice.getModelObject().setVariable(sourceChoice.getModelObject());
-                }
-                callbacks.onSubmit();
-            }
-        };
-        bindAction.setOutputMarkupId(true);
-        connectionForm.add(bindAction);
-
-        AjaxLink cancelAction = new AjaxLink("cancel") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                callbacks.onClose();
-            }
-        };
-        connectionForm.add(cancelAction);
     }
 
     private void addBindingList() {
