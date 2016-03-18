@@ -48,7 +48,16 @@ public class PortalWebApplication extends WebApplication {
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
-        return RuntimeConfigurationType.DEVELOPMENT;
+        RuntimeConfigurationType result = RuntimeConfigurationType.DEPLOYMENT;
+        if (isDevelopmentEnvironment()) {
+            result = RuntimeConfigurationType.DEVELOPMENT;
+        }
+        return result;
+    }
+
+    private boolean isDevelopmentEnvironment() {
+        String development = System.getProperty("development");
+        return Boolean.parseBoolean(development);
     }
 
     protected void configureSecurity() {

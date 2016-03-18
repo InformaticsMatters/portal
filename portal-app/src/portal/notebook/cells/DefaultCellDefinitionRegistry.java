@@ -32,6 +32,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new ChemblActivitiesFetcherCellDefinition());
         registerCellDefinition(createTableDisplayCellDefinition());
         registerCellDefinition(createScatterPlotCellDefinition());
+        registerCellDefinition(createBoxPlotCellDefinition());
         registerCellDefinition(new CsvUploadCellDefinition());
         registerCellDefinition(new SdfUploadCellDefinition());
         registerCellDefinition(new DatasetMergerCellDefinition());
@@ -56,6 +57,19 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     private static CellDefinition createScatterPlotCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("ScatterPlot", "Scatter plot", "icons/view.png", new String[]{"scatter", "plot", "visualization", "visualisation", "viz"}, false);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName(VAR_NAME_INPUT);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        return cellDefinition;
+    }
+
+    private static CellDefinition createBoxPlotCellDefinition() {
+        CellDefinition cellDefinition = new SimpleCellDefinition("BoxPlot", "Box plot", "icons/view.png", new String[]{"box", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(VAR_NAME_INPUT);
