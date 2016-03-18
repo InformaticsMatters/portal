@@ -9,7 +9,6 @@ import org.squonk.dataset.DatasetMetadata;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.types.io.JsonHandler;
 import portal.notebook.api.CellInstance;
-import portal.notebook.api.NotebookClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,10 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -31,7 +27,7 @@ import java.util.stream.Stream;
 public class MockJobStatusService {
     private static final Logger LOGGER = Logger.getLogger(MockJobStatusService.class.getName());
     @Inject
-    private NotebookClient notebookClient;
+    private NotebookService notebookService;
 
     @Path("execute")
     @POST
@@ -56,19 +52,19 @@ public class MockJobStatusService {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
         try (Stream stream = generator.getAsStream()) {
             InputStream dataInputStream = generator.getAsInputStream(stream, true);
-            notebookClient.writeStreamContents(notebookId, cellName, name, dataInputStream);
+            notebookService.writeStreamContents(notebookId, cellName, name, dataInputStream);
         }
         DatasetMetadata metadata = generator.getDatasetMetadata();
         String jsonTring = JsonHandler.getInstance().objectToJson(metadata);
-        notebookClient.writeTextValue(notebookId, cellName, name, jsonTring);
-        String storedValue = notebookClient.readTextValue(notebookId, cellName, name);
+        notebookService.writeTextValue(notebookId, cellName, name, jsonTring);
+        String storedValue = notebookService.readTextValue(notebookId, cellName, name);
         if (!storedValue.equals(jsonTring)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }
     }
 
     private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) {
-        CellInstance cellInstance = notebookClient.retrieveCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellName());
+        CellInstance cellInstance = notebookService.retrieveCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellName());
         Dataset<MoleculeObject> dataset = createMockDataset((String)cellInstance.getOptionMap().get("prefix").getValue());
         try {
             writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellName(), "output", dataset);
@@ -81,16 +77,14 @@ public class MockJobStatusService {
 
     Dataset<MoleculeObject> createMockDataset(String prefix) {
         List<MoleculeObject> mols = new ArrayList<>();
-        Map<String,Object> values = new HashMap<>();
-        values.put("ID", 1);
-        values.put(prefix, 1.1);
-        mols.add(new MoleculeObject("C", "smiles", values));
-        values.put("ID", 2);
-        values.put(prefix, 2.2);
-        mols.add(new MoleculeObject("CC", "smiles", values));
-        values.put("ID", 3);
-        values.put(prefix, 3.3);
-        mols.add(new MoleculeObject("CCC", "smiles", values));
+        for (int i = 0; i < 100; i++) {
+            Map<String, Object> values = new LinkedHashMap<>();
+            values.put("ID", i + 1);
+            values.put(prefix, 1.1);
+            values.put("x", new Random().nextInt(19) + 1);
+            values.put("y", new Random().nextInt(19) + 1);
+            mols.add(new MoleculeObject("C", "smiles", values));
+        }
         return new Dataset<>(MoleculeObject.class, mols);
     }
 
