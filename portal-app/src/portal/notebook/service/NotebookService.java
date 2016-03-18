@@ -444,7 +444,7 @@ public class NotebookService {
 
     @Path("writeTextValue")
     @POST
-    public void writeValueAsText(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") String value) {
+    public void writeTextValue(@QueryParam("notebookId") Long notebookId, @QueryParam("producerName") String producerName, @QueryParam("variableName") String variableName, @QueryParam("value") String value) {
         NotebookInstance notebookInstance = findNotebookInstance(notebookId);
         VariableInstance variable = notebookInstance.findVariable(producerName, variableName);
         variable.setValue(value);
