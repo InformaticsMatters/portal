@@ -6,7 +6,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +25,12 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private PopupContainerProvider popupContainerProvider;
     @Inject
     private ExecutionStatusChangeManager executionStatusChangeManager;
-    private BindingsModalPanel bindingsModalPanel;
     private CellTitleBarPanel cellTitleBarPanel;
     private Execution oldExecution;
 
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
         this.cellId = cellId;
-        addBindingsPanel();
     }
 
     @Override
@@ -50,33 +47,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         logger.info(js);
 
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
-    }
-
-    private void addBindingsPanel() {
-        bindingsModalPanel = new BindingsModalPanel("content", "modalElement");
-        bindingsModalPanel.setCallbacks(new BindingsModalPanel.Callbacks() {
-
-            @Override
-            public void onSubmit() {
-                notebookSession.storeCurrentNotebook();
-                if (bindingsModalPanel.getSourceCellInstance() != null) {
-                    AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
-                    ajaxRequestTarget.add(getPage());
-                    String sourceMarkupId = NotebookCanvasPage.CANVAS_ITEM_PREFIX + bindingsModalPanel.getSourceCellInstance().getId();
-                    String targetMarkupId = NotebookCanvasPage.CANVAS_ITEM_PREFIX + bindingsModalPanel.getTargetCellInstance().getId();
-                    String js = "addConnection('" + sourceMarkupId + "', '" + targetMarkupId + "');";
-                    ajaxRequestTarget.appendJavaScript(js);
-                }
-            }
-
-            @Override
-            public void onClose() {
-                if (bindingsModalPanel.isDirty()) {
-                    notebookSession.reloadCurrentNotebook();
-                    RequestCycle.get().find(AjaxRequestTarget.class).add(getPage());
-                }
-            }
-        });
     }
 
     protected void addTitleBar() {
@@ -109,14 +79,11 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
     @Override
     public void onEditBindings(CellInstance cellModel) {
-        editBindings(null, findCellInstance(), false);
+        editBindings();
     }
 
-    public void editBindings(CellInstance sourceCellInstance, CellInstance targetCellInstance, boolean canAddBindings) {
-        bindingsModalPanel.configure(sourceCellInstance, targetCellInstance, canAddBindings);
-        popupContainerProvider.setPopupContentForPage(getPage(), bindingsModalPanel);
+    public void editBindings() {
         popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
-        bindingsModalPanel.showModal();
     }
 
     public void addExecutionStatusTimerBehavior() {

@@ -309,6 +309,12 @@ public class NotebookService {
         }
     }
 
+    @Path("ping")
+    @GET
+    public String ping() {
+        return "OK";
+    }
+
     @Path("listActiveExecution")
     @GET
     public List<Execution> listActiveExecution() {
