@@ -268,7 +268,8 @@ div.ui-resizable-handle.ui-resizable-s {
 }
 
 .cellPopup {
-    width: 600px;
+    width: 500px;
+    max-width: 500px!important;
 }
 
 .icon.grey.remove {
