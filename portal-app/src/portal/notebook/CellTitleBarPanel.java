@@ -68,18 +68,6 @@ public class CellTitleBarPanel extends Panel {
         openPopupLink.setOutputMarkupId(true);
         add(openPopupLink);
 
-        AjaxLink bindingsAction = new AjaxLink("bindings") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getCallbackHandler().onEditBindings(cellInstance);
-            }
-        };
-        add(bindingsAction);
-        if (cellInstance.getBindingMap().isEmpty()) {
-            bindingsAction.setVisible(false);
-        }
-
         submitLink = new IndicatingAjaxSubmitLink("submit", callbackHandler.getExecuteFormComponent()) {
 
             @Override
