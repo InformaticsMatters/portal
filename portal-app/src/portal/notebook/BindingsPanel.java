@@ -46,18 +46,17 @@ public class BindingsPanel extends Panel {
 
             @Override
             protected void populateItem(ListItem<BindingInstance> listItem) {
-                final BindingInstance bindingModel = listItem.getModelObject();
-                listItem.add(new Label("targetName", bindingModel.getDisplayName()));
-                VariableInstance variableInstance = bindingModel.getVariable();
+                final BindingInstance bindingInstance = listItem.getModelObject();
+                listItem.add(new Label("targetName", bindingInstance.getDisplayName()));
+                VariableInstance variableInstance = bindingInstance.getVariable();
                 String sourceDisplayName = resolveDisplayNameFor(variableInstance);
                 listItem.add(new Label("variableName", sourceDisplayName));
                 AjaxLink unassignLink = new AjaxLink("unassign") {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        bindingModel.setVariable(null);
-                        notebookSession.storeCurrentNotebook();
-                        ajaxRequestTarget.add(bindingListContainer);
+                        removeBinding(bindingInstance);
+                        ajaxRequestTarget.add(BindingsPanel.this.getPage());
                     }
                 };
                 unassignLink.setVisible(sourceDisplayName != null);
@@ -66,6 +65,14 @@ public class BindingsPanel extends Panel {
         };
         bindingListContainer.add(listView);
         add(bindingListContainer);
+    }
+
+    private void removeBinding(BindingInstance bindingInstance) {
+        CellInstance boundCellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellInstance.getId());
+        BindingInstance boundBindingInstance = boundCellInstance.getBindingMap().get(bindingInstance.getName());
+        boundBindingInstance.setVariable(null);
+        notebookSession.storeCurrentNotebook();
+        cellInstance = boundCellInstance;
     }
 
     private List<BindingInstance> rebuildBindingInstanceList() {
@@ -82,10 +89,6 @@ public class BindingsPanel extends Panel {
             });
             return list;
         }
-    }
-
-    public void refreshBindingList() {
-        bindingInstanceList = rebuildBindingInstanceList();
     }
 
     private String resolveDisplayNameFor(VariableInstance variableInstance) {
