@@ -23,20 +23,25 @@ function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbList
     }
 
     if (canvasVisible) {
-        $('.plumbContainer').show();
+        $('.notebookContainer').show();
+        $('.nbCanvasMenu').show();
     } else if (!canvasVisible) {
-        $('.plumbContainer').hide();
+        $('.notebookContainer').hide();
+        $('.nbCanvasMenu').hide();
     }
 
     if (!cellsVisible && !nbListVisible && !canvasVisible) {
         $('.left-column').attr('style','display: flex!important;');
         $('.right-column').attr('style','display:flex!important;');
-    } else if (cellsVisible && nbListVisible && canvasVisible) {
+    } else if ((cellsVisible || nbListVisible) && canvasVisible) {
         $('.left-column').attr('style','display: flex!important;');
         $('.right-column').attr('style','display: flex!important;');
     } else if ((cellsVisible || nbListVisible) && !canvasVisible) {
         $('.left-column').attr('style','margin-right: 20px!important; border-right: 1px solid #ddd;');
         $('.right-column').attr('style','display:none!important;');
+    } else if ((!cellsVisible && !nbListVisible) && canvasVisible) {
+        $('.left-column').attr('style','display:none!important;');
+        $('.right-column').attr('style','margin-left: 20px!important; border-left: 1px solid #ddd;');
     }
 
 

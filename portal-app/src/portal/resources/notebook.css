@@ -237,6 +237,12 @@ div.ui-resizable-handle.ui-resizable-s {
     height: initial;
 }
 
+.nbCanvasMenu {
+    height: 18px;
+    margin-top: 6px;
+    margin-bottom: -3px;
+}
+
 .innerNbContainer {
     display: flex;
     flex: 1;
@@ -266,6 +272,7 @@ div.ui-resizable-handle.ui-resizable-s {
     padding: 0!important;
     border: 0!important;
 }
+
 
 .cellPopup {
     width: 500px;
