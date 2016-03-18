@@ -23,6 +23,7 @@ import java.net.URI;
 public class SessionContext implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(SessionContext.class);
+    private static final String LOGOUT_BASE_URL = IOUtils.getConfiguration("PUBLIC_HOST_URL", "http://localhost:8080");
 
     @Inject
     private UserClient client;
@@ -64,8 +65,7 @@ public class SessionContext implements Serializable {
     public String getLogoutURL() {
         try {
             HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-            String base = IOUtils.getConfiguration("PORTAL_SERVER_URL", "http://localhost:8080");
-            URI logoutURI = defaultUserDetailsManager.getLogoutUrl(request, base + "/");
+            URI logoutURI = defaultUserDetailsManager.getLogoutUrl(request, LOGOUT_BASE_URL);
             if (logoutURI == null) {
                 return null;
             } else {
