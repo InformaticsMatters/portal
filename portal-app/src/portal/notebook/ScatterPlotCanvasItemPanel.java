@@ -8,6 +8,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -24,6 +25,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data)";
     private Form<ModelObject> form;
+    private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
 
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -77,6 +79,13 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private String buildPlotJs() {
         ModelObject model = form.getModelObject();
         return BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getPlotDataAsJson());
+    }
+
+    public Panel getAdvancedOptionsPanel() {
+        if (advancedOptionsPanel == null) {
+            advancedOptionsPanel = new ScatterPlotAdvancedOptionsPanel("advancedOptionsPanel");
+        }
+        return advancedOptionsPanel;
     }
 
     class ModelObject implements Serializable {

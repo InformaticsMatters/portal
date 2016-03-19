@@ -6,19 +6,16 @@ import portal.notebook.api.CellInstance;
 /**
  * @author simetrias
  */
-public class CellPopupPanel extends Panel {
+public class AdvancedPopupPanel extends Panel {
 
     private final CellInstance cellInstance;
     private BindingsPanel bindingsPanel;
 
-    public CellPopupPanel(String id, CellInstance cellInstance) {
+    public AdvancedPopupPanel(String id, CellInstance cellInstance, Panel advancedOptionsPanel) {
         super(id);
+        setOutputMarkupId(true);
         this.cellInstance = cellInstance;
-        addPanels();
+        add(advancedOptionsPanel);
     }
 
-    private void addPanels() {
-        bindingsPanel = new BindingsPanel("bindingsPanel", cellInstance);
-        add(bindingsPanel);
-    }
 }

@@ -1,4 +1,3 @@
-
 package portal.notebook;
 
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
@@ -77,15 +76,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         fireContentChanged();
     }
 
-    @Override
-    public void onEditBindings(CellInstance cellModel) {
-        editBindings();
-    }
-
-    public void editBindings() {
-        popupContainerProvider.refreshContainer(getPage(), getRequestCycle().find(AjaxRequestTarget.class));
-    }
-
     public void addExecutionStatusTimerBehavior() {
         add(new AbstractAjaxTimerBehavior(Duration.seconds(2)) {
 
@@ -114,7 +104,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             return true;
         } else if (oldExecution.getJobId().equals(lastExecution.getJobId())) {
             return !oldExecution.getJobActive().equals(lastExecution.getJobActive())
-            || !oldExecution.getJobStatus().equals(lastExecution.getJobStatus());
+                    || !oldExecution.getJobStatus().equals(lastExecution.getJobStatus());
         } else if (!oldExecution.getJobId().equals(lastExecution.getJobId())) {
             return true;
         } else {

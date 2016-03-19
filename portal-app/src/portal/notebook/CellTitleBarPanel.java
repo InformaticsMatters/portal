@@ -20,14 +20,14 @@ public class CellTitleBarPanel extends Panel {
 
     private final CellInstance cellInstance;
     private final CallbackHandler callbackHandler;
-    private AjaxLink openPopupLink;
-    private CellPopupPanel cellPopupPanel;
+    private BindingsPopupPanel bindingsPopupPanel;
+    private AdvancedPopupPanel advancedPopupPanel;
+    private IndicatingAjaxSubmitLink submitLink;
+    private AjaxLink waitLink;
     @Inject
     private PopupContainerProvider popupContainerProvider;
     @Inject
     private NotebookSession notebookSession;
-    private IndicatingAjaxSubmitLink submitLink;
-    private AjaxLink waitLink;
 
     public CellTitleBarPanel(String id, CellInstance cellInstance, CallbackHandler callbackHandler) {
         super(id);
@@ -57,16 +57,33 @@ public class CellTitleBarPanel extends Panel {
     private void addToolbarControls() {
         add(new Label("cellName", cellInstance.getName().toLowerCase()));
 
-        cellPopupPanel = new CellPopupPanel("content", cellInstance);
-        openPopupLink = new AjaxLink("openPopup") {
+        bindingsPopupPanel = new BindingsPopupPanel("content", cellInstance);
+        AjaxLink bindingsLink = new AjaxLink("bindings") {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                decoratePopupLink(this, ajaxRequestTarget);
+                onBindingsLinkClicked(this, ajaxRequestTarget);
             }
         };
-        openPopupLink.setOutputMarkupId(true);
-        add(openPopupLink);
+        bindingsLink.setOutputMarkupId(true);
+        add(bindingsLink);
+
+        AjaxLink advancedLink = new AjaxLink("advanced") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                onAdvancedLinkClicked(this, ajaxRequestTarget);
+            }
+        };
+        advancedLink.setOutputMarkupId(true);
+        add(advancedLink);
+        Panel advancedOptionsPanel = callbackHandler.getAdvancedOptionsPanel();
+        if (advancedOptionsPanel != null) {
+            advancedPopupPanel = new AdvancedPopupPanel("content", cellInstance, advancedOptionsPanel);
+            advancedLink.setVisible(true);
+        } else {
+            advancedLink.setVisible(false);
+        }
 
         submitLink = new IndicatingAjaxSubmitLink("submit", callbackHandler.getExecuteFormComponent()) {
 
@@ -99,16 +116,25 @@ public class CellTitleBarPanel extends Panel {
         });
     }
 
-    private void decoratePopupLink(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {
-        popupContainerProvider.setPopupContentForPage(getPage(), cellPopupPanel);
+    private void onBindingsLinkClicked(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {
+        popupContainerProvider.setPopupContentForPage(getPage(), bindingsPopupPanel);
         popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
         String js = "$('#:link')" +
                 ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
                 ".popup('toggle').popup('destroy')";
-        js = js.replace(":link", link.getMarkupId()).replace(":content", cellPopupPanel.getMarkupId());
+        js = js.replace(":link", link.getMarkupId()).replace(":content", bindingsPopupPanel.getMarkupId());
         ajaxRequestTarget.appendJavaScript(js);
     }
 
+    private void onAdvancedLinkClicked(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {
+        popupContainerProvider.setPopupContentForPage(getPage(), advancedPopupPanel);
+        popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
+        String js = "$('#:link')" +
+                ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
+                ".popup('toggle').popup('destroy')";
+        js = js.replace(":link", link.getMarkupId()).replace(":content", advancedPopupPanel.getMarkupId());
+        ajaxRequestTarget.appendJavaScript(js);
+    }
 
     public void applyExecutionStatus(Execution execution) {
         boolean active = execution != null && execution.getJobActive();
@@ -133,11 +159,12 @@ public class CellTitleBarPanel extends Panel {
 
         void onRemove(CellInstance cellModel);
 
-        void onEditBindings(CellInstance cellModel);
-
         Form getExecuteFormComponent();
 
         void onExecute();
 
+        default Panel getAdvancedOptionsPanel() {
+            return null;
+        }
     }
 }
