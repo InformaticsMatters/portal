@@ -54,6 +54,7 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
 
     private void addComponents() {
         Model model = new Model<String>() {
+
             @Override
             public String getObject() {
                 return (String) getFieldEditorModel().getValue();

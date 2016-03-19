@@ -215,6 +215,11 @@ public class NotebookSession implements Serializable {
         return createDatasetFromMolecules(list, name);
     }
 
+    public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance inputVariableInstance) {
+        CellInstance producerCell = currentNotebookInstance.findCellById(inputVariableInstance.getCellId());
+        return notebookService.squonkDatasetAsMolecules(currentNotebookInfo.getId(), producerCell.getName(), inputVariableInstance.getVariableDefinition().getName());
+    }
+
     public IDatasetDescriptor loadDatasetFromSquonkDataset(VariableInstance inputVariableInstance) {
         try {
             CellInstance producerCell = currentNotebookInstance.findCellById(inputVariableInstance.getCellId());
@@ -233,7 +238,6 @@ public class NotebookSession implements Serializable {
             throw new RuntimeException(e);
         }
     }
-
 
     private synchronized Long nextDatasetId() {
         lastDatasetId++;

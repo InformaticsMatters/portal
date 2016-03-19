@@ -1,6 +1,7 @@
 package portal.notebook;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -14,9 +15,14 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import portal.PortalWebApplication;
+import portal.notebook.api.BindingInstance;
+import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 
+import javax.inject.Inject;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author simetrias
@@ -26,6 +32,8 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data)";
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
+    @Inject
+    private NotebookSession notebookSession;
 
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -72,8 +80,25 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void refreshPlotData() {
-        ModelObject model = form.getModelObject();
-        model.setPlotData(new int[][]{{1, 1}, {2, 2}, {3, 3}});
+        String xFieldName = advancedOptionsPanel.getXAxisFieldName();
+        String yFieldName = advancedOptionsPanel.getYAxisFieldName();
+        if (xFieldName != null || yFieldName != null) {
+            CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(getCellId());
+            BindingInstance bindingInstance = cellInstance.getBindingMap().get(CellDefinition.VAR_NAME_INPUT);
+            VariableInstance variableInstance = bindingInstance.getVariable();
+            if (variableInstance != null) {
+                List<MoleculeObject> dataset = notebookSession.squonkDatasetAsMolecules(variableInstance);
+                int[][] plotData = new int[dataset.size()][dataset.size()];
+                int index = 0;
+                for (MoleculeObject moleculeObject : dataset) {
+                    plotData[index][0] = (int) moleculeObject.getValue(xFieldName);
+                    plotData[index][1] = (int) moleculeObject.getValue(yFieldName);
+                    index++;
+                }
+                ModelObject model = form.getModelObject();
+                model.setPlotData(plotData);
+            }
+        }
     }
 
     private String buildPlotJs() {
@@ -81,9 +106,10 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         return BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getPlotDataAsJson());
     }
 
+    @Override
     public Panel getAdvancedOptionsPanel() {
         if (advancedOptionsPanel == null) {
-            advancedOptionsPanel = new ScatterPlotAdvancedOptionsPanel("advancedOptionsPanel");
+            advancedOptionsPanel = new ScatterPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
         }
         return advancedOptionsPanel;
     }

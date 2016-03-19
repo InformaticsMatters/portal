@@ -1,5 +1,16 @@
 <wicket:panel>
     <div>
-        Advanced stuff specific to the ScatterPlot cell
+        <div class="field">
+            <form wicket:id="form">
+                <label>X axis field</label>
+                <select wicket:id="x" class="ui small input">
+                </select>
+                <label>Y axis field</label>
+                <select wicket:id="y" class="ui small input">
+                </select>
+                <input type="submit" wicket:id="save" style="width: 50px; padding: 5px;" class="ui mini button blue"
+                       value="Save">
+            </form>
+        </div>
     </div>
 </wicket:panel>
