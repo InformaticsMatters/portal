@@ -60,6 +60,7 @@
     <include name="**/?*.woff"/>
     <include name="**/?*.ttf"/>
     <include name="**/?*.gif"/>
+    <include name="**/?*.png"/>
   </patternset>
 
 
