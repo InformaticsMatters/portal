@@ -25,7 +25,6 @@ public class TableDisplayNavigationPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-
                 tableDisplayVisualizer.setCurrentPage(0);
                 ajaxRequestTarget.appendJavaScript("fitTableDisplayGrid('" + TableDisplayNavigationPanel.this.getParent().getMarkupId() + "');");
             }
