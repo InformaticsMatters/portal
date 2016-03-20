@@ -37,6 +37,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new SdfUploadCellDefinition());
         registerCellDefinition(new DatasetMergerCellDefinition());
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
+        registerCellDefinition(new DatasetFilterGroovyCellDefinition());
         registerCellDefinition(new TransformValuesCellDefinition());
         registerCellDefinition(new ProcessDatasetTrustedGroovyScriptCellDefinition());
         registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
