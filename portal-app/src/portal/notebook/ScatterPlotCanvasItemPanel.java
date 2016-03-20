@@ -88,15 +88,36 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
             VariableInstance variableInstance = bindingInstance.getVariable();
             if (variableInstance != null) {
                 List<MoleculeObject> dataset = notebookSession.squonkDatasetAsMolecules(variableInstance);
-                int[][] plotData = new int[dataset.size()][dataset.size()];
+                float[][] plotData = new float[dataset.size()][dataset.size()];
                 int index = 0;
                 for (MoleculeObject moleculeObject : dataset) {
-                    plotData[index][0] = (int) moleculeObject.getValue(xFieldName);
-                    plotData[index][1] = (int) moleculeObject.getValue(yFieldName);
-                    index++;
+                    Float x = safeConvertToFloat(moleculeObject.getValue(xFieldName));
+                    Float y = safeConvertToFloat(moleculeObject.getValue(yFieldName));
+                    if (x != null && y != null) {
+                        plotData[index][0] = x;
+                        plotData[index][1] = y;
+                        index++;
+                        // TODO - should we record how many records are not handled?
+                    }
                 }
                 ModelObject model = form.getModelObject();
                 model.setPlotData(plotData);
+            }
+        }
+    }
+
+    private Float safeConvertToFloat(Object o) {
+        if (o == null) {
+            return null;
+        } if (o instanceof  Float) {
+            return (Float)o;
+        } else if (o instanceof Number) {
+            return ((Number)o).floatValue();
+        } else {
+            try {
+                return new Float(o.toString());
+            } catch (NumberFormatException nfe) {
+                return null;
             }
         }
     }
@@ -116,13 +137,13 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     class ModelObject implements Serializable {
 
-        private int[][] plotData = {};
+        private float[][] plotData = {};
 
-        public int[][] getPlotData() {
+        public float[][] getPlotData() {
             return plotData;
         }
 
-        public void setPlotData(int[][] plotData) {
+        public void setPlotData(float[][] plotData) {
             this.plotData = plotData;
         }
 
