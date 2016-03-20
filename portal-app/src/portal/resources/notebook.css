@@ -335,3 +335,16 @@ div.ui-resizable-handle.ui-resizable-s {
     max-height: 48px;
 }
 
+.notebook-canvas-item-content .select2-container .select2-choice {
+	padding: .5em 1em !important;
+	height: 27px!important;
+}
+
+.notebook-canvas-item-content .select2-container .select2-choice div b {
+    margin-top: 0.26em !important;
+}
+
+.notebook-canvas-item-content .select2-dropdown-open .select2-choice div b {
+	margin-top: 0.7em !important;
+}
+
