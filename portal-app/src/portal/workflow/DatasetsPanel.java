@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import portal.dataset.DatasetsSession;
 import portal.dataset.IDatasetDescriptor;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 

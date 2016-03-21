@@ -4,8 +4,9 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import portal.dataset.IDatasetDescriptor;
 import portal.PopupContainerProvider;
+import portal.dataset.DatasetsSession;
+import portal.dataset.IDatasetDescriptor;
 
 import javax.inject.Inject;
 import java.io.Serializable;

@@ -1,4 +1,4 @@
-package portal.workflow;
+package portal.dataset;
 
 import com.im.lac.dataset.DataItem;
 import com.im.lac.dataset.client.DatasetClient;
@@ -6,7 +6,7 @@ import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.SessionContext;
-import portal.dataset.*;
+import portal.workflow.DatasetFilterData;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;

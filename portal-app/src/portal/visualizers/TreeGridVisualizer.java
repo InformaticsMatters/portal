@@ -5,11 +5,7 @@ import com.inmethod.grid.treegrid.TreeGrid;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.model.Model;
-import portal.dataset.IDatasetDescriptor;
-import portal.dataset.IPropertyDescriptor;
-import portal.dataset.IRow;
-import portal.dataset.IRowDescriptor;
-import portal.workflow.DatasetsSession;
+import portal.dataset.*;
 
 import javax.inject.Inject;
 import javax.swing.tree.DefaultMutableTreeNode;

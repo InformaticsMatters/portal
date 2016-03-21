@@ -6,11 +6,11 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import portal.dataset.IDatasetDescriptor;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PortalWebApplication;
-import portal.workflow.DatasetsSession;
+import portal.dataset.DatasetsSession;
+import portal.dataset.IDatasetDescriptor;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

@@ -5,10 +5,10 @@ import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
 import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.request.resource.DynamicImageResource;
+import portal.dataset.DatasetsSession;
 import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IPropertyDescriptor;
 import portal.dataset.IRow;
-import portal.workflow.DatasetsSession;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
