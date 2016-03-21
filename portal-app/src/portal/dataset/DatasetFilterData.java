@@ -1,4 +1,4 @@
-package portal.workflow;
+package portal.dataset;
 
 import java.io.Serializable;
 

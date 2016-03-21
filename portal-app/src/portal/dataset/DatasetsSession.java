@@ -6,7 +6,6 @@ import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.SessionContext;
-import portal.workflow.DatasetFilterData;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
