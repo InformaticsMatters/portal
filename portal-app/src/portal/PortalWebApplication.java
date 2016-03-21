@@ -7,7 +7,6 @@ import org.apache.wicket.cdi.ConversationPropagation;
 import org.apache.wicket.protocol.http.WebApplication;
 import portal.notebook.NotebookCanvasPage;
 import portal.notebook.NotebookStructureImageResource;
-import portal.visualizers.DynamicStructureImageResource;
 import toolkit.derby.DerbyUtils;
 
 import javax.enterprise.inject.spi.BeanManager;

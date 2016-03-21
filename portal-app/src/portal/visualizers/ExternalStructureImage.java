@@ -6,6 +6,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.SharedResourceReference;
+import portal.DynamicStructureImageResource;
 
 public class ExternalStructureImage extends WebComponent {
 

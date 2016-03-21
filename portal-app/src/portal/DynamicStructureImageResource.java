@@ -1,4 +1,4 @@
-package portal.visualizers;
+package portal;
 
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.MolPrinter;
