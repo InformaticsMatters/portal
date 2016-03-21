@@ -18,9 +18,9 @@ import java.util.Properties;
  */
 @Default
 @ApplicationScoped
-public class PropertiesFileNotebookConfig implements NotebookConfig {
+public class PropertiesFilePortalConfig implements PortalConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(PropertiesFileNotebookConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesFilePortalConfig.class);
     private Properties persistenceProperties;
     @Inject
     private ServletContext servletContext;

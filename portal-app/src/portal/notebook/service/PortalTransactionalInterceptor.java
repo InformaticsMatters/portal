@@ -1,6 +1,5 @@
-package portal.notebook;
+package portal.notebook.service;
 
-import portal.notebook.service.NotebookConstants;
 import toolkit.services.PU;
 import toolkit.services.ServiceSecurityContext;
 import toolkit.services.Transactional;
@@ -16,10 +15,10 @@ import java.io.Serializable;
 
 @Interceptor
 @Transactional
-public class NotebookTransactionalInterceptor extends TransactionalInterceptor implements Serializable {
+public class PortalTransactionalInterceptor extends TransactionalInterceptor implements Serializable {
 
     @Inject
-    @PU(puName = NotebookConstants.PU_NAME)
+    @PU(puName = PortalConstants.PU_NAME)
     private EntityManager entityManager;
     @Inject
     private ServiceSecurityContext serviceSecurityContext;

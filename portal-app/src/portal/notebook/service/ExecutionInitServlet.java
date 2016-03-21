@@ -3,7 +3,7 @@ package portal.notebook.service;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
-import portal.notebook.api.NotebookClientConfig;
+import portal.notebook.api.PortalClientConfig;
 
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
@@ -19,7 +19,7 @@ public class ExecutionInitServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(ExecutionInitServlet.class.getName());
     private Timer timer;
     @Inject
-    private NotebookClientConfig notebookClientConfig;
+    private PortalClientConfig portalClientConfig;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -37,13 +37,13 @@ public class ExecutionInitServlet extends HttpServlet {
 
     private void updateExecutions() {
         Client client = Client.create();
-        WebResource resource = client.resource(notebookClientConfig.getBaseUri() + "/listActiveExecution");
+        WebResource resource = client.resource(portalClientConfig.getBaseUri() + "/listActiveExecution");
         GenericType<List<Execution>> genericType = new GenericType<List<Execution>>(){};
         List<Execution> list = resource.get(genericType);
         for (Execution execution : list) {
             LOGGER.log(Level.INFO, "Processng execution id " + execution.getId());
             try {
-                client.resource(notebookClientConfig.getBaseUri() + "/updateExecutionStatus").queryParam("id", execution.getId().toString()).post();
+                client.resource(portalClientConfig.getBaseUri() + "/updateExecutionStatus").queryParam("id", execution.getId().toString()).post();
             } catch (Throwable t) {
                 LOGGER.log(Level.WARNING, "Error processing execution id " + execution.getId(), t);
             }

@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"notebook_id", "cellid"})})
 @XmlRootElement
 public class Execution extends AbstractEntity {
-    private Long notebookDescriptorId;
+    private Long notebookId;
     private Long cellId;
     private String jobId;
     private Boolean jobActive;
@@ -21,12 +21,12 @@ public class Execution extends AbstractEntity {
     private JobStatus.Status jobStatus;
 
     @Column(nullable = false)
-    public Long getNotebookDescriptorId() {
-        return notebookDescriptorId;
+    public Long getNotebookId() {
+        return notebookId;
     }
 
-    public void setNotebookDescriptorId(Long notebookDescriptorId) {
-        this.notebookDescriptorId = notebookDescriptorId;
+    public void setNotebookId(Long notebookId) {
+        this.notebookId = notebookId;
     }
 
     @Column(nullable = false)

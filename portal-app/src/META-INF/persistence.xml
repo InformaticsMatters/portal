@@ -5,11 +5,11 @@
     <persistence-unit name="chemcentral" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     </persistence-unit>
-    <persistence-unit name="notebooks" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="portal" transaction-type="RESOURCE_LOCAL">
         <shared-cache-mode>NONE</shared-cache-mode>
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <class>portal.notebook.service.Notebook</class>
-        <class>portal.notebook.service.NotebookHistory</class>
+        <class>portal.notebook.service.MockNotebookDescriptor</class>
+        <class>portal.notebook.service.MockNotebookEditable</class>
         <class>portal.notebook.service.Execution</class>
     </persistence-unit>
 

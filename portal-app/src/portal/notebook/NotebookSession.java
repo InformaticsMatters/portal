@@ -14,7 +14,7 @@ import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IRow;
 import portal.notebook.api.*;
 import portal.notebook.service.Execution;
-import portal.notebook.service.ExecutionService;
+import portal.notebook.service.PortalService;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -31,8 +31,8 @@ public class NotebookSession implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotebookSession.class);
     private NotebookInstance currentNotebookInstance;
-    private NotebookDescriptor currentNotebookDescriptor;
-    private NotebookEditable currentNotebookEditable;
+    private NotebookInfo currentNotebookInfo;
+    private Long currentNotebookEditableId;
     private List<CellDefinition> cellDefinitionList;
     @Inject
     private NotebookClient notebookClient;
@@ -43,31 +43,40 @@ public class NotebookSession implements Serializable {
     @Inject
     private CellDefinitionRegistry cellDefinitionRegistry;
     @Inject
-    private ExecutionService executionService;
+    private PortalService portalService;
     @Inject
     private Datasets datasets;
 
-    public List<NotebookDescriptor> listNotebookDescriptor() {
+    public List<NotebookInfo> listNotebookInfo() {
         try {
-            return notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid());
+            List<NotebookInfo> list = new ArrayList<>();
+            for (NotebookDescriptor notebookDescriptor : notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
+                NotebookInfo notebookInfo = NotebookInfo.fromNotebookDescriptor(notebookDescriptor);
+                list.add(notebookInfo);
+            }
+            return list;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public NotebookDescriptor findNotebookDescriptor(Long id) {
-        List<NotebookDescriptor> descriptors = listNotebookDescriptor();
-        for (NotebookDescriptor notebookDescriptor : descriptors) {
+    public NotebookInfo findNotebookInfo(Long id) {
+        try {
+        for (NotebookDescriptor notebookDescriptor : notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
             if (notebookDescriptor.getId().equals(id)) {
-                return notebookDescriptor;
+                return NotebookInfo.fromNotebookDescriptor(notebookDescriptor);
             }
         }
         return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Long createNotebook(String name, String description) {
         try {
             NotebookDescriptor notebookDescriptor = notebookClient.createNotebook(sessionContext.getLoggedInUserDetails().getUserid(), name, description);
+            notebookClient.createEditable(notebookDescriptor.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
             return notebookDescriptor.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -86,7 +95,7 @@ public class NotebookSession implements Serializable {
 
     }
 
-    public NotebookEditable findLastNotebookEditable(Long descriptorId) {
+    private NotebookEditable findLastNotebookEditable(Long descriptorId) {
         try {
             List<NotebookEditable> editables = notebookClient.listEditables(descriptorId, sessionContext.getLoggedInUserDetails().getUserid());
             return editables.isEmpty() ? null : editables.get(editables.size() - 1);
@@ -97,12 +106,17 @@ public class NotebookSession implements Serializable {
 
     public void loadCurrentNotebook(Long id) {
         try {
-            currentNotebookDescriptor = findNotebookDescriptor(id);
-            currentNotebookEditable = findLastNotebookEditable(currentNotebookDescriptor.getId());
+            currentNotebookInfo = findNotebookInfo(id);
+            NotebookEditable currentNotebookEditable = findLastNotebookEditable(currentNotebookInfo.getId());
             if (currentNotebookEditable == null) {
                 currentNotebookInstance = new NotebookInstance();
+                currentNotebookEditableId = null;
             } else {
-                currentNotebookInstance = new ObjectMapper().readValue(currentNotebookEditable.getContent(), NotebookInstance.class);
+                currentNotebookInstance = NotebookInstance.fromJsonString(currentNotebookEditable.getContent());
+                if (currentNotebookInstance == null) {
+                    currentNotebookInstance = new NotebookInstance();
+                }
+                currentNotebookEditableId = currentNotebookEditable.getId();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -110,24 +124,25 @@ public class NotebookSession implements Serializable {
     }
 
     public void reloadCurrentNotebook() {
-        loadCurrentNotebook(currentNotebookDescriptor.getId());
+        loadCurrentNotebook(currentNotebookInfo.getId());
     }
 
     public NotebookInstance getCurrentNotebookInstance() {
         return currentNotebookInstance;
     }
 
-    public NotebookDescriptor getCurrentNotebookDescriptor() {
-        return currentNotebookDescriptor;
+    public NotebookInfo getCurrentNotebookInfo() {
+        return currentNotebookInfo;
     }
 
     public void storeCurrentNotebook() {
         try {
             String json = currentNotebookInstance.toJsonString();
-            if (currentNotebookEditable == null) {
-                notebookClient.createEditable(currentNotebookDescriptor.getId(), null, json);
+            if (currentNotebookEditableId == null) {
+                NotebookEditable currentNotebookEditable = notebookClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
+                currentNotebookEditableId = currentNotebookEditable.getId();
             } else {
-                notebookClient.updateEditable(currentNotebookDescriptor.getId(), currentNotebookEditable.getId(), json);
+                notebookClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, json);
             }
             reloadCurrentNotebook();
         } catch (Exception e) {
@@ -185,7 +200,7 @@ public class NotebookSession implements Serializable {
         storeCurrentNotebook();
         CellInstance cell = currentNotebookInstance.findCellById(cellId);
         if (cell.getCellDefinition().getExecutable()) {
-            executionService.executeCell(currentNotebookInstance, currentNotebookDescriptor.getId(), cellId);
+            portalService.executeCell(currentNotebookInstance, currentNotebookInfo.getId(), cellId);
         }
     }
 
@@ -201,11 +216,16 @@ public class NotebookSession implements Serializable {
     }
 
     public Execution findExecution(Long cellId) {
-        return executionService.findExecution(currentNotebookDescriptor.getId(), cellId);
+        return portalService.findExecution(currentNotebookInfo.getId(), cellId);
     }
 
     public void storeTemporaryFileForVariable(VariableInstance variableInstance, InputStream inputStream) {
-
+        storeCurrentNotebook();
+        try {
+            notebookClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void commitFileForVariable(VariableInstance variableInstance) {
@@ -235,10 +255,10 @@ public class NotebookSession implements Serializable {
     }
 
     public List<MoleculeObject> parseMoleculesFromFileVariable(VariableInstance variableInstance) throws Exception {
-        String fileName = notebookClient.readTextValue(currentNotebookDescriptor.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        String fileName = notebookClient.readTextValue(currentNotebookInfo.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
         int x = fileName.lastIndexOf(".");
         String ext = fileName.toLowerCase().substring(x + 1);
-        InputStream inputStream = notebookClient.readStreamValue(currentNotebookDescriptor.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        InputStream inputStream = notebookClient.readStreamValue(currentNotebookInfo.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
         try {
             if (ext.equals("json")) {
                 return Datasets.parseJson(inputStream);
@@ -264,7 +284,7 @@ public class NotebookSession implements Serializable {
 
     public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) {
         try {
-            InputStream inputStreaam = notebookClient.readStreamValue(currentNotebookDescriptor.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+            InputStream inputStreaam = notebookClient.readStreamValue(currentNotebookInfo.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
             try {
                 GZIPInputStream gzipInputStream = new GZIPInputStream(inputStreaam);
                 ObjectMapper objectMapper = new ObjectMapper();

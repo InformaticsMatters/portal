@@ -2,18 +2,17 @@ package portal.notebook.service;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Default;
 import java.util.Properties;
 
 @Alternative
 @ApplicationScoped
-public class IdeDerbyNotebookConfig implements NotebookConfig {
+public class IdeDerbyPortalConfig implements PortalConfig {
 
     @Override
     public Properties getPersistenceProperties() {
 
         Properties properties = new Properties();
-        properties.setProperty("javax.persistence.jdbc.url", "jdbc:derby://localhost:1527/notebooks;create=true");
+        properties.setProperty("javax.persistence.jdbc.url", "jdbc:derby://localhost:1527/portal;create=true");
         properties.setProperty("javax.persistence.jdbc.password", "admin");
         properties.setProperty("javax.persistence.jdbc.driver", "org.apache.derby.jdbc.ClientDriver");
         properties.setProperty("javax.persistence.jdbc.user", "admin");

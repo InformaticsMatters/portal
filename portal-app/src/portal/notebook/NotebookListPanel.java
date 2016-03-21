@@ -12,7 +12,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.notebook.api2.NotebookDescriptor;
 import portal.SessionContext;
 
 import javax.inject.Inject;
@@ -25,7 +24,7 @@ public class NotebookListPanel extends Panel {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookListPanel.class);
     private final EditNotebookPanel editNotebookPanel;
-    private ListView<NotebookDescriptor> listView;
+    private ListView<NotebookInfo> listView;
     private String selectedMarkupId;
     @Inject
     private NotebookSession notebookSession;
@@ -47,16 +46,16 @@ public class NotebookListPanel extends Panel {
         }
     }
 
-    public List<NotebookDescriptor> getNotebookDescriptorList() {
-        return notebookSession.listNotebookDescriptor();
+    public List<NotebookInfo> getNotebookInfoList() {
+        return notebookSession.listNotebookInfo();
     }
 
     private void addNotebookList() {
-        listView = new ListView<NotebookDescriptor>("notebook", new PropertyModel<List<NotebookDescriptor>>(this, "notebookInfoList")) {
+        listView = new ListView<NotebookInfo>("notebook", new PropertyModel<List<NotebookInfo>>(this, "notebookInfoList")) {
 
             @Override
-            protected void populateItem(ListItem<NotebookDescriptor> listItem) {
-                NotebookDescriptor notebookDescriptor = listItem.getModelObject();
+            protected void populateItem(ListItem<NotebookInfo> listItem) {
+                NotebookInfo notebookDescriptor = listItem.getModelObject();
                 boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookDescriptor.getOwner());
                 listItem.add(new Label("name", notebookDescriptor.getName()));
                 listItem.add(new Label("owner", notebookDescriptor.getOwner()));
@@ -103,7 +102,7 @@ public class NotebookListPanel extends Panel {
                     }
                 });
 
-                Long currentId = notebookSession.getCurrentNotebookDescriptor() == null ? null : notebookSession.getCurrentNotebookDescriptor().getId();
+                Long currentId = notebookSession.getCurrentNotebookInfo() == null ? null : notebookSession.getCurrentNotebookInfo().getId();
                 if (listItem.getModelObject().getId().equals(currentId)) {
                     selectedMarkupId = listItem.getMarkupId();
                 }
@@ -120,7 +119,7 @@ public class NotebookListPanel extends Panel {
     }
 
     public void refreshNotebookList() {
-        listView.setList(notebookSession.listNotebookDescriptor());
+        listView.setList(notebookSession.listNotebookInfo());
         getRequestCycle().find(AjaxRequestTarget.class).add(this);
     }
 }

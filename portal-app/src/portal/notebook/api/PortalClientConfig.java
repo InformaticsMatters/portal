@@ -1,5 +1,5 @@
 package portal.notebook.api;
 
-public interface NotebookClientConfig {
+public interface PortalClientConfig {
     String getBaseUri();
 }

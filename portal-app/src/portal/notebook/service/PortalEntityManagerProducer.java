@@ -11,32 +11,32 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.Properties;
 
-public class ExecutionEntityManagerProducer {
+public class PortalEntityManagerProducer {
 
     @Inject
-    private NotebookConfig config;
+    private PortalConfig config;
     private static EntityManagerFactory emf;
 
     private void checkEMF() {
         if (emf == null) {
             Properties properties = config.getPersistenceProperties();
             if (properties == null) {
-                emf = Persistence.createEntityManagerFactory(NotebookConstants.PU_NAME);
+                emf = Persistence.createEntityManagerFactory(PortalConstants.PU_NAME);
             } else {
-                emf = Persistence.createEntityManagerFactory(NotebookConstants.PU_NAME, properties);
+                emf = Persistence.createEntityManagerFactory(PortalConstants.PU_NAME, properties);
             }
         }
     }
 
     @Produces
-    @PU(puName = NotebookConstants.PU_NAME)
+    @PU(puName = PortalConstants.PU_NAME)
     @RequestScoped
     EntityManager createEntityManager() {
         checkEMF();
         return emf.createEntityManager();
     }
 
-    void close(@Disposes @PU(puName = NotebookConstants.PU_NAME) EntityManager entityManager) {
+    void close(@Disposes @PU(puName = PortalConstants.PU_NAME) EntityManager entityManager) {
         entityManager.close();
     }
 }

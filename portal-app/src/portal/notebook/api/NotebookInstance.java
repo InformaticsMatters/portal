@@ -178,7 +178,11 @@ public class NotebookInstance implements Serializable {
     }
 
     public static NotebookInstance fromJsonString(String string) throws Exception {
-        return new ObjectMapper().readValue(string, NotebookInstance.class);
+        if (string == null) {
+            return null;
+        } else {
+            return new ObjectMapper().readValue(string, NotebookInstance.class);
+        }
     }
 
     public String toJsonString() throws IOException {

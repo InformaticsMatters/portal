@@ -6,14 +6,11 @@ import com.im.lac.types.MoleculeObject;
 import portal.dataset.*;
 
 import javax.enterprise.context.SessionScoped;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 @SessionScoped
-public class Datasets {
+public class Datasets implements Serializable {
 
     private final Map<Long, Map<UUID, MoleculeObject>> moleculeObjectMapMap = new HashMap<>();
     private final Map<Long, List<UUID>> uuidListMap = new HashMap<>();
