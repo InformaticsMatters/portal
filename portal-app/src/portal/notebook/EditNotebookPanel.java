@@ -10,9 +10,8 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.notebook.api2.NotebookDescriptor;
 import portal.SessionContext;
-import portal.notebook.service.EditNotebookData;
-import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
@@ -99,13 +98,12 @@ public class EditNotebookPanel extends SemanticModalPanel {
     private void store() {
         EditNotebookData editNotebookData = form.getModelObject();
         if (editNotebookData.getId() == null) {
-            editNotebookData.setOwner(sessionContext.getLoggedInUserDetails().getUserid());
-            Long id = notebookSession.createNotebook(editNotebookData);
+            Long id = notebookSession.createNotebook(editNotebookData.getName(), editNotebookData.getDescription());
             notebookSession.loadCurrentNotebook(id);
         } else if (forRemove) {
             notebookSession.removeNotebook(editNotebookData.getId());
         } else {
-            notebookSession.updateNotebook(editNotebookData);
+            notebookSession.updateNotebook(editNotebookData.getId(), editNotebookData.getName(), editNotebookData.getDescription());
         }
     }
 
@@ -117,7 +115,6 @@ public class EditNotebookPanel extends SemanticModalPanel {
         this.notebookId = null;
         EditNotebookData data = new EditNotebookData();
         data.setShared(false);
-        data.setOwner(sessionContext.getLoggedInUserDetails().getUserid());
         form.setModelObject(data);
         nameField.setEnabled(true);
         descriptionField.setEnabled(true);
@@ -126,13 +123,12 @@ public class EditNotebookPanel extends SemanticModalPanel {
 
     public void configureForEdit(Long id) {
         this.notebookId = id;
-        NotebookInfo notebookInfo = notebookSession.retrieveNotebookInfo(id);
+        NotebookDescriptor notebookDescriptor = notebookSession.findNotebookDescriptor(id);
         EditNotebookData editNotebookData = new EditNotebookData();
-        editNotebookData.setId(notebookInfo.getId());
-        editNotebookData.setName(notebookInfo.getName());
-        editNotebookData.setDescription(notebookInfo.getDescription());
-        editNotebookData.setOwner(notebookInfo.getOwner());
-        editNotebookData.setShared(notebookInfo.getShared());
+        editNotebookData.setId(notebookDescriptor.getId());
+        editNotebookData.setName(notebookDescriptor.getName());
+        editNotebookData.setDescription(notebookDescriptor.getDescription());
+        editNotebookData.setShared(false);//notebookDescriptor.getShared());
         form.setModelObject(editNotebookData);
         nameField.setEnabled(true);
         descriptionField.setEnabled(true);
@@ -141,13 +137,12 @@ public class EditNotebookPanel extends SemanticModalPanel {
 
     public void configureForRemove(Long id) {
         this.notebookId = id;
-        NotebookInfo notebookInfo = notebookSession.retrieveNotebookInfo(id);
+        NotebookDescriptor notebookDescriptor = notebookSession.findNotebookDescriptor(id);
         EditNotebookData editNotebookData = new EditNotebookData();
-        editNotebookData.setId(notebookInfo.getId());
-        editNotebookData.setName(notebookInfo.getName());
-        editNotebookData.setDescription(notebookInfo.getDescription());
-        editNotebookData.setOwner(notebookInfo.getOwner());
-        editNotebookData.setShared(notebookInfo.getShared());
+        editNotebookData.setId(notebookDescriptor.getId());
+        editNotebookData.setName(notebookDescriptor.getName());
+        editNotebookData.setDescription(notebookDescriptor.getDescription());
+        editNotebookData.setShared(false);//notebookDescriptor.getShared());
         form.setModelObject(editNotebookData);
         nameField.setEnabled(false);
         descriptionField.setEnabled(false);
@@ -163,5 +158,44 @@ public class EditNotebookPanel extends SemanticModalPanel {
     }
 
     private class ModelObject implements Serializable {
+    }
+
+    private class EditNotebookData {
+        private Long id;
+        private String name;
+        private String description;
+        private Boolean shared;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Boolean getShared() {
+            return shared;
+        }
+
+        public void setShared(Boolean shared) {
+            this.shared = shared;
+        }
     }
 }

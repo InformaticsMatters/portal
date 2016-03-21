@@ -3,29 +3,30 @@ package portal.notebook.service;
 import com.im.lac.job.jobdef.JobStatus;
 import toolkit.services.AbstractEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"notebook_id", "cellid"})})
 @XmlRootElement
 public class Execution extends AbstractEntity {
-    private Notebook notebook;
+    private Long notebookDescriptorId;
     private Long cellId;
     private String jobId;
     private Boolean jobActive;
     private Boolean jobSuccessful;
     private JobStatus.Status jobStatus;
 
-
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    public Notebook getNotebook() {
-        return notebook;
+    @Column(nullable = false)
+    public Long getNotebookDescriptorId() {
+        return notebookDescriptorId;
     }
 
-    public void setNotebook(Notebook notebook) {
-        this.notebook = notebook;
+    public void setNotebookDescriptorId(Long notebookDescriptorId) {
+        this.notebookDescriptorId = notebookDescriptorId;
     }
 
     @Column(nullable = false)
@@ -68,4 +69,5 @@ public class Execution extends AbstractEntity {
     public void setJobStatus(JobStatus.Status jobStatus) {
         this.jobStatus = jobStatus;
     }
+
 }

@@ -1,17 +1,17 @@
 package portal.notebook;
 
-import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.dataset.IDatasetDescriptor;
-import portal.notebook.api.*;
+import portal.notebook.api.BindingInstance;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author simetrias
@@ -76,19 +76,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     private IDatasetDescriptor loadDescriptor() {
         CellInstance cellInstance = findCellInstance();
-        VariableInstance variableModel = cellInstance.getBindingMap().get("input").getVariable();
-        VariableType variableType = variableModel.getVariableDefinition().getVariableType();
-        if (variableType.equals(VariableType.FILE)) {
-            return notebookSession.loadDatasetFromFile(variableModel.getValue().toString());
-        } else if (variableType.equals(VariableType.DATASET)) {
-            return notebookSession.loadDatasetFromSquonkDataset(variableModel);
-        } else if (variableModel.getValue() instanceof Strings) {
-            return notebookSession.createDatasetFromStrings((Strings) variableModel.getValue(), variableModel.getVariableDefinition().getName());
-        } else if (variableModel.getValue() instanceof List) {
-            return notebookSession.createDatasetFromMolecules((List<MoleculeObject>) variableModel.getValue(), variableModel.getVariableDefinition().getName());
-        } else {
-            return null;
-        }
+        VariableInstance variableInstance = cellInstance.getBindingMap().get("input").getVariable();
+        return notebookSession.loadDatasetFromVariable(variableInstance);
     }
 
     private void addOrReplaceTreeGridVisualizer(IDatasetDescriptor datasetDescriptor) {

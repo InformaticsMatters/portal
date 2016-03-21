@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.squonk.options.OptionDescriptor;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,12 +21,6 @@ public class NotebookInstance implements Serializable {
     private final List<Long> removedCellIdList = new ArrayList<>();
     private final List<CellInstance> cellList = new ArrayList<>();
     private Long lastCellId;
-
-    public static NotebookInstance fromBytes(byte[] bytes) throws Exception {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-        return (NotebookInstance) objectInputStream.readObject();
-    }
 
     public List<CellInstance> getCellList() {
         return cellList;
@@ -130,15 +126,6 @@ public class NotebookInstance implements Serializable {
         }
     }
 
-    public byte[] toBytes() throws Exception {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-        objectOutputStream.writeObject(this);
-        objectOutputStream.flush();
-        byteArrayOutputStream.flush();
-        return  byteArrayOutputStream.toByteArray();
-    }
-
     public void applyChangesFrom(NotebookInstance notebookInstance) {
         for (Long cellId : notebookInstance.removedCellIdList) {
             removeCell(cellId);
@@ -188,6 +175,10 @@ public class NotebookInstance implements Serializable {
         for (CellInstance cellInstance : cellList) {
             cellInstance.resetDirty();
         }
+    }
+
+    public static NotebookInstance fromJsonString(String string) throws Exception {
+        return new ObjectMapper().readValue(string, NotebookInstance.class);
     }
 
     public String toJsonString() throws IOException {

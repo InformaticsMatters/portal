@@ -54,7 +54,7 @@ public class NotebookStructureImageResource extends DynamicImageResource {
         UUID rowId = UUID.fromString(rowIdAsString);
 
         IDatasetDescriptor dataset = notebookSession.findDatasetDescriptorById(datasetDescriptorId);
-        List<IRow> rows = notebookSession.listRow(dataset, Collections.singletonList(rowId));
+        List<IRow> rows = notebookSession.listDatasetRow(dataset, Collections.singletonList(rowId));
         IRow row = rows.get(0);
 
         if (row != null) {

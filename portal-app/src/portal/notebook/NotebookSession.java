@@ -1,114 +1,138 @@
 package portal.notebook;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.client.NotebookClient;
+import org.squonk.notebook.api2.NotebookDescriptor;
+import org.squonk.notebook.api2.NotebookEditable;
 import org.squonk.notebook.client.CellClient;
 import portal.SessionContext;
-import portal.dataset.*;
+import portal.dataset.IDatasetDescriptor;
+import portal.dataset.IRow;
 import portal.notebook.api.*;
-import portal.notebook.service.*;
+import portal.notebook.service.Execution;
+import portal.notebook.service.ExecutionService;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.util.zip.GZIPInputStream;
 
 @SessionScoped
 public class NotebookSession implements Serializable {
 
-    private static final Logger logger = LoggerFactory.getLogger(NotebookSession.class);
-    private final Map<Long, Map<UUID, MoleculeObject>> moleculeObjectMapMap = new HashMap<>();
-    private final Map<Long, List<UUID>> uuidListMap = new HashMap<>();
-    private final Map<Long, IDatasetDescriptor> datasetDescriptorMap = new HashMap<>();
-    private long lastDatasetId = 0;
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotebookSession.class);
     private NotebookInstance currentNotebookInstance;
-    private NotebookInfo currentNotebookInfo;
+    private NotebookDescriptor currentNotebookDescriptor;
+    private NotebookEditable currentNotebookEditable;
     private List<CellDefinition> cellDefinitionList;
     @Inject
-    private NotebookService notebookService;
+    private NotebookClient notebookClient;
     @Inject
     private CellClient cellClient;
     @Inject
     private SessionContext sessionContext;
     @Inject
     private CellDefinitionRegistry cellDefinitionRegistry;
+    @Inject
+    private ExecutionService executionService;
+    @Inject
+    private Datasets datasets;
 
-    public NotebookSession() {
-        moleculeObjectMapMap.put(0L, new HashMap<>());
-    }
-
-    public NotebookInfo prepareDefaultNotebook() {
-        List<NotebookInfo> list = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
-        if (list.isEmpty()) {
-            EditNotebookData data = new EditNotebookData();
-            data.setName("Default notebook");
-            data.setOwner(sessionContext.getLoggedInUserDetails().getUserid());
-            data.setShared(false);
-            Long id = notebookService.createNotebook(data);
-            //System.out.println("Created notebook " + id);
-            List<NotebookInfo> list2 = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
-            //System.out.println("Now have " + list2.size() + "  notebooks");
-            currentNotebookInfo = list2.get(0);
-            NotebookInstance notebookInstance = new NotebookInstance();
-            UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-            updateNotebookContentsData.setId(currentNotebookInfo.getId());
-            updateNotebookContentsData.setNotebookInstance(notebookInstance);
-            notebookService.updateNotebookContents(updateNotebookContentsData);
-            list = notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
+    public List<NotebookDescriptor> listNotebookDescriptor() {
+        try {
+            return notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return list.get(0);
     }
 
-    public List<NotebookInfo> listNotebookInfo() {
-        return notebookService.listNotebookInfo(sessionContext.getLoggedInUserDetails().getUserid());
+    public NotebookDescriptor findNotebookDescriptor(Long id) {
+        List<NotebookDescriptor> descriptors = listNotebookDescriptor();
+        for (NotebookDescriptor notebookDescriptor : descriptors) {
+            if (notebookDescriptor.getId().equals(id)) {
+                return notebookDescriptor;
+            }
+        }
+        return null;
     }
 
-    public NotebookInfo retrieveNotebookInfo(Long id) {
-        return notebookService.retrieveNotebookInfo(id);
+    public Long createNotebook(String name, String description) {
+        try {
+            NotebookDescriptor notebookDescriptor = notebookClient.createNotebook(sessionContext.getLoggedInUserDetails().getUserid(), name, description);
+            return notebookDescriptor.getId();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public Long createNotebook(EditNotebookData editNotebookData) {
-        return notebookService.createNotebook(editNotebookData);
-    }
-
-    public void updateNotebook(EditNotebookData editNotebookData) {
-        notebookService.updateNotebook(editNotebookData);
-        currentNotebookInfo = notebookService.retrieveNotebookInfo(editNotebookData.getId());
+    public void updateNotebook(Long id, String name, String description) {
+        try {
+            notebookClient.updateNotebook(id, name, description);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void removeNotebook(Long notebookId) {
-        notebookService.removeNotebook(notebookId);
-        if (currentNotebookInfo != null && notebookId.equals(currentNotebookInfo.getId())) {
-            currentNotebookInfo = null;
-            currentNotebookInstance = null;
+
+    }
+
+    public NotebookEditable findLastNotebookEditable(Long descriptorId) {
+        try {
+            List<NotebookEditable> editables = notebookClient.listEditables(descriptorId, sessionContext.getLoggedInUserDetails().getUserid());
+            return editables.isEmpty() ? null : editables.get(editables.size() - 1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     public void loadCurrentNotebook(Long id) {
-        currentNotebookInfo = notebookService.retrieveNotebookInfo(id);
-        currentNotebookInstance = notebookService.findNotebookInstance(id);
+        try {
+            currentNotebookDescriptor = findNotebookDescriptor(id);
+            currentNotebookEditable = findLastNotebookEditable(currentNotebookDescriptor.getId());
+            if (currentNotebookEditable == null) {
+                currentNotebookInstance = new NotebookInstance();
+            } else {
+                currentNotebookInstance = new ObjectMapper().readValue(currentNotebookEditable.getContent(), NotebookInstance.class);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void reloadCurrentNotebook() {
-        loadCurrentNotebook(currentNotebookInfo.getId());
+        loadCurrentNotebook(currentNotebookDescriptor.getId());
     }
 
     public NotebookInstance getCurrentNotebookInstance() {
         return currentNotebookInstance;
     }
 
-    public NotebookInfo getCurrentNotebookInfo() {
-        return currentNotebookInfo;
+    public NotebookDescriptor getCurrentNotebookDescriptor() {
+        return currentNotebookDescriptor;
     }
 
     public void storeCurrentNotebook() {
-        UpdateNotebookContentsData updateNotebookContentsData = new UpdateNotebookContentsData();
-        updateNotebookContentsData.setId(currentNotebookInfo.getId());
-        updateNotebookContentsData.setNotebookInstance(currentNotebookInstance);
-        notebookService.updateNotebookContents(updateNotebookContentsData);
-        reloadCurrentNotebook();
+        try {
+            String json = currentNotebookInstance.toJsonString();
+            if (currentNotebookEditable == null) {
+                notebookClient.createEditable(currentNotebookDescriptor.getId(), null, json);
+            } else {
+                notebookClient.updateEditable(currentNotebookDescriptor.getId(), currentNotebookEditable.getId(), json);
+            }
+            reloadCurrentNotebook();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<CellDefinition> listCellDefinition(CellDefinitionFilterData cellDefinitionFilterData) {
@@ -157,132 +181,11 @@ public class NotebookSession implements Serializable {
         return result;
     }
 
-    public List<UUID> listAllUuids(IDatasetDescriptor datasetDescriptor) {
-        List<UUID> list = uuidListMap.get(datasetDescriptor.getId());
-        if (list == null) {
-            return new ArrayList<>();
-        } else {
-            return list;
-        }
-    }
-
-    public IDatasetDescriptor createDatasetFromMolecules(List<MoleculeObject> list, String name) {
-        Map<UUID, MoleculeObject> objectMap = new HashMap<>();
-        List<UUID> uuidList = new ArrayList<>();
-        for (MoleculeObject moleculeObject : list) {
-            objectMap.put(moleculeObject.getUUID(), moleculeObject);
-            uuidList.add(moleculeObject.getUUID());
-        }
-        Long datasetId = nextDatasetId();
-        moleculeObjectMapMap.put(datasetId, objectMap);
-        uuidListMap.put(datasetId, uuidList);
-
-        TableDisplayDatasetDescriptor datasetDescriptor = new TableDisplayDatasetDescriptor(datasetId, name, list.size());
-
-        RowDescriptor rowDescriptor = new RowDescriptor();
-
-        PropertyDescriptor structurePropertyDescriptor = new PropertyDescriptor();
-        structurePropertyDescriptor.setDescription("Structure property");
-        structurePropertyDescriptor.setId(1l);
-        rowDescriptor.addPropertyDescriptor(structurePropertyDescriptor);
-        rowDescriptor.setStructurePropertyId(structurePropertyDescriptor.getId());
-        rowDescriptor.setHierarchicalPropertyId(structurePropertyDescriptor.getId());
-        long propertyCount = 1;
-        Set<String> keySet = new HashSet<>();
-        for (MoleculeObject moleculeObject : list) {
-            for (String key : moleculeObject.getValues().keySet()) {
-                if (!keySet.contains(key)) {
-                    propertyCount++;
-                    PropertyDescriptor plainPropertyDescriptor = new PropertyDescriptor();
-                    plainPropertyDescriptor.setDescription(key);
-                    plainPropertyDescriptor.setId(propertyCount);
-                    rowDescriptor.addPropertyDescriptor(plainPropertyDescriptor);
-                    keySet.add(key);
-                }
-            }
-        }
-        datasetDescriptor.addRowDescriptor(rowDescriptor);
-        datasetDescriptorMap.put(datasetDescriptor.getId(), datasetDescriptor);
-        return datasetDescriptor;
-    }
-
-    public IDatasetDescriptor createDatasetFromStrings(Strings value, String name) {
-        List<MoleculeObject> list = new ArrayList<>();
-        for (String smile : value.getList()) {
-            MoleculeObject moleculeObject = new MoleculeObject(smile);
-            list.add(moleculeObject);
-        }
-        return createDatasetFromMolecules(list, name);
-    }
-
-    public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance inputVariableInstance) {
-        CellInstance producerCell = currentNotebookInstance.findCellById(inputVariableInstance.getCellId());
-        return notebookService.squonkDatasetAsMolecules(currentNotebookInfo.getId(), producerCell.getName(), inputVariableInstance.getVariableDefinition().getName());
-    }
-
-    public IDatasetDescriptor loadDatasetFromSquonkDataset(VariableInstance inputVariableInstance) {
-        try {
-            CellInstance producerCell = currentNotebookInstance.findCellById(inputVariableInstance.getCellId());
-            List<MoleculeObject> list = notebookService.squonkDatasetAsMolecules(currentNotebookInfo.getId(), producerCell.getName(), inputVariableInstance.getVariableDefinition().getName());
-            return createDatasetFromMolecules(list, producerCell.getName() + "." + inputVariableInstance.getVariableDefinition().getName());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public IDatasetDescriptor loadDatasetFromFile(String fileName) {
-        try {
-            List<MoleculeObject> list = notebookService.parseFile(fileName);
-            return createDatasetFromMolecules(list, fileName);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private synchronized Long nextDatasetId() {
-        lastDatasetId++;
-        return lastDatasetId;
-    }
-
-    public List<IRow> listRow(IDatasetDescriptor datasetDescriptor, List<UUID> uuidList) {
-        Map<UUID, MoleculeObject> datasetContents = moleculeObjectMapMap.get(datasetDescriptor.getId());
-
-        if (datasetContents.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        RowDescriptor rowDescriptor = (RowDescriptor) datasetDescriptor.getAllRowDescriptors().get(0);
-        PropertyDescriptor structurePropertyDescriptor = (PropertyDescriptor) rowDescriptor.getStructurePropertyDescriptor();
-
-        List<IRow> result = new ArrayList<>();
-        for (UUID uuid : uuidList) {
-            MoleculeObject molecule = datasetContents.get(uuid);
-            Row row = new Row();
-            row.setUuid(molecule.getUUID());
-            row.setDescriptor(rowDescriptor);
-            row.setProperty(structurePropertyDescriptor, molecule.getSource());
-
-            for (IPropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
-                if (!propertyDescriptor.getId().equals(structurePropertyDescriptor.getId())) {
-                    row.setProperty((PropertyDescriptor) propertyDescriptor, molecule.getValue(propertyDescriptor.getDescription()));
-                }
-            }
-
-            result.add(row);
-        }
-        return result;
-    }
-
-    public IDatasetDescriptor findDatasetDescriptorById(Long datasetDescriptorId) {
-        return datasetDescriptorMap.get(datasetDescriptorId);
-    }
-
-
     public void executeCell(Long cellId) {
         storeCurrentNotebook();
         CellInstance cell = currentNotebookInstance.findCellById(cellId);
         if (cell.getCellDefinition().getExecutable()) {
-            notebookService.executeCell(currentNotebookInfo.getId(), cellId);
+            executionService.executeCell(currentNotebookInstance, currentNotebookDescriptor.getId(), cellId);
         }
     }
 
@@ -298,17 +201,95 @@ public class NotebookSession implements Serializable {
     }
 
     public Execution findExecution(Long cellId) {
-        return notebookService.findExecution(currentNotebookInfo.getId(), cellId);
+        return executionService.findExecution(currentNotebookDescriptor.getId(), cellId);
     }
 
     public void storeTemporaryFileForVariable(VariableInstance variableInstance, InputStream inputStream) {
-        notebookService.storeTemporaryFileForVariable(currentNotebookInfo.getId(), variableInstance, inputStream);
+
     }
 
     public void commitFileForVariable(VariableInstance variableInstance) {
-        notebookService.commitFileForVariable(currentNotebookInfo.getId(), variableInstance);
 
     }
 
+    public IDatasetDescriptor loadDatasetFromVariable(VariableInstance variableInstance) {
+        VariableType variableType = variableInstance.getVariableDefinition().getVariableType();
+        if (variableType.equals(VariableType.DATASET)) {
+            return loadDatasetFromDatasetVariable(variableInstance);
+        } else if (variableType.equals(VariableType.FILE)) {
+            return loadDatasetFromFileVariable(variableInstance);
+        } else if (variableType.equals(VariableType.STRING)) {
+            return loadDatasetFromFileVariable(variableInstance);
+        } else {
+            return null;
+        }
+    }
+
+    public IDatasetDescriptor loadDatasetFromFileVariable(VariableInstance variableInstance) {
+        try {
+            List<MoleculeObject> list = parseMoleculesFromFileVariable(variableInstance);
+            return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<MoleculeObject> parseMoleculesFromFileVariable(VariableInstance variableInstance) throws Exception {
+        String fileName = notebookClient.readTextValue(currentNotebookDescriptor.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        int x = fileName.lastIndexOf(".");
+        String ext = fileName.toLowerCase().substring(x + 1);
+        InputStream inputStream = notebookClient.readStreamValue(currentNotebookDescriptor.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        try {
+            if (ext.equals("json")) {
+                return Datasets.parseJson(inputStream);
+            } else if (ext.equals("tab")) {
+                return Datasets.parseTsv(inputStream);
+            } else {
+                LOGGER.warn("Unrecognised format: " + ext);
+                return new ArrayList<>();
+            }
+        } finally {
+            inputStream.close();
+        }
+    }
+
+    public IDatasetDescriptor loadDatasetFromDatasetVariable(VariableInstance variableInstance) {
+        try {
+            List<MoleculeObject> list = squonkDatasetAsMolecules(variableInstance);
+            return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) {
+        try {
+            InputStream inputStreaam = notebookClient.readStreamValue(currentNotebookDescriptor.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+            try {
+                GZIPInputStream gzipInputStream = new GZIPInputStream(inputStreaam);
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.readValue(gzipInputStream, new TypeReference<List<MoleculeObject>>() {
+                });
+            } finally {
+                inputStreaam.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    public List<UUID> listAllDatasetUuids(IDatasetDescriptor datasetDescriptor) {
+        return datasets.listAllDatasetUuids(datasetDescriptor);
+    }
+
+    public List<IRow> listDatasetRow(IDatasetDescriptor datasetDescriptor, List<UUID> uuidList) {
+        return datasets.listdatasetRow(datasetDescriptor, uuidList);
+    }
+
+    public IDatasetDescriptor findDatasetDescriptorById(Long datasetDescriptorId) {
+        return datasets.findDatasetDescriptorById(datasetDescriptorId);
+    }
 }
 

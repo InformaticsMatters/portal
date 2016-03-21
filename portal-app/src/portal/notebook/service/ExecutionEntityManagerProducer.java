@@ -11,7 +11,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.Properties;
 
-public class NotebookEntityManagerProducer {
+public class ExecutionEntityManagerProducer {
 
     @Inject
     private NotebookConfig config;

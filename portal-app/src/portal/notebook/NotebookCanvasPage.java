@@ -27,7 +27,6 @@ import portal.MenuPanel;
 import portal.PopupContainerProvider;
 import portal.PortalHomePage;
 import portal.notebook.api.*;
-import portal.notebook.service.NotebookInfo;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -90,11 +89,9 @@ public class NotebookCanvasPage extends WebPage {
         addCanvasNewConnectionBehavior();
         addConnectionsRenderBehavior();
         addResizeBehavior();
-        NotebookInfo notebookInfo = notebookSession.prepareDefaultNotebook();
         addEditNotebookPanel();
         addNotebookListPanel();
         addNotebookCellTypesPanel();
-        notebookSession.loadCurrentNotebook(notebookInfo.getId());
     }
 
     private void configureExecutionStatusListener() {

@@ -36,7 +36,7 @@ public class TableDisplayVisualizer extends TreeGrid<DefaultTreeModel, DefaultMu
         setOutputMarkupId(true);
         getTree().setRootLess(true);
         this.datasetDescriptor = datasetDescriptor;
-        allUuids = notebookSession.listAllUuids(datasetDescriptor);
+        allUuids = notebookSession.listAllDatasetUuids(datasetDescriptor);
         setCurrentPage(0);
     }
 
@@ -82,7 +82,7 @@ public class TableDisplayVisualizer extends TreeGrid<DefaultTreeModel, DefaultMu
         }
 
         List<UUID> uuidList = allUuids.subList(start, end);
-        List<IRow> rowList = notebookSession.listRow(datasetDescriptor, uuidList);
+        List<IRow> rowList = notebookSession.listDatasetRow(datasetDescriptor, uuidList);
 
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
         buildNodeHierarchy(rootNode, rowList);

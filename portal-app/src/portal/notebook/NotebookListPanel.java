@@ -1,6 +1,5 @@
 package portal.notebook;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -10,13 +9,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.notebook.api2.NotebookDescriptor;
 import portal.SessionContext;
-import portal.notebook.service.EditNotebookData;
-import portal.notebook.service.NotebookInfo;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -28,7 +25,7 @@ public class NotebookListPanel extends Panel {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookListPanel.class);
     private final EditNotebookPanel editNotebookPanel;
-    private ListView<NotebookInfo> listView;
+    private ListView<NotebookDescriptor> listView;
     private String selectedMarkupId;
     @Inject
     private NotebookSession notebookSession;
@@ -50,19 +47,19 @@ public class NotebookListPanel extends Panel {
         }
     }
 
-    public List<NotebookInfo> getNotebookInfoList() {
-        return notebookSession.listNotebookInfo();
+    public List<NotebookDescriptor> getNotebookDescriptorList() {
+        return notebookSession.listNotebookDescriptor();
     }
 
     private void addNotebookList() {
-        listView = new ListView<NotebookInfo>("notebook", new PropertyModel<List<NotebookInfo>>(this, "notebookInfoList")) {
+        listView = new ListView<NotebookDescriptor>("notebook", new PropertyModel<List<NotebookDescriptor>>(this, "notebookInfoList")) {
 
             @Override
-            protected void populateItem(ListItem<NotebookInfo> listItem) {
-                NotebookInfo notebookInfo = listItem.getModelObject();
-                boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookInfo.getOwner());
-                listItem.add(new Label("name", notebookInfo.getName()));
-                listItem.add(new Label("owner", notebookInfo.getOwner()));
+            protected void populateItem(ListItem<NotebookDescriptor> listItem) {
+                NotebookDescriptor notebookDescriptor = listItem.getModelObject();
+                boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookDescriptor.getOwner());
+                listItem.add(new Label("name", notebookDescriptor.getName()));
+                listItem.add(new Label("owner", notebookDescriptor.getOwner()));
 
                 AjaxLink editLink = new AjaxLink("edit") {
 
@@ -79,13 +76,7 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        EditNotebookData data = new EditNotebookData();
-                        data.setOwner(notebookInfo.getOwner());
-                        data.setName(notebookInfo.getName());
-                        data.setDescription(notebookInfo.getDescription());
-                        data.setId(notebookInfo.getId());
-                        data.setShared(!notebookInfo.getShared());
-                        notebookSession.updateNotebook(data);
+                        notebookSession.updateNotebook(notebookDescriptor.getId(), notebookDescriptor.getName(), notebookDescriptor.getDescription());
                         refreshNotebookList();
                     }
                 };
@@ -107,20 +98,20 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     protected void onEvent(AjaxRequestTarget target) {
-                        notebookSession.loadCurrentNotebook(notebookInfo.getId());
+                        notebookSession.loadCurrentNotebook(notebookDescriptor.getId());
                         target.add(getPage());
                     }
                 });
 
-                Long currentId = notebookSession.getCurrentNotebookInfo() == null ? null : notebookSession.getCurrentNotebookInfo().getId();
+                Long currentId = notebookSession.getCurrentNotebookDescriptor() == null ? null : notebookSession.getCurrentNotebookDescriptor().getId();
                 if (listItem.getModelObject().getId().equals(currentId)) {
                     selectedMarkupId = listItem.getMarkupId();
                 }
                 Label shared = new Label("shared");
-                if (notebookInfo.getShared()) {
+                /**if (notebookDescriptor.getShared()) {
                     shared.setDefaultModel(Model.of("public"));
                     shared.add(new AttributeModifier("class", "ui tiny blue label"));
-                }
+                }**/
                 listItem.add(shared);
                 shared.setVisible(isOwner);
             }
@@ -129,7 +120,7 @@ public class NotebookListPanel extends Panel {
     }
 
     public void refreshNotebookList() {
-        listView.setList(notebookSession.listNotebookInfo());
+        listView.setList(notebookSession.listNotebookDescriptor());
         getRequestCycle().find(AjaxRequestTarget.class).add(this);
     }
 }
