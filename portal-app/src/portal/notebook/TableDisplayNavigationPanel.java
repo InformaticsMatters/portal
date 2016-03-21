@@ -5,6 +5,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigation;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.util.string.StringValue;
 
 /**
  * @author simetrias
@@ -46,9 +47,13 @@ public class TableDisplayNavigationPanel extends Panel {
             public void onEvent(IEvent<?> event) {
                 super.onEvent(event);
                 AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
-                ajaxRequestTarget.add(TableDisplayNavigationPanel.this);
-                ajaxRequestTarget.add(tableDisplayVisualizer);
-                ajaxRequestTarget.appendJavaScript("fitTableDisplayGrid('" + TableDisplayNavigationPanel.this.getParent().getMarkupId() + "');");
+                StringValue executionStatusTimer = getRequest().getQueryParameters().getParameterValue("executionStatusTimer");
+                boolean proceed = executionStatusTimer == null ? true : ! "true".equals(executionStatusTimer.toString("false"));
+                if (proceed) {
+                    ajaxRequestTarget.add(TableDisplayNavigationPanel.this);
+                    ajaxRequestTarget.add(tableDisplayVisualizer);
+                    ajaxRequestTarget.appendJavaScript("fitTableDisplayGrid('" + TableDisplayNavigationPanel.this.getParent().getMarkupId() + "');");
+                }
             }
         });
     }

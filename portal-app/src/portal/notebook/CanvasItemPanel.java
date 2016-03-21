@@ -80,6 +80,11 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         add(new AbstractAjaxTimerBehavior(Duration.seconds(2)) {
 
             @Override
+            public CharSequence getCallbackUrl() {
+                return super.getCallbackUrl() + "&executionStatusTimer=true";
+            }
+
+            @Override
             protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
                 refreshExecutionStatus(ajaxRequestTarget);
             }
