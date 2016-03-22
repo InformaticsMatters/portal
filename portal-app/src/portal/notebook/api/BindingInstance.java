@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class BindingInstance implements Serializable {
     private final static long serialVersionUID = 1l;
     private BindingDefinition bindingDefinition;
-    private VariableInstance variable;
+    private VariableInstance variableInstance;
     private boolean dirty = true;
 
     @JsonIgnore
@@ -22,13 +22,13 @@ public class BindingInstance implements Serializable {
         return bindingDefinition.getDisplayName();
     }
 
-    public VariableInstance getVariable() {
-        return variable;
+    public VariableInstance getVariableInstance() {
+        return variableInstance;
     }
 
-    public void setVariable(VariableInstance variable) {
+    public void setVariableInstance(VariableInstance variableInstance) {
         dirty = true;
-        this.variable = variable;
+        this.variableInstance = variableInstance;
     }
 
     @JsonIgnore

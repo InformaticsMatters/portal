@@ -19,7 +19,7 @@ public class ProcessDatasetUntrustedGroovyScriptCellDefinition extends CellDefin
     public ProcessDatasetUntrustedGroovyScriptCellDefinition() {
         super(CELL_NAME, "Groovy Script (untrusted)", "default_icon.png", new String[]{"script", "groovy"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
-        getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(
                 new MultiLineTextTypeDescriptor(20, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
                 "script", "Groovy Script", "Groovy script to execute"));

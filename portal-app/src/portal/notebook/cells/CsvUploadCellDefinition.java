@@ -26,9 +26,9 @@ public class CsvUploadCellDefinition extends CellDefinition {
     public CsvUploadCellDefinition() {
         super(CELL_NAME, "CSV upload", "default_icon.png", new String[]{"file", "upload", "csv", "tab"});
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
-        getOutputVariableDefinitionList().add(variableDefinition);
+        getVariableDefinitionList().add(variableDefinition);
         variableDefinition  = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);
-        getOutputVariableDefinitionList().add(variableDefinition);
+        getVariableDefinitionList().add(variableDefinition);
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor<File>(new String[] {"csv", "tab", "txt"}),
                 OPT_FILE_UPLOAD, "CSV/TAB File", "Upload comma or tab separated text file"));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_FILE_TYPE, "File type", "Type of CSV or TAB file")
@@ -48,7 +48,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
 
         @Override
         protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
-            CellInstance cell = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
+            CellInstance cell = cellExecutionData.getNotebookInstance().findCellInstanceById(cellExecutionData.getCellId());
             VariableKey key = new VariableKey(cell.getName(), VAR_NAME_FILECONTENT); // we are the producer
 
             StepDefinition step1 = new StepDefinition(CsvUpload.CLASSNAME)

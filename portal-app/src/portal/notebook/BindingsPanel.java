@@ -48,7 +48,7 @@ public class BindingsPanel extends Panel {
             protected void populateItem(ListItem<BindingInstance> listItem) {
                 final BindingInstance bindingInstance = listItem.getModelObject();
                 listItem.add(new Label("targetName", bindingInstance.getDisplayName()));
-                VariableInstance variableInstance = bindingInstance.getVariable();
+                VariableInstance variableInstance = bindingInstance.getVariableInstance();
                 String sourceDisplayName = resolveDisplayNameFor(variableInstance);
                 listItem.add(new Label("variableName", sourceDisplayName));
                 AjaxLink unassignLink = new AjaxLink("unassign") {
@@ -68,9 +68,9 @@ public class BindingsPanel extends Panel {
     }
 
     private void removeBinding(BindingInstance bindingInstance) {
-        CellInstance boundCellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellInstance.getId());
-        BindingInstance boundBindingInstance = boundCellInstance.getBindingMap().get(bindingInstance.getName());
-        boundBindingInstance.setVariable(null);
+        CellInstance boundCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellInstance.getId());
+        BindingInstance boundBindingInstance = boundCellInstance.getBindingInstanceMap().get(bindingInstance.getName());
+        boundBindingInstance.setVariableInstance(null);
         notebookSession.storeCurrentNotebook();
         cellInstance = boundCellInstance;
     }
@@ -79,7 +79,7 @@ public class BindingsPanel extends Panel {
         if (cellInstance == null) {
             return new ArrayList<>();
         } else {
-            ArrayList<BindingInstance> list = new ArrayList<BindingInstance>(cellInstance.getBindingMap().values());
+            ArrayList<BindingInstance> list = new ArrayList<BindingInstance>(cellInstance.getBindingInstanceMap().values());
             Collections.sort(list, new Comparator<BindingInstance>() {
 
                 @Override
@@ -95,7 +95,7 @@ public class BindingsPanel extends Panel {
         if (variableInstance == null) {
             return null;
         }
-        CellInstance producerCellInstance = notebookSession.getCurrentNotebookInstance().findCellById(variableInstance.getCellId());
+        CellInstance producerCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(variableInstance.getCellId());
         return producerCellInstance.getName() + " " + variableInstance.getVariableDefinition().getDisplayName();
     }
 }

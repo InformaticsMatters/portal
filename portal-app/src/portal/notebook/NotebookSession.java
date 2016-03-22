@@ -198,7 +198,7 @@ public class NotebookSession implements Serializable {
 
     public void executeCell(Long cellId) {
         storeCurrentNotebook();
-        CellInstance cell = currentNotebookInstance.findCellById(cellId);
+        CellInstance cell = currentNotebookInstance.findCellInstanceById(cellId);
         if (cell.getCellDefinition().getExecutable()) {
             portalService.executeCell(currentNotebookInstance, currentNotebookInfo.getId(), cellId);
         }

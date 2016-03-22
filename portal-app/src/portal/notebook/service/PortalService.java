@@ -82,7 +82,7 @@ public class PortalService {
             if (execution != null && execution.getJobActive()) {
                 throw new RuntimeException("Already running");
             }
-            CellInstance cellInstance = notebookInstance.findCellById(cellId);
+            CellInstance cellInstance = notebookInstance.findCellInstanceById(cellId);
             CellDefinition cellDefinition = cellInstance.getCellDefinition();
             CellExecutionData cellExecutionData = new CellExecutionData();
             cellExecutionData.setCellId(cellId);

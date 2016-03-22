@@ -51,7 +51,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
         List<OptionInstance> optionList = new ArrayList<>();
         CellInstance cellInstance = findCellInstance();
-        for (OptionInstance optionInstance : cellInstance.getOptionMap().values()) {
+        for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
             if (optionInstance.getOptionDescriptor().isEditable()) {
                 optionList.add(optionInstance);
             }
@@ -94,7 +94,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private void storeOptions() {
         for (String name : optionEditorModelMap.keySet()) {
             FieldEditorModel editorModel = optionEditorModelMap.get(name);
-            OptionInstance optionInstance = findCellInstance().getOptionMap().get(name);
+            OptionInstance optionInstance = findCellInstance().getOptionInstanceMap().get(name);
             optionInstance.setValue(editorModel.getValue());
             if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
@@ -105,7 +105,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
 
     private void commitFiles() {
-        for (OptionInstance optionInstance : findCellInstance().getOptionMap().values()) {
+        for (OptionInstance optionInstance : findCellInstance().getOptionInstanceMap().values()) {
             if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
                 notebookSession.commitFileForVariable(variableInstance);
@@ -154,7 +154,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     private VariableInstance findVariableInstanceForFileOption() {
-        for (VariableInstance variableInstance : findCellInstance().getOutputVariableMap().values()) {
+        for (VariableInstance variableInstance : findCellInstance().getVariableInstanceMap().values()) {
             if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.FILE)) {
                 return variableInstance;
             }

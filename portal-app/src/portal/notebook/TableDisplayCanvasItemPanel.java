@@ -46,8 +46,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
         CellInstance cellInstance = findCellInstance();
-        BindingInstance binding = cellInstance.getBindingMap().get("input");
-        if (binding.getVariable() != null && binding.getVariable().getCellId().equals(changedCellId)) {
+        BindingInstance binding = cellInstance.getBindingInstanceMap().get("input");
+        if (binding.getVariableInstance() != null && binding.getVariableInstance().getCellId().equals(changedCellId)) {
             load();
             ajaxRequestTarget.add(this);
         }
@@ -64,8 +64,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        BindingInstance bindingModel = findCellInstance().getBindingMap().get("input");
-        VariableInstance variableModel = bindingModel == null ? null : bindingModel.getVariable();
+        BindingInstance bindingModel = findCellInstance().getBindingInstanceMap().get("input");
+        VariableInstance variableModel = bindingModel == null ? null : bindingModel.getVariableInstance();
         boolean assigned = variableModel != null && variableModel.getValue() != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
@@ -76,7 +76,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     private IDatasetDescriptor loadDescriptor() {
         CellInstance cellInstance = findCellInstance();
-        VariableInstance variableInstance = cellInstance.getBindingMap().get("input").getVariable();
+        VariableInstance variableInstance = cellInstance.getBindingInstanceMap().get("input").getVariableInstance();
         return notebookSession.loadDatasetFromVariable(variableInstance);
     }
 

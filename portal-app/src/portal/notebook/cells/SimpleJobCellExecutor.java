@@ -28,7 +28,7 @@ class SimpleJobCellExecutor extends AbstractJobCellExecutor {
     @Override
     protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
         NotebookInstance notebook = cellExecutionData.getNotebookInstance();
-        CellInstance cell = notebook.findCellById(cellExecutionData.getCellId());
+        CellInstance cell = notebook.findCellInstanceById(cellExecutionData.getCellId());
         VariableKey key = createVariableKey(notebook, cell, CellDefinition.VAR_NAME_INPUT);
 
         StepDefinition step = new StepDefinition(stepClassName)

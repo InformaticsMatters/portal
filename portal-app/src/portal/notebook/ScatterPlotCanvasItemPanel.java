@@ -83,9 +83,9 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         String xFieldName = advancedOptionsPanel.getXAxisFieldName();
         String yFieldName = advancedOptionsPanel.getYAxisFieldName();
         if (xFieldName != null || yFieldName != null) {
-            CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(getCellId());
-            BindingInstance bindingInstance = cellInstance.getBindingMap().get(CellDefinition.VAR_NAME_INPUT);
-            VariableInstance variableInstance = bindingInstance.getVariable();
+            CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(getCellId());
+            BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+            VariableInstance variableInstance = bindingInstance.getVariableInstance();
             if (variableInstance != null) {
                 List<MoleculeObject> dataset = notebookSession.squonkDatasetAsMolecules(variableInstance);
                 float[][] plotData = new float[dataset.size()][dataset.size()];

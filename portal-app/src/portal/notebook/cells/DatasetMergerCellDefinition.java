@@ -21,7 +21,7 @@ public class DatasetMergerCellDefinition extends CellDefinition {
 
     public DatasetMergerCellDefinition() {
         super(CELL_NAME, "Merge datasets into one", "default_icon.png", new String[]{"merge", "dataset"});
-        getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new DatasetsFieldOptionDescriptor(DatasetMerger.OPTION_MERGE_FIELD_NAME, "Merge field name", "Name of value field which identifies equivalent entries"));
         getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, DatasetMerger.OPTION_KEEP_FIRST, "When duplicate keep first", "When duplicate field name use the existing value rather than the new one")
         .withDefaultValue(true));
@@ -41,7 +41,7 @@ public class DatasetMergerCellDefinition extends CellDefinition {
         protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
 
             NotebookInstance notebook = cellExecutionData.getNotebookInstance();
-            CellInstance cell = notebook.findCellById(cellExecutionData.getCellId());
+            CellInstance cell = notebook.findCellInstanceById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.DatasetMerger.CLASSNAME)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cell));

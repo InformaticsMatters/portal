@@ -55,7 +55,7 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
     protected Map<String, Object> collectAllOptions(CellInstance cell) {
 
         Map<String, Object> result = new HashMap<>();
-        for (Map.Entry<String,OptionInstance> e :cell.getOptionMap().entrySet()) {
+        for (Map.Entry<String,OptionInstance> e :cell.getOptionInstanceMap().entrySet()) {
             String key = e.getKey();
             OptionInstance i = e.getValue();
             LOG.fine("checking option " + key);
@@ -76,12 +76,12 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
      * @return
      */
     protected VariableKey createVariableKey(NotebookInstance notebook, CellInstance cell, String varName) {
-        BindingInstance binding = cell.getBindingMap().get(varName);
+        BindingInstance binding = cell.getBindingInstanceMap().get(varName);
         if (binding != null) {
-            VariableInstance variable = binding.getVariable();
+            VariableInstance variable = binding.getVariableInstance();
             if (variable != null) {
                 Long cellId = variable.getCellId();
-                CellInstance producer = notebook.findCellById(cellId);
+                CellInstance producer = notebook.findCellInstanceById(cellId);
                 if (producer != null) {
                     return new VariableKey(producer.getName(), variable.getVariableDefinition().getName());
                 }

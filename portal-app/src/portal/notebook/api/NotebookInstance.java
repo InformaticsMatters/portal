@@ -20,7 +20,7 @@ public class NotebookInstance implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(NotebookInstance.class.getName());
     private final List<Long> removedCellIdList = new ArrayList<>();
-    private final List<CellInstance> cellList = new ArrayList<>();
+    private final List<CellInstance> cellInstanceList = new ArrayList<>();
     private Long lastCellId;
 
 
@@ -32,39 +32,39 @@ public class NotebookInstance implements Serializable {
         this.lastCellId = lastCellId;
     }
 
-    public List<CellInstance> getCellList() {
-        return cellList;
+    public List<CellInstance> getCellInstanceList() {
+        return cellInstanceList;
     }
 
-    public VariableInstance findVariable(String producerName, String name) {
-        for (CellInstance cell : cellList) {
+    public VariableInstance findVariableByCellName(String producerName, String name) {
+        for (CellInstance cell : cellInstanceList) {
             if (cell.getName().equals(producerName)) {
-                return cell.getOutputVariableMap().get(name);
+                return cell.getVariableInstanceMap().get(name);
             }
         }
         return null;
     }
 
-    public VariableInstance findVariable(Long producerId, String name) {
-        for (CellInstance cell : cellList) {
+    public VariableInstance findVariableByCellId(Long producerId, String name) {
+        for (CellInstance cell : cellInstanceList) {
             if (cell.getId().equals(producerId)) {
-                return cell.getOutputVariableMap().get(name);
+                return cell.getVariableInstanceMap().get(name);
             }
         }
         return null;
     }
 
-    public CellInstance addCell(CellDefinition cellType) {
-        CellInstance cell = createCell(cellType);
+    public CellInstance addCellInstance(CellDefinition cellType) {
+        CellInstance cell = createCellInstance(cellType);
         cell.setName(calculateCellName(cell));
-        cellList.add(cell);
+        cellInstanceList.add(cell);
         return cell;
     }
 
     private String calculateCellName(CellInstance cell) {
         int typeCount = 0;
         Set<String> nameSet = new HashSet<String>();
-        for (CellInstance item : cellList) {
+        for (CellInstance item : cellInstanceList) {
             if (item.getCellDefinition().equals(cell.getCellDefinition())) {
                 typeCount++;
             }
@@ -79,8 +79,8 @@ public class NotebookInstance implements Serializable {
         return newName;
     }
 
-    public CellInstance findCellByName(String name) {
-        for (CellInstance cell : cellList) {
+    public CellInstance findCellInstanceByName(String name) {
+        for (CellInstance cell : cellInstanceList) {
             if (cell.getName().equals(name)) {
                 return cell;
             }
@@ -88,8 +88,8 @@ public class NotebookInstance implements Serializable {
         return null;
     }
 
-    public CellInstance findCellById(Long id) {
-        for (CellInstance cell : cellList) {
+    public CellInstance findCellInstanceById(Long id) {
+        for (CellInstance cell : cellInstanceList) {
             if (cell.getId().equals(id)) {
                 return cell;
             }
@@ -97,40 +97,40 @@ public class NotebookInstance implements Serializable {
         return null;
     }
 
-    private CellInstance createCell(CellDefinition cellDefinition) {
+    private CellInstance createCellInstance(CellDefinition cellDefinition) {
         CellInstance cell = new CellInstance();
         cell.setCellDefinition(cellDefinition);
         cell.setId(lastCellId == null ? 1L : lastCellId + 1L);
         lastCellId = cell.getId();
-        for (VariableDefinition variableDefinition : cellDefinition.getOutputVariableDefinitionList()) {
+        for (VariableDefinition variableDefinition : cellDefinition.getVariableDefinitionList()) {
             VariableInstance variable = new VariableInstance();
             variable.setVariableDefinition(variableDefinition);
             variable.setValue(variableDefinition.getDefaultValue());
             variable.setCellId(cell.getId());
-            cell.getOutputVariableMap().put(variableDefinition.getName(), variable);
+            cell.getVariableInstanceMap().put(variableDefinition.getName(), variable);
         }
         for (BindingDefinition bindingDefinition : cellDefinition.getBindingDefinitionList()) {
             BindingInstance binding = new BindingInstance();
             binding.setBindingDefinition(bindingDefinition);
-            cell.getBindingMap().put(bindingDefinition.getName(), binding);
+            cell.getBindingInstanceMap().put(bindingDefinition.getName(), binding);
         }
-        for (OptionDescriptor optionDefinition : cellDefinition.getOptionDefinitionList()) {
+        for (OptionDescriptor optionDescriptor : cellDefinition.getOptionDefinitionList()) {
             OptionInstance option = new OptionInstance();
-            option.setOptionDescriptor(optionDefinition);
-            cell.getOptionMap().put(optionDefinition.getName(), option);
+            option.setOptionDescriptor(optionDescriptor);
+            cell.getOptionInstanceMap().put(optionDescriptor.getName(), option);
         }
         return cell;
     }
 
-    public void removeCell(Long id) {
-        CellInstance cellInstance = findCellById(id);
-        cellList.remove(cellInstance);
+    public void removeCellInstance(Long id) {
+        CellInstance cellInstance = findCellInstanceById(id);
+        cellInstanceList.remove(cellInstance);
         removedCellIdList.add(id);
-        for (CellInstance otherCellInstance : cellList) {
-            for (BindingInstance bindingInstance : otherCellInstance.getBindingMap().values()) {
-                VariableInstance variableInstance = bindingInstance.getVariable();
+        for (CellInstance otherCellInstance : cellInstanceList) {
+            for (BindingInstance bindingInstance : otherCellInstance.getBindingInstanceMap().values()) {
+                VariableInstance variableInstance = bindingInstance.getVariableInstance();
                 if (variableInstance != null && variableInstance.getCellId().equals(id)) {
-                    bindingInstance.setVariable(null);
+                    bindingInstance.setVariableInstance(null);
                 }
             }
         }
@@ -138,12 +138,12 @@ public class NotebookInstance implements Serializable {
 
     public void applyChangesFrom(NotebookInstance notebookInstance) {
         for (Long cellId : notebookInstance.removedCellIdList) {
-            removeCell(cellId);
+            removeCellInstance(cellId);
         }
-        for (CellInstance cellInstance : notebookInstance.cellList) {
-            CellInstance localCellInstance = findCellById(cellInstance.getId());
+        for (CellInstance cellInstance : notebookInstance.cellInstanceList) {
+            CellInstance localCellInstance = findCellInstanceById(cellInstance.getId());
             if (localCellInstance == null) {
-                cellList.add(cellInstance);
+                cellInstanceList.add(cellInstance);
                 lastCellId = cellInstance.getId();
             }  else {
                 applyCellChanges(cellInstance, localCellInstance);
@@ -158,23 +158,23 @@ public class NotebookInstance implements Serializable {
            localCellInstance.setSizeHeight(cellInstance.getSizeHeight());
            localCellInstance.setSizeWidth(cellInstance.getSizeWidth());
         }
-        for (OptionInstance optionInstance : cellInstance.getOptionMap().values()) {
+        for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
             if (optionInstance.isDirty()) {
-                localCellInstance.getOptionMap().get(optionInstance.getOptionDescriptor().getName()).setValue(optionInstance.getValue());
+                localCellInstance.getOptionInstanceMap().get(optionInstance.getOptionDescriptor().getName()).setValue(optionInstance.getValue());
             }
         }
-        for (VariableInstance variableInstance : cellInstance.getOutputVariableMap().values()) {
+        for (VariableInstance variableInstance : cellInstance.getVariableInstanceMap().values()) {
             if (variableInstance.isDirty()) {
-                localCellInstance.getOutputVariableMap().get(variableInstance.getVariableDefinition().getName()).setValue(variableInstance.getValue());
+                localCellInstance.getVariableInstanceMap().get(variableInstance.getVariableDefinition().getName()).setValue(variableInstance.getValue());
             }
         }
-        for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
+        for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
             if (bindingInstance.isDirty()) {
-                if (bindingInstance.getVariable() == null) {
-                    localCellInstance.getBindingMap().get(bindingInstance.getName()).setVariable(null);
+                if (bindingInstance.getVariableInstance() == null) {
+                    localCellInstance.getBindingInstanceMap().get(bindingInstance.getName()).setVariableInstance(null);
                 } else {
-                    VariableInstance variableInstance = findVariable(bindingInstance.getVariable().getCellId(), bindingInstance.getVariable().getVariableDefinition().getName());
-                    localCellInstance.getBindingMap().get(bindingInstance.getName()).setVariable(variableInstance);
+                    VariableInstance variableInstance = findVariableByCellId(bindingInstance.getVariableInstance().getCellId(), bindingInstance.getVariableInstance().getVariableDefinition().getName());
+                    localCellInstance.getBindingInstanceMap().get(bindingInstance.getName()).setVariableInstance(variableInstance);
                 }
             }
         }
@@ -182,7 +182,7 @@ public class NotebookInstance implements Serializable {
 
     public void resetDirty() {
         removedCellIdList.clear();
-        for (CellInstance cellInstance : cellList) {
+        for (CellInstance cellInstance : cellInstanceList) {
             cellInstance.resetDirty();
         }
     }
@@ -198,11 +198,11 @@ public class NotebookInstance implements Serializable {
     }
 
     protected void fixReferences() {
-        for (CellInstance cellInstance : cellList) {
-            for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
-                VariableInstance variableInstance = bindingInstance.getVariable();
+        for (CellInstance cellInstance : cellInstanceList) {
+            for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
+                VariableInstance variableInstance = bindingInstance.getVariableInstance();
                  if (variableInstance != null) {
-                     bindingInstance.setVariable(findVariable(variableInstance.getCellId(), variableInstance.getVariableDefinition().getName()));
+                     bindingInstance.setVariableInstance(findVariableByCellId(variableInstance.getCellId(), variableInstance.getVariableDefinition().getName()));
                  }
             }
         }

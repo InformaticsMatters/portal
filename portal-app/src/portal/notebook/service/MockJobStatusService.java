@@ -4,7 +4,6 @@ import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.types.MoleculeObject;
-import org.squonk.client.NotebookClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.execution.steps.StepDefinitionConstants;
@@ -66,7 +65,7 @@ public class MockJobStatusService {
 
     private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) {
         CellInstance cellInstance = mockNotebookClient.oldFindCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellName());
-        Dataset<MoleculeObject> dataset = createMockDataset((String)cellInstance.getOptionMap().get("prefix").getValue());
+        Dataset<MoleculeObject> dataset = createMockDataset((String)cellInstance.getOptionInstanceMap().get("prefix").getValue());
         try {
             writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellName(), "output", dataset);
         } catch (IOException e) {

@@ -121,7 +121,7 @@ public class MockNotebookClient implements NotebookClient {
         query.setParameter("notebookId", aLong);
         MockNotebookEditable mockNotebookEditable = query.getResultList().get(0);
         NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-        return (String)notebookInstance.findCellById(aLong1).getOutputVariableMap().get(s).getValue();
+        return (String)notebookInstance.findCellInstanceById(aLong1).getVariableInstanceMap().get(s).getValue();
     }
 
     @Override
@@ -135,7 +135,7 @@ public class MockNotebookClient implements NotebookClient {
         query.setParameter("notebookId", aLong);
         MockNotebookEditable mockNotebookEditable = query.getResultList().get(0);
         NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-        notebookInstance.findVariable(aLong2, s).setValue(s1);
+        notebookInstance.findVariableByCellId(aLong2, s).setValue(s1);
         mockNotebookEditable.setJson(notebookInstance.toJsonString().getBytes());
     }
 
@@ -190,7 +190,7 @@ public class MockNotebookClient implements NotebookClient {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
             NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-            VariableInstance variableInstance = notebookInstance.findVariable(cellName, name);
+            VariableInstance variableInstance = notebookInstance.findVariableByCellName(cellName, name);
             writeStreamValue(notebookId, null, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), dataInputStream, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -201,7 +201,7 @@ public class MockNotebookClient implements NotebookClient {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
             NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-            VariableInstance variableInstance = notebookInstance.findVariable(cellName, name);
+            VariableInstance variableInstance = notebookInstance.findVariableByCellName(cellName, name);
             variableInstance.setValue(value);
             mockNotebookEditable.setJson(notebookInstance.toJsonString().getBytes());
         } catch (Exception e) {
@@ -213,7 +213,7 @@ public class MockNotebookClient implements NotebookClient {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
             NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-            VariableInstance variableInstance = notebookInstance.findVariable(cellName, name);
+            VariableInstance variableInstance = notebookInstance.findVariableByCellName(cellName, name);
             return (String)variableInstance.getValue();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -224,7 +224,7 @@ public class MockNotebookClient implements NotebookClient {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
             NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-            return notebookInstance.findCellByName(cellName);
+            return notebookInstance.findCellInstanceByName(cellName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

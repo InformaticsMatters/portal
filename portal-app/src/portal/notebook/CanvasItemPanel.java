@@ -61,7 +61,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     public CellInstance findCellInstance() {
-        return notebookSession.getCurrentNotebookInstance().findCellById(cellId);
+        return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
     }
 
     public void fireContentChanged() {
@@ -71,7 +71,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
     @Override
     public void onRemove(CellInstance cellInstance) {
-        notebookSession.getCurrentNotebookInstance().removeCell(cellInstance.getId());
+        notebookSession.getCurrentNotebookInstance().removeCellInstance(cellInstance.getId());
         notebookSession.storeCurrentNotebook();
         fireContentChanged();
     }

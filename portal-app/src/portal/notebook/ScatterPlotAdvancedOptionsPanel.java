@@ -64,9 +64,9 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
     private void loadPicklist() {
         picklistItems = new ArrayList<>();
-        CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellId);
-        BindingInstance bindingInstance = cellInstance.getBindingMap().get(CellDefinition.VAR_NAME_INPUT);
-        VariableInstance variableInstance = bindingInstance.getVariable();
+        CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        VariableInstance variableInstance = bindingInstance.getVariableInstance();
         if (variableInstance != null) {
             loadFieldNames(variableInstance);
         }

@@ -11,12 +11,12 @@ import java.util.Map;
 public class CellInstance implements Serializable {
     private final static long serialVersionUID = 1l;
 
-    private final Map<String, BindingInstance> bindingMap = new LinkedHashMap<>();
-    private final Map<String, VariableInstance> outputVariableMap = new LinkedHashMap<>();
-    private final Map<String, OptionInstance> optionMap = new LinkedHashMap<>();
+    private CellDefinition cellDefinition;
+    private final Map<String, BindingInstance> bindingInstanceMap = new LinkedHashMap<>();
+    private final Map<String, VariableInstance> variableInstanceMap = new LinkedHashMap<>();
+    private final Map<String, OptionInstance> optionInstanceMap = new LinkedHashMap<>();
     private Long id;
     private String name;
-    private CellDefinition cellDefinition;
     private int positionLeft;
     private int positionTop;
     private int sizeWidth;
@@ -39,12 +39,12 @@ public class CellInstance implements Serializable {
         this.cellDefinition = cellDefinition;
     }
 
-    public Map<String, BindingInstance> getBindingMap() {
-        return bindingMap;
+    public Map<String, BindingInstance> getBindingInstanceMap() {
+        return bindingInstanceMap;
     }
 
-    public Map<String, VariableInstance> getOutputVariableMap() {
-        return outputVariableMap;
+    public Map<String, VariableInstance> getVariableInstanceMap() {
+        return variableInstanceMap;
     }
 
     public Long getId() {
@@ -55,8 +55,8 @@ public class CellInstance implements Serializable {
         this.id = id;
     }
 
-    public Map<String, OptionInstance> getOptionMap() {
-        return optionMap;
+    public Map<String, OptionInstance> getOptionInstanceMap() {
+        return optionInstanceMap;
     }
 
     public int getPositionLeft() {
@@ -102,13 +102,13 @@ public class CellInstance implements Serializable {
 
     public void resetDirty() {
         dirty = false;
-        for (VariableInstance variableInstance : outputVariableMap.values()) {
+        for (VariableInstance variableInstance : variableInstanceMap.values()) {
             variableInstance.resetDirty();
         }
-        for (OptionInstance optionInstance : optionMap.values()) {
+        for (OptionInstance optionInstance : optionInstanceMap.values()) {
             optionInstance.resetDirty();
         }
-        for (BindingInstance bindingInstance : bindingMap.values()) {
+        for (BindingInstance bindingInstance : bindingInstanceMap.values()) {
             bindingInstance.resetDirty();
         }
     }

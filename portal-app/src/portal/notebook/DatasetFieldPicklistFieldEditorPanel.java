@@ -32,9 +32,9 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
 
     private void loadPicklist() {
         picklistItems = new ArrayList<>();
-        CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellById(cellId);
-        BindingInstance bindingInstance = cellInstance.getBindingMap().get(CellDefinition.VAR_NAME_INPUT);
-        VariableInstance variableInstance = bindingInstance.getVariable();
+        CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        VariableInstance variableInstance = bindingInstance.getVariableInstance();
         if (variableInstance != null) {
             loadFieldNames(variableInstance);
         }
@@ -72,9 +72,9 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
 
     @Override
     public boolean processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-        CellInstance thisCellInstance = notebookSession.getCurrentNotebookInstance().findCellById(this.cellId);
-        BindingInstance bindingInstance = thisCellInstance.getBindingMap().get(CellDefinition.VAR_NAME_INPUT);
-        VariableInstance variableInstance = bindingInstance.getVariable();
+        CellInstance thisCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(this.cellId);
+        BindingInstance bindingInstance = thisCellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        VariableInstance variableInstance = bindingInstance.getVariableInstance();
         if (variableInstance != null && variableInstance.getCellId().equals(changedCellId)) {
             loadPicklist();
             return true;

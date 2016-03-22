@@ -25,9 +25,9 @@ public class SdfUploadCellDefinition extends CellDefinition {
     public SdfUploadCellDefinition() {
         super(CELL_NAME, "SDF upload", "icons/molecules_many.png", new String[]{"file", "upload", "sdf"});
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
-        getOutputVariableDefinitionList().add(variableDefinition);
+        getVariableDefinitionList().add(variableDefinition);
         variableDefinition = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);
-        getOutputVariableDefinitionList().add(variableDefinition);
+        getVariableDefinitionList().add(variableDefinition);
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor<File>(new String[] {"sdf"}), OPT_FILE_UPLOAD, "SD File", "Upload SD file"));
         getOptionDefinitionList().add(new OptionDescriptor<>(
                 String.class, OPT_NAME_FIELD_NAME,
@@ -45,7 +45,7 @@ public class SdfUploadCellDefinition extends CellDefinition {
         @Override
         protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
 
-            CellInstance cell = cellExecutionData.getNotebookInstance().findCellById(cellExecutionData.getCellId());
+            CellInstance cell = cellExecutionData.getNotebookInstance().findCellInstanceById(cellExecutionData.getCellId());
             VariableKey key = new VariableKey(cell.getName(), VAR_NAME_FILECONTENT); // we are the producer
 
             StepDefinition step1 = new StepDefinition(SdfUpload.CLASSNAME)

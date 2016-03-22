@@ -28,7 +28,7 @@ public class ServiceCellDefinition extends CellDefinition {
         this.serviceDescriptor = serviceDescriptor;
         setExecutable(Boolean.TRUE);
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
-        getOutputVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         LOG.info("Creating service cell " + serviceDescriptor.getName() + " with icon " + serviceDescriptor.getIcon());
     }
 
@@ -74,7 +74,7 @@ public class ServiceCellDefinition extends CellDefinition {
             LOG.info("Building JobDefinition for service " + serviceDescriptor.getAccessModes()[0].getExecutionEndpoint());
 
             NotebookInstance notebook = cellExecutionData.getNotebookInstance();
-            CellInstance cell = notebook.findCellById(cellExecutionData.getCellId());
+            CellInstance cell = notebook.findCellInstanceById(cellExecutionData.getCellId());
             VariableKey key = createVariableKey(notebook, cell, VAR_NAME_INPUT);
 
             // TODO - the step type will need to be defined at the ServiceDescriptor level. For now we use MoleculeServiceThinExecutorStep for everything
