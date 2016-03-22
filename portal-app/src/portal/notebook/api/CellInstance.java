@@ -3,7 +3,6 @@ package portal.notebook.api;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,8 +31,6 @@ public class CellInstance implements Serializable {
         this.name = name;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public CellDefinition getCellDefinition() {
         return cellDefinition;
     }
@@ -98,6 +95,7 @@ public class CellInstance implements Serializable {
         this.sizeHeight = sizeHeight;
     }
 
+    @JsonIgnore
     public boolean isDirty() {
         return dirty;
     }

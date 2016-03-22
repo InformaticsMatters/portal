@@ -1,6 +1,7 @@
 package portal.notebook.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.squonk.options.OptionDescriptor;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,6 +12,11 @@ import java.util.List;
 
 
 @XmlRootElement
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.CLASS,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "@class"
+)
 public abstract class CellDefinition implements Serializable {
 
     public static final String VAR_NAME_INPUT = "input";

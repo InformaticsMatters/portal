@@ -1,5 +1,7 @@
 package portal.notebook.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -10,10 +12,12 @@ public class BindingInstance implements Serializable {
     private VariableInstance variable;
     private boolean dirty = true;
 
+    @JsonIgnore
     public String getName() {
         return bindingDefinition.getName();
     }
 
+    @JsonIgnore
     public String getDisplayName() {
         return bindingDefinition.getDisplayName();
     }
@@ -27,6 +31,7 @@ public class BindingInstance implements Serializable {
         this.variable = variable;
     }
 
+    @JsonIgnore
     public boolean isDirty() {
         return dirty;
     }

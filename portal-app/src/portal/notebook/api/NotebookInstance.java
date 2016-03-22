@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.squonk.options.OptionDescriptor;
 
@@ -22,17 +23,17 @@ public class NotebookInstance implements Serializable {
     private final List<CellInstance> cellList = new ArrayList<>();
     private Long lastCellId;
 
-    public List<CellInstance> getCellList() {
-        return cellList;
+
+    public NotebookInstance() {
+
     }
 
-    public VariableInstance findVariable(String producerName, String name) {
-        for (CellInstance cell : cellList) {
-            if (cell.getName().equals(producerName)) {
-                return cell.getOutputVariableMap().get(name);
-            }
-        }
-        return null;
+    public NotebookInstance(@JsonProperty("lastCellId") Long lastCellId) {
+        this.lastCellId = lastCellId;
+    }
+
+    public List<CellInstance> getCellList() {
+        return cellList;
     }
 
     public VariableInstance findVariable(Long producerId, String name) {
@@ -67,15 +68,6 @@ public class NotebookInstance implements Serializable {
             newName = cell.getCellDefinition().getName() + suffix;
         }
         return newName;
-    }
-
-    public CellInstance findCellByName(String name) {
-        for (CellInstance cell : cellList) {
-            if (cell.getName().equals(name)) {
-                return cell;
-            }
-        }
-        return null;
     }
 
     public CellInstance findCellById(Long id) {
@@ -192,5 +184,10 @@ public class NotebookInstance implements Serializable {
         byteArrayOutputStream.flush();
         return new String(byteArrayOutputStream.toByteArray());
     }
+
+    public Long getLastCellId() {
+        return lastCellId;
+    }
+
 
 }
