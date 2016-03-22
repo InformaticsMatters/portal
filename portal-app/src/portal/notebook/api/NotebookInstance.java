@@ -36,6 +36,15 @@ public class NotebookInstance implements Serializable {
         return cellList;
     }
 
+    public VariableInstance findVariable(String producerName, String name) {
+        for (CellInstance cell : cellList) {
+            if (cell.getName().equals(producerName)) {
+                return cell.getOutputVariableMap().get(name);
+            }
+        }
+        return null;
+    }
+
     public VariableInstance findVariable(Long producerId, String name) {
         for (CellInstance cell : cellList) {
             if (cell.getId().equals(producerId)) {
@@ -68,6 +77,15 @@ public class NotebookInstance implements Serializable {
             newName = cell.getCellDefinition().getName() + suffix;
         }
         return newName;
+    }
+
+    public CellInstance findCellByName(String name) {
+        for (CellInstance cell : cellList) {
+            if (cell.getName().equals(name)) {
+                return cell;
+            }
+        }
+        return null;
     }
 
     public CellInstance findCellById(Long id) {
@@ -173,8 +191,22 @@ public class NotebookInstance implements Serializable {
         if (string == null) {
             return null;
         } else {
-            return new ObjectMapper().readValue(string, NotebookInstance.class);
+            NotebookInstance notebookInstance = new ObjectMapper().readValue(string, NotebookInstance.class);
+            notebookInstance.fixReferences();
+            return notebookInstance;
         }
+    }
+
+    protected void fixReferences() {
+        for (CellInstance cellInstance : cellList) {
+            for (BindingInstance bindingInstance : cellInstance.getBindingMap().values()) {
+                VariableInstance variableInstance = bindingInstance.getVariable();
+                 if (variableInstance != null) {
+                     bindingInstance.setVariable(findVariable(variableInstance.getCellId(), variableInstance.getVariableDefinition().getName()));
+                 }
+            }
+        }
+
     }
 
     public String toJsonString() throws IOException {

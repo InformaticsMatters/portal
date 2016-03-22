@@ -4,7 +4,9 @@ import org.squonk.client.NotebookClient;
 import org.squonk.notebook.api2.NotebookDescriptor;
 import org.squonk.notebook.api2.NotebookEditable;
 import org.squonk.notebook.api2.NotebookSavepoint;
+import portal.notebook.api.CellInstance;
 import portal.notebook.api.NotebookInstance;
+import portal.notebook.api.VariableInstance;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 
@@ -147,12 +149,12 @@ public class MockNotebookClient implements NotebookClient {
         }
     }
 
-    private File resolveFile(Long aLong, Long aLong1, String s) throws Exception {
-        File root = new File(System.getProperty("user.home") + "/portal-files/" + aLong + "/" + aLong1);
+    private File resolveFile(Long notebookId, Long cellId, String variableName) throws Exception {
+        File root = new File(System.getProperty("user.home") + "/portal-files/" + notebookId + "/" + cellId);
         if (!root.exists() && !root.mkdirs()) {
             throw new IOException("Could not create " + root.getAbsolutePath());
         }
-        File file = new File(root, URLEncoder.encode(s, "ISO-8859-1"));
+        File file = new File(root, URLEncoder.encode(variableName, "ISO-8859-1"));
         return file;
     }
 
@@ -162,8 +164,8 @@ public class MockNotebookClient implements NotebookClient {
     }
 
     @Override
-    public void writeStreamValue(Long aLong, Long aLong1, Long aLong2, String s, InputStream inputStream, String s1) throws Exception {
-        File file = resolveFile(aLong, aLong2, s);
+    public void writeStreamValue(Long notebookId, Long editableId, Long cellId, String variableName, InputStream inputStream, String s1) throws Exception {
+        File file = resolveFile(notebookId, cellId, variableName);
         FileOutputStream outputStream = new FileOutputStream(file);
         try {
             byte[] buffer = new byte[4096];
@@ -175,6 +177,56 @@ public class MockNotebookClient implements NotebookClient {
             outputStream.flush();
         } finally {
             outputStream.close();
+        }
+    }
+
+    private MockNotebookEditable findMockNotebookEditableByNotebookId(Long notebookId) {
+        TypedQuery<MockNotebookEditable> query = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
+        query.setParameter("notebookId", notebookId);
+        return query.getResultList().isEmpty() ? null : query.getResultList().get(0);
+    }
+
+    public void oldWriteStreamValue(Long notebookId, String cellName, String name, InputStream dataInputStream) {
+        try {
+            MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
+            NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
+            VariableInstance variableInstance = notebookInstance.findVariable(cellName, name);
+            writeStreamValue(notebookId, null, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), dataInputStream, null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void oldWriteTextValue(Long notebookId, String cellName, String name, String value) {
+        try {
+            MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
+            NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
+            VariableInstance variableInstance = notebookInstance.findVariable(cellName, name);
+            variableInstance.setValue(value);
+            mockNotebookEditable.setJson(notebookInstance.toJsonString().getBytes());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String oldReadTextValue(Long notebookId, String cellName, String name) {
+        try {
+            MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
+            NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
+            VariableInstance variableInstance = notebookInstance.findVariable(cellName, name);
+            return (String)variableInstance.getValue();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public CellInstance oldFindCellInstance(Long notebookId, String cellName) {
+        try {
+            MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
+            NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
+            return notebookInstance.findCellByName(cellName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

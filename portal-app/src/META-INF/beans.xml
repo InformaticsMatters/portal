@@ -1,5 +1,5 @@
 <beans>
     <interceptors>
-        <class>portal.notebook.NotebookTransactionalInterceptor</class>
+        <class>portal.notebook.service.PortalTransactionalInterceptor</class>
     </interceptors>
 </beans>
