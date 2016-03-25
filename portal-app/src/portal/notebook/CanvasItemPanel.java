@@ -97,7 +97,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         if (changed) {
             cellTitleBarPanel.applyExecutionStatus(lastExecution);
             ajaxRequestTarget.add(cellTitleBarPanel);
-            executionStatusChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), ajaxRequestTarget);
+            executionStatusChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), lastExecution.getJobStatus(), ajaxRequestTarget);
         }
         oldExecution = lastExecution;
     }

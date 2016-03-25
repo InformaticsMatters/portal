@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import com.im.lac.job.jobdef.JobStatus;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -14,12 +15,12 @@ public class ExecutionStatusChangeManager implements Serializable {
     }
 
     public interface Listener {
-        void onExecutionstatusChanged(Long cellId, AjaxRequestTarget ajaxRequestTarget);
+        void onExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget);
     }
 
-    public void notifyExecutionStatusChanged(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
+    public void notifyExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget) {
         if (listener != null) {
-            listener.onExecutionstatusChanged(cellId, ajaxRequestTarget);
+            listener.onExecutionStatusChanged(cellId, jobStatus, ajaxRequestTarget);
         }
     }
 

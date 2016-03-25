@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import com.im.lac.job.jobdef.JobStatus;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -97,8 +98,10 @@ public class NotebookCanvasPage extends WebPage {
     private void configureExecutionStatusListener() {
         executionStatusChangeManager.setListener(new ExecutionStatusChangeManager.Listener() {
             @Override
-            public void onExecutionstatusChanged(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
-                processExecutionStatusChange(cellId, ajaxRequestTarget);
+            public void onExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget) {
+                if (JobStatus.Status.COMPLETED.equals(jobStatus) || JobStatus.Status.ERROR.equals(jobStatus)) {
+                    processExecutionStatusChange(cellId, ajaxRequestTarget);
+                }
             }
         });
     }
