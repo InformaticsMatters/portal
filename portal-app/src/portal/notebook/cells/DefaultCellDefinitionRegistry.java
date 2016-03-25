@@ -3,6 +3,7 @@ package portal.notebook.cells;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
 import portal.notebook.api.BindingDefinition;
 import portal.notebook.api.CellDefinition;
@@ -20,7 +21,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     public static final String VAR_NAME_INPUT = "input";
     public static final String VAR_NAME_OUTPUT = "output";
-    public static final String VAR_NAME_FILECONTENT = "fileContent";
     private static final Logger logger = LoggerFactory.getLogger(DefaultCellDefinitionRegistry.class);
     private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
     @Inject
@@ -66,6 +66,8 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "xAxis", "x Axis", "Field to use for x axis values"));
+        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "yAxis", "y Axis", "Field to use for y axis values"));
         return cellDefinition;
     }
 

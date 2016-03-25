@@ -27,11 +27,12 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
     private final Long cellId;
     private List<String> picklistItems;
+    private Form<ModelObject> form;
+    private CallbackHandler callbackHandler;
     @Inject
     private NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
-    private Form<ModelObject> form;
 
     public ScatterPlotAdvancedOptionsPanel(String id, Long cellId) {
         super(id);
@@ -55,7 +56,9 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> f) {
-                ModelObject model = form.getModelObject();
+                if (callbackHandler != null) {
+                    callbackHandler.onApplyAdvancedOptions();
+                }
                 popupContainerProvider.refreshContainer(getPage(), target);
             }
         });
@@ -84,12 +87,30 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
         }
     }
 
-    public String getXAxisFieldName() {
+    public String getX() {
         return form.getModelObject().getX();
     }
 
-    public String getYAxisFieldName() {
+    public void setX(String x) {
+        form.getModelObject().setX(x);
+    }
+
+    public String getY() {
         return form.getModelObject().getY();
+    }
+
+    public void setY(String y) {
+        form.getModelObject().setY(y);
+    }
+
+    public void setCallbackHandler(CallbackHandler callbackHandler) {
+        this.callbackHandler = callbackHandler;
+    }
+
+    public interface CallbackHandler extends Serializable {
+
+        void onApplyAdvancedOptions();
+
     }
 
     private class ModelObject implements Serializable {

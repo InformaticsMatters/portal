@@ -30,6 +30,8 @@ import java.util.List;
 public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data)";
+    private static final String OPTION_X_AXIS = "xAxis";
+    private static final String OPTION_Y_AXIS = "yAxis";
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
     @Inject
@@ -42,6 +44,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
             cellInstance.setSizeWidth(500);
         }
         addForm();
+        loadModelFromPersistentData();
         addTitleBar();
         refreshPlotData();
     }
@@ -58,12 +61,11 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-
-    }
-
-    private void addForm() {
-        form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
-        add(form);
+        if (isChangedCellBoundCell(changedCellId)) {
+            System.out.println("bound cell changed: executing");
+            invalidatePlotData();
+            onExecute();
+        }
     }
 
     @Override
@@ -74,16 +76,47 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void onExecute() {
         refreshPlotData();
-        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        target.add(this);
-        target.appendJavaScript(buildPlotJs());
+        rebuildPlot();
+    }
+
+    @Override
+    public Panel getAdvancedOptionsPanel() {
+        if (advancedOptionsPanel == null) {
+            createAdvancedOptionsPanel();
+        }
+        return advancedOptionsPanel;
+    }
+
+    private void loadModelFromPersistentData() {
+        CellInstance cellInstance = findCellInstance();
+        ModelObject model = form.getModelObject();
+        model.setX(cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue(String.class));
+        model.setY(cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue(String.class));
+    }
+
+    private void addForm() {
+        form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
+        add(form);
+    }
+
+    private boolean isChangedCellBoundCell(Long changedCellId) {
+        CellInstance cellInstance = findCellInstance();
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        VariableInstance variableInstance = bindingInstance.getVariableInstance();
+        return variableInstance != null && changedCellId.equals(variableInstance.getCellId());
+    }
+
+    private void invalidatePlotData() {
+        ModelObject model = form.getModelObject();
+        model.setPlotData(new float[][]{});
     }
 
     private void refreshPlotData() {
-        String xFieldName = advancedOptionsPanel.getXAxisFieldName();
-        String yFieldName = advancedOptionsPanel.getYAxisFieldName();
+        ModelObject model = form.getModelObject();
+        String xFieldName = model.getX();
+        String yFieldName = model.getY();
         if (xFieldName != null || yFieldName != null) {
-            CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(getCellId());
+            CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
             if (variableInstance != null) {
@@ -100,10 +133,15 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
                         // TODO - should we record how many records are not handled?
                     }
                 }
-                ModelObject model = form.getModelObject();
                 model.setPlotData(plotData);
             }
         }
+    }
+
+    private void rebuildPlot() {
+        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        target.add(this);
+        target.appendJavaScript(buildPlotJs());
     }
 
     private Float safeConvertToFloat(Object o) {
@@ -127,17 +165,32 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         return BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getPlotDataAsJson());
     }
 
-    @Override
-    public Panel getAdvancedOptionsPanel() {
-        if (advancedOptionsPanel == null) {
-            advancedOptionsPanel = new ScatterPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        }
-        return advancedOptionsPanel;
+    private void createAdvancedOptionsPanel() {
+        advancedOptionsPanel = new ScatterPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
+        advancedOptionsPanel.setCallbackHandler(new ScatterPlotAdvancedOptionsPanel.CallbackHandler() {
+
+            @Override
+            public void onApplyAdvancedOptions() {
+                CellInstance cellInstance = findCellInstance();
+                cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).setValue(advancedOptionsPanel.getX());
+                cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).setValue(advancedOptionsPanel.getY());
+                notebookSession.storeCurrentNotebook();
+
+                ModelObject model = form.getModelObject();
+                model.setX(advancedOptionsPanel.getX());
+                model.setY(advancedOptionsPanel.getY());
+                onExecute();
+            }
+        });
+        advancedOptionsPanel.setX(form.getModelObject().getX());
+        advancedOptionsPanel.setY(form.getModelObject().getY());
     }
 
     class ModelObject implements Serializable {
 
         private float[][] plotData = {};
+        private String x;
+        private String y;
 
         public float[][] getPlotData() {
             return plotData;
@@ -157,6 +210,22 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
             } catch (Throwable t) {
                 throw new RuntimeException(t);
             }
+        }
+
+        public String getX() {
+            return x;
+        }
+
+        public void setX(String x) {
+            this.x = x;
+        }
+
+        public String getY() {
+            return y;
+        }
+
+        public void setY(String y) {
+            this.y = y;
         }
     }
 }
