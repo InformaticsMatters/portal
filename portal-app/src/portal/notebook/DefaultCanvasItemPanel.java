@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.client.NotebookClient;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
@@ -98,7 +99,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             optionInstance.setValue(editorModel.getValue());
             if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
-                variableInstance.setValue(optionInstance.getValue());
+                notebookSession.writeTextValue(variableInstance, optionInstance.getValue());
             }
         }
     }

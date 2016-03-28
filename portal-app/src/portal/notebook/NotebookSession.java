@@ -284,7 +284,7 @@ public class NotebookSession implements Serializable {
 
     public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) {
         try {
-            InputStream inputStreaam = notebookClient.readStreamValue(currentNotebookInfo.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+            InputStream inputStreaam = notebookClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getVariableDefinition().getName(), null);
             try {
                 GZIPInputStream gzipInputStream = new GZIPInputStream(inputStreaam);
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -310,6 +310,22 @@ public class NotebookSession implements Serializable {
 
     public IDatasetDescriptor findDatasetDescriptorById(Long datasetDescriptorId) {
         return datasets.findDatasetDescriptorById(datasetDescriptorId);
+    }
+
+    public void writeTextValue(VariableInstance variableInstance, Object value) {
+        try {
+            notebookClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), value == null ? null : value.toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String readTextValue(VariableInstance variableInstance) {
+        try {
+            return notebookClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getVariableDefinition().getName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

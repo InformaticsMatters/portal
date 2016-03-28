@@ -53,7 +53,7 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
 
     private Set<String> extractFieldNames(VariableInstance variableInstance) {
         try {
-            String string = (String) variableInstance.getValue();
+            String string = notebookSession.readTextValue(variableInstance);
             if (string != null) {
                 DatasetMetadata datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
                 return datasetMetadata.getValueClassMappings().keySet();

@@ -105,7 +105,6 @@ public class NotebookInstance implements Serializable {
         for (VariableDefinition variableDefinition : cellDefinition.getVariableDefinitionList()) {
             VariableInstance variable = new VariableInstance();
             variable.setVariableDefinition(variableDefinition);
-            variable.setValue(variableDefinition.getDefaultValue());
             variable.setCellId(cell.getId());
             cell.getVariableInstanceMap().put(variableDefinition.getName(), variable);
         }
@@ -161,11 +160,6 @@ public class NotebookInstance implements Serializable {
         for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
             if (optionInstance.isDirty()) {
                 localCellInstance.getOptionInstanceMap().get(optionInstance.getOptionDescriptor().getName()).setValue(optionInstance.getValue());
-            }
-        }
-        for (VariableInstance variableInstance : cellInstance.getVariableInstanceMap().values()) {
-            if (variableInstance.isDirty()) {
-                localCellInstance.getVariableInstanceMap().get(variableInstance.getVariableDefinition().getName()).setValue(variableInstance.getValue());
             }
         }
         for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {

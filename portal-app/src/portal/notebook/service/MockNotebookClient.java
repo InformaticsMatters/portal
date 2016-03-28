@@ -116,36 +116,40 @@ public class MockNotebookClient implements NotebookClient {
     }
 
     @Override
-    public String readTextValue(Long aLong, Long aLong1, String s, String s1) throws Exception {
-        TypedQuery<MockNotebookEditable> query = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
-        query.setParameter("notebookId", aLong);
-        MockNotebookEditable mockNotebookEditable = query.getResultList().get(0);
-        NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-        return (String)notebookInstance.findCellInstanceById(aLong1).getVariableInstanceMap().get(s).getValue();
+    public String readTextValue(Long notebookId, Long editableId, String name, String key) throws Exception {
+        MockVariable mockVariable = findMockVariable(editableId, name);
+        return mockVariable == null ? null : mockVariable.getValue();
     }
 
     @Override
     public String readTextValue(Long aLong, String s, String s1, String s2) throws Exception {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public void writeTextValue(Long aLong, Long aLong1, Long aLong2, String s, String s1, String s2) throws Exception {
-        TypedQuery<MockNotebookEditable> query = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
-        query.setParameter("notebookId", aLong);
-        MockNotebookEditable mockNotebookEditable = query.getResultList().get(0);
-        NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-        notebookInstance.findVariableByCellId(aLong2, s).setValue(s1);
-        mockNotebookEditable.setJson(notebookInstance.toJsonString().getBytes());
+    public void writeTextValue(Long notebookId, Long editableId, Long cellId, String name, String value, String s2) throws Exception {
+        MockVariable mockVariable = findMockVariable(editableId, name);
+        if (mockVariable == null) {
+            TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
+            editableQuery.setParameter("notebookId", notebookId);
+            MockNotebookEditable mockNotebookEditable = editableQuery.getResultList().get(0);
+            mockVariable = new MockVariable();
+            mockVariable.setMockNotebookEditable(mockNotebookEditable);
+            mockVariable.setCellId(cellId);
+            mockVariable.setName(name);
+            entityManager.persist(mockVariable);
+        }
+        mockVariable.setValue(value);
     }
 
     @Override
-    public InputStream readStreamValue(Long aLong, Long aLong1, String s, String s1) throws Exception {
-        File file = resolveFile(aLong, aLong1, s);
-        if (file.exists()) {
-            return new FileInputStream(file);
-        } else {
+    public InputStream readStreamValue(Long notebookId, Long sourceId, String name, String s1) throws Exception {
+        MockVariable mockVariable = findMockVariable(sourceId, name);
+        byte[] bytes = mockVariable == null ? null : mockVariable.getStreamValue();
+        if (bytes == null) {
             return null;
+        } else {
+            return new ByteArrayInputStream(bytes);
         }
     }
 
@@ -164,20 +168,34 @@ public class MockNotebookClient implements NotebookClient {
     }
 
     @Override
-    public void writeStreamValue(Long notebookId, Long editableId, Long cellId, String variableName, InputStream inputStream, String s1) throws Exception {
-        File file = resolveFile(notebookId, cellId, variableName);
-        FileOutputStream outputStream = new FileOutputStream(file);
-        try {
-            byte[] buffer = new byte[4096];
-            int r = inputStream.read(buffer, 0, buffer.length);
-            while (r > -1) {
-                outputStream.write(buffer, 0, r);
-                r = inputStream.read(buffer, 0, buffer.length);
-            }
-            outputStream.flush();
-        } finally {
-            outputStream.close();
+    public void writeStreamValue(Long notebookId, Long editableId, Long cellId, String name, InputStream inputStream, String s1) throws Exception {
+        MockVariable mockVariable = findMockVariable(editableId, name);
+        if (mockVariable == null) {
+            TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
+            editableQuery.setParameter("notebookId", notebookId);
+            MockNotebookEditable mockNotebookEditable = editableQuery.getResultList().get(0);
+            mockVariable = new MockVariable();
+            mockVariable.setMockNotebookEditable(mockNotebookEditable);
+            mockVariable.setCellId(cellId);
+            mockVariable.setName(name);
+            entityManager.persist(mockVariable);
         }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int r = inputStream.read(buffer, 0, buffer.length);
+        while (r > -1) {
+            byteArrayOutputStream.write(buffer, 0, r);
+            r = inputStream.read(buffer, 0, buffer.length);
+        }
+        byteArrayOutputStream.flush();
+        mockVariable.setStreamValue(byteArrayOutputStream.toByteArray());
+    }
+
+    private MockVariable findMockVariable(Long editableId, String name) {
+        TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookEditable.id = :editableId and o.name = :name", MockVariable.class);
+        variableQuery.setParameter("editableId", editableId);
+        variableQuery.setParameter("name", name);
+        return variableQuery.getResultList().isEmpty() ? null : variableQuery.getResultList().get(0);
     }
 
     private MockNotebookEditable findMockNotebookEditableByNotebookId(Long notebookId) {
@@ -201,9 +219,8 @@ public class MockNotebookClient implements NotebookClient {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
             NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-            VariableInstance variableInstance = notebookInstance.findVariableByCellName(cellName, name);
-            variableInstance.setValue(value);
-            mockNotebookEditable.setJson(notebookInstance.toJsonString().getBytes());
+            CellInstance cellInstance = notebookInstance.findCellInstanceByName(cellName);
+            writeTextValue(notebookId, mockNotebookEditable.getId(), cellInstance.getId(), name, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -212,9 +229,7 @@ public class MockNotebookClient implements NotebookClient {
     public String oldReadTextValue(Long notebookId, String cellName, String name) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
-            VariableInstance variableInstance = notebookInstance.findVariableByCellName(cellName, name);
-            return (String)variableInstance.getValue();
+            return readTextValue(notebookId, mockNotebookEditable.getId(), name, "DEFAULT");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

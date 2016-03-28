@@ -10,6 +10,7 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>portal.notebook.service.MockNotebookDescriptor</class>
         <class>portal.notebook.service.MockNotebookEditable</class>
+        <class>portal.notebook.service.MockVariable</class>
         <class>portal.notebook.service.Execution</class>
     </persistence-unit>
 

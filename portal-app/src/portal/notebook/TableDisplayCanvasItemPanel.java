@@ -65,8 +65,9 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     private void load() {
         BindingInstance bindingModel = findCellInstance().getBindingInstanceMap().get("input");
-        VariableInstance variableModel = bindingModel == null ? null : bindingModel.getVariableInstance();
-        boolean assigned = variableModel != null && variableModel.getValue() != null;
+        VariableInstance variableInstance = bindingModel == null ? null : bindingModel.getVariableInstance();
+        String value = variableInstance == null ? null : notebookSession.readTextValue(variableInstance);
+        boolean assigned = value != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
             descriptor = new TableDisplayDatasetDescriptor(0L, "", 0);

@@ -77,7 +77,7 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
     private void loadFieldNames(VariableInstance variableInstance) {
         try {
-            String string = (String) variableInstance.getValue();
+            String string = notebookSession.readTextValue(variableInstance);
             if (string != null) {
                 DatasetMetadata datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
                 picklistItems.addAll(datasetMetadata.getValueClassMappings().keySet());

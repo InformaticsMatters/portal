@@ -8,17 +8,7 @@ public class VariableInstance implements Serializable {
     private final static long serialVersionUID = 1l;
     private Long cellId;
     private VariableDefinition variableDefinition;
-    private Object value;
     private boolean dirty = false;
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        dirty = true;
-        this.value = value;
-    }
 
     public Long getCellId() {
         return cellId;
@@ -44,5 +34,8 @@ public class VariableInstance implements Serializable {
         this.variableDefinition = variableDefinition;
     }
 
+    public String calculateKey() {
+        return cellId + "." + variableDefinition.getName();
+    }
 
 }
