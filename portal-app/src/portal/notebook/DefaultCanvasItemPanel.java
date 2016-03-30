@@ -6,7 +6,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.client.NotebookClient;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
@@ -32,12 +31,10 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
     private ListView<OptionInstance> optionListView;
-    private boolean fileDirty;
 
     public DefaultCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
         optionEditorModelMap = new LinkedHashMap<>();
-        fileDirty = false;
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
@@ -85,34 +82,20 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private void execute() throws IOException {
         storeOptions();
         notebookSession.storeCurrentNotebook();
-        if (fileDirty) {
-            commitFiles();
-        }
         notebookSession.executeCell(findCellInstance().getId());
         fireContentChanged();
     }
 
     private void storeOptions() {
         for (String name : optionEditorModelMap.keySet()) {
-            FieldEditorModel editorModel = optionEditorModelMap.get(name);
-            OptionInstance optionInstance = findCellInstance().getOptionInstanceMap().get(name);
-            optionInstance.setValue(editorModel.getValue());
-            if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
-                VariableInstance variableInstance = findVariableInstanceForFileOption();
-                notebookSession.writeTextValue(variableInstance, optionInstance.getValue());
-            }
+            storeOption(name);
         }
     }
 
-
-    private void commitFiles() {
-        for (OptionInstance optionInstance : findCellInstance().getOptionInstanceMap().values()) {
-            if (optionInstance.getOptionDescriptor().getTypeDescriptor().getType().equals(File.class)) {
-                VariableInstance variableInstance = findVariableInstanceForFileOption();
-                notebookSession.commitFileForVariable(variableInstance);
-                fileDirty = false;
-            }
-        }
+    private void storeOption(String name) {
+        FieldEditorModel editorModel = optionEditorModelMap.get(name);
+        OptionInstance optionInstance = findCellInstance().getOptionInstanceMap().get(name);
+        optionInstance.setValue(editorModel.getValue());
     }
 
     private void addOptionEditor(ListItem<OptionInstance> listItem) {
@@ -187,13 +170,17 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         }
 
         @Override
-        public void onUpload(InputStream inputStream) {
+        public void onUpload(String fileName, InputStream inputStream) {
+            String optionName = optionInstance.getOptionDescriptor().getName();
+            OptionInstance liveOptionInstance = findCellInstance().getOptionInstanceMap().get(optionName);
+            liveOptionInstance.setValue(fileName);
+            notebookSession.storeCurrentNotebook();
             VariableInstance variableInstance = findVariableInstanceForFileOption();
             if (variableInstance == null) {
                 throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getName());
             }
-            notebookSession.storeTemporaryFileForVariable(variableInstance, inputStream);
-            fileDirty = true;
+            notebookSession.writeTextValue(variableInstance, fileName);
+            notebookSession.writeStreamValue(variableInstance, inputStream);
         }
     }
 

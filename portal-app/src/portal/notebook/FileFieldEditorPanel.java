@@ -18,7 +18,7 @@ public class FileFieldEditorPanel extends FieldEditorPanel {
     private static final Logger LOGGER = Logger.getLogger(FileFieldEditorPanel.class.getName());
 
     public interface Callback extends Serializable {
-        void onUpload(InputStream inputStream);
+        void onUpload(String fileName, InputStream inputStream);
     }
 
     private final Callback callback;
@@ -70,7 +70,7 @@ public class FileFieldEditorPanel extends FieldEditorPanel {
         if (upload != null) {
             String fileName = upload.getClientFileName();
             InputStream inputStream = upload.getInputStream();
-            callback.onUpload(inputStream);
+            callback.onUpload(fileName, inputStream);
             fileNameModel.setObject(fileName);
         }
     }

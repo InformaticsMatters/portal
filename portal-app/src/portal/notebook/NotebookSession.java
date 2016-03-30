@@ -62,12 +62,12 @@ public class NotebookSession implements Serializable {
 
     public NotebookInfo findNotebookInfo(Long id) {
         try {
-        for (NotebookDescriptor notebookDescriptor : notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
-            if (notebookDescriptor.getId().equals(id)) {
-                return NotebookInfo.fromNotebookDescriptor(notebookDescriptor);
+            for (NotebookDescriptor notebookDescriptor : notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
+                if (notebookDescriptor.getId().equals(id)) {
+                    return NotebookInfo.fromNotebookDescriptor(notebookDescriptor);
+                }
             }
-        }
-        return null;
+            return null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -95,10 +95,10 @@ public class NotebookSession implements Serializable {
 
     }
 
-    private NotebookEditable findLastNotebookEditable(Long descriptorId) {
+    private NotebookEditable findDefaultNotebookEditable(Long descriptorId) {
         try {
             List<NotebookEditable> editables = notebookClient.listEditables(descriptorId, sessionContext.getLoggedInUserDetails().getUserid());
-            return editables.isEmpty() ? null : editables.get(editables.size() - 1);
+            return editables.isEmpty() ? null : editables.get(0);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -107,7 +107,7 @@ public class NotebookSession implements Serializable {
     public void loadCurrentNotebook(Long id) {
         try {
             currentNotebookInfo = findNotebookInfo(id);
-            NotebookEditable currentNotebookEditable = findLastNotebookEditable(currentNotebookInfo.getId());
+            NotebookEditable currentNotebookEditable = findDefaultNotebookEditable(currentNotebookInfo.getId());
             if (currentNotebookEditable == null) {
                 currentNotebookInstance = new NotebookInstance();
                 currentNotebookEditableId = null;
@@ -219,17 +219,12 @@ public class NotebookSession implements Serializable {
         return portalService.findExecution(currentNotebookInfo.getId(), cellId);
     }
 
-    public void storeTemporaryFileForVariable(VariableInstance variableInstance, InputStream inputStream) {
-        storeCurrentNotebook();
+    public void writeStreamValue(VariableInstance variableInstance, InputStream inputStream) {
         try {
             notebookClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void commitFileForVariable(VariableInstance variableInstance) {
-
     }
 
     public IDatasetDescriptor loadDatasetFromVariable(VariableInstance variableInstance) {
