@@ -82,14 +82,16 @@ li {
 
 .notebook-canvas-item-content .icon.remove,
 .notebook-canvas-item-content .icon.play,
-.notebook-canvas-item-content .icon.setting {
+.notebook-canvas-item-content .icon.setting,
+.notebook-canvas-item-content .icon.unlink {
     visibility: hidden;
     margin-right: 0 !important;
 }
 
 .notebook-canvas-item-content:hover .icon.remove,
 .notebook-canvas-item-content:hover .icon.play,
-.notebook-canvas-item-content:hover .icon.setting {
+.notebook-canvas-item-content:hover .icon.setting,
+.notebook-canvas-item-content:hover .icon.unlink {
     visibility: visible;
     margin-right: 0 !important;
 }
@@ -275,8 +277,8 @@ div.ui-resizable-handle.ui-resizable-s {
 
 
 .cellPopup {
-    width: 500px;
-    max-width: 500px!important;
+    width: 400px;
+    max-width: 400px!important;
 }
 
 .icon.grey.remove {
