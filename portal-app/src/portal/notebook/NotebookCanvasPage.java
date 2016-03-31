@@ -126,7 +126,11 @@ public class NotebookCanvasPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/lac.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/notebook.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
-        response.render(OnDomReadyHeaderItem.forScript("initJsPlumb(); addCellsPaletteDragAndDropSupport();"));
+        response.render(OnDomReadyHeaderItem.forScript("initJsPlumb();"));
+        if (notebookSession.getCurrentNotebookInstance() != null) {
+            response.render(OnDomReadyHeaderItem.forScript("addCellsPaletteDragAndDropSupport();"));
+
+        }
         response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');"));
     }
 

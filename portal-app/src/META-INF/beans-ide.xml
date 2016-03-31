@@ -1,5 +1,6 @@
 <beans>
     <alternatives>
+        <class>portal.notebook.service.IdeDerbyPortalConfig</class>
         <class>portal.notebook.service.MockUserClient</class>
         <class>portal.notebook.service.MockNotebookClient</class>
         <class>portal.notebook.service.MockJobStatusClient</class>
