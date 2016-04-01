@@ -77,8 +77,8 @@ public class EditNotebookPanel extends SemanticModalPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                store();
-                callbacks.onSubmit();
+                Long id = store();
+                callbacks.onSubmit(id);
             }
         };
         submitAction.setOutputMarkupId(true);
@@ -94,14 +94,16 @@ public class EditNotebookPanel extends SemanticModalPanel {
         form.add(cancelAction);
     }
 
-    private void store() {
+    private Long store() {
         EditNotebookData editNotebookData = form.getModelObject();
         if (editNotebookData.getId() == null) {
-            notebookSession.createNotebook(editNotebookData.getName(), editNotebookData.getDescription());
+            return notebookSession.createNotebook(editNotebookData.getName(), editNotebookData.getDescription());
         } else if (forRemove) {
             notebookSession.removeNotebook(editNotebookData.getId());
+            return null;
         } else {
             notebookSession.updateNotebook(editNotebookData.getId(), editNotebookData.getName(), editNotebookData.getDescription());
+            return editNotebookData.getId();
         }
     }
 
@@ -149,7 +151,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
 
     public interface Callbacks extends Serializable {
 
-        void onSubmit();
+        void onSubmit(Long id);
 
         void onCancel();
 

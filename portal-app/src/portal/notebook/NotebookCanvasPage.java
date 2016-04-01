@@ -203,8 +203,13 @@ public class NotebookCanvasPage extends WebPage {
         editNotebookPanel.setCallbacks(new EditNotebookPanel.Callbacks() {
 
             @Override
-            public void onSubmit() {
+            public void onSubmit(Long id) {
                 notebookListPanel.refreshNotebookList();
+                if (id == null) {
+                    notebookSession.resetCurrentNotebook();
+                } else {
+                    notebookSession.loadCurrentNotebook(id);
+                }
                 AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
                 ajaxRequestTarget.add(NotebookCanvasPage.this);
             }

@@ -322,5 +322,11 @@ public class NotebookSession implements Serializable {
             throw new RuntimeException(e);
         }
     }
+
+    public void resetCurrentNotebook() {
+        currentNotebookEditableId = null;
+        currentNotebookInstance = null;
+        currentNotebookInfo = null;
+    }
 }
 
