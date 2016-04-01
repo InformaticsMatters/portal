@@ -221,7 +221,7 @@ public class NotebookSession implements Serializable {
 
     public void writeStreamValue(VariableInstance variableInstance, InputStream inputStream) {
         try {
-            notebookClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
+            notebookClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.calculateKey(), inputStream);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -250,10 +250,10 @@ public class NotebookSession implements Serializable {
     }
 
     public List<MoleculeObject> parseMoleculesFromFileVariable(VariableInstance variableInstance) throws Exception {
-        String fileName = notebookClient.readTextValue(currentNotebookInfo.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        String fileName = notebookClient.readTextValue(currentNotebookInfo.getId(), variableInstance.getCellId(), variableInstance.calculateKey(), null);
         int x = fileName.lastIndexOf(".");
         String ext = fileName.toLowerCase().substring(x + 1);
-        InputStream inputStream = notebookClient.readStreamValue(currentNotebookInfo.getId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        InputStream inputStream = notebookClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.calculateKey(), null);
         try {
             if (ext.equals("json")) {
                 return Datasets.parseJson(inputStream);
@@ -279,14 +279,14 @@ public class NotebookSession implements Serializable {
 
     public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) {
         try {
-            InputStream inputStreaam = notebookClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getVariableDefinition().getName(), null);
+            InputStream inputStream = notebookClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.calculateKey(), null);
             try {
-                GZIPInputStream gzipInputStream = new GZIPInputStream(inputStreaam);
+                GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
                 ObjectMapper objectMapper = new ObjectMapper();
                 return objectMapper.readValue(gzipInputStream, new TypeReference<List<MoleculeObject>>() {
                 });
             } finally {
-                inputStreaam.close();
+                inputStream.close();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -317,7 +317,7 @@ public class NotebookSession implements Serializable {
 
     public String readTextValue(VariableInstance variableInstance) {
         try {
-            return notebookClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getVariableDefinition().getName());
+            return notebookClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.calculateKey());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

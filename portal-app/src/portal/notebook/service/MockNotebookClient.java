@@ -15,8 +15,9 @@ import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.io.*;
-import java.net.URLEncoder;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -181,14 +182,6 @@ public class MockNotebookClient implements NotebookClient {
         }
     }
 
-    private File resolveFile(Long notebookId, Long cellId, String variableName) throws Exception {
-        File root = new File(System.getProperty("user.home") + "/portal-files/" + notebookId + "/" + cellId);
-        if (!root.exists() && !root.mkdirs()) {
-            throw new IOException("Could not create " + root.getAbsolutePath());
-        }
-        File file = new File(root, URLEncoder.encode(variableName, "ISO-8859-1"));
-        return file;
-    }
 
     @Override
     public InputStream readStreamValue(Long aLong, String s, String s1, String s2) throws Exception {
@@ -237,7 +230,7 @@ public class MockNotebookClient implements NotebookClient {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
             NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
             VariableInstance variableInstance = notebookInstance.findVariableByCellName(cellName, name);
-            writeStreamValue(notebookId, null, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), dataInputStream, null);
+            writeStreamValue(notebookId, null, variableInstance.getCellId(), variableInstance.calculateKey(), dataInputStream, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -248,7 +241,7 @@ public class MockNotebookClient implements NotebookClient {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
             NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
             CellInstance cellInstance = notebookInstance.findCellInstanceByName(cellName);
-            writeTextValue(notebookId, mockNotebookEditable.getId(), cellInstance.getId(), name, value);
+            writeTextValue(notebookId, mockNotebookEditable.getId(), cellInstance.getId(), cellInstance.getId() + "." + name, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -257,7 +250,8 @@ public class MockNotebookClient implements NotebookClient {
     public String oldReadTextValue(Long notebookId, String cellName, String name) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            return readTextValue(notebookId, mockNotebookEditable.getId(), name, "DEFAULT");
+            CellInstance cellInstance = oldFindCellInstance(notebookId, cellName);
+            return readTextValue(notebookId, mockNotebookEditable.getId(), cellInstance.getId() + "." + name, "DEFAULT");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

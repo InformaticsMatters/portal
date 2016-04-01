@@ -9,18 +9,19 @@ import portal.notebook.api.CellInstance;
 import portal.notebook.api.NotebookInstance;
 import portal.notebook.api.VariableInstance;
 import portal.notebook.cells.ChemblActivitiesFetcherCellDefinition;
+import toolkit.derby.DerbyUtils;
 import toolkit.test.AbstractTestCase;
 import toolkit.test.TestCase;
 import toolkit.test.TestMethod;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 @TestCase
 public class NotebookClientHarness extends AbstractTestCase {
+    public static final String USER_NAME = "user1";
     @Inject
     private NotebookClient notebookClient;
     private String testPrefix;
@@ -34,13 +35,14 @@ public class NotebookClientHarness extends AbstractTestCase {
     }
 
     @TestMethod(ordinal = 0)
-    public void prepare() {
-       testPrefix = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    public void prepare() throws Exception {
+        DerbyUtils.startDerbyServer();
+        testPrefix = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     }
 
     @TestMethod(ordinal = 1)
     public void testNotebooks() throws Exception {
-        notebookDescriptor = notebookClient.createNotebook(testPrefix, testPrefix, "testUser");
+        notebookDescriptor = notebookClient.createNotebook(testPrefix, testPrefix, USER_NAME);
         notebookDescriptor = notebookClient.updateNotebook(notebookDescriptor.getId(), testPrefix + "'", testPrefix + "'");
         assert notebookDescriptor.getName().equals(testPrefix + "'");
         assert notebookDescriptor.getDescription().equals(testPrefix + "'");
@@ -48,17 +50,25 @@ public class NotebookClientHarness extends AbstractTestCase {
 
     @TestMethod(ordinal = 2)
     public void testEditables() throws Exception {
-        notebookEditable = notebookClient.createEditable(notebookDescriptor.getId(), null, "testUser");
+        notebookClient.createEditable(notebookDescriptor.getId(), null, USER_NAME);
+        notebookEditable = notebookClient.listEditables(notebookDescriptor.getId(), USER_NAME).get(0);
         NotebookInstance notebookInstance = new NotebookInstance();
         String json = notebookInstance.toJsonString();
-        notebookEditable = notebookClient.updateEditable(notebookEditable.getNotebookId(), notebookEditable.getId(), json);
-        assert json.equals(notebookEditable.getContent());
-        notebookInstance.addCellInstance(new ChemblActivitiesFetcherCellDefinition());
-        notebookEditable =  notebookClient.updateEditable(notebookEditable.getNotebookId(), notebookEditable.getId(), notebookInstance.toJsonString());
+        notebookClient.updateEditable(notebookEditable.getNotebookId(), notebookEditable.getId(), json);
+        notebookEditable = notebookClient.listEditables(notebookDescriptor.getId(), USER_NAME).get(0);
+        String newJson = notebookEditable.getContent();
+        assert json.equals(newJson);
+        CellInstance cellInstance = notebookInstance.addCellInstance(new ChemblActivitiesFetcherCellDefinition());
+        cellInstance.setSizeWidth(267);
+        cellInstance.setSizeHeight(167);
+        cellInstance.setPositionTop(1);
+        cellInstance.setPositionLeft(1);
+        notebookClient.updateEditable(notebookEditable.getNotebookId(), notebookEditable.getId(), notebookInstance.toJsonString());
+        notebookEditable = notebookClient.listEditables(notebookDescriptor.getId(), USER_NAME).get(0);
         notebookInstance = NotebookInstance.fromJsonString(notebookEditable.getContent());
-        CellInstance cellInstance = notebookInstance.getCellInstanceList().get(0);
+        cellInstance = notebookInstance.getCellInstanceList().get(0);
         VariableInstance outputVariableInstance = cellInstance.getVariableInstanceMap().values().iterator().next();
-        notebookClient.writeStreamValue(notebookEditable.getNotebookId(), notebookEditable.getId(), cellInstance.getId(), outputVariableInstance.getVariableDefinition().getName(), new ByteArrayInputStream("test".getBytes()));
+        notebookClient.writeTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), cellInstance.getId(), outputVariableInstance.getVariableDefinition().getName(), "test");
         String value = notebookClient.readTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), outputVariableInstance.calculateKey());
         assert value.equals("test");
     }
