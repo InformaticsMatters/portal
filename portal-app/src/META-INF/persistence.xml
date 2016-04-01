@@ -11,6 +11,7 @@
         <class>portal.notebook.service.MockNotebookDescriptor</class>
         <class>portal.notebook.service.MockNotebookEditable</class>
         <class>portal.notebook.service.MockVariable</class>
+        <class>portal.notebook.service.MockNotebookSavepoint</class>
         <class>portal.notebook.service.Execution</class>
     </persistence-unit>
 
