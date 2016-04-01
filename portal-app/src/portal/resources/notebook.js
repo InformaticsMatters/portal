@@ -279,14 +279,8 @@ function initJsPlumb() {
     });
 }
 
-$.fn.scrollTableId = function(id){
-	return this.animate({ scrollTop: $(id).offset().top - $(id).parent().position().top }, 'fast')
-}
-
 function makeNbTrActive(itemId) {
     $('.nbTr').removeClass("selected");
     $('#' + itemId).addClass("selected");
-    // re-enable changing to appropiate element once table scroll fixed
-   // $('.nbListTable')parent().parent().scrollTableId('#' + itemId);
 }
 
