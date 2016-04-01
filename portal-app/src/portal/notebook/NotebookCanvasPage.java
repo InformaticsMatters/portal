@@ -341,6 +341,8 @@ public class NotebookCanvasPage extends WebPage {
             return new ScatterPlotCanvasItemPanel("item", cellInstance.getId());
         } else if ("BoxPlot".equals(cellType.getName())) {
             return new BoxPlotCanvasItemPanel("item", cellInstance.getId());
+        } else if ("3DMol".equals(cellType.getName())) {
+            return new ThreeDimMolCanvasItemPanel("item", cellInstance.getId());
         } else {
             return new DefaultCanvasItemPanel("item", cellInstance.getId());
         }

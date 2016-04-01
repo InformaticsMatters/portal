@@ -33,6 +33,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(createTableDisplayCellDefinition());
         registerCellDefinition(createScatterPlotCellDefinition());
         registerCellDefinition(createBoxPlotCellDefinition());
+        registerCellDefinition(create3DMolCellDefinition());
         registerCellDefinition(new CsvUploadCellDefinition());
         registerCellDefinition(new SdfUploadCellDefinition());
         registerCellDefinition(new DatasetMergerCellDefinition());
@@ -68,6 +69,19 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "xAxis", "x Axis", "Field to use for x axis values"));
         cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "yAxis", "y Axis", "Field to use for y axis values"));
+        return cellDefinition;
+    }
+
+    private static CellDefinition create3DMolCellDefinition() {
+        CellDefinition cellDefinition = new SimpleCellDefinition("3DMol", "3D viewer", "icons/view.png", new String[]{"3d", "viewer", "visualization", "visualisation", "viz"}, false);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName(VAR_NAME_INPUT);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         return cellDefinition;
     }
 
