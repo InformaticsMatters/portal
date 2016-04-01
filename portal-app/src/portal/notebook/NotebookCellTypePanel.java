@@ -23,7 +23,7 @@ public class NotebookCellTypePanel extends Panel {
     }
 
     private void addComponents() {
-        Label cellName = new Label("description", cellDefinition.getDescription());
+        Label cellName = new Label("description", cellDefinition.getName());
         add(cellName);
         cellName.add(new AttributeModifier("title", cellDefinition.getDescription()));
         add(new Image("cellIcon", new PackageResourceReference(PortalWebApplication.class, APP_RESOURCES_SUBPACKAGE + "/" + cellDefinition.getIcon())));
