@@ -44,8 +44,12 @@ public class NotebookClientHarness extends AbstractTestCase {
     public void testNotebooks() throws Exception {
         notebookDescriptor = notebookClient.createNotebook(testPrefix, testPrefix, USER_NAME);
         notebookDescriptor = notebookClient.updateNotebook(notebookDescriptor.getId(), testPrefix + "'", testPrefix + "'");
-        assert notebookDescriptor.getName().equals(testPrefix + "'");
-        assert notebookDescriptor.getDescription().equals(testPrefix + "'");
+        if (!notebookDescriptor.getName().equals(testPrefix + "'")) {
+            throw new RuntimeException("Different name");
+        }
+        if (!notebookDescriptor.getDescription().equals(testPrefix + "'")) {
+            throw new RuntimeException("Different description");
+        }
     }
 
     @TestMethod(ordinal = 2)
@@ -57,7 +61,9 @@ public class NotebookClientHarness extends AbstractTestCase {
         notebookClient.updateEditable(notebookEditable.getNotebookId(), notebookEditable.getId(), json);
         notebookEditable = notebookClient.listEditables(notebookDescriptor.getId(), USER_NAME).get(0);
         String newJson = notebookEditable.getContent();
-        assert json.equals(newJson);
+        if (!json.equals(newJson)) {
+            throw new RuntimeException("Different content");
+        }
         CellInstance cellInstance = notebookInstance.addCellInstance(new ChemblActivitiesFetcherCellDefinition());
         cellInstance.setSizeWidth(267);
         cellInstance.setSizeHeight(167);
@@ -70,7 +76,9 @@ public class NotebookClientHarness extends AbstractTestCase {
         VariableInstance outputVariableInstance = cellInstance.getVariableInstanceMap().values().iterator().next();
         notebookClient.writeTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), cellInstance.getId(), outputVariableInstance.getVariableDefinition().getName(), "test");
         String value = notebookClient.readTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), outputVariableInstance.calculateKey());
-        assert value.equals("test");
+        if (!value.equals("test")) {
+            throw new RuntimeException("Different value");
+        }
     }
 
     @TestMethod(ordinal = 3)
@@ -78,7 +86,9 @@ public class NotebookClientHarness extends AbstractTestCase {
         savepointEditable = notebookClient.createSavepoint(notebookEditable.getNotebookId(), notebookEditable.getId());
         List<NotebookSavepoint> list = notebookClient.listSavepoints(notebookDescriptor.getId());
         savepoint = list.get(list.size() - 1);
-        assert savepointEditable.getContent().equals(savepoint.getContent());
+        if (!savepointEditable.getContent().equals(savepoint.getContent())) {
+            throw new RuntimeException("Different content");
+        }
     }
 
 }

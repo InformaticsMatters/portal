@@ -97,8 +97,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
     private void store() {
         EditNotebookData editNotebookData = form.getModelObject();
         if (editNotebookData.getId() == null) {
-            Long id = notebookSession.createNotebook(editNotebookData.getName(), editNotebookData.getDescription());
-            notebookSession.loadCurrentNotebook(id);
+            notebookSession.createNotebook(editNotebookData.getName(), editNotebookData.getDescription());
         } else if (forRemove) {
             notebookSession.removeNotebook(editNotebookData.getId());
         } else {
