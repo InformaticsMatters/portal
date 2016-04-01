@@ -2,7 +2,8 @@ package portal.notebook.cells;
 
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.OptionDescriptor;
-import portal.notebook.api.*;
+import org.squonk.notebook.api.*;
+import portal.notebook.api.DatasetFieldOptionDescriptor;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

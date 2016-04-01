@@ -6,10 +6,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.Model;
 import org.squonk.dataset.DatasetMetadata;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
+import org.squonk.notebook.api.BindingInstance;
+import org.squonk.notebook.api.CellDefinition;
+import org.squonk.notebook.api.CellInstance;
+import org.squonk.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.IOException;

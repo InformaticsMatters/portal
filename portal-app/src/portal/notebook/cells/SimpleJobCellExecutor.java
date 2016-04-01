@@ -3,11 +3,7 @@ package portal.notebook.cells;
 import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.api.VariableKey;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellExecutionData;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.NotebookInstance;
+import org.squonk.notebook.api.*;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -37,7 +33,7 @@ class SimpleJobCellExecutor extends AbstractJobCellExecutor {
 
         handleOptions(step, cell);
 
-        return buildJobDefinition(cellExecutionData.getNotebookId(), cell, step);
+        return buildJobDefinition(cellExecutionData, cell, step);
     }
 
     /** Hook to allow option handling to be customised.

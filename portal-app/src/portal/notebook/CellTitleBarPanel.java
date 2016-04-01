@@ -5,8 +5,8 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.squonk.notebook.api.CellInstance;
 import portal.PopupContainerProvider;
-import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 

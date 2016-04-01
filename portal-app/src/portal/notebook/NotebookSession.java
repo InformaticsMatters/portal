@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.client.NotebookClient;
-import org.squonk.notebook.api2.NotebookDescriptor;
-import org.squonk.notebook.api2.NotebookEditable;
-import org.squonk.notebook.client.CellClient;
+import org.squonk.client.NotebookVariableClient;
+import org.squonk.notebook.api.*;
 import portal.SessionContext;
 import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IRow;
@@ -35,9 +33,7 @@ public class NotebookSession implements Serializable {
     private Long currentNotebookEditableId;
     private List<CellDefinition> cellDefinitionList;
     @Inject
-    private NotebookClient notebookClient;
-    @Inject
-    private CellClient cellClient;
+    private NotebookVariableClient notebookClient;
     @Inject
     private SessionContext sessionContext;
     @Inject
@@ -112,7 +108,7 @@ public class NotebookSession implements Serializable {
                 currentNotebookInstance = new NotebookInstance();
                 currentNotebookEditableId = null;
             } else {
-                currentNotebookInstance = NotebookInstance.fromJsonString(currentNotebookEditable.getContent());
+                currentNotebookInstance = currentNotebookEditable.getNotebookInstance();
                 if (currentNotebookInstance == null) {
                     currentNotebookInstance = new NotebookInstance();
                 }
@@ -137,12 +133,11 @@ public class NotebookSession implements Serializable {
 
     public void storeCurrentNotebook() {
         try {
-            String json = currentNotebookInstance.toJsonString();
             if (currentNotebookEditableId == null) {
                 NotebookEditable currentNotebookEditable = notebookClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
                 currentNotebookEditableId = currentNotebookEditable.getId();
             } else {
-                notebookClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, json);
+                notebookClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, currentNotebookInstance);
             }
             reloadCurrentNotebook();
         } catch (Exception e) {
@@ -200,7 +195,7 @@ public class NotebookSession implements Serializable {
         storeCurrentNotebook();
         CellInstance cell = currentNotebookInstance.findCellInstanceById(cellId);
         if (cell.getCellDefinition().getExecutable()) {
-            portalService.executeCell(currentNotebookInstance, currentNotebookInfo.getId(), cellId);
+            portalService.executeCell(currentNotebookInstance, currentNotebookInfo.getId(), currentNotebookEditableId,  cellId);
         }
     }
 

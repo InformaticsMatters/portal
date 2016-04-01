@@ -4,11 +4,12 @@ import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.types.MoleculeObject;
+import org.squonk.client.NotebookClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.notebook.api.CellInstance;
 import org.squonk.types.io.JsonHandler;
-import portal.notebook.api.CellInstance;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -27,7 +28,7 @@ import java.util.stream.Stream;
 public class MockJobStatusService {
     private static final Logger LOGGER = Logger.getLogger(MockJobStatusService.class.getName());
     @Inject
-    private MockNotebookClient mockNotebookClient;
+    private NotebookClient mockNotebookClient;
 
     @Path("execute")
     @POST
@@ -48,26 +49,26 @@ public class MockJobStatusService {
         }
     }
 
-    protected void writeDataset(Long notebookId, String cellName, String name, Dataset dataset) throws IOException {
+    protected void writeDataset(Long notebookId, Long cellId, String name, Dataset dataset) throws IOException {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
         try (Stream stream = generator.getAsStream()) {
             InputStream dataInputStream = generator.getAsInputStream(stream, true);
-            mockNotebookClient.oldWriteStreamValue(notebookId, cellName, name, dataInputStream);
+            ((MockNotebookClient)mockNotebookClient).oldWriteStreamValue(notebookId, cellId, name, dataInputStream);
         }
         DatasetMetadata metadata = generator.getDatasetMetadata();
         String jsonTring = JsonHandler.getInstance().objectToJson(metadata);
-        mockNotebookClient.oldWriteTextValue(notebookId, cellName, name, jsonTring);
-        String storedValue = mockNotebookClient.oldReadTextValue(notebookId, cellName, name);
+        ((MockNotebookClient)mockNotebookClient).oldWriteTextValue(notebookId, cellId, name, jsonTring);
+        String storedValue = ((MockNotebookClient)mockNotebookClient).oldReadTextValue(notebookId, cellId, name);
         if (!storedValue.equals(jsonTring)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }
     }
 
     private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) {
-        CellInstance cellInstance = mockNotebookClient.oldFindCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellName());
+        CellInstance cellInstance = ((MockNotebookClient)mockNotebookClient).oldFindCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellId());
         Dataset<MoleculeObject> dataset = createMockDataset((String)cellInstance.getOptionInstanceMap().get("prefix").getValue());
         try {
-            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellName(), "output", dataset);
+            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellId(), "output", dataset);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

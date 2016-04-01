@@ -4,7 +4,7 @@ import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.OptionDescriptor;
-import portal.notebook.api.*;
+import org.squonk.notebook.api.*;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -41,7 +41,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cellInstance));
 
-            return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
+            return buildJobDefinition(cellExecutionData, cellInstance, step1);
         }
     }
 

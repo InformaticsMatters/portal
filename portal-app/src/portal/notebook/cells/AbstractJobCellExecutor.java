@@ -6,9 +6,8 @@ import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.job.jobdef.StepsCellExecutorJobDefinition;
 import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
-import org.squonk.notebook.api.VariableKey;
+import org.squonk.notebook.api.*;
 import portal.SessionContext;
-import portal.notebook.api.*;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
@@ -83,7 +82,7 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
                 Long cellId = variable.getCellId();
                 CellInstance producer = notebook.findCellInstanceById(cellId);
                 if (producer != null) {
-                    return new VariableKey(producer.getName(), variable.getVariableDefinition().getName());
+                    return new VariableKey(producer.getId(), variable.getVariableDefinition().getName());
                 }
             }
         }
@@ -101,14 +100,14 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
     /**
      * Build the JobDefinition using the specified StepDefinition(s).
      *
-     * @param notebookId
+     * @param cellExData
      * @param cell
      * @param steps
      * @return
      */
-    protected StepsCellExecutorJobDefinition buildJobDefinition(Long notebookId, CellInstance cell, StepDefinition... steps) {
+    protected StepsCellExecutorJobDefinition buildJobDefinition(CellExecutionData cellExData, CellInstance cell, StepDefinition... steps) {
         StepsCellExecutorJobDefinition jobdef = new ExecuteCellUsingStepsJobDefinition();
-        jobdef.configureCellAndSteps(notebookId, cell.getName(), steps);
+        jobdef.configureCellAndSteps(cellExData.getNotebookId(), cellExData.getEditableId(), cell.getId(), steps);
         return jobdef;
     }
 

@@ -1,6 +1,6 @@
 package portal.notebook;
 
-import org.squonk.notebook.api2.NotebookDescriptor;
+import org.squonk.notebook.api.NotebookDescriptor;
 
 import java.io.Serializable;
 

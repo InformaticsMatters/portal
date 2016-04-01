@@ -14,7 +14,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.util.time.Duration;
-import portal.notebook.api.CellDefinition;
+import org.squonk.notebook.api.CellDefinition;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;

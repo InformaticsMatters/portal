@@ -12,8 +12,8 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
+import org.squonk.notebook.api.CellInstance;
 import portal.PortalWebApplication;
-import portal.notebook.api.CellInstance;
 
 import java.io.Serializable;
 import java.util.ArrayList;

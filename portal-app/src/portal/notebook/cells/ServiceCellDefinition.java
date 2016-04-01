@@ -4,8 +4,7 @@ import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.core.ServiceDescriptor;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.api.VariableKey;
-import portal.notebook.api.*;
+import org.squonk.notebook.api.*;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.logging.Logger;
@@ -85,7 +84,7 @@ public class ServiceCellDefinition extends CellDefinition {
                     .withOption(OPT_SERVICE_PRESERVE_STRUCTURE, true) // TODO - this will need to be defined at the ServiceDescriptor level
                     .withOption(OPT_SERVICE_PARAMS, collectAllOptions(cell));
 
-            return buildJobDefinition(cellExecutionData.getNotebookId(), cell, step1);
+            return buildJobDefinition(cellExecutionData, cell, step1);
         }
     }
 }

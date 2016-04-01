@@ -6,19 +6,22 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.notebook.api.CellInstance;
+import org.squonk.notebook.api.OptionInstance;
+import org.squonk.notebook.api.VariableInstance;
+import org.squonk.notebook.api.VariableType;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
-import portal.notebook.api.*;
+import portal.notebook.api.DatasetFieldOptionDescriptor;
+import portal.notebook.api.DatasetsFieldOptionDescriptor;
+import portal.notebook.api.RestPicklistOptionDescriptor;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author simetrias
@@ -101,7 +104,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private void addOptionEditor(ListItem<OptionInstance> listItem) {
         OptionInstance optionInstance = listItem.getModelObject();
         FieldEditorPanel fieldEditorPanel = createOptionEditor(optionInstance);
-        optionEditorModelMap.put(optionInstance.getOptionDescriptor().getName(), fieldEditorPanel.getFieldEditorModel());
+        optionEditorModelMap.put(optionInstance.getOptionDescriptor().getkey(), fieldEditorPanel.getFieldEditorModel());
         listItem.add(fieldEditorPanel);
     }
 
@@ -110,30 +113,31 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         Object value = optionInstance.getValue() == null ? optionDescriptor.getDefaultValue() : optionInstance.getValue();
         if (optionDescriptor instanceof RestPicklistOptionDescriptor) {
             RestPicklistOptionDescriptor restPicklistOptionDescriptor = (RestPicklistOptionDescriptor) optionDescriptor;
-            return new RestPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()), restPicklistOptionDescriptor.getQueryUri());
+            return new RestPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()), restPicklistOptionDescriptor.getQueryUri());
         } else if (optionDescriptor instanceof DatasetFieldOptionDescriptor) {
-            return new DatasetFieldPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()), getCellId());
+            return new DatasetFieldPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()), getCellId());
         } else if (optionDescriptor instanceof DatasetsFieldOptionDescriptor) {
-            return new DatasetsFieldPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()), getCellId());
+            return new DatasetsFieldPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()), getCellId());
         } else if (optionDescriptor.getTypeDescriptor().getType() == Structure.class) {
-            return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()));
+            return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         } else if (optionDescriptor.getValues() != null && optionDescriptor.getValues().length > 0) {
-            return new PicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()), optionInstance.getOptionDescriptor().getPicklistValueList());
+            Object[] values = optionInstance.getOptionDescriptor().getValues();
+            return new PicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()), values == null ? Collections.emptyList() : Arrays.asList(values));
         } else if (optionDescriptor.getTypeDescriptor() instanceof MultiLineTextTypeDescriptor) {
-            return new MultilineFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()));
+            return new MultilineFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         } else if (optionDescriptor.getTypeDescriptor().getType() == String.class) {
-            return new StringFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()));
+            return new StringFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         } else if (optionDescriptor.getTypeDescriptor().getType() == Integer.class) {
-            return new IntegerFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()));
+            return new IntegerFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         } else if (optionDescriptor.getTypeDescriptor().getType() == Float.class) {
-            return new FloatFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()));
+            return new FloatFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         } else if (optionDescriptor.getTypeDescriptor().getType() == Boolean.class) {
-            return new BooleanFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()));
+            return new BooleanFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         } else if (optionDescriptor.getTypeDescriptor().getType() == File.class) {
             OptionUploadCallback callback = new OptionUploadCallback(optionInstance);
-            return new FileFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()), callback);
+            return new FileFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()), callback);
         } else {
-            return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getDisplayName()));
+            return new DummyFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         }
     }
 
@@ -171,13 +175,13 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
         @Override
         public void onUpload(String fileName, InputStream inputStream) {
-            String optionName = optionInstance.getOptionDescriptor().getName();
+            String optionName = optionInstance.getOptionDescriptor().getkey();
             OptionInstance liveOptionInstance = findCellInstance().getOptionInstanceMap().get(optionName);
             liveOptionInstance.setValue(fileName);
             notebookSession.storeCurrentNotebook();
             VariableInstance variableInstance = findVariableInstanceForFileOption();
             if (variableInstance == null) {
-                throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getName());
+                throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getkey());
             }
             notebookSession.writeTextValue(variableInstance, fileName);
             notebookSession.writeStreamValue(variableInstance, inputStream);

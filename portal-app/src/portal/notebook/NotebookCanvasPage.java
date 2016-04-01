@@ -27,7 +27,7 @@ import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PopupContainerProvider;
 import portal.PortalHomePage;
-import portal.notebook.api.*;
+import org.squonk.notebook.api.*;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 

@@ -5,10 +5,10 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.squonk.notebook.api.BindingInstance;
+import org.squonk.notebook.api.CellInstance;
+import org.squonk.notebook.api.VariableInstance;
 import portal.dataset.IDatasetDescriptor;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;

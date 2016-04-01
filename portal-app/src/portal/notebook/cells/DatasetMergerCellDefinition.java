@@ -4,9 +4,9 @@ import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.DatasetMerger;
-import org.squonk.notebook.api.VariableKey;
+import org.squonk.notebook.api.*;
 import org.squonk.options.OptionDescriptor;
-import portal.notebook.api.*;
+import portal.notebook.api.DatasetsFieldOptionDescriptor;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -54,7 +54,7 @@ public class DatasetMergerCellDefinition extends CellDefinition {
                     break;
                 }
             }
-            return buildJobDefinition(cellExecutionData.getNotebookId(), cell, step1);
+            return buildJobDefinition(cellExecutionData, cell, step1);
         }
     }
 

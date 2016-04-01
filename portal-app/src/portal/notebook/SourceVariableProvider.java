@@ -2,7 +2,7 @@ package portal.notebook;
 
 import com.vaynberg.wicket.select2.Response;
 import com.vaynberg.wicket.select2.TextChoiceProvider;
-import portal.notebook.api.VariableInstance;
+import org.squonk.notebook.api.VariableInstance;
 
 import java.util.*;
 

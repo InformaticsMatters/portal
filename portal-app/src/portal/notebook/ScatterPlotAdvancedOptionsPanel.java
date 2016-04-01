@@ -7,11 +7,11 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.notebook.api.BindingInstance;
+import org.squonk.notebook.api.CellDefinition;
+import org.squonk.notebook.api.CellInstance;
+import org.squonk.notebook.api.VariableInstance;
 import portal.PopupContainerProvider;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;

@@ -14,11 +14,11 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
+import org.squonk.notebook.api.BindingInstance;
+import org.squonk.notebook.api.CellDefinition;
+import org.squonk.notebook.api.CellInstance;
+import org.squonk.notebook.api.VariableInstance;
 import portal.PortalWebApplication;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;

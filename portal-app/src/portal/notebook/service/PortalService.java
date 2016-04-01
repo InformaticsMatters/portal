@@ -2,10 +2,10 @@ package portal.notebook.service;
 
 import com.im.lac.job.jobdef.JobStatus;
 import org.squonk.client.JobStatusClient;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellExecutionData;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.NotebookInstance;
+import org.squonk.notebook.api.CellDefinition;
+import org.squonk.notebook.api.CellExecutionData;
+import org.squonk.notebook.api.CellInstance;
+import org.squonk.notebook.api.NotebookInstance;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 
@@ -74,24 +74,21 @@ public class PortalService {
         }
     }
 
-    public Execution executeCell(NotebookInstance notebookInstance, Long notebookDescriptorId, Long cellId) {
+    public Execution executeCell(NotebookInstance notebookInstance, Long notebookId, Long editableId, Long cellId) {
         try {
             TypedQuery<Execution> query = entityManager.createQuery("select o from Execution o where o.notebookId = :notebookId", Execution.class);
-            query.setParameter("notebookId", notebookDescriptorId);
-            Execution execution = findExecution(notebookDescriptorId, cellId);
+            query.setParameter("notebookId", notebookId);
+            Execution execution = findExecution(notebookId, cellId);
             if (execution != null && execution.getJobActive()) {
                 throw new RuntimeException("Already running");
             }
             CellInstance cellInstance = notebookInstance.findCellInstanceById(cellId);
             CellDefinition cellDefinition = cellInstance.getCellDefinition();
-            CellExecutionData cellExecutionData = new CellExecutionData();
-            cellExecutionData.setCellId(cellId);
-            cellExecutionData.setNotebookId(notebookDescriptorId);
-            cellExecutionData.setNotebookInstance(notebookInstance);
+            CellExecutionData cellExecutionData = new CellExecutionData(notebookId, editableId, cellId, notebookInstance);
             JobStatus jobStatus = cellDefinition.getCellExecutor().execute(cellExecutionData);
             if (execution == null) {
                 execution = new Execution();
-                execution.setNotebookId(notebookDescriptorId);
+                execution.setNotebookId(notebookId);
                 execution.setCellId(cellId);
                 entityManager.persist(execution);
             }

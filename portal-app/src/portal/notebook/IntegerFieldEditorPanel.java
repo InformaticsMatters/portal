@@ -2,14 +2,10 @@ package portal.notebook;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.NumberTextField;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import portal.notebook.api.OptionInstance;
 
 import java.io.Serializable;
-import java.util.Comparator;
 
 /**
  * @author simetrias

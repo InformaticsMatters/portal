@@ -1,8 +1,8 @@
 package portal.notebook.cells;
 
+import org.squonk.notebook.api.*;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
-import portal.notebook.api.*;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

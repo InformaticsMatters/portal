@@ -1,6 +1,5 @@
 package portal.notebook.service;
 
-import org.squonk.notebook.api2.NotebookEditable;
 import toolkit.services.AbstractEntity;
 
 import javax.persistence.*;

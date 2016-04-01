@@ -8,8 +8,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.notebook.api.CellInstance;
 import portal.PopupContainerProvider;
-import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
 
 import javax.inject.Inject;
