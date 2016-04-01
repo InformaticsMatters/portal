@@ -79,10 +79,14 @@ public class MockNotebookClient implements NotebookClient {
     }
 
     @Override
-    public NotebookEditable createEditable(Long aLong, Long aLong1, String s) throws Exception {
+    public NotebookEditable createEditable(Long notebookId, Long aLong1, String userName) throws Exception {
+        MockNotebookDescriptor mockNotebookDescriptor = entityManager.find(MockNotebookDescriptor.class, notebookId);
+        if (mockNotebookDescriptor == null) {
+            throw new RuntimeException("Unknown notebook id");
+        }
         MockNotebookEditable mockNotebookEditable = new MockNotebookEditable();
-        mockNotebookEditable.setNotebookId(aLong);
-        mockNotebookEditable.setUserName(s);
+        mockNotebookEditable.setNotebookId(notebookId);
+        mockNotebookEditable.setUserName(userName);
         entityManager.persist(mockNotebookEditable);
         return toNotebookEditable(mockNotebookEditable);
     }
@@ -96,24 +100,48 @@ public class MockNotebookClient implements NotebookClient {
     }
 
     @Override
-    public NotebookEditable createSavepoint(Long aLong, Long aLong1) throws Exception {
-        return null;
+    public NotebookEditable createSavepoint(Long notebookId, Long editableId) throws Exception {
+        MockNotebookEditable mockNotebookEditable = entityManager.find(MockNotebookEditable.class, editableId);
+        if (mockNotebookEditable == null) {
+            throw new RuntimeException("Unknown editable id");
+        }
+        MockNotebookSavepoint mockNotebookSavepoint = new MockNotebookSavepoint();
+        mockNotebookSavepoint.setEditableId(editableId);
+        mockNotebookSavepoint.setNotebookId(notebookId);
+        entityManager.persist(mockNotebookSavepoint);
+        return toNotebookEditable(mockNotebookSavepoint);
     }
 
     @Override
-    public List<NotebookSavepoint> listSavepoints(Long aLong) throws Exception {
-        return null;
+    public List<NotebookSavepoint> listSavepoints(Long notebookId) throws Exception {
+        TypedQuery<MockNotebookSavepoint> query = entityManager.createQuery("select o from MockNotebookSavepoint o where o.notebookId = :notebookId", MockNotebookSavepoint.class);
+        query.setParameter("notebookId", notebookId);
+        List<NotebookSavepoint> list = new ArrayList<>();
+        for (MockNotebookSavepoint mockNotebookSavepoint : query.getResultList()) {
+            list.add(toNotebookSavepoint(mockNotebookSavepoint));
+        }
+        return list;
     }
 
     @Override
-    public NotebookSavepoint setSavepointDescription(Long aLong, Long aLong1, String s) throws Exception {
-        return null;
+    public NotebookSavepoint setSavepointDescription(Long notebookId, Long savepointId, String s) throws Exception {
+        MockNotebookSavepoint mockNotebookSavepoint = entityManager.find(MockNotebookSavepoint.class, savepointId);
+        mockNotebookSavepoint.setDescription(s);
+        return toNotebookSavepoint(mockNotebookSavepoint);
     }
 
     @Override
-    public NotebookSavepoint setSavepointLabel(Long aLong, Long aLong1, String s) throws Exception {
-        return null;
+    public NotebookSavepoint setSavepointLabel(Long notebookId, Long savepointId, String s) throws Exception {
+        MockNotebookSavepoint mockNotebookSavepoint = entityManager.find(MockNotebookSavepoint.class, savepointId);
+        mockNotebookSavepoint.setLabel(s);
+        return toNotebookSavepoint(mockNotebookSavepoint);
     }
+
+    private NotebookSavepoint toNotebookSavepoint(MockNotebookSavepoint mockNotebookSavepoint) {
+        String jsonString = mockNotebookSavepoint.getJson() == null ? null : new String(mockNotebookSavepoint.getJson());
+        return new NotebookSavepoint(mockNotebookSavepoint.getId(), mockNotebookSavepoint.getNotebookId(), mockNotebookSavepoint.getEditableId(), null, null, null,  mockNotebookSavepoint.getDescription(), mockNotebookSavepoint.getDescription(), jsonString);
+    }
+
 
     @Override
     public String readTextValue(Long notebookId, Long editableId, String name, String key) throws Exception {
