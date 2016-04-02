@@ -55,6 +55,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/threedimmol.js")));
         response.render(OnDomReadyHeaderItem.forScript("fit3DViewer('" + getMarkupId() + "')"));
         response.render(OnDomReadyHeaderItem.forScript(JS_INIT_VIEWER.replace(":data", convertForJavaScript(getSampleData()))));
+        makeCanvasItemResizable(container, "fit3DViewer", 325, 270);
     }
 
     @Override
