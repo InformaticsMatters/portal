@@ -170,6 +170,17 @@ function fitTableDisplayGrid(id) {
     $grid.css("height", h);
 }
 
+function fit3DViewer(id) {
+    var $id = $('#' + id);
+    var containerh = $id.outerHeight();
+
+    var $viewer = $id.find("#gldiv");
+    var $viewerTop = $viewer.position().top;
+
+    var h = containerh - $viewerTop - 12;
+    $viewer.css("height", h);
+}
+
 function fitScriptTextArea(id) {
     var $id = $('#' + id);
     var containerh = $id.outerHeight();
