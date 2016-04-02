@@ -18,6 +18,8 @@ import portal.notebook.service.PortalService;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -328,5 +330,31 @@ public class NotebookSession implements Serializable {
         currentNotebookInstance = null;
         currentNotebookInfo = null;
     }
+
+    public MoleculeObject findMoleculeObjectByRow(Long datasetDescriptorId, UUID uuid) {
+        return null;
+    }
+
+    public void writeMoleculeValue(VariableInstance variableInstance, MoleculeObject moleculeObject) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            objectMapper.writeValue(byteArrayOutputStream, moleculeObject);
+            byteArrayOutputStream.flush();
+            writeTextValue(variableInstance, new String(byteArrayOutputStream.toByteArray()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public MoleculeObject readMoleculeValue(VariableInstance variableInstance) {
+        String json = readTextValue(variableInstance);
+        try {
+            return new ObjectMapper().readValue(json, MoleculeObject.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
 

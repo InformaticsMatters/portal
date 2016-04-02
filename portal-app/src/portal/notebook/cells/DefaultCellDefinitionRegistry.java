@@ -5,10 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
-import portal.notebook.api.BindingDefinition;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellDefinitionRegistry;
-import portal.notebook.api.VariableType;
+import portal.notebook.api.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
@@ -54,6 +51,11 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        VariableDefinition variableDefinition = new VariableDefinition();
+        variableDefinition.setName("selection");
+        variableDefinition.setDisplayName("Selection");
+        variableDefinition.setVariableType(VariableType.STRING);
+        cellDefinition.getVariableDefinitionList().add(variableDefinition);
         return cellDefinition;
     }
 

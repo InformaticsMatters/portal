@@ -74,7 +74,7 @@ public class NotebookCanvasPage extends WebPage {
     @Inject
     private PopupContainerProvider popupContainerProvider;
     @Inject
-    private ExecutionStatusChangeManager executionStatusChangeManager;
+    private CellChangeManager cellChangeManager;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -96,17 +96,22 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void configureExecutionStatusListener() {
-        executionStatusChangeManager.setListener(new ExecutionStatusChangeManager.Listener() {
+        cellChangeManager.setListener(new CellChangeManager.Listener() {
             @Override
             public void onExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget) {
                 if (JobStatus.Status.COMPLETED.equals(jobStatus) || JobStatus.Status.ERROR.equals(jobStatus)) {
-                    processExecutionStatusChange(cellId, ajaxRequestTarget);
+                    processCellChange(cellId, ajaxRequestTarget);
                 }
+            }
+
+            @Override
+            public void onVariableChanged(Long cellId, String variableName, AjaxRequestTarget ajaxRequestTarget) {
+                processCellChange(cellId, ajaxRequestTarget);
             }
         });
     }
 
-    private void processExecutionStatusChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
+    private void processCellChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
         notebookSession.reloadCurrentNotebook();
         for (int i = 0; i< canvasItemRepeater.size(); i++) {
             ListItem listItem = (ListItem)canvasItemRepeater.get(i);
