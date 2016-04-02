@@ -1,5 +1,6 @@
 package portal.notebook;
 
+import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -10,12 +11,17 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import portal.PortalWebApplication;
+import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
+import portal.notebook.cells.DefaultCellDefinitionRegistry;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author simetrias
@@ -23,7 +29,10 @@ import java.io.Serializable;
 public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
     private static final String JS_INIT_VIEWER = "init3DMolViewer(':data')";
+    private static final String VAR_NAME_SELECTION = "selection";
     private Form<ModelObject> form;
+    @Inject
+    private NotebookSession notebookSession;
 
     public ThreeDimMolCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -60,7 +69,19 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-
+        CellInstance cellInstance = findCellInstance();
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(DefaultCellDefinitionRegistry.VAR_NAME_INPUT);
+        if (bindingInstance != null) {
+            VariableInstance variableInstance = bindingInstance.getVariableInstance();
+            boolean isOfInterest = variableInstance != null && changedCellId.equals(variableInstance.getCellId());
+            if (isOfInterest) {
+                MoleculeObject moleculeObject = notebookSession.readMoleculeValue(variableInstance);
+                Map<Object, Object> representations = moleculeObject.getRepresentations();
+                for (Object representation : representations.keySet()) {
+                    System.out.println(representation.toString() + " - " + representations.get(representation).getClass().getName());
+                }
+            }
+        }
     }
 
     @Override
@@ -79,8 +100,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
     private String getSampleData() {
         try {
-            try (InputStream inputStream = PortalWebApplication.class.getResourceAsStream("resources/kinase_inhibs.sdf");
-                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (InputStream inputStream = PortalWebApplication.class.getResourceAsStream("resources/kinase_inhibs.sdf"); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 transfer(inputStream, outputStream);
                 outputStream.flush();
                 return outputStream.toString();
