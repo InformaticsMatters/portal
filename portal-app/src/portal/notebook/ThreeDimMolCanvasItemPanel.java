@@ -1,5 +1,9 @@
 package portal.notebook;
 
+import chemaxon.formats.MolExporter;
+import chemaxon.formats.MolImporter;
+import chemaxon.struc.Molecule;
+import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -10,8 +14,12 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import portal.PortalWebApplication;
+import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
+import portal.notebook.cells.DefaultCellDefinitionRegistry;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,8 +30,11 @@ import java.io.Serializable;
  */
 public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
-    private static final String JS_INIT_VIEWER = "init3DMolViewer(':data')";
+    private static final String JS_INIT_VIEWER = "init3DMolViewer(':data', ':format')";
+    private static final String JS_SET_VIEWER_DATA = "set3DMolViewerData(':data', ':format')";
     private Form<ModelObject> form;
+    @Inject
+    private NotebookSession notebookSession;
 
     public ThreeDimMolCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -54,13 +65,23 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/3Dmol-nojquery.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/threedimmol.js")));
         response.render(OnDomReadyHeaderItem.forScript("fit3DViewer('" + getMarkupId() + "')"));
-        response.render(OnDomReadyHeaderItem.forScript(JS_INIT_VIEWER.replace(":data", convertForJavaScript(getSampleData()))));
+        loadInitialSampleData(response);
         makeCanvasItemResizable(container, "fit3DViewer", 325, 270);
     }
 
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-
+        CellInstance cellInstance = findCellInstance();
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(DefaultCellDefinitionRegistry.VAR_NAME_INPUT);
+        if (bindingInstance != null) {
+            VariableInstance variableInstance = bindingInstance.getVariableInstance();
+            boolean isOfInterest = variableInstance != null && changedCellId.equals(variableInstance.getCellId());
+            if (isOfInterest) {
+                MoleculeObject moleculeObject = notebookSession.readMoleculeValue(variableInstance);
+                String data = convertToFormat(moleculeObject.getSource(), "sdf");
+                ajaxRequestTarget.appendJavaScript(JS_SET_VIEWER_DATA.replace(":data", convertForJavaScript(data)).replace(":format", "sdf"));
+            }
+        }
     }
 
     @Override
@@ -77,10 +98,30 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
         add(form);
     }
 
-    private String getSampleData() {
+    private void loadInitialSampleData(IHeaderResponse response) {
+        // String data = convertForJavaScript(getSampleData("resources/kinase_inhibs.sdf"));
+        String sampleData = getSampleData("resources/caffeine.mol");
+        String data = convertForJavaScript(convertToFormat(sampleData, "sdf"));
+        String js = JS_INIT_VIEWER.replace(":data", data).replace(":format", "sdf");
+        response.render(OnDomReadyHeaderItem.forScript(js));
+    }
+
+    private String convertToFormat(String input, String format) {
         try {
-            try (InputStream inputStream = PortalWebApplication.class.getResourceAsStream("resources/kinase_inhibs.sdf");
-                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            if (input == null || input.isEmpty()) {
+                return null;
+            } else {
+                Molecule molecule = MolImporter.importMol(input);
+                return MolExporter.exportToFormat(molecule, format);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getSampleData(String resourcePath) {
+        try {
+            try (InputStream inputStream = PortalWebApplication.class.getResourceAsStream(resourcePath); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 transfer(inputStream, outputStream);
                 outputStream.flush();
                 return outputStream.toString();

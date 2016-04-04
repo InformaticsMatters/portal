@@ -311,7 +311,7 @@ public class NotebookSession implements Serializable {
 
     public void writeTextValue(VariableInstance variableInstance, Object value) {
         try {
-            notebookClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), value == null ? null : value.toString());
+            notebookClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.calculateKey(), value == null ? null : value.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -332,7 +332,7 @@ public class NotebookSession implements Serializable {
     }
 
     public MoleculeObject findMoleculeObjectByRow(Long datasetDescriptorId, UUID uuid) {
-        return null;
+        return datasets.findMoleculeObject(datasetDescriptorId, uuid);
     }
 
     public void writeMoleculeValue(VariableInstance variableInstance, MoleculeObject moleculeObject) {

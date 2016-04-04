@@ -6,13 +6,16 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import portal.dataset.IDatasetDescriptor;
+import portal.dataset.Row;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -93,19 +96,28 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addOrReplaceTreeGridVisualizer(IDatasetDescriptor datasetDescriptor) {
-        tableDisplayVisualizer = new TableDisplayVisualizer("visualizer", datasetDescriptor);
+        tableDisplayVisualizer = new TableDisplayVisualizer("visualizer", datasetDescriptor) {
+
+            @Override
+            protected void onItemSelectionChanged(IModel<DefaultMutableTreeNode> item, boolean newValue) {
+                Row row = (Row) item.getObject().getUserObject();
+                if (newValue) {
+                    storeCurrentSelection(row.getUuid());
+                }
+            }
+        };
         addOrReplace(tableDisplayVisualizer);
         TableDisplayNavigationPanel treeGridNavigation = new TableDisplayNavigationPanel("navigation", tableDisplayVisualizer);
         addOrReplace(treeGridNavigation);
     }
 
-    private void storeCurrentSelection(UUID uuid, AjaxRequestTarget ajaxRequestTarget) {
+    private void storeCurrentSelection(UUID uuid) {
         VariableInstance variableInstance = findCellInstance().getVariableInstanceMap().get("selection");
         MoleculeObject moleculeObject = notebookSession.findMoleculeObjectByRow(datasetDescriptorId, uuid);
         notebookSession.writeMoleculeValue(variableInstance, moleculeObject);
         notebookSession.storeCurrentNotebook();
-        cellChangeManager.notifyVariableChanged(getCellId(), variableInstance.getVariableDefinition().getName(), ajaxRequestTarget);
-
+        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        cellChangeManager.notifyVariableChanged(getCellId(), variableInstance.getVariableDefinition().getName(), target);
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 @ApplicationScoped
 @Path("mockJobs")
 public class MockJobStatusService {
+
     private static final Logger LOGGER = Logger.getLogger(MockJobStatusService.class.getName());
     @Inject
     private MockNotebookClient mockNotebookClient;
@@ -74,7 +75,6 @@ public class MockJobStatusService {
         return null;
     }
 
-
     Dataset<MoleculeObject> createMockDataset(String prefix) {
         List<MoleculeObject> mols = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
@@ -83,9 +83,8 @@ public class MockJobStatusService {
             values.put(prefix, 1.1);
             values.put("x", new Random().nextInt(19) + 1);
             values.put("y", new Random().nextInt(19) + 1);
-            mols.add(new MoleculeObject("C", "smiles", values));
+            mols.add(new MoleculeObject("Cn1cnc2n(C)c(=O)n(C)c(=O)c12", "smiles", values));
         }
         return new Dataset<>(MoleculeObject.class, mols);
     }
-
 }
