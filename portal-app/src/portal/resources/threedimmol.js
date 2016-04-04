@@ -80,22 +80,27 @@ var readText = function(input, func) {
     }
 };
 
-/* usage of file upload
-
-<input type="file" onchange="readText(this, function(data, name) {glviewer.clear(); m=glviewer.addModel(data, name); glviewer.zoomTo(); glviewer.render();} );">
-
-*/
-
-function init3DMolViewer(data) {
+function init3DMolViewer(data, format) {
     glviewer = $3Dmol.createViewer("gldiv", {defaultcolors : $3Dmol.rasmolElementColors});
     glviewer.setBackgroundColor(0xffffff);
 
-    glviewer.addModel(data, "sdf");
-    // $3Dmol.download('pdb:1UBQ', glviewer, {doAssembly:true, noSecondaryStructure: false});
+    glviewer.addModel(data, format);
     glviewer.setStyle({}, {stick: {}});
-
     glviewer.mapAtomProperties($3Dmol.applyPartialCharges);
-
     glviewer.zoomTo();
     glviewer.render();
+}
+
+function set3DMolViewerData(data, format) {
+    glviewer.clear();
+    glviewer.addModel(data, format);
+    glviewer.setStyle({}, {stick: {}});
+    glviewer.mapAtomProperties($3Dmol.applyPartialCharges);
+    glviewer.zoomTo();
+    glviewer.render();
+}
+
+// 1UBQ is a PDB id
+function downloadPdb(pdbId) {
+    $3Dmol.download('pdb:' + pdbId, glviewer, {doAssembly:true, noSecondaryStructure: false});
 }

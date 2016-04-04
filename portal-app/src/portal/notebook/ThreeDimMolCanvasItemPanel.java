@@ -1,5 +1,8 @@
 package portal.notebook;
 
+import chemaxon.formats.MolExporter;
+import chemaxon.formats.MolImporter;
+import chemaxon.struc.Molecule;
 import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -21,15 +24,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * @author simetrias
  */
 public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
-    private static final String JS_INIT_VIEWER = "init3DMolViewer(':data')";
-    private static final String VAR_NAME_SELECTION = "selection";
+    private static final String JS_INIT_VIEWER = "init3DMolViewer(':data', ':format')";
+    private static final String JS_SET_VIEWER_DATA = "set3DMolViewerData(':data', ':format')";
     private Form<ModelObject> form;
     @Inject
     private NotebookSession notebookSession;
@@ -63,7 +65,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/3Dmol-nojquery.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/threedimmol.js")));
         response.render(OnDomReadyHeaderItem.forScript("fit3DViewer('" + getMarkupId() + "')"));
-        response.render(OnDomReadyHeaderItem.forScript(JS_INIT_VIEWER.replace(":data", convertForJavaScript(getSampleData()))));
+        loadInitialSampleData(response);
         makeCanvasItemResizable(container, "fit3DViewer", 325, 270);
     }
 
@@ -76,10 +78,8 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
             boolean isOfInterest = variableInstance != null && changedCellId.equals(variableInstance.getCellId());
             if (isOfInterest) {
                 MoleculeObject moleculeObject = notebookSession.readMoleculeValue(variableInstance);
-                Map<Object, Object> representations = moleculeObject.getRepresentations();
-                for (Object representation : representations.keySet()) {
-                    System.out.println(representation.toString() + " - " + representations.get(representation).getClass().getName());
-                }
+                String data = convertToFormat(moleculeObject.getSource(), "sdf");
+                ajaxRequestTarget.appendJavaScript(JS_SET_VIEWER_DATA.replace(":data", convertForJavaScript(data)).replace(":format", "sdf"));
             }
         }
     }
@@ -98,9 +98,30 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
         add(form);
     }
 
-    private String getSampleData() {
+    private void loadInitialSampleData(IHeaderResponse response) {
+        // String data = convertForJavaScript(getSampleData("resources/kinase_inhibs.sdf"));
+        String sampleData = getSampleData("resources/caffeine.mol");
+        String data = convertForJavaScript(convertToFormat(sampleData, "sdf"));
+        String js = JS_INIT_VIEWER.replace(":data", data).replace(":format", "sdf");
+        response.render(OnDomReadyHeaderItem.forScript(js));
+    }
+
+    private String convertToFormat(String input, String format) {
         try {
-            try (InputStream inputStream = PortalWebApplication.class.getResourceAsStream("resources/kinase_inhibs.sdf"); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            if (input == null || input.isEmpty()) {
+                return null;
+            } else {
+                Molecule molecule = MolImporter.importMol(input);
+                return MolExporter.exportToFormat(molecule, format);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getSampleData(String resourcePath) {
+        try {
+            try (InputStream inputStream = PortalWebApplication.class.getResourceAsStream(resourcePath); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 transfer(inputStream, outputStream);
                 outputStream.flush();
                 return outputStream.toString();

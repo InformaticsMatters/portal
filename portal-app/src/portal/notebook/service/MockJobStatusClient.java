@@ -12,7 +12,6 @@ import org.squonk.execution.steps.StepDefinitionConstants;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
-import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
@@ -29,6 +28,7 @@ import java.util.logging.Logger;
 @Alternative
 @ApplicationScoped
 public class MockJobStatusClient implements JobStatusClient, Serializable {
+
     private static final Logger LOGGER = Logger.getLogger(MockJobStatusClient.class.getName());
     private final Map<String, JobStatus> jobStatusMap = new HashMap<>();
     private final Map<String, JobDefinition> jobDefinitionMap = new HashMap<>();
@@ -44,7 +44,7 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
         return jobStatus;
     }
 
-   @Override
+    @Override
     public JobStatus get(String jobId) throws IOException {
        LOGGER.log(Level.INFO, jobId);
        JobStatus oldJobStatus = jobStatusMap.get(jobId);
@@ -98,6 +98,7 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
     }
 
     class JobThread extends Thread {
+
         private final JobDefinition jobDefinition;
         private final String baseUri;
 
@@ -110,6 +111,7 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
         public void run() {
             WebResource resource = Client.create().resource(baseUri + "/execute");
             resource.type(MediaType.APPLICATION_JSON).post(new StreamingOutput() {
+
                 @Override
                 public void write(OutputStream outputStream) throws IOException, WebApplicationException {
                     ObjectMapper objectMapper = new ObjectMapper();
@@ -118,7 +120,6 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
                 }
             });
         }
-
     }
 
 }
