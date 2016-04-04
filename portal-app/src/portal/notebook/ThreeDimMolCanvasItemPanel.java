@@ -10,6 +10,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
@@ -33,6 +34,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     private static final String JS_INIT_VIEWER = "init3DMolViewer(':data', ':format')";
     private static final String JS_SET_VIEWER_DATA = "set3DMolViewerData(':data', ':format')";
     private Form<ModelObject> form;
+    private ThreeDimMolAdvancedOptionsPanel advancedOptionsPanel;
     @Inject
     private NotebookSession notebookSession;
 
@@ -93,6 +95,14 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     public void onExecute() {
     }
 
+    @Override
+    public Panel getAdvancedOptionsPanel() {
+        if (advancedOptionsPanel == null) {
+            createAdvancedOptionsPanel();
+        }
+        return advancedOptionsPanel;
+    }
+
     private void addForm() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
         add(form);
@@ -138,6 +148,19 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
             outputStream.write(buffer, 0, r);
             r = inputStream.read(buffer, 0, buffer.length);
         }
+    }
+
+    private void createAdvancedOptionsPanel() {
+        advancedOptionsPanel = new ThreeDimMolAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
+        advancedOptionsPanel.setCallbackHandler(new ThreeDimMolAdvancedOptionsPanel.CallbackHandler() {
+
+            @Override
+            public void onApplyAdvancedOptions() {
+                AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+                target.appendJavaScript("downloadPdb(':pdbId')".replace(":pdbId", advancedOptionsPanel.getPdbId()));
+            }
+        });
+        advancedOptionsPanel.setPdbId("1UBQ");
     }
 
     class ModelObject implements Serializable {
