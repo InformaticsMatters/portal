@@ -138,6 +138,10 @@ li {
     text-align: right;
 }
 
+.cellPopup .actions {
+    text-align: right;
+}
+
 .fileUploadInput {
     overflow: hidden;
     text-overflow: ellipsis;

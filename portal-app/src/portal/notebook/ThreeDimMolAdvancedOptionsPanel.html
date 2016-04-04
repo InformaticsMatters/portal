@@ -1,7 +1,7 @@
 <wicket:panel>
     <div>
         <div class="field">
-            <form wicket:id="form">
+            <form wicket:id="form" class="ui form">
                 <div class="field">
                     <label>PDB id</label>
 
@@ -9,8 +9,10 @@
                         <input wicket:id="pdbId" type="text">
                     </div>
                 </div>
-                <input type="submit" wicket:id="save" style="width: 50px; padding: 5px;" class="ui mini button blue"
-                       value="Save">
+                <div class="actions">
+                    <input type="submit" wicket:id="save" style="width: 50px; padding: 5px;" class="ui mini button blue"
+                           value="Save">
+                </div>
             </form>
         </div>
     </div>
