@@ -11,23 +11,29 @@ function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbList
     if (nbListVisible) {
         $('.notebookListPanel').show();
         $('.nbListMenu').show();
+        $('.nbListToggle').addClass("active");
     } else if (!nbListVisible) {
         $('.notebookListPanel').hide();
         $('.nbListMenu').hide();
+        $('.nbListToggle').removeClass("active");
     }
 
     if (cellsVisible) {
         $('.notebookCellsPanel').show();
+        $('.cellsToggle').addClass("active");
     } else if (!cellsVisible) {
         $('.notebookCellsPanel').hide();
+        $('.cellsToggle').removeClass("active");
     }
 
     if (canvasVisible) {
         $('.notebookContainer').show();
         $('.nbCanvasMenu').show();
+        $('.canvasToggle').addClass("active");
     } else if (!canvasVisible) {
         $('.notebookContainer').hide();
         $('.nbCanvasMenu').hide();
+        $('.canvasToggle').removeClass("active");
     }
 
     if (!cellsVisible && !nbListVisible && !canvasVisible) {

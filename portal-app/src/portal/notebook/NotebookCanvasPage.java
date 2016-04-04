@@ -136,6 +136,7 @@ public class NotebookCanvasPage extends WebPage {
             response.render(OnDomReadyHeaderItem.forScript("addCellsPaletteDragAndDropSupport();"));
         }
         response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');"));
+        response.render(OnDomReadyHeaderItem.forScript("applyNotebookCanvasPageLayout('" + cellsVisible + "', '" + canvasVisible + "', '" + nbListVisible + "')"));
     }
 
     private void addMenuAndFooter() {
@@ -251,7 +252,6 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 nbListVisible = !nbListVisible;
-                target.appendJavaScript("makeVerticalItemActive('" + nbListToggle.getMarkupId() + "')");
                 refreshPanelsVisibility(target);
             }
         };
@@ -262,7 +262,6 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 cellsVisible = !cellsVisible;
-                target.appendJavaScript("makeVerticalItemActive('" + cellsToggle.getMarkupId() + "')");
                 refreshPanelsVisibility(target);
             }
         };
@@ -273,7 +272,6 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 canvasVisible = !canvasVisible;
-                target.appendJavaScript("makeVerticalItemActive('" + canvasToggle.getMarkupId() + "')");
                 refreshPanelsVisibility(target);
             }
         };
