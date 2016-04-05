@@ -1,6 +1,6 @@
 package portal.notebook;
 
-import org.squonk.notebook.api.NotebookDescriptor;
+import org.squonk.notebook.api.NotebookDTO;
 
 import java.io.Serializable;
 
@@ -52,7 +52,7 @@ public class NotebookInfo implements Serializable {
         return owner;
     }
 
-    public static NotebookInfo fromNotebookDescriptor(NotebookDescriptor notebookDescriptor) {
+    public static NotebookInfo fromNotebookDescriptor(NotebookDTO notebookDescriptor) {
         NotebookInfo notebookInfo = new NotebookInfo();
         notebookInfo.setId(notebookDescriptor.getId());
         notebookInfo.setName(notebookDescriptor.getName());

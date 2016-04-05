@@ -8,6 +8,7 @@ import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.notebook.api.*;
 import portal.SessionContext;
+import portal.notebook.api.*;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
@@ -20,18 +21,19 @@ import java.util.logging.Logger;
 /**
  * Created by timbo on 16/01/16.
  */
-public abstract class AbstractJobCellExecutor implements CellExecutor, Serializable {
+public abstract class AbstractJobCellExecutor extends CellExecutor implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(AbstractJobCellExecutor.class.getName());
 
-    public JobStatus execute(CellExecutionData data) throws Exception {
+    @Override
+    public JobStatus execute(CellInstance cell, CellExecutionData data) throws Exception {
         Instance<SessionContext> sessionContextInstance = CDI.current().select(SessionContext.class);
         SessionContext sessionContext = sessionContextInstance.get();
         String username = sessionContext.getLoggedInUserDetails().getUserid();
         Integer workunits = null; // null means "I don't know", but we can probably get the number from the dataset metadata
 
         // create the job
-        JobDefinition jobdef = buildJobDefinition(data);
+        JobDefinition jobdef = buildJobDefinition(cell, data);
         // execute the job
         JobStatusClient client = createJobStatusClient();
         LOG.info("Executing job using client " + client);
@@ -48,7 +50,7 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
     /**
      * Build the JobDefinition that will be submitted for execution.
      */
-    protected abstract JobDefinition buildJobDefinition(CellExecutionData cellExecutionData);
+    protected abstract JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData);
 
 
     protected Map<String, Object> collectAllOptions(CellInstance cell) {
@@ -69,18 +71,16 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
 
     /** Creates a VariableKey for this variable, looking up the producer cell from the notebook
      *
-     * @param notebook
-     * @param cell
+     * @param producer
      * @param varName
      * @return
      */
-    protected VariableKey createVariableKey(NotebookInstance notebook, CellInstance cell, String varName) {
-        BindingInstance binding = cell.getBindingInstanceMap().get(varName);
+    protected VariableKey createVariableKey(CellInstance producer, String varName) {
+        BindingInstance binding = producer.getBindingInstanceMap().get(varName);
         if (binding != null) {
             VariableInstance variable = binding.getVariableInstance();
             if (variable != null) {
                 Long cellId = variable.getCellId();
-                CellInstance producer = notebook.findCellInstanceById(cellId);
                 if (producer != null) {
                     return new VariableKey(producer.getId(), variable.getVariableDefinition().getName());
                 }
@@ -89,8 +89,8 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         return null;
     }
 
-    protected VariableKey createVariableKeyRequired(NotebookInstance notebook, CellInstance cell, String varName) {
-        VariableKey key = createVariableKey(notebook, cell, varName);
+    protected VariableKey createVariableKeyRequired(CellInstance cell, String varName) {
+        VariableKey key = createVariableKey(cell, varName);
         if (key == null) {
             throw new IllegalStateException("Input variable " + varName + " not bound");
         }
@@ -111,10 +111,10 @@ public abstract class AbstractJobCellExecutor implements CellExecutor, Serializa
         return jobdef;
     }
 
-    public static class MockExecutor1 implements CellExecutor {
+    public static class MockExecutor1 extends CellExecutor {
 
         @Override
-        public JobStatus execute(CellExecutionData cellExecutionData) throws Exception {
+        public JobStatus execute(CellInstance cell, CellExecutionData cellExecutionData) throws Exception {
             // do something to set the output variable(s)
             // create a fake jobstatus
             return JobStatus.create(null /* JobDefinition */, "username", new Date(), null).withStatus(JobStatus.Status.COMPLETED, 0, 0, null);

@@ -1,7 +1,7 @@
 package portal.notebook;
 
 import org.apache.wicket.markup.html.panel.Panel;
-import org.squonk.notebook.api.CellInstance;
+import portal.notebook.api.CellInstance;
 
 /**
  * @author simetrias

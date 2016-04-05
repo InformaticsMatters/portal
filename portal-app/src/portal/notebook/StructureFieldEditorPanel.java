@@ -14,7 +14,7 @@ import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource
 import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.notebook.api.OptionInstance;
+import portal.notebook.api.OptionInstance;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 
 import java.awt.*;

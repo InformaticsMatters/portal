@@ -3,7 +3,10 @@ package portal.notebook.cells;
 import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.api.*;
+import org.squonk.notebook.api.VariableKey;
+import portal.notebook.api.CellDefinition;
+import portal.notebook.api.CellExecutionData;
+import portal.notebook.api.CellInstance;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -22,10 +25,9 @@ class SimpleJobCellExecutor extends AbstractJobCellExecutor {
 
 
     @Override
-    protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
-        NotebookInstance notebook = cellExecutionData.getNotebookInstance();
-        CellInstance cell = notebook.findCellInstanceById(cellExecutionData.getCellId());
-        VariableKey key = createVariableKey(notebook, cell, CellDefinition.VAR_NAME_INPUT);
+    protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
+
+        VariableKey key = createVariableKey(cell, CellDefinition.VAR_NAME_INPUT);
 
         StepDefinition step = new StepDefinition(stepClassName)
                 .withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key)

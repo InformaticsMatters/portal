@@ -4,9 +4,9 @@ import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.DatasetMerger;
-import org.squonk.notebook.api.*;
+import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
-import portal.notebook.api.DatasetsFieldOptionDescriptor;
+import portal.notebook.api.*;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -38,16 +38,14 @@ public class DatasetMergerCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
+        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
-            NotebookInstance notebook = cellExecutionData.getNotebookInstance();
-            CellInstance cell = notebook.findCellInstanceById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.DatasetMerger.CLASSNAME)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cell));
 
             for (int i = 1; i <= 5; i++) {
-                VariableKey key = createVariableKey(notebook, cell, "input" + i);
+                VariableKey key = createVariableKey(cell, "input" + i);
                 if (key != null) {
                     step1.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET + i, key);
                 } else {

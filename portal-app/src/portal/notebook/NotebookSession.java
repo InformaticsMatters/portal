@@ -6,7 +6,8 @@ import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.client.NotebookVariableClient;
-import org.squonk.notebook.api.*;
+import org.squonk.notebook.api.NotebookDTO;
+import org.squonk.notebook.api.NotebookEditableDTO;
 import portal.SessionContext;
 import portal.dataset.IDatasetDescriptor;
 import portal.dataset.IRow;
@@ -46,7 +47,7 @@ public class NotebookSession implements Serializable {
     public List<NotebookInfo> listNotebookInfo() {
         try {
             List<NotebookInfo> list = new ArrayList<>();
-            for (NotebookDescriptor notebookDescriptor : notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
+            for (NotebookDTO notebookDescriptor : notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
                 NotebookInfo notebookInfo = NotebookInfo.fromNotebookDescriptor(notebookDescriptor);
                 list.add(notebookInfo);
             }
@@ -58,7 +59,7 @@ public class NotebookSession implements Serializable {
 
     public NotebookInfo findNotebookInfo(Long id) {
         try {
-            for (NotebookDescriptor notebookDescriptor : notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
+            for (NotebookDTO notebookDescriptor : notebookClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
                 if (notebookDescriptor.getId().equals(id)) {
                     return NotebookInfo.fromNotebookDescriptor(notebookDescriptor);
                 }
@@ -71,7 +72,7 @@ public class NotebookSession implements Serializable {
 
     public Long createNotebook(String name, String description) {
         try {
-            NotebookDescriptor notebookDescriptor = notebookClient.createNotebook(sessionContext.getLoggedInUserDetails().getUserid(), name, description);
+            NotebookDTO notebookDescriptor = notebookClient.createNotebook(sessionContext.getLoggedInUserDetails().getUserid(), name, description);
             notebookClient.createEditable(notebookDescriptor.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
             return notebookDescriptor.getId();
         } catch (Exception e) {
@@ -91,9 +92,9 @@ public class NotebookSession implements Serializable {
 
     }
 
-    private NotebookEditable findDefaultNotebookEditable(Long descriptorId) {
+    private NotebookEditableDTO findDefaultNotebookEditable(Long descriptorId) {
         try {
-            List<NotebookEditable> editables = notebookClient.listEditables(descriptorId, sessionContext.getLoggedInUserDetails().getUserid());
+            List<NotebookEditableDTO> editables = notebookClient.listEditables(descriptorId, sessionContext.getLoggedInUserDetails().getUserid());
             return editables.isEmpty() ? null : editables.get(0);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -103,13 +104,13 @@ public class NotebookSession implements Serializable {
     public void loadCurrentNotebook(Long id) {
         try {
             currentNotebookInfo = findNotebookInfo(id);
-            NotebookEditable currentNotebookEditable = findDefaultNotebookEditable(currentNotebookInfo.getId());
+            NotebookEditableDTO currentNotebookEditable = findDefaultNotebookEditable(currentNotebookInfo.getId());
             if (currentNotebookEditable == null) {
                 currentNotebookInstance = new NotebookInstance();
                 currentNotebookEditableId = null;
             } else {
-                currentNotebookInstance = currentNotebookEditable.getNotebookInstance();
-                if (currentNotebookInstance == null) {
+                currentNotebookInstance = NotebookInstance.fromCanvasDTO(currentNotebookEditable.getCanvasDTO());
+                if (currentNotebookInstance == null) { // is this needed?
                     currentNotebookInstance = new NotebookInstance();
                 }
                 currentNotebookEditableId = currentNotebookEditable.getId();
@@ -134,10 +135,10 @@ public class NotebookSession implements Serializable {
     public void storeCurrentNotebook() {
         try {
             if (currentNotebookEditableId == null) {
-                NotebookEditable currentNotebookEditable = notebookClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
+                NotebookEditableDTO currentNotebookEditable = notebookClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
                 currentNotebookEditableId = currentNotebookEditable.getId();
             } else {
-                notebookClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, currentNotebookInstance);
+                notebookClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, currentNotebookInstance.toCanvasDTO());
             }
             reloadCurrentNotebook();
         } catch (Exception e) {

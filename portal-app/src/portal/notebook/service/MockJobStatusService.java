@@ -8,8 +8,8 @@ import org.squonk.client.NotebookClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.api.CellInstance;
 import org.squonk.types.io.JsonHandler;
+import portal.notebook.api.CellInstance;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

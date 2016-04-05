@@ -9,9 +9,10 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.notebook.api.BindingInstance;
-import org.squonk.notebook.api.CellInstance;
-import org.squonk.notebook.api.VariableInstance;
+import portal.notebook.api.BindingInstance;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
+
 
 import javax.inject.Inject;
 import java.util.ArrayList;

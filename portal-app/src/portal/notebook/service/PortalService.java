@@ -2,10 +2,10 @@ package portal.notebook.service;
 
 import com.im.lac.job.jobdef.JobStatus;
 import org.squonk.client.JobStatusClient;
-import org.squonk.notebook.api.CellDefinition;
-import org.squonk.notebook.api.CellExecutionData;
-import org.squonk.notebook.api.CellInstance;
-import org.squonk.notebook.api.NotebookInstance;
+import portal.notebook.api.CellDefinition;
+import portal.notebook.api.CellExecutionData;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.NotebookInstance;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 
@@ -84,8 +84,8 @@ public class PortalService {
             }
             CellInstance cellInstance = notebookInstance.findCellInstanceById(cellId);
             CellDefinition cellDefinition = cellInstance.getCellDefinition();
-            CellExecutionData cellExecutionData = new CellExecutionData(notebookId, editableId, cellId, notebookInstance);
-            JobStatus jobStatus = cellDefinition.getCellExecutor().execute(cellExecutionData);
+            CellExecutionData cellExecutionData = new CellExecutionData(notebookId, editableId, cellId);
+            JobStatus jobStatus = cellDefinition.getCellExecutor().execute(cellInstance, cellExecutionData);
             if (execution == null) {
                 execution = new Execution();
                 execution.setNotebookId(notebookId);

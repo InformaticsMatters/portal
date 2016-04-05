@@ -2,13 +2,14 @@ package portal.notebook.cells;
 
 
 import com.im.lac.job.jobdef.JobStatus;
-import org.squonk.notebook.api.CellExecutionData;
-import org.squonk.notebook.api.CellExecutor;
+import portal.notebook.api.CellExecutionData;
+import portal.notebook.api.CellExecutor;
+import portal.notebook.api.CellInstance;
 
-public class DummyCellExecutor implements CellExecutor {
+public class DummyCellExecutor extends CellExecutor {
 
     @Override
-    public JobStatus execute(CellExecutionData data) throws Exception {
+    public JobStatus execute(CellInstance cell, CellExecutionData data) throws Exception {
         return null;
     }
 }

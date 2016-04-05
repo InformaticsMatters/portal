@@ -5,8 +5,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.squonk.notebook.api.CellDefinition;
 import portal.PortalWebApplication;
+import portal.notebook.api.CellDefinition;
 
 /**
  * @author simetrias

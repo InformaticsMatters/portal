@@ -1,9 +1,8 @@
 package portal.notebook.cells;
 
 
-
-import org.squonk.notebook.api.CellDefinition;
-import org.squonk.notebook.api.CellExecutor;
+import portal.notebook.api.CellDefinition;
+import portal.notebook.api.CellExecutor;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

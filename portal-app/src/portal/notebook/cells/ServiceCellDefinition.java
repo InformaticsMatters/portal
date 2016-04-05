@@ -4,7 +4,9 @@ import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.core.ServiceDescriptor;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.api.*;
+import org.squonk.notebook.api.VariableKey;
+import portal.notebook.api.*;
+
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.logging.Logger;
@@ -68,13 +70,11 @@ public class ServiceCellDefinition extends CellDefinition {
     class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
+        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             LOG.info("Building JobDefinition for service " + serviceDescriptor.getAccessModes()[0].getExecutionEndpoint());
 
-            NotebookInstance notebook = cellExecutionData.getNotebookInstance();
-            CellInstance cell = notebook.findCellInstanceById(cellExecutionData.getCellId());
-            VariableKey key = createVariableKey(notebook, cell, VAR_NAME_INPUT);
+            VariableKey key = createVariableKey(cell, VAR_NAME_INPUT);
 
             // TODO - the step type will need to be defined at the ServiceDescriptor level. For now we use MoleculeServiceThinExecutorStep for everything
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ServiceExecutor.CLASSNAME)

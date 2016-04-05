@@ -3,12 +3,12 @@ package portal.notebook.cells;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.notebook.api.BindingDefinition;
-import org.squonk.notebook.api.CellDefinition;
-import org.squonk.notebook.api.VariableType;
 import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
+import portal.notebook.api.BindingDefinition;
+import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellDefinitionRegistry;
+import portal.notebook.api.VariableType;
 
 
 import javax.enterprise.context.ApplicationScoped;

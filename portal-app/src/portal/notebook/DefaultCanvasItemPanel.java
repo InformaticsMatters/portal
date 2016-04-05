@@ -6,16 +6,10 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.notebook.api.CellInstance;
-import org.squonk.notebook.api.OptionInstance;
-import org.squonk.notebook.api.VariableInstance;
-import org.squonk.notebook.api.VariableType;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
-import portal.notebook.api.DatasetFieldOptionDescriptor;
-import portal.notebook.api.DatasetsFieldOptionDescriptor;
-import portal.notebook.api.RestPicklistOptionDescriptor;
+import portal.notebook.api.*;
 
 import javax.inject.Inject;
 import java.io.File;

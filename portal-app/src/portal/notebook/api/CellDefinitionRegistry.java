@@ -1,6 +1,5 @@
 package portal.notebook.api;
 
-import org.squonk.notebook.api.CellDefinition;
 
 import java.util.Collection;
 

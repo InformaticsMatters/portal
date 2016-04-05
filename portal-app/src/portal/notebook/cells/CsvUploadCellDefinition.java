@@ -7,7 +7,7 @@ import org.squonk.execution.steps.StepDefinitionConstants.CsvUpload;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.FileTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
-import org.squonk.notebook.api.*;
+import portal.notebook.api.*;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
@@ -47,8 +47,8 @@ public class CsvUploadCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
-            CellInstance cell = cellExecutionData.getNotebookInstance().findCellInstanceById(cellExecutionData.getCellId());
+        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
+
             VariableKey key = new VariableKey(cell.getId(), VAR_NAME_FILECONTENT); // we are the producer
 
             StepDefinition step1 = new StepDefinition(CsvUpload.CLASSNAME)
