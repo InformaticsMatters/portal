@@ -149,4 +149,8 @@ public class Datasets implements Serializable {
         }
     }
 
+    public MoleculeObject findMoleculeObject(Long datasetDescriptorId, UUID rowId) {
+        return moleculeObjectMapMap.get(datasetDescriptorId).get(rowId);
+    }
+
 }

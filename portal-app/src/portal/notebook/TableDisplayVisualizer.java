@@ -37,6 +37,9 @@ public class TableDisplayVisualizer extends TreeGrid<DefaultTreeModel, DefaultMu
         getTree().setRootLess(true);
         this.datasetDescriptor = datasetDescriptor;
         allUuids = notebookSession.listAllDatasetUuids(datasetDescriptor);
+        setAllowSelectMultiple(false);
+        setClickRowToSelect(true);
+        setClickRowToDeselect(true);
         setCurrentPage(0);
     }
 

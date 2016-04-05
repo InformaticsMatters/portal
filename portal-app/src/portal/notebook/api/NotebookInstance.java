@@ -180,14 +180,14 @@ public class NotebookInstance implements Serializable {
         }
     }
 
-    public static NotebookInstance fromJsonString(String string) throws Exception {
-        if (string == null) {
-            return null;
-        } else {
-            NotebookCanvasDTO dto = JsonHandler.getInstance().objectFromJson(string, NotebookCanvasDTO.class);
-            return fromCanvasDTO(dto);
-        }
-    }
+//    public static NotebookInstance fromJsonString(String string) throws Exception {
+//        if (string == null) {
+//            return null;
+//        } else {
+//            NotebookCanvasDTO dto = JsonHandler.getInstance().objectFromJson(string, NotebookCanvasDTO.class);
+//            return fromCanvasDTO(dto);
+//        }
+//    }
 
     protected void fixReferences() {
         for (CellInstance cellInstance : cellInstanceList) {
@@ -201,16 +201,16 @@ public class NotebookInstance implements Serializable {
 
     }
 
-    public String toJsonString() throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        objectMapper.writeValue(byteArrayOutputStream, this);
-        byteArrayOutputStream.flush();
-        return new String(byteArrayOutputStream.toByteArray());
-    }
+//    public String toJsonString() throws IOException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        objectMapper.writeValue(byteArrayOutputStream, this);
+//        byteArrayOutputStream.flush();
+//        return new String(byteArrayOutputStream.toByteArray());
+//    }
 
     public NotebookCanvasDTO toCanvasDTO() {
-        NotebookCanvasDTO dto = new NotebookCanvasDTO(lastCellId);
+        NotebookCanvasDTO dto = new NotebookCanvasDTO(getLastCellId());
         for (CellInstance cell : getCellInstanceList()) {
 
             // cells

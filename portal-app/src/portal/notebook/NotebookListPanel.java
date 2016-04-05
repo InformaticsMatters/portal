@@ -98,6 +98,7 @@ public class NotebookListPanel extends Panel {
                     @Override
                     protected void onEvent(AjaxRequestTarget target) {
                         notebookSession.loadCurrentNotebook(notebookDescriptor.getId());
+                        selectedMarkupId = listItem.getMarkupId();
                         target.add(getPage());
                     }
                 });
@@ -122,4 +123,5 @@ public class NotebookListPanel extends Panel {
         listView.setList(notebookSession.listNotebookInfo());
         getRequestCycle().find(AjaxRequestTarget.class).add(this);
     }
+
 }

@@ -62,7 +62,6 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
         if (isChangedCellBoundCell(changedCellId)) {
-            System.out.println("bound cell changed: executing");
             invalidatePlotData();
             onExecute();
         }

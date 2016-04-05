@@ -74,7 +74,7 @@ public class NotebookCanvasPage extends WebPage {
     @Inject
     private PopupContainerProvider popupContainerProvider;
     @Inject
-    private ExecutionStatusChangeManager executionStatusChangeManager;
+    private CellChangeManager cellChangeManager;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
@@ -96,17 +96,22 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void configureExecutionStatusListener() {
-        executionStatusChangeManager.setListener(new ExecutionStatusChangeManager.Listener() {
+        cellChangeManager.setListener(new CellChangeManager.Listener() {
             @Override
             public void onExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget) {
                 if (JobStatus.Status.COMPLETED.equals(jobStatus) || JobStatus.Status.ERROR.equals(jobStatus)) {
-                    processExecutionStatusChange(cellId, ajaxRequestTarget);
+                    processCellChange(cellId, ajaxRequestTarget);
                 }
+            }
+
+            @Override
+            public void onVariableChanged(Long cellId, String variableName, AjaxRequestTarget ajaxRequestTarget) {
+                processCellChange(cellId, ajaxRequestTarget);
             }
         });
     }
 
-    private void processExecutionStatusChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
+    private void processCellChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
         notebookSession.reloadCurrentNotebook();
         for (int i = 0; i< canvasItemRepeater.size(); i++) {
             ListItem listItem = (ListItem)canvasItemRepeater.get(i);
@@ -126,8 +131,12 @@ public class NotebookCanvasPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/lac.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/notebook.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
-        response.render(OnDomReadyHeaderItem.forScript("initJsPlumb(); addCellsPaletteDragAndDropSupport();"));
+        response.render(OnDomReadyHeaderItem.forScript("initJsPlumb();"));
+        if (notebookSession.getCurrentNotebookInfo() != null) {
+            response.render(OnDomReadyHeaderItem.forScript("addCellsPaletteDragAndDropSupport();"));
+        }
         response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');"));
+        response.render(OnDomReadyHeaderItem.forScript("applyNotebookCanvasPageLayout('" + cellsVisible + "', '" + canvasVisible + "', '" + nbListVisible + "')"));
     }
 
     private void addMenuAndFooter() {
@@ -200,8 +209,13 @@ public class NotebookCanvasPage extends WebPage {
         editNotebookPanel.setCallbacks(new EditNotebookPanel.Callbacks() {
 
             @Override
-            public void onSubmit() {
+            public void onSubmit(Long id) {
                 notebookListPanel.refreshNotebookList();
+                if (id == null) {
+                    notebookSession.resetCurrentNotebook();
+                } else {
+                    notebookSession.loadCurrentNotebook(id);
+                }
                 AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
                 ajaxRequestTarget.add(NotebookCanvasPage.this);
             }
@@ -238,7 +252,6 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 nbListVisible = !nbListVisible;
-                target.appendJavaScript("makeVerticalItemActive('" + nbListToggle.getMarkupId() + "')");
                 refreshPanelsVisibility(target);
             }
         };
@@ -249,7 +262,6 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 cellsVisible = !cellsVisible;
-                target.appendJavaScript("makeVerticalItemActive('" + cellsToggle.getMarkupId() + "')");
                 refreshPanelsVisibility(target);
             }
         };
@@ -260,7 +272,6 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 canvasVisible = !canvasVisible;
-                target.appendJavaScript("makeVerticalItemActive('" + canvasToggle.getMarkupId() + "')");
                 refreshPanelsVisibility(target);
             }
         };
@@ -341,6 +352,8 @@ public class NotebookCanvasPage extends WebPage {
             return new ScatterPlotCanvasItemPanel("item", cellInstance.getId());
         } else if ("BoxPlot".equals(cellType.getName())) {
             return new BoxPlotCanvasItemPanel("item", cellInstance.getId());
+        } else if ("3DMol".equals(cellType.getName())) {
+            return new ThreeDimMolCanvasItemPanel("item", cellInstance.getId());
         } else {
             return new DefaultCanvasItemPanel("item", cellInstance.getId());
         }

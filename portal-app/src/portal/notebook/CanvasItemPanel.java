@@ -23,7 +23,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     @Inject
     private PopupContainerProvider popupContainerProvider;
     @Inject
-    private ExecutionStatusChangeManager executionStatusChangeManager;
+    private CellChangeManager cellChangeManager;
     private CellTitleBarPanel cellTitleBarPanel;
     private Execution oldExecution;
 
@@ -97,7 +97,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         if (changed) {
             cellTitleBarPanel.applyExecutionStatus(lastExecution);
             ajaxRequestTarget.add(cellTitleBarPanel);
-            executionStatusChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), lastExecution.getJobStatus(), ajaxRequestTarget);
+            cellChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), lastExecution.getJobStatus(), ajaxRequestTarget);
         }
         oldExecution = lastExecution;
     }

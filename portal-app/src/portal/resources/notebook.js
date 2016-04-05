@@ -11,23 +11,29 @@ function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbList
     if (nbListVisible) {
         $('.notebookListPanel').show();
         $('.nbListMenu').show();
+        $('.nbListToggle').addClass("active");
     } else if (!nbListVisible) {
         $('.notebookListPanel').hide();
         $('.nbListMenu').hide();
+        $('.nbListToggle').removeClass("active");
     }
 
     if (cellsVisible) {
         $('.notebookCellsPanel').show();
+        $('.cellsToggle').addClass("active");
     } else if (!cellsVisible) {
         $('.notebookCellsPanel').hide();
+        $('.cellsToggle').removeClass("active");
     }
 
     if (canvasVisible) {
         $('.notebookContainer').show();
         $('.nbCanvasMenu').show();
+        $('.canvasToggle').addClass("active");
     } else if (!canvasVisible) {
         $('.notebookContainer').hide();
         $('.nbCanvasMenu').hide();
+        $('.canvasToggle').removeClass("active");
     }
 
     if (!cellsVisible && !nbListVisible && !canvasVisible) {
@@ -108,7 +114,7 @@ function addCellsPaletteDragAndDropSupport() {
 function makeCanvasItemPlumbDraggable(selector) {
     jsPlumb.draggable($(selector), {
         containment: 'parent',
-        filter : ".ui-resizable-handle.ui-resizable-se.ui-icon.ui-icon-gripsmall-diagonal-se",
+        filter : ".ui-resizable-handle.ui-resizable-se.ui-icon.ui-icon-gripsmall-diagonal-se, canvas",
         drag: function(params) {
             var positionx = params.pos[0];
             var cellWidth = $('#' + params.el.id).outerWidth();
@@ -168,6 +174,17 @@ function fitTableDisplayGrid(id) {
 
     var h = containerh - gridTop - 12;
     $grid.css("height", h);
+}
+
+function fit3DViewer(id) {
+    var $id = $('#' + id);
+    var containerh = $id.outerHeight();
+
+    var $viewer = $id.find("#gldiv");
+    var $viewerTop = $viewer.position().top;
+
+    var h = containerh - $viewerTop - 12;
+    $viewer.css("height", h);
 }
 
 function fitScriptTextArea(id) {

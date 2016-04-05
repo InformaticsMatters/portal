@@ -13,8 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
-    public static final long serialVersionUID = 1l;
 
+    public static final long serialVersionUID = 1L;
     public static final String CELL_NAME = "ChemblActivitiesFetcher";
     public static final String OPT_ASSAY_ID = StepDefinitionConstants.ChemblActivitiesFetcher.OPTION_ASSAY_ID;
     public static final String OPT_PREFIX = StepDefinitionConstants.ChemblActivitiesFetcher.OPTION_PREFIX;
@@ -34,7 +34,6 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-
         protected JobDefinition buildJobDefinition(CellInstance cellInstance, CellExecutionData cellExecutionData) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)
@@ -44,5 +43,4 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
             return buildJobDefinition(cellExecutionData, cellInstance, step1);
         }
     }
-
 }

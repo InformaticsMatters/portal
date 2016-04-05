@@ -1,17 +1,23 @@
 package portal.notebook;
 
+import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import portal.dataset.IDatasetDescriptor;
+import portal.dataset.Row;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
+import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * @author simetrias
@@ -22,6 +28,11 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     private TableDisplayVisualizer tableDisplayVisualizer;
     @Inject
     private NotebookSession notebookSession;
+    @Inject
+    private NotifierProvider notifierProvider;
+    private Long datasetDescriptorId;
+    @Inject
+    private CellChangeManager cellChangeManager;
 
     public TableDisplayCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -70,7 +81,10 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         boolean assigned = value != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
+            datasetDescriptorId = null;
             descriptor = new TableDisplayDatasetDescriptor(0L, "", 0);
+        } else {
+            datasetDescriptorId = descriptor.getId();
         }
         addOrReplaceTreeGridVisualizer(descriptor);
     }
@@ -82,10 +96,28 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addOrReplaceTreeGridVisualizer(IDatasetDescriptor datasetDescriptor) {
-        tableDisplayVisualizer = new TableDisplayVisualizer("visualizer", datasetDescriptor);
+        tableDisplayVisualizer = new TableDisplayVisualizer("visualizer", datasetDescriptor) {
+
+            @Override
+            protected void onItemSelectionChanged(IModel<DefaultMutableTreeNode> item, boolean newValue) {
+                Row row = (Row) item.getObject().getUserObject();
+                if (newValue) {
+                    storeCurrentSelection(row.getUuid());
+                }
+            }
+        };
         addOrReplace(tableDisplayVisualizer);
         TableDisplayNavigationPanel treeGridNavigation = new TableDisplayNavigationPanel("navigation", tableDisplayVisualizer);
         addOrReplace(treeGridNavigation);
+    }
+
+    private void storeCurrentSelection(UUID uuid) {
+        VariableInstance variableInstance = findCellInstance().getVariableInstanceMap().get("selection");
+        MoleculeObject moleculeObject = notebookSession.findMoleculeObjectByRow(datasetDescriptorId, uuid);
+        notebookSession.writeMoleculeValue(variableInstance, moleculeObject);
+        notebookSession.storeCurrentNotebook();
+        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        cellChangeManager.notifyVariableChanged(getCellId(), variableInstance.getVariableDefinition().getName(), target);
     }
 
     @Override

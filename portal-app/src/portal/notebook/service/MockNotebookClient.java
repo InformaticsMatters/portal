@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.io.*;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,10 +82,14 @@ public class MockNotebookClient implements NotebookVariableClient {
     }
 
     @Override
-    public NotebookEditableDTO createEditable(Long aLong, Long aLong1, String s) throws Exception {
+    public NotebookEditableDTO createEditable(Long notebookId, Long aLong1, String userName) throws Exception {
+        MockNotebookDescriptor mockNotebookDescriptor = entityManager.find(MockNotebookDescriptor.class, notebookId);
+        if (mockNotebookDescriptor == null) {
+            throw new RuntimeException("Unknown notebook id");
+        }
         MockNotebookEditable mockNotebookEditable = new MockNotebookEditable();
-        mockNotebookEditable.setNotebookId(aLong);
-        mockNotebookEditable.setUserName(s);
+        mockNotebookEditable.setNotebookId(notebookId);
+        mockNotebookEditable.setUserName(userName);
         entityManager.persist(mockNotebookEditable);
         return toNotebookEditable(mockNotebookEditable);
     }
@@ -101,24 +104,55 @@ public class MockNotebookClient implements NotebookVariableClient {
     }
 
     @Override
-    public NotebookEditableDTO createSavepoint(Long aLong, Long aLong1) throws Exception {
-        return null;
+    public NotebookEditableDTO createSavepoint(Long notebookId, Long editableId) throws Exception {
+        MockNotebookEditable mockNotebookEditable = entityManager.find(MockNotebookEditable.class, editableId);
+        if (mockNotebookEditable == null) {
+            throw new RuntimeException("Unknown editable id");
+        }
+        MockNotebookSavepoint mockNotebookSavepoint = new MockNotebookSavepoint();
+        mockNotebookSavepoint.setEditableId(editableId);
+        mockNotebookSavepoint.setNotebookId(notebookId);
+        entityManager.persist(mockNotebookSavepoint);
+        return toNotebookEditable(mockNotebookSavepoint);
     }
 
     @Override
-    public List<NotebookSavepointDTO> listSavepoints(Long aLong) throws Exception {
-        return null;
+    public List<NotebookSavepointDTO> listSavepoints(Long notebookId) throws Exception {
+        TypedQuery<MockNotebookSavepoint> query = entityManager.createQuery("select o from MockNotebookSavepoint o where o.notebookId = :notebookId", MockNotebookSavepoint.class);
+        query.setParameter("notebookId", notebookId);
+        List<NotebookSavepointDTO> list = new ArrayList<>();
+        for (MockNotebookSavepoint mockNotebookSavepoint : query.getResultList()) {
+            list.add(toNotebookSavepoint(mockNotebookSavepoint));
+        }
+        return list;
     }
 
     @Override
-    public NotebookSavepointDTO setSavepointDescription(Long aLong, Long aLong1, String s) throws Exception {
-        return null;
+    public NotebookSavepointDTO setSavepointDescription(Long notebookId, Long savepointId, String s) throws Exception {
+        MockNotebookSavepoint mockNotebookSavepoint = entityManager.find(MockNotebookSavepoint.class, savepointId);
+        mockNotebookSavepoint.setDescription(s);
+        return toNotebookSavepoint(mockNotebookSavepoint);
     }
 
     @Override
-    public NotebookSavepointDTO setSavepointLabel(Long aLong, Long aLong1, String s) throws Exception {
-        return null;
+    public NotebookSavepointDTO setSavepointLabel(Long notebookId, Long savepointId, String s) throws Exception {
+        MockNotebookSavepoint mockNotebookSavepoint = entityManager.find(MockNotebookSavepoint.class, savepointId);
+        mockNotebookSavepoint.setLabel(s);
+        return toNotebookSavepoint(mockNotebookSavepoint);
     }
+
+    private NotebookSavepointDTO toNotebookSavepoint(MockNotebookSavepoint mockNotebookSavepoint) {
+        String jsonString = mockNotebookSavepoint.getJson() == null ? null : new String(mockNotebookSavepoint.getJson());
+        NotebookCanvasDTO dto = null;
+        try {
+            dto = (jsonString == null ? null : JsonHandler.getInstance().objectFromJson(jsonString, NotebookCanvasDTO.class));
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to unmarshal canvas dto", e);
+        }
+
+        return new NotebookSavepointDTO(mockNotebookSavepoint.getId(), mockNotebookSavepoint.getNotebookId(), mockNotebookSavepoint.getEditableId(), null, null, null,  mockNotebookSavepoint.getDescription(), mockNotebookSavepoint.getDescription(), dto);
+    }
+
 
     @Override
     public String readTextValue(Long notebookId, Long editableId, String name, String key) throws Exception {
@@ -158,14 +192,6 @@ public class MockNotebookClient implements NotebookVariableClient {
         }
     }
 
-    private File resolveFile(Long notebookId, Long cellId, String variableName) throws Exception {
-        File root = new File(System.getProperty("user.home") + "/portal-files/" + notebookId + "/" + cellId);
-        if (!root.exists() && !root.mkdirs()) {
-            throw new IOException("Could not create " + root.getAbsolutePath());
-        }
-        File file = new File(root, URLEncoder.encode(variableName, "ISO-8859-1"));
-        return file;
-    }
 
     @Override
     public InputStream readStreamValue(Long aLong, String s, String s1, String s2) throws Exception {
@@ -241,7 +267,8 @@ public class MockNotebookClient implements NotebookVariableClient {
     public String oldReadTextValue(Long notebookId, Long cellId, String name) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            return readTextValue(notebookId, mockNotebookEditable.getId(), name, "DEFAULT");
+            CellInstance cellInstance = oldFindCellInstance(notebookId, cellId);
+            return readTextValue(notebookId, mockNotebookEditable.getId(), cellInstance.getId() + "." + name, "DEFAULT");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -250,7 +277,7 @@ public class MockNotebookClient implements NotebookVariableClient {
     public CellInstance oldFindCellInstance(Long notebookId, Long cellId) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            NotebookInstance notebookInstance = NotebookInstance.fromJsonString(new String(mockNotebookEditable.getJson()));
+            NotebookInstance notebookInstance = createNotebookInstanceFromMock(mockNotebookEditable);
             return notebookInstance.findCellInstanceById(cellId);
         } catch (Exception e) {
             throw new RuntimeException(e);
