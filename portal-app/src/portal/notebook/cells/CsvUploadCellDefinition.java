@@ -24,7 +24,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
     private final static long serialVersionUID = 1l;
 
     public CsvUploadCellDefinition() {
-        super(CELL_NAME, "CSV upload", "default_icon.png", new String[]{"file", "upload", "csv", "tab"});
+        super(CELL_NAME, "CSV upload", "icons/file_upload_basic.png", new String[]{"file", "upload", "csv", "tab"});
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
         getVariableDefinitionList().add(variableDefinition);
         variableDefinition  = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);

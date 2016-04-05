@@ -20,7 +20,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
     public static final String OPT_PREFIX = StepDefinitionConstants.ChemblActivitiesFetcher.OPTION_PREFIX;
 
     public ChemblActivitiesFetcherCellDefinition() {
-        super(CELL_NAME, "ChEMBL activities fetcher", "default_icon.png", new String[]{"chembl", "assay", "rest"});
+        super(CELL_NAME, "ChEMBL activities fetcher", "icons/import_external_service.png", new String[]{"chembl", "assay", "rest"});
         getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_ASSAY_ID, "Assay ID", "ChEMBL Asssay ID"));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_PREFIX, "Prefix", "Prefix for result fields"));

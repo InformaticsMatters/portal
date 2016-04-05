@@ -18,7 +18,7 @@ public class DatasetFilterGroovyCellDefinition extends CellDefinition {
 
 
     public DatasetFilterGroovyCellDefinition() {
-        super(CELL_NAME, "Filter dataset (Groovy)", "default_icon.png", new String[]{"script", "groovy", "filter", "dataset"});
+        super(CELL_NAME, "Filter dataset (Groovy)", "icons/program_filter.png", new String[]{"script", "groovy", "filter", "dataset"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(

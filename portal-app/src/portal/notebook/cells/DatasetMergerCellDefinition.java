@@ -20,7 +20,7 @@ public class DatasetMergerCellDefinition extends CellDefinition {
     private final static long serialVersionUID = 1l;
 
     public DatasetMergerCellDefinition() {
-        super(CELL_NAME, "Merge datasets into one", "default_icon.png", new String[]{"merge", "dataset"});
+        super(CELL_NAME, "Merge datasets into one", "icons/merge.png", new String[]{"merge", "dataset"});
         getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new DatasetsFieldOptionDescriptor(DatasetMerger.OPTION_MERGE_FIELD_NAME, "Merge field name", "Name of value field which identifies equivalent entries"));
         getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, DatasetMerger.OPTION_KEEP_FIRST, "When duplicate keep first", "When duplicate field name use the existing value rather than the new one")
