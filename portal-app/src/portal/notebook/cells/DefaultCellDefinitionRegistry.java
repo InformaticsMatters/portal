@@ -42,7 +42,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private static CellDefinition createTableDisplayCellDefinition() {
-        CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "icons/view.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
+        CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "icons/visualisation_table.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(VAR_NAME_INPUT);
@@ -60,7 +60,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private static CellDefinition createScatterPlotCellDefinition() {
-        CellDefinition cellDefinition = new SimpleCellDefinition("ScatterPlot", "Scatter plot", "icons/view.png", new String[]{"scatter", "plot", "visualization", "visualisation", "viz"}, false);
+        CellDefinition cellDefinition = new SimpleCellDefinition("ScatterPlot", "Scatter plot", "icons/visualisation_chart.png", new String[]{"scatter", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(VAR_NAME_INPUT);
@@ -88,7 +88,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private static CellDefinition createBoxPlotCellDefinition() {
-        CellDefinition cellDefinition = new SimpleCellDefinition("BoxPlot", "Box plot", "icons/view.png", new String[]{"box", "plot", "visualization", "visualisation", "viz"}, false);
+        CellDefinition cellDefinition = new SimpleCellDefinition("BoxPlot", "Box plot", "icons/visualisation_chart.png", new String[]{"box", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(VAR_NAME_INPUT);
