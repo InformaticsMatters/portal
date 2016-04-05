@@ -1,19 +1,21 @@
 <wicket:panel>
     <div>
-        <div class="field">
-            <form wicket:id="form">
+        <form wicket:id="form" class="ui form">
+            <div class="field">
                 <label>X axis field</label>
                 <select wicket:id="x" class="ui small input">
                 </select>
+            </div>
+            <div class="field">
                 <label>Y axis field</label>
                 <select wicket:id="y" class="ui small input">
                 </select>
-
-                <div class="actions">
-                    <input type="submit" wicket:id="save" style="width: 50px; padding: 5px;" class="ui mini button blue"
+            </div>
+            <div class="actions">
+                <input type="submit" wicket:id="save" style="width: 50px; padding: 5px;" class="ui mini button blue"
                        value="Save">
-                </div>
-            </form>
-        </div>
+            </div>
+        </form>
+
     </div>
 </wicket:panel>
