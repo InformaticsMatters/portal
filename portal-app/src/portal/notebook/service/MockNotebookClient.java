@@ -239,7 +239,7 @@ public class MockNotebookClient implements NotebookVariableClient {
     public void oldWriteStreamValue(Long notebookId, Long cellId, String name, InputStream dataInputStream) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            writeStreamValue(notebookId, null, cellId, name, dataInputStream, null);
+            writeStreamValue(notebookId, mockNotebookEditable.getId(), cellId, cellId + "." + name, dataInputStream, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

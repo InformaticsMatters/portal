@@ -1,11 +1,13 @@
 package portal.notebook.api;
 
+import chemaxon.marvin.view.MDocStorage;
 import org.squonk.notebook.api.*;
 import org.squonk.options.OptionDescriptor;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @XmlRootElement
@@ -162,31 +164,37 @@ public class NotebookInstance implements Serializable {
         setLastCellId(notebookCanvasDTO.getLastCellId());
         for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
             CellDefinition cellDefinition = cellDefinitionRegistry.findCellDefinition(cellDTO.getKey());
-            CellInstance cellInstance = new CellInstance();
-            cellInstance.setCellDefinition(cellDefinition);
-            cellInstance.setId(cellDTO.getId());
-            cellInstance.setName(cellDTO.getName());
-            cellInstance.setPositionLeft(cellDTO.getLeft());
-            cellInstance.setPositionTop(cellDTO.getTop());
-            cellInstance.setSizeHeight(cellDTO.getHeight());
-            cellInstance.setSizeWidth(cellDTO.getWidth());
-            configureCellInstance(cellInstance);
-            cellInstanceList.add(cellInstance);
-            for (NotebookCanvasDTO.OptionDTO optionDTO : cellDTO.getOptions()) {
-                OptionInstance optionInstance = cellInstance.getOptionInstanceMap().get(optionDTO.getKey());
-                if (optionInstance != null) {
-                    optionInstance.setValue(optionDTO.getValue());
+            if (cellDefinition == null) {
+                LOGGER.log(Level.WARNING, "Unknown cell definition: " + cellDTO.getKey());
+            } else {
+                CellInstance cellInstance = new CellInstance();
+                cellInstance.setCellDefinition(cellDefinition);
+                cellInstance.setId(cellDTO.getId());
+                cellInstance.setName(cellDTO.getName());
+                cellInstance.setPositionLeft(cellDTO.getLeft());
+                cellInstance.setPositionTop(cellDTO.getTop());
+                cellInstance.setSizeHeight(cellDTO.getHeight());
+                cellInstance.setSizeWidth(cellDTO.getWidth());
+                configureCellInstance(cellInstance);
+                cellInstanceList.add(cellInstance);
+                for (NotebookCanvasDTO.OptionDTO optionDTO : cellDTO.getOptions()) {
+                    OptionInstance optionInstance = cellInstance.getOptionInstanceMap().get(optionDTO.getKey());
+                    if (optionInstance != null) {
+                        optionInstance.setValue(optionDTO.getValue());
+                    }
                 }
             }
         }
 
         for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
             CellInstance cellInstance = findCellInstanceById(cellDTO.getId());
-            for (NotebookCanvasDTO.BindingDTO bindingDTO : cellDTO.getBindings()) {
-                BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(bindingDTO.getVariableKey());
-                if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
-                    VariableInstance variableInstance = findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
-                    bindingInstance.setVariableInstance(variableInstance);
+            if (cellInstance != null) {
+                for (NotebookCanvasDTO.BindingDTO bindingDTO : cellDTO.getBindings()) {
+                    BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(bindingDTO.getVariableKey());
+                    if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
+                        VariableInstance variableInstance = findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
+                        bindingInstance.setVariableInstance(variableInstance);
+                    }
                 }
             }
         }

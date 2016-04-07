@@ -41,7 +41,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     public ThreeDimMolCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
         CellInstance cellInstance = findCellInstance();
-        if (cellInstance.getSizeWidth() == 0) {
+        if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeWidth(500);
             cellInstance.setSizeHeight(250);
         }

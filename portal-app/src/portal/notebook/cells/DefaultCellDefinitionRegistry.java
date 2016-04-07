@@ -26,21 +26,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     @Inject
     private ServiceCellsProvider serviceCellsProvider;
 
-    public DefaultCellDefinitionRegistry() {
-        registerCellDefinition(new ChemblActivitiesFetcherCellDefinition());
-        registerCellDefinition(createTableDisplayCellDefinition());
-        registerCellDefinition(createScatterPlotCellDefinition());
-        registerCellDefinition(createBoxPlotCellDefinition());
-        registerCellDefinition(create3DMolCellDefinition());
-        registerCellDefinition(new CsvUploadCellDefinition());
-        registerCellDefinition(new SdfUploadCellDefinition());
-        registerCellDefinition(new DatasetMergerCellDefinition());
-        registerCellDefinition(new ConvertToMoleculesCellDefinition());
-        registerCellDefinition(new DatasetFilterGroovyCellDefinition());
-        registerCellDefinition(new TransformValuesCellDefinition());
-        registerCellDefinition(new ProcessDatasetTrustedGroovyScriptCellDefinition());
-        registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
-    }
 
     private static CellDefinition createTableDisplayCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "icons/visualisation_table.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
@@ -106,10 +91,29 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     public Collection<CellDefinition> listCellDefinition() {
-        List<CellDefinition> definitionList = new ArrayList<>();
-        definitionList.addAll(cellDefinitionMap.values());
-        definitionList.addAll(serviceCellsProvider.listServiceCellDefinition());
-        return definitionList;
+        if (cellDefinitionMap.isEmpty()) {
+            loadCellDefinitions();
+        }
+       return cellDefinitionMap.values();
+    }
+
+    private void loadCellDefinitions() {
+        registerCellDefinition(new ChemblActivitiesFetcherCellDefinition());
+        registerCellDefinition(createTableDisplayCellDefinition());
+        registerCellDefinition(createScatterPlotCellDefinition());
+        registerCellDefinition(createBoxPlotCellDefinition());
+        registerCellDefinition(create3DMolCellDefinition());
+        registerCellDefinition(new CsvUploadCellDefinition());
+        registerCellDefinition(new SdfUploadCellDefinition());
+        registerCellDefinition(new DatasetMergerCellDefinition());
+        registerCellDefinition(new ConvertToMoleculesCellDefinition());
+        registerCellDefinition(new DatasetFilterGroovyCellDefinition());
+        registerCellDefinition(new TransformValuesCellDefinition());
+        registerCellDefinition(new ProcessDatasetTrustedGroovyScriptCellDefinition());
+        registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
+        for (CellDefinition cellDefinition : serviceCellsProvider.listServiceCellDefinition()) {
+            cellDefinitionMap.put(cellDefinition.getName(), cellDefinition);
+        }
     }
 
     public CellDefinition findCellDefinition(String name) {

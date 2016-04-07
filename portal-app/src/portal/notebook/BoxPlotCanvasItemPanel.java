@@ -29,7 +29,8 @@ public class BoxPlotCanvasItemPanel extends CanvasItemPanel {
     public BoxPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
         CellInstance cellInstance = findCellInstance();
-        if (cellInstance.getSizeWidth() == 0) {
+        if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
+            cellInstance.setSizeHeight(250);
             cellInstance.setSizeWidth(780);
         }
         addForm();
