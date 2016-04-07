@@ -29,7 +29,7 @@ public class MockJobStatusService {
 
     private static final Logger LOGGER = Logger.getLogger(MockJobStatusService.class.getName());
     @Inject
-    private NotebookVariableClient mockNotebookClient;
+    private NotebookVariableClient notebookVariableClient;
 
     @Path("execute")
     @POST
@@ -57,19 +57,19 @@ public class MockJobStatusService {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
         try (Stream stream = generator.getAsStream()) {
             InputStream dataInputStream = generator.getAsInputStream(stream, true);
-            mockNotebookClient.writeStreamValue(notebookId, editableId, cellId, cellId + "." + name, dataInputStream);
+            notebookVariableClient.writeStreamValue(notebookId, editableId, cellId, cellId + "." + name, dataInputStream);
         }
         DatasetMetadata metadata = generator.getDatasetMetadata();
         String jsonTring = JsonHandler.getInstance().objectToJson(metadata);
-        mockNotebookClient.writeTextValue(notebookId, editableId, cellId, cellId + "." + name, jsonTring);
-        String storedValue = mockNotebookClient.readTextValue(notebookId, editableId, cellId + "." + name);
+        notebookVariableClient.writeTextValue(notebookId, editableId, cellId, cellId + "." + name, jsonTring);
+        String storedValue = notebookVariableClient.readTextValue(notebookId, editableId, cellId + "." + name);
         if (!jsonTring.equals(storedValue)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }
     }
 
     private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {
-        List<NotebookEditableDTO> editableList = mockNotebookClient.listEditables(jobDefinition.getNotebookId(), "user1");
+        List<NotebookEditableDTO> editableList = notebookVariableClient.listEditables(jobDefinition.getNotebookId(), "user1");
         NotebookEditableDTO editableDTO = editableList.get(0);
         NotebookCanvasDTO notebookCanvasDTO = editableDTO.getCanvasDTO();
         NotebookCanvasDTO.CellDTO cellDTO = findCell(notebookCanvasDTO, jobDefinition.getCellId());
