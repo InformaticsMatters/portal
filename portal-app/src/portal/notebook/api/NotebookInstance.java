@@ -3,6 +3,7 @@ package portal.notebook.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.squonk.notebook.api.*;
 import org.squonk.options.OptionDescriptor;
+import portal.notebook.cells.SimpleCellDefinition;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -137,7 +138,7 @@ public class NotebookInstance implements Serializable {
             NotebookCanvasDTO.CellDTO cellDTO = new NotebookCanvasDTO.CellDTO(
                     cell.getId(),
                     1L, // TODO handle versioning of cells. For now everything is version 1
-                    cell.getCellDefinition().getClass().getName(), // TODO should there be a specific key for the cell definition?
+                    cell.getCellDefinition().getName(), // TODO should there be a specific key for the cell definition?
                     cell.getName(), // TODO allow user to change the cell name in UI
                     cell.getPositionTop(),
                     cell.getPositionLeft(),
@@ -163,10 +164,10 @@ public class NotebookInstance implements Serializable {
         return dto;
     }
 
-    public static NotebookInstance fromNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO) {
+    public static NotebookInstance fromNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO, CellDefinitionRegistry cellDefinitionRegistry) {
         NotebookInstance notebookInstance = new NotebookInstance(notebookCanvasDTO.getLastCellId());
         for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
-            CellDefinition cellDefinition = (CellDefinition)newInstance(cellDTO.getKey());
+            CellDefinition cellDefinition = cellDefinitionRegistry.findCellDefinition(cellDTO.getKey());
             CellInstance cellInstance = notebookInstance.addCellInstance(cellDefinition);
             cellInstance.setId(cellDTO.getId());
             cellInstance.setName(cellDTO.getName());
@@ -193,14 +194,6 @@ public class NotebookInstance implements Serializable {
             }
         }
         return notebookInstance;
-    }
-
-    private static Object newInstance(String className) {
-        try {
-            return Class.forName(className).newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public Long getLastCellId() {

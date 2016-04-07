@@ -113,7 +113,7 @@ public class NotebookSession implements Serializable {
                 currentNotebookEditableId = null;
             } else {
                 NotebookCanvasDTO notebookCanvasDTO = currentNotebookEditable.getCanvasDTO();
-                currentNotebookInstance = notebookCanvasDTO == null ? new NotebookInstance() : NotebookInstance.fromNotebookCanvasDTO(notebookCanvasDTO);
+                currentNotebookInstance = notebookCanvasDTO == null ? new NotebookInstance() : NotebookInstance.fromNotebookCanvasDTO(notebookCanvasDTO, cellDefinitionRegistry);
                 if (currentNotebookInstance == null) { // is this needed?
                     currentNotebookInstance = new NotebookInstance();
                 }

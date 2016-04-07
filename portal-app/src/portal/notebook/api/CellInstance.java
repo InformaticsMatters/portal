@@ -17,8 +17,8 @@ public class CellInstance implements Serializable {
     private final Map<String, OptionInstance> optionInstanceMap = new LinkedHashMap<>();
     private Long id;
     private String name;
-    private int positionLeft;
-    private int positionTop;
+    private Integer positionLeft;
+    private Integer positionTop;
     private Integer sizeWidth;
     private Integer sizeHeight;
 
@@ -58,19 +58,19 @@ public class CellInstance implements Serializable {
         return optionInstanceMap;
     }
 
-    public int getPositionLeft() {
+    public Integer getPositionLeft() {
         return positionLeft;
     }
 
-    public void setPositionLeft(int positionLeft) {
+    public void setPositionLeft(Integer positionLeft) {
         this.positionLeft = positionLeft;
     }
 
-    public int getPositionTop() {
+    public Integer getPositionTop() {
         return positionTop;
     }
 
-    public void setPositionTop(int positionTop) {
+    public void setPositionTop(Integer positionTop) {
         this.positionTop = positionTop;
     }
 

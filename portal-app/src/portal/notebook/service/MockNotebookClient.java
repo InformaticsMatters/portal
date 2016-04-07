@@ -248,7 +248,7 @@ public class MockNotebookClient implements NotebookVariableClient {
     public void oldWriteTextValue(Long notebookId, Long cellId, String name, String value) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            writeTextValue(notebookId, mockNotebookEditable.getId(), cellId, name, value);
+            writeTextValue(notebookId, mockNotebookEditable.getId(), cellId, cellId + "." + name, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

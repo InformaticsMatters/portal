@@ -6,6 +6,7 @@ import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.notebook.api.NotebookDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
 import org.squonk.notebook.api.NotebookSavepointDTO;
+import portal.notebook.api.CellDefinitionRegistry;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.NotebookInstance;
 import portal.notebook.api.VariableInstance;
@@ -25,6 +26,8 @@ public class NotebookClientHarness extends AbstractTestCase {
     public static final String USER_NAME = "user1";
     @Inject
     private NotebookVariableClient notebookClient;
+    @Inject
+    private CellDefinitionRegistry cellDefinitionRegistry;
     private String testPrefix;
     private NotebookDTO notebookDescriptor;
     private NotebookEditableDTO notebookEditable;
@@ -65,7 +68,7 @@ public class NotebookClientHarness extends AbstractTestCase {
         if (!canvas1.getLastCellId().equals(canvas2.getLastCellId())) {
             throw new RuntimeException("Different content");
         }
-        NotebookInstance notebookInstance = NotebookInstance.fromNotebookCanvasDTO(canvas2);
+        NotebookInstance notebookInstance = NotebookInstance.fromNotebookCanvasDTO(canvas2, cellDefinitionRegistry);
         CellInstance cellInstance = notebookInstance.addCellInstance(new ChemblActivitiesFetcherCellDefinition());
         cellInstance.setSizeWidth(267);
         cellInstance.setSizeHeight(167);
@@ -73,7 +76,7 @@ public class NotebookClientHarness extends AbstractTestCase {
         cellInstance.setPositionLeft(1);
         notebookClient.updateEditable(notebookEditable.getNotebookId(), notebookEditable.getId(), notebookInstance.toNotebookCanvasDTO());
         notebookEditable = notebookClient.listEditables(notebookDescriptor.getId(), USER_NAME).get(0);
-        notebookInstance = NotebookInstance.fromNotebookCanvasDTO(notebookEditable.getCanvasDTO());
+        notebookInstance = NotebookInstance.fromNotebookCanvasDTO(notebookEditable.getCanvasDTO(), cellDefinitionRegistry);
         cellInstance = notebookInstance.getCellInstanceList().get(0);
         VariableInstance outputVariableInstance = cellInstance.getVariableInstanceMap().values().iterator().next();
         notebookClient.writeTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), cellInstance.getId(), outputVariableInstance.getVariableDefinition().getName(), "test");
