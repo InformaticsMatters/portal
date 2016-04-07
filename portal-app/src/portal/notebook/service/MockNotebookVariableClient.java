@@ -25,7 +25,7 @@ import java.util.List;
 @Alternative
 @RequestScoped
 @Transactional
-public class MockNotebookClient implements NotebookVariableClient {
+public class MockNotebookVariableClient implements NotebookVariableClient {
     @Inject
     @PU(puName = PortalConstants.PU_NAME)
     private EntityManager entityManager;
@@ -64,10 +64,10 @@ public class MockNotebookClient implements NotebookVariableClient {
     }
 
     @Override
-    public List<NotebookEditableDTO> listEditables(Long aLong, String s) throws Exception {
-        TypedQuery<MockNotebookEditable> query = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId and o.userName = :userName", MockNotebookEditable.class);
+    public List<NotebookEditableDTO> listEditables(Long aLong, String userName) throws Exception {
+        TypedQuery<MockNotebookEditable> query = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId and o.userName = :userName order by o.id", MockNotebookEditable.class);
         query.setParameter("notebookId", aLong);
-        query.setParameter("userName", s);
+        query.setParameter("userName", userName);
         List<NotebookEditableDTO> list = new ArrayList<>();
         for (MockNotebookEditable mockNotebookEditable : query.getResultList()) {
             list.add(toNotebookEditable(mockNotebookEditable));
@@ -171,7 +171,7 @@ public class MockNotebookClient implements NotebookVariableClient {
         if (mockVariable == null) {
             TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
             editableQuery.setParameter("notebookId", notebookId);
-            MockNotebookEditable mockNotebookEditable = editableQuery.getResultList().get(0);
+            MockNotebookEditable mockNotebookEditable = entityManager.find(MockNotebookEditable.class, editableId);
             mockVariable = new MockVariable();
             mockVariable.setMockNotebookEditable(mockNotebookEditable);
             mockVariable.setCellId(cellId);

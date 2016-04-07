@@ -4,13 +4,13 @@ import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.types.MoleculeObject;
-import org.squonk.client.NotebookClient;
+import org.squonk.client.NotebookVariableClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.NotebookCanvasDTO;
+import org.squonk.notebook.api.NotebookEditableDTO;
 import org.squonk.types.io.JsonHandler;
-import portal.notebook.api.CellInstance;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,7 +18,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Logger;
@@ -30,20 +29,23 @@ public class MockJobStatusService {
 
     private static final Logger LOGGER = Logger.getLogger(MockJobStatusService.class.getName());
     @Inject
-    private MockNotebookClient mockNotebookClient;
+    private NotebookVariableClient mockNotebookClient;
 
     @Path("execute")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void execute(JobDefinition jobDefinition) {
-        if (jobDefinition instanceof ExecuteCellUsingStepsJobDefinition) {
-            ExecuteCellUsingStepsJobDefinition executeCellUsingStepsJobDefinition = (ExecuteCellUsingStepsJobDefinition) jobDefinition;
-            processStepsJobDefinition(executeCellUsingStepsJobDefinition);
+        try {
+            if (jobDefinition instanceof ExecuteCellUsingStepsJobDefinition) {
+                ExecuteCellUsingStepsJobDefinition executeCellUsingStepsJobDefinition = (ExecuteCellUsingStepsJobDefinition) jobDefinition;
+                processStepsJobDefinition(executeCellUsingStepsJobDefinition);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        LOGGER.info("Job definition processed");
     }
 
-    private JobStatus processStepsJobDefinition(ExecuteCellUsingStepsJobDefinition jobDefinition) {
+    private JobStatus processStepsJobDefinition(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {
         if (jobDefinition.getSteps()[0].getImplementationClass().equals(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)) {
             return processChemblActivitiesFetcher(jobDefinition);
         } else {
@@ -55,24 +57,36 @@ public class MockJobStatusService {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
         try (Stream stream = generator.getAsStream()) {
             InputStream dataInputStream = generator.getAsInputStream(stream, true);
-            mockNotebookClient.writeStreamValue(notebookId, editableId, cellId, name, dataInputStream);
+            mockNotebookClient.writeStreamValue(notebookId, editableId, cellId, cellId + "." + name, dataInputStream);
         }
         DatasetMetadata metadata = generator.getDatasetMetadata();
         String jsonTring = JsonHandler.getInstance().objectToJson(metadata);
-        mockNotebookClient.writeTextValue(notebookId,editableId, cellId, name, jsonTring);
-        String storedValue = mockNotebookClient.readTextValue(notebookId, cellId, name);
-        if (!storedValue.equals(jsonTring)) {
+        mockNotebookClient.writeTextValue(notebookId, editableId, cellId, cellId + "." + name, jsonTring);
+        String storedValue = mockNotebookClient.readTextValue(notebookId, editableId, cellId + "." + name);
+        if (!jsonTring.equals(storedValue)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }
     }
 
-    private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) {
-        NotebookCanvasDTO.CellDTO cellDTO = mockNotebookClient.findCell(jobDefinition.getNotebookId(), jobDefinition.getCellId());
+    private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {
+        List<NotebookEditableDTO> editableList = mockNotebookClient.listEditables(jobDefinition.getNotebookId(), "user1");
+        NotebookEditableDTO editableDTO = editableList.get(0);
+        NotebookCanvasDTO notebookCanvasDTO = editableDTO.getCanvasDTO();
+        NotebookCanvasDTO.CellDTO cellDTO = findCell(notebookCanvasDTO, jobDefinition.getCellId());
         Dataset<MoleculeObject> dataset = createMockDataset((String)(findOptionValue(cellDTO, "prefix")));
         try {
             writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), "output", dataset);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private NotebookCanvasDTO.CellDTO findCell(NotebookCanvasDTO notebookCanvasDTO, Long cellId) {
+        for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
+            if (cellDTO.getId().equals(cellId)) {
+                return cellDTO;
+            }
         }
         return null;
     }
