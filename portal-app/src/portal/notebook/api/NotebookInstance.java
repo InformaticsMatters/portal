@@ -1,14 +1,10 @@
 package portal.notebook.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.squonk.notebook.api.*;
 import org.squonk.options.OptionDescriptor;
-import org.squonk.types.io.JsonHandler;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Logger;
@@ -17,7 +13,7 @@ import java.util.logging.Logger;
 public class NotebookInstance implements Serializable {
     private final static long serialVersionUID = 1l;
 
-    private static final Logger LOG = Logger.getLogger(NotebookInstance.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(NotebookInstance.class.getName());
     private final List<Long> removedCellIdList = new ArrayList<>();
     private final List<CellInstance> cellInstanceList = new ArrayList<>();
     private Long lastCellId;
@@ -134,109 +130,29 @@ public class NotebookInstance implements Serializable {
         }
     }
 
-    public void applyChangesFrom(NotebookInstance notebookInstance) {
-        for (Long cellId : notebookInstance.removedCellIdList) {
-            removeCellInstance(cellId);
-        }
-        for (CellInstance cellInstance : notebookInstance.cellInstanceList) {
-            CellInstance localCellInstance = findCellInstanceById(cellInstance.getId());
-            if (localCellInstance == null) {
-                cellInstanceList.add(cellInstance);
-                lastCellId = cellInstance.getId();
-            }  else {
-                applyCellChanges(cellInstance, localCellInstance);
-            }
-        }
-    }
 
-    private void applyCellChanges(CellInstance cellInstance, CellInstance localCellInstance) {
-        if (cellInstance.isDirty()) {
-           localCellInstance.setPositionLeft(cellInstance.getPositionLeft());
-           localCellInstance.setPositionTop(cellInstance.getPositionTop());
-           localCellInstance.setSizeHeight(cellInstance.getSizeHeight());
-           localCellInstance.setSizeWidth(cellInstance.getSizeWidth());
-        }
-        for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
-            if (optionInstance.isDirty()) {
-                localCellInstance.getOptionInstanceMap().get(optionInstance.getOptionDescriptor().getkey()).setValue(optionInstance.getValue());
-            }
-        }
-        for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
-            if (bindingInstance.isDirty()) {
-                if (bindingInstance.getVariableInstance() == null) {
-                    localCellInstance.getBindingInstanceMap().get(bindingInstance.getName()).setVariableInstance(null);
-                } else {
-                    VariableInstance variableInstance = findVariableByCellId(bindingInstance.getVariableInstance().getCellId(), bindingInstance.getVariableInstance().getVariableDefinition().getName());
-                    localCellInstance.getBindingInstanceMap().get(bindingInstance.getName()).setVariableInstance(variableInstance);
-                }
-            }
-        }
-    }
-
-    public void resetDirty() {
-        removedCellIdList.clear();
-        for (CellInstance cellInstance : cellInstanceList) {
-            cellInstance.resetDirty();
-        }
-    }
-
-//    public static NotebookInstance fromJsonString(String string) throws Exception {
-//        if (string == null) {
-//            return null;
-//        } else {
-//            NotebookCanvasDTO dto = JsonHandler.getInstance().objectFromJson(string, NotebookCanvasDTO.class);
-//            return fromCanvasDTO(dto);
-//        }
-//    }
-
-    protected void fixReferences() {
-        for (CellInstance cellInstance : cellInstanceList) {
-            for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
-                VariableInstance variableInstance = bindingInstance.getVariableInstance();
-                 if (variableInstance != null) {
-                     bindingInstance.setVariableInstance(findVariableByCellId(variableInstance.getCellId(), variableInstance.getVariableDefinition().getName()));
-                 }
-            }
-        }
-
-    }
-
-//    public String toJsonString() throws IOException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        objectMapper.writeValue(byteArrayOutputStream, this);
-//        byteArrayOutputStream.flush();
-//        return new String(byteArrayOutputStream.toByteArray());
-//    }
-
-    public NotebookCanvasDTO toCanvasDTO() {
+    public NotebookCanvasDTO toNotebookCanvasDTO() {
         NotebookCanvasDTO dto = new NotebookCanvasDTO(getLastCellId());
         for (CellInstance cell : getCellInstanceList()) {
-
-            // cells
             NotebookCanvasDTO.CellDTO cellDTO = new NotebookCanvasDTO.CellDTO(
                     cell.getId(),
                     1L, // TODO handle versioning of cells. For now everything is version 1
-                    cell.getCellDefinition().getName(), // TODO should there be a specific key for the cell definition?
+                    cell.getCellDefinition().getClass().getName(), // TODO should there be a specific key for the cell definition?
                     cell.getName(), // TODO allow user to change the cell name in UI
                     cell.getPositionTop(),
                     cell.getPositionLeft(),
                     cell.getSizeWidth(), // TODO set to null if cell is not resizable
                     cell.getSizeHeight() // TODO set to null if cell is not resizable
                     );
-
             dto.addCell(cellDTO);
-
-            // bindings
             for (BindingInstance b :cell.getBindingInstanceMap().values()) {
+                VariableInstance variableInstance = b.getVariableInstance();
                 cellDTO.addBinding(new NotebookCanvasDTO.BindingDTO(
-                        b.getName(), // String variableKey TODO - is this correct?
-                        b.getVariableInstance().getCellId(), // Long producerId
-                        b.getVariableInstance().getVariableDefinition().getName() // String producerVariableName TODO - is this correct?
+                        b.getName(), // this is correct. It is NOT hte variable key. dto prop name should be "name"
+                        variableInstance == null ? null : variableInstance.getCellId(), // Long producerId
+                        variableInstance == null ? null : variableInstance.getVariableDefinition().getName() // String producerVariableName TODO - is this correct?
                         ));
             }
-
-            // options
             for (OptionInstance option : cell.getOptionInstanceMap().values()) {
                 cellDTO.addOption(new NotebookCanvasDTO.OptionDTO(
                         option.getOptionDescriptor().getkey(), // String key
@@ -244,21 +160,47 @@ public class NotebookInstance implements Serializable {
                 ));
             }
         }
-
         return dto;
     }
 
-    public static NotebookInstance fromCanvasDTO(NotebookCanvasDTO dto) {
-        if (dto == null) {
-            // TODO - review this. Will it only ever be null the first time?
-            return new NotebookInstance(1L);
+    public static NotebookInstance fromNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO) {
+        NotebookInstance notebookInstance = new NotebookInstance(notebookCanvasDTO.getLastCellId());
+        for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
+            CellDefinition cellDefinition = (CellDefinition)newInstance(cellDTO.getKey());
+            CellInstance cellInstance = notebookInstance.addCellInstance(cellDefinition);
+            cellInstance.setId(cellDTO.getId());
+            cellInstance.setName(cellDTO.getName());
+            cellInstance.setPositionLeft(cellDTO.getLeft());
+            cellInstance.setPositionTop(cellDTO.getTop());
+            cellInstance.setSizeHeight(cellDTO.getHeight());
+            cellInstance.setSizeWidth(cellDTO.getWidth());
+            for (NotebookCanvasDTO.OptionDTO optionDTO : cellDTO.getOptions()) {
+                OptionInstance optionInstance = cellInstance.getOptionInstanceMap().get(optionDTO.getKey());
+                if (optionInstance != null) {
+                    optionInstance.setValue(optionDTO.getValue());
+                }
+            }
         }
 
-        NotebookInstance instance = new NotebookInstance(dto.getLastCellId());
-        // TODO - handle the cells, bindings and options
+        for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
+            CellInstance cellInstance = notebookInstance.findCellInstanceById(cellDTO.getId());
+            for (NotebookCanvasDTO.BindingDTO bindingDTO : cellDTO.getBindings()) {
+                BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(bindingDTO.getVariableKey());
+                if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
+                    VariableInstance variableInstance = notebookInstance.findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
+                    bindingInstance.setVariableInstance(variableInstance);
+                }
+            }
+        }
+        return notebookInstance;
+    }
 
-        instance.fixReferences();
-        return instance;
+    private static Object newInstance(String className) {
+        try {
+            return Class.forName(className).newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Long getLastCellId() {

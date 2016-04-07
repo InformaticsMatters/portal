@@ -19,9 +19,8 @@ public class CellInstance implements Serializable {
     private String name;
     private int positionLeft;
     private int positionTop;
-    private int sizeWidth;
-    private int sizeHeight;
-    private boolean dirty = false;
+    private Integer sizeWidth;
+    private Integer sizeHeight;
 
     public String getName() {
         return name;
@@ -64,7 +63,6 @@ public class CellInstance implements Serializable {
     }
 
     public void setPositionLeft(int positionLeft) {
-        dirty = true;
         this.positionLeft = positionLeft;
     }
 
@@ -73,43 +71,23 @@ public class CellInstance implements Serializable {
     }
 
     public void setPositionTop(int positionTop) {
-        dirty = true;
         this.positionTop = positionTop;
     }
 
-    public int getSizeWidth() {
+    public Integer getSizeWidth() {
         return sizeWidth;
     }
 
-    public void setSizeWidth(int sizeWidth) {
-        dirty = true;
+    public void setSizeWidth(Integer sizeWidth) {
         this.sizeWidth = sizeWidth;
     }
 
-    public int getSizeHeight() {
+    public Integer getSizeHeight() {
         return sizeHeight;
     }
 
-    public void setSizeHeight(int sizeHeight) {
-        dirty = true;
+    public void setSizeHeight(Integer sizeHeight) {
         this.sizeHeight = sizeHeight;
     }
 
-    @JsonIgnore
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public void resetDirty() {
-        dirty = false;
-        for (VariableInstance variableInstance : variableInstanceMap.values()) {
-            variableInstance.resetDirty();
-        }
-        for (OptionInstance optionInstance : optionInstanceMap.values()) {
-            optionInstance.resetDirty();
-        }
-        for (BindingInstance bindingInstance : bindingInstanceMap.values()) {
-            bindingInstance.resetDirty();
-        }
-    }
 }

@@ -85,7 +85,7 @@ public abstract class CellDefinition implements Serializable {
     }
 
     public Boolean getExecutable() {
-        return this.executable;
+        return executable;
     }
 
     public void setExecutable(Boolean executable) {

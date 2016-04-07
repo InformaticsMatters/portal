@@ -6,6 +6,7 @@ import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.client.NotebookVariableClient;
+import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.notebook.api.NotebookDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
 import portal.SessionContext;
@@ -111,7 +112,8 @@ public class NotebookSession implements Serializable {
                 currentNotebookInstance = new NotebookInstance();
                 currentNotebookEditableId = null;
             } else {
-                currentNotebookInstance = NotebookInstance.fromCanvasDTO(currentNotebookEditable.getCanvasDTO());
+                NotebookCanvasDTO notebookCanvasDTO = currentNotebookEditable.getCanvasDTO();
+                currentNotebookInstance = notebookCanvasDTO == null ? new NotebookInstance() : NotebookInstance.fromNotebookCanvasDTO(notebookCanvasDTO);
                 if (currentNotebookInstance == null) { // is this needed?
                     currentNotebookInstance = new NotebookInstance();
                 }
@@ -140,7 +142,7 @@ public class NotebookSession implements Serializable {
                 NotebookEditableDTO currentNotebookEditable = notebookClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
                 currentNotebookEditableId = currentNotebookEditable.getId();
             } else {
-                notebookClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, currentNotebookInstance.toCanvasDTO());
+                notebookClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, currentNotebookInstance.toNotebookCanvasDTO());
             }
             reloadCurrentNotebook();
         } catch (Exception e) {

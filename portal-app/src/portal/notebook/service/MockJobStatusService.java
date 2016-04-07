@@ -8,6 +8,7 @@ import org.squonk.client.NotebookClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.types.io.JsonHandler;
 import portal.notebook.api.CellInstance;
 
@@ -29,7 +30,7 @@ public class MockJobStatusService {
 
     private static final Logger LOGGER = Logger.getLogger(MockJobStatusService.class.getName());
     @Inject
-    private NotebookClient mockNotebookClient;
+    private MockNotebookClient mockNotebookClient;
 
     @Path("execute")
     @POST
@@ -54,24 +55,33 @@ public class MockJobStatusService {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
         try (Stream stream = generator.getAsStream()) {
             InputStream dataInputStream = generator.getAsInputStream(stream, true);
-            ((MockNotebookClient)mockNotebookClient).oldWriteStreamValue(notebookId, cellId, name, dataInputStream);
+            mockNotebookClient.oldWriteStreamValue(notebookId, cellId, name, dataInputStream);
         }
         DatasetMetadata metadata = generator.getDatasetMetadata();
         String jsonTring = JsonHandler.getInstance().objectToJson(metadata);
-        ((MockNotebookClient)mockNotebookClient).oldWriteTextValue(notebookId, cellId, name, jsonTring);
-        String storedValue = ((MockNotebookClient)mockNotebookClient).oldReadTextValue(notebookId, cellId, name);
+        mockNotebookClient.oldWriteTextValue(notebookId, cellId, name, jsonTring);
+        String storedValue = mockNotebookClient.oldReadTextValue(notebookId, cellId, name);
         if (!storedValue.equals(jsonTring)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }
     }
 
     private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) {
-        CellInstance cellInstance = ((MockNotebookClient)mockNotebookClient).oldFindCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellId());
-        Dataset<MoleculeObject> dataset = createMockDataset((String)cellInstance.getOptionInstanceMap().get("prefix").getValue());
+        NotebookCanvasDTO.CellDTO cellDTO = mockNotebookClient.findCell(jobDefinition.getNotebookId(), jobDefinition.getCellId());
+        Dataset<MoleculeObject> dataset = createMockDataset((String)(findOptionValue(cellDTO, "prefix")));
         try {
             writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellId(), "output", dataset);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private Object findOptionValue(NotebookCanvasDTO.CellDTO cellDTO, String prefix) {
+        for (NotebookCanvasDTO.OptionDTO optionDTO : cellDTO.getOptions()) {
+            if (optionDTO.getKey().equals("prefix")) {
+                return optionDTO.getValue();
+            }
         }
         return null;
     }

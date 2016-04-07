@@ -37,7 +37,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     public TableDisplayCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
         CellInstance cellInstance = findCellInstance();
-        if (cellInstance.getSizeWidth() == 0) {
+        if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeWidth(500);
         }
         setOutputMarkupId(true);

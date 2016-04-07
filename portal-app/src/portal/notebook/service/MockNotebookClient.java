@@ -235,19 +235,11 @@ public class MockNotebookClient implements NotebookVariableClient {
         return query.getResultList().isEmpty() ? null : query.getResultList().get(0);
     }
 
-    private NotebookInstance createNotebookInstanceFromMock(MockNotebookEditable mockNotebookEditable) throws IOException {
-        byte[] json = mockNotebookEditable.getJson();
-        NotebookCanvasDTO canvas = JsonHandler.getInstance().objectFromJson(new String(json),NotebookCanvasDTO.class);
-        return NotebookInstance.fromCanvasDTO(canvas);
-    }
-
 
     public void oldWriteStreamValue(Long notebookId, Long cellId, String name, InputStream dataInputStream) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            NotebookInstance notebookInstance = createNotebookInstanceFromMock(mockNotebookEditable);
-            VariableInstance variableInstance = notebookInstance.findVariableByCellId(cellId, name);
-            writeStreamValue(notebookId, null, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), dataInputStream, null);
+            writeStreamValue(notebookId, null, cellId, name, dataInputStream, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -256,9 +248,7 @@ public class MockNotebookClient implements NotebookVariableClient {
     public void oldWriteTextValue(Long notebookId, Long cellId, String name, String value) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            NotebookInstance notebookInstance = createNotebookInstanceFromMock(mockNotebookEditable);
-            CellInstance cellInstance = notebookInstance.findCellInstanceById(cellId);
-            writeTextValue(notebookId, mockNotebookEditable.getId(), cellInstance.getId(), name, value);
+            writeTextValue(notebookId, mockNotebookEditable.getId(), cellId, name, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -267,18 +257,22 @@ public class MockNotebookClient implements NotebookVariableClient {
     public String oldReadTextValue(Long notebookId, Long cellId, String name) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            CellInstance cellInstance = oldFindCellInstance(notebookId, cellId);
-            return readTextValue(notebookId, mockNotebookEditable.getId(), cellInstance.getId() + "." + name, "DEFAULT");
+            return readTextValue(notebookId, mockNotebookEditable.getId(), cellId + "." + name, "DEFAULT");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public CellInstance oldFindCellInstance(Long notebookId, Long cellId) {
+    public NotebookCanvasDTO.CellDTO findCell(Long notebookId, Long cellId) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            NotebookInstance notebookInstance = createNotebookInstanceFromMock(mockNotebookEditable);
-            return notebookInstance.findCellInstanceById(cellId);
+            NotebookCanvasDTO notebookCanvasDTO = JsonHandler.getInstance().objectFromJson(new String(mockNotebookEditable.getJson()), NotebookCanvasDTO.class);
+            for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
+                if (cellDTO.getId().equals(cellId)) {
+                    return cellDTO;
+                }
+            }
+            return null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
