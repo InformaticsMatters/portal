@@ -3,6 +3,7 @@ package portal.notebook;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
+import org.jcamp.spectrum.notes.Note;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.client.NotebookVariableClient;
@@ -113,7 +114,10 @@ public class NotebookSession implements Serializable {
                 currentNotebookEditableId = null;
             } else {
                 NotebookCanvasDTO notebookCanvasDTO = currentNotebookEditable.getCanvasDTO();
-                currentNotebookInstance = notebookCanvasDTO == null ? new NotebookInstance() : NotebookInstance.fromNotebookCanvasDTO(notebookCanvasDTO, cellDefinitionRegistry);
+                currentNotebookInstance = new NotebookInstance();
+                if (notebookCanvasDTO != null) {
+                    currentNotebookInstance.loadNotebookCanvasDTO(notebookCanvasDTO, cellDefinitionRegistry);
+                }
                 if (currentNotebookInstance == null) { // is this needed?
                     currentNotebookInstance = new NotebookInstance();
                 }
@@ -142,7 +146,9 @@ public class NotebookSession implements Serializable {
                 NotebookEditableDTO currentNotebookEditable = notebookClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
                 currentNotebookEditableId = currentNotebookEditable.getId();
             } else {
-                notebookClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, currentNotebookInstance.toNotebookCanvasDTO());
+                NotebookCanvasDTO notebookCanvasDTO = new NotebookCanvasDTO(currentNotebookInstance.getLastCellId());
+                currentNotebookInstance.storeNotebookCanvasDTO(notebookCanvasDTO);
+                notebookClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, notebookCanvasDTO);
             }
             reloadCurrentNotebook();
         } catch (Exception e) {

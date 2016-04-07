@@ -1,9 +1,7 @@
 package portal.notebook.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.squonk.notebook.api.*;
 import org.squonk.options.OptionDescriptor;
-import portal.notebook.cells.SimpleCellDefinition;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -22,10 +20,6 @@ public class NotebookInstance implements Serializable {
 
     public NotebookInstance() {
 
-    }
-
-    public NotebookInstance(@JsonProperty("lastCellId") Long lastCellId) {
-        this.lastCellId = lastCellId;
     }
 
     public List<CellInstance> getCellInstanceList() {
@@ -50,11 +44,15 @@ public class NotebookInstance implements Serializable {
         return null;
     }
 
-    public CellInstance addCellInstance(CellDefinition cellType) {
-        CellInstance cell = createCellInstance(cellType);
-        cell.setName(calculateCellName(cell));
-        cellInstanceList.add(cell);
-        return cell;
+    public CellInstance addCellInstance(CellDefinition cellDefinition) {
+        CellInstance cellInstance = new CellInstance();
+        cellInstance.setCellDefinition(cellDefinition);
+        cellInstance.setId(getLastCellId() == null ? 1L : getLastCellId() + 1L);
+        setLastCellId(cellInstance.getId());
+        cellInstance.setName(calculateCellName(cellInstance));
+        configureCellInstance(cellInstance);
+        cellInstanceList.add(cellInstance);
+        return cellInstance;
     }
 
     private String calculateCellName(CellInstance cell) {
@@ -93,28 +91,25 @@ public class NotebookInstance implements Serializable {
         return null;
     }
 
-    private CellInstance createCellInstance(CellDefinition cellDefinition) {
-        CellInstance cell = new CellInstance();
-        cell.setCellDefinition(cellDefinition);
-        cell.setId(lastCellId == null ? 1L : lastCellId + 1L);
-        lastCellId = cell.getId();
+    private CellInstance configureCellInstance(CellInstance cellInstance) {
+        CellDefinition cellDefinition = cellInstance.getCellDefinition();
         for (VariableDefinition variableDefinition : cellDefinition.getVariableDefinitionList()) {
             VariableInstance variable = new VariableInstance();
             variable.setVariableDefinition(variableDefinition);
-            variable.setCellId(cell.getId());
-            cell.getVariableInstanceMap().put(variableDefinition.getName(), variable);
+            variable.setCellId(cellInstance.getId());
+            cellInstance.getVariableInstanceMap().put(variableDefinition.getName(), variable);
         }
         for (BindingDefinition bindingDefinition : cellDefinition.getBindingDefinitionList()) {
             BindingInstance binding = new BindingInstance();
             binding.setBindingDefinition(bindingDefinition);
-            cell.getBindingInstanceMap().put(bindingDefinition.getName(), binding);
+            cellInstance.getBindingInstanceMap().put(bindingDefinition.getName(), binding);
         }
         for (OptionDescriptor optionDescriptor : cellDefinition.getOptionDefinitionList()) {
             OptionInstance option = new OptionInstance();
             option.setOptionDescriptor(optionDescriptor);
-            cell.getOptionInstanceMap().put(optionDescriptor.getkey(), option);
+            cellInstance.getOptionInstanceMap().put(optionDescriptor.getkey(), option);
         }
-        return cell;
+        return cellInstance;
     }
 
     public void removeCellInstance(Long id) {
@@ -132,8 +127,7 @@ public class NotebookInstance implements Serializable {
     }
 
 
-    public NotebookCanvasDTO toNotebookCanvasDTO() {
-        NotebookCanvasDTO dto = new NotebookCanvasDTO(getLastCellId());
+    public void storeNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO) {
         for (CellInstance cell : getCellInstanceList()) {
             NotebookCanvasDTO.CellDTO cellDTO = new NotebookCanvasDTO.CellDTO(
                     cell.getId(),
@@ -145,14 +139,15 @@ public class NotebookInstance implements Serializable {
                     cell.getSizeWidth(), // TODO set to null if cell is not resizable
                     cell.getSizeHeight() // TODO set to null if cell is not resizable
                     );
-            dto.addCell(cellDTO);
+            notebookCanvasDTO.addCell(cellDTO);
             for (BindingInstance b :cell.getBindingInstanceMap().values()) {
                 VariableInstance variableInstance = b.getVariableInstance();
-                cellDTO.addBinding(new NotebookCanvasDTO.BindingDTO(
+                NotebookCanvasDTO.BindingDTO bindingDTO = new NotebookCanvasDTO.BindingDTO(
                         b.getName(), // this is correct. It is NOT hte variable key. dto prop name should be "name"
                         variableInstance == null ? null : variableInstance.getCellId(), // Long producerId
                         variableInstance == null ? null : variableInstance.getVariableDefinition().getName() // String producerVariableName TODO - is this correct?
-                        ));
+                );
+                cellDTO.addBinding(bindingDTO);
             }
             for (OptionInstance option : cell.getOptionInstanceMap().values()) {
                 cellDTO.addOption(new NotebookCanvasDTO.OptionDTO(
@@ -161,20 +156,22 @@ public class NotebookInstance implements Serializable {
                 ));
             }
         }
-        return dto;
     }
 
-    public static NotebookInstance fromNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO, CellDefinitionRegistry cellDefinitionRegistry) {
-        NotebookInstance notebookInstance = new NotebookInstance(notebookCanvasDTO.getLastCellId());
+    public void loadNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO, CellDefinitionRegistry cellDefinitionRegistry) {
+        setLastCellId(notebookCanvasDTO.getLastCellId());
         for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
             CellDefinition cellDefinition = cellDefinitionRegistry.findCellDefinition(cellDTO.getKey());
-            CellInstance cellInstance = notebookInstance.addCellInstance(cellDefinition);
+            CellInstance cellInstance = new CellInstance();
+            cellInstance.setCellDefinition(cellDefinition);
             cellInstance.setId(cellDTO.getId());
             cellInstance.setName(cellDTO.getName());
             cellInstance.setPositionLeft(cellDTO.getLeft());
             cellInstance.setPositionTop(cellDTO.getTop());
             cellInstance.setSizeHeight(cellDTO.getHeight());
             cellInstance.setSizeWidth(cellDTO.getWidth());
+            configureCellInstance(cellInstance);
+            cellInstanceList.add(cellInstance);
             for (NotebookCanvasDTO.OptionDTO optionDTO : cellDTO.getOptions()) {
                 OptionInstance optionInstance = cellInstance.getOptionInstanceMap().get(optionDTO.getKey());
                 if (optionInstance != null) {
@@ -184,16 +181,15 @@ public class NotebookInstance implements Serializable {
         }
 
         for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
-            CellInstance cellInstance = notebookInstance.findCellInstanceById(cellDTO.getId());
+            CellInstance cellInstance = findCellInstanceById(cellDTO.getId());
             for (NotebookCanvasDTO.BindingDTO bindingDTO : cellDTO.getBindings()) {
                 BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(bindingDTO.getVariableKey());
                 if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
-                    VariableInstance variableInstance = notebookInstance.findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
+                    VariableInstance variableInstance = findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
                     bindingInstance.setVariableInstance(variableInstance);
                 }
             }
         }
-        return notebookInstance;
     }
 
     public Long getLastCellId() {
@@ -201,4 +197,7 @@ public class NotebookInstance implements Serializable {
     }
 
 
+    public void setLastCellId(Long lastCellId) {
+        this.lastCellId = lastCellId;
+    }
 }
