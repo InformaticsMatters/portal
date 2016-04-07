@@ -236,33 +236,6 @@ public class MockNotebookClient implements NotebookVariableClient {
     }
 
 
-    public void oldWriteStreamValue(Long notebookId, Long cellId, String name, InputStream dataInputStream) {
-        try {
-            MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            writeStreamValue(notebookId, mockNotebookEditable.getId(), cellId, cellId + "." + name, dataInputStream, null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void oldWriteTextValue(Long notebookId, Long cellId, String name, String value) {
-        try {
-            MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            writeTextValue(notebookId, mockNotebookEditable.getId(), cellId, cellId + "." + name, value);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String oldReadTextValue(Long notebookId, Long cellId, String name) {
-        try {
-            MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            return readTextValue(notebookId, mockNotebookEditable.getId(), cellId + "." + name, "DEFAULT");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public NotebookCanvasDTO.CellDTO findCell(Long notebookId, Long cellId) {
         try {
             MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);

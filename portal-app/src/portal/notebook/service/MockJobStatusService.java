@@ -51,16 +51,16 @@ public class MockJobStatusService {
         }
     }
 
-    protected void writeDataset(Long notebookId, Long cellId, String name, Dataset dataset) throws IOException {
+    protected void writeDataset(Long notebookId, Long editableId, Long cellId, String name, Dataset dataset) throws Exception {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
         try (Stream stream = generator.getAsStream()) {
             InputStream dataInputStream = generator.getAsInputStream(stream, true);
-            mockNotebookClient.oldWriteStreamValue(notebookId, cellId, name, dataInputStream);
+            mockNotebookClient.writeStreamValue(notebookId, editableId, cellId, name, dataInputStream);
         }
         DatasetMetadata metadata = generator.getDatasetMetadata();
         String jsonTring = JsonHandler.getInstance().objectToJson(metadata);
-        mockNotebookClient.oldWriteTextValue(notebookId, cellId, name, jsonTring);
-        String storedValue = mockNotebookClient.oldReadTextValue(notebookId, cellId, name);
+        mockNotebookClient.writeTextValue(notebookId,editableId, cellId, name, jsonTring);
+        String storedValue = mockNotebookClient.readTextValue(notebookId, cellId, name);
         if (!storedValue.equals(jsonTring)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }
@@ -70,8 +70,8 @@ public class MockJobStatusService {
         NotebookCanvasDTO.CellDTO cellDTO = mockNotebookClient.findCell(jobDefinition.getNotebookId(), jobDefinition.getCellId());
         Dataset<MoleculeObject> dataset = createMockDataset((String)(findOptionValue(cellDTO, "prefix")));
         try {
-            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellId(), "output", dataset);
-        } catch (IOException e) {
+            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), "output", dataset);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return null;
