@@ -3,7 +3,7 @@
         <class>portal.notebook.service.MockUserClient</class>
         <class>portal.notebook.service.MockNotebookVariableClient</class>
         <class>portal.notebook.service.MockJobStatusClient</class>
-        <class>portal.notebook.cells.MockServiceCellsProvider</class>
+        <class>portal.notebook.api.MockServiceCellsProvider</class>
         <class>portal.IdeLogoutHandler</class>
     </alternatives>
     <interceptors>

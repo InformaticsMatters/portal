@@ -6,9 +6,6 @@ import org.squonk.notebook.api.NotebookDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
 import org.squonk.notebook.api.NotebookSavepointDTO;
 import org.squonk.types.io.JsonHandler;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.NotebookInstance;
-import portal.notebook.api.VariableInstance;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 

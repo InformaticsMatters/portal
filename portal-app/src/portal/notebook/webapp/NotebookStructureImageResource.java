@@ -1,14 +1,10 @@
-package portal;
+package portal.notebook.webapp;
 
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
 import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.request.resource.DynamicImageResource;
-import portal.notebook.webapp.DatasetsSession;
-import portal.notebook.webapp.IDatasetDescriptor;
-import portal.notebook.webapp.IPropertyDescriptor;
-import portal.notebook.webapp.IRow;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -19,16 +15,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class DynamicStructureImageResource extends DynamicImageResource {
+public class NotebookStructureImageResource extends DynamicImageResource {
 
-    public static final Rectangle RECTANGLE = new Rectangle(200, 130);
+    // public static final Rectangle RECTANGLE = new Rectangle(200, 130);
+    public static final Rectangle RECTANGLE = new Rectangle(100, 65);
     public static final String PARAM_DATASET = "dataset";
     public static final String PARAM_ROW = "row";
 
     @Inject
-    private DatasetsSession datasetsSession;
+    private NotebookSession notebookSession;
 
-    public DynamicStructureImageResource() {
+    public NotebookStructureImageResource() {
         CdiContainer.get().getNonContextualManager().postConstruct(this);
     }
 
@@ -53,8 +50,8 @@ public class DynamicStructureImageResource extends DynamicImageResource {
         Long datasetDescriptorId = Long.valueOf(datasetIdAsString);
         UUID rowId = UUID.fromString(rowIdAsString);
 
-        IDatasetDescriptor dataset = datasetsSession.findDatasetDescriptorById(datasetDescriptorId);
-        List<IRow> rows = datasetsSession.listRow(dataset, Collections.singletonList(rowId));
+        IDatasetDescriptor dataset = notebookSession.findDatasetDescriptorById(datasetDescriptorId);
+        List<IRow> rows = notebookSession.listDatasetRow(dataset, Collections.singletonList(rowId));
         IRow row = rows.get(0);
 
         if (row != null) {
@@ -70,8 +67,10 @@ public class DynamicStructureImageResource extends DynamicImageResource {
 
     protected Molecule getMolecule(String datasetIdAsString, String rowIdAsString) throws Exception {
         String structureAsString = loadStructureData(datasetIdAsString, rowIdAsString);
+        if (structureAsString == null || structureAsString.length() == 0) {
+            return null;
+        }
         Molecule molecule = MolImporter.importMol(structureAsString);
-        molecule.dearomatize();
         return molecule;
     }
 

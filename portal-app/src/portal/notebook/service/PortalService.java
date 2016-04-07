@@ -2,10 +2,9 @@ package portal.notebook.service;
 
 import com.im.lac.job.jobdef.JobStatus;
 import org.squonk.client.JobStatusClient;
+import portal.notebook.webapp.BindingsPanel;
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellExecutionData;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.NotebookInstance;
 import toolkit.services.PU;
 import toolkit.services.Transactional;
 
@@ -74,7 +73,7 @@ public class PortalService {
         }
     }
 
-    public Execution executeCell(NotebookInstance notebookInstance, Long notebookId, Long editableId, Long cellId) {
+    public Execution executeCell(BindingsPanel.NotebookInstance notebookInstance, Long notebookId, Long editableId, Long cellId) {
         try {
             TypedQuery<Execution> query = entityManager.createQuery("select o from Execution o where o.notebookId = :notebookId", Execution.class);
             query.setParameter("notebookId", notebookId);
@@ -82,7 +81,7 @@ public class PortalService {
             if (execution != null && execution.getJobActive()) {
                 throw new RuntimeException("Already running");
             }
-            CellInstance cellInstance = notebookInstance.findCellInstanceById(cellId);
+            BindingsPanel.CellInstance cellInstance = notebookInstance.findCellInstanceById(cellId);
             CellDefinition cellDefinition = cellInstance.getCellDefinition();
             CellExecutionData cellExecutionData = new CellExecutionData(notebookId, editableId, cellId);
             JobStatus jobStatus = cellDefinition.getCellExecutor().execute(cellInstance, cellExecutionData);
