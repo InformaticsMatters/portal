@@ -372,10 +372,7 @@ public class BindingsPanel extends Panel {
                     cellDTO.addBinding(bindingDTO);
                 }
                 for (OptionInstance option : cell.getOptionInstanceMap().values()) {
-                    cellDTO.addOption(new NotebookCanvasDTO.OptionDTO(
-                            option.getOptionDescriptor().getkey(), // String key
-                            option.getValue() // Object value
-                    ));
+                    cellDTO.addOption(option.getOptionDescriptor().getkey(),option.getValue());
                 }
             }
         }
@@ -383,6 +380,9 @@ public class BindingsPanel extends Panel {
         public void loadNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO, CellDefinitionRegistry cellDefinitionRegistry) {
             setLastCellId(notebookCanvasDTO.getLastCellId());
             for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
+                // TODO - error handling
+                // if cell can't be created for any reason replace it with a "error" cell that contains
+                // as much info as is reasonable so that user can try to remedy the problem
                 CellDefinition cellDefinition = cellDefinitionRegistry.findCellDefinition(cellDTO.getKey());
                 if (cellDefinition == null) {
                     LOGGER.log(Level.WARNING, "Unknown cell definition: " + cellDTO.getKey());
@@ -397,10 +397,10 @@ public class BindingsPanel extends Panel {
                     cellInstance.setSizeWidth(cellDTO.getWidth());
                     configureCellInstance(cellInstance);
                     cellInstanceList.add(cellInstance);
-                    for (NotebookCanvasDTO.OptionDTO optionDTO : cellDTO.getOptions()) {
-                        OptionInstance optionInstance = cellInstance.getOptionInstanceMap().get(optionDTO.getKey());
+                    for (Map.Entry<String,Object> e: cellDTO.getOptions().entrySet()) {
+                        OptionInstance optionInstance = cellInstance.getOptionInstanceMap().get(e.getKey());
                         if (optionInstance != null) {
-                            optionInstance.setValue(optionDTO.getValue());
+                            optionInstance.setValue(e.getValue());
                         }
                     }
                 }

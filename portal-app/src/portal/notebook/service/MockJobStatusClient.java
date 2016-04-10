@@ -49,12 +49,12 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
        LOGGER.log(Level.INFO, jobId);
        JobStatus oldJobStatus = jobStatusMap.get(jobId);
        if (oldJobStatus == null) {
-           JobStatus<JobDefinition> jobStatus = new JobStatus(jobId, "some", JobStatus.Status.COMPLETED, 2, 1, 0, null, null, null, null, null);
+           JobStatus<? extends JobDefinition> jobStatus = new JobStatus<>(jobId, "some", JobStatus.Status.COMPLETED, 2, 1, 0, null, null, null, null, null);
            jobStatusMap.put(jobStatus.getJobId(), jobStatus);
            return jobStatus;
        }  else {
            JobStatus.Status newStatus = calculateStatus(jobId, oldJobStatus);
-           JobStatus newJobStatus = new JobStatus(jobId, oldJobStatus.getUsername(), newStatus, 0, 0, 0, oldJobStatus.getStarted(), new Date(), oldJobStatus.getJobDefinition(), null, null);
+           JobStatus<? extends JobDefinition> newJobStatus = new JobStatus<>(jobId, oldJobStatus.getUsername(), newStatus, 0, 0, 0, oldJobStatus.getStarted(), new Date(), oldJobStatus.getJobDefinition(), null, null);
            jobStatusMap.put(jobId, newJobStatus);
            return newJobStatus;
        }

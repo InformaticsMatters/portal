@@ -73,7 +73,7 @@ public class MockJobStatusService {
         NotebookEditableDTO editableDTO = editableList.get(0);
         NotebookCanvasDTO notebookCanvasDTO = editableDTO.getCanvasDTO();
         NotebookCanvasDTO.CellDTO cellDTO = findCell(notebookCanvasDTO, jobDefinition.getCellId());
-        Dataset<MoleculeObject> dataset = createMockDataset((String)(findOptionValue(cellDTO, "prefix")));
+        Dataset<MoleculeObject> dataset = createMockDataset((String)cellDTO.getOptions().get("prefix"));
         try {
             writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), "output", dataset);
         } catch (Exception e) {
@@ -86,15 +86,6 @@ public class MockJobStatusService {
         for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
             if (cellDTO.getId().equals(cellId)) {
                 return cellDTO;
-            }
-        }
-        return null;
-    }
-
-    private Object findOptionValue(NotebookCanvasDTO.CellDTO cellDTO, String prefix) {
-        for (NotebookCanvasDTO.OptionDTO optionDTO : cellDTO.getOptions()) {
-            if (optionDTO.getKey().equals("prefix")) {
-                return optionDTO.getValue();
             }
         }
         return null;
