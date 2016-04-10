@@ -82,7 +82,7 @@ public class NotebookClientHarness extends AbstractTestCase {
         cellInstance = notebookInstance.getCellInstanceList().get(0);
         BindingsPanel.VariableInstance outputVariableInstance = cellInstance.getVariableInstanceMap().values().iterator().next();
         notebookClient.writeTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), cellInstance.getId(), outputVariableInstance.getVariableDefinition().getName(), "test");
-        String value = notebookClient.readTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), outputVariableInstance.calculateKey());
+        String value = notebookClient.readTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), cellInstance.getId(), outputVariableInstance.getVariableDefinition().getName());
         if (!value.equals("test")) {
             throw new RuntimeException("Different value");
         }

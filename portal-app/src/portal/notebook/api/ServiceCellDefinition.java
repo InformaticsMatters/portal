@@ -75,6 +75,11 @@ public class ServiceCellDefinition extends CellDefinition {
             LOG.info("Building JobDefinition for service " + serviceDescriptor.getAccessModes()[0].getExecutionEndpoint());
 
             VariableKey key = createVariableKey(cell, VAR_NAME_INPUT);
+            if (key != null) {
+                LOG.info("Using input variable " + key.getCellId() + ":" + key.getVariableName() + " as variable " + VAR_NAME_INPUT);
+            } else {
+                LOG.info("Input variable " + VAR_NAME_INPUT + " not found");
+            }
 
             // TODO - the step type will need to be defined at the ServiceDescriptor level. For now we use MoleculeServiceThinExecutorStep for everything
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ServiceExecutor.CLASSNAME)

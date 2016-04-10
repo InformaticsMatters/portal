@@ -1,6 +1,8 @@
 package portal.notebook.service;
 
+import org.squonk.client.NotebookClient;
 import org.squonk.client.NotebookVariableClient;
+import org.squonk.client.VariableClient;
 import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.notebook.api.NotebookDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
@@ -28,11 +30,11 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     private EntityManager entityManager;
 
     @Override
-    public NotebookDTO createNotebook(String s, String s1, String s2) throws Exception {
+    public NotebookDTO createNotebook(String owner, String name, String desc) throws Exception {
         MockNotebookDescriptor mockNotebookDescriptor = new MockNotebookDescriptor();
-        mockNotebookDescriptor.setOwner(s);
-        mockNotebookDescriptor.setName(s1);
-        mockNotebookDescriptor.setDescription(s2);
+        mockNotebookDescriptor.setOwner(owner);
+        mockNotebookDescriptor.setName(name);
+        mockNotebookDescriptor.setDescription(desc);
         entityManager.persist(mockNotebookDescriptor);
         System.out.println("Created new empty notebook");
         NotebookDTO notebookDescriptor = toNotebookDescriptor(mockNotebookDescriptor);
@@ -50,7 +52,7 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     }
 
     @Override
-    public List<NotebookDTO> listNotebooks(String s) throws Exception {
+    public List<NotebookDTO> listNotebooks(String userName) throws Exception {
         TypedQuery<MockNotebookDescriptor> query = entityManager.createQuery("select o from MockNotebookDescriptor o", MockNotebookDescriptor.class);
         List<NotebookDTO> list = new ArrayList<>();
         for (MockNotebookDescriptor mockNotebookDescriptor : query.getResultList()) {
@@ -125,16 +127,16 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     }
 
     @Override
-    public NotebookSavepointDTO setSavepointDescription(Long notebookId, Long savepointId, String s) throws Exception {
+    public NotebookSavepointDTO setSavepointDescription(Long notebookId, Long savepointId, String desc) throws Exception {
         MockNotebookSavepoint mockNotebookSavepoint = entityManager.find(MockNotebookSavepoint.class, savepointId);
-        mockNotebookSavepoint.setDescription(s);
+        mockNotebookSavepoint.setDescription(desc);
         return toNotebookSavepoint(mockNotebookSavepoint);
     }
 
     @Override
-    public NotebookSavepointDTO setSavepointLabel(Long notebookId, Long savepointId, String s) throws Exception {
+    public NotebookSavepointDTO setSavepointLabel(Long notebookId, Long savepointId, String label) throws Exception {
         MockNotebookSavepoint mockNotebookSavepoint = entityManager.find(MockNotebookSavepoint.class, savepointId);
-        mockNotebookSavepoint.setLabel(s);
+        mockNotebookSavepoint.setLabel(label);
         return toNotebookSavepoint(mockNotebookSavepoint);
     }
 
@@ -152,19 +154,14 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
 
 
     @Override
-    public String readTextValue(Long notebookId, Long editableId, String name, String key) throws Exception {
-        MockVariable mockVariable = findMockVariable(editableId, name);
+    public String readTextValue(Long notebookId, Long editableId, Long cellId, String name, String key) throws Exception {
+        MockVariable mockVariable = findMockVariable(editableId, cellId, name);
         return mockVariable == null ? null : mockVariable.getValue();
     }
 
     @Override
-    public String readTextValue(Long aLong, String s, String s1, String s2) throws Exception {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void writeTextValue(Long notebookId, Long editableId, Long cellId, String name, String value, String s2) throws Exception {
-        MockVariable mockVariable = findMockVariable(editableId, name);
+    public void writeTextValue(Long notebookId, Long editableId, Long cellId, String name, String value, String key) throws Exception {
+        MockVariable mockVariable = findMockVariable(editableId, cellId, name);
         if (mockVariable == null) {
             TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
             editableQuery.setParameter("notebookId", notebookId);
@@ -179,8 +176,8 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     }
 
     @Override
-    public InputStream readStreamValue(Long notebookId, Long sourceId, String name, String s1) throws Exception {
-        MockVariable mockVariable = findMockVariable(sourceId, name);
+    public InputStream readStreamValue(Long notebookId, Long sourceId, Long cellId, String name, String key) throws Exception {
+        MockVariable mockVariable = findMockVariable(sourceId, cellId, name);
         byte[] bytes = mockVariable == null ? null : mockVariable.getStreamValue();
         if (bytes == null) {
             return null;
@@ -189,15 +186,9 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         }
     }
 
-
-    @Override
-    public InputStream readStreamValue(Long aLong, String s, String s1, String s2) throws Exception {
-         return null;
-    }
-
     @Override
     public void writeStreamValue(Long notebookId, Long editableId, Long cellId, String name, InputStream inputStream, String s1) throws Exception {
-        MockVariable mockVariable = findMockVariable(editableId, name);
+        MockVariable mockVariable = findMockVariable(editableId, cellId, name);
         if (mockVariable == null) {
             TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
             editableQuery.setParameter("notebookId", notebookId);
@@ -219,9 +210,10 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         mockVariable.setStreamValue(byteArrayOutputStream.toByteArray());
     }
 
-    private MockVariable findMockVariable(Long editableId, String name) {
-        TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookEditable.id = :editableId and o.name = :name", MockVariable.class);
+    private MockVariable findMockVariable(Long editableId, Long cellId, String name) {
+        TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookEditable.id = :editableId and o.cellId = :cellId and o.name = :name", MockVariable.class);
         variableQuery.setParameter("editableId", editableId);
+        variableQuery.setParameter("cellId", cellId);
         variableQuery.setParameter("name", name);
         return variableQuery.getResultList().isEmpty() ? null : variableQuery.getResultList().get(0);
     }

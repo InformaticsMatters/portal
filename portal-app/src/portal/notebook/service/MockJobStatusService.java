@@ -29,7 +29,7 @@ public class MockJobStatusService {
 
     private static final Logger LOGGER = Logger.getLogger(MockJobStatusService.class.getName());
     @Inject
-    private NotebookVariableClient notebookVariableClient;
+    private MockNotebookVariableClient notebookVariableClient;
 
     @Path("execute")
     @POST
@@ -62,7 +62,7 @@ public class MockJobStatusService {
         DatasetMetadata metadata = generator.getDatasetMetadata();
         String jsonTring = JsonHandler.getInstance().objectToJson(metadata);
         notebookVariableClient.writeTextValue(notebookId, editableId, cellId, cellId + "." + name, jsonTring);
-        String storedValue = notebookVariableClient.readTextValue(notebookId, editableId, cellId + "." + name);
+        String storedValue = notebookVariableClient.readTextValue(notebookId, editableId, cellId, name);
         if (!jsonTring.equals(storedValue)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }

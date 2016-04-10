@@ -222,13 +222,6 @@ public class NotebookSession implements Serializable {
         return portalService.findExecution(currentNotebookInfo.getId(), cellId);
     }
 
-    public void writeStreamValue(BindingsPanel.VariableInstance variableInstance, InputStream inputStream) {
-        try {
-            notebookVariableClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.calculateKey(), inputStream);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public IDatasetDescriptor loadDatasetFromVariable(BindingsPanel.VariableInstance variableInstance) {
         VariableType variableType = variableInstance.getVariableDefinition().getVariableType();
@@ -253,10 +246,10 @@ public class NotebookSession implements Serializable {
     }
 
     public List<MoleculeObject> parseMoleculesFromFileVariable(BindingsPanel.VariableInstance variableInstance) throws Exception {
-        String fileName = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), variableInstance.getCellId(), variableInstance.calculateKey(), null);
+        String fileName = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
         int x = fileName.lastIndexOf(".");
         String ext = fileName.toLowerCase().substring(x + 1);
-        InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.calculateKey(), null);
+        InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
         try {
             if (ext.equals("json")) {
                 return Datasets.parseJson(inputStream);
@@ -281,20 +274,18 @@ public class NotebookSession implements Serializable {
     }
 
     public List<MoleculeObject> squonkDatasetAsMolecules(BindingsPanel.VariableInstance variableInstance) {
-        try {
-            InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.calculateKey(), null);
-            try {
-                GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
-                ObjectMapper objectMapper = new ObjectMapper();
-                return objectMapper.readValue(gzipInputStream, new TypeReference<List<MoleculeObject>>() {
-                });
-            } finally {
-                inputStream.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
+        try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
+
+            GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(gzipInputStream, new TypeReference<List<MoleculeObject>>() {
+            });
+        } catch (Throwable t) {
+            // TODO - error handling
+            LOGGER.warn("Failed to read dataset as molecules", t);
+            return null;
+        }
     }
 
 
@@ -312,16 +303,28 @@ public class NotebookSession implements Serializable {
 
     public void writeTextValue(BindingsPanel.VariableInstance variableInstance, Object value) {
         try {
-            notebookVariableClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.calculateKey(), value == null ? null : value.toString());
+            notebookVariableClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), value == null ? null : value.toString());
         } catch (Exception e) {
+            // TODO - error handling
             throw new RuntimeException(e);
         }
     }
 
     public String readTextValue(BindingsPanel.VariableInstance variableInstance) {
         try {
-            return notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.calculateKey());
+            return notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
         } catch (Exception e) {
+            // TODO - error handling
+            LOGGER.error("Failed to read text variable " + variableInstance.calculateKey());
+            return null;
+        }
+    }
+
+    public void writeStreamValue(BindingsPanel.VariableInstance variableInstance, InputStream inputStream) {
+        try {
+            notebookVariableClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
+        } catch (Exception e) {
+            // TODO - error handling
             throw new RuntimeException(e);
         }
     }

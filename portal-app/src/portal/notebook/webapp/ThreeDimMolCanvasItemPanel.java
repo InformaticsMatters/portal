@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import chemaxon.calculations.clean.Cleaner;
 import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;
 import chemaxon.struc.Molecule;
@@ -106,8 +107,8 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void loadInitialSampleData(IHeaderResponse response) {
-        // String data = convertForJavaScript(getSampleData("resources/kinase_inhibs.sdf"));
-        String sampleData = getSampleData("resources/caffeine.mol");
+        // String data = convertForJavaScript(getSampleData("/portal/resources/kinase_inhibs.sdf"));
+        String sampleData = getSampleData("/portal/resources/caffeine.mol");
         String data = convertForJavaScript(convertToFormat(sampleData, "sdf"));
         String js = JS_INIT_VIEWER.replace(":data", data).replace(":format", "sdf");
         response.render(OnDomReadyHeaderItem.forScript(js));
@@ -119,6 +120,10 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
                 return null;
             } else {
                 Molecule molecule = MolImporter.importMol(input);
+                if (molecule.getDim() != 3) {
+                    // convert to 3D if not already
+                    Cleaner.clean(molecule, 3);
+                }
                 return MolExporter.exportToFormat(molecule, format);
             }
         } catch (Exception e) {

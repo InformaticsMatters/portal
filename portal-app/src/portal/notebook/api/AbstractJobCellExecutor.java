@@ -80,10 +80,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         if (binding != null) {
             BindingsPanel.VariableInstance variable = binding.getVariableInstance();
             if (variable != null) {
-                Long cellId = variable.getCellId();
-                if (producer != null) {
-                    return new VariableKey(producer.getId(), variable.getVariableDefinition().getName());
-                }
+                return new VariableKey(variable.getCellId(), variable.getVariableDefinition().getName());
             }
         }
         return null;
