@@ -4,7 +4,6 @@ import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.OptionDescriptor;
-import portal.notebook.webapp.BindingsPanel;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -34,7 +33,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(BindingsPanel.CellInstance cellInstance, CellExecutionData cellExecutionData) {
+        protected JobDefinition buildJobDefinition(CellInstance cellInstance, CellExecutionData cellExecutionData) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)

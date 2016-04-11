@@ -8,7 +8,10 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.dataset.DatasetMetadata;
 import portal.PopupContainerProvider;
+import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -64,15 +67,15 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
     private void loadPicklist() {
         picklistItems = new ArrayList<>();
-        BindingsPanel.CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
-        BindingsPanel.BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-        BindingsPanel.VariableInstance variableInstance = bindingInstance.getVariableInstance();
+        CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        VariableInstance variableInstance = bindingInstance.getVariableInstance();
         if (variableInstance != null) {
             loadFieldNames(variableInstance);
         }
     }
 
-    private void loadFieldNames(BindingsPanel.VariableInstance variableInstance) {
+    private void loadFieldNames(VariableInstance variableInstance) {
         try {
             String string = notebookSession.readTextValue(variableInstance);
             if (string != null) {

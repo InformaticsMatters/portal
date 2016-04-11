@@ -47,7 +47,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(BindingsPanel.CellInstance cell, CellExecutionData cellExecutionData) {
+        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             VariableKey key = new VariableKey(cell.getId(), VAR_NAME_FILECONTENT); // we are the producer
 

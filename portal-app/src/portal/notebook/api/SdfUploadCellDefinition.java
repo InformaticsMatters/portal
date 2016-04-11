@@ -43,7 +43,7 @@ public class SdfUploadCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(BindingsPanel.CellInstance cell, CellExecutionData cellExecutionData) {
+        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             VariableKey key = new VariableKey(cellExecutionData.getCellId(), VAR_NAME_FILECONTENT); // we are the producer
 

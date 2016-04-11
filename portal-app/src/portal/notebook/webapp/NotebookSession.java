@@ -30,7 +30,7 @@ import java.util.zip.GZIPInputStream;
 public class NotebookSession implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotebookSession.class);
-    private BindingsPanel.NotebookInstance currentNotebookInstance;
+    private NotebookInstance currentNotebookInstance;
     private NotebookInfo currentNotebookInfo;
     private Long currentNotebookEditableId;
     private List<CellDefinition> cellDefinitionList;
@@ -107,16 +107,16 @@ public class NotebookSession implements Serializable {
             currentNotebookInfo = findNotebookInfo(id);
             NotebookEditableDTO currentNotebookEditable = findDefaultNotebookEditable(currentNotebookInfo.getId());
             if (currentNotebookEditable == null) {
-                currentNotebookInstance = new BindingsPanel.NotebookInstance();
+                currentNotebookInstance = new NotebookInstance();
                 currentNotebookEditableId = null;
             } else {
                 NotebookCanvasDTO notebookCanvasDTO = currentNotebookEditable.getCanvasDTO();
-                currentNotebookInstance = new BindingsPanel.NotebookInstance();
+                currentNotebookInstance = new NotebookInstance();
                 if (notebookCanvasDTO != null) {
                     currentNotebookInstance.loadNotebookCanvasDTO(notebookCanvasDTO, cellDefinitionRegistry);
                 }
                 if (currentNotebookInstance == null) { // is this needed?
-                    currentNotebookInstance = new BindingsPanel.NotebookInstance();
+                    currentNotebookInstance = new NotebookInstance();
                 }
                 currentNotebookEditableId = currentNotebookEditable.getId();
             }
@@ -129,7 +129,7 @@ public class NotebookSession implements Serializable {
         loadCurrentNotebook(currentNotebookInfo.getId());
     }
 
-    public BindingsPanel.NotebookInstance getCurrentNotebookInstance() {
+    public NotebookInstance getCurrentNotebookInstance() {
         return currentNotebookInstance;
     }
 
@@ -201,7 +201,7 @@ public class NotebookSession implements Serializable {
 
     public void executeCell(Long cellId) {
         storeCurrentNotebook();
-        BindingsPanel.CellInstance cell = currentNotebookInstance.findCellInstanceById(cellId);
+        CellInstance cell = currentNotebookInstance.findCellInstanceById(cellId);
         if (cell.getCellDefinition().getExecutable()) {
             portalService.executeCell(currentNotebookInstance, currentNotebookInfo.getId(), currentNotebookEditableId,  cellId);
         }
@@ -223,7 +223,7 @@ public class NotebookSession implements Serializable {
     }
 
 
-    public IDatasetDescriptor loadDatasetFromVariable(BindingsPanel.VariableInstance variableInstance) {
+    public IDatasetDescriptor loadDatasetFromVariable(VariableInstance variableInstance) {
         VariableType variableType = variableInstance.getVariableDefinition().getVariableType();
         if (variableType.equals(VariableType.DATASET)) {
             return loadDatasetFromDatasetVariable(variableInstance);
@@ -236,7 +236,7 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public IDatasetDescriptor loadDatasetFromFileVariable(BindingsPanel.VariableInstance variableInstance) {
+    public IDatasetDescriptor loadDatasetFromFileVariable(VariableInstance variableInstance) {
         try {
             List<MoleculeObject> list = parseMoleculesFromFileVariable(variableInstance);
             return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
@@ -245,7 +245,7 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public List<MoleculeObject> parseMoleculesFromFileVariable(BindingsPanel.VariableInstance variableInstance) throws Exception {
+    public List<MoleculeObject> parseMoleculesFromFileVariable(VariableInstance variableInstance) throws Exception {
         String fileName = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
         int x = fileName.lastIndexOf(".");
         String ext = fileName.toLowerCase().substring(x + 1);
@@ -264,7 +264,7 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public IDatasetDescriptor loadDatasetFromDatasetVariable(BindingsPanel.VariableInstance variableInstance) {
+    public IDatasetDescriptor loadDatasetFromDatasetVariable(VariableInstance variableInstance) {
         try {
             List<MoleculeObject> list = squonkDatasetAsMolecules(variableInstance);
             return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
@@ -273,7 +273,7 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public List<MoleculeObject> squonkDatasetAsMolecules(BindingsPanel.VariableInstance variableInstance) {
+    public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) {
 
         try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
 
@@ -301,7 +301,7 @@ public class NotebookSession implements Serializable {
         return datasets.findDatasetDescriptorById(datasetDescriptorId);
     }
 
-    public void writeTextValue(BindingsPanel.VariableInstance variableInstance, Object value) {
+    public void writeTextValue(VariableInstance variableInstance, Object value) {
         try {
             notebookVariableClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), value == null ? null : value.toString());
         } catch (Exception e) {
@@ -310,7 +310,7 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public String readTextValue(BindingsPanel.VariableInstance variableInstance) {
+    public String readTextValue(VariableInstance variableInstance) {
         try {
             return notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
         } catch (Exception e) {
@@ -320,7 +320,7 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public void writeStreamValue(BindingsPanel.VariableInstance variableInstance, InputStream inputStream) {
+    public void writeStreamValue(VariableInstance variableInstance, InputStream inputStream) {
         try {
             notebookVariableClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
         } catch (Exception e) {
@@ -339,7 +339,7 @@ public class NotebookSession implements Serializable {
         return datasets.findMoleculeObject(datasetDescriptorId, uuid);
     }
 
-    public void writeMoleculeValue(BindingsPanel.VariableInstance variableInstance, MoleculeObject moleculeObject) {
+    public void writeMoleculeValue(VariableInstance variableInstance, MoleculeObject moleculeObject) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -351,7 +351,7 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public MoleculeObject readMoleculeValue(BindingsPanel.VariableInstance variableInstance) {
+    public MoleculeObject readMoleculeValue(VariableInstance variableInstance) {
         String json = readTextValue(variableInstance);
         try {
             return new ObjectMapper().readValue(json, MoleculeObject.class);

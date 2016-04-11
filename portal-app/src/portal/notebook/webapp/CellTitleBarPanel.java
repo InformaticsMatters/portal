@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.PopupContainerProvider;
+import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
@@ -17,7 +18,7 @@ import java.io.Serializable;
  */
 public class CellTitleBarPanel extends Panel {
 
-    private final BindingsPanel.CellInstance cellInstance;
+    private final CellInstance cellInstance;
     private final CallbackHandler callbackHandler;
     private BindingsPopupPanel bindingsPopupPanel;
     private AdvancedPopupPanel advancedPopupPanel;
@@ -28,7 +29,7 @@ public class CellTitleBarPanel extends Panel {
     @Inject
     private NotebookSession notebookSession;
 
-    public CellTitleBarPanel(String id, BindingsPanel.CellInstance cellInstance, CallbackHandler callbackHandler) {
+    public CellTitleBarPanel(String id, CellInstance cellInstance, CallbackHandler callbackHandler) {
         super(id);
         setOutputMarkupId(true);
         this.cellInstance = cellInstance;
@@ -146,7 +147,7 @@ public class CellTitleBarPanel extends Panel {
         return lastExecution != null && Boolean.FALSE.equals(lastExecution.getJobSuccessful());
     }
 
-    public BindingsPanel.CellInstance getCellInstance() {
+    public CellInstance getCellInstance() {
         return cellInstance;
     }
 
@@ -156,7 +157,7 @@ public class CellTitleBarPanel extends Panel {
 
     public interface CallbackHandler extends Serializable {
 
-        void onRemove(BindingsPanel.CellInstance cellModel);
+        void onRemove(CellInstance cellModel);
 
         Form getExecuteFormComponent();
 

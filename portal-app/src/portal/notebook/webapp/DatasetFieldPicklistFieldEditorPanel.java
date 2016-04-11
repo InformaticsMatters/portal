@@ -6,7 +6,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.Model;
 import org.squonk.dataset.DatasetMetadata;
+import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -29,15 +32,15 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
 
     private void loadPicklist() {
         picklistItems = new ArrayList<>();
-        BindingsPanel.CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
-        BindingsPanel.BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-        BindingsPanel.VariableInstance variableInstance = bindingInstance.getVariableInstance();
+        CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        VariableInstance variableInstance = bindingInstance.getVariableInstance();
         if (variableInstance != null) {
             loadFieldNames(variableInstance);
         }
     }
 
-    private void loadFieldNames(BindingsPanel.VariableInstance variableInstance) {
+    private void loadFieldNames(VariableInstance variableInstance) {
         try {
             String string = notebookSession.readTextValue(variableInstance);
             if (string != null) {
@@ -69,9 +72,9 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
 
     @Override
     public boolean processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-        BindingsPanel.CellInstance thisCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(this.cellId);
-        BindingsPanel.BindingInstance bindingInstance = thisCellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-        BindingsPanel.VariableInstance variableInstance = bindingInstance.getVariableInstance();
+        CellInstance thisCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(this.cellId);
+        BindingInstance bindingInstance = thisCellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        VariableInstance variableInstance = bindingInstance.getVariableInstance();
         if (variableInstance != null && variableInstance.getCellId().equals(changedCellId)) {
             loadPicklist();
             return true;

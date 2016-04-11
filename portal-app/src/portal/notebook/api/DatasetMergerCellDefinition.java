@@ -38,7 +38,7 @@ public class DatasetMergerCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(BindingsPanel.CellInstance cell, CellExecutionData cellExecutionData) {
+        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.DatasetMerger.CLASSNAME)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)

@@ -6,9 +6,8 @@ import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.notebook.api.NotebookDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
 import org.squonk.notebook.api.NotebookSavepointDTO;
+import portal.notebook.api.*;
 import portal.notebook.webapp.BindingsPanel;
-import portal.notebook.api.CellDefinitionRegistry;
-import portal.notebook.api.ChemblActivitiesFetcherCellDefinition;
 import toolkit.derby.DerbyUtils;
 import toolkit.test.AbstractTestCase;
 import toolkit.test.TestCase;
@@ -66,9 +65,9 @@ public class NotebookClientHarness extends AbstractTestCase {
         if (!canvas1.getLastCellId().equals(canvas2.getLastCellId())) {
             throw new RuntimeException("Different content");
         }
-        BindingsPanel.NotebookInstance notebookInstance = new BindingsPanel.NotebookInstance();
+        NotebookInstance notebookInstance = new NotebookInstance();
         notebookInstance.loadNotebookCanvasDTO(canvas2, cellDefinitionRegistry);
-        BindingsPanel.CellInstance cellInstance = notebookInstance.addCellInstance(new ChemblActivitiesFetcherCellDefinition());
+        CellInstance cellInstance = notebookInstance.addCellInstance(new ChemblActivitiesFetcherCellDefinition());
         cellInstance.setSizeWidth(267);
         cellInstance.setSizeHeight(167);
         cellInstance.setPositionTop(1);
@@ -77,10 +76,10 @@ public class NotebookClientHarness extends AbstractTestCase {
         notebookInstance.storeNotebookCanvasDTO(notebookCanvasDTO);
         notebookClient.updateEditable(notebookEditable.getNotebookId(), notebookEditable.getId(), notebookCanvasDTO);
         notebookEditable = notebookClient.listEditables(notebookDescriptor.getId(), USER_NAME).get(0);
-        notebookInstance = new BindingsPanel.NotebookInstance();
+        notebookInstance = new NotebookInstance();
         notebookInstance.loadNotebookCanvasDTO(notebookEditable.getCanvasDTO(), cellDefinitionRegistry);
         cellInstance = notebookInstance.getCellInstanceList().get(0);
-        BindingsPanel.VariableInstance outputVariableInstance = cellInstance.getVariableInstanceMap().values().iterator().next();
+        VariableInstance outputVariableInstance = cellInstance.getVariableInstanceMap().values().iterator().next();
         notebookClient.writeTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), cellInstance.getId(), outputVariableInstance.getVariableDefinition().getName(), "test");
         String value = notebookClient.readTextValue(notebookEditable.getNotebookId(), notebookEditable.getId(), cellInstance.getId(), outputVariableInstance.getVariableDefinition().getName());
         if (!value.equals("test")) {

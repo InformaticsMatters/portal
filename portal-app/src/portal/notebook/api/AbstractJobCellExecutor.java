@@ -26,7 +26,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
     private static final Logger LOG = Logger.getLogger(AbstractJobCellExecutor.class.getName());
 
     @Override
-    public JobStatus execute(BindingsPanel.CellInstance cell, CellExecutionData data) throws Exception {
+    public JobStatus execute(CellInstance cell, CellExecutionData data) throws Exception {
         Instance<SessionContext> sessionContextInstance = CDI.current().select(SessionContext.class);
         SessionContext sessionContext = sessionContextInstance.get();
         String username = sessionContext.getLoggedInUserDetails().getUserid();
@@ -50,15 +50,15 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
     /**
      * Build the JobDefinition that will be submitted for execution.
      */
-    protected abstract JobDefinition buildJobDefinition(BindingsPanel.CellInstance cell, CellExecutionData cellExecutionData);
+    protected abstract JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData);
 
 
-    protected Map<String, Object> collectAllOptions(BindingsPanel.CellInstance cell) {
+    protected Map<String, Object> collectAllOptions(CellInstance cell) {
 
         Map<String, Object> result = new HashMap<>();
-        for (Map.Entry<String,BindingsPanel.OptionInstance> e :cell.getOptionInstanceMap().entrySet()) {
+        for (Map.Entry<String,OptionInstance> e :cell.getOptionInstanceMap().entrySet()) {
             String key = e.getKey();
-            BindingsPanel.OptionInstance i = e.getValue();
+            OptionInstance i = e.getValue();
             LOG.fine("checking option " + key);
             if (i != null && i.getValue() != null) {
                 result.put(key, i.getValue());
@@ -75,10 +75,10 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
      * @param varName
      * @return
      */
-    protected VariableKey createVariableKey(BindingsPanel.CellInstance producer, String varName) {
-        BindingsPanel.BindingInstance binding = producer.getBindingInstanceMap().get(varName);
+    protected VariableKey createVariableKey(CellInstance producer, String varName) {
+        BindingInstance binding = producer.getBindingInstanceMap().get(varName);
         if (binding != null) {
-            BindingsPanel.VariableInstance variable = binding.getVariableInstance();
+            VariableInstance variable = binding.getVariableInstance();
             if (variable != null) {
                 return new VariableKey(variable.getCellId(), variable.getVariableDefinition().getName());
             }
@@ -86,7 +86,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         return null;
     }
 
-    protected VariableKey createVariableKeyRequired(BindingsPanel.CellInstance cell, String varName) {
+    protected VariableKey createVariableKeyRequired(CellInstance cell, String varName) {
         VariableKey key = createVariableKey(cell, varName);
         if (key == null) {
             throw new IllegalStateException("Input variable " + varName + " not bound");
@@ -102,7 +102,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
      * @param steps
      * @return
      */
-    protected StepsCellExecutorJobDefinition buildJobDefinition(CellExecutionData cellExData, BindingsPanel.CellInstance cell, StepDefinition... steps) {
+    protected StepsCellExecutorJobDefinition buildJobDefinition(CellExecutionData cellExData, CellInstance cell, StepDefinition... steps) {
         StepsCellExecutorJobDefinition jobdef = new ExecuteCellUsingStepsJobDefinition();
         jobdef.configureCellAndSteps(cellExData.getNotebookId(), cellExData.getEditableId(), cell.getId(), steps);
         return jobdef;
@@ -111,7 +111,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
     public static class MockExecutor1 extends CellExecutor {
 
         @Override
-        public JobStatus execute(BindingsPanel.CellInstance cell, CellExecutionData cellExecutionData) throws Exception {
+        public JobStatus execute(CellInstance cell, CellExecutionData cellExecutionData) throws Exception {
             // do something to set the output variable(s)
             // create a fake jobstatus
             return JobStatus.create(null /* JobDefinition */, "username", new Date(), null).withStatus(JobStatus.Status.COMPLETED, 0, 0, null);

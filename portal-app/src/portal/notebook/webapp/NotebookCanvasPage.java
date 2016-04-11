@@ -162,9 +162,9 @@ public class NotebookCanvasPage extends WebPage {
                 if (notebookSession.getCurrentNotebookInstance() == null) {
                     return new ArrayList<>();
                 } else {
-                    List<BindingsPanel.CellInstance> cellInstanceList = notebookSession.getCurrentNotebookInstance().getCellInstanceList();
+                    List<CellInstance> cellInstanceList = notebookSession.getCurrentNotebookInstance().getCellInstanceList();
                     List<Long> idList = new ArrayList<>();
-                    for (BindingsPanel.CellInstance cellInstance : cellInstanceList) {
+                    for (CellInstance cellInstance : cellInstanceList) {
                         idList.add(cellInstance.getId());
                     }
                     return idList;
@@ -185,7 +185,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void populateItem(ListItem<Long> listItem) {
-                BindingsPanel.CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(listItem.getModelObject());
+                CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(listItem.getModelObject());
                 String markupId = CANVAS_ITEM_PREFIX + cellInstance.getId();
                 Panel canvasItemPanel = createCanvasItemPanel(cellInstance);
                 listItem.setOutputMarkupId(true);
@@ -310,16 +310,16 @@ public class NotebookCanvasPage extends WebPage {
         logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
         CellDefinition cellDefinition = notebookSession.findCellType(dropDataId);
-        BindingsPanel.CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().addCellInstance(cellDefinition);
+        CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().addCellInstance(cellDefinition);
         cellInstance.setPositionLeft(Integer.parseInt(x));
         cellInstance.setPositionTop(Integer.parseInt(y));
         notebookSession.storeCurrentNotebook();
 
         Panel canvasItemPanel = createCanvasItemPanel(cellInstance);
 
-        List<BindingsPanel.CellInstance> cellInstanceList = notebookSession.getCurrentNotebookInstance().getCellInstanceList();
+        List<CellInstance> cellInstanceList = notebookSession.getCurrentNotebookInstance().getCellInstanceList();
         String markupId = CANVAS_ITEM_PREFIX + cellInstance.getId();
-        ListItem<BindingsPanel.CellInstance> listItem = new ListItem<>(markupId, cellInstanceList.size());
+        ListItem<CellInstance> listItem = new ListItem<>(markupId, cellInstanceList.size());
         listItem.setMarkupId(markupId);
         listItem.setOutputMarkupId(true);
         listItem.add(canvasItemPanel);
@@ -343,7 +343,7 @@ public class NotebookCanvasPage extends WebPage {
         target.appendJavaScript("jsPlumb.repaintEverything(':itemId')".replaceAll(":itemId", "#" + listItem.getMarkupId()));
     }
 
-    private Panel createCanvasItemPanel(BindingsPanel.CellInstance cellInstance) {
+    private Panel createCanvasItemPanel(CellInstance cellInstance) {
         CellDefinition cellType = cellInstance.getCellDefinition();
         logger.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("TableDisplay".equals(cellType.getName())) {
@@ -370,9 +370,9 @@ public class NotebookCanvasPage extends WebPage {
 
                 logger.info("Item index " + index + " dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-                BindingsPanel.NotebookInstance notebookModel = notebookSession.getCurrentNotebookInstance();
+                NotebookInstance notebookModel = notebookSession.getCurrentNotebookInstance();
                 int i = Integer.parseInt(index);
-                BindingsPanel.CellInstance model = notebookModel.getCellInstanceList().get(i);
+                CellInstance model = notebookModel.getCellInstanceList().get(i);
                 model.setPositionLeft(Integer.parseInt(x));
                 model.setPositionTop(Integer.parseInt(y));
                 notebookSession.storeCurrentNotebook();
@@ -430,9 +430,9 @@ public class NotebookCanvasPage extends WebPage {
 
                 logger.info("Item index " + index + " resized to: " + SIZE_WIDTH + ": " + width + " and " + SIZE_HEIGHT + ": " + height);
 
-                BindingsPanel.NotebookInstance notebookModel = notebookSession.getCurrentNotebookInstance();
+                NotebookInstance notebookModel = notebookSession.getCurrentNotebookInstance();
                 int i = Integer.parseInt(index);
-                BindingsPanel.CellInstance model = notebookModel.getCellInstanceList().get(i);
+                CellInstance model = notebookModel.getCellInstanceList().get(i);
                 model.setSizeWidth(Integer.parseInt(width));
                 model.setSizeHeight(Integer.parseInt(height));
                 notebookSession.storeCurrentNotebook();
@@ -466,10 +466,10 @@ public class NotebookCanvasPage extends WebPage {
         String sourceVariableName = sourceEndpointUuid.substring(sourceEndpointUuid.indexOf("-") + 1);
         String targetVariableName = targetEndpointUuid.substring(targetEndpointUuid.indexOf("-") + 1);
 
-        BindingsPanel.CellInstance sourceCellInstance = null;
-        BindingsPanel.CellInstance targetCellInstance = null;
-        BindingsPanel.VariableInstance source = null;
-        BindingsPanel.BindingInstance target = null;
+        CellInstance sourceCellInstance = null;
+        CellInstance targetCellInstance = null;
+        VariableInstance source = null;
+        BindingInstance target = null;
 
         Iterator<Component> iterator = canvasItemRepeater.iterator();
         while (iterator.hasNext()) {
@@ -489,7 +489,7 @@ public class NotebookCanvasPage extends WebPage {
         }
     }
 
-    private void applyBinding(BindingsPanel.VariableInstance variableInstance, BindingsPanel.BindingInstance bindingInstance) {
+    private void applyBinding(VariableInstance variableInstance, BindingInstance bindingInstance) {
         bindingInstance.setVariableInstance(variableInstance);
         logger.info("Binding applied");
         notebookSession.storeCurrentNotebook();
@@ -521,14 +521,14 @@ public class NotebookCanvasPage extends WebPage {
     private String buildConnectionsJS() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Long cellId : canvasItemRepeater.getList()) {
-            BindingsPanel.CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
+            CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
             stringBuilder.append(buildEndpointsJS(cellInstance));
         }
         for (Long cellId : canvasItemRepeater.getList()) {
-            BindingsPanel.CellInstance targetCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
+            CellInstance targetCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
             String targetCellMarkupId = CANVAS_ITEM_PREFIX + targetCellInstance.getId();
-            for (BindingsPanel.BindingInstance bindingInstance : targetCellInstance.getBindingInstanceMap().values()) {
-                BindingsPanel.VariableInstance source = bindingInstance.getVariableInstance();
+            for (BindingInstance bindingInstance : targetCellInstance.getBindingInstanceMap().values()) {
+                VariableInstance source = bindingInstance.getVariableInstance();
                 if (source != null) {
                     String sourceEndpointUuid = CANVAS_ITEM_PREFIX + source.getCellId() + "-" + source.getVariableDefinition().getName();
                     String targetEndpointUuid = targetCellMarkupId + "-" + bindingInstance.getName();
@@ -540,14 +540,14 @@ public class NotebookCanvasPage extends WebPage {
         return stringBuilder.toString();
     }
 
-    private String buildEndpointsJS(BindingsPanel.CellInstance cellInstance) {
+    private String buildEndpointsJS(CellInstance cellInstance) {
         String itemId = CANVAS_ITEM_PREFIX + cellInstance.getId();
         StringBuilder stringBuilder = new StringBuilder();
-        for (BindingsPanel.VariableInstance variableInstance : cellInstance.getVariableInstanceMap().values()) {
+        for (VariableInstance variableInstance : cellInstance.getVariableInstanceMap().values()) {
             String endpointId = itemId + "-" + variableInstance.getVariableDefinition().getName();
             stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + variableInstance.getVariableDefinition().getName() + "');");
         }
-        for (BindingsPanel.BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
+        for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
             String endpointId = itemId + "-" + bindingInstance.getName();
             stringBuilder.append("addTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + bindingInstance.getName() + "');");
         }

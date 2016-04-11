@@ -15,7 +15,10 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import portal.PortalWebApplication;
+import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -36,7 +39,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
+        CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeWidth(500);
             cellInstance.setSizeHeight(285);
@@ -85,7 +88,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void loadModelFromPersistentData() {
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
+        CellInstance cellInstance = findCellInstance();
         ModelObject model = form.getModelObject();
         model.setX((String)cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue());
         model.setY((String)cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue());
@@ -97,9 +100,9 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     }
 
     private boolean isChangedCellBoundCell(Long changedCellId) {
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
-        BindingsPanel.BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-        BindingsPanel.VariableInstance variableInstance = bindingInstance.getVariableInstance();
+        CellInstance cellInstance = findCellInstance();
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        VariableInstance variableInstance = bindingInstance.getVariableInstance();
         return variableInstance != null && changedCellId.equals(variableInstance.getCellId());
     }
 
@@ -113,9 +116,9 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         String xFieldName = model.getX();
         String yFieldName = model.getY();
         if (xFieldName != null || yFieldName != null) {
-            BindingsPanel.CellInstance cellInstance = findCellInstance();
-            BindingsPanel.BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-            BindingsPanel.VariableInstance variableInstance = bindingInstance.getVariableInstance();
+            CellInstance cellInstance = findCellInstance();
+            BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+            VariableInstance variableInstance = bindingInstance.getVariableInstance();
             if (variableInstance != null) {
                 List<MoleculeObject> dataset = notebookSession.squonkDatasetAsMolecules(variableInstance);
                 float[][] plotData = new float[dataset.size()][dataset.size()];
@@ -168,7 +171,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
             @Override
             public void onApplyAdvancedOptions() {
-                BindingsPanel.CellInstance cellInstance = findCellInstance();
+                CellInstance cellInstance = findCellInstance();
                 cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).setValue(advancedOptionsPanel.getX());
                 cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).setValue(advancedOptionsPanel.getY());
                 notebookSession.storeCurrentNotebook();

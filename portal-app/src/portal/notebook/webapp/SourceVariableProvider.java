@@ -2,36 +2,37 @@ package portal.notebook.webapp;
 
 import com.vaynberg.wicket.select2.Response;
 import com.vaynberg.wicket.select2.TextChoiceProvider;
+import portal.notebook.api.VariableInstance;
 
 import java.util.*;
 
 /**
  * @author simetrias
  */
-public class SourceVariableProvider extends TextChoiceProvider<BindingsPanel.VariableInstance> {
+public class SourceVariableProvider extends TextChoiceProvider<VariableInstance> {
 
-    private final Map<String, BindingsPanel.VariableInstance> outputVariableInstanceMap;
+    private final Map<String, VariableInstance> outputVariableInstanceMap;
 
-    public SourceVariableProvider(Map<String, BindingsPanel.VariableInstance> outputVariableInstanceMap) {
+    public SourceVariableProvider(Map<String, VariableInstance> outputVariableInstanceMap) {
         this.outputVariableInstanceMap = outputVariableInstanceMap;
     }
 
     @Override
-    protected String getDisplayText(BindingsPanel.VariableInstance variableModel) {
+    protected String getDisplayText(VariableInstance variableModel) {
         return variableModel.getVariableDefinition().getDisplayName();
     }
 
     @Override
-    protected Object getId(BindingsPanel.VariableInstance variableModel) {
+    protected Object getId(VariableInstance variableModel) {
         return variableModel.getVariableDefinition().getName();
     }
 
     @Override
-    public void query(String s, int i, Response<BindingsPanel.VariableInstance> response) {
-        ArrayList<BindingsPanel.VariableInstance> list = new ArrayList<>(outputVariableInstanceMap.values());
-        Collections.sort(list, new Comparator<BindingsPanel.VariableInstance>() {
+    public void query(String s, int i, Response<VariableInstance> response) {
+        ArrayList<VariableInstance> list = new ArrayList<>(outputVariableInstanceMap.values());
+        Collections.sort(list, new Comparator<VariableInstance>() {
             @Override
-            public int compare(BindingsPanel.VariableInstance o1, BindingsPanel.VariableInstance o2) {
+            public int compare(VariableInstance o1, VariableInstance o2) {
                 return o1.getVariableDefinition().getName().compareTo(o2.getVariableDefinition().getName());
             }
         });
@@ -40,10 +41,10 @@ public class SourceVariableProvider extends TextChoiceProvider<BindingsPanel.Var
     }
 
     @Override
-    public Collection<BindingsPanel.VariableInstance> toChoices(Collection<String> collection) {
+    public Collection<VariableInstance> toChoices(Collection<String> collection) {
         String firstChoiceKey = collection.iterator().next();
-        BindingsPanel.VariableInstance firstChoice = outputVariableInstanceMap.get(firstChoiceKey);
-        ArrayList<BindingsPanel.VariableInstance> result = new ArrayList<>();
+        VariableInstance firstChoice = outputVariableInstanceMap.get(firstChoiceKey);
+        ArrayList<VariableInstance> result = new ArrayList<>();
         result.add(firstChoice);
         return result;
     }

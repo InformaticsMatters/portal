@@ -16,7 +16,10 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import portal.PortalWebApplication;
+import portal.notebook.api.BindingInstance;
+import portal.notebook.api.CellInstance;
 import portal.notebook.api.DefaultCellDefinitionRegistry;
+import portal.notebook.api.VariableInstance;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -38,7 +41,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
     public ThreeDimMolCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
+        CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeWidth(500);
             cellInstance.setSizeHeight(250);
@@ -71,10 +74,10 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
-        BindingsPanel.BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(DefaultCellDefinitionRegistry.VAR_NAME_INPUT);
+        CellInstance cellInstance = findCellInstance();
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(DefaultCellDefinitionRegistry.VAR_NAME_INPUT);
         if (bindingInstance != null) {
-            BindingsPanel.VariableInstance variableInstance = bindingInstance.getVariableInstance();
+            VariableInstance variableInstance = bindingInstance.getVariableInstance();
             boolean isOfInterest = variableInstance != null && changedCellId.equals(variableInstance.getCellId());
             if (isOfInterest) {
                 MoleculeObject moleculeObject = notebookSession.readMoleculeValue(variableInstance);

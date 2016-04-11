@@ -27,7 +27,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private Form form;
     @Inject
     private NotebookSession notebookSession;
-    private ListView<BindingsPanel.OptionInstance> optionListView;
+    private ListView<OptionInstance> optionListView;
 
     public DefaultCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -46,17 +46,17 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         form = new Form("form");
         add(form);
 
-        List<BindingsPanel.OptionInstance> optionList = new ArrayList<>();
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
-        for (BindingsPanel.OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
+        List<OptionInstance> optionList = new ArrayList<>();
+        CellInstance cellInstance = findCellInstance();
+        for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
             if (optionInstance.getOptionDescriptor().isEditable()) {
                 optionList.add(optionInstance);
             }
         }
-        optionListView = new ListView<BindingsPanel.OptionInstance>("option", optionList) {
+        optionListView = new ListView<OptionInstance>("option", optionList) {
 
             @Override
-            protected void populateItem(ListItem<BindingsPanel.OptionInstance> listItem) {
+            protected void populateItem(ListItem<OptionInstance> listItem) {
                 addOptionEditor(listItem);
             }
         };
@@ -93,18 +93,18 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
     private void storeOption(String name) {
         FieldEditorModel editorModel = optionEditorModelMap.get(name);
-        BindingsPanel.OptionInstance optionInstance = findCellInstance().getOptionInstanceMap().get(name);
+        OptionInstance optionInstance = findCellInstance().getOptionInstanceMap().get(name);
         optionInstance.setValue(editorModel.getValue());
     }
 
-    private void addOptionEditor(ListItem<BindingsPanel.OptionInstance> listItem) {
-        BindingsPanel.OptionInstance optionInstance = listItem.getModelObject();
+    private void addOptionEditor(ListItem<OptionInstance> listItem) {
+        OptionInstance optionInstance = listItem.getModelObject();
         FieldEditorPanel fieldEditorPanel = createOptionEditor(optionInstance);
         optionEditorModelMap.put(optionInstance.getOptionDescriptor().getkey(), fieldEditorPanel.getFieldEditorModel());
         listItem.add(fieldEditorPanel);
     }
 
-    private FieldEditorPanel createOptionEditor(BindingsPanel.OptionInstance optionInstance) {
+    private FieldEditorPanel createOptionEditor(OptionInstance optionInstance) {
         OptionDescriptor optionDescriptor = optionInstance.getOptionDescriptor();
         Object value = optionInstance.getValue() == null ? optionDescriptor.getDefaultValue() : optionInstance.getValue();
         if (optionDescriptor instanceof RestPicklistOptionDescriptor) {
@@ -137,8 +137,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         }
     }
 
-    private BindingsPanel.VariableInstance findVariableInstanceForFileOption() {
-        for (BindingsPanel.VariableInstance variableInstance : findCellInstance().getVariableInstanceMap().values()) {
+    private VariableInstance findVariableInstanceForFileOption() {
+        for (VariableInstance variableInstance : findCellInstance().getVariableInstanceMap().values()) {
             if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.FILE)) {
                 return variableInstance;
             }
@@ -163,19 +163,19 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     class OptionUploadCallback implements FileFieldEditorPanel.Callback {
-        private final BindingsPanel.OptionInstance optionInstance;
+        private final OptionInstance optionInstance;
 
-        OptionUploadCallback(BindingsPanel.OptionInstance optionInstance) {
+        OptionUploadCallback(OptionInstance optionInstance) {
             this.optionInstance = optionInstance;
         }
 
         @Override
         public void onUpload(String fileName, InputStream inputStream) {
             String optionName = optionInstance.getOptionDescriptor().getkey();
-            BindingsPanel.OptionInstance liveOptionInstance = findCellInstance().getOptionInstanceMap().get(optionName);
+            OptionInstance liveOptionInstance = findCellInstance().getOptionInstanceMap().get(optionName);
             liveOptionInstance.setValue(fileName);
             notebookSession.storeCurrentNotebook();
-            BindingsPanel.VariableInstance variableInstance = findVariableInstanceForFileOption();
+            VariableInstance variableInstance = findVariableInstanceForFileOption();
             if (variableInstance == null) {
                 throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getkey());
             }

@@ -9,6 +9,7 @@ import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.PopupContainerProvider;
+import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
 
 import javax.inject.Inject;
@@ -35,7 +36,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
         String js = "initCellSizeAndPosition(':id', :left, :top, :width, :height)";
-        BindingsPanel.CellInstance model = findCellInstance();
+        CellInstance model = findCellInstance();
         js = js.replace(":id", getMarkupId());
         js = js.replace(":left", Integer.toString(model.getPositionLeft() == null ? 1 : model.getPositionLeft()));
         js = js.replace(":top", Integer.toString(model.getPositionTop() == null ? 1 : model.getPositionTop()));
@@ -59,7 +60,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
 
-    public BindingsPanel.CellInstance findCellInstance() {
+    public CellInstance findCellInstance() {
         return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
     }
 
@@ -69,7 +70,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     @Override
-    public void onRemove(BindingsPanel.CellInstance cellInstance) {
+    public void onRemove(CellInstance cellInstance) {
         notebookSession.getCurrentNotebookInstance().removeCellInstance(cellInstance.getId());
         notebookSession.storeCurrentNotebook();
         fireContentChanged();

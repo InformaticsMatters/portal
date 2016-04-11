@@ -14,6 +14,7 @@ import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource
 import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import portal.notebook.api.OptionInstance;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 
 import java.awt.*;
@@ -96,7 +97,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
         add(marvinSketcherPanel);
     }
 
-    public void store(BindingsPanel.OptionInstance optionInstance) {
+    public void store(OptionInstance optionInstance) {
         optionInstance.setValue(model.getObject());
     }
 

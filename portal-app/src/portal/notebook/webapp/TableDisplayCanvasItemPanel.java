@@ -7,6 +7,9 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import portal.notebook.api.BindingInstance;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
@@ -31,7 +34,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     public TableDisplayCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
+        CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeWidth(500);
         }
@@ -51,8 +54,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
-        BindingsPanel.BindingInstance binding = cellInstance.getBindingInstanceMap().get("input");
+        CellInstance cellInstance = findCellInstance();
+        BindingInstance binding = cellInstance.getBindingInstanceMap().get("input");
         if (binding.getVariableInstance() != null && binding.getVariableInstance().getCellId().equals(changedCellId)) {
             load();
             ajaxRequestTarget.add(this);
@@ -70,8 +73,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() {
-        BindingsPanel.BindingInstance bindingModel = findCellInstance().getBindingInstanceMap().get("input");
-        BindingsPanel.VariableInstance variableInstance = bindingModel == null ? null : bindingModel.getVariableInstance();
+        BindingInstance bindingModel = findCellInstance().getBindingInstanceMap().get("input");
+        VariableInstance variableInstance = bindingModel == null ? null : bindingModel.getVariableInstance();
         String value = variableInstance == null ? null : notebookSession.readTextValue(variableInstance);
         boolean assigned = value != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
@@ -85,8 +88,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private IDatasetDescriptor loadDescriptor() {
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
-        BindingsPanel.VariableInstance variableInstance = cellInstance.getBindingInstanceMap().get("input").getVariableInstance();
+        CellInstance cellInstance = findCellInstance();
+        VariableInstance variableInstance = cellInstance.getBindingInstanceMap().get("input").getVariableInstance();
         return notebookSession.loadDatasetFromVariable(variableInstance);
     }
 
@@ -107,7 +110,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void storeCurrentSelection(UUID uuid) {
-        BindingsPanel.VariableInstance variableInstance = findCellInstance().getVariableInstanceMap().get("selection");
+        VariableInstance variableInstance = findCellInstance().getVariableInstanceMap().get("selection");
         MoleculeObject moleculeObject = notebookSession.findMoleculeObjectByRow(datasetDescriptorId, uuid);
         notebookSession.writeMoleculeValue(variableInstance, moleculeObject);
         notebookSession.storeCurrentNotebook();

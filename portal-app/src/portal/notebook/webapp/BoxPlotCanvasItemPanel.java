@@ -13,6 +13,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import portal.PortalWebApplication;
+import portal.notebook.api.CellInstance;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class BoxPlotCanvasItemPanel extends CanvasItemPanel {
 
     public BoxPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
-        BindingsPanel.CellInstance cellInstance = findCellInstance();
+        CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeHeight(250);
             cellInstance.setSizeWidth(780);

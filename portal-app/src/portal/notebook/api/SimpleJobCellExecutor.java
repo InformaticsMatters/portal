@@ -23,7 +23,7 @@ class SimpleJobCellExecutor extends AbstractJobCellExecutor {
 
 
     @Override
-    protected JobDefinition buildJobDefinition(BindingsPanel.CellInstance cell, CellExecutionData cellExecutionData) {
+    protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
         VariableKey key = createVariableKey(cell, CellDefinition.VAR_NAME_INPUT);
 
@@ -42,7 +42,7 @@ class SimpleJobCellExecutor extends AbstractJobCellExecutor {
      * @param step
      * @param cell
      */
-    protected void handleOptions(StepDefinition step, BindingsPanel.CellInstance cell) {
+    protected void handleOptions(StepDefinition step, CellInstance cell) {
         step.withOptions(collectAllOptions(cell));
     }
 

@@ -70,7 +70,7 @@ public class ServiceCellDefinition extends CellDefinition {
     class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(BindingsPanel.CellInstance cell, CellExecutionData cellExecutionData) {
+        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             LOG.info("Building JobDefinition for service " + serviceDescriptor.getAccessModes()[0].getExecutionEndpoint());
 
