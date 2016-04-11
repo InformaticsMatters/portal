@@ -57,11 +57,11 @@ public class MockJobStatusService {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
         try (Stream stream = generator.getAsStream()) {
             InputStream dataInputStream = generator.getAsInputStream(stream, true);
-            notebookVariableClient.writeStreamValue(notebookId, editableId, cellId, cellId + "." + name, dataInputStream);
+            notebookVariableClient.writeStreamValue(notebookId, editableId, cellId, name, dataInputStream);
         }
         DatasetMetadata metadata = generator.getDatasetMetadata();
         String jsonTring = JsonHandler.getInstance().objectToJson(metadata);
-        notebookVariableClient.writeTextValue(notebookId, editableId, cellId, cellId + "." + name, jsonTring);
+        notebookVariableClient.writeTextValue(notebookId, editableId, cellId, name, jsonTring);
         String storedValue = notebookVariableClient.readTextValue(notebookId, editableId, cellId, name);
         if (!jsonTring.equals(storedValue)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
