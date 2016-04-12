@@ -316,9 +316,13 @@ div.ui-resizable-handle.ui-resizable-s {
     padding-left: 0;
 }
 
-.checkbox {
+.checkbox input {
     margin-top: 3px;
     margin-right: 3px;
+}
+
+.checkbox label {
+    font-size: 14px;
 }
 
 .nb-cell-name {

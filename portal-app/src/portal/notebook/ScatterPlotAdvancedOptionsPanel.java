@@ -2,6 +2,7 @@ package portal.notebook;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -52,6 +53,10 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
         DropDownChoice<String> y = new DropDownChoice<>("y", picklistItems);
         form.add(y);
 
+        CheckBox checkBox = new CheckBox("showAxisLabels");
+        form.add(checkBox);
+        add(form);
+
         form.add(new IndicatingAjaxSubmitLink("save") {
 
             @Override
@@ -62,7 +67,6 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
                 popupContainerProvider.refreshContainer(getPage(), target);
             }
         });
-        add(form);
     }
 
     private void loadPicklist() {
@@ -117,6 +121,7 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
         private String x;
         private String y;
+        private Boolean showAxisLabels = Boolean.FALSE;
 
         public String getX() {
             return x;
@@ -132,6 +137,14 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
         public void setY(String y) {
             this.y = y;
+        }
+
+        public Boolean getShowAxisLabels() {
+            return showAxisLabels;
+        }
+
+        public void setShowAxisLabels(Boolean showAxisLabels) {
+            this.showAxisLabels = showAxisLabels;
         }
     }
 }
