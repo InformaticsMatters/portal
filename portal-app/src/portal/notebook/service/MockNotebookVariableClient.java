@@ -41,6 +41,11 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         return notebookDescriptor;
     }
 
+    @Override
+    public boolean deleteNotebook(Long aLong) throws Exception {
+        throw new UnsupportedOperationException("NYI");
+    }
+
     private NotebookDTO toNotebookDescriptor(MockNotebookDescriptor mockNotebookDescriptor) {
         return new NotebookDTO(mockNotebookDescriptor.getId(), mockNotebookDescriptor.getName(), mockNotebookDescriptor.getDescription(), mockNotebookDescriptor.getOwner(), new Date(), new Date());
     }
@@ -49,6 +54,21 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     public NotebookDTO updateNotebook(Long aLong, String s, String s1) throws Exception {
         MockNotebookDescriptor mockNotebookDescriptor = entityManager.find(MockNotebookDescriptor.class, aLong);
         return toNotebookDescriptor(mockNotebookDescriptor);
+    }
+
+    @Override
+    public void addNotebookToLayer(Long aLong, String s) throws Exception {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+    @Override
+    public void removeNotebookFromLayer(Long aLong, String s) throws Exception {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+    @Override
+    public List<String> listLayers(Long aLong) throws Exception {
+        throw new UnsupportedOperationException("NYI");
     }
 
     @Override
