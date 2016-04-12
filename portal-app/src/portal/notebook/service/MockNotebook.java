@@ -2,14 +2,17 @@ package portal.notebook.service;
 
 import toolkit.services.AbstractEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
-public class MockNotebookDescriptor extends AbstractEntity {
+public class MockNotebook extends AbstractEntity {
     private String owner;
     private String name;
     private String description;
 
+    @Column(nullable = false)
     public String getOwner() {
         return owner;
     }
@@ -18,6 +21,7 @@ public class MockNotebookDescriptor extends AbstractEntity {
         this.owner = owner;
     }
 
+    @Column(nullable = false, unique = true)
     public String getName() {
         return name;
     }
@@ -33,4 +37,5 @@ public class MockNotebookDescriptor extends AbstractEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

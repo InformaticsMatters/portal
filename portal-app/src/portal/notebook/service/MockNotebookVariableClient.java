@@ -1,8 +1,6 @@
 package portal.notebook.service;
 
-import org.squonk.client.NotebookClient;
 import org.squonk.client.NotebookVariableClient;
-import org.squonk.client.VariableClient;
 import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.notebook.api.NotebookDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
@@ -31,20 +29,20 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
 
     @Override
     public NotebookDTO createNotebook(String owner, String name, String desc) throws Exception {
-        MockNotebookDescriptor mockNotebookDescriptor = new MockNotebookDescriptor();
-        mockNotebookDescriptor.setOwner(owner);
-        mockNotebookDescriptor.setName(name);
-        mockNotebookDescriptor.setDescription(desc);
-        entityManager.persist(mockNotebookDescriptor);
+        MockNotebook mockNotebook = new MockNotebook();
+        mockNotebook.setOwner(owner);
+        mockNotebook.setName(name);
+        mockNotebook.setDescription(desc);
+        entityManager.persist(mockNotebook);
         System.out.println("Created new empty notebook");
-        NotebookDTO notebookDescriptor = toNotebookDescriptor(mockNotebookDescriptor);
-        return notebookDescriptor;
+        NotebookDTO notebookDTO = toNotebook(mockNotebook);
+        return notebookDTO;
     }
 
     @Override
     public boolean deleteNotebook(Long notebookId) throws Exception {
-        MockNotebookDescriptor mockNotebookDescriptor = entityManager.find(MockNotebookDescriptor.class, notebookId);
-        if (mockNotebookDescriptor == null) {
+        MockNotebook mockNotebook = entityManager.find(MockNotebook.class, notebookId);
+        if (mockNotebook == null) {
             return false;
         } else {
             TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
@@ -57,42 +55,56 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
                 }
                 entityManager.remove(mockNotebookEditable);
             }
-            entityManager.remove(mockNotebookDescriptor);
+            entityManager.remove(mockNotebook);
             return true;
         }
     }
 
-    private NotebookDTO toNotebookDescriptor(MockNotebookDescriptor mockNotebookDescriptor) {
-        return new NotebookDTO(mockNotebookDescriptor.getId(), mockNotebookDescriptor.getName(), mockNotebookDescriptor.getDescription(), mockNotebookDescriptor.getOwner(), new Date(), new Date());
+    private NotebookDTO toNotebook(MockNotebook mockNotebook) {
+        return new NotebookDTO(mockNotebook.getId(), mockNotebook.getName(), mockNotebook.getDescription(), mockNotebook.getOwner(), new Date(), new Date());
     }
 
     @Override
     public NotebookDTO updateNotebook(Long aLong, String s, String s1) throws Exception {
-        MockNotebookDescriptor mockNotebookDescriptor = entityManager.find(MockNotebookDescriptor.class, aLong);
-        return toNotebookDescriptor(mockNotebookDescriptor);
+        MockNotebook mockNotebook = entityManager.find(MockNotebook.class, aLong);
+        return toNotebook(mockNotebook);
     }
 
     @Override
     public void addNotebookToLayer(Long aLong, String s) throws Exception {
-        throw new UnsupportedOperationException("NYI");
+        MockNotebookNotebookLayer mockNotebookNotebookLayer = new MockNotebookNotebookLayer();
+        mockNotebookNotebookLayer.setMockNotebook(entityManager.find(MockNotebook.class, aLong));
+        mockNotebookNotebookLayer.setLayerName(s);
+        entityManager.persist(mockNotebookNotebookLayer);
     }
 
     @Override
     public void removeNotebookFromLayer(Long aLong, String s) throws Exception {
-        throw new UnsupportedOperationException("NYI");
+        TypedQuery<MockNotebookNotebookLayer> query = entityManager.createQuery("select o from MockNotebookNotebookLayer o where o.mockNotebook.id = :notebookId and o.layerName = :layerName", MockNotebookNotebookLayer.class);
+        query.setParameter("notebookId", aLong);
+        query.setParameter("layerName", s);
+        if (!query.getResultList().isEmpty()) {
+            entityManager.remove(query.getResultList().get(0));
+        }
     }
 
     @Override
     public List<String> listLayers(Long aLong) throws Exception {
-        throw new UnsupportedOperationException("NYI");
+        TypedQuery<MockNotebookNotebookLayer> query = entityManager.createQuery("select o from MockNotebookNotebookLayer o where o.mockNotebook.id = :notebookId order by o.layerName", MockNotebookNotebookLayer.class);
+        query.setParameter("notebookId", aLong);
+        List<String> list = new ArrayList<>();
+        for (MockNotebookNotebookLayer mockNotebookNotebookLayer : query.getResultList()) {
+            list.add(mockNotebookNotebookLayer.getLayerName());
+        }
+        return list;
     }
 
     @Override
     public List<NotebookDTO> listNotebooks(String userName) throws Exception {
-        TypedQuery<MockNotebookDescriptor> query = entityManager.createQuery("select o from MockNotebookDescriptor o", MockNotebookDescriptor.class);
+        TypedQuery<MockNotebook> query = entityManager.createQuery("select o from MockNotebook o", MockNotebook.class);
         List<NotebookDTO> list = new ArrayList<>();
-        for (MockNotebookDescriptor mockNotebookDescriptor : query.getResultList()) {
-            list.add(toNotebookDescriptor(mockNotebookDescriptor));
+        for (MockNotebook mockNotebook : query.getResultList()) {
+            list.add(toNotebook(mockNotebook));
 
         }
         return list;
@@ -118,8 +130,8 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
 
     @Override
     public NotebookEditableDTO createEditable(Long notebookId, Long aLong1, String userName) throws Exception {
-        MockNotebookDescriptor mockNotebookDescriptor = entityManager.find(MockNotebookDescriptor.class, notebookId);
-        if (mockNotebookDescriptor == null) {
+        MockNotebook mockNotebook = entityManager.find(MockNotebook.class, notebookId);
+        if (mockNotebook == null) {
             throw new RuntimeException("Unknown notebook id");
         }
         MockNotebookEditable mockNotebookEditable = new MockNotebookEditable();
@@ -254,25 +266,5 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         return variableQuery.getResultList().isEmpty() ? null : variableQuery.getResultList().get(0);
     }
 
-    private MockNotebookEditable findMockNotebookEditableByNotebookId(Long notebookId) {
-        TypedQuery<MockNotebookEditable> query = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
-        query.setParameter("notebookId", notebookId);
-        return query.getResultList().isEmpty() ? null : query.getResultList().get(0);
-    }
 
-
-    public NotebookCanvasDTO.CellDTO findCell(Long notebookId, Long cellId) {
-        try {
-            MockNotebookEditable mockNotebookEditable = findMockNotebookEditableByNotebookId(notebookId);
-            NotebookCanvasDTO notebookCanvasDTO = JsonHandler.getInstance().objectFromJson(new String(mockNotebookEditable.getJson()), NotebookCanvasDTO.class);
-            for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
-                if (cellDTO.getId().equals(cellId)) {
-                    return cellDTO;
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

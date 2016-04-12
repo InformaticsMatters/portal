@@ -97,12 +97,12 @@ public class EditNotebookPanel extends SemanticModalPanel {
     private Long store() {
         EditNotebookData editNotebookData = form.getModelObject();
         if (editNotebookData.getId() == null) {
-            return notebookSession.createNotebook(editNotebookData.getName(), editNotebookData.getDescription());
+            return notebookSession.createNotebook(editNotebookData.getName(), editNotebookData.getDescription(), editNotebookData.getShared());
         } else if (forRemove) {
             notebookSession.removeNotebook(editNotebookData.getId());
             return null;
         } else {
-            notebookSession.updateNotebook(editNotebookData.getId(), editNotebookData.getName(), editNotebookData.getDescription());
+            notebookSession.updateNotebook(editNotebookData.getId(), editNotebookData.getName(), editNotebookData.getDescription(), editNotebookData.getShared());
             return editNotebookData.getId();
         }
     }
@@ -128,7 +128,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
         editNotebookData.setId(notebookInfo.getId());
         editNotebookData.setName(notebookInfo.getName());
         editNotebookData.setDescription(notebookInfo.getDescription());
-        editNotebookData.setShared(false);//notebookDescriptor.getShared());
+        editNotebookData.setShared(notebookInfo.getShared());
         form.setModelObject(editNotebookData);
         nameField.setEnabled(true);
         descriptionField.setEnabled(true);
@@ -142,7 +142,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
         editNotebookData.setId(notebookInfo.getId());
         editNotebookData.setName(notebookInfo.getName());
         editNotebookData.setDescription(notebookInfo.getDescription());
-        editNotebookData.setShared(false);//notebookDescriptor.getShared());
+        editNotebookData.setShared(notebookInfo.getShared());
         form.setModelObject(editNotebookData);
         nameField.setEnabled(false);
         descriptionField.setEnabled(false);
