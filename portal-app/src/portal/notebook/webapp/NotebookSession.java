@@ -90,7 +90,11 @@ public class NotebookSession implements Serializable {
     }
 
     public void removeNotebook(Long notebookId) {
-
+        try {
+            notebookVariableClient.deleteNotebook(notebookId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private NotebookEditableDTO findDefaultNotebookEditable(Long descriptorId) {

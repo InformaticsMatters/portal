@@ -42,8 +42,24 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     }
 
     @Override
-    public boolean deleteNotebook(Long aLong) throws Exception {
-        throw new UnsupportedOperationException("NYI");
+    public boolean deleteNotebook(Long notebookId) throws Exception {
+        MockNotebookDescriptor mockNotebookDescriptor = entityManager.find(MockNotebookDescriptor.class, notebookId);
+        if (mockNotebookDescriptor == null) {
+            return false;
+        } else {
+            TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.notebookId = :notebookId", MockNotebookEditable.class);
+            TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookEditable.id = :editableId", MockVariable.class);
+            editableQuery.setParameter("notebookId", notebookId);
+            for (MockNotebookEditable mockNotebookEditable : editableQuery.getResultList()) {
+                variableQuery.setParameter("editableId", mockNotebookEditable.getId());
+                for (MockVariable mockVariable : variableQuery.getResultList()) {
+                    entityManager.remove(mockVariable);
+                }
+                entityManager.remove(mockNotebookEditable);
+            }
+            entityManager.remove(mockNotebookDescriptor);
+            return true;
+        }
     }
 
     private NotebookDTO toNotebookDescriptor(MockNotebookDescriptor mockNotebookDescriptor) {
