@@ -143,8 +143,16 @@ public class NotebookCanvasPage extends WebPage {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-        add(new Label("notebookName", new PropertyModel(notebookSession, "currentNotebookInfo.name")));
-        add(new Label("notebookOwner", new PropertyModel(notebookSession, "currentNotebookInfo.owner")));
+        Label nbInfo = new Label("nbInfo", new PropertyModel(this, "currentNotebookDescription"));
+        add(nbInfo);
+    }
+
+    public String getCurrentNotebookDescription() {
+        if (notebookSession.getCurrentNotebookInfo() != null) {
+            return notebookSession.getCurrentNotebookInfo().getName() + " - " + notebookSession.getCurrentNotebookInfo().getOwner();
+        } else {
+            return "No notebook selected";
+        }
     }
 
     private void addPlumbContainer() {
