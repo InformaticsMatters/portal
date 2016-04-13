@@ -5,8 +5,8 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.cdi.ConversationPropagation;
 import org.apache.wicket.protocol.http.WebApplication;
-import portal.notebook.NotebookCanvasPage;
-import portal.notebook.NotebookStructureImageResource;
+import portal.notebook.webapp.NotebookCanvasPage;
+import portal.notebook.webapp.NotebookStructureImageResource;
 import toolkit.derby.DerbyUtils;
 
 import javax.enterprise.inject.spi.BeanManager;

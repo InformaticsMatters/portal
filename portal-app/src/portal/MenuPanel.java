@@ -9,7 +9,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.squonk.security.UserDetails;
-import portal.notebook.NotebookCanvasPage;
+import portal.notebook.webapp.NotebookCanvasPage;
 
 import javax.inject.Inject;
 

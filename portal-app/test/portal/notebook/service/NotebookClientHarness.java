@@ -8,7 +8,7 @@ import org.squonk.notebook.api2.NotebookSavepoint;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.NotebookInstance;
 import portal.notebook.api.VariableInstance;
-import portal.notebook.cells.ChemblActivitiesFetcherCellDefinition;
+import portal.notebook.api.ChemblActivitiesFetcherCellDefinition;
 import toolkit.derby.DerbyUtils;
 import toolkit.test.AbstractTestCase;
 import toolkit.test.TestCase;
