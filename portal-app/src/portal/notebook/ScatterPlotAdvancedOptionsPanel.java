@@ -55,6 +55,10 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
         CheckBox checkBox = new CheckBox("showAxisLabels");
         form.add(checkBox);
+
+        DropDownChoice<String> color = new DropDownChoice<>("color", picklistItems);
+        form.add(color);
+
         add(form);
 
         form.add(new IndicatingAjaxSubmitLink("save") {
@@ -121,6 +125,7 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
         private String x;
         private String y;
+        private String color;
         private Boolean showAxisLabels = Boolean.FALSE;
 
         public String getX() {
@@ -137,6 +142,14 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
         public void setY(String y) {
             this.y = y;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
         }
 
         public Boolean getShowAxisLabels() {
