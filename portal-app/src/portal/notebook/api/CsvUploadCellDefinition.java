@@ -52,7 +52,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
 
             StepDefinition step1 = new StepDefinition(CsvUpload.CLASSNAME)
                     .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, key) // maps the input to our own file contents
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellConstants.VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cell));
 
             return buildJobDefinition(cellExecutionData.getNotebookId(), cell, step1);
