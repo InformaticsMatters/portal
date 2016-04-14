@@ -1,4 +1,4 @@
-package portal.notebook;
+package portal.notebook.webapp;
 
 import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;
@@ -19,7 +19,9 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.DefaultCellDefinitionRegistry;
 import portal.notebook.api.VariableInstance;
-import portal.notebook.cells.DefaultCellDefinitionRegistry;
+import portal.notebook.webapp.CanvasItemPanel;
+import portal.notebook.webapp.NotebookSession;
+import portal.notebook.webapp.ThreeDimMolAdvancedOptionsPanel;
 
 import javax.inject.Inject;
 import java.io.IOException;
