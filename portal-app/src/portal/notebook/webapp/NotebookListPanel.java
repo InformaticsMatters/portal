@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -9,6 +10,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,10 +57,10 @@ public class NotebookListPanel extends Panel {
 
             @Override
             protected void populateItem(ListItem<NotebookInfo> listItem) {
-                NotebookInfo notebookDescriptor = listItem.getModelObject();
-                boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookDescriptor.getOwner());
-                listItem.add(new Label("name", notebookDescriptor.getName()));
-                listItem.add(new Label("owner", notebookDescriptor.getOwner()));
+                NotebookInfo notebookInfo = listItem.getModelObject();
+                boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookInfo.getOwner());
+                listItem.add(new Label("name", notebookInfo.getName()));
+                listItem.add(new Label("owner", notebookInfo.getOwner()));
 
                 AjaxLink editLink = new AjaxLink("edit") {
 
@@ -75,7 +77,8 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        notebookSession.updateNotebook(notebookDescriptor.getId(), notebookDescriptor.getName(), notebookDescriptor.getDescription());
+                        boolean share = !notebookInfo.getShared();
+                        notebookSession.updateNotebook(notebookInfo.getId(), notebookInfo.getName(), notebookInfo.getDescription(), share);
                         refreshNotebookList();
                     }
                 };
@@ -97,7 +100,7 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     protected void onEvent(AjaxRequestTarget target) {
-                        notebookSession.loadCurrentNotebook(notebookDescriptor.getId());
+                        notebookSession.loadCurrentNotebook(notebookInfo.getId());
                         selectedMarkupId = listItem.getMarkupId();
                         target.add(getPage());
                     }
@@ -108,10 +111,10 @@ public class NotebookListPanel extends Panel {
                     selectedMarkupId = listItem.getMarkupId();
                 }
                 Label shared = new Label("shared");
-                /**if (notebookDescriptor.getShared()) {
+                if (notebookInfo.getShared()) {
                     shared.setDefaultModel(Model.of("public"));
                     shared.add(new AttributeModifier("class", "ui tiny blue label"));
-                }**/
+                }
                 listItem.add(shared);
                 shared.setVisible(isOwner);
             }

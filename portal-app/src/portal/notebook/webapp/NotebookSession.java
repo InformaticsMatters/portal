@@ -50,6 +50,7 @@ public class NotebookSession implements Serializable {
             List<NotebookInfo> list = new ArrayList<>();
             for (NotebookDTO notebookDescriptor : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
                 NotebookInfo notebookInfo = NotebookInfo.fromNotebookDescriptor(notebookDescriptor);
+                notebookInfo.setShared(isPublicNotebook(notebookInfo.getId()));
                 list.add(notebookInfo);
             }
             return list;
@@ -58,11 +59,23 @@ public class NotebookSession implements Serializable {
         }
     }
 
+    private Boolean isPublicNotebook(Long id) throws Exception {
+        List<String> layerNameList = notebookVariableClient.listLayers(id);
+        for (String name : layerNameList) {
+            if (name.equals("public")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public NotebookInfo findNotebookInfo(Long id) {
         try {
-            for (NotebookDTO notebookDescriptor : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
-                if (notebookDescriptor.getId().equals(id)) {
-                    return NotebookInfo.fromNotebookDescriptor(notebookDescriptor);
+            for (NotebookDTO notebookDTO : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
+                if (notebookDTO.getId().equals(id)) {
+                    NotebookInfo notebookInfo = NotebookInfo.fromNotebookDescriptor(notebookDTO);
+                    notebookInfo.setShared(isPublicNotebook(notebookDTO.getId()));
+                    return notebookInfo;
                 }
             }
             return null;
@@ -71,26 +84,37 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public Long createNotebook(String name, String description) {
+    public Long createNotebook(String name, String description, Boolean shared) {
         try {
-            NotebookDTO notebookDescriptor = notebookVariableClient.createNotebook(sessionContext.getLoggedInUserDetails().getUserid(), name, description);
-            notebookVariableClient.createEditable(notebookDescriptor.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
-            return notebookDescriptor.getId();
+            NotebookDTO notebookDTO = notebookVariableClient.createNotebook(sessionContext.getLoggedInUserDetails().getUserid(), name, description);
+            notebookVariableClient.createEditable(notebookDTO.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
+            if (shared) {
+                notebookVariableClient.addNotebookToLayer(notebookDTO.getId(), "public");
+            }
+            return notebookDTO.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void updateNotebook(Long id, String name, String description) {
+    public void updateNotebook(Long id, String name, String description, Boolean shared) {
         try {
             notebookVariableClient.updateNotebook(id, name, description);
+            notebookVariableClient.removeNotebookFromLayer(id, "public");
+            if (shared) {
+                notebookVariableClient.addNotebookToLayer(id, "public");
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public void removeNotebook(Long notebookId) {
-
+        try {
+            notebookVariableClient.deleteNotebook(notebookId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private NotebookEditableDTO findDefaultNotebookEditable(Long descriptorId) {

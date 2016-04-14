@@ -1,6 +1,5 @@
 package portal.notebook.webapp;
 
-import chemaxon.calculations.clean.Cleaner;
 import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;
 import chemaxon.struc.Molecule;
@@ -20,6 +19,9 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.DefaultCellDefinitionRegistry;
 import portal.notebook.api.VariableInstance;
+import portal.notebook.webapp.CanvasItemPanel;
+import portal.notebook.webapp.NotebookSession;
+import portal.notebook.webapp.ThreeDimMolAdvancedOptionsPanel;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -123,10 +125,6 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
                 return null;
             } else {
                 Molecule molecule = MolImporter.importMol(input);
-                if (molecule.getDim() != 3) {
-                    // convert to 3D if not already
-                    Cleaner.clean(molecule, 3);
-                }
                 return MolExporter.exportToFormat(molecule, format);
             }
         } catch (Exception e) {

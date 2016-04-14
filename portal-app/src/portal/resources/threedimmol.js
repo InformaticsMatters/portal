@@ -92,7 +92,7 @@ function init3DMolViewer(data, format) {
 }
 
 function set3DMolViewerData(data, format) {
-    glviewer.clear();
+    // glviewer.clear();
     glviewer.addModel(data, format);
     glviewer.setStyle({}, {stick: {}});
     glviewer.mapAtomProperties($3Dmol.applyPartialCharges);
@@ -102,5 +102,6 @@ function set3DMolViewerData(data, format) {
 
 // 1UBQ is a PDB id
 function downloadPdb(pdbId) {
+    glviewer.clear();
     $3Dmol.download('pdb:' + pdbId, glviewer, {doAssembly:true, noSecondaryStructure: false});
 }
