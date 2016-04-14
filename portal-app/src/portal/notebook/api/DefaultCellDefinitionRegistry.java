@@ -42,7 +42,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "icons/visualisation_table.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName(CellConstants.VAR_NAME_INPUT);
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
@@ -60,7 +60,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("ScatterPlot", "Scatter plot", "icons/visualisation_chart.png", new String[]{"scatter", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName(CellConstants.VAR_NAME_INPUT);
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
@@ -75,7 +75,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("3DMol", "3D viewer", "icons/view.png", new String[]{"3d", "viewer", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName(CellConstants.VAR_NAME_INPUT);
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
@@ -88,7 +88,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("BoxPlot", "Box plot", "icons/visualisation_chart.png", new String[]{"box", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName(CellConstants.VAR_NAME_INPUT);
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);

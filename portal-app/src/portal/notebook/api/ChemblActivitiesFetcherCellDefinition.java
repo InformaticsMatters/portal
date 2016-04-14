@@ -36,7 +36,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
         protected JobDefinition buildJobDefinition(CellExecutionData cellExecutionData) {
             CellInstance cellInstance = cellExecutionData.getNotebookInstance().findCellInstanceById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellConstants.VAR_NAME_OUTPUT)
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cellInstance));
 
             return buildJobDefinition(cellExecutionData.getNotebookId(), cellInstance, step1);
