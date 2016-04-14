@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
-    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data)";
+    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data, ':xLabel', ':yLabel')";
     private static final String OPTION_X_AXIS = "xAxis";
     private static final String OPTION_Y_AXIS = "yAxis";
     private Form<ModelObject> form;
@@ -107,32 +107,37 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     private void invalidatePlotData() {
         ModelObject model = form.getModelObject();
-        model.setPlotData(new float[][]{});
+        model.setData(new DataItem[]{});
     }
 
     private void refreshPlotData() {
         ModelObject model = form.getModelObject();
         String xFieldName = model.getX();
         String yFieldName = model.getY();
+        String colorFieldName = model.getColor();
         if (xFieldName != null || yFieldName != null) {
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
             if (variableInstance != null) {
                 List<MoleculeObject> dataset = notebookSession.squonkDatasetAsMolecules(variableInstance);
-                float[][] plotData = new float[dataset.size()][dataset.size()];
+                DataItem[] data = new DataItem[dataset.size()];
                 int index = 0;
                 for (MoleculeObject moleculeObject : dataset) {
                     Float x = safeConvertToFloat(moleculeObject.getValue(xFieldName));
                     Float y = safeConvertToFloat(moleculeObject.getValue(yFieldName));
+                    Integer color = (Integer) moleculeObject.getValue(colorFieldName);
                     if (x != null && y != null) {
-                        plotData[index][0] = x;
-                        plotData[index][1] = y;
+                        DataItem dataItem = new DataItem();
+                        dataItem.setX(x);
+                        dataItem.setY(y);
+                        dataItem.setColor(color);
+                        data[index] = dataItem;
                         index++;
                         // TODO - should we record how many records are not handled?
                     }
                 }
-                model.setPlotData(plotData);
+                model.setData(data);
             }
         }
     }
@@ -161,7 +166,10 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     private String buildPlotJs() {
         ModelObject model = form.getModelObject();
-        return BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getPlotDataAsJson());
+        String result = BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getDataAsJson());
+        result = result.replace(":xLabel", model.getX() != null ? model.getX() : "");
+        result = result.replace(":yLabel", model.getY() != null ? model.getY() : "");
+        return result;
     }
 
     private void createAdvancedOptionsPanel() {
@@ -178,6 +186,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
                 ModelObject model = form.getModelObject();
                 model.setX(advancedOptionsPanel.getX());
                 model.setY(advancedOptionsPanel.getY());
+                model.setColor(advancedOptionsPanel.getColor());
                 onExecute();
             }
         });
@@ -187,29 +196,10 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
     class ModelObject implements Serializable {
 
-        private float[][] plotData = {};
         private String x;
         private String y;
-
-        public float[][] getPlotData() {
-            return plotData;
-        }
-
-        public void setPlotData(float[][] plotData) {
-            this.plotData = plotData;
-        }
-
-        private String getPlotDataAsJson() {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                objectMapper.writeValue(outputStream, plotData);
-                outputStream.flush();
-                return outputStream.toString();
-            } catch (Throwable t) {
-                throw new RuntimeException(t);
-            }
-        }
+        private DataItem[] data = {};
+        private String color;
 
         public String getX() {
             return x;
@@ -225,6 +215,65 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
         public void setY(String y) {
             this.y = y;
+        }
+
+        public DataItem[] getData() {
+            return data;
+        }
+
+        public void setData(DataItem[] data) {
+            this.data = data;
+        }
+
+        private String getDataAsJson() {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                objectMapper.writeValue(outputStream, data);
+                outputStream.flush();
+                return outputStream.toString();
+            } catch (Throwable t) {
+                throw new RuntimeException(t);
+            }
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
+        }
+    }
+
+    class DataItem implements Serializable {
+
+        private float x;
+        private float y;
+        private Integer color;
+
+        public float getX() {
+            return x;
+        }
+
+        public void setX(float x) {
+            this.x = x;
+        }
+
+        public float getY() {
+            return y;
+        }
+
+        public void setY(float y) {
+            this.y = y;
+        }
+
+        public Integer getColor() {
+            return color;
+        }
+
+        public void setColor(Integer color) {
+            this.color = color;
         }
     }
 }

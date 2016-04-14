@@ -111,6 +111,14 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
         form.getModelObject().setY(y);
     }
 
+    public String getColor() {
+        return form.getModelObject().getColor();
+    }
+
+    public void setColor(String color) {
+        form.getModelObject().setColor(color);
+    }
+
     public void setCallbackHandler(CallbackHandler callbackHandler) {
         this.callbackHandler = callbackHandler;
     }
