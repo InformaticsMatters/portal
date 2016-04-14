@@ -29,7 +29,7 @@ class SimpleJobCellExecutor extends AbstractJobCellExecutor {
 
         StepDefinition step = new StepDefinition(stepClassName)
                 .withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key)
-                .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT);
+                .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellDefinition.VAR_NAME_OUTPUT);
 
         handleOptions(step, cell);
 

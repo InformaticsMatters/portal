@@ -42,7 +42,7 @@ public class DatasetMergerCellDefinition extends CellDefinition {
             NotebookInstance notebook = cellExecutionData.getNotebookInstance();
             CellInstance cell = notebook.findCellInstanceById(cellExecutionData.getCellId());
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.DatasetMerger.CLASSNAME)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cell));
 
             for (int i = 1; i <= 5; i++) {
