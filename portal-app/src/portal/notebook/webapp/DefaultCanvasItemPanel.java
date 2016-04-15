@@ -126,7 +126,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         } else if (optionDescriptor.getTypeDescriptor().getType() == Integer.class) {
             return new IntegerFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         } else if (optionDescriptor.getTypeDescriptor().getType() == Float.class) {
-            return new FloatFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
+            return new DoubleFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         } else if (optionDescriptor.getTypeDescriptor().getType() == Boolean.class) {
             return new BooleanFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel()));
         } else if (optionDescriptor.getTypeDescriptor().getType() == File.class) {
