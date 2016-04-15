@@ -70,6 +70,25 @@ function buildScatterPlot(id, data, xLabel, yLabel) {
           .attr("cy", function (d) { return y(d.y); } )
           .attr("r", 5)
           .style("fill", function(d) { return colors(d.color); });
+
+    var legend = g.selectAll(".legend")
+        .data(colors.domain())
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    legend.append("rect")
+        .attr("x", width - 18)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", colors);
+
+    legend.append("text")
+        .attr("x", width - 24)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function(d) { return d;})
 }
 
 
