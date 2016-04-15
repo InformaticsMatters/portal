@@ -68,6 +68,8 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "xAxis", "x Axis", "Field to use for x axis values"));
         cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "yAxis", "y Axis", "Field to use for y axis values"));
+        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "color", "Color", "Field to use as color switch"));
+        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, "axisLabels", "Show axis labels", "Controls whether the axis labels are visible"));
         return cellDefinition;
     }
 
