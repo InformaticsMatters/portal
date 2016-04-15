@@ -36,7 +36,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
         protected JobDefinition buildJobDefinition(CellInstance cellInstance, CellExecutionData cellExecutionData) {
 
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, DefaultCellDefinitionRegistry.VAR_NAME_OUTPUT)
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cellInstance));
 
             return buildJobDefinition(cellExecutionData, cellInstance, step1);

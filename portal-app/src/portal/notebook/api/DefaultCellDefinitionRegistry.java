@@ -16,8 +16,6 @@ import java.util.*;
 @ApplicationScoped
 public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
-    public static final String VAR_NAME_INPUT = "input";
-    public static final String VAR_NAME_OUTPUT = "output";
     private static final Logger logger = LoggerFactory.getLogger(DefaultCellDefinitionRegistry.class);
     private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
     @Inject
@@ -30,7 +28,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "icons/visualisation_table.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName(VAR_NAME_INPUT);
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
@@ -48,7 +46,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("ScatterPlot", "Scatter plot", "icons/visualisation_chart.png", new String[]{"scatter", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName(VAR_NAME_INPUT);
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
@@ -56,6 +54,8 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "xAxis", "x Axis", "Field to use for x axis values"));
         cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "yAxis", "y Axis", "Field to use for y axis values"));
+        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "color", "Color", "Field to use as color switch"));
+        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, "axisLabels", "Show axis labels", "Controls whether the axis labels are visible"));
         return cellDefinition;
     }
 
@@ -63,7 +63,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("3DMol", "3D viewer", "icons/view.png", new String[]{"3d", "viewer", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName(VAR_NAME_INPUT);
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
@@ -76,7 +76,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("BoxPlot", "Box plot", "icons/visualisation_chart.png", new String[]{"box", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
-        bindingDefinition.setName(VAR_NAME_INPUT);
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
