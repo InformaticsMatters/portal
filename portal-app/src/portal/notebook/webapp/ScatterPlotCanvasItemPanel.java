@@ -92,10 +92,10 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
         ModelObject model = form.getModelObject();
-        model.setX(cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue(String.class));
-        model.setY(cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue(String.class));
-        model.setColor(cellInstance.getOptionInstanceMap().get(OPTION_COLOR).getValue(String.class));
-        model.setShowAxisLabels(cellInstance.getOptionInstanceMap().get(OPTION_AXIS_LABELS).getValue(Boolean.class));
+        model.setX((String)cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue());
+        model.setY((String)cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue());
+        model.setColor((String)cellInstance.getOptionInstanceMap().get(OPTION_COLOR).getValue());
+        model.setShowAxisLabels((Boolean)cellInstance.getOptionInstanceMap().get(OPTION_AXIS_LABELS).getValue());
     }
 
     private void addForm() {
