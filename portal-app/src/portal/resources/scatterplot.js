@@ -1,11 +1,3 @@
-function colorCircle(item) {
-
-    debugger;
-
-}
-
-
-
 function buildScatterPlot(id, data, xLabel, yLabel) {
     $id = $('#' + id);
     $plotContent = $id.find('.scatterPlotContent');
@@ -74,10 +66,10 @@ function buildScatterPlot(id, data, xLabel, yLabel) {
       .data(data)
       .enter()
       .append("svg:circle")
-          .attr("cx", function (d,i) { debugger; return x(d.x); } )
+          .attr("cx", function (d,i) { return x(d.x); } )
           .attr("cy", function (d) { return y(d.y); } )
           .attr("r", 5)
-          .style("fill", function(d) { debugger; return colors(d.color); });
+          .style("fill", function(d) { return colors(d.color); });
 }
 
 

@@ -167,8 +167,8 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private String buildPlotJs() {
         ModelObject model = form.getModelObject();
         String result = BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getDataAsJson());
-        result = result.replace(":xLabel", model.getX() != null ? model.getX() : "");
-        result = result.replace(":yLabel", model.getY() != null ? model.getY() : "");
+        result = result.replace(":xLabel", advancedOptionsPanel.getShowAxisLabels() && model.getX() != null ? model.getX() : "");
+        result = result.replace(":yLabel", advancedOptionsPanel.getShowAxisLabels() && model.getY() != null ? model.getY() : "");
         return result;
     }
 
@@ -192,6 +192,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         });
         advancedOptionsPanel.setX(form.getModelObject().getX());
         advancedOptionsPanel.setY(form.getModelObject().getY());
+        advancedOptionsPanel.setColor(form.getModelObject().getColor());
     }
 
     class ModelObject implements Serializable {
