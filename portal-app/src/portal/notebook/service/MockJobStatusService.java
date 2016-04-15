@@ -2,9 +2,7 @@ package portal.notebook.service;
 
 import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
-import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.types.MoleculeObject;
-import org.squonk.client.NotebookVariableClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.execution.steps.StepDefinitionConstants;
@@ -19,7 +17,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-import javax.wsdl.Input;
 import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Logger;
@@ -111,8 +108,9 @@ public class MockJobStatusService {
             Map<String, Object> values = new LinkedHashMap<>();
             values.put("ID", i + 1);
             values.put(prefix, 1.1);
-            values.put("x", new Random().nextInt(19) + 1);
-            values.put("y", new Random().nextInt(19) + 1);
+            values.put("x Axis", new Random().nextInt(19) - 10);
+            values.put("y Axis", new Random().nextInt(19) - 10);
+            values.put("Color", new Random().nextInt(5) + 1);
             mols.add(new MoleculeObject("Cn1cnc2n(C)c(=O)n(C)c(=O)c12", "smiles", values));
         }
         return new Dataset<>(MoleculeObject.class, mols);

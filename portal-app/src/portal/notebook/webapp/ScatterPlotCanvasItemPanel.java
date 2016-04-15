@@ -162,7 +162,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
             xLabel = model.getX() != null ? model.getX() : "";
             yLabel = model.getY() != null ? model.getY() : "";
         }
-        result = result.replace(":xLabel", xLabel).replace("yLabel", yLabel);
+        result = result.replace(":xLabel", xLabel).replace(":yLabel", yLabel);
         return result;
     }
 

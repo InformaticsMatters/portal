@@ -10,11 +10,11 @@ function buildScatterPlot(id, data, xLabel, yLabel) {
     var colors = d3.scale.category10();
 
     var x = d3.scale.linear()
-        .domain([0, d3.max(data, function(d) { return d.x; })])
+        .domain([d3.min(data, function(d) { return d.x; }), d3.max(data, function(d) { return d.x; })])
         .range([0, width]);
 
     var y = d3.scale.linear()
-        .domain([0, d3.max(data, function(d) { return d.y; })])
+        .domain([d3.min(data, function(d) { return d.y; }), d3.max(data, function(d) { return d.y; })])
         .range([height, 0]);
 
     var chart = d3.select($plotContent[0])
