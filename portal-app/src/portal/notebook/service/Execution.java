@@ -10,7 +10,7 @@ import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"notebook_id", "cellid"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"notebookid", "cellid"})})
 @XmlRootElement
 public class Execution extends AbstractEntity {
     private Long notebookId;

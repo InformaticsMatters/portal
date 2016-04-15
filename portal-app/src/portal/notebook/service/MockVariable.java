@@ -5,7 +5,7 @@ import toolkit.services.AbstractEntity;
 import javax.persistence.*;
 
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"notebookeditable_id", "name"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"mocknotebookeditable_id", "name"})})
 public class MockVariable extends AbstractEntity {
     private MockNotebookEditable mockNotebookEditable;
     private Long cellId;
