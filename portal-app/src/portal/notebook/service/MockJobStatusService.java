@@ -81,7 +81,7 @@ public class MockJobStatusService {
             Map<String, Object> values = new LinkedHashMap<>();
             values.put("ID", i + 1);
             values.put(prefix, 1.1);
-            values.put("x Axis", new Random().nextInt(19) + 1);
+            values.put("x Axis", new Random().nextInt(19) - 5);
             values.put("y Axis", new Random().nextInt(19) + 1);
             values.put("Color", new Random().nextInt(5) + 1);
             mols.add(new MoleculeObject("Cn1cnc2n(C)c(=O)n(C)c(=O)c12", "smiles", values));

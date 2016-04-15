@@ -155,8 +155,13 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private String buildPlotJs() {
         ModelObject model = form.getModelObject();
         String result = BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getDataAsJson());
-        result = result.replace(":xLabel", advancedOptionsPanel != null && advancedOptionsPanel.getShowAxisLabels() && model.getX() != null ? model.getX() : "");
-        result = result.replace(":yLabel", advancedOptionsPanel != null && advancedOptionsPanel.getShowAxisLabels() && model.getY() != null ? model.getY() : "");
+        String xLabel = "";
+        String yLabel = "";
+        if (advancedOptionsPanel != null && Boolean.TRUE.equals(advancedOptionsPanel.getShowAxisLabels())) {
+            xLabel = model.getX() != null ? model.getX() : "";
+            yLabel = model.getY() != null ? model.getY() : "";
+        }
+        result = result.replace(":xLabel", xLabel).replace("yLabel", yLabel);
         return result;
     }
 
