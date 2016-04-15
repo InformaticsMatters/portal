@@ -32,6 +32,8 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data, ':xLabel', ':yLabel')";
     private static final String OPTION_X_AXIS = "xAxis";
     private static final String OPTION_Y_AXIS = "yAxis";
+    private static final String OPTION_COLOR = "color";
+    private static final String OPTION_AXIS_LABELS = "axisLabels";
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
     @Inject
@@ -91,6 +93,8 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         ModelObject model = form.getModelObject();
         model.setX(cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue(String.class));
         model.setY(cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue(String.class));
+        model.setColor(cellInstance.getOptionInstanceMap().get(OPTION_COLOR).getValue(String.class));
+        model.setShowAxisLabels(cellInstance.getOptionInstanceMap().get(OPTION_AXIS_LABELS).getValue(Boolean.class));
     }
 
     private void addForm() {
@@ -148,27 +152,11 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         target.appendJavaScript(buildPlotJs());
     }
 
-    private Float safeConvertToFloat(Object o) {
-        if (o == null) {
-            return null;
-        } if (o instanceof  Float) {
-            return (Float)o;
-        } else if (o instanceof Number) {
-            return ((Number)o).floatValue();
-        } else {
-            try {
-                return new Float(o.toString());
-            } catch (NumberFormatException nfe) {
-                return null;
-            }
-        }
-    }
-
     private String buildPlotJs() {
         ModelObject model = form.getModelObject();
         String result = BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getDataAsJson());
-        result = result.replace(":xLabel", advancedOptionsPanel.getShowAxisLabels() && model.getX() != null ? model.getX() : "");
-        result = result.replace(":yLabel", advancedOptionsPanel.getShowAxisLabels() && model.getY() != null ? model.getY() : "");
+        result = result.replace(":xLabel", advancedOptionsPanel != null && advancedOptionsPanel.getShowAxisLabels() && model.getX() != null ? model.getX() : "");
+        result = result.replace(":yLabel", advancedOptionsPanel != null && advancedOptionsPanel.getShowAxisLabels() && model.getY() != null ? model.getY() : "");
         return result;
     }
 
@@ -181,18 +169,39 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
                 CellInstance cellInstance = findCellInstance();
                 cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).setValue(advancedOptionsPanel.getX());
                 cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).setValue(advancedOptionsPanel.getY());
+                cellInstance.getOptionInstanceMap().get(OPTION_COLOR).setValue(advancedOptionsPanel.getColor());
+                cellInstance.getOptionInstanceMap().get(OPTION_AXIS_LABELS).setValue(advancedOptionsPanel.getShowAxisLabels());
                 notebookSession.storeCurrentNotebook();
 
                 ModelObject model = form.getModelObject();
                 model.setX(advancedOptionsPanel.getX());
                 model.setY(advancedOptionsPanel.getY());
                 model.setColor(advancedOptionsPanel.getColor());
+                model.setShowAxisLabels(advancedOptionsPanel.getShowAxisLabels());
                 onExecute();
             }
         });
         advancedOptionsPanel.setX(form.getModelObject().getX());
         advancedOptionsPanel.setY(form.getModelObject().getY());
         advancedOptionsPanel.setColor(form.getModelObject().getColor());
+        advancedOptionsPanel.setShowAxisLabels(form.getModelObject().getShowAxisLabels());
+    }
+
+    private Float safeConvertToFloat(Object o) {
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof Float) {
+            return (Float) o;
+        } else if (o instanceof Number) {
+            return ((Number) o).floatValue();
+        } else {
+            try {
+                return new Float(o.toString());
+            } catch (NumberFormatException nfe) {
+                return null;
+            }
+        }
     }
 
     class ModelObject implements Serializable {
@@ -201,6 +210,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         private String y;
         private DataItem[] data = {};
         private String color;
+        private Boolean showAxisLabels = Boolean.FALSE;
 
         public String getX() {
             return x;
@@ -244,6 +254,14 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
         public void setColor(String color) {
             this.color = color;
+        }
+
+        public Boolean getShowAxisLabels() {
+            return showAxisLabels;
+        }
+
+        public void setShowAxisLabels(Boolean showAxisLabels) {
+            this.showAxisLabels = showAxisLabels;
         }
     }
 
