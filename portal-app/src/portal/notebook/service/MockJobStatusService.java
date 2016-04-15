@@ -11,6 +11,7 @@ import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
 import org.squonk.types.io.JsonHandler;
+import portal.notebook.api.CellDefinition;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,6 +19,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
+import javax.wsdl.Input;
 import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Logger;
@@ -45,13 +47,39 @@ public class MockJobStatusService {
         }
     }
 
-    private JobStatus processStepsJobDefinition(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {
+    private void processStepsJobDefinition(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {
         if (jobDefinition.getSteps()[0].getImplementationClass().equals(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)) {
-            return processChemblActivitiesFetcher(jobDefinition);
-        } else {
-            return null;
+            processChemblActivitiesFetcher(jobDefinition);
+        } else if (jobDefinition.getSteps()[0].getImplementationClass().equals(StepDefinitionConstants.SdfUpload.CLASSNAME)) {
+            processSdfUpload(jobDefinition);
         }
     }
+
+
+    private void processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {
+        List<NotebookEditableDTO> editableList = notebookVariableClient.listEditables(jobDefinition.getNotebookId(), "user1");
+        NotebookEditableDTO editableDTO = editableList.get(0);
+        NotebookCanvasDTO notebookCanvasDTO = editableDTO.getCanvasDTO();
+        NotebookCanvasDTO.CellDTO cellDTO = findCell(notebookCanvasDTO, jobDefinition.getCellId());
+        Dataset<MoleculeObject> dataset = createMockDataset((String)cellDTO.getOptions().get("prefix"));
+        try {
+            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), "output", dataset);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void processSdfUpload(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {
+        InputStream inputStream = notebookVariableClient.readStreamValue(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), CellDefinition.VAR_NAME_FILECONTENT);
+        try {
+            //convert stream
+            Dataset<MoleculeObject> dataset = createMockDataset("mock");
+            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), CellDefinition.VAR_NAME_OUTPUT, dataset);
+        } finally {
+            inputStream.close();
+        }
+    }
+
 
     protected void writeDataset(Long notebookId, Long editableId, Long cellId, String name, Dataset dataset) throws Exception {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
@@ -66,20 +94,6 @@ public class MockJobStatusService {
         if (!jsonTring.equals(storedValue)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }
-    }
-
-    private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {
-        List<NotebookEditableDTO> editableList = notebookVariableClient.listEditables(jobDefinition.getNotebookId(), "user1");
-        NotebookEditableDTO editableDTO = editableList.get(0);
-        NotebookCanvasDTO notebookCanvasDTO = editableDTO.getCanvasDTO();
-        NotebookCanvasDTO.CellDTO cellDTO = findCell(notebookCanvasDTO, jobDefinition.getCellId());
-        Dataset<MoleculeObject> dataset = createMockDataset((String)cellDTO.getOptions().get("prefix"));
-        try {
-            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), "output", dataset);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return null;
     }
 
     private NotebookCanvasDTO.CellDTO findCell(NotebookCanvasDTO notebookCanvasDTO, Long cellId) {
