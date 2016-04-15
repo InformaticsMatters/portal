@@ -6,6 +6,7 @@ import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.types.MoleculeObject;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.types.io.JsonHandler;
 import portal.notebook.api.CellInstance;
@@ -42,11 +43,41 @@ public class MockJobStatusService {
     }
 
     private JobStatus processStepsJobDefinition(ExecuteCellUsingStepsJobDefinition jobDefinition) {
-        if (jobDefinition.getSteps()[0].getImplementationClass().equals(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)) {
+        StepDefinition stepDefinition = jobDefinition.getSteps()[0];
+        if (stepDefinition.getImplementationClass().equals(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)) {
             return processChemblActivitiesFetcher(jobDefinition);
+        } else if (stepDefinition.getImplementationClass().equals(StepDefinitionConstants.SdfUpload.CLASSNAME)) {
+            return processSdfUpload(jobDefinition);
         } else {
             return null;
         }
+    }
+
+    private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) {
+        CellInstance cellInstance = mockNotebookClient.oldFindCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellName());
+        Dataset<MoleculeObject> dataset = createMockDataset((String)cellInstance.getOptionInstanceMap().get("prefix").getValue());
+        try {
+            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellName(), "output", dataset);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+
+    private JobStatus processSdfUpload(ExecuteCellUsingStepsJobDefinition jobDefinition) {
+        CellInstance cellInstance = mockNotebookClient.oldFindCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellName());
+        Dataset<MoleculeObject> dataset = sdfVariableToDataset((String)cellInstance.getOptionInstanceMap().get("prefix").getValue());
+        try {
+            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellName(), "output", dataset);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private Dataset<MoleculeObject> sdfVariableToDataset(String prefix) {
+        return null;
     }
 
     protected void writeDataset(Long notebookId, String cellName, String name, Dataset dataset) throws IOException {
@@ -62,17 +93,6 @@ public class MockJobStatusService {
         if (!storedValue.equals(jsonTring)) {
             throw new RuntimeException("Storage failed. Returned values: " + storedValue);
         }
-    }
-
-    private JobStatus processChemblActivitiesFetcher(ExecuteCellUsingStepsJobDefinition jobDefinition) {
-        CellInstance cellInstance = mockNotebookClient.oldFindCellInstance(jobDefinition.getNotebookId(), jobDefinition.getCellName());
-        Dataset<MoleculeObject> dataset = createMockDataset((String)cellInstance.getOptionInstanceMap().get("prefix").getValue());
-        try {
-            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getCellName(), "output", dataset);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
     }
 
     Dataset<MoleculeObject> createMockDataset(String prefix) {
