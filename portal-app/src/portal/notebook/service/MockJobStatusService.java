@@ -5,9 +5,11 @@ import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.types.MoleculeObject;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.dataset.MoleculeObjectDataset;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
+import org.squonk.reader.SDFReader;
 import org.squonk.types.io.JsonHandler;
 import portal.notebook.api.CellDefinition;
 
@@ -67,16 +69,12 @@ public class MockJobStatusService {
     }
 
     private void processSdfUpload(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {
-        InputStream inputStream = notebookVariableClient.readStreamValue(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), CellDefinition.VAR_NAME_FILECONTENT);
-        try {
-            //convert stream
-            Dataset<MoleculeObject> dataset = createMockDataset("mock");
-            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), CellDefinition.VAR_NAME_OUTPUT, dataset);
-        } finally {
-            inputStream.close();
+        try (InputStream inputStream = notebookVariableClient.readStreamValue(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), CellDefinition.VAR_NAME_FILECONTENT)) {
+            SDFReader reader = new SDFReader(inputStream);
+            MoleculeObjectDataset modataset = new MoleculeObjectDataset(reader.asStream());
+            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), CellDefinition.VAR_NAME_OUTPUT, modataset.getDataset());
         }
     }
-
 
     protected void writeDataset(Long notebookId, Long editableId, Long cellId, String name, Dataset dataset) throws Exception {
         Dataset.DatasetMetadataGenerator generator = dataset.createDatasetMetadataGenerator();
