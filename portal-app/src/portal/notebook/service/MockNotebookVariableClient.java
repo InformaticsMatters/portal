@@ -61,7 +61,8 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     }
 
     private NotebookDTO toNotebook(MockNotebook mockNotebook) {
-        return new NotebookDTO(mockNotebook.getId(), mockNotebook.getName(), mockNotebook.getDescription(), mockNotebook.getOwner(), new Date(), new Date());
+        // TODO - handle layers (visibility)
+        return new NotebookDTO(mockNotebook.getId(), mockNotebook.getName(), mockNotebook.getDescription(), mockNotebook.getOwner(), new Date(), new Date(), null);
     }
 
     @Override
@@ -71,21 +72,25 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     }
 
     @Override
-    public void addNotebookToLayer(Long aLong, String s) throws Exception {
+    public NotebookDTO addNotebookToLayer(Long aLong, String s) throws Exception {
         MockNotebookNotebookLayer mockNotebookNotebookLayer = new MockNotebookNotebookLayer();
         mockNotebookNotebookLayer.setMockNotebook(entityManager.find(MockNotebook.class, aLong));
         mockNotebookNotebookLayer.setLayerName(s);
         entityManager.persist(mockNotebookNotebookLayer);
+        // TODO - return the DTO
+        return null;
     }
 
     @Override
-    public void removeNotebookFromLayer(Long aLong, String s) throws Exception {
+    public NotebookDTO removeNotebookFromLayer(Long aLong, String s) throws Exception {
         TypedQuery<MockNotebookNotebookLayer> query = entityManager.createQuery("select o from MockNotebookNotebookLayer o where o.mockNotebook.id = :notebookId and o.layerName = :layerName", MockNotebookNotebookLayer.class);
         query.setParameter("notebookId", aLong);
         query.setParameter("layerName", s);
         if (!query.getResultList().isEmpty()) {
             entityManager.remove(query.getResultList().get(0));
         }
+        // TODO - return the DTO
+        return null;
     }
 
     @Override
