@@ -60,6 +60,8 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/scatterplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/scatterplot.css")));
         response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("fitChart('" + getMarkupId() + "')"));
+        makeCanvasItemResizable(container, "fitChart", 480, 270);
     }
 
     @Override

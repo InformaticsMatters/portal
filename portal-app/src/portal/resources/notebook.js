@@ -165,6 +165,8 @@ function makeCanvasItemResizable(width, height, id, fitCallback) {
     });
 }
 
+function fitChart(id) {}
+
 function fitTableDisplayGrid(id) {
     var $id = $('#' + id);
     var containerh = $id.outerHeight();

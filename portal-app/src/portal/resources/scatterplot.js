@@ -1,12 +1,12 @@
 function buildScatterPlot(id, data, xLabel, yLabel) {
     $id = $('#' + id);
-    $plotContent = $id.find('.scatterPlotContent');
+    $plotContent = $id.find('.svg-container');
 
     $plotContent.empty();
 
     var margin = {top: 16, right: 16, bottom: 32, left: 32};
-    var width = 480 - margin.left - margin.right;
-    var height = 240 - margin.top - margin.bottom;
+    var width = 440 - margin.left - margin.right;
+    var height = 220 - margin.top - margin.bottom;
     var colors = d3.scale.category10();
 
     var x = d3.scale.linear()
@@ -19,14 +19,17 @@ function buildScatterPlot(id, data, xLabel, yLabel) {
 
     var chart = d3.select($plotContent[0])
         .append('svg:svg')
-        .attr('width', width + margin.right + margin.left)
+       /* .attr('width', width + margin.right + margin.left)
         .attr('height', height + margin.top + margin.bottom)
-        .attr('class', 'chart')
+        .attr('class', 'chart') */
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 440 220")
+        .classed("svg-content chart", true);
 
     var main = chart.append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-        .attr('width', width)
-        .attr('height', height)
+       /* .attr('width', width)
+        .attr('height', height)*/
         .attr('class', 'main')
 
     var xAxis = d3.svg.axis()
