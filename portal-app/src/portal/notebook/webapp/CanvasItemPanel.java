@@ -41,7 +41,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         js = js.replace(":left", Integer.toString(model.getPositionLeft() == null ? 1 : model.getPositionLeft()));
         js = js.replace(":top", Integer.toString(model.getPositionTop() == null ? 1 : model.getPositionTop()));
         js = js.replace(":width", Integer.toString(model.getSizeWidth() == null ? 265 : model.getSizeWidth()));
-        js = js.replace(":height", Integer.toString(model.getSizeHeight() == null ? 200 : model.getSizeHeight()));
+        js = js.replace(":height", Integer.toString(model.getSizeHeight() == null ? 0 : model.getSizeHeight()));
 
         logger.info(js);
 
