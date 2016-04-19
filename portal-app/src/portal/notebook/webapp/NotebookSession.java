@@ -49,8 +49,7 @@ public class NotebookSession implements Serializable {
         try {
             List<NotebookInfo> list = new ArrayList<>();
             for (NotebookDTO notebookDescriptor : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
-                NotebookInfo notebookInfo = NotebookInfo.fromNotebookDescriptor(notebookDescriptor);
-                notebookInfo.setShared(isPublicNotebook(notebookInfo.getId()));
+                NotebookInfo notebookInfo = NotebookInfo.fromNotebookDTO(notebookDescriptor);
                 list.add(notebookInfo);
             }
             return list;
@@ -59,23 +58,11 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    private Boolean isPublicNotebook(Long id) throws Exception {
-        List<String> layerNameList = notebookVariableClient.listLayers(id);
-        for (String name : layerNameList) {
-            if (name.equals("public")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public NotebookInfo findNotebookInfo(Long id) {
         try {
             for (NotebookDTO notebookDTO : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
                 if (notebookDTO.getId().equals(id)) {
-                    NotebookInfo notebookInfo = NotebookInfo.fromNotebookDescriptor(notebookDTO);
-                    notebookInfo.setShared(isPublicNotebook(notebookDTO.getId()));
-                    return notebookInfo;
+                    return NotebookInfo.fromNotebookDTO(notebookDTO);
                 }
             }
             return null;

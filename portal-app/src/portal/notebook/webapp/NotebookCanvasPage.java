@@ -499,7 +499,6 @@ public class NotebookCanvasPage extends WebPage {
 
     private void applyBinding(VariableInstance variableInstance, BindingInstance bindingInstance) {
         bindingInstance.setVariableInstance(variableInstance);
-        logger.info("Binding applied");
         notebookSession.storeCurrentNotebook();
         getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
     }

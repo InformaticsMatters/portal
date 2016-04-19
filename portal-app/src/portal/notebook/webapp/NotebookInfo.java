@@ -52,13 +52,13 @@ public class NotebookInfo implements Serializable {
         return owner;
     }
 
-    public static NotebookInfo fromNotebookDescriptor(NotebookDTO notebookDescriptor) {
+    public static NotebookInfo fromNotebookDTO(NotebookDTO notebookDTO) {
         NotebookInfo notebookInfo = new NotebookInfo();
-        notebookInfo.setId(notebookDescriptor.getId());
-        notebookInfo.setName(notebookDescriptor.getName());
-        notebookInfo.setDescription(notebookDescriptor.getDescription());
-        notebookInfo.setOwner(notebookDescriptor.getOwner());
-        notebookInfo.setShared(false);
+        notebookInfo.setId(notebookDTO.getId());
+        notebookInfo.setName(notebookDTO.getName());
+        notebookInfo.setDescription(notebookDTO.getDescription());
+        notebookInfo.setOwner(notebookDTO.getOwner());
+        notebookInfo.setShared(notebookDTO.getLayers().contains("public"));
         return notebookInfo;
     }
 

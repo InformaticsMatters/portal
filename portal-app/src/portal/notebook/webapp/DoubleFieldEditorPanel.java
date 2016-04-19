@@ -4,7 +4,9 @@ package portal.notebook.webapp;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
+import toolkit.wicket.semantic.NotifierProvider;
 
+import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -12,6 +14,8 @@ import java.text.ParseException;
 
 public class DoubleFieldEditorPanel extends FieldEditorPanel {
     private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
+    @Inject
+    private NotifierProvider notifierProvider;
 
 
     public DoubleFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
@@ -33,8 +37,9 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel {
                     } else {
                         return decimalFormat.format(value);
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (Throwable e) {
+                    notifierProvider.getNotifier(getPage()).notify("Error", e.getMessage());
+                    return null;
                 }
             }
 
@@ -46,8 +51,8 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel {
                     } else {
                         getFieldEditorModel().setValue(decimalFormat.parse(object).doubleValue());
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (Throwable e) {
+                    notifierProvider.getNotifier(getPage()).notify("Error", e.getMessage());
                 }
             }
         };
