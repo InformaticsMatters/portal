@@ -43,8 +43,8 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         super(id, cellId);
         CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
-            cellInstance.setSizeWidth(500);
-            cellInstance.setSizeHeight(285);
+            cellInstance.setSizeWidth(480);
+            cellInstance.setSizeHeight(260);
         }
         addForm();
         loadModelFromPersistentData();
@@ -60,8 +60,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/scatterplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/scatterplot.css")));
         response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
-        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("fitChart('" + getMarkupId() + "')"));
-        makeCanvasItemResizable(container, "fitChart", 480, 270);
+        makeScatterPlotResizable(container, 480, 270);
     }
 
     @Override

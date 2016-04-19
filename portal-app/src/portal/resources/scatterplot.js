@@ -4,7 +4,7 @@ function buildScatterPlot(id, data, xLabel, yLabel) {
 
     $plotContent.empty();
 
-    var margin = {top: 16, right: 16, bottom: 32, left: 32};
+    var margin = {top: 5, right: 25, bottom: 18, left: 25};
     var width = 440 - margin.left - margin.right;
     var height = 220 - margin.top - margin.bottom;
     var colors = d3.scale.category10();

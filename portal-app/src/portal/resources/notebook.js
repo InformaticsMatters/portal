@@ -165,7 +165,22 @@ function makeCanvasItemResizable(width, height, id, fitCallback) {
     });
 }
 
-function fitChart(id) {}
+function makeScatterPlotResizable(width, height, id) {
+    $("#" + id).resizable({
+        minWidth: width,
+        minHeight: height,
+        aspectRatio: true,
+        resize : function(event, ui) {
+            jsPlumb.repaintEverything();
+        },
+
+        stop: function(event, ui) {
+            $element = $(ui.element);
+            var index = $element.parent().index('.notebook-canvas-item');
+            onNotebookCanvasItemResized(index, ui.size.width, ui.size.height);
+        }
+    });
+}
 
 function fitTableDisplayGrid(id) {
     var $id = $('#' + id);

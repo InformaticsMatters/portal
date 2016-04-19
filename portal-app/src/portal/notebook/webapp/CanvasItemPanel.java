@@ -60,6 +60,12 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
 
+    protected void makeScatterPlotResizable(HtmlHeaderContainer container, int minWidth, int minHeight) {
+        String js = "makeScatterPlotResizable(:minWidth, :minHeight, ':id')";
+        js = js.replace(":id", getMarkupId()).replace(":minWidth", Integer.toString(minWidth)).replace(":minHeight", Integer.toString(minHeight));
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
+    }
+
     public CellInstance findCellInstance() {
         return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
     }
