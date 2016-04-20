@@ -102,7 +102,7 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                                     false, // URL is relative
                                     AsyncHttpProcessDatasetJobDefinition.class,
                                     null, null, null, null, new OptionDescriptor[]{
-                                    new OptionDescriptor<>(new MoleculeTypeDescriptor<>(MoleculeTypeDescriptor.MoleculeType.DISCRETE), "header.query_structure", "Query Structure", "Structure to us as the query"),
+                                    new OptionDescriptor<>(new MoleculeTypeDescriptor<>(MoleculeTypeDescriptor.MoleculeType.DISCRETE, new String[] {"smiles"}), "header.query_structure", "Query Structure", "Structure to us as the query"),
                                     new OptionDescriptor<>(Float.class, "header.threshold", "Similarity Cuttoff", "Similarity score cuttoff between 0 and 1 (1 means identical)")
                                             .withDefaultValue(0.7f),
                                     new OptionDescriptor<>(String.class, "header.descriptor", "descriptor", "Molecular descriptor")

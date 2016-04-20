@@ -18,6 +18,7 @@ import portal.notebook.api.OptionInstance;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * @author simetrias
@@ -139,7 +140,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
                 return null;
             } else {
                 Molecule molecule = MolImporter.importMol(mrv);
-                return MolExporter.exportToFormat(molecule, "smiles");
+                return exportAsString(molecule, "smiles", "cxsmiles");
             }
         } catch (Throwable t) {
             throw new RuntimeException(t);
@@ -157,6 +158,19 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // this method is copied from MolecuelUtils in the chemaxon-lib module
+    private static String exportAsString(Molecule mol, String... format) throws IOException {
+        IOException ex = null;
+        for (String f : format) {
+            try {
+                return MolExporter.exportToFormat(mol, f);
+            } catch (IOException e) {
+                ex = e;
+            }
+        }
+        throw ex;
     }
 
     private Rectangle getRectangle() {

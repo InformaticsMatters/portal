@@ -86,7 +86,6 @@ public class ServiceCellDefinition extends CellDefinition {
                     .withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
                     .withOption(OPT_SERVICE_ENDPOINT, serviceDescriptor.getAccessModes()[0].getExecutionEndpoint())
-                    .withOption(OPT_SERVICE_PRESERVE_STRUCTURE, true) // TODO - this will need to be defined at the ServiceDescriptor level
                     .withOption(OPT_SERVICE_PARAMS, collectAllOptions(cell));
 
             return buildJobDefinition(cellExecutionData, cell, step1);
