@@ -45,98 +45,70 @@ public class NotebookSession implements Serializable {
     @Inject
     private Datasets datasets;
 
-    public List<NotebookInfo> listNotebookInfo() {
-        try {
-            List<NotebookInfo> list = new ArrayList<>();
-            for (NotebookDTO notebookDescriptor : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
-                NotebookInfo notebookInfo = NotebookInfo.fromNotebookDTO(notebookDescriptor);
-                list.add(notebookInfo);
+    public List<NotebookInfo> listNotebookInfo() throws Exception {
+        List<NotebookInfo> list = new ArrayList<>();
+        for (NotebookDTO notebookDescriptor : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
+            NotebookInfo notebookInfo = NotebookInfo.fromNotebookDTO(notebookDescriptor);
+            list.add(notebookInfo);
+        }
+        return list;
+    }
+
+    public NotebookInfo findNotebookInfo(Long id) throws Exception {
+        for (NotebookDTO notebookDTO : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
+            if (notebookDTO.getId().equals(id)) {
+                return NotebookInfo.fromNotebookDTO(notebookDTO);
             }
-            return list;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public Long createNotebook(String name, String description, Boolean shared) throws Exception {
+        NotebookDTO notebookDTO = notebookVariableClient.createNotebook(sessionContext.getLoggedInUserDetails().getUserid(), name, description);
+        notebookVariableClient.createEditable(notebookDTO.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
+        if (shared) {
+            notebookVariableClient.addNotebookToLayer(notebookDTO.getId(), "public");
+        }
+        return notebookDTO.getId();
+    }
+
+    public void updateNotebook(Long id, String name, String description, Boolean shared) throws Exception {
+        notebookVariableClient.updateNotebook(id, name, description);
+        notebookVariableClient.removeNotebookFromLayer(id, "public");
+        if (shared) {
+            notebookVariableClient.addNotebookToLayer(id, "public");
         }
     }
 
-    public NotebookInfo findNotebookInfo(Long id) {
-        try {
-            for (NotebookDTO notebookDTO : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
-                if (notebookDTO.getId().equals(id)) {
-                    return NotebookInfo.fromNotebookDTO(notebookDTO);
-                }
+    public void removeNotebook(Long notebookId) throws Exception {
+        notebookVariableClient.deleteNotebook(notebookId);
+    }
+
+    private NotebookEditableDTO findDefaultNotebookEditable(Long descriptorId) throws Exception {
+        List<NotebookEditableDTO> editables = notebookVariableClient.listEditables(descriptorId, sessionContext.getLoggedInUserDetails().getUserid());
+        return editables.isEmpty() ? null : editables.get(0);
+    }
+
+    public void loadCurrentNotebook(Long id) throws Exception {
+        currentNotebookInfo = findNotebookInfo(id);
+        NotebookEditableDTO currentNotebookEditable = findDefaultNotebookEditable(currentNotebookInfo.getId());
+        if (currentNotebookEditable == null) {
+            currentNotebookInstance = new NotebookInstance();
+            currentNotebookEditableId = null;
+        } else {
+            NotebookCanvasDTO notebookCanvasDTO = currentNotebookEditable.getCanvasDTO();
+            currentNotebookInstance = new NotebookInstance();
+            if (notebookCanvasDTO != null) {
+                currentNotebookInstance.loadNotebookCanvasDTO(notebookCanvasDTO, cellDefinitionRegistry);
             }
-            return null;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Long createNotebook(String name, String description, Boolean shared) {
-        try {
-            NotebookDTO notebookDTO = notebookVariableClient.createNotebook(sessionContext.getLoggedInUserDetails().getUserid(), name, description);
-            notebookVariableClient.createEditable(notebookDTO.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
-            if (shared) {
-                notebookVariableClient.addNotebookToLayer(notebookDTO.getId(), "public");
-            }
-            return notebookDTO.getId();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void updateNotebook(Long id, String name, String description, Boolean shared) {
-        try {
-            notebookVariableClient.updateNotebook(id, name, description);
-            notebookVariableClient.removeNotebookFromLayer(id, "public");
-            if (shared) {
-                notebookVariableClient.addNotebookToLayer(id, "public");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void removeNotebook(Long notebookId) {
-        try {
-            notebookVariableClient.deleteNotebook(notebookId);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private NotebookEditableDTO findDefaultNotebookEditable(Long descriptorId) {
-        try {
-            List<NotebookEditableDTO> editables = notebookVariableClient.listEditables(descriptorId, sessionContext.getLoggedInUserDetails().getUserid());
-            return editables.isEmpty() ? null : editables.get(0);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void loadCurrentNotebook(Long id) {
-        try {
-            currentNotebookInfo = findNotebookInfo(id);
-            NotebookEditableDTO currentNotebookEditable = findDefaultNotebookEditable(currentNotebookInfo.getId());
-            if (currentNotebookEditable == null) {
+            if (currentNotebookInstance == null) { // is this needed?
                 currentNotebookInstance = new NotebookInstance();
-                currentNotebookEditableId = null;
-            } else {
-                NotebookCanvasDTO notebookCanvasDTO = currentNotebookEditable.getCanvasDTO();
-                currentNotebookInstance = new NotebookInstance();
-                if (notebookCanvasDTO != null) {
-                    currentNotebookInstance.loadNotebookCanvasDTO(notebookCanvasDTO, cellDefinitionRegistry);
-                }
-                if (currentNotebookInstance == null) { // is this needed?
-                    currentNotebookInstance = new NotebookInstance();
-                }
-                currentNotebookEditableId = currentNotebookEditable.getId();
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            currentNotebookEditableId = currentNotebookEditable.getId();
         }
     }
 
-    public void reloadCurrentNotebook() {
+    public void reloadCurrentNotebook() throws Exception {
         loadCurrentNotebook(currentNotebookInfo.getId());
     }
 
@@ -148,20 +120,16 @@ public class NotebookSession implements Serializable {
         return currentNotebookInfo;
     }
 
-    public void storeCurrentNotebook() {
-        try {
-            if (currentNotebookEditableId == null) {
-                NotebookEditableDTO currentNotebookEditable = notebookVariableClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
-                currentNotebookEditableId = currentNotebookEditable.getId();
-            } else {
-                NotebookCanvasDTO notebookCanvasDTO = new NotebookCanvasDTO(currentNotebookInstance.getLastCellId());
-                currentNotebookInstance.storeNotebookCanvasDTO(notebookCanvasDTO);
-                notebookVariableClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, notebookCanvasDTO);
-            }
-            reloadCurrentNotebook();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public void storeCurrentNotebook() throws Exception {
+        if (currentNotebookEditableId == null) {
+            NotebookEditableDTO currentNotebookEditable = notebookVariableClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
+            currentNotebookEditableId = currentNotebookEditable.getId();
+        } else {
+            NotebookCanvasDTO notebookCanvasDTO = new NotebookCanvasDTO(currentNotebookInstance.getLastCellId());
+            currentNotebookInstance.storeNotebookCanvasDTO(notebookCanvasDTO);
+            notebookVariableClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, notebookCanvasDTO);
         }
+        reloadCurrentNotebook();
     }
 
     public List<CellDefinition> listCellDefinition(CellDefinitionFilterData cellDefinitionFilterData) {
@@ -210,11 +178,11 @@ public class NotebookSession implements Serializable {
         return result;
     }
 
-    public void executeCell(Long cellId) {
+    public void executeCell(Long cellId) throws Exception {
         storeCurrentNotebook();
         CellInstance cell = currentNotebookInstance.findCellInstanceById(cellId);
         if (cell.getCellDefinition().getExecutable()) {
-            portalService.executeCell(currentNotebookInstance, currentNotebookInfo.getId(), currentNotebookEditableId,  cellId);
+            portalService.executeCell(currentNotebookInstance, currentNotebookInfo.getId(), currentNotebookEditableId, cellId);
         }
     }
 
@@ -234,7 +202,7 @@ public class NotebookSession implements Serializable {
     }
 
 
-    public IDatasetDescriptor loadDatasetFromVariable(VariableInstance variableInstance) {
+    public IDatasetDescriptor loadDatasetFromVariable(VariableInstance variableInstance) throws Exception {
         VariableType variableType = variableInstance.getVariableDefinition().getVariableType();
         if (variableType.equals(VariableType.DATASET)) {
             return loadDatasetFromDatasetVariable(variableInstance);
@@ -247,13 +215,9 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public IDatasetDescriptor loadDatasetFromFileVariable(VariableInstance variableInstance) {
-        try {
-            List<MoleculeObject> list = parseMoleculesFromFileVariable(variableInstance);
-            return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public IDatasetDescriptor loadDatasetFromFileVariable(VariableInstance variableInstance) throws Exception {
+        List<MoleculeObject> list = parseMoleculesFromFileVariable(variableInstance);
+        return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
     }
 
     public List<MoleculeObject> parseMoleculesFromFileVariable(VariableInstance variableInstance) throws Exception {
@@ -275,27 +239,17 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public IDatasetDescriptor loadDatasetFromDatasetVariable(VariableInstance variableInstance) {
-        try {
-            List<MoleculeObject> list = squonkDatasetAsMolecules(variableInstance);
-            return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public IDatasetDescriptor loadDatasetFromDatasetVariable(VariableInstance variableInstance) throws Exception {
+        List<MoleculeObject> list = squonkDatasetAsMolecules(variableInstance);
+        return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
     }
 
-    public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) {
-
+    public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) throws Exception {
         try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
-
             GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(gzipInputStream, new TypeReference<List<MoleculeObject>>() {
             });
-        } catch (Throwable t) {
-            // TODO - error handling
-            LOGGER.warn("Failed to read dataset as molecules", t);
-            return null;
         }
     }
 
@@ -312,32 +266,16 @@ public class NotebookSession implements Serializable {
         return datasets.findDatasetDescriptorById(datasetDescriptorId);
     }
 
-    public void writeTextValue(VariableInstance variableInstance, Object value) {
-        try {
-            notebookVariableClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), value == null ? null : value.toString());
-        } catch (Exception e) {
-            // TODO - error handling
-            throw new RuntimeException(e);
-        }
+    public void writeTextValue(VariableInstance variableInstance, Object value) throws Exception {
+        notebookVariableClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), value == null ? null : value.toString());
     }
 
-    public String readTextValue(VariableInstance variableInstance) {
-        try {
-            return notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
-        } catch (Exception e) {
-            // TODO - error handling
-            LOGGER.error("Failed to read text variable " + variableInstance.calculateKey());
-            return null;
-        }
+    public String readTextValue(VariableInstance variableInstance) throws Exception {
+        return notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
     }
 
-    public void writeStreamValue(VariableInstance variableInstance, InputStream inputStream) {
-        try {
-            notebookVariableClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
-        } catch (Exception e) {
-            // TODO - error handling
-            throw new RuntimeException(e);
-        }
+    public void writeStreamValue(VariableInstance variableInstance, InputStream inputStream) throws Exception {
+        notebookVariableClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
     }
 
     public void resetCurrentNotebook() {
@@ -350,25 +288,17 @@ public class NotebookSession implements Serializable {
         return datasets.findMoleculeObject(datasetDescriptorId, uuid);
     }
 
-    public void writeMoleculeValue(VariableInstance variableInstance, MoleculeObject moleculeObject) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            objectMapper.writeValue(byteArrayOutputStream, moleculeObject);
-            byteArrayOutputStream.flush();
-            writeTextValue(variableInstance, new String(byteArrayOutputStream.toByteArray()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void writeMoleculeValue(VariableInstance variableInstance, MoleculeObject moleculeObject) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        objectMapper.writeValue(byteArrayOutputStream, moleculeObject);
+        byteArrayOutputStream.flush();
+        writeTextValue(variableInstance, new String(byteArrayOutputStream.toByteArray()));
     }
 
-    public MoleculeObject readMoleculeValue(VariableInstance variableInstance) {
+    public MoleculeObject readMoleculeValue(VariableInstance variableInstance) throws Exception {
         String json = readTextValue(variableInstance);
-        try {
-            return new ObjectMapper().readValue(json, MoleculeObject.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return new ObjectMapper().readValue(json, MoleculeObject.class);
     }
 
 }

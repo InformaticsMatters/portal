@@ -11,14 +11,16 @@ import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.SessionContext;
+import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.util.logging.Level;
 
 public class EditNotebookPanel extends SemanticModalPanel {
 
-    private static final Logger logger = LoggerFactory.getLogger(EditNotebookPanel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EditNotebookPanel.class);
     private Callbacks callbacks;
     private Form<EditNotebookData> form;
     private AjaxSubmitLink submitAction;
@@ -30,6 +32,8 @@ public class EditNotebookPanel extends SemanticModalPanel {
     private NotebookSession notebookSession;
     @Inject
     private SessionContext sessionContext;
+    @Inject
+    private NotifierProvider notifierProvider;
 
     public EditNotebookPanel(String id, String modalElementWicketId) {
         super(id, modalElementWicketId);
@@ -77,8 +81,13 @@ public class EditNotebookPanel extends SemanticModalPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                Long id = store();
-                callbacks.onSubmit(id);
+                try {
+                    Long id = store();
+                    callbacks.onSubmit(id);
+                } catch (Throwable t) {
+                    LOGGER.warn("Error storing notebook", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
             }
         };
         submitAction.setOutputMarkupId(true);
@@ -94,7 +103,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
         form.add(cancelAction);
     }
 
-    private Long store() {
+    private Long store() throws Exception {
         EditNotebookData editNotebookData = form.getModelObject();
         if (editNotebookData.getId() == null) {
             return notebookSession.createNotebook(editNotebookData.getName(), editNotebookData.getDescription(), editNotebookData.getShared());
@@ -121,7 +130,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
         forRemove = false;
     }
 
-    public void configureForEdit(Long id) {
+    public void configureForEdit(Long id) throws Exception {
         this.notebookId = id;
         NotebookInfo notebookInfo = notebookSession.findNotebookInfo(id);
         EditNotebookData editNotebookData = new EditNotebookData();
@@ -135,7 +144,7 @@ public class EditNotebookPanel extends SemanticModalPanel {
         forRemove = false;
     }
 
-    public void configureForRemove(Long id) {
+    public void configureForRemove(Long id) throws Exception {
         this.notebookId = id;
         NotebookInfo notebookInfo = notebookSession.findNotebookInfo(id);
         EditNotebookData editNotebookData = new EditNotebookData();

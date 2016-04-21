@@ -16,12 +16,14 @@ import javax.inject.Inject;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.Serializable;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
 public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
-
+    private static final Logger LOGGER = Logger.getLogger(TableDisplayCanvasItemPanel.class.getName());
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
     @Inject
@@ -42,7 +44,12 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         addForm();
         addTitleBar();
         addGrid();
-        load();
+        try {
+            load();
+        } catch (Throwable t) {
+            LOGGER.log(Level.WARNING, "Error loading data", t);
+            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+        }
     }
 
     @Override
@@ -54,11 +61,16 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-        CellInstance cellInstance = findCellInstance();
-        BindingInstance binding = cellInstance.getBindingInstanceMap().get("input");
-        if (binding.getVariableInstance() != null && binding.getVariableInstance().getCellId().equals(changedCellId)) {
-            load();
-            ajaxRequestTarget.add(this);
+        try {
+            CellInstance cellInstance = findCellInstance();
+            BindingInstance binding = cellInstance.getBindingInstanceMap().get("input");
+            if (binding.getVariableInstance() != null && binding.getVariableInstance().getCellId().equals(changedCellId)) {
+                load();
+                ajaxRequestTarget.add(this);
+            }
+        } catch (Throwable t) {
+            LOGGER.log(Level.WARNING, "Error loading data", t);
+            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
         }
 
     }
@@ -72,7 +84,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         addOrReplaceTreeGridVisualizer(new TableDisplayDatasetDescriptor(0L, "", 0));
     }
 
-    private void load() {
+    private void load() throws Exception {
         BindingInstance bindingModel = findCellInstance().getBindingInstanceMap().get("input");
         VariableInstance variableInstance = bindingModel == null ? null : bindingModel.getVariableInstance();
         String value = variableInstance == null ? null : notebookSession.readTextValue(variableInstance);
@@ -87,7 +99,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         addOrReplaceTreeGridVisualizer(descriptor);
     }
 
-    private IDatasetDescriptor loadDescriptor() {
+    private IDatasetDescriptor loadDescriptor() throws Exception {
         CellInstance cellInstance = findCellInstance();
         VariableInstance variableInstance = cellInstance.getBindingInstanceMap().get("input").getVariableInstance();
         return notebookSession.loadDatasetFromVariable(variableInstance);
@@ -98,9 +110,14 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
             @Override
             protected void onItemSelectionChanged(IModel<DefaultMutableTreeNode> item, boolean newValue) {
-                Row row = (Row) item.getObject().getUserObject();
-                if (newValue) {
-                    storeCurrentSelection(row.getUuid());
+                try {
+                    Row row = (Row) item.getObject().getUserObject();
+                    if (newValue) {
+                        storeCurrentSelection(row.getUuid());
+                    }
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error persisting selection", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
         };
@@ -109,7 +126,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         addOrReplace(treeGridNavigation);
     }
 
-    private void storeCurrentSelection(UUID uuid) {
+    private void storeCurrentSelection(UUID uuid) throws Exception {
         VariableInstance variableInstance = findCellInstance().getVariableInstanceMap().get("selection");
         MoleculeObject moleculeObject = notebookSession.findMoleculeObjectByRow(datasetDescriptorId, uuid);
         notebookSession.writeMoleculeValue(variableInstance, moleculeObject);
@@ -125,8 +142,12 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void onExecute() {
-        notebookSession.reloadCurrentNotebook();
-        load();
+        try {
+            notebookSession.reloadCurrentNotebook();
+            load();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     class ModelObject implements Serializable {

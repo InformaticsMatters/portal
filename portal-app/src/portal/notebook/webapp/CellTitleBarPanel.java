@@ -9,15 +9,18 @@ import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
+import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
 public class CellTitleBarPanel extends Panel {
-
+    private static final Logger LOGGER = Logger.getLogger(CellTitleBarPanel.class.getName());
     private final CellInstance cellInstance;
     private final CallbackHandler callbackHandler;
     private BindingsPopupPanel bindingsPopupPanel;
@@ -28,6 +31,8 @@ public class CellTitleBarPanel extends Panel {
     private PopupContainerProvider popupContainerProvider;
     @Inject
     private NotebookSession notebookSession;
+    @Inject
+    private NotifierProvider notifierProvider;
 
     public CellTitleBarPanel(String id, CellInstance cellInstance, CallbackHandler callbackHandler) {
         super(id);
@@ -40,8 +45,13 @@ public class CellTitleBarPanel extends Panel {
     }
 
     private void initExecutionStatus() {
-        Execution lastExecution = notebookSession.findExecution(getCellInstance().getId());
-        applyExecutionStatus(lastExecution);
+        try {
+            Execution lastExecution = notebookSession.findExecution(getCellInstance().getId());
+            applyExecutionStatus(lastExecution);
+        } catch (Throwable t) {
+            LOGGER.log(Level.WARNING, "Error findingExecution", t);
+            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+        }
     }
 
     private void addTitleBarCssToggler() {
@@ -49,7 +59,13 @@ public class CellTitleBarPanel extends Panel {
 
             @Override
             public boolean cssActiveIf() {
-                return isFailed();
+                try {
+                    return isFailed();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error checking status", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                    return true;
+                }
             }
         }));
     }
@@ -89,8 +105,14 @@ public class CellTitleBarPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                callbackHandler.onExecute();
+                try {
+                    callbackHandler.onExecute();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error executing " + getCellInstance().getName(), t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
                 target.add(CellTitleBarPanel.this);
+
             }
         };
         submitLink.setOutputMarkupId(true);
@@ -111,7 +133,12 @@ public class CellTitleBarPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                getCallbackHandler().onRemove(cellInstance);
+                try {
+                    getCallbackHandler().onRemove(cellInstance);
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error removing cell", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
             }
         });
     }
@@ -157,11 +184,11 @@ public class CellTitleBarPanel extends Panel {
 
     public interface CallbackHandler extends Serializable {
 
-        void onRemove(CellInstance cellModel);
+        void onRemove(CellInstance cellModel) throws Exception;
 
         Form getExecuteFormComponent();
 
-        void onExecute();
+        void onExecute() throws Exception;
 
         default Panel getAdvancedOptionsPanel() {
             return null;

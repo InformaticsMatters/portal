@@ -76,7 +76,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
+    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         CellInstance cellInstance = findCellInstance();
         BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
         if (bindingInstance != null) {

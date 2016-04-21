@@ -10,12 +10,14 @@ import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.types.Structure;
 import portal.notebook.api.*;
+import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @author simetrias
@@ -28,6 +30,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotebookSession notebookSession;
     private ListView<OptionInstance> optionListView;
+    @Inject
+    private NotifierProvider notifierProvider;
 
     public DefaultCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -57,7 +61,11 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
             @Override
             protected void populateItem(ListItem<OptionInstance> listItem) {
-                addOptionEditor(listItem);
+                try {
+                    addOptionEditor(listItem);
+                } catch (Throwable t) {
+                    LOGGER.warn("Error popualting item", t);
+                }
             }
         };
         form.add(optionListView);
@@ -75,10 +83,11 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             getRequestCycle().find(AjaxRequestTarget.class).add(DefaultCanvasItemPanel.this.form);
         } catch (Throwable t) {
             LOGGER.error("Failed to execute cell", t);
+            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
         }
     }
 
-    private void execute() throws IOException {
+    private void execute() throws Exception {
         storeOptions();
         notebookSession.storeCurrentNotebook();
         notebookSession.executeCell(findCellInstance().getId());
@@ -152,14 +161,18 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         for (int i = 0; i < optionListView.size(); i++) {
             ListItem listItem = (ListItem) optionListView.get(i);
             FieldEditorPanel fieldEditorPanel = (FieldEditorPanel) listItem.get(0);
-            if (fieldEditorPanel.processCellChanged(changedCellId, ajaxRequestTarget)) {
-                refresh = true;
+            try {
+                if (fieldEditorPanel.processCellChanged(changedCellId, ajaxRequestTarget)) {
+                    refresh = true;
+                }
+            } catch (Throwable t) {
+                LOGGER.warn("Error processing change", t);
+                notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
             }
         }
         if (refresh) {
             ajaxRequestTarget.add(this);
         }
-
     }
 
     class OptionUploadCallback implements FileFieldEditorPanel.Callback {
@@ -171,16 +184,21 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
         @Override
         public void onUpload(String fileName, InputStream inputStream) {
-            String optionName = optionInstance.getOptionDescriptor().getkey();
-            OptionInstance liveOptionInstance = findCellInstance().getOptionInstanceMap().get(optionName);
-            liveOptionInstance.setValue(fileName);
-            notebookSession.storeCurrentNotebook();
-            VariableInstance variableInstance = findVariableInstanceForFileOption();
-            if (variableInstance == null) {
-                throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getkey());
+            try {
+                String optionName = optionInstance.getOptionDescriptor().getkey();
+                OptionInstance liveOptionInstance = findCellInstance().getOptionInstanceMap().get(optionName);
+                liveOptionInstance.setValue(fileName);
+                notebookSession.storeCurrentNotebook();
+                VariableInstance variableInstance = findVariableInstanceForFileOption();
+                if (variableInstance == null) {
+                    throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getkey());
+                }
+                notebookSession.writeTextValue(variableInstance, fileName);
+                notebookSession.writeStreamValue(variableInstance, inputStream);
+            } catch (Throwable t) {
+                LOGGER.warn("Error uploading " + fileName, t);
+                notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
             }
-            notebookSession.writeTextValue(variableInstance, fileName);
-            notebookSession.writeStreamValue(variableInstance, inputStream);
         }
     }
 

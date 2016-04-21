@@ -14,18 +14,20 @@ import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
+import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
 public class ScatterPlotAdvancedOptionsPanel extends Panel {
-
+    private static final Logger LOGGER = Logger.getLogger(ScatterPlotAdvancedOptionsPanel.class.getName());
     private final Long cellId;
     private List<String> picklistItems;
     private Form<ModelObject> form;
@@ -34,12 +36,19 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
     private NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
+    @Inject
+    private NotifierProvider notifierProvider;
 
     public ScatterPlotAdvancedOptionsPanel(String id, Long cellId) {
         super(id);
         setOutputMarkupId(true);
         this.cellId = cellId;
-        loadPicklist();
+        try {
+            loadPicklist();
+        } catch (Throwable t) {
+            LOGGER.log(Level.WARNING, "Error loading picklist", t);
+            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+        }
         addComponents();
     }
 
@@ -65,15 +74,20 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> f) {
-                if (callbackHandler != null) {
-                    callbackHandler.onApplyAdvancedOptions();
+                try {
+                    if (callbackHandler != null) {
+                        callbackHandler.onApplyAdvancedOptions();
+                    }
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error storing notebook", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
                 popupContainerProvider.refreshContainer(getPage(), target);
             }
         });
     }
 
-    private void loadPicklist() {
+    private void loadPicklist() throws Exception {
         picklistItems = new ArrayList<>();
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
         BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
@@ -83,15 +97,11 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
         }
     }
 
-    private void loadFieldNames(VariableInstance variableInstance) {
-        try {
-            String string = notebookSession.readTextValue(variableInstance);
-            if (string != null) {
-                DatasetMetadata datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
-                picklistItems.addAll(datasetMetadata.getValueClassMappings().keySet());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private void loadFieldNames(VariableInstance variableInstance) throws Exception {
+        String string = notebookSession.readTextValue(variableInstance);
+        if (string != null) {
+            DatasetMetadata datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
+            picklistItems.addAll(datasetMetadata.getValueClassMappings().keySet());
         }
     }
 
@@ -133,7 +143,7 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
     public interface CallbackHandler extends Serializable {
 
-        void onApplyAdvancedOptions();
+        void onApplyAdvancedOptions() throws Exception;
 
     }
 

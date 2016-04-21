@@ -11,12 +11,13 @@ import org.slf4j.LoggerFactory;
 import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
+import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(CanvasItemPanel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CanvasItemPanel.class);
     private final Long cellId;
     @Inject
     private NotebookSession notebookSession;
@@ -26,6 +27,8 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private CellChangeManager cellChangeManager;
     private CellTitleBarPanel cellTitleBarPanel;
     private Execution oldExecution;
+    @Inject
+    private NotifierProvider notifierProvider;
 
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
@@ -43,7 +46,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         js = js.replace(":width", Integer.toString(model.getSizeWidth() == null ? 265 : model.getSizeWidth()));
         js = js.replace(":height", Integer.toString(model.getSizeHeight() == null ? 0 : model.getSizeHeight()));
 
-        logger.info(js);
+        LOGGER.info(js);
 
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
@@ -70,16 +73,21 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
     }
 
-    public void fireContentChanged() {
+    public void fireContentChanged() throws Exception {
         notebookSession.reloadCurrentNotebook();
         getRequestCycle().find(AjaxRequestTarget.class).add(getPage());
     }
 
     @Override
     public void onRemove(CellInstance cellInstance) {
-        notebookSession.getCurrentNotebookInstance().removeCellInstance(cellInstance.getId());
-        notebookSession.storeCurrentNotebook();
-        fireContentChanged();
+        try {
+            notebookSession.getCurrentNotebookInstance().removeCellInstance(cellInstance.getId());
+            notebookSession.storeCurrentNotebook();
+            fireContentChanged();
+        } catch (Throwable t) {
+            LOGGER.warn("Error removing cell", t);
+            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+        }
     }
 
     public void addExecutionStatusTimerBehavior() {
@@ -92,7 +100,12 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
             @Override
             protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
-                refreshExecutionStatus(ajaxRequestTarget);
+                try {
+                    refreshExecutionStatus(ajaxRequestTarget);
+                } catch (Throwable t) {
+                    LOGGER.warn("Error refreshing status", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
             }
         });
     }
@@ -123,7 +136,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         }
     }
 
-    public abstract void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget);
+    public abstract void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception;
 
     public Long getCellId() {
         return cellId;

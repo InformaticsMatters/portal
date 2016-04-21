@@ -10,6 +10,7 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 import portal.notebook.api.VariableType;
+import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -17,22 +18,31 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
-
+    private static final Logger LOGGER = Logger.getLogger(DatasetsFieldPicklistFieldEditorPanel.class.getName());
     private final Long cellId;
     private List<String> picklistItems;
     @Inject
     private NotebookSession notebookSession;
+    @Inject
+    private NotifierProvider notifierProvider;
 
     public DatasetsFieldPicklistFieldEditorPanel(String id, FieldEditorModel fieldEditorModel, Long cellId) {
         super(id, fieldEditorModel);
         this.cellId = cellId;
-        loadPicklist();
+        try {
+            loadPicklist();
+        } catch (Throwable t) {
+            LOGGER.log(Level.WARNING, "Error loading picklist", t);
+            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+        }
         addComponents();
     }
 
-    private void loadPicklist() {
+    private void loadPicklist() throws Exception {
         picklistItems = new ArrayList<>();
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
         boolean first = true;
@@ -51,17 +61,13 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     }
 
 
-    private Set<String> extractFieldNames(VariableInstance variableInstance) {
-        try {
-            String string = notebookSession.readTextValue(variableInstance);
-            if (string != null) {
-                DatasetMetadata datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
-                return datasetMetadata.getValueClassMappings().keySet();
-            } else {
-                return new HashSet<>();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private Set<String> extractFieldNames(VariableInstance variableInstance) throws Exception {
+        String string = notebookSession.readTextValue(variableInstance);
+        if (string != null) {
+            DatasetMetadata datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
+            return datasetMetadata.getValueClassMappings().keySet();
+        } else {
+            return new HashSet<>();
         }
     }
 
@@ -89,7 +95,12 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
         for (BindingInstance bindingInstance : thisCellInstance.getBindingInstanceMap().values()) {
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
             if (variableInstance != null && variableInstance.getCellId().equals(changedCellId)) {
-                loadPicklist();
+                try {
+                    loadPicklist();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error loading picklist for " + bindingInstance.getName(), t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
                 refresh = true;
             }
         }

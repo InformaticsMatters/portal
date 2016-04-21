@@ -14,11 +14,14 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import portal.PortalWebApplication;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
+import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -28,7 +31,7 @@ import java.util.List;
  * @author simetrias
  */
 public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
     private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data, ':xLabel', ':yLabel')";
     private static final String OPTION_X_AXIS = "xAxis";
     private static final String OPTION_Y_AXIS = "yAxis";
@@ -38,6 +41,8 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
     @Inject
     private NotebookSession notebookSession;
+    @Inject
+    private NotifierProvider notifierProvider;
 
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -49,7 +54,12 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         addForm();
         loadModelFromPersistentData();
         addTitleBar();
-        refreshPlotData();
+        try {
+            refreshPlotData();
+        } catch (Throwable t) {
+            LOGGER.warn("Error storing notebook", t);
+            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+        }
     }
 
     @Override
@@ -64,7 +74,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
+    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         if (isChangedCellBoundCell(changedCellId)) {
             invalidatePlotData();
             onExecute();
@@ -77,7 +87,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public void onExecute() {
+    public void onExecute() throws Exception {
         refreshPlotData();
         rebuildPlot();
     }
@@ -116,7 +126,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         model.setData(new DataItem[]{});
     }
 
-    private void refreshPlotData() {
+    private void refreshPlotData() throws Exception {
         ModelObject model = form.getModelObject();
         String xFieldName = model.getX();
         String yFieldName = model.getY();
@@ -172,7 +182,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         advancedOptionsPanel.setCallbackHandler(new ScatterPlotAdvancedOptionsPanel.CallbackHandler() {
 
             @Override
-            public void onApplyAdvancedOptions() {
+            public void onApplyAdvancedOptions() throws Exception {
                 CellInstance cellInstance = findCellInstance();
                 cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).setValue(advancedOptionsPanel.getX());
                 cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).setValue(advancedOptionsPanel.getY());

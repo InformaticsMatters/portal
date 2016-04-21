@@ -18,7 +18,7 @@ public abstract class FieldEditorPanel extends Panel {
         return fieldEditorModel;
     }
 
-    public boolean processCellChanged(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
+    public boolean processCellChanged(Long cellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         return false;
     }
 }

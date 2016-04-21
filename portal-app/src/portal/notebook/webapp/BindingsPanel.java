@@ -7,25 +7,28 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import portal.notebook.api.*;
+import toolkit.wicket.semantic.NotifierProvider;
 
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
 public class BindingsPanel extends Panel {
 
-    private static final Logger logger = LoggerFactory.getLogger(BindingsPanel.class);
+    private static final Logger LOGGER = Logger.getLogger(BindingsPanel.class.getName());
     private CellInstance cellInstance;
     @Inject
     private NotebookSession notebookSession;
     private List<BindingInstance> bindingInstanceList;
     private WebMarkupContainer bindingListContainer;
+    @Inject
+    private NotifierProvider notifierProvider;
 
     public BindingsPanel(String id, CellInstance cellInstance) {
         super(id);
@@ -51,8 +54,13 @@ public class BindingsPanel extends Panel {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        removeBinding(bindingInstance);
-                        ajaxRequestTarget.add(BindingsPanel.this.getPage());
+                        try {
+                            removeBinding(bindingInstance);
+                            ajaxRequestTarget.add(BindingsPanel.this.getPage());
+                        } catch (Exception e) {
+                            LOGGER.log(Level.WARNING, "Error removing binding", e);
+                            notifierProvider.getNotifier(getPage()).notify("Error", e.getMessage());
+                        }
                     }
                 };
                 unassignLink.setVisible(sourceDisplayName != null);
@@ -63,7 +71,7 @@ public class BindingsPanel extends Panel {
         add(bindingListContainer);
     }
 
-    private void removeBinding(BindingInstance bindingInstance) {
+    private void removeBinding(BindingInstance bindingInstance) throws Exception {
         CellInstance boundCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellInstance.getId());
         BindingInstance boundBindingInstance = boundCellInstance.getBindingInstanceMap().get(bindingInstance.getName());
         boundBindingInstance.setVariableInstance(null);
@@ -94,9 +102,6 @@ public class BindingsPanel extends Panel {
         CellInstance producerCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(variableInstance.getCellId());
         return producerCellInstance.getName() + " " + variableInstance.getVariableDefinition().getDisplayName();
     }
-
-
-
 
 
 }

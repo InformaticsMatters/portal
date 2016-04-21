@@ -21,8 +21,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PopupContainerProvider;
@@ -35,12 +33,13 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
 public class NotebookCanvasPage extends WebPage {
-
     public static final String DROP_DATA_TYPE = "dropDataType";
     public static final String DROP_DATA_ID = "dropDataId";
     public static final String SOURCE_ID = "sourceId";
@@ -51,7 +50,7 @@ public class NotebookCanvasPage extends WebPage {
     public static final String SIZE_HEIGHT = "sizeHeight";
     public static final String CANVAS_ITEM_PREFIX = "canvasItem";
     public static final String CANVASITEM_INDEX = "index";
-    private static final Logger logger = LoggerFactory.getLogger(NotebookCanvasPage.class);
+    private static final Logger LOGGER = Logger.getLogger(NotebookCanvasPage.class.getName());
 
     boolean nbListVisible = true;
     boolean cellsVisible = true;
@@ -100,23 +99,38 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget) {
                 if (JobStatus.Status.COMPLETED.equals(jobStatus) || JobStatus.Status.ERROR.equals(jobStatus)) {
-                    processCellChange(cellId, ajaxRequestTarget);
+                    try {
+                        processCellChange(cellId, ajaxRequestTarget);
+                    } catch (Throwable t) {
+                        LOGGER.log(Level.WARNING, "Error processing cell change", t);
+                        notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                    }
                 }
             }
 
             @Override
             public void onVariableChanged(Long cellId, String variableName, AjaxRequestTarget ajaxRequestTarget) {
-                processCellChange(cellId, ajaxRequestTarget);
+                try {
+                    processCellChange(cellId, ajaxRequestTarget);
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error processing change", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
             }
         });
     }
 
-    private void processCellChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) {
+    private void processCellChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         notebookSession.reloadCurrentNotebook();
         for (int i = 0; i< canvasItemRepeater.size(); i++) {
             ListItem listItem = (ListItem)canvasItemRepeater.get(i);
             CanvasItemPanel canvasItemPanel = (CanvasItemPanel)listItem.get(0);
-            canvasItemPanel.processCellChanged(cellId, ajaxRequestTarget);
+            try {
+                canvasItemPanel.processCellChanged(cellId, ajaxRequestTarget);
+            } catch (Throwable t) {
+                LOGGER.log(Level.WARNING, "Error loading data", t);
+                notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+            }
         }
     }
 
@@ -218,11 +232,16 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onSubmit(Long id) {
-                notebookListPanel.refreshNotebookList();
-                if (id == null) {
-                    notebookSession.resetCurrentNotebook();
-                } else {
-                    notebookSession.loadCurrentNotebook(id);
+                try {
+                    notebookListPanel.refreshNotebookList();
+                    if (id == null) {
+                        notebookSession.resetCurrentNotebook();
+                    } else {
+                        notebookSession.loadCurrentNotebook(id);
+                    }
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error refreshing notebook", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
                 AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
                 ajaxRequestTarget.add(NotebookCanvasPage.this);
@@ -291,7 +310,12 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void respond(AjaxRequestTarget target) {
-                addCanvasItemFromDrop(target);
+                try {
+                    addCanvasItemFromDrop(target);
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error adding item", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
             }
 
             @Override
@@ -309,13 +333,13 @@ public class NotebookCanvasPage extends WebPage {
         add(onCanvasDropBehavior);
     }
 
-    private void addCanvasItemFromDrop(AjaxRequestTarget target) {
+    private void addCanvasItemFromDrop(AjaxRequestTarget target) throws Exception {
         String dropDataType = getRequest().getRequestParameters().getParameterValue(DROP_DATA_TYPE).toString();
         String dropDataId = getRequest().getRequestParameters().getParameterValue(DROP_DATA_ID).toString();
         String x = getRequest().getRequestParameters().getParameterValue(POSITION_LEFT).toString();
         String y = getRequest().getRequestParameters().getParameterValue(POSITION_TOP).toString();
 
-        logger.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
+        LOGGER.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
         CellDefinition cellDefinition = notebookSession.findCellType(dropDataId);
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().addCellInstance(cellDefinition);
@@ -353,7 +377,7 @@ public class NotebookCanvasPage extends WebPage {
 
     private Panel createCanvasItemPanel(CellInstance cellInstance) {
         CellDefinition cellType = cellInstance.getCellDefinition();
-        logger.info("createCanvasItemPanel for cell type " + cellType.getName());
+        LOGGER.info("createCanvasItemPanel for cell type " + cellType.getName());
         if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCanvasItemPanel("item", cellInstance.getId());
         } else if ("ScatterPlot".equals(cellType.getName())) {
@@ -372,18 +396,23 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void respond(AjaxRequestTarget target) {
-                String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
-                String x = getRequest().getRequestParameters().getParameterValue(POSITION_LEFT).toString();
-                String y = getRequest().getRequestParameters().getParameterValue(POSITION_TOP).toString();
+                try {
+                    String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
+                    String x = getRequest().getRequestParameters().getParameterValue(POSITION_LEFT).toString();
+                    String y = getRequest().getRequestParameters().getParameterValue(POSITION_TOP).toString();
 
-                logger.info("Item index " + index + " dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
+                    LOGGER.info("Item index " + index + " dragged to: " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-                NotebookInstance notebookModel = notebookSession.getCurrentNotebookInstance();
-                int i = Integer.parseInt(index);
-                CellInstance model = notebookModel.getCellInstanceList().get(i);
-                model.setPositionLeft(Integer.parseInt(x));
-                model.setPositionTop(Integer.parseInt(y));
-                notebookSession.storeCurrentNotebook();
+                    NotebookInstance notebookModel = notebookSession.getCurrentNotebookInstance();
+                    int i = Integer.parseInt(index);
+                    CellInstance model = notebookModel.getCellInstanceList().get(i);
+                    model.setPositionLeft(Integer.parseInt(x));
+                    model.setPositionTop(Integer.parseInt(y));
+                    notebookSession.storeCurrentNotebook();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error dragging item", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
             }
 
             @Override
@@ -411,7 +440,12 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void respond(AjaxRequestTarget target) {
-                onNewCanvasConnection();
+                try {
+                    onNewCanvasConnection();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error loading data", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
             }
 
             @Override
@@ -432,18 +466,23 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             protected void respond(AjaxRequestTarget target) {
-                String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
-                String width = getRequest().getRequestParameters().getParameterValue(SIZE_WIDTH).toString();
-                String height = getRequest().getRequestParameters().getParameterValue(SIZE_HEIGHT).toString();
+                try {
+                    String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
+                    String width = getRequest().getRequestParameters().getParameterValue(SIZE_WIDTH).toString();
+                    String height = getRequest().getRequestParameters().getParameterValue(SIZE_HEIGHT).toString();
 
-                logger.info("Item index " + index + " resized to: " + SIZE_WIDTH + ": " + width + " and " + SIZE_HEIGHT + ": " + height);
+                    LOGGER.info("Item index " + index + " resized to: " + SIZE_WIDTH + ": " + width + " and " + SIZE_HEIGHT + ": " + height);
 
-                NotebookInstance notebookModel = notebookSession.getCurrentNotebookInstance();
-                int i = Integer.parseInt(index);
-                CellInstance model = notebookModel.getCellInstanceList().get(i);
-                model.setSizeWidth(Integer.parseInt(width));
-                model.setSizeHeight(Integer.parseInt(height));
-                notebookSession.storeCurrentNotebook();
+                    NotebookInstance notebookModel = notebookSession.getCurrentNotebookInstance();
+                    int i = Integer.parseInt(index);
+                    CellInstance model = notebookModel.getCellInstanceList().get(i);
+                    model.setSizeWidth(Integer.parseInt(width));
+                    model.setSizeHeight(Integer.parseInt(height));
+                    notebookSession.storeCurrentNotebook();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error resizing item", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
             }
 
             @Override
@@ -466,7 +505,7 @@ public class NotebookCanvasPage extends WebPage {
         add(onNotebookCanvasItemResizedBehavior);
     }
 
-    private void onNewCanvasConnection() {
+    private void onNewCanvasConnection() throws Exception {
         String sourceEndpointUuid = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
         String targetEndpointUuid = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
         String sourceCellMarkupId = sourceEndpointUuid.substring(0, sourceEndpointUuid.indexOf("-"));
@@ -497,7 +536,7 @@ public class NotebookCanvasPage extends WebPage {
         }
     }
 
-    private void applyBinding(VariableInstance variableInstance, BindingInstance bindingInstance) {
+    private void applyBinding(VariableInstance variableInstance, BindingInstance bindingInstance) throws Exception {
         bindingInstance.setVariableInstance(variableInstance);
         notebookSession.storeCurrentNotebook();
         getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);

@@ -15,16 +15,18 @@ import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.SessionContext;
+import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * @author simetrias
  */
 public class NotebookListPanel extends Panel {
 
-    private static final Logger logger = LoggerFactory.getLogger(NotebookListPanel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotebookListPanel.class);
     private final EditNotebookPanel editNotebookPanel;
     private ListView<NotebookInfo> listView;
     private String selectedMarkupId;
@@ -32,6 +34,8 @@ public class NotebookListPanel extends Panel {
     private NotebookSession notebookSession;
     @Inject
     private SessionContext sessionContext;
+    @Inject
+    private NotifierProvider notifierProvider;
 
     public NotebookListPanel(String id, EditNotebookPanel editNotebookPanel) {
         super(id);
@@ -48,10 +52,6 @@ public class NotebookListPanel extends Panel {
         }
     }
 
-    public List<NotebookInfo> getNotebookInfoList() {
-        return notebookSession.listNotebookInfo();
-    }
-
     private void addNotebookList() {
         listView = new ListView<NotebookInfo>("notebook", new PropertyModel<List<NotebookInfo>>(this, "notebookInfoList")) {
 
@@ -66,7 +66,12 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        editNotebookPanel.configureForEdit(listItem.getModelObject().getId());
+                        try {
+                            editNotebookPanel.configureForEdit(listItem.getModelObject().getId());
+                        } catch (Throwable t) {
+                            LOGGER.warn("Error configuring for edit", t);
+                            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                        }
                         editNotebookPanel.showModal();
                     }
                 };
@@ -77,9 +82,14 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        boolean share = !notebookInfo.getShared();
-                        notebookSession.updateNotebook(notebookInfo.getId(), notebookInfo.getName(), notebookInfo.getDescription(), share);
-                        refreshNotebookList();
+                        try {
+                            boolean share = !notebookInfo.getShared();
+                            notebookSession.updateNotebook(notebookInfo.getId(), notebookInfo.getName(), notebookInfo.getDescription(), share);
+                            refreshNotebookList();
+                        } catch (Throwable t) {
+                            LOGGER.warn("Error updating notebook", t);
+                            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                        }
                     }
                 };
                 listItem.add(shareLink);
@@ -89,7 +99,12 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                        editNotebookPanel.configureForRemove(listItem.getModelObject().getId());
+                        try {
+                            editNotebookPanel.configureForRemove(listItem.getModelObject().getId());
+                        } catch (Throwable t) {
+                            LOGGER.warn("Error configuring for remove", t);
+                            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                        }
                         editNotebookPanel.showModal();
                     }
                 };
@@ -100,7 +115,12 @@ public class NotebookListPanel extends Panel {
 
                     @Override
                     protected void onEvent(AjaxRequestTarget target) {
-                        notebookSession.loadCurrentNotebook(notebookInfo.getId());
+                        try {
+                            notebookSession.loadCurrentNotebook(notebookInfo.getId());
+                        } catch (Throwable t) {
+                            LOGGER.warn("Error loading notebook", t);
+                            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                        }
                         selectedMarkupId = listItem.getMarkupId();
                         target.add(getPage());
                     }
@@ -122,7 +142,7 @@ public class NotebookListPanel extends Panel {
         add(listView);
     }
 
-    public void refreshNotebookList() {
+    public void refreshNotebookList() throws Exception {
         listView.setList(notebookSession.listNotebookInfo());
         getRequestCycle().find(AjaxRequestTarget.class).add(this);
     }
