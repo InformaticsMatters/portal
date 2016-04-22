@@ -18,6 +18,7 @@ import portal.SessionContext;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -49,6 +50,16 @@ public class NotebookListPanel extends Panel {
         if (selectedMarkupId != null) {
             String js = "makeNbTrActive('" + selectedMarkupId + "');";
             response.render(OnDomReadyHeaderItem.forScript(js));
+        }
+    }
+
+    public List<NotebookInfo> getNotebookInfoList() {
+        try {
+            return notebookSession.listNotebookInfo();
+        } catch (Throwable t) {
+            LOGGER.warn("Error listing notebooks", t);
+            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+            return new ArrayList<>();
         }
     }
 
