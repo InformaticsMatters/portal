@@ -43,4 +43,9 @@ public class DerbyUtils {
 
     }
 
+    public static void main(String[] args) throws Exception {
+        startDerbyServer();
+        System.in.read();
+    }
+
 }

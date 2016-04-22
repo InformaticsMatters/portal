@@ -5,6 +5,7 @@
         <class>portal.notebook.service.MockJobStatusClient</class>
         <class>portal.notebook.api.MockServiceCellsProvider</class>
         <class>portal.notebook.service.IdeDerbyPortalConfig</class>
+        <class>portal.notebook.service.IdePortalClientConfig</class>
         <class>portal.IdeLogoutHandler</class>
     </alternatives>
     <interceptors>
