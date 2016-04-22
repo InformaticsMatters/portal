@@ -58,7 +58,6 @@ public class NotebookListPanel extends Panel {
             return notebookSession.listNotebookInfo();
         } catch (Throwable t) {
             LOGGER.warn("Error listing notebooks", t);
-            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
             return new ArrayList<>();
         }
     }
