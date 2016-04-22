@@ -66,9 +66,6 @@
         <copy file="src/META-INF/beans-deploy-mock.xml"
               tofile="${portal-app.output.dir}/META-INF/beans.xml"
               overwrite="true" failonerror="true"/>
-        <copy file="webapp/WEB-INF/persistence-derby.properties"
-              tofile="build/WEB-INF/persistence.properties"
-              overwrite="true"/>
         <antcall target="--prepare-war"/>
         <war basedir="build" file="dist/portal.war"/>
         <delete dir="build"/>
