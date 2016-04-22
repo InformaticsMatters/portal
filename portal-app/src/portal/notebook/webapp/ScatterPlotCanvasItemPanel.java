@@ -27,6 +27,8 @@ import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.List;
 
+import static chemaxon.marvin.io.formats.cdx.CDXConstants.page;
+
 /**
  * @author simetrias
  */
@@ -57,8 +59,8 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         try {
             refreshPlotData();
         } catch (Throwable t) {
-            LOGGER.warn("Error storing notebook", t);
-            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+            LOGGER.warn("Error refreshing data", t);
+            // TODO
         }
     }
 

@@ -47,7 +47,7 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
             loadPicklist();
         } catch (Throwable t) {
             LOGGER.log(Level.WARNING, "Error loading picklist", t);
-            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+            // TODO
         }
         addComponents();
     }

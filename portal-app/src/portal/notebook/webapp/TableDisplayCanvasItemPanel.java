@@ -48,7 +48,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
             load();
         } catch (Throwable t) {
             LOGGER.log(Level.WARNING, "Error loading data", t);
-            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+            // TODO
         }
     }
 
