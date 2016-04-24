@@ -27,8 +27,6 @@ import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.List;
 
-import static chemaxon.marvin.io.formats.cdx.CDXConstants.page;
-
 /**
  * @author simetrias
  */
@@ -51,7 +49,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeWidth(480);
-            cellInstance.setSizeHeight(260);
+            cellInstance.setSizeHeight(265);
         }
         addForm();
         loadModelFromPersistentData();

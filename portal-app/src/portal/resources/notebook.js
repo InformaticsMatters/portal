@@ -2,11 +2,12 @@ var onNotebookCanvasPaletteDrop;
 var onNotebookCanvasItemDragged;
 var onNotebookCanvasItemResized;
 
-function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbListVisibility) {
+function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbListVisibility, versionTreeVisibility) {
 
     var nbListVisible = (nbListVisibility === 'true');
     var cellsVisible = (cellsVisibility === 'true');
     var canvasVisible = (canvasVisibility === 'true');
+    var versionTreeVisible = (versionTreeVisibility === 'true');
 
     if (nbListVisible) {
         $('.notebookListPanel').show();
@@ -36,16 +37,24 @@ function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbList
         $('.canvasToggle').removeClass("active");
     }
 
-    if (!cellsVisible && !nbListVisible && !canvasVisible) {
+    if (versionTreeVisible) {
+            $('.notebookVersionTreePanel').show();
+            $('.versionTreeToggle').addClass("active");
+        } else if (!versionTreeVisible) {
+            $('.notebookVersionTreePanel').hide();
+            $('.versionTreeToggle').removeClass("active");
+        }
+
+    if (!cellsVisible && !nbListVisible && !canvasVisible && !versionTreeVisible) {
         $('.left-column').attr('style','display: flex!important;');
         $('.right-column').attr('style','display:flex!important;');
-    } else if ((cellsVisible || nbListVisible) && canvasVisible) {
+    } else if ((cellsVisible || nbListVisible) && (canvasVisible || versionTreeVisible)) {
         $('.left-column').attr('style','display: flex!important;');
         $('.right-column').attr('style','display: flex!important;');
-    } else if ((cellsVisible || nbListVisible) && !canvasVisible) {
+    } else if ((cellsVisible || nbListVisible) && (!canvasVisible && !versionTreeVisible)) {
         $('.left-column').attr('style','margin-right: 20px!important; border-right: 1px solid #ddd;');
         $('.right-column').attr('style','display:none!important;');
-    } else if ((!cellsVisible && !nbListVisible) && canvasVisible) {
+    } else if ((!cellsVisible && !nbListVisible) && (canvasVisible || versionTreeVisible)) {
         $('.left-column').attr('style','display:none!important;');
         $('.right-column').attr('style','margin-left: 20px!important; border-left: 1px solid #ddd;');
     }

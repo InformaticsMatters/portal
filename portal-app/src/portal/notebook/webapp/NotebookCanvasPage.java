@@ -55,13 +55,15 @@ public class NotebookCanvasPage extends WebPage {
     boolean nbListVisible = true;
     boolean cellsVisible = true;
     boolean canvasVisible = true;
+    boolean versionTreeVisible = true;
     private AjaxLink nbListToggle;
     private AjaxLink cellsToggle;
     private AjaxLink canvasToggle;
+    private AjaxLink versionTreeToggle;
 
     private NotebookListPanel notebookListPanel;
     private WebMarkupContainer plumbContainer;
-
+    private NotebookVersionTreePanel notebookVersionTreePanel;
     private ListView<Long> canvasItemRepeater;
 
     private EditNotebookPanel editNotebookPanel;
@@ -92,6 +94,7 @@ public class NotebookCanvasPage extends WebPage {
         addEditNotebookPanel();
         addNotebookListPanel();
         addNotebookCellTypesPanel();
+        addVersionTreePanel();
     }
 
     private void configureExecutionStatusListener() {
@@ -150,7 +153,7 @@ public class NotebookCanvasPage extends WebPage {
             response.render(OnDomReadyHeaderItem.forScript("addCellsPaletteDragAndDropSupport();"));
         }
         response.render(OnDomReadyHeaderItem.forScript("makeCanvasItemPlumbDraggable('.notebook-canvas-item');"));
-        response.render(OnDomReadyHeaderItem.forScript("applyNotebookCanvasPageLayout('" + cellsVisible + "', '" + canvasVisible + "', '" + nbListVisible + "')"));
+        response.render(OnDomReadyHeaderItem.forScript("applyNotebookCanvasPageLayout('" + cellsVisible + "', '" + canvasVisible + "', '" + nbListVisible + "', '" + versionTreeVisible + "')"));
     }
 
     private void addMenuAndFooter() {
@@ -174,6 +177,12 @@ public class NotebookCanvasPage extends WebPage {
         plumbContainer.setOutputMarkupId(true);
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
+    }
+
+    private void addVersionTreePanel() {
+        NotebookVersionTreePanel notebookVersionTreePanel = new NotebookVersionTreePanel("versionTree");
+        add(notebookVersionTreePanel);
+        notebookVersionTreePanel.setOutputMarkupPlaceholderTag(true);
     }
 
     private void addCanvasItemRepeater() {
@@ -261,7 +270,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void refreshPanelsVisibility(AjaxRequestTarget target) {
-        target.appendJavaScript("applyNotebookCanvasPageLayout('" + cellsVisible + "', '" + canvasVisible + "', '" + nbListVisible + "')");
+        target.appendJavaScript("applyNotebookCanvasPageLayout('" + cellsVisible + "', '" + canvasVisible + "', '" + nbListVisible + "', '" + versionTreeVisible + "')");
     }
 
     private void addActions() {
@@ -303,6 +312,16 @@ public class NotebookCanvasPage extends WebPage {
             }
         };
         add(canvasToggle);
+
+        versionTreeToggle = new AjaxLink("versionTreeToggle") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                versionTreeVisible = !versionTreeVisible;
+                refreshPanelsVisibility(target);
+            }
+        };
+        add(versionTreeToggle);
     }
 
     private void addCanvasPaletteDropBehavior() {

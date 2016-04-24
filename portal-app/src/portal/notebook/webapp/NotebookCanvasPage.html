@@ -52,17 +52,19 @@
                 </div>
             </div>
 
-            <div class="ui segment notebookContainer">
+            <div class="ui segment child-2 notebookContainer">
                 <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
                     <div wicket:id="canvasItem" class="notebook-canvas-item">
                         <div wicket:id="item"></div>
                     </div>
                 </div>
             </div>
+            <div wicket:id="versionTree" class="ui segment child-1 notebookVersionTreePanel"></div>
         </div>
 
         <div class="nb-vertical-right-menu">
             <a class="right-nav-item verticalItem canvasToggle" wicket:id="canvasToggle">Canvas</a>
+            <a class="right-nav-item verticalItem versionTreeToggle" wicket:id="versionTreeToggle">History</a>
         </div>
 
     </div>

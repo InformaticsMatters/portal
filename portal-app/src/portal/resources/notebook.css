@@ -182,12 +182,9 @@ div.ui-resizable-handle.ui-resizable-s {
     padding-top: 0!important;
 }
 
-.ui.segment.notebookContainer {
-    margin-top: 0!important;
-}
-
 .notebookListPanel,
-.notebookCellsPanel {
+.notebookCellsPanel,
+.notebookVersionTreePanel {
     overflow-y: auto;
     height: 0;
 }

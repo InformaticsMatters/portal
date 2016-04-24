@@ -310,6 +310,11 @@
     flex:1 1 0!important;
 }
 
+.child-2 {
+    -webkit-flex:2!important;
+    flex:2!important;
+}
+
 .margin0 {
     margin:0!important;
 }
@@ -372,11 +377,11 @@
 
 .nb-vertical-right-menu {
   text-align:center;
-  -moz-transform: rotate(90deg) translateX(40px) translateY(-40px);
-  -webkit-transform: rotate(90deg) translateX(40px) translateY(-40px);
-  -o-transform: rotate(90deg) translateX(40px) translateY(-40px);
-  transform: rotate(90deg) translateX(40px) translateY(-40px);
-  width: 100px;
+  -moz-transform: rotate(90deg) translateX(90px) translateY(-90px);
+  -webkit-transform: rotate(90deg) translateX(90px) translateY(-90px);
+  -o-transform: rotate(90deg) translateX(90px) translateY(-90px);
+  transform: rotate(90deg) translateX(90px) translateY(-90px);
+  width: 200px;
   height: 20px;
   margin: 0;
   padding: 0!important;
