@@ -189,6 +189,11 @@ div.ui-resizable-handle.ui-resizable-s {
     height: 0;
 }
 
+.notebookVersionTreePanel {
+    position: relative;
+    width: 100%;
+}
+
 .ui.menu.text.notebookMenu {
     margin-bottom: 0px!important;
     margin-top: 0!important;
@@ -357,3 +362,22 @@ div.ui-resizable-handle.ui-resizable-s {
 	margin-top: 0.7em !important;
 }
 
+
+.notebook-versionTree-item {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 0.2857rem;
+    transition: box-shadow 0.2s ease;
+    z-index: 100;
+    margin: 20px;
+    width: 150px;
+    padding 10px;
+}
+
+.notebook-versionTree-item:hover {
+    box-shadow: 0px 0px 5px #999!important;
+    -o-box-shadow: 0px 0px 5px #999!important;
+    -webkit-box-shadow: 0px 0px 5px #999!important;
+    -moz-box-shadow: 0px 0px 5px #999!important;
+    border: 1px solid #aaa!important;
+}
