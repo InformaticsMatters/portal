@@ -330,32 +330,6 @@ function makeNbTrActive(itemId) {
 
 jsPlumb.ready(function () {
 
-     var sourceEndpointOptions = {
-         anchor: ["Continuous", {shape: "Rectangle", faces:["bottom", "right"]}],
-         isSource: true,
-         maxConnections: -1,
-         paintStyle: {
-             fillStyle: "#7AB02C",
-             radius: 10
-         },
-         connectorStyle: {
-             lineWidth: 2,
-             strokeStyle: "#61B7CF"
-         }
-     };
-
-     var targetEndpointOptions = {
-         endpoint: 'Dot',
-         anchor: ["Continuous", {shape: "Rectangle", faces:["top", "left"]}],
-         maxConnections: -1,
-         isTarget: true,
-         paintStyle: {
-             strokeStyle: "#7AB02C",
-             radius: 9,
-             lineWidth: 3
-         }
-     };
-
 
     var color = "gray";
 
@@ -374,5 +348,4 @@ jsPlumb.ready(function () {
 
 
 
-    jsPlumb.fire("jsPlumbDemoLoaded", instance);
 });
