@@ -326,22 +326,3 @@ function makeNbTrActive(itemId) {
 }
 
 
-jsPlumb.ready(function () {
-
-
-    var instance = jsPlumb.getInstance({
-        PaintStyle: { strokeStyle: color, lineWidth: 2 },
-        EndpointStyle: { radius: 5, fillStyle: color },
-        HoverPaintStyle: {strokeStyle: "#ec9f2e" },
-        EndpointHoverStyle: {fillStyle: "#ec9f2e" },
-        Container: "versionTreeContainer"
-    });
-
-
-    instance.connect({source:"item1", target:"item2", anchor:"Continuous", connector: ["Flowchart", {cornerRadius: 5}]});
-    instance.connect({source:"item1", target:"item3", anchor:"Continuous", connector: ["Flowchart", {cornerRadius: 5}]});
-    instance.connect({source:"item2", target:"item4", anchor:"Continuous", connector: ["Flowchart", {cornerRadius: 5}]});
-
-
-
-});

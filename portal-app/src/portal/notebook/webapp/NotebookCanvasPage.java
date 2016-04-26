@@ -76,7 +76,6 @@ public class NotebookCanvasPage extends WebPage {
     private PopupContainerProvider popupContainerProvider;
     @Inject
     private CellChangeManager cellChangeManager;
-    private List<CellInstance> cellInstanceList;
 
     public NotebookCanvasPage() {
         notifierProvider.createNotifier(this, "notifier");
