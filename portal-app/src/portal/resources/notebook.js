@@ -29,11 +29,9 @@ function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbList
 
     if (canvasVisible) {
         $('.notebookContainer').show();
-        $('.nbCanvasMenu').show();
         $('.canvasToggle').addClass("active");
     } else if (!canvasVisible) {
         $('.notebookContainer').hide();
-        $('.nbCanvasMenu').hide();
         $('.canvasToggle').removeClass("active");
     }
 
@@ -330,8 +328,6 @@ function makeNbTrActive(itemId) {
 
 jsPlumb.ready(function () {
 
-
-    var color = "gray";
 
     var instance = jsPlumb.getInstance({
         PaintStyle: { strokeStyle: color, lineWidth: 2 },
