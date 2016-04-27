@@ -78,11 +78,11 @@ public class NotebookListPanel extends Panel {
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         try {
                             editNotebookPanel.configureForEdit(listItem.getModelObject().getId());
+                            editNotebookPanel.showModal();
                         } catch (Throwable t) {
                             LOGGER.warn("Error configuring for edit", t);
                             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                         }
-                        editNotebookPanel.showModal();
                     }
                 };
                 listItem.add(editLink);
@@ -111,11 +111,11 @@ public class NotebookListPanel extends Panel {
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         try {
                             editNotebookPanel.configureForRemove(listItem.getModelObject().getId());
+                            editNotebookPanel.showModal();
                         } catch (Throwable t) {
                             LOGGER.warn("Error configuring for remove", t);
                             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                         }
-                        editNotebookPanel.showModal();
                     }
                 };
                 listItem.add(removeLink);
@@ -127,12 +127,12 @@ public class NotebookListPanel extends Panel {
                     protected void onEvent(AjaxRequestTarget target) {
                         try {
                             notebookSession.loadCurrentNotebook(notebookInfo.getId());
+                            selectedMarkupId = listItem.getMarkupId();
+                            target.add(getPage());
                         } catch (Throwable t) {
                             LOGGER.warn("Error loading notebook", t);
                             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                         }
-                        selectedMarkupId = listItem.getMarkupId();
-                        target.add(getPage());
                     }
                 });
 

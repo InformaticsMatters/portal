@@ -107,12 +107,11 @@ public class CellTitleBarPanel extends Panel {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
                     callbackHandler.onExecute();
+                    target.add(CellTitleBarPanel.this);
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error executing " + getCellInstance().getName(), t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
-                target.add(CellTitleBarPanel.this);
-
             }
         };
         submitLink.setOutputMarkupId(true);
