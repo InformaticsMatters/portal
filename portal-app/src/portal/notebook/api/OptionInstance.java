@@ -1,6 +1,7 @@
 package portal.notebook.api;
 
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.TypeDescriptor;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;

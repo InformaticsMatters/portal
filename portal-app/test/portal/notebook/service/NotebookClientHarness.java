@@ -89,7 +89,7 @@ public class NotebookClientHarness extends AbstractTestCase {
 
     @TestMethod(ordinal = 3)
     public void testSavepoints() throws Exception {
-        savepointEditable = notebookClient.createSavepoint(notebookEditable.getNotebookId(), notebookEditable.getId());
+        savepointEditable = notebookClient.createSavepoint(notebookEditable.getNotebookId(), notebookEditable.getId(), "description");
         List<NotebookSavepointDTO> list = notebookClient.listSavepoints(notebookDescriptor.getId());
         savepoint = list.get(list.size() - 1);
         if (!savepointEditable.getCanvasDTO().getLastCellId().equals(savepoint.getCanvasDTO().getLastCellId())) {

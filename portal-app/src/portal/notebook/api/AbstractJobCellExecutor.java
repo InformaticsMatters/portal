@@ -4,11 +4,15 @@ import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.job.jobdef.StepsCellExecutorJobDefinition;
+import com.im.lac.types.MoleculeObject;
 import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.notebook.api.*;
+import org.squonk.options.MoleculeTypeDescriptor;
+import org.squonk.options.TypeDescriptor;
 import portal.SessionContext;
 import portal.notebook.webapp.BindingsPanel;
+import portal.notebook.webapp.StructureFieldEditorPanel;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
@@ -61,12 +65,28 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
             OptionInstance i = e.getValue();
             LOG.fine("checking option " + key);
             if (i != null && i.getValue() != null) {
-                result.put(key, i.getValue());
-                LOG.info("value for option: " + key + " -> " + i.getValue());
+                Object converted = getOptionValue(i);
+                result.put(key, converted);
+                LOG.info("value for option: " + key + " -> " + converted);
             }
         }
         return result;
+    }
 
+    protected Object getOptionValue(OptionInstance i) {
+        TypeDescriptor td = i.getOptionDescriptor().getTypeDescriptor();
+        if (td instanceof MoleculeTypeDescriptor) {
+            MoleculeTypeDescriptor mtd = (MoleculeTypeDescriptor)td;
+            Object value = i.getValue();
+            if (value instanceof String) { // is it always a String?
+                String mol = (String)value;
+                String converted = StructureFieldEditorPanel.convertMolecule(mol, mtd.getFormats());
+                LOG.info("Converted mol to: " + converted);
+                //return new MoleculeObject(converted, null); // we should be able to work out which format
+                return converted;
+            }
+        }
+        return i.getValue();
     }
 
     /** Creates a VariableKey for this variable, looking up the producer cell from the notebook

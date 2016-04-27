@@ -1,5 +1,7 @@
 package portal.notebook.api;
 
+import org.squonk.options.TypeDescriptor;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.LinkedHashMap;

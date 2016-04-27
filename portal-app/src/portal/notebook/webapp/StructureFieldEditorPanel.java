@@ -160,6 +160,19 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
         }
     }
 
+    public static String convertMolecule(String molstr, String... formats) {
+        try {
+            if (molstr == null || molstr.isEmpty()) {
+                return null;
+            } else {
+                Molecule molecule = MolImporter.importMol(molstr);
+                return exportAsString(molecule, formats);
+            }
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
+
     // this method is copied from MolecuelUtils in the chemaxon-lib module
     private static String exportAsString(Molecule mol, String... format) throws IOException {
         IOException ex = null;

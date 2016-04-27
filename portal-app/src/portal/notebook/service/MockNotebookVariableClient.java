@@ -161,7 +161,13 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     }
 
     @Override
-    public NotebookEditableDTO createSavepoint(Long notebookId, Long editableId) throws Exception {
+    public boolean deleteEditable(Long notebookId, Long editableId, String username) throws Exception {
+        //TODO - implement
+        return false;
+    }
+
+    @Override
+    public NotebookEditableDTO createSavepoint(Long notebookId, Long editableId, String description) throws Exception {
         MockNotebookEditable mockNotebookEditable = entityManager.find(MockNotebookEditable.class, editableId);
         if (mockNotebookEditable == null) {
             throw new RuntimeException("Unknown editable id");
@@ -169,6 +175,7 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         MockNotebookSavepoint mockNotebookSavepoint = new MockNotebookSavepoint();
         mockNotebookSavepoint.setEditableId(editableId);
         mockNotebookSavepoint.setNotebookId(notebookId);
+        mockNotebookSavepoint.setDescription(description);
         entityManager.persist(mockNotebookSavepoint);
         return toNotebookEditable(mockNotebookSavepoint);
     }
