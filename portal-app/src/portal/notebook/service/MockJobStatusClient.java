@@ -73,7 +73,7 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
         if (jobDefinition instanceof ExecuteCellUsingStepsJobDefinition) {
             ExecuteCellUsingStepsJobDefinition executeCellUsingStepsJobDefinition = (ExecuteCellUsingStepsJobDefinition) jobDefinition;
             if (executeCellUsingStepsJobDefinition.getSteps()[0].getImplementationClass().equals(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)) {
-                return executeCellUsingStepsJobDefinition.getSteps()[0].getOptions().get("prefix").equals("2");
+                return "2".equals(executeCellUsingStepsJobDefinition.getSteps()[0].getOptions().get("prefix"));
             } else {
                 return false;
             }
