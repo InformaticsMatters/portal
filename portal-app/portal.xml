@@ -403,7 +403,7 @@
             </lib>
         </war>
 
-        <delete dir="build">
-        </delete>
+        <delete dir="build" />
     </target>
+
 </project>
