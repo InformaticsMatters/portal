@@ -340,7 +340,7 @@
 
     </target>
 
-    <target name="build-prod" depends="all, prepare-war">
+    <target name="build-prod" depends="all">
 
         <copy file="${module.portal-app.basedir}/src/META-INF/beans-prod.xml"
               tofile="${portal-app.output.dir}/META-INF/beans.xml" overwrite="true"/>
@@ -357,7 +357,7 @@
 
     </target>
 
-    <target name="build-mock" depends="all, prepare-war">
+    <target name="build-mock" depends="all">
 
         <copy file="${module.portal-app.basedir}/src/META-INF/beans-mock.xml"
               tofile="${portal-app.output.dir}/META-INF/beans.xml" overwrite="true"/>
