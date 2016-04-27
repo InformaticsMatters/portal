@@ -60,12 +60,12 @@ public class MockJobStatusService {
         NotebookEditableDTO editableDTO = editableList.get(0);
         NotebookCanvasDTO notebookCanvasDTO = editableDTO.getCanvasDTO();
         NotebookCanvasDTO.CellDTO cellDTO = findCell(notebookCanvasDTO, jobDefinition.getCellId());
-        Dataset<MoleculeObject> dataset = createMockDataset((String)cellDTO.getOptions().get("prefix"));
-        try {
-            writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), "output", dataset);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        String prefix = (String)cellDTO.getOptions().get("prefix");
+        if (prefix == null) {
+            throw new Exception("Null prefix");
         }
+        Dataset<MoleculeObject> dataset = createMockDataset(prefix);
+        writeDataset(jobDefinition.getNotebookId(), jobDefinition.getEditableId(), jobDefinition.getCellId(), "output", dataset);
     }
 
     private void processSdfUpload(ExecuteCellUsingStepsJobDefinition jobDefinition) throws Exception {

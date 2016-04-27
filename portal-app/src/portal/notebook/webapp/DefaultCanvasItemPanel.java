@@ -168,6 +168,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             } catch (Throwable t) {
                 LOGGER.warn("Error processing change", t);
                 notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                refresh = false;
             }
         }
         if (refresh) {
