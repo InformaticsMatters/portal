@@ -57,8 +57,7 @@ public class NotebookSession implements Serializable {
     public NotebookInfo findNotebookInfo(Long id) throws Exception {
         for (NotebookDTO notebookDTO : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
             if (notebookDTO.getId().equals(id)) {
-                throw new Exception("Test");
-                //return NotebookInfo.fromNotebookDTO(notebookDTO);
+                return NotebookInfo.fromNotebookDTO(notebookDTO);
             }
         }
         return null;
