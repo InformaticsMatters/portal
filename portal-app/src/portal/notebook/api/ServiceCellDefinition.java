@@ -28,7 +28,7 @@ public class ServiceCellDefinition extends CellDefinition {
     public ServiceCellDefinition(ServiceDescriptor serviceDescriptor) {
         this.serviceDescriptor = serviceDescriptor;
         setExecutable(Boolean.TRUE);
-        if (findOptionForBody() != null) {
+        if (findOptionForBody() == null) {
             // if one of the options is defined as the body then we don't want an input endpoint
             getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         }
