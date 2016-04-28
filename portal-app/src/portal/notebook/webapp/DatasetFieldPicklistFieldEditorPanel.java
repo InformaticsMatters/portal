@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
-    private final Logger LOGGER = Logger.getLogger(DatasetsFieldPicklistFieldEditorPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DatasetsFieldPicklistFieldEditorPanel.class.getName());
     private final Long cellId;
     private List<String> picklistItems;
     @Inject
@@ -35,7 +35,6 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
             loadPicklist();
         } catch (Throwable t) {
             LOGGER.log(Level.WARNING, "Error loading picklist", t);
-            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
         }
         addComponents();
     }

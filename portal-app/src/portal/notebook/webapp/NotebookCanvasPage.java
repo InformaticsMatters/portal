@@ -248,12 +248,12 @@ public class NotebookCanvasPage extends WebPage {
                     } else {
                         notebookSession.loadCurrentNotebook(id);
                     }
+                    AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
+                    ajaxRequestTarget.add(NotebookCanvasPage.this);
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error refreshing notebook", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
-                AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
-                ajaxRequestTarget.add(NotebookCanvasPage.this);
             }
 
             @Override

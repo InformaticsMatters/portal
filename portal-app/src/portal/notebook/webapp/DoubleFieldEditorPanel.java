@@ -10,9 +10,11 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DoubleFieldEditorPanel extends FieldEditorPanel {
+    private static final Logger LOGGER = Logger.getLogger(DoubleFieldEditorPanel.class.getName());
     private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
     @Inject
     private NotifierProvider notifierProvider;
@@ -38,6 +40,7 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel {
                         return decimalFormat.format(value);
                     }
                 } catch (Throwable e) {
+                    LOGGER.log(Level.WARNING, "Error converting " + getFieldEditorModel().getValue(), e);
                     notifierProvider.getNotifier(getPage()).notify("Error", e.getMessage());
                     return null;
                 }
@@ -52,6 +55,7 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel {
                         getFieldEditorModel().setValue(decimalFormat.parse(object).doubleValue());
                     }
                 } catch (Throwable e) {
+                    LOGGER.log(Level.WARNING, "Error converting " + object, e);
                     notifierProvider.getNotifier(getPage()).notify("Error", e.getMessage());
                 }
             }

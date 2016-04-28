@@ -318,6 +318,65 @@
 
     <target name="all" depends="build.modules" description="build all"/>
 
+
+    <target name="prepare-war" description="prepare war commons">
+
+        <copy file="${module.portal-app.basedir}/src/META-INF/persistence.xml"
+              tofile="${portal-app.output.dir}/META-INF/persistence.xml" overwrite="true"/>
+
+        <copy todir="${portal-app.output.dir}">
+            <fileset dir="${toolkit.output.dir}"/>
+        </copy>
+
+        <copy todir="build/WEB-INF/lib">
+            <path refid="library.lib.classpath"></path>
+        </copy>
+
+        <jar destfile="build/WEB-INF/lib/portal-app.jar"
+             basedir="${portal-app.output.dir}"/>
+
+        <copy file="${module.portal-app.basedir}/webapp/WEB-INF/web.xml"
+              tofile="build/WEB-INF/web.xml" overwrite="true"/>
+
+    </target>
+
+    <target name="build-prod" depends="all">
+
+        <copy file="${module.portal-app.basedir}/src/META-INF/beans-prod.xml"
+              tofile="${portal-app.output.dir}/META-INF/beans.xml" overwrite="true"/>
+
+        <antcall target="prepare-war"/>
+
+        <copy file="webapp/WEB-INF/persistence-prod.properties"
+              tofile="build/WEB-INF/persistence.properties"
+              overwrite="true"/>
+
+        <war basedir="build" file="dist/portal.war"/>
+
+        <delete dir="build"/>
+
+    </target>
+
+    <target name="build-mock" depends="all">
+
+        <copy file="${module.portal-app.basedir}/src/META-INF/beans-mock.xml"
+              tofile="${portal-app.output.dir}/META-INF/beans.xml" overwrite="true"/>
+
+        <antcall target="prepare-war"/>
+
+        <copy file="webapp/WEB-INF/persistence-derby.properties"
+              tofile="build/WEB-INF/persistence.properties"
+              overwrite="true"/>
+
+        <war basedir="build" file="dist/portal.war"/>
+
+        <delete dir="build"/>
+
+    </target>
+
+
+    <!-- TODO: remove later once new build approved -->
+
     <target name="copylibs-new">
         <copy todir="build/lib">
             <path refid="library.lib.classpath"></path>
@@ -344,7 +403,7 @@
             </lib>
         </war>
 
-        <delete dir="build">
-        </delete>
+        <delete dir="build" />
     </target>
+
 </project>

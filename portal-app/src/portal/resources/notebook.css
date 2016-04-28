@@ -246,7 +246,7 @@ div.ui-resizable-handle.ui-resizable-s {
     height: initial;
 }
 
-.nbCanvasMenu {
+.nbCanvasMenuContainer {
     height: 18px;
     margin-top: 6px;
     margin-bottom: -3px;

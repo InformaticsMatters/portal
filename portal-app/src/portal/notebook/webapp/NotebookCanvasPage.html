@@ -40,22 +40,23 @@
         </div>
 
         <div class="column flex-column-2 right-column">
-            <div class="nbCanvasMenu">
-                <label wicket:id="nbInfo"></label>
+            <div class="nbCanvasMenuContainer">
+                <div class="nbCanvasMenu">
+                    <label wicket:id="nbInfo"></label>
 
-                <div class="ui menu text notebookMenu">
-                    <a class="item">
-                        <i class="green small play icon"></i>Run
-                    </a>
-                    <a class="item">
-                        <i class="orange share icon"></i>Share
-                    </a>
-                    <a class="item">
-                        <i class="grey remove icon"></i>Delete
-                    </a>
+                    <div class="ui menu text notebookMenu">
+                        <a class="item">
+                            <i class="green small play icon"></i>Run
+                        </a>
+                        <a class="item">
+                            <i class="orange share icon"></i>Share
+                        </a>
+                        <a class="item">
+                            <i class="grey remove icon"></i>Delete
+                        </a>
+                    </div>
                 </div>
             </div>
-
             <div class="ui segment child-2 notebookContainer">
                 <div wicket:id="plumbContainer" id="plumbContainer" class="plumbContainer">
                     <div wicket:id="canvasItem" class="notebook-canvas-item">

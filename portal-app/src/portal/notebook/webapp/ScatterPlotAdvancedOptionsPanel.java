@@ -78,11 +78,11 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
                     if (callbackHandler != null) {
                         callbackHandler.onApplyAdvancedOptions();
                     }
+                    popupContainerProvider.refreshContainer(getPage(), target);
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error storing notebook", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
-                popupContainerProvider.refreshContainer(getPage(), target);
             }
         });
     }

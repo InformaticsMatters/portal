@@ -29,11 +29,9 @@ function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbList
 
     if (canvasVisible) {
         $('.notebookContainer').show();
-        $('.nbCanvasMenu').show();
         $('.canvasToggle').addClass("active");
     } else if (!canvasVisible) {
         $('.notebookContainer').hide();
-        $('.nbCanvasMenu').hide();
         $('.canvasToggle').removeClass("active");
     }
 
@@ -328,24 +326,3 @@ function makeNbTrActive(itemId) {
 }
 
 
-jsPlumb.ready(function () {
-
-
-    var color = "gray";
-
-    var instance = jsPlumb.getInstance({
-        PaintStyle: { strokeStyle: color, lineWidth: 2 },
-        EndpointStyle: { radius: 5, fillStyle: color },
-        HoverPaintStyle: {strokeStyle: "#ec9f2e" },
-        EndpointHoverStyle: {fillStyle: "#ec9f2e" },
-        Container: "versionTreeContainer"
-    });
-
-
-    instance.connect({source:"item1", target:"item2", anchor:"Continuous", connector: ["Flowchart", {cornerRadius: 5}]});
-    instance.connect({source:"item1", target:"item3", anchor:"Continuous", connector: ["Flowchart", {cornerRadius: 5}]});
-    instance.connect({source:"item2", target:"item4", anchor:"Continuous", connector: ["Flowchart", {cornerRadius: 5}]});
-
-
-
-});
