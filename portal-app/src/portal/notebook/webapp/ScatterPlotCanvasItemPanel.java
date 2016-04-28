@@ -70,7 +70,8 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/scatterplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/scatterplot.css")));
         response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
-        makeScatterPlotResizable(container, 480, 270);
+        response.render(OnDomReadyHeaderItem.forScript("fitScatterPlot('" + getMarkupId() + "')"));
+        makeCanvasItemResizable(container, "fitScatterPlot", 480, 270);
     }
 
     @Override
