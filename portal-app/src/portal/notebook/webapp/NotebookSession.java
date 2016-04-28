@@ -6,9 +6,7 @@ import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.client.NotebookVariableClient;
-import org.squonk.notebook.api.NotebookCanvasDTO;
-import org.squonk.notebook.api.NotebookDTO;
-import org.squonk.notebook.api.NotebookEditableDTO;
+import org.squonk.notebook.api.*;
 import portal.SessionContext;
 import portal.notebook.api.*;
 import portal.notebook.service.Execution;
@@ -17,13 +15,9 @@ import portal.notebook.service.PortalService;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 @SessionScoped
@@ -299,6 +293,23 @@ public class NotebookSession implements Serializable {
     public MoleculeObject readMoleculeValue(VariableInstance variableInstance) throws Exception {
         String json = readTextValue(variableInstance);
         return new ObjectMapper().readValue(json, MoleculeObject.class);
+    }
+
+    public HistoryTree buildHistoryTree() throws Exception {
+        Map<Long, AbstractNotebookVersionDTO> versionMap = new HashMap<>();
+        List<NotebookEditableDTO> editableList = notebookVariableClient.listEditables(currentNotebookInfo.getId(), sessionContext.getLoggedInUserDetails().getUserid());
+        for (NotebookEditableDTO dto : editableList) {
+            versionMap.put(dto.getId(), dto);
+        }
+        List<NotebookSavepointDTO> savepointList = notebookVariableClient.listSavepoints(currentNotebookInfo.getId());
+        for (NotebookSavepointDTO dto : savepointList) {
+            versionMap.put(dto.getId(), dto);
+        }
+
+        HistoryTree tree = new HistoryTree();
+        tree.setName(currentNotebookInfo.getName());
+        tree.loadVersionMap(versionMap);
+        return tree;
     }
 
 }
