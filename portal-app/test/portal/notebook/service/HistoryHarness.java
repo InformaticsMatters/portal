@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.squonk.notebook.api.AbstractNotebookVersionDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
 import org.squonk.notebook.api.NotebookSavepointDTO;
-import portal.notebook.webapp.HistoryTrees;
+import portal.notebook.webapp.HistoryTree;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,19 +23,19 @@ public class HistoryHarness {
         versionMap.put(5l, new NotebookEditableDTO(5l, 1l, 3l, null, new Date(), null, null));
         versionMap.put(6l, new NotebookSavepointDTO(6l, 1l, 5l, null, new Date(), null, "sp3", null, null));
 
-        HistoryTrees historyTrees = new HistoryTrees();
-        historyTrees.setName("A NB");
-        historyTrees.loadVersionMap(versionMap);
+        HistoryTree historyTree = new HistoryTree();
+        historyTree.setName("A NB");
+        historyTree.loadVersionMap(versionMap);
 
         ObjectMapper objectMapper = new ObjectMapper();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        objectMapper.writeValue(byteArrayOutputStream, historyTrees);
+        objectMapper.writeValue(byteArrayOutputStream, historyTree);
         byteArrayOutputStream.flush();
 
         System.out.println(new String(byteArrayOutputStream.toByteArray()));
         System.out.println("-------------------");
 
-        String treesString = historyTrees.toTreesString();
+        String treesString = historyTree.toTreesString();
         System.out.println(treesString);
         System.out.println("-------------------");
 

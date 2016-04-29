@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HistoryTrees implements Serializable {
+public class HistoryTree implements Serializable {
     private final transient DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH':'mm':'ss");
     private String name;
-    private final List<HistoryNode> rootNodeList = new ArrayList<>();
+    private final List<HistoryNode> nodeList = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -23,8 +23,8 @@ public class HistoryTrees implements Serializable {
         this.name = name;
     }
 
-    public List<HistoryNode> getRootNodeList() {
-        return rootNodeList;
+    public List<HistoryNode> getNodeList() {
+        return nodeList;
     }
 
     public void loadVersionMap(Map<Long, AbstractNotebookVersionDTO> versionMap) {
@@ -34,7 +34,7 @@ public class HistoryTrees implements Serializable {
             HistoryNode node = HistoryNode.fromVersionDto(dto, dateFormat);
             nodeMap.put(node.getId(), node);
             if (dto.getParentId() == null) {
-                rootNodeList.add(node);
+                nodeList.add(node);
                 nodeMap.put(node.getId(), node);
             } else {
                 AbstractNotebookVersionDTO parentDTO = versionMap.get(dto.getParentId());
@@ -51,7 +51,7 @@ public class HistoryTrees implements Serializable {
     public String toTreesString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name).append("\r\n");
-        for (HistoryNode node : rootNodeList) {
+        for (HistoryNode node : nodeList) {
             nodeToTreeString(node, stringBuilder, 1);
         }
         return stringBuilder.toString();
