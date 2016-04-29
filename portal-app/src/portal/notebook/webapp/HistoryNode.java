@@ -1,6 +1,7 @@
 package portal.notebook.webapp;
 
 import org.squonk.notebook.api.AbstractNotebookVersionDTO;
+import org.squonk.notebook.api.NotebookSavepointDTO;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -55,7 +56,11 @@ public class HistoryNode implements Serializable {
     public static HistoryNode fromVersionDto(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
         HistoryNode node = new HistoryNode();
         node.setId(dto.getId());
-        node.setLabel(dto.getId() + " - " + dateFormat.format(dto.getCreatedDate()));
+        if (dto instanceof NotebookSavepointDTO) {
+            node.setLabel(((NotebookSavepointDTO)dto).getDescription());
+        } else {
+            node.setLabel(dto.getId() + " - " + dateFormat.format(dto.getCreatedDate()));
+        }
         node.setParentId(dto.getParentId());
         node.setNodeType(dto.getClass().getSimpleName());
         return node;
