@@ -3,10 +3,6 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-
-    <script>
-
-    </script>
 </head>
 
 <body>
@@ -45,8 +41,8 @@
                     <label wicket:id="nbInfo"></label>
 
                     <div class="ui menu text notebookMenu">
-                        <a class="item">
-                            <i class="green small play icon"></i>Run
+                        <a wicket:id="save" class="item">
+                            <i class="black copy icon"></i>Save a copy
                         </a>
                         <a class="item">
                             <i class="orange share icon"></i>Share
@@ -62,10 +58,10 @@
                     <div wicket:id="canvasItem" class="notebook-canvas-item">
                         <div wicket:id="item"></div>
                     </div>
+                    </div>
                 </div>
+            <div wicket:id="versionTree" id="versionTreeContainer" class="ui segment child-1 notebookVersionTreePanel">
             </div>
-            <div wicket:id="versionTree" id="versionTreeContainer"
-                 class="ui segment child-1 notebookVersionTreePanel"></div>
         </div>
 
         <div class="nb-vertical-right-menu">

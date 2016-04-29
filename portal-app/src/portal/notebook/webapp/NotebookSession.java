@@ -312,5 +312,8 @@ public class NotebookSession implements Serializable {
         return tree;
     }
 
+    public void createSavepoint(String description) throws Exception {
+        notebookVariableClient.createSavepoint(currentNotebookInfo.getId(), currentNotebookEditableId);
+    }
 }
 
