@@ -1,36 +1,17 @@
 package portal.notebook.service;
 
-import toolkit.services.AbstractEntity;
-
 import javax.persistence.Entity;
 
 @Entity
-public class MockNotebookEditable extends AbstractEntity {
-    private Long notebookId;
-    private String userName;
-    private byte[] json;
+public class MockNotebookEditable extends MockAbstractNotebookVersion {
+    private String owner;
 
-    public Long getNotebookId() {
-        return notebookId;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setNotebookId(Long notebookId) {
-        this.notebookId = notebookId;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
-    public byte[] getJson() {
-        return json;
-    }
-
-    public void setJson(byte[] json) {
-        this.json = json;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 }

@@ -3,8 +3,7 @@ package portal.notebook.service;
 import javax.persistence.Entity;
 
 @Entity
-public class MockNotebookSavepoint extends MockNotebookEditable {
-    private Long editableId;
+public class MockNotebookSavepoint extends MockAbstractNotebookVersion {
     private String label;
     private String description;
 
@@ -24,11 +23,4 @@ public class MockNotebookSavepoint extends MockNotebookEditable {
         this.description = description;
     }
 
-    public Long getEditableId() {
-        return editableId;
-    }
-
-    public void setEditableId(Long editableId) {
-        this.editableId = editableId;
-    }
 }
