@@ -237,8 +237,13 @@ function fit3DViewer(id) {
     var $viewer = $id.find("#gldiv");
     var $viewerTop = $viewer.position().top;
 
-    var h = containerh - $viewerTop - 12;
+    var $status = $id.find(".extra.content");
+    var $statush = $id.find(".extra.content").outerHeight();
+    var statuspos = containerh - $statush - $viewerTop + 5;
+
+    var h = containerh - $viewerTop - $statush;
     $viewer.css("height", h);
+    $status.css("margin-top", statuspos);
 }
 
 function fitScriptTextArea(id) {
