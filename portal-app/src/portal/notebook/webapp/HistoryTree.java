@@ -48,7 +48,7 @@ public class HistoryTree implements Serializable {
         }
     }
 
-    public String toTreesString() {
+    public String toTreeString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name).append("\r\n");
         for (HistoryNode node : children) {

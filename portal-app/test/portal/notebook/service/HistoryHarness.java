@@ -35,7 +35,7 @@ public class HistoryHarness {
         System.out.println(new String(byteArrayOutputStream.toByteArray()));
         System.out.println("-------------------");
 
-        String treesString = historyTree.toTreesString();
+        String treesString = historyTree.toTreeString();
         System.out.println(treesString);
         System.out.println("-------------------");
 
