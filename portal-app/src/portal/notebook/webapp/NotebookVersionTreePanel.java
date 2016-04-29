@@ -47,7 +47,7 @@ public class NotebookVersionTreePanel extends Panel {
         try {
             String json = "";
             if (notebookSession.getCurrentNotebookInfo() != null) {
-                HistoryTree history = notebookSession.buildHistoryTree();
+                HistoryTree history = notebookSession.buildCurrentNotebookHistoryTree();
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.writeValue(outputStream, history);
