@@ -57,13 +57,18 @@ public class HistoryNode implements Serializable {
         HistoryNode node = new HistoryNode();
         node.setId(dto.getId());
         if (dto instanceof NotebookSavepointDTO) {
-            node.setLabel(((NotebookSavepointDTO)dto).getDescription());
+            NotebookSavepointDTO savepointDTO = (NotebookSavepointDTO) dto;
+            node.setLabel(savepointDTO.getDescription() == null ? buildDefaultNodeLabel(dto, dateFormat) : savepointDTO.getDescription());
         } else {
-            node.setLabel(dto.getId() + " - " + dateFormat.format(dto.getCreatedDate()));
+            node.setLabel(buildDefaultNodeLabel(dto, dateFormat));
         }
         node.setParentId(dto.getParentId());
         node.setNodeType(dto.getClass().getSimpleName());
         return node;
+    }
+
+    private static String buildDefaultNodeLabel(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
+        return dto.getId() + " - " + dateFormat.format(dto.getCreatedDate());
     }
 
 }

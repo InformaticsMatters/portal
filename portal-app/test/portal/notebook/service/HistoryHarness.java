@@ -21,7 +21,7 @@ public class HistoryHarness {
         versionMap.put(3l, new NotebookSavepointDTO(3l, 1l, 2l, null, new Date(), null, "sp1", null, null));
         versionMap.put(4l, new NotebookSavepointDTO(4l, 1l, 1l, null, new Date(), null, "sp2", null, null));
         versionMap.put(5l, new NotebookEditableDTO(5l, 1l, 3l, null, new Date(), null, null));
-        versionMap.put(6l, new NotebookSavepointDTO(6l, 1l, 5l, null, new Date(), null, "sp3", null, null));
+        versionMap.put(6l, new NotebookSavepointDTO(6l, 1l, 5l, null, new Date(), null, null, null, null));
 
         HistoryTree historyTree = new HistoryTree();
         historyTree.setName("A NB");
