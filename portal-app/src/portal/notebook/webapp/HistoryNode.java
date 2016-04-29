@@ -7,14 +7,13 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 public class HistoryNode implements Serializable {
     private Long id;
     private Long parentId;
-    private String label;
-    private final List<HistoryNode> childList = new ArrayList<>();
+    private String name;
+    private final List<HistoryNode> children = new ArrayList<>();
     private String nodeType;
 
     public Long getId() {
@@ -33,16 +32,16 @@ public class HistoryNode implements Serializable {
         this.parentId = parentId;
     }
 
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<HistoryNode> getChildList() {
-        return childList;
+    public List<HistoryNode> getChildren() {
+        return children;
     }
 
     public void setNodeType(String nodeType) {
@@ -58,9 +57,9 @@ public class HistoryNode implements Serializable {
         node.setId(dto.getId());
         if (dto instanceof NotebookSavepointDTO) {
             NotebookSavepointDTO savepointDTO = (NotebookSavepointDTO) dto;
-            node.setLabel(savepointDTO.getDescription() == null ? buildDefaultNodeLabel(dto, dateFormat) : savepointDTO.getDescription());
+            node.setName(savepointDTO.getDescription() == null ? buildDefaultNodeLabel(dto, dateFormat) : savepointDTO.getDescription());
         } else {
-            node.setLabel(buildDefaultNodeLabel(dto, dateFormat));
+            node.setName(buildDefaultNodeLabel(dto, dateFormat));
         }
         node.setParentId(dto.getParentId());
         node.setNodeType(dto.getClass().getSimpleName());

@@ -13,7 +13,7 @@ import java.util.Map;
 public class HistoryTree implements Serializable {
     private final transient DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH':'mm':'ss");
     private String name;
-    private final List<HistoryNode> nodeList = new ArrayList<>();
+    private final List<HistoryNode> children = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -23,8 +23,8 @@ public class HistoryTree implements Serializable {
         this.name = name;
     }
 
-    public List<HistoryNode> getNodeList() {
-        return nodeList;
+    public List<HistoryNode> getChildren() {
+        return children;
     }
 
     public void loadVersionMap(Map<Long, AbstractNotebookVersionDTO> versionMap) {
@@ -34,7 +34,7 @@ public class HistoryTree implements Serializable {
             HistoryNode node = HistoryNode.fromVersionDto(dto, dateFormat);
             nodeMap.put(node.getId(), node);
             if (dto.getParentId() == null) {
-                nodeList.add(node);
+                children.add(node);
                 nodeMap.put(node.getId(), node);
             } else {
                 AbstractNotebookVersionDTO parentDTO = versionMap.get(dto.getParentId());
@@ -43,7 +43,7 @@ public class HistoryTree implements Serializable {
                     parentNode = HistoryNode.fromVersionDto(parentDTO, dateFormat);
                     nodeMap.put(parentNode.getId(), parentNode);
                 }
-                parentNode.getChildList().add(node);
+                parentNode.getChildren().add(node);
             }
         }
     }
@@ -51,7 +51,7 @@ public class HistoryTree implements Serializable {
     public String toTreesString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name).append("\r\n");
-        for (HistoryNode node : nodeList) {
+        for (HistoryNode node : children) {
             nodeToTreeString(node, stringBuilder, 1);
         }
         return stringBuilder.toString();
@@ -61,9 +61,9 @@ public class HistoryTree implements Serializable {
         for (int i = 0; i < level; i ++) {
             stringBuilder.append("   ");
         }
-        stringBuilder.append(node.getLabel());
+        stringBuilder.append(node.getName());
         stringBuilder.append("\r\n");
-        for (HistoryNode child : node.getChildList()) {
+        for (HistoryNode child : node.getChildren()) {
             nodeToTreeString(child, stringBuilder, level + 1);
         }
     }
