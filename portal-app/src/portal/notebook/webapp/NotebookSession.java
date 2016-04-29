@@ -295,7 +295,7 @@ public class NotebookSession implements Serializable {
         return new ObjectMapper().readValue(json, MoleculeObject.class);
     }
 
-    public HistoryTree buildHistoryTree() throws Exception {
+    public HistoryTree buildCurrentNotebookHistoryTree() throws Exception {
         Map<Long, AbstractNotebookVersionDTO> versionMap = new HashMap<>();
         List<NotebookEditableDTO> editableList = notebookVariableClient.listEditables(currentNotebookInfo.getId(), sessionContext.getLoggedInUserDetails().getUserid());
         for (NotebookEditableDTO dto : editableList) {
