@@ -75,6 +75,11 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
 
     protected Object getOptionValue(OptionInstance i) {
         TypeDescriptor td = i.getOptionDescriptor().getTypeDescriptor();
+        // ----- start of huge hack --------------
+        // This is a temp workaround until we find a way of asking the sketcher for the molecule in the required format.
+        // The MoleculeTypeDescriptor defines what formats the services can handle, but the sketcher knows how to convert
+        //   its internal format to the required format.
+        // This needs to be generalised to support any cell/option type.
         if (td instanceof MoleculeTypeDescriptor) {
             MoleculeTypeDescriptor mtd = (MoleculeTypeDescriptor)td;
             Object value = i.getValue();
@@ -82,10 +87,10 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
                 String mol = (String)value;
                 String converted = StructureFieldEditorPanel.convertMolecule(mol, mtd.getFormats());
                 LOG.info("Converted mol to: " + converted);
-                //return new MoleculeObject(converted, null); // we should be able to work out which format
                 return converted;
             }
         }
+        // ----- end of huge hack --------------
         return i.getValue();
     }
 
