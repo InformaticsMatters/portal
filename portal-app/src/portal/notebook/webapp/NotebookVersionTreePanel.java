@@ -1,11 +1,13 @@
 package portal.notebook.webapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.CssResourceReference;
@@ -28,8 +30,12 @@ public class NotebookVersionTreePanel extends Panel {
         add(new AbstractDefaultAjaxBehavior() {
 
             @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                response.render(OnDomReadyHeaderItem.forScript("createTree(:json)".replace(":json", buildHistoryTreeAsJson())));
+            }
+
+            @Override
             protected void respond(AjaxRequestTarget ajaxRequestTarget) {
-                ajaxRequestTarget.appendJavaScript("createTree(:json)".replace(":json", buildHistoryTreeAsJson()));
             }
         });
     }
@@ -45,7 +51,7 @@ public class NotebookVersionTreePanel extends Panel {
 
     private String buildHistoryTreeAsJson() {
         try {
-            String json = "";
+            String json = "{'children': []}";
             if (notebookSession.getCurrentNotebookInfo() != null) {
                 HistoryTree history = notebookSession.buildCurrentNotebookHistoryTree();
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

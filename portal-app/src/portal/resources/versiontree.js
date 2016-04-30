@@ -385,7 +385,6 @@ function createTree(data) {
     var height = 800 - margin.top - margin.bottom;
     var i = 0;
     var duration = 750;
-    var root;
 
     var tree = d3.layout.tree().size([height, width]);
 
@@ -401,10 +400,9 @@ function createTree(data) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    root = data;
+    var root = data;
     root.x0 = height / 2;
     root.y0 = 0;
-
     root.children.forEach(collapse);
     update(root);
 
