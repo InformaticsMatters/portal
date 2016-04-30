@@ -1,6 +1,7 @@
 package portal.notebook.webapp;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -14,10 +15,8 @@ import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * @author simetrias
@@ -44,6 +43,11 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         if (executable != null && executable) {
             addExecutionStatusTimerBehavior();
         }
+        addStatus();
+    }
+
+    private void addStatus() {
+        add(new Label("cellStatus", "Status message here"));
     }
 
     private void addForm() {

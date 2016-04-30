@@ -19,18 +19,15 @@ function buildScatterPlot(id, data, xLabel, yLabel) {
 
     var chart = d3.select($plotContent[0])
         .append('svg:svg')
-       /* .attr('width', width + margin.right + margin.left)
+        .attr('width', width + margin.right + margin.left)
         .attr('height', height + margin.top + margin.bottom)
-        .attr('class', 'chart') */
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 440 220")
-        .classed("svg-content chart", true);
+        .attr('class', 'chart');
 
     var main = chart.append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-       /* .attr('width', width)
-        .attr('height', height)*/
-        .attr('class', 'main')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('class', 'main') ;
 
     var xAxis = d3.svg.axis()
         .scale(x)

@@ -3,6 +3,7 @@ package portal.notebook.webapp;
 import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -50,6 +51,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
             LOGGER.log(Level.WARNING, "Error loading data", t);
             // TODO
         }
+        addStatus();
     }
 
     @Override
@@ -148,6 +150,10 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void addStatus() {
+        add(new Label("cellStatus", "Status message here"));
     }
 
     class ModelObject implements Serializable {

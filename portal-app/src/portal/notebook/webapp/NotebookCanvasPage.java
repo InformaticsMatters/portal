@@ -83,7 +83,7 @@ public class NotebookCanvasPage extends WebPage {
         setOutputMarkupId(true);
         configureExecutionStatusListener();
         addMenuAndFooter();
-        addPlumbContainer();
+        addCanvas();
         addCanvasItemRepeater();
         addActions();
         addCanvasPaletteDropBehavior();
@@ -172,11 +172,19 @@ public class NotebookCanvasPage extends WebPage {
         }
     }
 
-    private void addPlumbContainer() {
+    private void addCanvas() {
         plumbContainer = new WebMarkupContainer("plumbContainer");
         plumbContainer.setOutputMarkupId(true);
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
+
+        add(new AjaxLink("save") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+
+            }
+        });
     }
 
     private void addVersionTreePanel() {

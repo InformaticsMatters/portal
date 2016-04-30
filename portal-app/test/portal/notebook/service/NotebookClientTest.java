@@ -7,7 +7,6 @@ import org.squonk.notebook.api.NotebookDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
 import org.squonk.notebook.api.NotebookSavepointDTO;
 import portal.notebook.api.*;
-import portal.notebook.webapp.BindingsPanel;
 import toolkit.derby.DerbyUtils;
 import toolkit.test.AbstractTestCase;
 import toolkit.test.TestCase;
@@ -19,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @TestCase
-public class NotebookClientHarness extends AbstractTestCase {
+public class NotebookClientTest extends AbstractTestCase {
     public static final String USER_NAME = "user1";
     @Inject
     private NotebookVariableClient notebookClient;
@@ -32,7 +31,7 @@ public class NotebookClientHarness extends AbstractTestCase {
     private NotebookSavepointDTO savepoint;
 
     public static void main(String[] args) throws Exception {
-        NotebookClientHarness.runTestCase(NotebookClientHarness.class);
+        NotebookClientTest.runTestCase(NotebookClientTest.class);
     }
 
     @TestMethod(ordinal = 0)

@@ -8,6 +8,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -15,14 +16,10 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import portal.PortalWebApplication;
-import portal.notebook.api.*;
 import portal.notebook.api.BindingInstance;
+import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
-import portal.notebook.api.DefaultCellDefinitionRegistry;
 import portal.notebook.api.VariableInstance;
-import portal.notebook.webapp.CanvasItemPanel;
-import portal.notebook.webapp.NotebookSession;
-import portal.notebook.webapp.ThreeDimMolAdvancedOptionsPanel;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -51,6 +48,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
         }
         addForm();
         addTitleBar();
+        addStatus();
     }
 
     private static String convertForJavaScript(String input) {
@@ -165,6 +163,10 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
             }
         });
         advancedOptionsPanel.setPdbId("1UBQ");
+    }
+
+    private void addStatus() {
+        add(new Label("cellStatus", "Status message here"));
     }
 
     class ModelObject implements Serializable {

@@ -9,6 +9,7 @@
         <shared-cache-mode>NONE</shared-cache-mode>
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>portal.notebook.service.MockNotebook</class>
+        <class>portal.notebook.service.MockAbstractNotebookVersion</class>
         <class>portal.notebook.service.MockNotebookEditable</class>
         <class>portal.notebook.service.MockVariable</class>
         <class>portal.notebook.service.MockNotebookSavepoint</class>
