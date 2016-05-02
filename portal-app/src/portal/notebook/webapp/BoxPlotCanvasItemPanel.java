@@ -59,11 +59,6 @@ public class BoxPlotCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
-
-    }
-
-    @Override
     public Form getExecuteFormComponent() {
         return form;
     }

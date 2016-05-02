@@ -62,7 +62,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
+    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        super.processCellChanged(changedCellId, ajaxRequestTarget);
         try {
             CellInstance cellInstance = findCellInstance();
             BindingInstance binding = cellInstance.getBindingInstanceMap().get("input");

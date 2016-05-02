@@ -5,6 +5,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.options.MultiLineTextTypeDescriptor;
@@ -31,6 +32,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private ListView<OptionInstance> optionListView;
     @Inject
     private NotifierProvider notifierProvider;
+    private Label statusLabel;
+    private CellStatusInfo cellStatusInfo;
 
     public DefaultCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -47,7 +50,24 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addStatus() {
-        add(new Label("cellStatus", "Status message here"));
+        statusLabel = new Label("cellStatus", new IModel<String>() {
+            @Override
+            public void detach() {
+
+            }
+
+            @Override
+            public String getObject() {
+                return cellStatusInfo == null ? "Inactive" : cellStatusInfo.toString();
+            }
+
+            @Override
+            public void setObject(String s) {
+
+            }
+        });
+        statusLabel.setOutputMarkupId(true);
+        add(statusLabel);
     }
 
     private void addForm() {
@@ -160,7 +180,14 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) {
+    protected void cellStatusChanged(CellStatusInfo cellStatusInfo, AjaxRequestTarget ajaxRequestTarget) {
+        this.cellStatusInfo = cellStatusInfo;
+        ajaxRequestTarget.add(statusLabel);
+    }
+
+    @Override
+    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        super.processCellChanged(changedCellId, ajaxRequestTarget);
         boolean refresh = false;
         for (int i = 0; i < optionListView.size(); i++) {
             ListItem listItem = (ListItem) optionListView.get(i);

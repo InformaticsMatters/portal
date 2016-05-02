@@ -101,7 +101,13 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             @Override
             protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
                 try {
-                    refreshExecutionStatus(ajaxRequestTarget);
+                    Execution lastExecution = notebookSession.findExecution(findCellInstance().getId());
+                    boolean executionChanged = executionChanged(lastExecution);
+                    if (executionChanged) {
+                        notifyExecutionChanged(ajaxRequestTarget, lastExecution);
+                        notifyCellStatus(ajaxRequestTarget);
+                    }
+                    oldExecution = lastExecution;
                 } catch (Throwable t) {
                     LOGGER.warn("Error refreshing status", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
@@ -110,15 +116,34 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         });
     }
 
-    protected void refreshExecutionStatus(AjaxRequestTarget ajaxRequestTarget) {
-        Execution lastExecution = notebookSession.findExecution(findCellInstance().getId());
-        boolean changed = executionChanged(lastExecution);
-        if (changed) {
-            cellTitleBarPanel.applyExecutionStatus(lastExecution);
-            ajaxRequestTarget.add(cellTitleBarPanel);
-            cellChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), lastExecution.getJobStatus(), ajaxRequestTarget);
+    private void notifyExecutionChanged(AjaxRequestTarget ajaxRequestTarget, Execution execution) {
+        cellTitleBarPanel.applyExecutionStatus(execution);
+        ajaxRequestTarget.add(cellTitleBarPanel);
+        cellChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), execution.getJobStatus(), ajaxRequestTarget);
+    }
+
+    private void notifyCellStatus(AjaxRequestTarget ajaxRequestTarget) {
+        Execution execution = notebookSession.findExecution(findCellInstance().getId());
+        CellInstance cellInstance = findCellInstance();
+        CellStatusInfo cellStatusInfo = new CellStatusInfo();
+        cellStatusInfo.setHasBindings(!cellInstance.getBindingInstanceMap().isEmpty());
+        if (execution == null) {
+            cellStatusInfo.setRunning(Boolean.FALSE);
+        } else {
+            cellStatusInfo.setRunning(execution.getJobActive());
+            cellStatusInfo.setSucceed(execution.getJobSuccessful());
         }
-        oldExecution = lastExecution;
+        cellStatusChanged(cellStatusInfo, ajaxRequestTarget);
+    }
+
+    protected void cellStatusChanged(CellStatusInfo cellStatusInfo, AjaxRequestTarget ajaxRequestTarget) {
+
+    }
+
+    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        if (changedCellId.equals(getCellId())) {
+            notifyCellStatus(ajaxRequestTarget);
+        }
     }
 
     private boolean executionChanged(Execution lastExecution) {
@@ -135,8 +160,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             return false;
         }
     }
-
-    public abstract void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception;
 
     public Long getCellId() {
         return cellId;

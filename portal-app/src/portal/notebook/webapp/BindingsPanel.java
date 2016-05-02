@@ -29,6 +29,8 @@ public class BindingsPanel extends Panel {
     private WebMarkupContainer bindingListContainer;
     @Inject
     private NotifierProvider notifierProvider;
+    @Inject
+    private CellChangeManager cellChangeManager;
 
     public BindingsPanel(String id, CellInstance cellInstance) {
         super(id);
@@ -55,7 +57,7 @@ public class BindingsPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         try {
-                            removeBinding(bindingInstance);
+                            removeBinding(bindingInstance, ajaxRequestTarget);
                             ajaxRequestTarget.add(BindingsPanel.this.getPage());
                         } catch (Exception e) {
                             LOGGER.log(Level.WARNING, "Error removing binding", e);
@@ -71,12 +73,13 @@ public class BindingsPanel extends Panel {
         add(bindingListContainer);
     }
 
-    private void removeBinding(BindingInstance bindingInstance) throws Exception {
+    private void removeBinding(BindingInstance bindingInstance, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         CellInstance boundCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellInstance.getId());
         BindingInstance boundBindingInstance = boundCellInstance.getBindingInstanceMap().get(bindingInstance.getName());
         boundBindingInstance.setVariableInstance(null);
         notebookSession.storeCurrentNotebook();
         cellInstance = boundCellInstance;
+        cellChangeManager.notifyBindingChanged(boundCellInstance.getId(), bindingInstance.getName(), ajaxRequestTarget);
     }
 
     private List<BindingInstance> rebuildBindingInstanceList() {

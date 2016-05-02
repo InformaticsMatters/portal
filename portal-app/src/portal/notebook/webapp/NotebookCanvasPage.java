@@ -120,6 +120,16 @@ public class NotebookCanvasPage extends WebPage {
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
+
+            @Override
+            public void onBindingChanged(Long cellId, String name, AjaxRequestTarget ajaxRequestTarget) {
+                try {
+                    processCellChange(cellId, ajaxRequestTarget);
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error processing change", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
+            }
         });
     }
 
