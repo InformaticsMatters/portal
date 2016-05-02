@@ -33,16 +33,12 @@ public class HistoryTree implements Serializable {
             AbstractNotebookVersionDTO dto = versionMap.get(id);
             HistoryNode node = HistoryNode.fromVersionDto(dto, dateFormat);
             nodeMap.put(node.getId(), node);
-            if (dto.getParentId() == null) {
+        }
+        for (HistoryNode node : nodeMap.values()) {
+            if (node.getParentId() == null) {
                 children.add(node);
-                nodeMap.put(node.getId(), node);
             } else {
-                AbstractNotebookVersionDTO parentDTO = versionMap.get(dto.getParentId());
-                HistoryNode parentNode = nodeMap.get(dto.getParentId());
-                if (parentNode == null) {
-                    parentNode = HistoryNode.fromVersionDto(parentDTO, dateFormat);
-                    nodeMap.put(parentNode.getId(), parentNode);
-                }
+                HistoryNode parentNode = nodeMap.get(node.getParentId());
                 parentNode.getChildren().add(node);
             }
         }
