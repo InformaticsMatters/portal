@@ -182,7 +182,11 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-
+                try {
+                    notebookSession.createSavepoint("New savepoint created");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

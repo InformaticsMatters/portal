@@ -382,7 +382,7 @@ treeData = {
 function createTree(data) {
     var margin = {top: 20, right: 120, bottom: 20, left: 120};
     var width = 960 - margin.right - margin.left;
-    var height = 800 - margin.top - margin.bottom;
+    var height = 300 - margin.top - margin.bottom;
     var i = 0;
     var duration = 750;
 

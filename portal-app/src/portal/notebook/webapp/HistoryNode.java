@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.squonk.notebook.api.AbstractNotebookVersionDTO;
 import org.squonk.notebook.api.NotebookSavepointDTO;
 
@@ -10,11 +11,29 @@ import java.util.List;
 
 
 public class HistoryNode implements Serializable {
+    private final List<HistoryNode> children = new ArrayList<>();
     private Long id;
     private Long parentId;
     private String name;
-    private final List<HistoryNode> children = new ArrayList<>();
     private String nodeType;
+
+    public static HistoryNode fromVersionDto(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
+        HistoryNode node = new HistoryNode();
+        node.setId(dto.getId());
+        if (dto instanceof NotebookSavepointDTO) {
+            NotebookSavepointDTO savepointDTO = (NotebookSavepointDTO) dto;
+            node.setName(savepointDTO.getDescription() == null ? buildDefaultNodeDescription(dto, dateFormat) : savepointDTO.getDescription());
+        } else {
+            node.setName(buildDefaultNodeDescription(dto, dateFormat));
+        }
+        node.setParentId(dto.getParentId());
+        node.setNodeType(dto.getClass().getSimpleName());
+        return node;
+    }
+
+    private static String buildDefaultNodeDescription(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
+        return dto.getId() + " - " + dateFormat.format(dto.getCreatedDate());
+    }
 
     public Long getId() {
         return id;
@@ -40,34 +59,17 @@ public class HistoryNode implements Serializable {
         this.name = name;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public List<HistoryNode> getChildren() {
         return children;
-    }
-
-    public void setNodeType(String nodeType) {
-        this.nodeType = nodeType;
     }
 
     public String getNodeType() {
         return nodeType;
     }
 
-    public static HistoryNode fromVersionDto(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
-        HistoryNode node = new HistoryNode();
-        node.setId(dto.getId());
-        if (dto instanceof NotebookSavepointDTO) {
-            NotebookSavepointDTO savepointDTO = (NotebookSavepointDTO) dto;
-            node.setName(savepointDTO.getDescription() == null ? buildDefaultNodeLabel(dto, dateFormat) : savepointDTO.getDescription());
-        } else {
-            node.setName(buildDefaultNodeLabel(dto, dateFormat));
-        }
-        node.setParentId(dto.getParentId());
-        node.setNodeType(dto.getClass().getSimpleName());
-        return node;
-    }
-
-    private static String buildDefaultNodeLabel(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
-        return dto.getId() + " - " + dateFormat.format(dto.getCreatedDate());
+    public void setNodeType(String nodeType) {
+        this.nodeType = nodeType;
     }
 
 }

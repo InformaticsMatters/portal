@@ -182,6 +182,7 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         mockNotebookSavepoint.setParent(mockNotebookEditable);
         mockNotebookSavepoint.setMockNotebook(mockNotebookEditable.getMockNotebook());
         mockNotebookSavepoint.setCreatedDate(new Date());
+        mockNotebookSavepoint.setDescription(description);
         mockNotebookSavepoint.setLastUpdatedDate(mockNotebookSavepoint.getCreatedDate());
         entityManager.persist(mockNotebookSavepoint);
         NotebookEditableDTO notebookEditableDTO = new NotebookEditableDTO(mockNotebookSavepoint.getId(), mockNotebookEditable.getMockNotebook().getId(), mockNotebookEditable.getId(), mockNotebookEditable.getOwner(), new Date(), new Date(), null);
