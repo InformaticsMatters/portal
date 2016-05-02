@@ -185,6 +185,7 @@ public class NotebookCanvasPage extends WebPage {
                 try {
                     notebookSession.createSavepoint("New savepoint created");
                     ajaxRequestTarget.add(notebookVersionTreePanel);
+                    notifierProvider.getNotifier(getPage()).notify("Savepoint", "New savepoint created");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

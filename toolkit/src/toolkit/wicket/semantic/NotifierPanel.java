@@ -30,6 +30,6 @@ public class NotifierPanel extends Panel {
         ajaxRequestTarget.appendJavaScript("" +
                 "clearTimeout(window.notifierTimeout);\n;" +
                 "$('#" + notifierBehavior.getMarkupId() + "').find('.notifier').show();\n" +
-                "window.notifierTimeout = window.setTimeout(function(){ $('#" + notifierBehavior.getMarkupId() + "').find('.notifier').hide() }, 10000);\n");
+                "window.notifierTimeout = window.setTimeout(function(){ $('#" + notifierBehavior.getMarkupId() + "').find('.notifier').hide() }, 5000);\n");
     }
 }

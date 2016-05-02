@@ -403,8 +403,10 @@ function createTree(data) {
     var root = data;
     root.x0 = height / 2;
     root.y0 = 0;
-    root.children.forEach(collapse);
-    update(root);
+    if (root.children !== undefined) {
+        root.children.forEach(collapse);
+        update(root);
+    }
 
     function collapse(d) {
         if (d.children) {
