@@ -144,13 +144,19 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         if (mockNotebook == null) {
             throw new RuntimeException("Unknown notebook id");
         }
-        MockNotebookEditable parent = parentId == null ? null : entityManager.find(MockNotebookEditable.class, parentId);
+        MockAbstractNotebookVersion parent = parentId == null ? null : entityManager.find(MockAbstractNotebookVersion.class, parentId);
         MockNotebookEditable mockNotebookEditable = new MockNotebookEditable();
         mockNotebookEditable.setParent(parent);
         mockNotebookEditable.setMockNotebook(mockNotebook);
         mockNotebookEditable.setOwner(userName);
         mockNotebookEditable.setCreatedDate(new Date());
         mockNotebookEditable.setLastUpdatedDate(mockNotebookEditable.getCreatedDate());
+        if (parent == null) {
+            String json = JsonHandler.getInstance().objectToJson(new NotebookCanvasDTO(0l));
+            mockNotebookEditable.setJson(json.getBytes());
+        } else {
+            mockNotebookEditable.setJson(parent.getJson());
+        }
         entityManager.persist(mockNotebookEditable);
         return toNotebookEditable(mockNotebookEditable);
     }
@@ -168,8 +174,13 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
 
     @Override
     public boolean deleteEditable(Long notebookId, Long editableId, String username) throws Exception {
-        //TODO - implement
-        return false;
+        MockNotebookEditable mockNotebookEditable = entityManager.find(MockNotebookEditable.class, editableId);
+        if (mockNotebookEditable == null) {
+            return false;
+        } else {
+            entityManager.remove(mockNotebookEditable);
+            return true;
+        }
     }
 
     @Override
@@ -179,14 +190,15 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
             throw new RuntimeException("Unknown editable id");
         }
         MockNotebookSavepoint mockNotebookSavepoint = new MockNotebookSavepoint();
+        mockNotebookSavepoint.setCreator(mockNotebookEditable.getOwner());
         mockNotebookSavepoint.setParent(mockNotebookEditable);
         mockNotebookSavepoint.setMockNotebook(mockNotebookEditable.getMockNotebook());
         mockNotebookSavepoint.setCreatedDate(new Date());
         mockNotebookSavepoint.setDescription(description);
         mockNotebookSavepoint.setLastUpdatedDate(mockNotebookSavepoint.getCreatedDate());
+        mockNotebookSavepoint.setJson(mockNotebookEditable.getJson());
         entityManager.persist(mockNotebookSavepoint);
-        NotebookEditableDTO notebookEditableDTO = new NotebookEditableDTO(mockNotebookSavepoint.getId(), mockNotebookEditable.getMockNotebook().getId(), mockNotebookEditable.getId(), mockNotebookEditable.getOwner(), new Date(), new Date(), null);
-        return notebookEditableDTO;
+        return new NotebookEditableDTO(mockNotebookSavepoint.getId(), mockNotebookEditable.getMockNotebook().getId(), mockNotebookEditable.getId(), mockNotebookEditable.getOwner(), new Date(), new Date(), null);
     }
 
     @Override
@@ -214,16 +226,10 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         return toNotebookSavepoint(mockNotebookSavepoint);
     }
 
-    private NotebookSavepointDTO toNotebookSavepoint(MockNotebookSavepoint mockNotebookSavepoint) {
+    private NotebookSavepointDTO toNotebookSavepoint(MockNotebookSavepoint mockNotebookSavepoint) throws IOException {
         String jsonString = mockNotebookSavepoint.getJson() == null ? null : new String(mockNotebookSavepoint.getJson());
-        NotebookCanvasDTO dto = null;
-        try {
-            dto = (jsonString == null ? null : JsonHandler.getInstance().objectFromJson(jsonString, NotebookCanvasDTO.class));
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to unmarshal canvas dto", e);
-        }
-
-        return new NotebookSavepointDTO(mockNotebookSavepoint.getId(), mockNotebookSavepoint.getMockNotebook().getId(), mockNotebookSavepoint.getParent().getId(), mockNotebookSavepoint.getParent().getOwner(), mockNotebookSavepoint.getCreatedDate(), mockNotebookSavepoint.getLastUpdatedDate(),  mockNotebookSavepoint.getDescription(), mockNotebookSavepoint.getDescription(), dto);
+        NotebookCanvasDTO dto = jsonString == null ? null : JsonHandler.getInstance().objectFromJson(jsonString, NotebookCanvasDTO.class);
+        return new NotebookSavepointDTO(mockNotebookSavepoint.getId(), mockNotebookSavepoint.getMockNotebook().getId(), mockNotebookSavepoint.getParent().getId(), mockNotebookSavepoint.getCreator(), mockNotebookSavepoint.getCreatedDate(), mockNotebookSavepoint.getLastUpdatedDate(),  mockNotebookSavepoint.getDescription(), mockNotebookSavepoint.getDescription(), dto);
     }
 
 

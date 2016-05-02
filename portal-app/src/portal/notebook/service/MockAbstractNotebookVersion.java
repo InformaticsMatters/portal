@@ -9,12 +9,13 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class MockAbstractNotebookVersion extends AbstractEntity {
     private MockNotebook mockNotebook;
-    private MockNotebookEditable parent;
+    private MockAbstractNotebookVersion parent;
     private Date createdDate;
     private Date lastUpdatedDate;
     private byte[] json;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
     public MockNotebook getMockNotebook() {
         return mockNotebook;
     }
@@ -24,14 +25,15 @@ public abstract class MockAbstractNotebookVersion extends AbstractEntity {
     }
 
     @ManyToOne
-    public MockNotebookEditable getParent() {
+    public MockAbstractNotebookVersion getParent() {
         return parent;
     }
 
-    public void setParent(MockNotebookEditable parent) {
+    public void setParent(MockAbstractNotebookVersion parent) {
         this.parent = parent;
     }
 
+    @Column(nullable = false)
     public byte[] getJson() {
         return json;
     }
@@ -41,6 +43,7 @@ public abstract class MockAbstractNotebookVersion extends AbstractEntity {
     }
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -50,6 +53,7 @@ public abstract class MockAbstractNotebookVersion extends AbstractEntity {
     }
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
     public Date getLastUpdatedDate() {
         return lastUpdatedDate;
     }
