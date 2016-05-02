@@ -184,6 +184,7 @@ public class NotebookCanvasPage extends WebPage {
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 try {
                     notebookSession.createSavepoint("New savepoint created");
+                    ajaxRequestTarget.add(notebookVersionTreePanel);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -192,7 +193,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addVersionTreePanel() {
-        NotebookVersionTreePanel notebookVersionTreePanel = new NotebookVersionTreePanel("versionTree");
+        notebookVersionTreePanel = new NotebookVersionTreePanel("versionTree");
         add(notebookVersionTreePanel);
         notebookVersionTreePanel.setOutputMarkupPlaceholderTag(true);
     }
