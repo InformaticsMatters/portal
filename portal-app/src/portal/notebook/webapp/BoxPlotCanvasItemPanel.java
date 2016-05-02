@@ -6,6 +6,7 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -35,6 +36,7 @@ public class BoxPlotCanvasItemPanel extends CanvasItemPanel {
         addForm();
         addTitleBar();
         refreshPlotData();
+        addStatus();
     }
 
     @Override
@@ -45,6 +47,10 @@ public class BoxPlotCanvasItemPanel extends CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/boxplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/boxplot.css")));
         response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
+    }
+
+    private void addStatus() {
+        add(new Label("cellStatus", "Status message here"));
     }
 
     private void addForm() {
