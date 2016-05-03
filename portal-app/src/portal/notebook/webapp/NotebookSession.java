@@ -319,13 +319,12 @@ public class NotebookSession implements Serializable {
         return tree;
     }
 
-    public void saveCopy(String description) throws Exception {
-        if (currentNotebookInstance.isEditable()) {
-            notebookVariableClient.createSavepoint(currentNotebookInfo.getId(), currentNotebookVersionId, description);
-        } else {
-            notebookVariableClient.createEditable(currentNotebookInfo.getId(), currentNotebookVersionId, sessionContext.getLoggedInUserDetails().getUserid());
-        }
+    public void createSavepointFromCurrentEditable(String description) throws Exception {
+        notebookVariableClient.createSavepoint(currentNotebookInfo.getId(), currentNotebookVersionId, description);
     }
 
+    public void createEditableFromCurrentSavePoint() throws Exception {
+        notebookVariableClient.createEditable(currentNotebookInfo.getId(), currentNotebookVersionId, sessionContext.getLoggedInUserDetails().getUserid());
+    }
 }
 

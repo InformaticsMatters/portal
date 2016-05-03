@@ -195,7 +195,11 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 try {
-                    notebookSession.saveCopy("New savepoint created");
+                    if (notebookSession.getCurrentNotebookInstance().isEditable()) {
+                        notebookSession.createSavepointFromCurrentEditable("New savepoint created");
+                    } else {
+                        notebookSession.createEditableFromCurrentSavePoint("New savepoint created");
+                    }
                     ajaxRequestTarget.add(notebookVersionTreePanel);
                     notifierProvider.getNotifier(getPage()).notify("Savepoint", "New savepoint created");
                 } catch (Exception e) {
