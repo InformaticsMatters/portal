@@ -51,14 +51,10 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addStatus() {
-        statusLabel = new Label("cellStatus", new PropertyModel<>(this, "cellStatusInfoString"));
-        statusLabel.setOutputMarkupId(true);
+        statusLabel = createStatusLabel("cellStatus");
         add(statusLabel);
     }
 
-    public String getCellStatusInfoString() {
-        return cellStatusInfo == null ? "Inactive" : cellStatusInfo.toString();
-    }
 
     private void addForm() {
         form = new Form("form");

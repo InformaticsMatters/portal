@@ -3,8 +3,10 @@ package portal.notebook.webapp;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,8 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private Execution oldExecution;
     @Inject
     private NotifierProvider notifierProvider;
+    private Label statusLabel;
+    private CellStatusInfo cellStatusInfo;
 
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
@@ -60,12 +64,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         String js = "makeCanvasItemResizable(:minWidth, :minHeight, ':id', :fitCallback)";
         js = js.replace(":id", getMarkupId()).replace(":minWidth", Integer.toString(minWidth)).replace(":minHeight", Integer.toString(minHeight));
         js = js.replace(":fitCallback", "function(id) {" + fitCallbackFunction + "(id)}");
-        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
-    }
-
-    protected void makeScatterPlotResizable(HtmlHeaderContainer container, int minWidth, int minHeight) {
-        String js = "makeScatterPlotResizable(:minWidth, :minHeight, ':id')";
-        js = js.replace(":id", getMarkupId()).replace(":minWidth", Integer.toString(minWidth)).replace(":minHeight", Integer.toString(minHeight));
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
 
@@ -125,7 +123,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private void notifyCellStatus(AjaxRequestTarget ajaxRequestTarget) {
         Execution execution = notebookSession.findExecution(findCellInstance().getId());
         CellInstance cellInstance = findCellInstance();
-        CellStatusInfo cellStatusInfo = new CellStatusInfo();
+        cellStatusInfo = new CellStatusInfo();
         cellStatusInfo.setHasBindings(!cellInstance.getBindingInstanceMap().isEmpty());
         if (execution == null) {
             cellStatusInfo.setRunning(Boolean.FALSE);
@@ -137,7 +135,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     protected void cellStatusChanged(CellStatusInfo cellStatusInfo, AjaxRequestTarget ajaxRequestTarget) {
-
+        ajaxRequestTarget.add(statusLabel);
     }
 
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
@@ -164,4 +162,15 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public Long getCellId() {
         return cellId;
     }
+
+    protected Label createStatusLabel(String id) {
+        statusLabel = new Label(id, new PropertyModel<String>(this, "statusString"));
+        statusLabel.setOutputMarkupId(true);
+        return statusLabel;
+    }
+
+    public String getStatusString() {
+        return cellStatusInfo == null ? "Inactive" : cellStatusInfo.toString();
+    }
+
 }
