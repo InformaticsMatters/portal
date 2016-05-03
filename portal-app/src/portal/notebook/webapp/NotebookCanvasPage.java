@@ -578,7 +578,7 @@ public class NotebookCanvasPage extends WebPage {
     private void onVersionTreeNodeSelection() throws Exception {
         String nodeId = getRequest().getRequestParameters().getParameterValue(VERSION_TREE_NODE_ID).toString();
         notebookSession.loadCurrentVersion(new Long(nodeId));
-        getRequestCycle().find(AjaxRequestTarget.class).add(plumbContainer);
+        getRequestCycle().find(AjaxRequestTarget.class).add(getPage());
     }
 
     private void onNewCanvasConnection() throws Exception {
