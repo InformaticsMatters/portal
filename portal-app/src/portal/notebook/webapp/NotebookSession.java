@@ -26,7 +26,7 @@ public class NotebookSession implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotebookSession.class);
     private NotebookInstance currentNotebookInstance;
     private NotebookInfo currentNotebookInfo;
-    private Long currentNotebookVersionId;
+    private Long currentNotebookEditableId;
     private List<CellDefinition> cellDefinitionList;
     @Inject
     private NotebookVariableClient notebookVariableClient;
@@ -59,7 +59,6 @@ public class NotebookSession implements Serializable {
 
     public Long createNotebook(String name, String description, Boolean shared) throws Exception {
         NotebookDTO notebookDTO = notebookVariableClient.createNotebook(sessionContext.getLoggedInUserDetails().getUserid(), name, description);
-        notebookVariableClient.createEditable(notebookDTO.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
         if (shared) {
             notebookVariableClient.addNotebookToLayer(notebookDTO.getId(), "public");
         }
@@ -88,14 +87,14 @@ public class NotebookSession implements Serializable {
         NotebookEditableDTO currentNotebookEditable = findDefaultNotebookEditable(currentNotebookInfo.getId());
         if (currentNotebookEditable == null) {
             currentNotebookInstance = new NotebookInstance();
-            currentNotebookVersionId = null;
+            currentNotebookEditableId = null;
         } else {
             NotebookCanvasDTO notebookCanvasDTO = currentNotebookEditable.getCanvasDTO();
             currentNotebookInstance = new NotebookInstance();
             if (notebookCanvasDTO != null) {
                 currentNotebookInstance.loadNotebookCanvasDTO(notebookCanvasDTO, cellDefinitionRegistry);
             }
-            currentNotebookVersionId = currentNotebookEditable.getId();
+            currentNotebookEditableId = currentNotebookEditable.getId();
         }
     }
 
@@ -104,7 +103,7 @@ public class NotebookSession implements Serializable {
         AbstractNotebookVersionDTO versionDTO = map.get(versionId);
         currentNotebookInstance = new NotebookInstance();
         currentNotebookInstance.loadNotebookCanvasDTO(versionDTO.getCanvasDTO(), cellDefinitionRegistry);
-        currentNotebookVersionId = versionId;
+        currentNotebookEditableId = versionId;
     }
 
     public void reloadCurrentNotebook() throws Exception {
@@ -120,13 +119,13 @@ public class NotebookSession implements Serializable {
     }
 
     public void storeCurrentNotebook() throws Exception {
-        if (currentNotebookVersionId == null) {
+        if (currentNotebookEditableId == null) {
             NotebookEditableDTO currentNotebookEditable = notebookVariableClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
-            currentNotebookVersionId = currentNotebookEditable.getId();
+            currentNotebookEditableId = currentNotebookEditable.getId();
         } else {
             NotebookCanvasDTO notebookCanvasDTO = new NotebookCanvasDTO(currentNotebookInstance.getLastCellId());
             currentNotebookInstance.storeNotebookCanvasDTO(notebookCanvasDTO);
-            notebookVariableClient.updateEditable(currentNotebookInfo.getId(), currentNotebookVersionId, notebookCanvasDTO);
+            notebookVariableClient.updateEditable(currentNotebookInfo.getId(), currentNotebookEditableId, notebookCanvasDTO);
         }
         reloadCurrentNotebook();
     }
@@ -181,7 +180,7 @@ public class NotebookSession implements Serializable {
         storeCurrentNotebook();
         CellInstance cell = currentNotebookInstance.findCellInstanceById(cellId);
         if (cell.getCellDefinition().getExecutable()) {
-            portalService.executeCell(currentNotebookInstance, currentNotebookInfo.getId(), currentNotebookVersionId, cellId);
+            portalService.executeCell(currentNotebookInstance, currentNotebookInfo.getId(), currentNotebookEditableId, cellId);
         }
     }
 
@@ -220,10 +219,10 @@ public class NotebookSession implements Serializable {
     }
 
     public List<MoleculeObject> parseMoleculesFromFileVariable(VariableInstance variableInstance) throws Exception {
-        String fileName = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookVersionId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
+        String fileName = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
         int x = fileName.lastIndexOf(".");
         String ext = fileName.toLowerCase().substring(x + 1);
-        InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookVersionId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
+        InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
         try {
             if (ext.equals("json")) {
                 return Datasets.parseJson(inputStream);
@@ -244,7 +243,7 @@ public class NotebookSession implements Serializable {
     }
 
     public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) throws Exception {
-        try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookVersionId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
+        try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
             GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(gzipInputStream, new TypeReference<List<MoleculeObject>>() {
@@ -266,19 +265,19 @@ public class NotebookSession implements Serializable {
     }
 
     public void writeTextValue(VariableInstance variableInstance, Object value) throws Exception {
-        notebookVariableClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookVersionId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), value == null ? null : value.toString());
+        notebookVariableClient.writeTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), value == null ? null : value.toString());
     }
 
     public String readTextValue(VariableInstance variableInstance) throws Exception {
-        return notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookVersionId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
+        return notebookVariableClient.readTextValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
     }
 
     public void writeStreamValue(VariableInstance variableInstance, InputStream inputStream) throws Exception {
-        notebookVariableClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookVersionId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
+        notebookVariableClient.writeStreamValue(currentNotebookInfo.getId(), currentNotebookEditableId, variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
     }
 
     public void resetCurrentNotebook() {
-        currentNotebookVersionId = null;
+        currentNotebookEditableId = null;
         currentNotebookInstance = null;
         currentNotebookInfo = null;
     }
@@ -322,7 +321,7 @@ public class NotebookSession implements Serializable {
     }
 
     public void createSavepoint(String description) throws Exception {
-        notebookVariableClient.createSavepoint(currentNotebookInfo.getId(), currentNotebookVersionId, description);
+        notebookVariableClient.createSavepoint(currentNotebookInfo.getId(), currentNotebookEditableId, description);
     }
 }
 

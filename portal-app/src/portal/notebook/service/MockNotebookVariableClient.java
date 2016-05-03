@@ -34,6 +34,7 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         mockNotebook.setName(name);
         mockNotebook.setDescription(desc);
         entityManager.persist(mockNotebook);
+        createEditable(mockNotebook.getId(), null, owner);
         NotebookDTO notebookDTO = toNotebookDTO(mockNotebook);
         return notebookDTO;
     }
