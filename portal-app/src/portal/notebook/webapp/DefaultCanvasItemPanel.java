@@ -34,7 +34,6 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     @Inject
     private NotifierProvider notifierProvider;
     private Label statusLabel;
-    private CellStatusInfo cellStatusInfo;
 
     public DefaultCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -163,12 +162,6 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             }
         }
         return null;
-    }
-
-    @Override
-    protected void cellStatusChanged(CellStatusInfo cellStatusInfo, AjaxRequestTarget ajaxRequestTarget) {
-        this.cellStatusInfo = cellStatusInfo;
-        ajaxRequestTarget.add(statusLabel);
     }
 
     @Override
