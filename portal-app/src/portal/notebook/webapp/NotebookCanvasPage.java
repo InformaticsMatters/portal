@@ -50,6 +50,7 @@ public class NotebookCanvasPage extends WebPage {
     public static final String SIZE_HEIGHT = "sizeHeight";
     public static final String CANVAS_ITEM_PREFIX = "canvasItem";
     public static final String CANVASITEM_INDEX = "index";
+    public static final String VERSION_TREE_NODE_ID = "versionTreeNodeId";
     private static final Logger LOGGER = Logger.getLogger(NotebookCanvasPage.class.getName());
 
     boolean nbListVisible = true;
@@ -95,6 +96,7 @@ public class NotebookCanvasPage extends WebPage {
         addNotebookListPanel();
         addNotebookCellTypesPanel();
         addVersionTreePanel();
+        addVersionTreeNodeSelectionBehavior();
     }
 
     private void configureExecutionStatusListener() {
@@ -453,7 +455,7 @@ public class NotebookCanvasPage extends WebPage {
                     model.setPositionTop(Integer.parseInt(y));
                     notebookSession.storeCurrentNotebook();
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error dragging item", t);
+                    LOGGER.log(Level.WARNING, "Error while handling Ajax request in behavior", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
@@ -486,7 +488,7 @@ public class NotebookCanvasPage extends WebPage {
                 try {
                     onNewCanvasConnection();
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error loading data", t);
+                    LOGGER.log(Level.WARNING, "Error while handling Ajax request in behavior", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
@@ -502,6 +504,31 @@ public class NotebookCanvasPage extends WebPage {
             }
         };
         add(onNotebookCanvasNewConnectionBehavior);
+    }
+
+    private void addVersionTreeNodeSelectionBehavior() {
+        AbstractDefaultAjaxBehavior onVersionTreeNodeSelectionBehavior = new AbstractDefaultAjaxBehavior() {
+
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                try {
+                    onVersionTreeNodeSelection();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error while handling Ajax request in behavior", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
+            }
+
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                super.renderHead(component, response);
+                CharSequence callBackScript = getCallbackFunction(
+                        CallbackParameter.explicit(VERSION_TREE_NODE_ID));
+                callBackScript = "onVersionTreeNodeSelection=" + callBackScript + ";";
+                response.render(OnDomReadyHeaderItem.forScript(callBackScript));
+            }
+        };
+        add(onVersionTreeNodeSelectionBehavior);
     }
 
     private void addResizeBehavior() {
@@ -546,6 +573,11 @@ public class NotebookCanvasPage extends WebPage {
             }
         };
         add(onNotebookCanvasItemResizedBehavior);
+    }
+
+    private void onVersionTreeNodeSelection() {
+        String versionTreeNodeId = getRequest().getRequestParameters().getParameterValue(VERSION_TREE_NODE_ID).toString();
+        System.out.println("Version tree node selected: " + versionTreeNodeId);
     }
 
     private void onNewCanvasConnection() throws Exception {

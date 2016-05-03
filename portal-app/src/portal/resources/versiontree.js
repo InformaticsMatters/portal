@@ -433,7 +433,8 @@ function createTree(data) {
             .append("g")
             .attr("class", "node")
             .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-            .on("click", click);
+            .on("click", click)
+            .on("dblclick", dblclick);
 
         nodeEnter.append("circle")
             .attr("r", 1e-6)
@@ -517,5 +518,10 @@ function createTree(data) {
         }
         update(d);
     }
+
+    function dblclick(d) {
+        onVersionTreeNodeSelection(d.id);
+    }
+
 }
 

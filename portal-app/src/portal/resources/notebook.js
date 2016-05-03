@@ -1,6 +1,7 @@
 var onNotebookCanvasPaletteDrop;
 var onNotebookCanvasItemDragged;
 var onNotebookCanvasItemResized;
+var onVersionTreeNodeSelection;
 
 function applyNotebookCanvasPageLayout(cellsVisibility, canvasVisibility, nbListVisibility, versionTreeVisibility) {
 
