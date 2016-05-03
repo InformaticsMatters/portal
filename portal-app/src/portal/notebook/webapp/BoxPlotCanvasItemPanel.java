@@ -26,6 +26,7 @@ public class BoxPlotCanvasItemPanel extends CanvasItemPanel {
 
     private static final String BUILD_PLOT_JS = "buildBoxPlot(':id', :data)";
     private Form<ModelObject> form;
+    private Label statusLabel;
 
     public BoxPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -50,7 +51,8 @@ public class BoxPlotCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addStatus() {
-        add(new Label("cellStatus", "Status message here"));
+        statusLabel = createStatusLabel("cellStatus");
+        add(statusLabel);
     }
 
     private void addForm() {
