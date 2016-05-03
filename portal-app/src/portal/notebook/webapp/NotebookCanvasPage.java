@@ -575,9 +575,10 @@ public class NotebookCanvasPage extends WebPage {
         add(onNotebookCanvasItemResizedBehavior);
     }
 
-    private void onVersionTreeNodeSelection() {
-        String versionTreeNodeId = getRequest().getRequestParameters().getParameterValue(VERSION_TREE_NODE_ID).toString();
-        System.out.println("Version tree node selected: " + versionTreeNodeId);
+    private void onVersionTreeNodeSelection() throws Exception {
+        String nodeId = getRequest().getRequestParameters().getParameterValue(VERSION_TREE_NODE_ID).toString();
+        notebookSession.loadCurrentVersion(new Long(nodeId));
+        getRequestCycle().find(AjaxRequestTarget.class).add(plumbContainer);
     }
 
     private void onNewCanvasConnection() throws Exception {
