@@ -17,6 +17,7 @@ public class NotebookInstance implements Serializable {
     private final List<Long> removedCellIdList = new ArrayList<>();
     private final List<CellInstance> cellInstanceList = new ArrayList<>();
     private Long lastCellId;
+    private boolean editable;
 
 
     public NotebookInstance() {
@@ -206,5 +207,13 @@ public class NotebookInstance implements Serializable {
 
     public void setLastCellId(Long lastCellId) {
         this.lastCellId = lastCellId;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

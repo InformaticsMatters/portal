@@ -190,7 +190,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
                 cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).setValue(advancedOptionsPanel.getY());
                 cellInstance.getOptionInstanceMap().get(OPTION_COLOR).setValue(advancedOptionsPanel.getColor());
                 cellInstance.getOptionInstanceMap().get(OPTION_AXIS_LABELS).setValue(advancedOptionsPanel.getShowAxisLabels());
-                notebookSession.storeCurrentNotebook();
+                notebookSession.storeCurrentEditable();
 
                 ModelObject model = form.getModelObject();
                 model.setX(advancedOptionsPanel.getX());

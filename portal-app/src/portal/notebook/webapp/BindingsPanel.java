@@ -77,7 +77,7 @@ public class BindingsPanel extends Panel {
         CellInstance boundCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellInstance.getId());
         BindingInstance boundBindingInstance = boundCellInstance.getBindingInstanceMap().get(bindingInstance.getName());
         boundBindingInstance.setVariableInstance(null);
-        notebookSession.storeCurrentNotebook();
+        notebookSession.storeCurrentEditable();
         cellInstance = boundCellInstance;
         cellChangeManager.notifyBindingChanged(boundCellInstance.getId(), bindingInstance.getName(), ajaxRequestTarget);
     }

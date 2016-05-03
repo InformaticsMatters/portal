@@ -5,8 +5,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.options.MultiLineTextTypeDescriptor;
@@ -98,7 +96,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
 
     private void execute() throws Exception {
         storeOptions();
-        notebookSession.storeCurrentNotebook();
+        notebookSession.storeCurrentEditable();
         notebookSession.executeCell(findCellInstance().getId());
         fireContentChanged();
     }
@@ -199,7 +197,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
                 String optionName = optionInstance.getOptionDescriptor().getkey();
                 OptionInstance liveOptionInstance = findCellInstance().getOptionInstanceMap().get(optionName);
                 liveOptionInstance.setValue(fileName);
-                notebookSession.storeCurrentNotebook();
+                notebookSession.storeCurrentEditable();
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
                 if (variableInstance == null) {
                     throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getkey());

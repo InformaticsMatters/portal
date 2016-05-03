@@ -133,7 +133,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         VariableInstance variableInstance = findCellInstance().getVariableInstanceMap().get("selection");
         MoleculeObject moleculeObject = notebookSession.findMoleculeObjectByRow(datasetDescriptorId, uuid);
         notebookSession.writeMoleculeValue(variableInstance, moleculeObject);
-        notebookSession.storeCurrentNotebook();
+        notebookSession.storeCurrentEditable();
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         cellChangeManager.notifyVariableChanged(getCellId(), variableInstance.getVariableDefinition().getName(), target);
     }
@@ -146,7 +146,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     @Override
     public void onExecute() {
         try {
-            notebookSession.reloadCurrentNotebook();
+            notebookSession.reloadCurrentVersion();
             load();
         } catch (Exception e) {
             throw new RuntimeException(e);

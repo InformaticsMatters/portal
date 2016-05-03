@@ -136,7 +136,7 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void processCellChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
-        notebookSession.reloadCurrentNotebook();
+        notebookSession.reloadCurrentVersion();
         for (int i = 0; i< canvasItemRepeater.size(); i++) {
             ListItem listItem = (ListItem)canvasItemRepeater.get(i);
             CanvasItemPanel canvasItemPanel = (CanvasItemPanel)listItem.get(0);
@@ -195,7 +195,7 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 try {
-                    notebookSession.createSavepoint("New savepoint created");
+                    notebookSession.saveCopy("New savepoint created");
                     ajaxRequestTarget.add(notebookVersionTreePanel);
                     notifierProvider.getNotifier(getPage()).notify("Savepoint", "New savepoint created");
                 } catch (Exception e) {
@@ -390,7 +390,7 @@ public class NotebookCanvasPage extends WebPage {
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().addCellInstance(cellDefinition);
         cellInstance.setPositionLeft(Integer.parseInt(x));
         cellInstance.setPositionTop(Integer.parseInt(y));
-        notebookSession.storeCurrentNotebook();
+        notebookSession.storeCurrentEditable();
 
         Panel canvasItemPanel = createCanvasItemPanel(cellInstance);
 
@@ -453,7 +453,7 @@ public class NotebookCanvasPage extends WebPage {
                     CellInstance model = notebookModel.getCellInstanceList().get(i);
                     model.setPositionLeft(Integer.parseInt(x));
                     model.setPositionTop(Integer.parseInt(y));
-                    notebookSession.storeCurrentNotebook();
+                    notebookSession.storeCurrentEditable();
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error while handling Ajax request in behavior", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
@@ -548,7 +548,7 @@ public class NotebookCanvasPage extends WebPage {
                     CellInstance model = notebookModel.getCellInstanceList().get(i);
                     model.setSizeWidth(Integer.parseInt(width));
                     model.setSizeHeight(Integer.parseInt(height));
-                    notebookSession.storeCurrentNotebook();
+                    notebookSession.storeCurrentEditable();
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error resizing item", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
@@ -614,7 +614,7 @@ public class NotebookCanvasPage extends WebPage {
 
     private void applyBinding(VariableInstance variableInstance, BindingInstance bindingInstance) throws Exception {
         bindingInstance.setVariableInstance(variableInstance);
-        notebookSession.storeCurrentNotebook();
+        notebookSession.storeCurrentEditable();
         getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
     }
 

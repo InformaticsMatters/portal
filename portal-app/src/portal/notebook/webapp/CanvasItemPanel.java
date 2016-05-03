@@ -78,7 +78,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     public void fireContentChanged() throws Exception {
-        notebookSession.reloadCurrentNotebook();
+        notebookSession.reloadCurrentVersion();
         getRequestCycle().find(AjaxRequestTarget.class).add(getPage());
     }
 
@@ -86,7 +86,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public void onRemove(CellInstance cellInstance) {
         try {
             notebookSession.getCurrentNotebookInstance().removeCellInstance(cellInstance.getId());
-            notebookSession.storeCurrentNotebook();
+            notebookSession.storeCurrentEditable();
             fireContentChanged();
         } catch (Throwable t) {
             LOGGER.warn("Error removing cell", t);
