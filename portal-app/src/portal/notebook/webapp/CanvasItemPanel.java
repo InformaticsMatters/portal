@@ -11,6 +11,7 @@ import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.PopupContainerProvider;
+import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
 import toolkit.wicket.semantic.NotifierProvider;
@@ -37,6 +38,11 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
         this.cellId = cellId;
+        try {
+            updateStatusInfo();
+        } catch (Throwable t) {
+            LOGGER.warn("Error refreshing status", t);
+        }
     }
 
     @Override
@@ -121,17 +127,31 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     private void notifyCellStatus(AjaxRequestTarget ajaxRequestTarget) {
+        updateStatusInfo();
+        cellStatusChanged(cellStatusInfo, ajaxRequestTarget);
+    }
+
+    protected void updateStatusInfo() {
         Execution execution = notebookSession.findExecution(findCellInstance().getId());
         CellInstance cellInstance = findCellInstance();
         cellStatusInfo = new CellStatusInfo();
-        cellStatusInfo.setHasBindings(!cellInstance.getBindingInstanceMap().isEmpty());
+        cellStatusInfo.setBindingsComplete(bindingsComplete(cellInstance));
         if (execution == null) {
             cellStatusInfo.setRunning(Boolean.FALSE);
         } else {
             cellStatusInfo.setRunning(execution.getJobActive());
             cellStatusInfo.setSucceed(execution.getJobSuccessful());
         }
-        cellStatusChanged(cellStatusInfo, ajaxRequestTarget);
+    }
+
+
+    private Boolean bindingsComplete(CellInstance cellInstance) {
+        for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
+            if (bindingInstance.getVariableInstance() == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected void cellStatusChanged(CellStatusInfo cellStatusInfo, AjaxRequestTarget ajaxRequestTarget) {
@@ -170,7 +190,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     public String getStatusString() {
-        return cellStatusInfo == null ? "Inactive" : cellStatusInfo.toString();
+        return cellStatusInfo == null ? "" : cellStatusInfo.toString();
     }
 
 }

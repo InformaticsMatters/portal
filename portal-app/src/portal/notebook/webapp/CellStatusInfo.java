@@ -3,16 +3,16 @@ package portal.notebook.webapp;
 import java.io.Serializable;
 
 public class CellStatusInfo implements Serializable {
-    private Boolean hasBindings;
+    private Boolean bindingsComplete;
     private Boolean running;
     private Boolean succeed;
 
-    public Boolean getHasBindings() {
-        return hasBindings;
+    public Boolean getBindingsComplete() {
+        return bindingsComplete;
     }
 
-    public void setHasBindings(Boolean hasBindings) {
-        this.hasBindings = hasBindings;
+    public void setBindingsComplete(Boolean bindingsComplete) {
+        this.bindingsComplete = bindingsComplete;
     }
 
     public Boolean getRunning() {
@@ -33,18 +33,17 @@ public class CellStatusInfo implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (hasBindings) {
-            stringBuilder.append("Bindings set.");
-        }
-        if (Boolean.TRUE.equals(running)) {
-            stringBuilder.append(" Running.");
+        if (!bindingsComplete) {
+            return "Input needs defining.";
+        } else if (Boolean.TRUE.equals(running)) {
+            return "Executing";
         } else if (Boolean.TRUE.equals(succeed)) {
-            stringBuilder.append(" Succeed.");
+            return "Succeed.";
         } else if (Boolean.FALSE.equals(succeed)) {
-            stringBuilder.append(" Error.");
+            return "Error occured.";
+        } else {
+            return "Ready for execution";
         }
-        return stringBuilder.toString();
     }
 
 
