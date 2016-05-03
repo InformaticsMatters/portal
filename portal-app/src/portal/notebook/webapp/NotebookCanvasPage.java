@@ -198,7 +198,7 @@ public class NotebookCanvasPage extends WebPage {
                     if (notebookSession.getCurrentNotebookInstance().isEditable()) {
                         notebookSession.createSavepointFromCurrentEditable("New savepoint created");
                     } else {
-                        notebookSession.createEditableFromCurrentSavePoint("New savepoint created");
+                        notebookSession.createEditableFromCurrentSavePoint();
                     }
                     ajaxRequestTarget.add(notebookVersionTreePanel);
                     notifierProvider.getNotifier(getPage()).notify("Savepoint", "New savepoint created");
