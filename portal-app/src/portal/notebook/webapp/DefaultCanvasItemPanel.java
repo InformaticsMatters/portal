@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.options.MultiLineTextTypeDescriptor;
@@ -50,24 +51,13 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addStatus() {
-        statusLabel = new Label("cellStatus", new IModel<String>() {
-            @Override
-            public void detach() {
-
-            }
-
-            @Override
-            public String getObject() {
-                return cellStatusInfo == null ? "Inactive" : cellStatusInfo.toString();
-            }
-
-            @Override
-            public void setObject(String s) {
-
-            }
-        });
+        statusLabel = new Label("cellStatus", new PropertyModel<>(this, "cellStatusInfoString"));
         statusLabel.setOutputMarkupId(true);
         add(statusLabel);
+    }
+
+    public String getCellStatusInfoString() {
+        return cellStatusInfo == null ? "Inactive" : cellStatusInfo.toString();
     }
 
     private void addForm() {
