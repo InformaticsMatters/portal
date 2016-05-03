@@ -67,7 +67,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
             if (i != null && i.getValue() != null) {
                 Object converted = getOptionValue(i);
                 result.put(key, converted);
-                LOG.info("value for option: " + key + " -> " + converted);
+                LOG.fine("value for option: " + key + " -> " + converted);
             }
         }
         return result;
@@ -85,8 +85,12 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
             Object value = i.getValue();
             if (value instanceof String) { // is it always a String?
                 String mol = (String)value;
-                String converted = StructureFieldEditorPanel.convertMolecule(mol, mtd.getFormats());
-                LOG.info("Converted mol to: " + converted);
+                MoleculeObject converted = StructureFieldEditorPanel.convertMolecule(mol, mtd.getFormats());
+                if (converted != null) {
+                    LOG.info("Converted mol to: " + converted.getSource() + " " + converted.getFormat());
+                } else {
+                    LOG.info("No converted molecule");
+                }
                 return converted;
             }
         }

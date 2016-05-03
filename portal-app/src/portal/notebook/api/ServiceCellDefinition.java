@@ -9,6 +9,7 @@ import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -24,11 +25,12 @@ public class ServiceCellDefinition extends CellDefinition {
     private static final String SERVICE_ICON = "default_icon.png";
     private static final Logger LOG = Logger.getLogger(ServiceCellDefinition.class.getName());
     private ServiceDescriptor serviceDescriptor;
+    private static final String OPTION_BODY = "body"; // = StepDefinitionConstants.OPTION_BODY
 
     public ServiceCellDefinition(ServiceDescriptor serviceDescriptor) {
         this.serviceDescriptor = serviceDescriptor;
         setExecutable(Boolean.TRUE);
-        if (findOptionForBody() == null) {
+        if (findOptionDescriptorForBody() == null) {
             // if one of the options is defined as the body then we don't want an input endpoint
             getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         }
@@ -36,11 +38,11 @@ public class ServiceCellDefinition extends CellDefinition {
         LOG.info("Creating service cell " + serviceDescriptor.getName() + " with icon " + serviceDescriptor.getIcon());
     }
 
-    private OptionDescriptor findOptionForBody() {
+    private OptionDescriptor findOptionDescriptorForBody() {
         AccessMode accessMode = serviceDescriptor.getAccessModes()[0];
         if (accessMode.getParameters() != null) {
             for (OptionDescriptor od : accessMode.getParameters()) {
-                if ("body".equalsIgnoreCase(od.getkey())) {
+                if (OPTION_BODY.equalsIgnoreCase(od.getkey())) {
                     return od;
                 }
             }
@@ -90,13 +92,23 @@ public class ServiceCellDefinition extends CellDefinition {
             AccessMode accessMode = serviceDescriptor.getAccessModes()[0];
             LOG.info("Building JobDefinition for service " + accessMode.getExecutionEndpoint());
 
+            Map<String, Object> options = collectAllOptions(cell);
+            OptionDescriptor<?> optDesc = findOptionDescriptorForBody();
+            LOG.info("Body OptionDescriptor: " + optDesc);
+            Object body = null;
+            if (optDesc != null) {
+                body = options.remove(OPTION_BODY);
+            }
+
             StepDefinition step = new StepDefinition(accessMode.getAdapterClassName())
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
                     .withOption(OPT_SERVICE_ENDPOINT, serviceDescriptor.getAccessModes()[0].getExecutionEndpoint())
-                    .withOption(OPT_SERVICE_PARAMS, collectAllOptions(cell));
+                    .withOption(OPT_SERVICE_PARAMS, options);
 
-            boolean internalInput = findOptionForBody() != null;
-            if (!internalInput) {
+            if (optDesc != null) {
+                LOG.info("Setting body option: " + body);
+                step = step.withOption(OPTION_BODY, body);
+            } else {
                 // only define an input binding if one of the options is not specified as the body
                 VariableKey key = createVariableKey(cell, VAR_NAME_INPUT);
                 if (key != null) {
