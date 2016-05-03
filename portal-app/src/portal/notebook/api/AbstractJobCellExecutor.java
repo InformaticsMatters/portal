@@ -87,7 +87,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
                 String mol = (String)value;
                 MoleculeObject converted = StructureFieldEditorPanel.convertMolecule(mol, mtd.getFormats());
                 if (converted != null) {
-                    LOG.info("Converted mol to: " + converted.getSource() + " " + converted.getFormat());
+                    LOG.info("Converted mol to: " + converted.getFormat());
                 } else {
                     LOG.info("No converted molecule");
                 }
