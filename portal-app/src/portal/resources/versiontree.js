@@ -437,7 +437,10 @@ function createTree(data) {
 
         nodeEnter.append("circle")
             .attr("r", 1e-6)
-            .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+            .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
+            .style("stroke", function(d) {
+                if(d.nodeType == "NotebookEditableDTO") return "orange";
+                if(d.nodeType == "NotebookSavepointDTO") return "green"; });
 
         nodeEnter.append("text")
             .attr("x", function(d) { return d.children || d._children ? -10 : 10; })

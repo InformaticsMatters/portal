@@ -5,6 +5,7 @@ import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
+import com.im.lac.types.MoleculeObject;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -140,7 +141,8 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
                 return null;
             } else {
                 Molecule molecule = MolImporter.importMol(mrv);
-                return exportAsString(molecule, "smiles", "cxsmiles");
+                MoleculeObject mo =  exportAsString(molecule, "smiles", "cxsmiles");
+                return mo.getSource();
             }
         } catch (Throwable t) {
             throw new RuntimeException(t);
@@ -160,7 +162,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
         }
     }
 
-    public static String convertMolecule(String molstr, String... formats) {
+    public static MoleculeObject convertMolecule(String molstr, String... formats) {
         try {
             if (molstr == null || molstr.isEmpty()) {
                 return null;
@@ -174,11 +176,11 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
     }
 
     // this method is copied from MolecuelUtils in the chemaxon-lib module
-    private static String exportAsString(Molecule mol, String... format) throws IOException {
+    private static MoleculeObject exportAsString(Molecule mol, String... format) throws IOException {
         IOException ex = null;
         for (String f : format) {
             try {
-                return MolExporter.exportToFormat(mol, f);
+                return new MoleculeObject(MolExporter.exportToFormat(mol, f), f);
             } catch (IOException e) {
                 ex = e;
             }
