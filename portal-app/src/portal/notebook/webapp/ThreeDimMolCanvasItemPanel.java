@@ -38,6 +38,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     private ThreeDimMolAdvancedOptionsPanel advancedOptionsPanel;
     @Inject
     private NotebookSession notebookSession;
+    private Label statusLabel;
 
     public ThreeDimMolCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -167,7 +168,8 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addStatus() {
-        add(new Label("cellStatus", "Status message here"));
+        statusLabel = createStatusLabel("cellStatus");
+        add(statusLabel);
     }
 
     class ModelObject implements Serializable {
