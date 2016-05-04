@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class HistoryTree implements Serializable {
+
+    private static final Logger LOGGER = Logger.getLogger(HistoryTree.class.getName());
     private final transient DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH':'mm':'ss");
     private String name;
     private final List<HistoryNode> children = new ArrayList<>();
@@ -31,6 +34,7 @@ public class HistoryTree implements Serializable {
         Map<Long, HistoryNode> nodeMap = new HashMap<>();
         for (Long id : versionMap.keySet()) {
             AbstractNotebookVersionDTO dto = versionMap.get(id);
+            LOGGER.info("Adding to tree: id:" + dto.getId() + " parent: " + dto.getParentId() + " type: " + dto.getClass().getName());
             HistoryNode node = HistoryNode.fromVersionDto(dto, dateFormat);
             nodeMap.put(node.getId(), node);
         }
