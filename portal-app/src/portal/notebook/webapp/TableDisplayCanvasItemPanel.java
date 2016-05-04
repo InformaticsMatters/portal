@@ -34,6 +34,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     private Long datasetDescriptorId;
     @Inject
     private CellChangeManager cellChangeManager;
+    private Label statusLabel;
 
     public TableDisplayCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -154,7 +155,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void addStatus() {
-        add(new Label("cellStatus", "Status message here"));
+        statusLabel = createStatusLabel("cellStatus");
+        add(statusLabel);
     }
 
     class ModelObject implements Serializable {

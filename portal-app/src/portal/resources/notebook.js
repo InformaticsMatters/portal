@@ -227,7 +227,11 @@ function fitTableDisplayGrid(id) {
     var $grid = $id.find(".imxt-vista .imxt-body-container1");
     var gridTop = $grid.position().top;
 
-    var h = containerh - gridTop - 12;
+    var $status = $id.find(".extra.content");
+    var $statush = $id.find(".extra.content").outerHeight();
+    var statuspos = containerh - $statush - gridTop + 5;
+
+    var h = containerh - gridTop - $statush;
     $grid.css("height", h);
 }
 
