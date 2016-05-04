@@ -51,7 +51,7 @@ public class NotebookVersionTreePanel extends Panel {
 
     private String buildHistoryTreeAsJson() {
         try {
-            String json = "{'children': []}";
+            String json = "{}";
             if (notebookSession.getCurrentNotebookInfo() != null) {
                 HistoryTree history = notebookSession.buildCurrentNotebookHistoryTree();
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

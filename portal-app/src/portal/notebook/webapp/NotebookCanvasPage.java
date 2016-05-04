@@ -68,6 +68,7 @@ public class NotebookCanvasPage extends WebPage {
     private ListView<Long> canvasItemRepeater;
 
     private EditNotebookPanel editNotebookPanel;
+    private SaveCopyPanel saveCopyPanel;
 
     @Inject
     private NotifierProvider notifierProvider;
@@ -93,6 +94,7 @@ public class NotebookCanvasPage extends WebPage {
         addConnectionsRenderBehavior();
         addResizeBehavior();
         addEditNotebookPanel();
+        addSaveCopyPanel();
         addNotebookListPanel();
         addNotebookCellTypesPanel();
         addVersionTreePanel();
@@ -189,24 +191,6 @@ public class NotebookCanvasPage extends WebPage {
         plumbContainer.setOutputMarkupId(true);
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
-
-        add(new AjaxLink("save") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                try {
-                    if (notebookSession.getCurrentNotebookInstance().isEditable()) {
-                        notebookSession.createSavepointFromCurrentEditable("New savepoint created");
-                    } else {
-                        notebookSession.createEditableFromCurrentSavePoint();
-                    }
-                    ajaxRequestTarget.add(notebookVersionTreePanel);
-                    notifierProvider.getNotifier(getPage()).notify("Savepoint", "New savepoint created");
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
     }
 
     private void addVersionTreePanel() {
@@ -293,6 +277,33 @@ public class NotebookCanvasPage extends WebPage {
         });
     }
 
+    private void addSaveCopyPanel() {
+        saveCopyPanel = new SaveCopyPanel("saveCopyPanel", "modalElement");
+        add(saveCopyPanel);
+        saveCopyPanel.setCallbacks(new SaveCopyPanel.Callbacks() {
+
+            @Override
+            public void onSubmit() {
+                try {
+                    if (notebookSession.getCurrentNotebookInstance().isEditable()) {
+                        notebookSession.createSavepointFromCurrentEditable(saveCopyPanel.getDescription());
+                    } else {
+                        notebookSession.createEditableFromCurrentSavePoint();
+                    }
+                    getRequestCycle().find(AjaxRequestTarget.class).add(notebookVersionTreePanel);
+                    notifierProvider.getNotifier(getPage()).notify("Save a Copy", "New version created");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+
     private void addNotebookListPanel() {
         notebookListPanel = new NotebookListPanel("notebookList", editNotebookPanel);
         add(notebookListPanel);
@@ -310,6 +321,24 @@ public class NotebookCanvasPage extends WebPage {
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 editNotebookPanel.configureForCreate();
                 editNotebookPanel.showModal();
+            }
+        });
+
+        add(new AjaxLink("save") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                NotebookInstance currentNotebookInstance = notebookSession.getCurrentNotebookInstance();
+                if (currentNotebookInstance != null) {
+                    if (currentNotebookInstance.isEditable()) {
+                        saveCopyPanel.setTitle("Create Savepoint");
+                        saveCopyPanel.setDescription("");
+                    } else {
+                        saveCopyPanel.setTitle("Create Editable");
+                        saveCopyPanel.setDescription("[Ignored - Editables don't have a description?]");
+                    }
+                    saveCopyPanel.showModal();
+                }
             }
         });
 

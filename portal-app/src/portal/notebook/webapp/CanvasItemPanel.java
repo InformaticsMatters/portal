@@ -155,7 +155,9 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     protected void cellStatusChanged(CellStatusInfo cellStatusInfo, AjaxRequestTarget ajaxRequestTarget) {
-        ajaxRequestTarget.add(statusLabel);
+        if (statusLabel != null) {
+            ajaxRequestTarget.add(statusLabel);
+        }
     }
 
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
