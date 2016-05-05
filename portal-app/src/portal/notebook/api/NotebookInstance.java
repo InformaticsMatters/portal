@@ -155,6 +155,7 @@ public class NotebookInstance implements Serializable {
 
     public void loadNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO, CellDefinitionRegistry cellDefinitionRegistry) {
         if (notebookCanvasDTO == null) {
+            // TODO: this shouldn't be necessary here. Means need to take care of it somewhere else. We want it to crash to signal possible bug.
             // new notebook - no contents
             return;
         } else {
