@@ -18,6 +18,7 @@ public class NotebookInstance implements Serializable {
     private final List<CellInstance> cellInstanceList = new ArrayList<>();
     private Long lastCellId;
     private boolean editable;
+    private String versionDescription;
 
     public List<CellInstance> getCellInstanceList() {
         return cellInstanceList;
@@ -218,4 +219,11 @@ public class NotebookInstance implements Serializable {
     }
 
 
+    public String getVersionDescription() {
+        return versionDescription;
+    }
+
+    public void setVersionDescription(String versionDescription) {
+        this.versionDescription = versionDescription;
+    }
 }
