@@ -6,12 +6,13 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class MockAbstractNotebookVersion extends AbstractEntity {
+public class MockNotebookVersion extends AbstractEntity {
     private MockNotebook mockNotebook;
-    private MockAbstractNotebookVersion parent;
+    private String owner;
+    private MockNotebookVersion parent;
     private Date createdDate;
     private Date lastUpdatedDate;
+    private Boolean editable;
     private byte[] json;
 
     @ManyToOne
@@ -24,12 +25,21 @@ public abstract class MockAbstractNotebookVersion extends AbstractEntity {
         this.mockNotebook = mockNotebook;
     }
 
+    @Column(nullable = false)
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
     @ManyToOne
-    public MockAbstractNotebookVersion getParent() {
+    public MockNotebookVersion getParent() {
         return parent;
     }
 
-    public void setParent(MockAbstractNotebookVersion parent) {
+    public void setParent(MockNotebookVersion parent) {
         this.parent = parent;
     }
 
@@ -60,5 +70,14 @@ public abstract class MockAbstractNotebookVersion extends AbstractEntity {
 
     public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    @Column(nullable = false)
+    public Boolean getEditable() {
+        return editable;
+    }
+
+    public void setEditable(Boolean editable) {
+        this.editable = editable;
     }
 }

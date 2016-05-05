@@ -34,7 +34,7 @@ public class HistoryNode implements Serializable {
     }
 
     private static String buildDefaultNodeDescription(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
-        return dto.getId() + " - " + dateFormat.format(dto.getCreatedDate());
+        return dateFormat.format(dto.getCreatedDate());
     }
 
     public Long getId() {

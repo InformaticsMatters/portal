@@ -45,15 +45,15 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         if (mockNotebook == null) {
             return false;
         } else {
-            TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.mockNotebook.id = :notebookId", MockNotebookEditable.class);
-            TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookEditable.id = :editableId", MockVariable.class);
+            TypedQuery<MockNotebookVersion> editableQuery = entityManager.createQuery("select o from MockNotebookVersion o where o.mockNotebook.id = :notebookId", MockNotebookVersion.class);
+            TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookVersion.id = :editableId", MockVariable.class);
             editableQuery.setParameter("notebookId", notebookId);
-            for (MockNotebookEditable mockNotebookEditable : editableQuery.getResultList()) {
-                variableQuery.setParameter("editableId", mockNotebookEditable.getId());
+            for (MockNotebookVersion mockNotebookVersion : editableQuery.getResultList()) {
+                variableQuery.setParameter("editableId", mockNotebookVersion.getId());
                 for (MockVariable mockVariable : variableQuery.getResultList()) {
                     entityManager.remove(mockVariable);
                 }
-                entityManager.remove(mockNotebookEditable);
+                entityManager.remove(mockNotebookVersion);
             }
             entityManager.remove(mockNotebook);
             return true;
@@ -122,21 +122,22 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
 
     @Override
     public List<NotebookEditableDTO> listEditables(Long aLong, String userName) throws Exception {
-        TypedQuery<MockNotebookEditable> query = entityManager.createQuery("select o from MockNotebookEditable o where o.mockNotebook.id = :notebookId and o.owner = :userName order by o.id", MockNotebookEditable.class);
+        TypedQuery<MockNotebookVersion> query = entityManager.createQuery("select o from MockNotebookVersion o where o.mockNotebook.id = :notebookId and o.owner = :userName and o.editable = :editable order by o.id", MockNotebookVersion.class);
         query.setParameter("notebookId", aLong);
         query.setParameter("userName", userName);
+        query.setParameter("editable", Boolean.TRUE);
         List<NotebookEditableDTO> list = new ArrayList<>();
-        for (MockNotebookEditable mockNotebookEditable : query.getResultList()) {
-            list.add(toNotebookEditable(mockNotebookEditable));
+        for (MockNotebookVersion mockNotebookVersion : query.getResultList()) {
+            list.add(toNotebookEditable(mockNotebookVersion));
         }
         return list;
     }
 
-    private NotebookEditableDTO toNotebookEditable(MockNotebookEditable mockNotebookEditable) throws Exception {
-        String jsonString = mockNotebookEditable.getJson() == null ? null : new String(mockNotebookEditable.getJson());
+    private NotebookEditableDTO toNotebookEditable(MockNotebookVersion mockNotebookVersion) throws Exception {
+        String jsonString = mockNotebookVersion.getJson() == null ? null : new String(mockNotebookVersion.getJson());
         NotebookCanvasDTO dto = (jsonString == null ? null : JsonHandler.getInstance().objectFromJson(jsonString, NotebookCanvasDTO.class));
-        Long parentId = mockNotebookEditable.getParent() == null ? null : mockNotebookEditable.getParent().getId();
-        return new NotebookEditableDTO(mockNotebookEditable.getId(), mockNotebookEditable.getMockNotebook().getId(), parentId, mockNotebookEditable.getOwner(), mockNotebookEditable.getCreatedDate(), mockNotebookEditable.getLastUpdatedDate(), dto);
+        Long parentId = mockNotebookVersion.getParent() == null ? null : mockNotebookVersion.getParent().getId();
+        return new NotebookEditableDTO(mockNotebookVersion.getId(), mockNotebookVersion.getMockNotebook().getId(), parentId, mockNotebookVersion.getOwner(), mockNotebookVersion.getCreatedDate(), mockNotebookVersion.getLastUpdatedDate(), dto);
     }
 
     @Override
@@ -145,66 +146,65 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         if (mockNotebook == null) {
             throw new RuntimeException("Unknown notebook id");
         }
-        MockAbstractNotebookVersion parent = parentId == null ? null : entityManager.find(MockAbstractNotebookVersion.class, parentId);
-        MockNotebookEditable mockNotebookEditable = new MockNotebookEditable();
-        mockNotebookEditable.setParent(parent);
-        mockNotebookEditable.setMockNotebook(mockNotebook);
-        mockNotebookEditable.setOwner(userName);
-        mockNotebookEditable.setCreatedDate(new Date());
-        mockNotebookEditable.setLastUpdatedDate(mockNotebookEditable.getCreatedDate());
+        MockNotebookVersion parent = parentId == null ? null : entityManager.find(MockNotebookVersion.class, parentId);
+        MockNotebookVersion mockNotebookVersion = new MockNotebookVersion();
+        mockNotebookVersion.setParent(parent);
+        mockNotebookVersion.setMockNotebook(mockNotebook);
+        mockNotebookVersion.setOwner(userName);
+        mockNotebookVersion.setCreatedDate(new Date());
+        mockNotebookVersion.setLastUpdatedDate(mockNotebookVersion.getCreatedDate());
+        mockNotebookVersion.setEditable(Boolean.TRUE);
         if (parent == null) {
             String json = JsonHandler.getInstance().objectToJson(new NotebookCanvasDTO(0l));
-            mockNotebookEditable.setJson(json.getBytes());
+            mockNotebookVersion.setJson(json.getBytes());
         } else {
-            mockNotebookEditable.setJson(parent.getJson());
+            mockNotebookVersion.setJson(parent.getJson());
         }
-        entityManager.persist(mockNotebookEditable);
-        return toNotebookEditable(mockNotebookEditable);
+        entityManager.persist(mockNotebookVersion);
+        return toNotebookEditable(mockNotebookVersion);
     }
 
     @Override
     public NotebookEditableDTO updateEditable(Long notebookId, Long aLong1, NotebookCanvasDTO canvasDTO) throws Exception {
         MockNotebook mockNotebook = entityManager.find(MockNotebook.class, notebookId);
-        MockNotebookEditable mockNotebookEditable = entityManager.find(MockNotebookEditable.class, aLong1);
-        mockNotebookEditable.setMockNotebook(mockNotebook);
+        MockNotebookVersion mockNotebookVersion = entityManager.find(MockNotebookVersion.class, aLong1);
+        mockNotebookVersion.setMockNotebook(mockNotebook);
         String json = JsonHandler.getInstance().objectToJson(canvasDTO);
-        mockNotebookEditable.setJson(json.getBytes());
-        mockNotebookEditable.setLastUpdatedDate(new Date());
-        return toNotebookEditable(mockNotebookEditable);
+        mockNotebookVersion.setJson(json.getBytes());
+        mockNotebookVersion.setLastUpdatedDate(new Date());
+        return toNotebookEditable(mockNotebookVersion);
     }
 
     @Override
     public boolean deleteEditable(Long notebookId, Long editableId, String username) throws Exception {
-        MockNotebookEditable mockNotebookEditable = entityManager.find(MockNotebookEditable.class, editableId);
-        if (mockNotebookEditable == null) {
+        MockNotebookVersion mockNotebookVersion = entityManager.find(MockNotebookVersion.class, editableId);
+        if (mockNotebookVersion == null) {
             return false;
         } else {
-            entityManager.remove(mockNotebookEditable);
+            entityManager.remove(mockNotebookVersion);
             return true;
         }
     }
 
     @Override
     public NotebookEditableDTO createSavepoint(Long notebookId, Long editableId, String description) throws Exception {
-        MockNotebookEditable mockNotebookEditable = entityManager.find(MockNotebookEditable.class, editableId);
-        if (mockNotebookEditable == null) {
+        MockNotebookVersion mockNotebookVersion = entityManager.find(MockNotebookVersion.class, editableId);
+        if (mockNotebookVersion == null) {
             throw new RuntimeException("Unknown editable id");
         }
+        mockNotebookVersion.setEditable(Boolean.FALSE);
         MockNotebookSavepoint mockNotebookSavepoint = new MockNotebookSavepoint();
-        mockNotebookSavepoint.setCreator(mockNotebookEditable.getOwner());
-        mockNotebookSavepoint.setParent(mockNotebookEditable);
-        mockNotebookSavepoint.setMockNotebook(mockNotebookEditable.getMockNotebook());
-        mockNotebookSavepoint.setCreatedDate(new Date());
+        mockNotebookSavepoint.setCreator(mockNotebookVersion.getOwner());
+        mockNotebookSavepoint.setMockNotebookVersion(mockNotebookVersion);
         mockNotebookSavepoint.setDescription(description);
-        mockNotebookSavepoint.setLastUpdatedDate(mockNotebookSavepoint.getCreatedDate());
-        mockNotebookSavepoint.setJson(mockNotebookEditable.getJson());
+        mockNotebookSavepoint.setLabel("");
         entityManager.persist(mockNotebookSavepoint);
-        return new NotebookEditableDTO(mockNotebookSavepoint.getId(), mockNotebookEditable.getMockNotebook().getId(), mockNotebookEditable.getId(), mockNotebookEditable.getOwner(), new Date(), new Date(), null);
+        return createEditable(notebookId, mockNotebookVersion.getId(), mockNotebookVersion.getOwner());
     }
 
     @Override
     public List<NotebookSavepointDTO> listSavepoints(Long notebookId) throws Exception {
-        TypedQuery<MockNotebookSavepoint> query = entityManager.createQuery("select o from MockNotebookSavepoint o where o.mockNotebook.id = :notebookId", MockNotebookSavepoint.class);
+        TypedQuery<MockNotebookSavepoint> query = entityManager.createQuery("select o from MockNotebookSavepoint o where o.mockNotebookVersion.mockNotebook.id = :notebookId", MockNotebookSavepoint.class);
         query.setParameter("notebookId", notebookId);
         List<NotebookSavepointDTO> list = new ArrayList<>();
         for (MockNotebookSavepoint mockNotebookSavepoint : query.getResultList()) {
@@ -228,9 +228,11 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     }
 
     private NotebookSavepointDTO toNotebookSavepoint(MockNotebookSavepoint mockNotebookSavepoint) throws IOException {
-        String jsonString = mockNotebookSavepoint.getJson() == null ? null : new String(mockNotebookSavepoint.getJson());
+        MockNotebookVersion mockNotebookVersion = mockNotebookSavepoint.getMockNotebookVersion();
+        String jsonString = mockNotebookVersion.getJson() == null ? null : new String(mockNotebookVersion.getJson());
         NotebookCanvasDTO dto = jsonString == null ? null : JsonHandler.getInstance().objectFromJson(jsonString, NotebookCanvasDTO.class);
-        return new NotebookSavepointDTO(mockNotebookSavepoint.getId(), mockNotebookSavepoint.getMockNotebook().getId(), mockNotebookSavepoint.getParent().getId(), mockNotebookSavepoint.getCreator(), mockNotebookSavepoint.getCreatedDate(), mockNotebookSavepoint.getLastUpdatedDate(),  mockNotebookSavepoint.getDescription(), mockNotebookSavepoint.getDescription(), dto);
+        Long parentId = mockNotebookVersion.getParent() == null ? null : mockNotebookVersion.getParent().getId();
+        return new NotebookSavepointDTO(mockNotebookVersion.getId(), mockNotebookVersion.getMockNotebook().getId(), parentId, mockNotebookSavepoint.getCreator(), mockNotebookVersion.getCreatedDate(), mockNotebookVersion.getLastUpdatedDate(),  mockNotebookSavepoint.getDescription(), mockNotebookSavepoint.getDescription(), dto);
     }
 
 
@@ -244,11 +246,11 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     public void writeTextValue(Long notebookId, Long editableId, Long cellId, String name, String value, String key) throws Exception {
         MockVariable mockVariable = findMockVariable(editableId, cellId, name);
         if (mockVariable == null) {
-            TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.mockNotebook.id = :notebookId", MockNotebookEditable.class);
+            TypedQuery<MockNotebookVersion> editableQuery = entityManager.createQuery("select o from MockNotebookVersion o where o.mockNotebook.id = :notebookId", MockNotebookVersion.class);
             editableQuery.setParameter("notebookId", notebookId);
-            MockNotebookEditable mockNotebookEditable = entityManager.find(MockNotebookEditable.class, editableId);
+            MockNotebookVersion mockNotebookVersion = entityManager.find(MockNotebookVersion.class, editableId);
             mockVariable = new MockVariable();
-            mockVariable.setMockNotebookEditable(mockNotebookEditable);
+            mockVariable.setMockNotebookVersion(mockNotebookVersion);
             mockVariable.setCellId(cellId);
             mockVariable.setName(name);
             entityManager.persist(mockVariable);
@@ -271,11 +273,11 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     public void writeStreamValue(Long notebookId, Long editableId, Long cellId, String name, InputStream inputStream, String s1) throws Exception {
         MockVariable mockVariable = findMockVariable(editableId, cellId, name);
         if (mockVariable == null) {
-            TypedQuery<MockNotebookEditable> editableQuery = entityManager.createQuery("select o from MockNotebookEditable o where o.mockNotebook.id = :notebookId", MockNotebookEditable.class);
+            TypedQuery<MockNotebookVersion> editableQuery = entityManager.createQuery("select o from MockNotebookVersion o where o.mockNotebook.id = :notebookId", MockNotebookVersion.class);
             editableQuery.setParameter("notebookId", notebookId);
-            MockNotebookEditable mockNotebookEditable = editableQuery.getResultList().get(0);
+            MockNotebookVersion mockNotebookVersion = editableQuery.getResultList().get(0);
             mockVariable = new MockVariable();
-            mockVariable.setMockNotebookEditable(mockNotebookEditable);
+            mockVariable.setMockNotebookVersion(mockNotebookVersion);
             mockVariable.setCellId(cellId);
             mockVariable.setName(name);
             entityManager.persist(mockVariable);
@@ -292,7 +294,7 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     }
 
     private MockVariable findMockVariable(Long editableId, Long cellId, String name) {
-        TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookEditable.id = :editableId and o.cellId = :cellId and o.name = :name", MockVariable.class);
+        TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookVersion.id = :editableId and o.cellId = :cellId and o.name = :name", MockVariable.class);
         variableQuery.setParameter("editableId", editableId);
         variableQuery.setParameter("cellId", cellId);
         variableQuery.setParameter("name", name);

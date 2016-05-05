@@ -174,13 +174,15 @@ public class NotebookCanvasPage extends WebPage {
         add(new MenuPanel("menuPanel"));
         add(new FooterPanel("footerPanel"));
 
-        Label nbInfo = new Label("nbInfo", new PropertyModel(this, "currentNotebookDescription"));
+        Label nbInfo = new Label("nbInfo", new PropertyModel(this, "currentVersionDescription"));
         add(nbInfo);
     }
 
-    public String getCurrentNotebookDescription() {
+    public String getCurrentVersionDescription() {
         if (notebookSession.getCurrentNotebookInfo() != null) {
-            return notebookSession.getCurrentNotebookInfo().getName() + " - " + notebookSession.getCurrentNotebookInfo().getOwner();
+            return notebookSession.getCurrentNotebookInfo().getName()
+                    + " - " + notebookSession.getCurrentNotebookInfo().getOwner()
+                    + " - " + notebookSession.getCurrentNotebookInstance().getVersionDescription();
         } else {
             return "No notebook selected";
         }
@@ -290,7 +292,7 @@ public class NotebookCanvasPage extends WebPage {
                     } else {
                         notebookSession.createEditableFromCurrentSavePoint();
                     }
-                    getRequestCycle().find(AjaxRequestTarget.class).add(notebookVersionTreePanel);
+                    getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
                     notifierProvider.getNotifier(getPage()).notify("Save a Copy", "New version created");
                 } catch (Exception e) {
                     throw new RuntimeException(e);

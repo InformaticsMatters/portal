@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"mocknotebookeditable_id", "cellid", "name"})})
 public class MockVariable extends AbstractEntity {
-    private MockNotebookEditable mockNotebookEditable;
+    private MockNotebookVersion mockNotebookVersion;
     private Long cellId;
     private String name;
     private String value;
@@ -15,12 +15,12 @@ public class MockVariable extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    public MockNotebookEditable getMockNotebookEditable() {
-        return mockNotebookEditable;
+    public MockNotebookVersion getMockNotebookVersion() {
+        return mockNotebookVersion;
     }
 
-    public void setMockNotebookEditable(MockNotebookEditable mockNotebookEditable) {
-        this.mockNotebookEditable = mockNotebookEditable;
+    public void setMockNotebookVersion(MockNotebookVersion mockNotebookVersion) {
+        this.mockNotebookVersion = mockNotebookVersion;
     }
 
     public String getValue() {

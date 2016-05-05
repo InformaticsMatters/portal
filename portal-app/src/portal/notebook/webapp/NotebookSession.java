@@ -18,6 +18,8 @@ import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 
@@ -25,6 +27,7 @@ import java.util.zip.GZIPInputStream;
 public class NotebookSession implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotebookSession.class);
+    private final DateFormat versionDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
     private NotebookInstance currentNotebookInstance;
     private NotebookInfo currentNotebookInfo;
     private Long currentNotebookVersionId;
@@ -95,7 +98,16 @@ public class NotebookSession implements Serializable {
         currentNotebookInstance = new NotebookInstance();
         currentNotebookInstance.loadNotebookCanvasDTO(versionDTO.getCanvasDTO(), cellDefinitionRegistry);
         currentNotebookInstance.setEditable(versionDTO instanceof NotebookEditableDTO);
+        currentNotebookInstance.setVersionDescription(buildVersionDescription(versionDTO));
         currentNotebookVersionId = versionId;
+    }
+
+    private String buildVersionDescription(AbstractNotebookVersionDTO versionDTO) {
+        if (versionDTO instanceof NotebookEditableDTO) {
+            return versionDateFormat.format(versionDTO.getCreatedDate());
+        } else {
+            return ((NotebookSavepointDTO)versionDTO).getDescription();
+        }
     }
 
     public void reloadCurrentVersion() throws Exception {
@@ -320,11 +332,13 @@ public class NotebookSession implements Serializable {
     }
 
     public void createSavepointFromCurrentEditable(String description) throws Exception {
-        notebookVariableClient.createSavepoint(currentNotebookInfo.getId(), currentNotebookVersionId, description);
+        NotebookEditableDTO editable = notebookVariableClient.createSavepoint(currentNotebookInfo.getId(), currentNotebookVersionId, description);
+        loadCurrentVersion(editable.getId());
     }
 
     public void createEditableFromCurrentSavePoint() throws Exception {
-        notebookVariableClient.createEditable(currentNotebookInfo.getId(), currentNotebookVersionId, sessionContext.getLoggedInUserDetails().getUserid());
+        NotebookEditableDTO editable = notebookVariableClient.createEditable(currentNotebookInfo.getId(), currentNotebookVersionId, sessionContext.getLoggedInUserDetails().getUserid());
+        loadCurrentVersion(editable.getId());
     }
 }
 
