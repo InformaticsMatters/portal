@@ -18,7 +18,6 @@ public class NotebookInstance implements Serializable {
     private final List<CellInstance> cellInstanceList = new ArrayList<>();
     private Long lastCellId;
     private boolean editable;
-    private String versionDescription;
 
     public List<CellInstance> getCellInstanceList() {
         return cellInstanceList;
@@ -154,42 +153,47 @@ public class NotebookInstance implements Serializable {
     }
 
     public void loadNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO, CellDefinitionRegistry cellDefinitionRegistry) {
-        setLastCellId(notebookCanvasDTO.getLastCellId());
-        for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
-            // TODO - error handling
-            // if cell can't be created for any reason replace it with a "error" cell that contains
-            // as much info as is reasonable so that user can try to remedy the problem
-            CellDefinition cellDefinition = cellDefinitionRegistry.findCellDefinition(cellDTO.getKey());
-            if (cellDefinition == null) {
-                LOGGER.log(Level.WARNING, "Unknown cell definition: " + cellDTO.getKey());
-            } else {
-                CellInstance cellInstance = new CellInstance();
-                cellInstance.setCellDefinition(cellDefinition);
-                cellInstance.setId(cellDTO.getId());
-                cellInstance.setName(cellDTO.getName());
-                cellInstance.setPositionLeft(cellDTO.getLeft());
-                cellInstance.setPositionTop(cellDTO.getTop());
-                cellInstance.setSizeHeight(cellDTO.getHeight());
-                cellInstance.setSizeWidth(cellDTO.getWidth());
-                configureCellInstance(cellInstance);
-                cellInstanceList.add(cellInstance);
-                for (Map.Entry<String, Object> e : cellDTO.getOptions().entrySet()) {
-                    OptionInstance optionInstance = cellInstance.getOptionInstanceMap().get(e.getKey());
-                    if (optionInstance != null) {
-                        optionInstance.setValue(e.getValue());
+        if (notebookCanvasDTO == null) {
+            // new notebook - no contents
+            return;
+        } else {
+            setLastCellId(notebookCanvasDTO.getLastCellId());
+            for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
+                // TODO - error handling
+                // if cell can't be created for any reason replace it with a "error" cell that contains
+                // as much info as is reasonable so that user can try to remedy the problem
+                CellDefinition cellDefinition = cellDefinitionRegistry.findCellDefinition(cellDTO.getKey());
+                if (cellDefinition == null) {
+                    LOGGER.log(Level.WARNING, "Unknown cell definition: " + cellDTO.getKey());
+                } else {
+                    CellInstance cellInstance = new CellInstance();
+                    cellInstance.setCellDefinition(cellDefinition);
+                    cellInstance.setId(cellDTO.getId());
+                    cellInstance.setName(cellDTO.getName());
+                    cellInstance.setPositionLeft(cellDTO.getLeft());
+                    cellInstance.setPositionTop(cellDTO.getTop());
+                    cellInstance.setSizeHeight(cellDTO.getHeight());
+                    cellInstance.setSizeWidth(cellDTO.getWidth());
+                    configureCellInstance(cellInstance);
+                    cellInstanceList.add(cellInstance);
+                    for (Map.Entry<String, Object> e : cellDTO.getOptions().entrySet()) {
+                        OptionInstance optionInstance = cellInstance.getOptionInstanceMap().get(e.getKey());
+                        if (optionInstance != null) {
+                            optionInstance.setValue(e.getValue());
+                        }
                     }
                 }
             }
-        }
 
-        for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
-            CellInstance cellInstance = findCellInstanceById(cellDTO.getId());
-            if (cellInstance != null) {
-                for (NotebookCanvasDTO.BindingDTO bindingDTO : cellDTO.getBindings()) {
-                    BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(bindingDTO.getVariableKey());
-                    if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
-                        VariableInstance variableInstance = findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
-                        bindingInstance.setVariableInstance(variableInstance);
+            for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
+                CellInstance cellInstance = findCellInstanceById(cellDTO.getId());
+                if (cellInstance != null) {
+                    for (NotebookCanvasDTO.BindingDTO bindingDTO : cellDTO.getBindings()) {
+                        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(bindingDTO.getVariableKey());
+                        if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
+                            VariableInstance variableInstance = findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
+                            bindingInstance.setVariableInstance(variableInstance);
+                        }
                     }
                 }
             }
@@ -213,11 +217,5 @@ public class NotebookInstance implements Serializable {
         this.editable = editable;
     }
 
-    public void setVersionDescription(String versionDescription) {
-        this.versionDescription = versionDescription;
-    }
 
-    public String getVersionDescription() {
-        return versionDescription;
-    }
 }
