@@ -34,6 +34,7 @@ public class HistoryTree implements Serializable {
         Map<Long, HistoryNode> nodeMap = new HashMap<>();
         for (Long id : versionMap.keySet()) {
             AbstractNotebookVersionDTO dto = versionMap.get(id);
+            LOGGER.fine("Adding to tree: id:" + dto.getId() + " parent: " + dto.getParentId() + " type: " + dto.getClass().getName());
             HistoryNode node = HistoryNode.fromVersionDto(dto, dateFormat);
             nodeMap.put(node.getId(), node);
         }
