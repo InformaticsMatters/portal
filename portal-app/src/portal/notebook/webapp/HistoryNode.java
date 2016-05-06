@@ -15,6 +15,8 @@ public class HistoryNode implements Serializable {
     private Long id;
     private Long parentId;
     private String name;
+    private String dateCreated;
+    private String dateUpdated;
     private String nodeType;
 
     public static HistoryNode fromVersionDto(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
@@ -32,6 +34,8 @@ public class HistoryNode implements Serializable {
         }
         node.setParentId(dto.getParentId());
         node.setNodeType(dto.getClass().getSimpleName());
+        node.setDateCreated(dateFormat.format(dto.getCreatedDate()));
+        node.setDateUpdated(dateFormat.format(dto.getLastUpdatedDate()));
         return node;
     }
 
@@ -76,4 +80,19 @@ public class HistoryNode implements Serializable {
         this.nodeType = nodeType;
     }
 
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public String getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(String dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
 }
