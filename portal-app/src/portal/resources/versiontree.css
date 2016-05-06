@@ -18,6 +18,14 @@
   stroke-width: 1.5px;
 }
 
+.versionTreeCard {
+    width: 80px;
+    height: 50px;
+    border: thin solid silver;
+    padding: 4px;
+    font: 12px sans-serif;
+}
+
 
 
 

@@ -1,7 +1,4 @@
-var versionTreeSelectedNodeId;
-
 function createTree(data) {
-
     var margin = {top: 20, right: 120, bottom: 20, left: 120};
     var width = 960 - margin.right - margin.left;
     var height = 300 - margin.top - margin.bottom;
@@ -65,12 +62,22 @@ function createTree(data) {
                 if(d.nodeType == "NotebookEditableDTO") return "green";
                 if(d.nodeType == "NotebookSavepointDTO") return "orange"; });
 
+        /*
         nodeEnter.append("text")
             .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
             .attr("dy", ".35em")
             .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
             .text(function(d) { return d.name; })
             .style("fill-opacity", 1e-6);
+            */
+
+        nodeEnter.append("foreignObject")
+            .attr("width", 80)
+            .attr("height", 50)
+            .attr("x", function(d) { return d.children || d._children ? -90 : 10; })
+            .attr("y", -20)
+            .append("xhtml:body")
+            .html("<div class='versionTreeCard'><p><span class=''>Id: </span><span class=''>value</span></p></div>");
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
