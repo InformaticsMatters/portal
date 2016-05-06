@@ -153,6 +153,7 @@ public class NotebookListPanel extends Panel {
     }
 
     public void refreshNotebookList() throws Exception {
+        LOGGER.info("refresh...");
         listView.setList(notebookSession.listNotebookInfo());
         getRequestCycle().find(AjaxRequestTarget.class).add(this);
     }

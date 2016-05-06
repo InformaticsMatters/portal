@@ -27,8 +27,8 @@ function createTree(data) {
     root.y0 = 0;
     if (root.children !== undefined) {
         // root.children.forEach(collapse);
-        update(root);
     }
+    update(root);
 
     function collapse(d) {
         if (d.children) {

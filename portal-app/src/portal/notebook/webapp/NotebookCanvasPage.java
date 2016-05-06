@@ -181,8 +181,7 @@ public class NotebookCanvasPage extends WebPage {
     public String getCurrentVersionDescription() {
         if (notebookSession.getCurrentNotebookInfo() != null) {
             return notebookSession.getCurrentNotebookInfo().getName()
-                    + " - " + notebookSession.getCurrentNotebookInfo().getOwner()
-                    + " - " + notebookSession.getCurrentNotebookInstance().getVersionDescription();
+                    + " - " + notebookSession.getCurrentNotebookVersionId();
         } else {
             return "No notebook selected";
         }

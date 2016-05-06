@@ -18,11 +18,14 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Alternative
 @RequestScoped
 @Transactional
 public class MockNotebookVariableClient implements NotebookVariableClient {
+    private static final Logger LOGGER = Logger.getLogger(MockNotebookVariableClient.class.getName());
     @Inject
     @PU(puName = PortalConstants.PU_NAME)
     private EntityManager entityManager;

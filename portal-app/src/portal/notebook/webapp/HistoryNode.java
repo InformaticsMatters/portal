@@ -20,9 +20,7 @@ public class HistoryNode implements Serializable {
     public static HistoryNode fromVersionDto(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
         HistoryNode node = new HistoryNode();
         node.setId(dto.getId());
-        if (dto.getParentId() == null) {
-            node.setName("root");
-        } else if (dto instanceof NotebookSavepointDTO) {
+        if (dto instanceof NotebookSavepointDTO) {
             NotebookSavepointDTO savepointDTO = (NotebookSavepointDTO) dto;
             node.setName(savepointDTO.getDescription() == null ? buildDefaultNodeDescription(dto, dateFormat) : savepointDTO.getDescription());
         } else {
