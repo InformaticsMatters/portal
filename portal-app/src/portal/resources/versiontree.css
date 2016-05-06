@@ -9,7 +9,7 @@
 }
 
 .node text {
-  font: 12px sans-serif;
+  font: 10px sans-serif;
 }
 
 .link {
@@ -19,13 +19,23 @@
 }
 
 .versionTreeCard {
-    width: 80px;
+    width: 160;
     height: 50px;
-    border: thin solid silver;
     padding: 4px;
-    font: 12px sans-serif;
+    font: 10px sans-serif;
 }
 
+.versionCardLabel {
+    font-weight: bold;
+}
+
+.versionCardValue {
+}
+
+.versionCardDescription {
+    color: steelblue;
+    font-weight: bold;
+}
 
 
 

@@ -72,12 +72,20 @@ function createTree(data) {
             */
 
         nodeEnter.append("foreignObject")
-            .attr("width", 80)
+            .attr("width", 160)
             .attr("height", 50)
-            .attr("x", function(d) { return d.children || d._children ? -90 : 10; })
+            .attr("x", function(d) { return d.children || d._children ? -170 : 10; })
             .attr("y", -20)
-            .append("xhtml:body")
-            .html("<div class='versionTreeCard'><p><span class=''>Id: </span><span class=''>value</span></p></div>");
+            .html(function(d) {
+                var title = d.nodeType == "NotebookSavepointDTO" ? "<span class='versionCardDescription'>" + d.name + "</span><br>" : "";
+                return "" +
+                    "<div class='versionTreeCard'>" +
+                        title +
+                        "<span class='versionCardLabel'>Id: </span><span class='versionCardValue'>" + d.id + "</span>" +
+                        "<br><span class='versionCardLabel'>Created: </span><span class='versionCardValue'>" + d.dateCreated + "</span>" +
+                        "<br><span class='versionCardLabel'>Updated: </span><span class='versionCardValue'>" + d.dateUpdated + "</span>" +
+                    "</div>";
+            });
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
