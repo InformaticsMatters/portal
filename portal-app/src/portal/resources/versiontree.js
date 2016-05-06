@@ -1,5 +1,5 @@
 function createTree(data) {
-    var margin = {top: 20, right: 120, bottom: 20, left: 120};
+    var margin = {top: 20, right: 120, bottom: 20, left: 180};
     var width = 960 - margin.right - margin.left;
     var height = 300 - margin.top - margin.bottom;
     var i = 0;
@@ -72,9 +72,9 @@ function createTree(data) {
             */
 
         nodeEnter.append("foreignObject")
-            .attr("width", 160)
-            .attr("height", 50)
-            .attr("x", function(d) { return d.children || d._children ? -170 : 10; })
+            .attr("width", 150)
+            .attr("height", function(d) {return d.nodeType == "NotebookSavepointDTO" ? 60 : 50})
+            .attr("x", function(d) { return d.children || d._children ? -150 : 10; })
             .attr("y", -20)
             .html(function(d) {
                 var title = d.nodeType == "NotebookSavepointDTO" ? "<span class='versionCardDescription'>" + d.name + "</span><br>" : "";
