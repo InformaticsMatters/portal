@@ -22,7 +22,11 @@ public class HistoryNode implements Serializable {
         node.setId(dto.getId());
         if (dto instanceof NotebookSavepointDTO) {
             NotebookSavepointDTO savepointDTO = (NotebookSavepointDTO) dto;
-            node.setName(savepointDTO.getDescription() == null ? buildDefaultNodeDescription(dto, dateFormat) : savepointDTO.getDescription());
+            if (savepointDTO.getDescription() == null) {
+                node.setName(dto.getId().toString());
+            } else {
+                node.setName(dto.getId() + " - " + savepointDTO.getDescription());
+            }
         } else {
             node.setName(buildDefaultNodeDescription(dto, dateFormat));
         }
@@ -32,7 +36,7 @@ public class HistoryNode implements Serializable {
     }
 
     private static String buildDefaultNodeDescription(AbstractNotebookVersionDTO dto, DateFormat dateFormat) {
-        return dateFormat.format(dto.getCreatedDate());
+        return dto.getId().toString();
     }
 
     public Long getId() {
