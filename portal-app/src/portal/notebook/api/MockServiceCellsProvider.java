@@ -108,8 +108,40 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                                     new OptionDescriptor<>(String.class, "header.descriptor", "descriptor", "Molecular descriptor")
                                             .withValues(new String[]{"Chemical hashed fingerprint", "ECFP4"})
                                             .withDefaultValue("ECFP4")
-                            }, null)
+                            }, null),
                     }
+            ),
+            new ServiceDescriptor(
+            "mock.deduplication",
+            "Mock deduplication",
+            "Mock deduplication with filed pick list options",
+            new String[]{"tag1", "tag3", "tag5"},
+            null,
+            new String[]{"path/to/find", "road/to/noware"},
+            "User1 <user1@squonk.it>",
+            null,
+            new String[]{"public"},
+            MoleculeObject.class, // inputClass
+            MoleculeObject.class, // outputClass
+            Metadata.Type.STREAM, // inputTypes
+            Metadata.Type.STREAM, // outputTypes
+            "default_icon.png",
+            new AccessMode[]{
+                    new AccessMode(
+                            "asyncHttp",
+                            "Immediate execution",
+                            "Execute as an asynchronous REST web service",
+                            "http://www.somewhere.com/screening", // endpoint
+                            false, // URL is relative
+                            AsyncHttpProcessDatasetJobDefinition.class,
+                            null, null, null, null, new OptionDescriptor[]{
+                            new DatasetsFieldOptionDescriptor("query.cansmiles", "Canonical smiles field", "File with canonical smiles that identifies identical structures"),
+                            new DatasetsFieldOptionDescriptor("query.keepfirst", "Keep first value", "When multiple values keep the first").withMinValues(0).withMaxValues(100),
+                            new DatasetsFieldOptionDescriptor("query.keeplasst", "Keep last value", "When multiple values keep the last").withMinValues(0).withMaxValues(100),
+                            new DatasetsFieldOptionDescriptor("query.append", "Append value", "When multiple values append to list").withMinValues(0).withMaxValues(100),
+
+                    }, null)
+            }
             )
     };
     private static final Logger logger = LoggerFactory.getLogger(MockServiceCellsProvider.class);
