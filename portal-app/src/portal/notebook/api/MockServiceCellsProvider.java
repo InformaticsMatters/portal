@@ -137,7 +137,7 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                             null, null, null, null, new OptionDescriptor[]{
                             new DatasetsFieldOptionDescriptor("query.cansmiles", "Canonical smiles field", "File with canonical smiles that identifies identical structures"),
                             new DatasetsFieldOptionDescriptor("query.keepfirst", "Keep first value", "When multiple values keep the first").withMinValues(0).withMaxValues(100),
-                            new DatasetsFieldOptionDescriptor("query.keeplasst", "Keep last value", "When multiple values keep the last").withMinValues(0).withMaxValues(100),
+                            new DatasetsFieldOptionDescriptor("query.keeplast", "Keep last value", "When multiple values keep the last").withMinValues(0).withMaxValues(100),
                             new DatasetsFieldOptionDescriptor("query.append", "Append value", "When multiple values append to list").withMinValues(0).withMaxValues(100),
 
                     }, null)

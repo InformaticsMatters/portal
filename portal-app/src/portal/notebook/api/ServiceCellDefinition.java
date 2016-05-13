@@ -18,14 +18,13 @@ import java.util.logging.Logger;
 @XmlRootElement
 public class ServiceCellDefinition extends CellDefinition {
 
-    public static final String OPT_SERVICE_ENDPOINT = StepDefinitionConstants.ServiceExecutor.OPTION_SERVICE_ENDPOINT;
-    public static final String OPT_SERVICE_PARAMS = StepDefinitionConstants.ServiceExecutor.OPTION_SERVICE_PARAMS;
-    public static final String OPT_SERVICE_PRESERVE_STRUCTURE = StepDefinitionConstants.ServiceExecutor.OPTION_PRESERVE_STRUCTURE;
+    public static final String OPT_SERVICE_ENDPOINT = StepDefinitionConstants.MoleculeServiceThinExecutor.OPTION_SERVICE_ENDPOINT;
+    public static final String OPT_SERVICE_PARAMS = StepDefinitionConstants.MoleculeServiceThinExecutor.OPTION_SERVICE_PARAMS;
     private final static long serialVersionUID = 1l;
     private static final String SERVICE_ICON = "default_icon.png";
     private static final Logger LOG = Logger.getLogger(ServiceCellDefinition.class.getName());
     private ServiceDescriptor serviceDescriptor;
-    private static final String OPTION_BODY = "body"; // = StepDefinitionConstants.OPTION_BODY
+    private static final String OPTION_BODY = StepDefinitionConstants.OPTION_BODY;
 
     public ServiceCellDefinition(ServiceDescriptor serviceDescriptor) {
         this.serviceDescriptor = serviceDescriptor;
