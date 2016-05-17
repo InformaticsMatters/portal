@@ -6,16 +6,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.Model;
 import org.squonk.dataset.DatasetMetadata;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
+import org.squonk.options.DatasetFieldTypeDescriptor;
+import portal.notebook.api.*;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,8 +50,18 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     private void loadFieldNames(VariableInstance variableInstance) throws Exception {
         String string = notebookSession.readTextValue(variableInstance);
         if (string != null) {
-            DatasetMetadata datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
-            picklistItems.addAll(datasetMetadata.getValueClassMappings().keySet());
+            DatasetMetadata<?> datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
+            if (getFieldEditorModel().getTypeDescriptor() != null && getFieldEditorModel().getTypeDescriptor() instanceof DatasetFieldTypeDescriptor) {
+                DatasetFieldTypeDescriptor dfod = (DatasetFieldTypeDescriptor)getFieldEditorModel().getTypeDescriptor();
+                for (Map.Entry<String,Class> e: datasetMetadata.getValueClassMappings().entrySet()) {
+                    if (dfod.filter(e.getKey(), e.getValue())) {
+                        picklistItems.add(e.getKey());
+                    }
+                }
+            } else {
+                // just add all fields
+                picklistItems.addAll(datasetMetadata.getValueClassMappings().keySet());
+            }
         }
     }
 

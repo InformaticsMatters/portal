@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.core.AccessMode;
 import org.squonk.core.ServiceDescriptor;
+import org.squonk.options.DatasetFieldTypeDescriptor;
+import org.squonk.options.FieldActionTypeDescriptor;
 import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 
@@ -135,10 +137,11 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                             false, // URL is relative
                             AsyncHttpProcessDatasetJobDefinition.class,
                             null, null, null, null, new OptionDescriptor[]{
-                            new DatasetsFieldOptionDescriptor("query.cansmiles", "Canonical smiles field", "File with canonical smiles that identifies identical structures"),
-                            new DatasetsFieldOptionDescriptor("query.keepfirst", "Keep first value", "When multiple values keep the first").withMinValues(0).withMaxValues(100),
-                            new DatasetsFieldOptionDescriptor("query.keeplast", "Keep last value", "When multiple values keep the last").withMinValues(0).withMaxValues(100),
-                            new DatasetsFieldOptionDescriptor("query.append", "Append value", "When multiple values append to list").withMinValues(0).withMaxValues(100),
+                            new OptionDescriptor(new DatasetFieldTypeDescriptor<>(new Class[] {String.class}), "cansmiles", "Canonical smiles field", "File with canonical smiles that identifies identical structures"),
+                            new OptionDescriptor(new DatasetFieldTypeDescriptor<>(), "keepfirstFields", "Keep first value fields", "When multiple values keep the first fields").withMinValues(0).withMaxValues(100),
+                            new OptionDescriptor(new DatasetFieldTypeDescriptor<>(), "keeplastFields", "Keesp last value fields", "When multiple values keep the last fields").withMinValues(0).withMaxValues(100),
+                            new OptionDescriptor(new DatasetFieldTypeDescriptor<>(), "appendFields", "Append value fields", "When multiple values append to list fields").withMinValues(0).withMaxValues(100),
+                            new OptionDescriptor(new FieldActionTypeDescriptor(new String[] {"First", "Last", "Min", "Max", "Append", "Distinct"}), "fieldHandling", "Field handling", "How to handle the individual fields").withMinValues(0).withMaxValues(0)
 
                     }, null)
             }

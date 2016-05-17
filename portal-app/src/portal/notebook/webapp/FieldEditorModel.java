@@ -1,14 +1,18 @@
 package portal.notebook.webapp;
 
+import org.squonk.options.TypeDescriptor;
+
 import java.io.Serializable;
 
 public class FieldEditorModel implements Serializable {
     private final String displayName;
     private Object value;
+    private TypeDescriptor typeDescriptor;
 
-    protected FieldEditorModel(Object value, String displayName) {
+    protected FieldEditorModel(Object value, String displayName, TypeDescriptor typeDescriptor) {
         this.value = value;
         this.displayName = displayName;
+        this.typeDescriptor = typeDescriptor;
     }
 
     public Object getValue() {
@@ -23,4 +27,7 @@ public class FieldEditorModel implements Serializable {
         return displayName;
     }
 
+    public TypeDescriptor getTypeDescriptor() {
+        return typeDescriptor;
+    }
 }
