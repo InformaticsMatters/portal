@@ -6,6 +6,7 @@ public class CellStatusInfo implements Serializable {
     private Boolean bindingsComplete;
     private Boolean running;
     private Boolean succeed;
+    private String message;
 
     public Boolean getBindingsComplete() {
         return bindingsComplete;
@@ -34,17 +35,24 @@ public class CellStatusInfo implements Serializable {
     @Override
     public String toString() {
         if (!bindingsComplete) {
-            return "Input needs defining.";
+            return "Input needs defining";
         } else if (Boolean.TRUE.equals(running)) {
             return "Executing";
         } else if (Boolean.TRUE.equals(succeed)) {
-            return "Succeed.";
+            return "Succeed";
         } else if (Boolean.FALSE.equals(succeed)) {
-            return "Error occured.";
+            return "Error occured";
         } else {
             return "Ready for execution";
         }
     }
 
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

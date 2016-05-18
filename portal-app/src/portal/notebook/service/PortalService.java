@@ -57,6 +57,7 @@ public class PortalService {
                 execution.setJobSuccessful(Boolean.FALSE);
             }
             execution.setJobStatus(jobStatus.getStatus());
+            execution.setLastEventMessage(jobStatus.getEvents().isEmpty() ? null : jobStatus.getEvents().get(0).toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -95,6 +96,7 @@ public class PortalService {
             execution.setJobId(jobStatus.getJobId());
             execution.setJobStatus(jobStatus.getStatus());
             execution.setJobActive(Boolean.TRUE);
+            execution.setLastEventMessage(jobStatus.getEvents().isEmpty() ? null : jobStatus.getEvents().get(0).toString());
             return execution;
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import com.im.lac.job.jobdef.JobStatus;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -141,6 +142,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         } else {
             cellStatusInfo.setRunning(execution.getJobActive());
             cellStatusInfo.setSucceed(execution.getJobSuccessful());
+            cellStatusInfo.setMessage(execution.getLastEventMessage());
         }
     }
 
@@ -192,7 +194,13 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     public String getStatusString() {
-        return cellStatusInfo == null ? "" : cellStatusInfo.toString();
+        if (cellStatusInfo == null) {
+            return "";
+        } else if (cellStatusInfo.getMessage() == null){
+            return cellStatusInfo.toString() + ".";
+        } else {
+            return cellStatusInfo.toString() + ": " + cellStatusInfo.getMessage();
+        }
     }
 
 }

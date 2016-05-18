@@ -18,10 +18,7 @@ import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,15 +46,29 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
        LOGGER.log(Level.INFO, jobId);
        JobStatus oldJobStatus = jobStatusMap.get(jobId);
        if (oldJobStatus == null) {
-           JobStatus<? extends JobDefinition> jobStatus = new JobStatus<>(jobId, "some", JobStatus.Status.COMPLETED, 2, 1, 0, null, null, null, null, null);
+           String message = resolveMessage(JobStatus.Status.COMPLETED);
+           JobStatus<? extends JobDefinition> jobStatus = new JobStatus<>(jobId, "some", JobStatus.Status.COMPLETED, 2, 1, 0, null, null, null, null, Collections.singletonList("message"));
            jobStatusMap.put(jobStatus.getJobId(), jobStatus);
            return jobStatus;
        }  else {
            JobStatus.Status newStatus = calculateStatus(jobId, oldJobStatus);
-           JobStatus<? extends JobDefinition> newJobStatus = new JobStatus<>(jobId, oldJobStatus.getUsername(), newStatus, 0, 0, 0, oldJobStatus.getStarted(), new Date(), oldJobStatus.getJobDefinition(), null, null);
+           String message = resolveMessage(newStatus);
+           JobStatus<? extends JobDefinition> newJobStatus = new JobStatus<>(jobId, oldJobStatus.getUsername(), newStatus, 0, 0, 0, oldJobStatus.getStarted(), new Date(), oldJobStatus.getJobDefinition(), null, message == null ? null : Collections.singletonList(message));
            jobStatusMap.put(jobId, newJobStatus);
            return newJobStatus;
        }
+    }
+
+    private String resolveMessage(JobStatus.Status status) {
+        if (JobStatus.Status.COMPLETED.equals(status)) {
+            return "A lot of items processed";
+        } else if (JobStatus.Status.ERROR.equals(status)) {
+            return "Ugly errors occurred";
+        } else if (JobStatus.Status.RUNNING.equals(status)) {
+            return "Processing a lot of items";
+        } else {
+            return null;
+        }
     }
 
     private JobStatus.Status calculateStatus(String jobId, JobStatus oldJobStatus) {

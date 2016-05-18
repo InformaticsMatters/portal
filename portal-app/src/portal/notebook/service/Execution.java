@@ -19,6 +19,8 @@ public class Execution extends AbstractEntity {
     private Boolean jobActive;
     private Boolean jobSuccessful;
     private JobStatus.Status jobStatus;
+    private String lastEventMessage;
+    private String additionalInfo;
 
     @Column(nullable = false)
     public Long getNotebookId() {
@@ -70,4 +72,19 @@ public class Execution extends AbstractEntity {
         this.jobStatus = jobStatus;
     }
 
+    public String getLastEventMessage() {
+        return lastEventMessage;
+    }
+
+    public void setLastEventMessage(String lastEventMessage) {
+        this.lastEventMessage = lastEventMessage;
+    }
+
+    public String getAdditionalInfo() {
+        return additionalInfo;
+    }
+
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
 }
