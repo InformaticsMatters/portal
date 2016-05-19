@@ -191,4 +191,9 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
     private Rectangle getRectangle() {
         return RECTANGLE;
     }
+
+    @Override
+    public void enableEditor(boolean editable) {
+        marvinSketcherPanel.setEnabled(editable);
+    }
 }

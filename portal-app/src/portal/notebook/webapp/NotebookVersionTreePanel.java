@@ -22,6 +22,7 @@ import javax.inject.Inject;
  */
 public class NotebookVersionTreePanel extends Panel {
 
+    public static final String EMPTY_LIST_JSON = "{}";
     @Inject
     private NotebookSession notebookSession;
 
@@ -31,7 +32,12 @@ public class NotebookVersionTreePanel extends Panel {
 
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
-                response.render(OnDomReadyHeaderItem.forScript("createTree(:json)".replace(":json", buildHistoryTreeAsJson())));
+                String json = buildHistoryTreeAsJson();
+                if (json.equals(EMPTY_LIST_JSON)) {
+                    response.render(OnDomReadyHeaderItem.forScript("createTree(\"\")"));
+                } else {
+                    response.render(OnDomReadyHeaderItem.forScript("createTree(:json)".replace(":json", json)));
+                }
             }
 
             @Override
@@ -51,16 +57,20 @@ public class NotebookVersionTreePanel extends Panel {
 
     private String buildHistoryTreeAsJson() {
         try {
-            String json = "{}";
-            if (notebookSession.getCurrentNotebookInfo() != null) {
+            if (notebookSession.getCurrentNotebookInfo() == null) {
+                return EMPTY_LIST_JSON;
+            } else {
                 HistoryTree history = notebookSession.buildCurrentNotebookHistoryTree();
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.writeValue(outputStream, history.getChildren().get(0));
-                outputStream.flush();
-                json = outputStream.toString();
+                if (history.getChildren().isEmpty()) {
+                    return EMPTY_LIST_JSON;
+                } else {
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.writeValue(outputStream, history.getChildren().get(0));
+                    outputStream.flush();
+                    return outputStream.toString();
+                }
             }
-            return json;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

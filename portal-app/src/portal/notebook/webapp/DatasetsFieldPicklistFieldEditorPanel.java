@@ -29,6 +29,7 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     private NotebookSession notebookSession;
     @Inject
     private NotifierProvider notifierProvider;
+    private DropDownChoice picklistChoice;
 
     public DatasetsFieldPicklistFieldEditorPanel(String id, FieldEditorModel fieldEditorModel, Long cellId) {
         super(id, fieldEditorModel);
@@ -84,7 +85,7 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
             }
         };
         add(new Label("label", getFieldEditorModel().getDisplayName()));
-        DropDownChoice picklistChoice = new DropDownChoice("picklist", model, picklistItems);
+        picklistChoice = new DropDownChoice("picklist", model, picklistItems);
         add(picklistChoice);
     }
 
@@ -105,6 +106,11 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
             }
         }
         return refresh;
+    }
+
+    @Override
+    public void enableEditor(boolean editable) {
+        picklistChoice.setEnabled(editable);
     }
 
 }

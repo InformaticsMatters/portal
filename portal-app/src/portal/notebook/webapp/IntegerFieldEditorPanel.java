@@ -14,6 +14,7 @@ public class IntegerFieldEditorPanel extends FieldEditorPanel {
 
 
     private final FieldEditorModel fieldEditorModel;
+    private NumberTextField<Integer> textField;
 
     public IntegerFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
         super(id, fieldEditorModel);
@@ -21,11 +22,16 @@ public class IntegerFieldEditorPanel extends FieldEditorPanel {
         addComponents();
     }
 
+    @Override
+    public void enableEditor(boolean editable) {
+        textField.setEnabled(editable);
+    }
+
     private void addComponents() {
         CompoundPropertyModel<IntegerModelObject> model = new CompoundPropertyModel<>(new IntegerModelObject());
         IModel<Integer> propertyModel = model.bind("value");
         add(new Label("label", fieldEditorModel.getDisplayName()));
-        NumberTextField<Integer> textField = new NumberTextField<>("value", propertyModel);
+        textField = new NumberTextField<>("value", propertyModel);
         add(textField);
     }
 

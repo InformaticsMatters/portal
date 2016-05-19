@@ -89,7 +89,12 @@ public class NotebookSession implements Serializable {
     public void loadCurrentNotebook(Long id) throws Exception {
         currentNotebookInfo = findNotebookInfo(id);
         NotebookEditableDTO editable = findDefaultNotebookEditable(currentNotebookInfo.getId());
-        loadCurrentVersion(editable.getId());
+        if (editable == null) {
+            currentNotebookVersionId = null;
+            currentNotebookInstance = null;
+        } else {
+            loadCurrentVersion(editable.getId());
+        }
     }
 
     public void loadCurrentVersion(Long versionId) throws Exception {
@@ -342,6 +347,12 @@ public class NotebookSession implements Serializable {
     public void createEditableFromCurrentSavePoint() throws Exception {
 
         NotebookEditableDTO editable = notebookVariableClient.createEditable(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), sessionContext.getLoggedInUserDetails().getUserid());
+        loadCurrentVersion(editable.getId());
+    }
+
+    public void createRootEditable() throws Exception {
+
+        NotebookEditableDTO editable = notebookVariableClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
         loadCurrentVersion(editable.getId());
     }
 

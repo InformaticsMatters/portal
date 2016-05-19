@@ -6,16 +6,19 @@ import org.apache.wicket.model.Model;
 
 public class MultilineFieldEditorPanel extends FieldEditorPanel {
 
+    private TextArea<String> textArea;
+
     public MultilineFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
         super(id, fieldEditorModel);
         addComponents();
     }
 
+
     private void addComponents() {
         Model<String> model = new Model<String>() {
             @Override
             public String getObject() {
-                return (String)getFieldEditorModel().getValue();
+                return (String) getFieldEditorModel().getValue();
             }
 
             @Override
@@ -24,7 +27,13 @@ public class MultilineFieldEditorPanel extends FieldEditorPanel {
             }
         };
         add(new Label("label", getFieldEditorModel().getDisplayName()));
-        TextArea<String> textArea = new TextArea<String>("value", model);
+        textArea = new TextArea<String>("value", model);
         add(textArea);
     }
+
+    @Override
+    public void enableEditor(boolean editable) {
+        textArea.setEnabled(editable);
+    }
+
 }

@@ -59,7 +59,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         List<OptionInstance> optionList = new ArrayList<>();
         CellInstance cellInstance = findCellInstance();
         for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
-            if (optionInstance.getOptionDescriptor().isEditable()) {
+            if (optionInstance.getOptionDescriptor().isVisible()) {
                 optionList.add(optionInstance);
             }
         }
@@ -94,27 +94,29 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void execute() throws Exception {
-        storeOptions();
+        CellInstance cellInstance = findCellInstance();
+        storeOptions(cellInstance);
         notebookSession.storeCurrentEditable();
-        notebookSession.executeCell(findCellInstance().getId());
+        notebookSession.executeCell(cellInstance.getId());
         fireContentChanged();
     }
 
-    private void storeOptions() {
+    private void storeOptions(CellInstance cellInstance) {
         for (String name : optionEditorModelMap.keySet()) {
-            storeOption(name);
+            storeOption(cellInstance, name);
         }
     }
 
-    private void storeOption(String name) {
+    private void storeOption(CellInstance cellInstance, String name) {
         FieldEditorModel editorModel = optionEditorModelMap.get(name);
-        OptionInstance optionInstance = findCellInstance().getOptionInstanceMap().get(name);
+        OptionInstance optionInstance = cellInstance.getOptionInstanceMap().get(name);
         optionInstance.setValue(editorModel.getValue());
     }
 
     private void addOptionEditor(ListItem<OptionInstance> listItem) {
         OptionInstance optionInstance = listItem.getModelObject();
         FieldEditorPanel fieldEditorPanel = createOptionEditor(optionInstance);
+        fieldEditorPanel.enableEditor(optionInstance.getOptionDescriptor().isEditable());
         optionEditorModelMap.put(optionInstance.getOptionDescriptor().getkey(), fieldEditorPanel.getFieldEditorModel());
         listItem.add(fieldEditorPanel);
     }

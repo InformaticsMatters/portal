@@ -6,9 +6,16 @@ import org.apache.wicket.model.Model;
 
 public class StringFieldEditorPanel extends FieldEditorPanel {
 
+    private TextField<String> textField;
+
     public StringFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
         super(id, fieldEditorModel);
         addComponents();
+    }
+
+    @Override
+    public void enableEditor(boolean editable) {
+        textField.setEnabled(editable);
     }
 
     private void addComponents() {
@@ -24,7 +31,7 @@ public class StringFieldEditorPanel extends FieldEditorPanel {
             }
         };
         add(new Label("label", getFieldEditorModel().getDisplayName()));
-        TextField<String> textField = new TextField<>("value", model);
+        textField = new TextField<>("value", model);
         add(textField);
     }
 }

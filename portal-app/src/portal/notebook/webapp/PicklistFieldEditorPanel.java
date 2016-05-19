@@ -9,6 +9,7 @@ import java.util.List;
 public class PicklistFieldEditorPanel  extends FieldEditorPanel {
 
     private final List picklistItems;
+    private DropDownChoice picklistChoice;
 
     public PicklistFieldEditorPanel(String id, FieldEditorModel fieldEditorModel, List picklistItems) {
         super(id, fieldEditorModel);
@@ -29,7 +30,12 @@ public class PicklistFieldEditorPanel  extends FieldEditorPanel {
             }
         };
         add(new Label("label", getFieldEditorModel().getDisplayName()));
-        DropDownChoice picklistChoice = new DropDownChoice("picklist", model, picklistItems);
+        picklistChoice = new DropDownChoice("picklist", model, picklistItems);
         add(picklistChoice);
+    }
+
+    @Override
+    public void enableEditor(boolean editable) {
+        picklistChoice.setEnabled(editable);
     }
 }

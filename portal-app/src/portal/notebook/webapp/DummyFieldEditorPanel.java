@@ -8,6 +8,11 @@ public class DummyFieldEditorPanel extends FieldEditorPanel {
         super(id, editorModel); addComponents();
     }
 
+    @Override
+    public void enableEditor(boolean editable) {
+
+    }
+
     private void addComponents() {
         add(new Label("label", getFieldEditorModel().getDisplayName()));
     }

@@ -16,14 +16,14 @@ import java.util.logging.Logger;
 
 public class FileFieldEditorPanel extends FieldEditorPanel {
     private static final Logger LOGGER = Logger.getLogger(FileFieldEditorPanel.class.getName());
+    private IndicatingAjaxSubmitLink uploadLink;
+    private final Callback callback;
+    private FileUploadField fileUploadField;
+    private Model<String> fileNameModel;
 
     public interface Callback extends Serializable {
         void onUpload(String fileName, InputStream inputStream);
     }
-
-    private final Callback callback;
-    private FileUploadField fileUploadField;
-    private Model<String> fileNameModel;
 
     public FileFieldEditorPanel(String id, FieldEditorModel fieldEditorModel, Callback callback) {
         super(id, fieldEditorModel);
@@ -51,7 +51,7 @@ public class FileFieldEditorPanel extends FieldEditorPanel {
         fileUploadField = new FileUploadField("fileInput");
         add(fileUploadField);
 
-        IndicatingAjaxSubmitLink uploadLink = new IndicatingAjaxSubmitLink("upload", (Form)getParent()) {
+        uploadLink = new IndicatingAjaxSubmitLink("upload", (Form)getParent()) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -73,6 +73,13 @@ public class FileFieldEditorPanel extends FieldEditorPanel {
             callback.onUpload(fileName, inputStream);
             fileNameModel.setObject(fileName);
         }
+    }
+
+
+    @Override
+    public void enableEditor(boolean editable) {
+        fileUploadField.setEnabled(editable);
+        uploadLink.setEnabled(editable);
     }
 
 }

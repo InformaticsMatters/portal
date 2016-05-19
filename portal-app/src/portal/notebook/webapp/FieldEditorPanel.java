@@ -21,4 +21,6 @@ public abstract class FieldEditorPanel extends Panel {
     public boolean processCellChanged(Long cellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         return false;
     }
+
+    public abstract void enableEditor(boolean editable);
 }

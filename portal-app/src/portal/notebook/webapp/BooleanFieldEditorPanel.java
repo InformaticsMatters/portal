@@ -6,9 +6,16 @@ import org.apache.wicket.model.Model;
 
 public class BooleanFieldEditorPanel extends FieldEditorPanel {
 
+    private CheckBox checkBox;
+
     public BooleanFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
         super(id, fieldEditorModel);
         addComponents();
+    }
+
+    @Override
+    public void enableEditor(boolean editable) {
+        checkBox.setEnabled(editable);
     }
 
     private void addComponents() {
@@ -24,7 +31,7 @@ public class BooleanFieldEditorPanel extends FieldEditorPanel {
             }
         };
         add(new Label("label", getFieldEditorModel().getDisplayName()));
-        CheckBox checkBox = new CheckBox("value", model);
+        checkBox = new CheckBox("value", model);
         add(checkBox);
     }
 }

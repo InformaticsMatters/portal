@@ -18,6 +18,7 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel {
     private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
     @Inject
     private NotifierProvider notifierProvider;
+    private TextField<String> textField;
 
 
     public DoubleFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
@@ -26,6 +27,11 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel {
         symbols.setDecimalSeparator('.');
         decimalFormat.setDecimalFormatSymbols(symbols);
         addComponents();
+    }
+
+    @Override
+    public void enableEditor(boolean editable) {
+        textField.setEnabled(editable);
     }
 
     private void addComponents() {
@@ -61,7 +67,7 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel {
             }
         };
         add(new Label("label", getFieldEditorModel().getDisplayName()));
-        TextField<String> textField = new TextField<>("value", propertyModel);
+        textField = new TextField<>("value", propertyModel);
         add(textField);
     }
 
