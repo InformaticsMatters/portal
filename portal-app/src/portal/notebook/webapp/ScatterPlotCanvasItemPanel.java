@@ -133,7 +133,6 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         String xFieldName = model.getX();
         String yFieldName = model.getY();
         String colorFieldName = model.getColor();
-        System.out.println("Color field: " + colorFieldName);
         if (xFieldName != null || yFieldName != null) {
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
