@@ -133,6 +133,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         String xFieldName = model.getX();
         String yFieldName = model.getY();
         String colorFieldName = model.getColor();
+        System.out.println("Color field: " + colorFieldName);
         if (xFieldName != null || yFieldName != null) {
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
@@ -144,12 +145,14 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
                 for (MoleculeObject moleculeObject : dataset) {
                     Float x = safeConvertToFloat(moleculeObject.getValue(xFieldName));
                     Float y = safeConvertToFloat(moleculeObject.getValue(yFieldName));
-                    Integer color = (Integer) moleculeObject.getValue(colorFieldName);
+                    Integer color = (colorFieldName == null ? null : moleculeObject.getValue(colorFieldName, Integer.class));
                     if (x != null && y != null) {
                         DataItem dataItem = new DataItem();
                         dataItem.setX(x);
                         dataItem.setY(y);
-                        dataItem.setColor(color);
+                        if (color != null) {
+                            dataItem.setColor(color);
+                        }
                         data[index] = dataItem;
                         index++;
                         // TODO - should we record how many records are not handled?
