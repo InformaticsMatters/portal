@@ -90,11 +90,10 @@ public class NotebookSession implements Serializable {
         currentNotebookInfo = findNotebookInfo(id);
         NotebookEditableDTO editable = findDefaultNotebookEditable(currentNotebookInfo.getId());
         if (editable == null) {
-            currentNotebookVersionId = null;
-            currentNotebookInstance = null;
-        } else {
-            loadCurrentVersion(editable.getId());
+            createRootEditable();
+            editable = findDefaultNotebookEditable(currentNotebookInfo.getId());
         }
+        loadCurrentVersion(editable.getId());
     }
 
     public void loadCurrentVersion(Long versionId) throws Exception {
