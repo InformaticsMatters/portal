@@ -1,4 +1,8 @@
 function createTree(data) {
+    if (data == "") {
+        return;
+    }
+
     var margin = {top: 20, right: 120, bottom: 20, left: 180};
     var width = 960 - margin.right - margin.left;
     var height = 300 - margin.top - margin.bottom;
