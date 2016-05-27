@@ -109,6 +109,8 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new DatasetFilterGroovyCellDefinition());
         registerCellDefinition(new TransformValuesCellDefinition());
         registerCellDefinition(new ProcessDatasetTrustedGroovyScriptCellDefinition());
+        registerCellDefinition(new DatasetSelectSliceCellDefinition());
+        registerCellDefinition(new DatasetSelectRandomCellDefinition());
         //registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
         registerCellDefinition(new SmilesDeduplicatorCellDefinition());
         for (CellDefinition cellDefinition : serviceCellsProvider.listServiceCellDefinition()) {
