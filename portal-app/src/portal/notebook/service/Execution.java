@@ -1,6 +1,7 @@
 package portal.notebook.service;
 
 import com.im.lac.job.jobdef.JobStatus;
+import org.squonk.util.IOUtils;
 import toolkit.services.AbstractEntity;
 
 import javax.persistence.Column;
@@ -77,7 +78,7 @@ public class Execution extends AbstractEntity {
     }
 
     public void setLastEventMessage(String lastEventMessage) {
-        this.lastEventMessage = lastEventMessage;
+        this.lastEventMessage = IOUtils.truncateString(lastEventMessage, 255);
     }
 
     public String getAdditionalInfo() {
