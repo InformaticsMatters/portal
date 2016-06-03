@@ -97,7 +97,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private void loadCellDefinitions() {
-        registerCellDefinition(new TestCellDefinition());
         registerCellDefinition(new ChemblActivitiesFetcherCellDefinition());
         registerCellDefinition(createTableDisplayCellDefinition());
         registerCellDefinition(createScatterPlotCellDefinition());
