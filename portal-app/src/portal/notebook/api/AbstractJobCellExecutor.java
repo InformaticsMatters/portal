@@ -10,6 +10,7 @@ import org.squonk.execution.steps.StepDefinition;
 import org.squonk.notebook.api.*;
 import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.TypeDescriptor;
+import org.squonk.options.types.Structure;
 import portal.SessionContext;
 import portal.notebook.webapp.BindingsPanel;
 import portal.notebook.webapp.StructureFieldEditorPanel;
@@ -63,18 +64,16 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         for (Map.Entry<String,OptionInstance> e :cell.getOptionInstanceMap().entrySet()) {
             String key = e.getKey();
             OptionInstance i = e.getValue();
-            LOG.fine("checking option " + key);
+            //LOG.fine("checking option " + key);
             if (i != null && i.getValue() != null) {
-                Object converted = getOptionValue(i);
-                result.put(key, converted);
-                LOG.fine("value for option: " + key + " -> " + converted);
+                putOptionValue(result, i.getOptionDescriptor().getTypeDescriptor(), key, i.getValue());
             }
         }
         return result;
     }
 
-    protected Object getOptionValue(OptionInstance i) {
-        TypeDescriptor td = i.getOptionDescriptor().getTypeDescriptor();
+    protected void putOptionValue(Map<String, Object> options, TypeDescriptor td, String key, Object value) {
+        LOG.info("Handling option " + key + " -> " + value);
         // ----- start of huge hack --------------
         // This is a temp workaround until we find a way of asking the sketcher for the molecule in the required format.
         // The MoleculeTypeDescriptor defines what formats the services can handle, but the sketcher knows how to convert
@@ -82,20 +81,21 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         // This needs to be generalised to support any cell/option type.
         if (td instanceof MoleculeTypeDescriptor) {
             MoleculeTypeDescriptor mtd = (MoleculeTypeDescriptor)td;
-            Object value = i.getValue();
             if (value instanceof String) { // is it always a String?
                 String mol = (String)value;
-                MoleculeObject converted = StructureFieldEditorPanel.convertMolecule(mol, mtd.getFormats());
+                Structure converted = StructureFieldEditorPanel.convertMolecule(mol, mtd.getFormats());
                 if (converted != null) {
                     LOG.info("Converted mol to: " + converted.getFormat());
+                    td.putOptionValue(options, key, converted);
                 } else {
                     LOG.info("No converted molecule");
                 }
-                return converted;
+
             }
+            // ----- end of huge hack --------------
+        } else {
+            td.putOptionValue(options, key, value);
         }
-        // ----- end of huge hack --------------
-        return i.getValue();
     }
 
     /** Creates a VariableKey for this variable, looking up the producer cell from the notebook

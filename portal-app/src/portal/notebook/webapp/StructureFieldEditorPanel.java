@@ -15,6 +15,7 @@ import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource
 import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.options.types.Structure;
 import portal.notebook.api.OptionInstance;
 import toolkit.wicket.marvinjs.MarvinSketcher;
 
@@ -141,7 +142,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
                 return null;
             } else {
                 Molecule molecule = MolImporter.importMol(mrv);
-                MoleculeObject mo =  exportAsString(molecule, "smiles", "cxsmiles");
+                Structure mo =  exportAsString(molecule, "smiles", "cxsmiles");
                 return mo.getSource();
             }
         } catch (Throwable t) {
@@ -162,7 +163,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
         }
     }
 
-    public static MoleculeObject convertMolecule(String molstr, String... formats) {
+    public static Structure convertMolecule(String molstr, String... formats) {
         try {
             if (molstr == null || molstr.isEmpty()) {
                 return null;
@@ -176,11 +177,11 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
     }
 
     // this method is copied from MolecuelUtils in the chemaxon-lib module
-    private static MoleculeObject exportAsString(Molecule mol, String... format) throws IOException {
+    private static Structure exportAsString(Molecule mol, String... format) throws IOException {
         IOException ex = null;
         for (String f : format) {
             try {
-                return new MoleculeObject(MolExporter.exportToFormat(mol, f), f);
+                return new Structure(MolExporter.exportToFormat(mol, f), f);
             } catch (IOException e) {
                 ex = e;
             }

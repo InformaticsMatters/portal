@@ -18,8 +18,7 @@ import java.util.logging.Logger;
 @XmlRootElement
 public class ServiceCellDefinition extends CellDefinition {
 
-    public static final String OPT_SERVICE_ENDPOINT = StepDefinitionConstants.MoleculeServiceThinExecutor.OPTION_SERVICE_ENDPOINT;
-    public static final String OPT_SERVICE_PARAMS = StepDefinitionConstants.MoleculeServiceThinExecutor.OPTION_SERVICE_PARAMS;
+    public static final String OPT_SERVICE_ENDPOINT = StepDefinitionConstants.OPTION_SERVICE_ENDPOINT;
     private final static long serialVersionUID = 1l;
     private static final String SERVICE_ICON = "default_icon.png";
     private static final Logger LOG = Logger.getLogger(ServiceCellDefinition.class.getName());
@@ -91,20 +90,16 @@ public class ServiceCellDefinition extends CellDefinition {
             AccessMode accessMode = serviceDescriptor.getAccessModes()[0];
             LOG.info("Building JobDefinition for service " + accessMode.getExecutionEndpoint());
 
-            Map<String, Object> options = collectAllOptions(cell);
-            OptionDescriptor<?> optDesc = findOptionDescriptorForBody();
-            LOG.info("Body OptionDescriptor: " + optDesc);
-            Object body = null;
-            if (optDesc != null) {
-                body = options.remove(OPTION_BODY);
-            }
-
             StepDefinition step = new StepDefinition(accessMode.getAdapterClassName())
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
-                    .withOption(OPT_SERVICE_ENDPOINT, serviceDescriptor.getAccessModes()[0].getExecutionEndpoint())
-                    .withOption(OPT_SERVICE_PARAMS, options);
+                    .withOption(OPT_SERVICE_ENDPOINT, serviceDescriptor.getAccessModes()[0].getExecutionEndpoint());
 
+            Map<String, Object> options = collectAllOptions(cell);
+
+            OptionDescriptor<?> optDesc = findOptionDescriptorForBody();
+            LOG.info("Body OptionDescriptor: " + optDesc);
             if (optDesc != null) {
+                Object body = options.remove(OPTION_BODY);
                 LOG.info("Setting body option: " + body);
                 step = step.withOption(OPTION_BODY, body);
             } else {
@@ -116,6 +111,10 @@ public class ServiceCellDefinition extends CellDefinition {
                     LOG.info("Input variable " + VAR_NAME_INPUT + " not found");
                 }
                 step = step.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key);
+            }
+
+            for (Map.Entry<String,Object> e: options.entrySet()) {
+                step.withOption(e.getKey(), e.getValue());
             }
 
             return buildJobDefinition(cellExecutionData, cell, step);
