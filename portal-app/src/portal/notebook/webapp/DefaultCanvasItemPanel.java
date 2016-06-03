@@ -124,7 +124,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private FieldEditorPanel createOptionEditor(OptionInstance optionInstance) {
         OptionDescriptor optionDescriptor = optionInstance.getOptionDescriptor();
         TypeDescriptor typeDescriptor = optionDescriptor.getTypeDescriptor();
-        Object value = optionInstance.getValue() == null ? optionDescriptor.getDefaultValue() : optionInstance.getValue();
+        Object value = optionInstance.getValue();
         if (optionDescriptor instanceof RestPicklistOptionDescriptor) {
             RestPicklistOptionDescriptor restPicklistOptionDescriptor = (RestPicklistOptionDescriptor) optionDescriptor;
             return new RestPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel(), typeDescriptor), restPicklistOptionDescriptor.getQueryUri());

@@ -49,8 +49,15 @@ public class NotebookInstance implements Serializable {
         setLastCellId(cellInstance.getId());
         cellInstance.setName(calculateCellName(cellInstance));
         configureCellInstance(cellInstance);
+        applyDefaultValues(cellInstance);
         cellInstanceList.add(cellInstance);
         return cellInstance;
+    }
+
+    private void applyDefaultValues(CellInstance cellInstance) {
+        for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
+            optionInstance.setValue(optionInstance.getOptionDescriptor().getDefaultValue());
+        }
     }
 
     private String calculateCellName(CellInstance cell) {
