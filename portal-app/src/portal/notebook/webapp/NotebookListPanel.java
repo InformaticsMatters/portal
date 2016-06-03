@@ -94,8 +94,12 @@ public class NotebookListPanel extends Panel {
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         try {
                             boolean share = !notebookInfo.getShared();
-                            notebookSession.updateNotebook(notebookInfo.getId(), notebookInfo.getName(), notebookInfo.getDescription(), share);
-                            refreshNotebookList();
+                            if (share && !notebookSession.hasSavepoints(notebookInfo.getId())) {
+                                throw new Exception("At least one savepoint is required to share a notebook");
+                            } else {
+                                notebookSession.updateNotebook(notebookInfo.getId(), notebookInfo.getName(), notebookInfo.getDescription(), share);
+                                refreshNotebookList();
+                            }
                         } catch (Throwable t) {
                             LOGGER.warn("Error updating notebook", t);
                             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());

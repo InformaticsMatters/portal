@@ -81,8 +81,8 @@ public class NotebookSession implements Serializable {
         notebookVariableClient.deleteNotebook(notebookId);
     }
 
-    private NotebookEditableDTO findDefaultNotebookEditable(Long descriptorId) throws Exception {
-        List<NotebookEditableDTO> editables = notebookVariableClient.listEditables(descriptorId, sessionContext.getLoggedInUserDetails().getUserid());
+    public NotebookEditableDTO findDefaultNotebookEditable(Long notebookId) throws Exception {
+        List<NotebookEditableDTO> editables = notebookVariableClient.listEditables(notebookId, sessionContext.getLoggedInUserDetails().getUserid());
         return editables.isEmpty() ? null : editables.get(0);
     }
 
@@ -90,8 +90,7 @@ public class NotebookSession implements Serializable {
         currentNotebookInfo = findNotebookInfo(id);
         NotebookEditableDTO editable = findDefaultNotebookEditable(currentNotebookInfo.getId());
         if (editable == null) {
-            createRootEditable();
-            editable = findDefaultNotebookEditable(currentNotebookInfo.getId());
+            throw new Exception("No default editable");
         }
         loadCurrentVersion(editable.getId());
     }
@@ -349,18 +348,16 @@ public class NotebookSession implements Serializable {
         loadCurrentVersion(editable.getId());
     }
 
-    public void createRootEditable() throws Exception {
-
-        NotebookEditableDTO editable = notebookVariableClient.createEditable(currentNotebookInfo.getId(), null, sessionContext.getLoggedInUserDetails().getUserid());
-        loadCurrentVersion(editable.getId());
-    }
-
     public Long getCurrentNotebookVersionId() {
         return currentNotebookVersionId;
     }
 
     public void setCurrentNotebookVersionId(Long currentNotebookVersionId) {
         this.currentNotebookVersionId = currentNotebookVersionId;
+    }
+
+    public boolean hasSavepoints(Long id) throws Exception {
+        return !notebookVariableClient.listSavepoints(id).isEmpty();
     }
 }
 
