@@ -12,7 +12,7 @@ public class RestPicklistOptionDescriptor extends OptionDescriptor<String> {
 
 
     public RestPicklistOptionDescriptor(String key, String label, String description, String queryUri) {
-        super(new SimpleTypeDescriptor(String.class), key, label, description, new String[0], null, true, true, 1, 1);
+        super(new SimpleTypeDescriptor<>(String.class), key, label, description, new String[0], null, true, true, 1, 1);
         this.queryUri = queryUri;
     }
 

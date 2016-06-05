@@ -29,7 +29,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
         getVariableDefinitionList().add(variableDefinition);
         variableDefinition  = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);
         getVariableDefinitionList().add(variableDefinition);
-        getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor<File>(new String[] {"csv", "tab", "txt"}),
+        getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"csv", "tab", "txt"}),
                 OPT_FILE_UPLOAD, "CSV/TAB File", "Upload comma or tab separated text file"));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_FILE_TYPE, "File type", "Type of CSV or TAB file")
                 .withValues(new String[]{"TDF", "EXCEL", "MYSQL", "RFC4180", "DEFAULT"})

@@ -104,7 +104,7 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                                     false, // URL is relative
                                     AsyncHttpProcessDatasetJobDefinition.class,
                                     null, null, null, null, new OptionDescriptor[]{
-                                    new OptionDescriptor<>(new MoleculeTypeDescriptor<>(MoleculeTypeDescriptor.MoleculeType.DISCRETE, new String[] {"smiles"}), "header.query_structure", "Query Structure", "Structure to us as the query"),
+                                    new OptionDescriptor<>(new MoleculeTypeDescriptor(MoleculeTypeDescriptor.MoleculeType.DISCRETE, new String[] {"smiles"}), "header.query_structure", "Query Structure", "Structure to us as the query"),
                                     new OptionDescriptor<>(Float.class, "header.threshold", "Similarity Cuttoff", "Similarity score cuttoff between 0 and 1 (1 means identical)")
                                             .withDefaultValue(0.7f),
                                     new OptionDescriptor<>(String.class, "header.descriptor", "descriptor", "Molecular descriptor")
@@ -137,11 +137,11 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                             false, // URL is relative
                             AsyncHttpProcessDatasetJobDefinition.class,
                             null, null, null, null, new OptionDescriptor[]{
-                            new OptionDescriptor(new DatasetFieldTypeDescriptor<>(new Class[] {String.class}), "cansmiles", "Canonical smiles field", "File with canonical smiles that identifies identical structures"),
-                            new OptionDescriptor(new DatasetFieldTypeDescriptor<>(), "keepfirstFields", "Keep first value fields", "When multiple values keep the first fields").withMinValues(0).withMaxValues(100),
-                            new OptionDescriptor(new DatasetFieldTypeDescriptor<>(), "keeplastFields", "Keesp last value fields", "When multiple values keep the last fields").withMinValues(0).withMaxValues(100),
-                            new OptionDescriptor(new DatasetFieldTypeDescriptor<>(), "appendFields", "Append value fields", "When multiple values append to list fields").withMinValues(0).withMaxValues(100),
-                            new OptionDescriptor(new FieldActionTypeDescriptor(new String[] {"First", "Last", "Min", "Max", "Append", "Distinct"}), "fieldHandling", "Field handling", "How to handle the individual fields").withMinValues(0).withMaxValues(0)
+                            new OptionDescriptor<>(new DatasetFieldTypeDescriptor(new Class[] {String.class}), "cansmiles", "Canonical smiles field", "File with canonical smiles that identifies identical structures"),
+                            new OptionDescriptor<>(new DatasetFieldTypeDescriptor(), "keepfirstFields", "Keep first value fields", "When multiple values keep the first fields").withMinValues(0).withMaxValues(100),
+                            new OptionDescriptor<>(new DatasetFieldTypeDescriptor(), "keeplastFields", "Keesp last value fields", "When multiple values keep the last fields").withMinValues(0).withMaxValues(100),
+                            new OptionDescriptor<>(new DatasetFieldTypeDescriptor(), "appendFields", "Append value fields", "When multiple values append to list fields").withMinValues(0).withMaxValues(100),
+                            new OptionDescriptor<>(new FieldActionTypeDescriptor(new String[] {"First", "Last", "Min", "Max", "Append", "Distinct"}), "fieldHandling", "Field handling", "How to handle the individual fields").withMinValues(0).withMaxValues(0)
 
                     }, null)
             }

@@ -66,7 +66,7 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
     private NotebookDTO toNotebookDTO(MockNotebook mockNotebook) {
         TypedQuery<MockNotebookNotebookLayer> layerQuery = entityManager.createQuery("select o from MockNotebookNotebookLayer o where o.mockNotebook = :mockNotebook", MockNotebookNotebookLayer.class);
         layerQuery.setParameter("mockNotebook", mockNotebook);
-        NotebookDTO notebookDTO = new NotebookDTO(mockNotebook.getId(), mockNotebook.getName(), mockNotebook.getDescription(), mockNotebook.getOwner(), new Date(), new Date(), null);
+        NotebookDTO notebookDTO = new NotebookDTO(mockNotebook.getId(), mockNotebook.getName(), mockNotebook.getDescription(), mockNotebook.getOwner(), new Date(), new Date(), null, 0, 0, 0);
         for (MockNotebookNotebookLayer mockNotebookNotebookLayer : layerQuery.getResultList()) {
             notebookDTO.getLayers().add(mockNotebookNotebookLayer.getLayerName());
         }

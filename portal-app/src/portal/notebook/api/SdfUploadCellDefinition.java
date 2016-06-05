@@ -28,7 +28,7 @@ public class SdfUploadCellDefinition extends CellDefinition {
         getVariableDefinitionList().add(variableDefinition);
         variableDefinition = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);
         getVariableDefinitionList().add(variableDefinition);
-        getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor<File>(new String[] {"sdf"}), OPT_FILE_UPLOAD, "SD File", "Upload SD file"));
+        getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"sdf"}), OPT_FILE_UPLOAD, "SD File", "Upload SD file"));
         getOptionDefinitionList().add(new OptionDescriptor<>(
                 String.class, OPT_NAME_FIELD_NAME,
                 "Name field name", "Name of the field to use for the molecule name (the part before the CTAB block)")
