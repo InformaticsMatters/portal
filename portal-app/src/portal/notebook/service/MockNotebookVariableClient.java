@@ -18,7 +18,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Alternative
@@ -65,8 +64,10 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
 
     private NotebookDTO toNotebookDTO(MockNotebook mockNotebook) {
         TypedQuery<MockNotebookNotebookLayer> layerQuery = entityManager.createQuery("select o from MockNotebookNotebookLayer o where o.mockNotebook = :mockNotebook", MockNotebookNotebookLayer.class);
+        TypedQuery<MockNotebookSavepoint> savepointQuery = entityManager.createQuery("select o from MockNotebookSavepoint o where o.mockNotebookVersion.mockNotebook = :mockNotebook", MockNotebookSavepoint.class);
         layerQuery.setParameter("mockNotebook", mockNotebook);
-        NotebookDTO notebookDTO = new NotebookDTO(mockNotebook.getId(), mockNotebook.getName(), mockNotebook.getDescription(), mockNotebook.getOwner(), new Date(), new Date(), null, 0, 0, 0);
+        savepointQuery.setParameter("mockNotebook", mockNotebook);
+        NotebookDTO notebookDTO = new NotebookDTO(mockNotebook.getId(), mockNotebook.getName(), mockNotebook.getDescription(), mockNotebook.getOwner(), new Date(), new Date(), null, savepointQuery.getResultList().size(), 0, 0);
         for (MockNotebookNotebookLayer mockNotebookNotebookLayer : layerQuery.getResultList()) {
             notebookDTO.getLayers().add(mockNotebookNotebookLayer.getLayerName());
         }
@@ -117,11 +118,14 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         TypedQuery<MockNotebook> query = entityManager.createQuery("select o from MockNotebook o", MockNotebook.class);
         List<NotebookDTO> list = new ArrayList<>();
         for (MockNotebook mockNotebook : query.getResultList()) {
-            list.add(toNotebookDTO(mockNotebook));
-
+            NotebookDTO notebookDTO = toNotebookDTO(mockNotebook);
+            if (mockNotebook.getOwner().equals(userName) || (notebookDTO.getLayers().contains("public") && notebookDTO.getSavepointCount() > 0)) {
+                list.add(toNotebookDTO(mockNotebook));
+            }
         }
         return list;
     }
+
 
     @Override
     public List<NotebookEditableDTO> listEditables(Long aLong, String userName) throws Exception {

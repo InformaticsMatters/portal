@@ -45,8 +45,8 @@ public class NotebookSession implements Serializable {
     public List<NotebookInfo> listNotebookInfo() throws Exception {
         LOGGER.info("list");
         List<NotebookInfo> list = new ArrayList<>();
-        for (NotebookDTO notebookDescriptor : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
-            NotebookInfo notebookInfo = NotebookInfo.fromNotebookDTO(notebookDescriptor);
+        for (NotebookDTO notebookDTO : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
+            NotebookInfo notebookInfo = NotebookInfo.fromNotebookDTO(notebookDTO);
             list.add(notebookInfo);
         }
         return list;
@@ -89,11 +89,16 @@ public class NotebookSession implements Serializable {
     public void loadCurrentNotebook(Long id) throws Exception {
         currentNotebookInfo = findNotebookInfo(id);
         NotebookEditableDTO editable = findDefaultNotebookEditable(currentNotebookInfo.getId());
+        if (editable == null && !currentNotebookInfo.getOwner().equals(sessionContext.getLoggedInUserDetails().getUserid())) {
+            NotebookSavepointDTO savepoint = notebookVariableClient.listSavepoints(currentNotebookInfo.getId()).get(0);
+            editable = notebookVariableClient.createEditable(currentNotebookInfo.getId(), savepoint.getId(), sessionContext.getLoggedInUserDetails().getUserid());
+        }
         if (editable == null) {
             throw new Exception("No default editable");
         }
         loadCurrentVersion(editable.getId());
     }
+
 
     public void loadCurrentVersion(Long versionId) throws Exception {
         Map<Long, AbstractNotebookVersionDTO> map = buildCurrentNotebookVersionMap();

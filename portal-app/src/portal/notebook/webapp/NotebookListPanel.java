@@ -20,7 +20,6 @@ import toolkit.wicket.semantic.NotifierProvider;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * @author simetrias
@@ -94,7 +93,7 @@ public class NotebookListPanel extends Panel {
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         try {
                             boolean share = !notebookInfo.getShared();
-                            if (share && !notebookSession.hasSavepoints(notebookInfo.getId())) {
+                            if (share && !notebookInfo.getShareable()) {
                                 throw new Exception("At least one savepoint is required to share a notebook");
                             } else {
                                 notebookSession.updateNotebook(notebookInfo.getId(), notebookInfo.getName(), notebookInfo.getDescription(), share);
@@ -107,7 +106,7 @@ public class NotebookListPanel extends Panel {
                     }
                 };
                 listItem.add(shareLink);
-                shareLink.setVisible(isOwner);
+                shareLink.setVisible(isOwner && notebookInfo.getShareable());
 
                 AjaxLink removeLink = new AjaxLink("remove") {
 

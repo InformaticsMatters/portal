@@ -11,6 +11,7 @@ public class NotebookInfo implements Serializable {
     private String description;
     private Boolean shared;
     private String owner;
+    private Boolean shareable;
 
     public Long getId() {
         return id;
@@ -59,8 +60,16 @@ public class NotebookInfo implements Serializable {
         notebookInfo.setDescription(notebookDTO.getDescription());
         notebookInfo.setOwner(notebookDTO.getOwner());
         notebookInfo.setShared(notebookDTO.getLayers().contains("public"));
+        notebookInfo.setShareable(notebookDTO.getSavepointCount() > 0);
         return notebookInfo;
     }
 
 
+    public void setShareable(Boolean shareable) {
+        this.shareable = shareable;
+    }
+
+    public Boolean getShareable() {
+        return shareable;
+    }
 }
