@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 
@@ -16,7 +17,7 @@ public class ProcessDatasetUntrustedGroovyScriptCellDefinition extends CellDefin
 
 
     public ProcessDatasetUntrustedGroovyScriptCellDefinition() {
-        super(CELL_NAME, "Groovy Script (untrusted)", "icons/program.png", new String[]{"script", "groovy"});
+        super(CELL_NAME, "Groovy Script (untrusted)", "icons/program.png", new String[]{"script", "groovy", "dataset", "docker"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(
@@ -26,8 +27,7 @@ public class ProcessDatasetUntrustedGroovyScriptCellDefinition extends CellDefin
 
     @Override
     public CellExecutor getCellExecutor() {
-        //return new SimpleJobCellExecutor(StepDefinitionConstants.UntrustedGroovyDataset.CLASSNAME);
-        return new SimpleJobCellExecutor("org.squonk.execution.steps.impl.UntrustedGroovyDatasetScriptStep");
+        return new SimpleJobCellExecutor(StepDefinitionConstants.UnrustedGroovyDataset.CLASSNAME);
     }
 
 }
