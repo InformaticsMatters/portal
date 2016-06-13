@@ -1,4 +1,10 @@
 function buildScatterPlot(id, data, xLabel, yLabel) {
+    // this prevents #13, caused by server side generating
+    // data with invalid (null) values
+    if (data[0] == null) {
+        data = [];
+    }
+
     $id = $('#' + id);
     $plotContent = $id.find('.svg-container');
 
