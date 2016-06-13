@@ -1,12 +1,15 @@
 package portal.notebook.webapp;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.im.lac.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.client.NotebookVariableClient;
+import org.squonk.dataset.Dataset;
+import org.squonk.dataset.DatasetMetadata;
 import org.squonk.notebook.api.*;
+import org.squonk.types.io.JsonHandler;
+import org.squonk.util.IOUtils;
 import portal.SessionContext;
 import portal.notebook.api.*;
 import portal.notebook.service.Execution;
@@ -20,7 +23,6 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.zip.GZIPInputStream;
 
 @SessionScoped
 public class NotebookSession implements Serializable {
@@ -261,11 +263,13 @@ public class NotebookSession implements Serializable {
     }
 
     public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) throws Exception {
+
+        String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        DatasetMetadata meta = JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
         try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
-            GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(gzipInputStream, new TypeReference<List<MoleculeObject>>() {
-            });
+            InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
+            Dataset<MoleculeObject> dataset = new Dataset<>(MoleculeObject.class, gunzippedInputStream, meta);
+            return dataset.getItems();
         }
     }
 
