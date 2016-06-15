@@ -19,6 +19,8 @@ public class NotebookInstance implements Serializable {
     private Long lastCellId;
     private boolean editable;
     private String versionDescription;
+    private Integer canvasWidth;
+    private Integer canvasHeight;
 
     public List<CellInstance> getCellInstanceList() {
         return cellInstanceList;
@@ -233,5 +235,21 @@ public class NotebookInstance implements Serializable {
 
     public void setVersionDescription(String versionDescription) {
         this.versionDescription = versionDescription;
+    }
+
+    public Integer getCanvasWidth() {
+        return canvasWidth;
+    }
+
+    public void setCanvasWidth(Integer canvasWidth) {
+        this.canvasWidth = canvasWidth;
+    }
+
+    public Integer getCanvasHeight() {
+        return canvasHeight;
+    }
+
+    public void setCanvasHeight(Integer canvasHeight) {
+        this.canvasHeight = canvasHeight;
     }
 }
