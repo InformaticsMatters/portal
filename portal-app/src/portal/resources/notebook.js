@@ -151,7 +151,10 @@ function makeCanvasItemPlumbDraggable(selector) {
 
         stop: function(params) {
             var index = $('#' + params.el.id).index('.notebook-canvas-item');
-            onNotebookCanvasItemDragged(index, params.pos[0], params.pos[1]);
+            var $plumbContainer = $('#plumbContainer');
+            var containerHeight = $plumbContainer.outerHeight();
+            var containerWidth = $plumbContainer.outerWidth();
+            onNotebookCanvasItemDragged(index, params.pos[0], params.pos[1], containerWidth, containerHeight);
         }
     });
 }
@@ -363,6 +366,12 @@ function initJsPlumb() {
 function makeNbTrActive(itemId) {
     $('.nbTr').removeClass("selected");
     $('#' + itemId).addClass("selected");
+}
+
+function applySavedCanvasSize(width, height) {
+    $plumbContainer = $('#plumbContainer');
+    $plumbContainer.css("min-width", width);
+    $plumbContainer.css("height", height);
 }
 
 

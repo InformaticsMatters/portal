@@ -9,7 +9,6 @@ import portal.notebook.api.CellInstance;
 public class AdvancedPopupPanel extends Panel {
 
     private final CellInstance cellInstance;
-    private BindingsPanel bindingsPanel;
 
     public AdvancedPopupPanel(String id, CellInstance cellInstance, Panel advancedOptionsPanel) {
         super(id);

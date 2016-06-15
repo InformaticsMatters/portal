@@ -7,6 +7,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -19,8 +20,10 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.string.StringValue;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PopupContainerProvider;
@@ -51,6 +54,9 @@ public class NotebookCanvasPage extends WebPage {
     public static final String CANVAS_ITEM_PREFIX = "canvasItem";
     public static final String CANVASITEM_INDEX = "index";
     public static final String VERSION_TREE_NODE_ID = "versionTreeNodeId";
+    public static final String CANVAS_WIDTH = "canvasWidth";
+    public static final String CANVAS_HEIGHT = "canvasHeight";
+
     private static final Logger LOGGER = Logger.getLogger(NotebookCanvasPage.class.getName());
 
     boolean nbListVisible = true;
@@ -192,6 +198,28 @@ public class NotebookCanvasPage extends WebPage {
         plumbContainer.setOutputMarkupId(true);
         plumbContainer.setOutputMarkupPlaceholderTag(true);
         add(plumbContainer);
+        plumbContainer.add(new Behavior() {
+
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                NotebookInstance instance = notebookSession.getCurrentNotebookInstance();
+                if (instance != null && isSavedCanvasSize(instance)) {
+                    String canvasWidth = instance.getCanvasWidth().toString();
+                    String canvasHeight = instance.getCanvasHeight().toString();
+                    String js = "applySavedCanvasSize(:width, :height)";
+                    js = js.replace(":width", canvasWidth).replace(":height", canvasHeight);
+                    response.render(OnDomReadyHeaderItem.forScript(js));
+
+                    LOGGER.info("Applied saved canvas size: " + canvasWidth + ", " + canvasHeight);
+                }
+            }
+
+            private boolean isSavedCanvasSize(NotebookInstance instance) {
+                boolean hasSavedWidth = instance.getCanvasWidth() != null && instance.getCanvasWidth() > 0;
+                boolean hasSavedHeight = instance.getCanvasHeight() != null && instance.getCanvasHeight() > 0;
+                return hasSavedWidth && hasSavedHeight;
+            }
+        });
     }
 
     private void addVersionTreePanel() {
@@ -476,6 +504,7 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             protected void respond(AjaxRequestTarget target) {
                 try {
+                    saveCanvasSize();
                     String index = getRequest().getRequestParameters().getParameterValue(CANVASITEM_INDEX).toString();
                     String x = getRequest().getRequestParameters().getParameterValue(POSITION_LEFT).toString();
                     String y = getRequest().getRequestParameters().getParameterValue(POSITION_TOP).toString();
@@ -500,7 +529,9 @@ public class NotebookCanvasPage extends WebPage {
                 CharSequence callBackScript = getCallbackFunction(
                         CallbackParameter.explicit(CANVASITEM_INDEX),
                         CallbackParameter.explicit(POSITION_LEFT),
-                        CallbackParameter.explicit(POSITION_TOP));
+                        CallbackParameter.explicit(POSITION_TOP),
+                        CallbackParameter.explicit(CANVAS_WIDTH),
+                        CallbackParameter.explicit(CANVAS_HEIGHT));
                 callBackScript = "onNotebookCanvasItemDragged=" + callBackScript + ";";
                 response.render(OnDomReadyHeaderItem.forScript(callBackScript));
             }
@@ -512,6 +543,23 @@ public class NotebookCanvasPage extends WebPage {
             }
         };
         add(onCanvasItemDragStopBehavior);
+    }
+
+    private void saveCanvasSize() {
+        IRequestParameters requestParameters = getRequest().getRequestParameters();
+        StringValue width = requestParameters.getParameterValue(CANVAS_WIDTH);
+        StringValue height = requestParameters.getParameterValue(CANVAS_HEIGHT);
+        int canvasWidth;
+        int canvasHeight;
+        if (width != null && height != null) {
+            canvasWidth = Integer.parseInt(width.toString());
+            canvasHeight = Integer.parseInt(height.toString());
+            NotebookInstance instance = notebookSession.getCurrentNotebookInstance();
+            instance.setCanvasWidth(canvasWidth);
+            instance.setCanvasHeight(canvasHeight);
+
+            LOGGER.info("Saved canvas size: " + canvasWidth + ", " + canvasHeight);
+        }
     }
 
     private void addCanvasNewConnectionBehavior() {
