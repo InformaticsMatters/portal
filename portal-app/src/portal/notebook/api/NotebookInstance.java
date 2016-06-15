@@ -135,6 +135,8 @@ public class NotebookInstance implements Serializable {
 
 
     public void storeNotebookCanvasDTO(NotebookCanvasDTO notebookCanvasDTO) {
+        notebookCanvasDTO.putProperty("canvasWidth", canvasWidth);
+        notebookCanvasDTO.putProperty("canvasHeight", canvasHeight);
         for (CellInstance cell : getCellInstanceList()) {
             NotebookCanvasDTO.CellDTO cellDTO = new NotebookCanvasDTO.CellDTO(
                     cell.getId(),
@@ -168,6 +170,8 @@ public class NotebookInstance implements Serializable {
             // new notebook - no contents
             return;
         } else {
+            canvasWidth = (Integer)notebookCanvasDTO.getProperty("canvasWidth");
+            canvasHeight = (Integer)notebookCanvasDTO.getProperty("canvasHeight");
             setLastCellId(notebookCanvasDTO.getLastCellId());
             for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
                 // TODO - error handling
