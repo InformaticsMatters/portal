@@ -2,7 +2,7 @@ package portal.notebook.api;
 
 import com.im.lac.dataset.Metadata;
 import com.im.lac.job.jobdef.AsyncHttpProcessDatasetJobDefinition;
-import com.im.lac.types.MoleculeObject;
+import org.squonk.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.core.AccessMode;

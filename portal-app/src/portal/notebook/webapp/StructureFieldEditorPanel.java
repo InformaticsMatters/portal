@@ -5,7 +5,7 @@ import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.MolPrinter;
 import chemaxon.struc.Molecule;
-import com.im.lac.types.MoleculeObject;
+import org.squonk.types.MoleculeObject;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;

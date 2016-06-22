@@ -4,15 +4,13 @@ import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
 import com.im.lac.job.jobdef.JobDefinition;
 import com.im.lac.job.jobdef.JobStatus;
 import com.im.lac.job.jobdef.StepsCellExecutorJobDefinition;
-import com.im.lac.types.MoleculeObject;
 import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
-import org.squonk.notebook.api.*;
+import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.TypeDescriptor;
 import org.squonk.options.types.Structure;
 import portal.SessionContext;
-import portal.notebook.webapp.BindingsPanel;
 import portal.notebook.webapp.StructureFieldEditorPanel;
 
 import javax.enterprise.inject.Instance;

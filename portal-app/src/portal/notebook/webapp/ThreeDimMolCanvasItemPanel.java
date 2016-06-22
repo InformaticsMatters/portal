@@ -3,7 +3,7 @@ package portal.notebook.webapp;
 import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;
 import chemaxon.struc.Molecule;
-import com.im.lac.types.MoleculeObject;
+import org.squonk.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
