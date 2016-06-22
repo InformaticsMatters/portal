@@ -92,7 +92,7 @@ function init3DMolViewer(data, format) {
 }
 
 function set3DMolViewerData(data, format) {
-    // glviewer.clear();
+    glviewer.clear();
     glviewer.addModel(data, format);
     glviewer.setStyle({}, {stick: {}});
     glviewer.mapAtomProperties($3Dmol.applyPartialCharges);
