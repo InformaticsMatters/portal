@@ -29,7 +29,6 @@ public class PortalWebApplication extends WebApplication {
         checkDerbyServer();
         BeanManager beanManager = CDI.current().getBeanManager();
         new CdiConfiguration(beanManager).setPropagation(ConversationPropagation.NONE).configure(this);
-        getSharedResources().add("structureImageResource", new DynamicStructureImageResource());
         getSharedResources().add("notebookStructureImageResource", new NotebookStructureImageResource());
         mountPage("/nbcanvas", NotebookCanvasPage.class);
         configureSecurity();
