@@ -1,6 +1,6 @@
 package portal.notebook.api;
 
-import com.im.lac.job.jobdef.JobDefinition;
+import org.squonk.jobdef.JobDefinition;
 import org.squonk.core.AccessMode;
 import org.squonk.core.ServiceDescriptor;
 import org.squonk.execution.steps.StepDefinition;

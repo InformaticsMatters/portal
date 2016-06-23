@@ -1,6 +1,6 @@
 package portal;
 
-import com.im.lac.job.jobdef.JobStatus;
+import org.squonk.jobdef.JobStatus;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;

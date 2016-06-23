@@ -1,11 +1,6 @@
 package portal.notebook.api;
 
-import com.im.lac.job.jobdef.JobDefinition;
-import com.im.lac.job.jobdef.JobStatus;
-import org.squonk.execution.steps.StepDefinition;
-import org.squonk.execution.steps.StepDefinitionConstants;
-import org.squonk.notebook.api.VariableKey;
-import org.squonk.options.FileTypeDescriptor;
+import org.squonk.jobdef.JobStatus;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.SimpleTypeDescriptor;
 

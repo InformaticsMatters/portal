@@ -1,16 +1,14 @@
 package portal.notebook.api;
 
-import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.SdfUpload;
+import org.squonk.jobdef.JobDefinition;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.FileTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
-import portal.notebook.webapp.BindingsPanel;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.File;
 
 /**
  * Created by timbo on 29/01/16.

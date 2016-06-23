@@ -1,6 +1,6 @@
 package portal.notebook.api;
 
-import com.im.lac.job.jobdef.JobStatus;
+import org.squonk.jobdef.JobStatus;
 
 public abstract class CellExecutor {
 

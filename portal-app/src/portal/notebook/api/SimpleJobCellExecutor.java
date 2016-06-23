@@ -1,10 +1,9 @@
 package portal.notebook.api;
 
-import com.im.lac.job.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.jobdef.JobDefinition;
 import org.squonk.notebook.api.VariableKey;
-import portal.notebook.webapp.BindingsPanel;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

@@ -1,9 +1,9 @@
 package portal.notebook.api;
 
-import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
-import com.im.lac.job.jobdef.JobDefinition;
-import com.im.lac.job.jobdef.JobStatus;
-import com.im.lac.job.jobdef.StepsCellExecutorJobDefinition;
+import org.squonk.jobdef.ExecuteCellUsingStepsJobDefinition;
+import org.squonk.jobdef.JobDefinition;
+import org.squonk.jobdef.JobStatus;
+import org.squonk.jobdef.StepsCellExecutorJobDefinition;
 import org.squonk.client.JobStatusClient;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.notebook.api.VariableKey;

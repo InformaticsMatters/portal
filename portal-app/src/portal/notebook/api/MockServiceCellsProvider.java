@@ -1,16 +1,15 @@
 package portal.notebook.api;
 
-import com.im.lac.dataset.Metadata;
-import com.im.lac.job.jobdef.AsyncHttpProcessDatasetJobDefinition;
-import org.squonk.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.core.AccessMode;
 import org.squonk.core.ServiceDescriptor;
+import org.squonk.core.ServiceDescriptor.DataType;
 import org.squonk.options.DatasetFieldTypeDescriptor;
 import org.squonk.options.FieldActionTypeDescriptor;
 import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.types.MoleculeObject;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
@@ -37,8 +36,8 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                     new String[]{"public"}, // layers it appears on
                     MoleculeObject.class, // inputClass
                     MoleculeObject.class, // outputClass
-                    Metadata.Type.STREAM, // inputTypes
-                    Metadata.Type.STREAM, // outputTypes
+                    DataType.STREAM, // inputTypes
+                    DataType.STREAM, // outputTypes
                     "default_icon.png",
                     new AccessMode[]{
                             new AccessMode(
@@ -47,7 +46,6 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                                     "Execute as an asynchronous REST web service",
                                     "http://www.somewhere.com/logp", // endpoint
                                     false, // URL is relative
-                                    AsyncHttpProcessDatasetJobDefinition.class,
                                     null, null, null, null, null, null)
                     }
             ),
@@ -63,8 +61,8 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                     new String[]{"public"},
                     MoleculeObject.class, // inputClass
                     MoleculeObject.class, // outputClass
-                    Metadata.Type.STREAM, // inputTypes
-                    Metadata.Type.STREAM, // outputTypes
+                    DataType.STREAM, // inputTypes
+                    DataType.STREAM, // outputTypes
                     "default_icon.png",
                     new AccessMode[]{
                             new AccessMode(
@@ -73,7 +71,6 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                                     "Execute as an asynchronous REST web service",
                                     "http://www.somewhere.com/clustering", // endpoint
                                     false, // URL is relative
-                                    AsyncHttpProcessDatasetJobDefinition.class,
                                     null, null, null, null, new OptionDescriptor[]{
                                     new OptionDescriptor<>(Integer.class, "header.min_clusters", "Min clusters", "Minimum number of clusters to generate").withDefaultValue(5),
                                     new OptionDescriptor<>(Integer.class, "header.max_clusters", "Max clusters", "Maximum number of clusters to generate").withDefaultValue(10)
@@ -92,8 +89,8 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                     new String[]{"public"},
                     MoleculeObject.class, // inputClass
                     MoleculeObject.class, // outputClass
-                    Metadata.Type.STREAM, // inputTypes
-                    Metadata.Type.STREAM, // outputTypes
+                    DataType.STREAM, // inputTypes
+                    DataType.STREAM, // outputTypes
                     "default_icon.png",
                     new AccessMode[]{
                             new AccessMode(
@@ -102,7 +99,6 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                                     "Execute as an asynchronous REST web service",
                                     "http://www.somewhere.com/screening", // endpoint
                                     false, // URL is relative
-                                    AsyncHttpProcessDatasetJobDefinition.class,
                                     null, null, null, null, new OptionDescriptor[]{
                                     new OptionDescriptor<>(new MoleculeTypeDescriptor(MoleculeTypeDescriptor.MoleculeType.DISCRETE, new String[] {"smiles"}), "header.query_structure", "Query Structure", "Structure to us as the query"),
                                     new OptionDescriptor<>(Float.class, "header.threshold", "Similarity Cuttoff", "Similarity score cuttoff between 0 and 1 (1 means identical)")
@@ -125,8 +121,8 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
             new String[]{"public"},
             MoleculeObject.class, // inputClass
             MoleculeObject.class, // outputClass
-            Metadata.Type.STREAM, // inputTypes
-            Metadata.Type.STREAM, // outputTypes
+                     DataType.STREAM, // inputTypes
+                    DataType.STREAM, // outputTypes
             "default_icon.png",
             new AccessMode[]{
                     new AccessMode(
@@ -135,7 +131,6 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                             "Execute as an asynchronous REST web service",
                             "http://www.somewhere.com/screening", // endpoint
                             false, // URL is relative
-                            AsyncHttpProcessDatasetJobDefinition.class,
                             null, null, null, null, new OptionDescriptor[]{
                             new OptionDescriptor<>(new DatasetFieldTypeDescriptor(new Class[] {String.class}), "cansmiles", "Canonical smiles field", "File with canonical smiles that identifies identical structures"),
                             new OptionDescriptor<>(new DatasetFieldTypeDescriptor(), "keepfirstFields", "Keep first value fields", "When multiple values keep the first fields").withMinValues(0).withMaxValues(100),

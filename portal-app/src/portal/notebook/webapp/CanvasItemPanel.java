@@ -1,6 +1,6 @@
 package portal.notebook.webapp;
 
-import com.im.lac.job.jobdef.JobStatus;
+import org.squonk.jobdef.JobStatus;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;

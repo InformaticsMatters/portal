@@ -1,8 +1,8 @@
 package portal;
 
 import com.im.lac.job.client.JobClient;
-import com.im.lac.job.jobdef.JobDefinition;
-import com.im.lac.job.jobdef.JobStatus;
+import org.squonk.jobdef.JobDefinition;
+import org.squonk.jobdef.JobStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

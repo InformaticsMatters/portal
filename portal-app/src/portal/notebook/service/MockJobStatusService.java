@@ -1,7 +1,7 @@
 package portal.notebook.service;
 
-import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
-import com.im.lac.job.jobdef.JobDefinition;
+import org.squonk.jobdef.ExecuteCellUsingStepsJobDefinition;
+import org.squonk.jobdef.JobDefinition;
 import org.squonk.types.MoleculeObject;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;

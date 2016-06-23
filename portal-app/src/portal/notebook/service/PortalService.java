@@ -1,6 +1,6 @@
 package portal.notebook.service;
 
-import com.im.lac.job.jobdef.JobStatus;
+import org.squonk.jobdef.JobStatus;
 import org.squonk.client.JobStatusClient;
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellExecutionData;

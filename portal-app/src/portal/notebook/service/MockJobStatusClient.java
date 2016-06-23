@@ -1,10 +1,10 @@
 package portal.notebook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.im.lac.job.jobdef.ExecuteCellUsingStepsJobDefinition;
-import com.im.lac.job.jobdef.JobDefinition;
-import com.im.lac.job.jobdef.JobQuery;
-import com.im.lac.job.jobdef.JobStatus;
+import org.squonk.jobdef.ExecuteCellUsingStepsJobDefinition;
+import org.squonk.jobdef.JobDefinition;
+import org.squonk.jobdef.JobQuery;
+import org.squonk.jobdef.JobStatus;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import org.squonk.client.JobStatusClient;
