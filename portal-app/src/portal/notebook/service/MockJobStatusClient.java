@@ -47,13 +47,13 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
        JobStatus oldJobStatus = jobStatusMap.get(jobId);
        if (oldJobStatus == null) {
            String message = resolveMessage(JobStatus.Status.COMPLETED);
-           JobStatus<? extends JobDefinition> jobStatus = new JobStatus<>(jobId, "some", JobStatus.Status.COMPLETED, 2, 1, 0, null, null, null, null, Collections.singletonList("message"));
+           JobStatus<? extends JobDefinition> jobStatus = new JobStatus<>(jobId, "some", JobStatus.Status.COMPLETED, 2, 1, 0, null, null, null, Collections.singletonList("message"));
            jobStatusMap.put(jobStatus.getJobId(), jobStatus);
            return jobStatus;
        }  else {
            JobStatus.Status newStatus = calculateStatus(jobId, oldJobStatus);
            String message = resolveMessage(newStatus);
-           JobStatus<? extends JobDefinition> newJobStatus = new JobStatus<>(jobId, oldJobStatus.getUsername(), newStatus, 0, 0, 0, oldJobStatus.getStarted(), new Date(), oldJobStatus.getJobDefinition(), null, message == null ? null : Collections.singletonList(message));
+           JobStatus<? extends JobDefinition> newJobStatus = new JobStatus<>(jobId, oldJobStatus.getUsername(), newStatus, 0, 0, 0, oldJobStatus.getStarted(), new Date(), oldJobStatus.getJobDefinition(), message == null ? null : Collections.singletonList(message));
            jobStatusMap.put(jobId, newJobStatus);
            return newJobStatus;
        }
