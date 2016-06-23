@@ -5,18 +5,13 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.cdi.ConversationPropagation;
 import org.apache.wicket.protocol.http.WebApplication;
-import portal.notebook.webapp.NotebookCanvasPage;
 import portal.notebook.webapp.NotebookStructureImageResource;
 import toolkit.derby.DerbyUtils;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
-import javax.inject.Inject;
 
 public class PortalWebApplication extends WebApplication {
-
-    @Inject
-    private ComponentInstantiationListener componentInstantiationListener;
 
     @Override
     public Class<? extends Page> getHomePage() {
@@ -30,8 +25,6 @@ public class PortalWebApplication extends WebApplication {
         BeanManager beanManager = CDI.current().getBeanManager();
         new CdiConfiguration(beanManager).setPropagation(ConversationPropagation.NONE).configure(this);
         getSharedResources().add("notebookStructureImageResource", new NotebookStructureImageResource());
-        mountPage("/nbcanvas", NotebookCanvasPage.class);
-        configureSecurity();
     }
 
     private void checkDerbyServer() {
@@ -56,9 +49,5 @@ public class PortalWebApplication extends WebApplication {
     private boolean isDevelopmentEnvironment() {
         String development = System.getProperty("development");
         return Boolean.parseBoolean(development);
-    }
-
-    protected void configureSecurity() {
-        getComponentInstantiationListeners().add(componentInstantiationListener);
     }
 }

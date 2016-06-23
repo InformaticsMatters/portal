@@ -25,12 +25,12 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCanvasItemPanel.class.getName());
     private Map<String, FieldEditorModel> optionEditorModelMap;
     private Form form;
+    private ListView<OptionInstance> optionListView;
+    private Label statusLabel;
     @Inject
     private NotebookSession notebookSession;
-    private ListView<OptionInstance> optionListView;
     @Inject
     private NotifierProvider notifierProvider;
-    private Label statusLabel;
 
     public DefaultCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -39,7 +39,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         addForm();
         addTitleBar();
         Boolean executable = findCellInstance().getCellDefinition().getExecutable();
-        // test for null shpuldn´t be necessary. means bug somewhere else
+        // test for null shouldn´t be necessary. means bug somewhere else
         if (executable != null && executable) {
             addExecutionStatusTimerBehavior();
         }
@@ -131,7 +131,9 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         } else if (optionDescriptor instanceof DatasetsFieldOptionDescriptor) {
             return new DatasetsFieldPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel(), typeDescriptor), getCellId());
         } else if (typeDescriptor.getType() == Structure.class) {
-            return new StructureFieldEditorPanel("optionEditor", "canvasMarvinEditor", new FieldEditorModel(value, optionDescriptor.getLabel(), typeDescriptor));
+            String notebookId = notebookSession.getCurrentNotebookInfo().getId().toString();
+            String cellInstanceId = findCellInstance().getId().toString();
+            return new StructureFieldEditorPanel("optionEditor", "marvin" + notebookId + "_" + cellInstanceId, new FieldEditorModel(value, optionDescriptor.getLabel(), typeDescriptor));
         } else if (optionDescriptor.getValues() != null && optionDescriptor.getValues().length > 0) {
             Object[] values = optionInstance.getOptionDescriptor().getValues();
             return new PicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel(), typeDescriptor), values == null ? Collections.emptyList() : Arrays.asList(values));
