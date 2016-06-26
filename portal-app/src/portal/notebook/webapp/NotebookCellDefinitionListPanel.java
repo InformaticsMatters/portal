@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author simetrias
  */
-public class NotebookCellTypesPanel extends Panel {
+public class NotebookCellDefinitionListPanel extends Panel {
 
     public static final String DROP_DATA_TYPE_VALUE = "cellDescriptor";
 
@@ -35,7 +35,7 @@ public class NotebookCellTypesPanel extends Panel {
     @Inject
     private NotebookSession notebookSession;
 
-    public NotebookCellTypesPanel(String id) {
+    public NotebookCellDefinitionListPanel(String id) {
         super(id);
         addSearchForm();
         addCells();
@@ -83,7 +83,7 @@ public class NotebookCellTypesPanel extends Panel {
             @Override
             protected void populateItem(ListItem<CellDefinition> listItem) {
                 CellDefinition cellType = listItem.getModelObject();
-                listItem.add(new NotebookCellTypePanel("descriptorItem", cellType));
+                listItem.add(new NotebookCellDefinitionPanel("descriptorItem", cellType));
                 listItem.setOutputMarkupId(true);
                 listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_TYPE, DROP_DATA_TYPE_VALUE));
                 listItem.add(new AttributeModifier(NotebookCanvasPage.DROP_DATA_ID, cellType.getName()));

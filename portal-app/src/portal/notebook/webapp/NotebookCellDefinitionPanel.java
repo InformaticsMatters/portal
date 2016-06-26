@@ -11,12 +11,12 @@ import portal.notebook.api.CellDefinition;
 /**
  * @author simetrias
  */
-public class NotebookCellTypePanel extends Panel {
+public class NotebookCellDefinitionPanel extends Panel {
 
     private static final String APP_RESOURCES_SUBPACKAGE = "resources";
     private final CellDefinition cellDefinition;
 
-    public NotebookCellTypePanel(String id, CellDefinition cellDefinition) {
+    public NotebookCellDefinitionPanel(String id, CellDefinition cellDefinition) {
         super(id);
         this.cellDefinition = cellDefinition;
         addComponents();

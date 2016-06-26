@@ -1,6 +1,5 @@
 package portal.notebook.webapp;
 
-import org.squonk.jobdef.JobStatus;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -24,6 +23,7 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.string.StringValue;
+import org.squonk.jobdef.JobStatus;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PopupContainerProvider;
@@ -272,9 +272,9 @@ public class NotebookCanvasPage extends WebPage {
     }
 
     private void addNotebookCellTypesPanel() {
-        NotebookCellTypesPanel notebookCellTypesPanel = new NotebookCellTypesPanel("descriptors");
-        add(notebookCellTypesPanel);
-        notebookCellTypesPanel.setOutputMarkupPlaceholderTag(true);
+        NotebookCellDefinitionListPanel notebookCellDefinitionListPanel = new NotebookCellDefinitionListPanel("descriptors");
+        add(notebookCellDefinitionListPanel);
+        notebookCellDefinitionListPanel.setOutputMarkupPlaceholderTag(true);
     }
 
     private void addEditNotebookPanel() {
