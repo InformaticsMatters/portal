@@ -6,11 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
 
-
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Default
 @ApplicationScoped
@@ -18,11 +21,11 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultCellDefinitionRegistry.class);
     private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
+    private boolean serviceCellsRegistered = false;
     @Inject
     private SessionContext sessionContext;
     @Inject
     private ServiceCellsProvider serviceCellsProvider;
-
 
     private static CellDefinition createTableDisplayCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "icons/visualisation_table.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
@@ -85,23 +88,31 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         return cellDefinition;
     }
 
-    public void registerCellDefinition(CellDefinition cellDefinition) {
-        cellDefinitionMap.put(cellDefinition.getName(), cellDefinition);
+    @PostConstruct
+    public void init() {
+        registerStandardCellDefinitions();
+        registerCustomCellDefinitions();
+        registerServiceCellDefinitions();
+    }
+
+    public CellDefinition findCellDefinition(String name) {
+        return cellDefinitionMap.get(name);
     }
 
     public Collection<CellDefinition> listCellDefinition() {
         if (cellDefinitionMap.isEmpty()) {
-            loadCellDefinitions();
+            registerStandardCellDefinitions();
+            registerCustomCellDefinitions();
+            registerServiceCellDefinitions();
+        }
+        if (!serviceCellsRegistered) {
+            registerServiceCellDefinitions();
         }
        return cellDefinitionMap.values();
     }
 
-    private void loadCellDefinitions() {
+    private void registerStandardCellDefinitions() {
         registerCellDefinition(new ChemblActivitiesFetcherCellDefinition());
-        registerCellDefinition(createTableDisplayCellDefinition());
-        registerCellDefinition(createScatterPlotCellDefinition());
-        registerCellDefinition(createBoxPlotCellDefinition());
-        registerCellDefinition(create3DMolCellDefinition());
         registerCellDefinition(new CsvUploadCellDefinition());
         registerCellDefinition(new SdfUploadCellDefinition());
         registerCellDefinition(new DatasetMergerCellDefinition());
@@ -114,12 +125,24 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
         registerCellDefinition(new SmilesDeduplicatorCellDefinition());
         registerCellDefinition(new DatasetDockerProcessorCellDefinition());
-        for (CellDefinition cellDefinition : serviceCellsProvider.listServiceCellDefinition()) {
-            cellDefinitionMap.put(cellDefinition.getName(), cellDefinition);
-        }
     }
 
-    public CellDefinition findCellDefinition(String name) {
-        return cellDefinitionMap.get(name);
+    private void registerCustomCellDefinitions() {
+        registerCellDefinition(createTableDisplayCellDefinition());
+        registerCellDefinition(createScatterPlotCellDefinition());
+        registerCellDefinition(createBoxPlotCellDefinition());
+        registerCellDefinition(create3DMolCellDefinition());
+    }
+
+    private void registerServiceCellDefinitions() {
+        List<ServiceCellDefinition> serviceCellDefinitions = serviceCellsProvider.listServiceCellDefinition();
+        for (CellDefinition cellDefinition : serviceCellDefinitions) {
+            registerCellDefinition(cellDefinition);
+        }
+        serviceCellsRegistered = serviceCellDefinitions.size() > 0;
+    }
+
+    public void registerCellDefinition(CellDefinition cellDefinition) {
+        cellDefinitionMap.put(cellDefinition.getName(), cellDefinition);
     }
 }
