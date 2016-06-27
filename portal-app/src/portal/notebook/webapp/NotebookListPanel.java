@@ -1,16 +1,15 @@
 package portal.notebook.webapp;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +67,7 @@ public class NotebookListPanel extends Panel {
             protected void populateItem(ListItem<NotebookInfo> listItem) {
                 NotebookInfo notebookInfo = listItem.getModelObject();
                 boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookInfo.getOwner());
+                boolean isShared = notebookInfo.getShared();
                 listItem.add(new Label("name", notebookInfo.getName()));
                 listItem.add(new Label("owner", notebookInfo.getOwner()));
 
@@ -87,7 +87,7 @@ public class NotebookListPanel extends Panel {
                 listItem.add(editLink);
                 editLink.setVisible(isOwner);
 
-                AjaxLink shareLink = new AjaxLink("share") {
+                AjaxLink changeStatusLink = new AjaxLink("changeStatus") {
 
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
@@ -105,8 +105,16 @@ public class NotebookListPanel extends Panel {
                         }
                     }
                 };
-                listItem.add(shareLink);
-                shareLink.setVisible(isOwner && notebookInfo.getShareable());
+                listItem.add(changeStatusLink);
+                changeStatusLink.setVisible(isOwner && notebookInfo.getShareable());
+
+                WebMarkupContainer publicNb = new WebMarkupContainer("publicNb");
+                changeStatusLink.add(publicNb);
+                publicNb.setVisible(isShared);
+
+                WebMarkupContainer privateNb = new WebMarkupContainer("privateNb");
+                changeStatusLink.add(privateNb);
+                privateNb.setVisible(!isShared);
 
                 AjaxLink removeLink = new AjaxLink("remove") {
 
@@ -143,13 +151,16 @@ public class NotebookListPanel extends Panel {
                 if (listItem.getModelObject().getId().equals(currentId)) {
                     selectedMarkupId = listItem.getMarkupId();
                 }
-                Label shared = new Label("shared");
+
+
+
+               /* Label shared = new Label("shared");
                 if (notebookInfo.getShared()) {
                     shared.setDefaultModel(Model.of("public"));
                     shared.add(new AttributeModifier("class", "ui tiny blue label"));
                 }
                 listItem.add(shared);
-                shared.setVisible(isOwner);
+                shared.setVisible(isOwner);*/
             }
         };
         add(listView);

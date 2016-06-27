@@ -17,16 +17,17 @@
                 <a href="" wicket:id="edit"><i class="blue write right icon"></i></a>
             </td>
             <td class="collapsing center aligned iconTd">
-                <a href="" wicket:id="share"><i class="orange share icon"></i></a>
+                <a href="" wicket:id="changeStatus">
+                    <span wicket:id="publicNb" title="Change sharing status to private"><i
+                            class="orange users icon"></i></span>
+                    <span wicket:id="privateNb" title="Change sharing status to public"><i class="yellow lock icon"></i></span>
+                </a>
             </td>
             <td class="collapsing center aligned iconTd">
                 <a href="" wicket:id="remove"><i class="grey remove icon"></i></a>
             </td>
             <td><span wicket:id="name">Nb name</span></td>
             <td><span wicket:id="owner">Owner name</span></td>
-            <td class="collapsing center aligned">
-                <span wicket:id="shared"></span>
-            </td>
         </tr>
         </tbody>
     </table>
