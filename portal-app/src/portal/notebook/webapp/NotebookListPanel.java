@@ -116,6 +116,14 @@ public class NotebookListPanel extends Panel {
                 changeStatusLink.add(privateNb);
                 privateNb.setVisible(!isShared);
 
+                WebMarkupContainer publicNbLabel = new WebMarkupContainer("publicNbLabel");
+                listItem.add(publicNbLabel);
+                publicNbLabel.setVisible(isShared && (!isOwner || !notebookInfo.getShareable()));
+
+                WebMarkupContainer privateNbLabel = new WebMarkupContainer("privateNbLabel");
+                listItem.add(privateNbLabel);
+                privateNbLabel.setVisible(!isShared && (!isOwner || !notebookInfo.getShareable()));
+
                 AjaxLink removeLink = new AjaxLink("remove") {
 
                     @Override
