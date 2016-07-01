@@ -1,6 +1,11 @@
 <wicket:panel>
 
     <table class="ui small very compact table nbListTable">
+        <col width="25"/>
+        <col width="25"/>
+        <col width="25"/>
+        <col/>
+        <col/>
         <thead>
         <tr>
             <th></th>
@@ -13,9 +18,6 @@
         <tbody>
         <tr wicket:id="notebook" class="nbTr top aligned">
             <td class="collapsing center aligned iconTd">
-                <a href="" wicket:id="edit"><i class="blue write right icon"></i></a>
-            </td>
-            <td class="collapsing center aligned iconTd">
                 <a href="" wicket:id="changeStatus">
                     <span wicket:id="publicNb" title="Change sharing status to private"><i
                             class="green unlock icon"></i></span>
@@ -23,6 +25,9 @@
                 </a>
                 <span wicket:id="publicNbLabel" title="Notebook is public"><i class="green unlock icon"></i></span>
                 <span wicket:id="privateNbLabel" title="Notebook is private"><i class="orange lock icon"></i></span>
+            </td>
+            <td class="collapsing center aligned iconTd">
+                <a href="" wicket:id="edit"><i class="blue write right icon"></i></a>
             </td>
             <td class="collapsing center aligned iconTd">
                 <a href="" wicket:id="remove"><i class="grey remove icon"></i></a>

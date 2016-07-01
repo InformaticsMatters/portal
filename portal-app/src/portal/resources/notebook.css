@@ -216,7 +216,7 @@ div.ui-resizable-handle.ui-resizable-s {
 }
 
 .nbListTable .icon {
-    visibility: hidden;
+    display: none;
 }
 
 .nbListTable tr:hover {
@@ -225,7 +225,7 @@ div.ui-resizable-handle.ui-resizable-s {
 }
 
 .nbListTable tr.selected .icon {
-    visibility: visible;
+    display: block;
 }
 
 .nbListTable tr.selected td {
