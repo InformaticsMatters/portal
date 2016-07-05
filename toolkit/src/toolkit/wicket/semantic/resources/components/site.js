@@ -1,9 +1,9 @@
-/*
- * # Semantic - Site
+/*!
+ * # Semantic UI 2.0.0 - Site
  * http://github.com/semantic-org/semantic-ui/
  *
  *
- * Copyright 2014 Contributor
+ * Copyright 2015 Contributors
  * Released under the MIT license
  * http://opensource.org/licenses/MIT
  *
@@ -150,7 +150,7 @@ $.site = $.fn.site = function(parameters) {
             $.fn[name].settings[setting] = value;
             if(modifyExisting && namespace) {
               $existingModules = $(':data(module-' + namespace + ')');
-              if($existingModules.size() > 0) {
+              if($existingModules.length > 0) {
                 module.verbose('Modifying existing settings', $existingModules);
                 $existingModules[name]('setting', setting, value);
               }
@@ -176,7 +176,7 @@ $.site = $.fn.site = function(parameters) {
             $.extend(true, $.fn[name].settings, newSettings);
             if(modifyExisting && namespace) {
               $existingModules = $(':data(module-' + namespace + ')');
-              if($existingModules.size() > 0) {
+              if($existingModules.length > 0) {
                 module.verbose('Modifying existing settings', $existingModules);
                 $existingModules[name]('setting', newSettings);
               }
@@ -320,7 +320,7 @@ $.site = $.fn.site = function(parameters) {
           });
         }
         clearTimeout(module.performance.timer);
-        module.performance.timer = setTimeout(module.performance.display, 100);
+        module.performance.timer = setTimeout(module.performance.display, 500);
       },
       display: function() {
         var
@@ -433,7 +433,7 @@ $.site.settings = {
   },
 
   debug       : false,
-  verbose     : true,
+  verbose     : false,
   performance : true,
 
   modules: [
@@ -442,6 +442,7 @@ $.site.settings = {
     'checkbox',
     'dimmer',
     'dropdown',
+    'embed',
     'form',
     'modal',
     'nag',
@@ -453,7 +454,6 @@ $.site.settings = {
     'sticky',
     'tab',
     'transition',
-    'video',
     'visit',
     'visibility'
   ],

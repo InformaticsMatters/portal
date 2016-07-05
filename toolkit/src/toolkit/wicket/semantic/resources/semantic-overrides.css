@@ -1,95 +1,15 @@
 
-em {
-    font-style: normal;
+.loginPage .column {
+    width: 400px;
+    margin-top: 50px;
 }
 
-.separator10 {
-    height: 10px;
+.loginPage label {
+    text-align: left;
 }
 
-.separator15 {
-    height: 15px;
-}
-
-.separator20 {
-    height: 20px;
-}
-
-.separator25 {
-    height: 25px;
-}
-
-.rowActionsPanel ul {
-    padding: 0 2px;
-    margin: 0;
-}
-
-.rowActionsPanel ul li {
-    display: inline-block;
-}
-
-.rowActionsPanel ui li i.icon {
-    display: inline-block;
-}
-
-.animated> .icon> i.icon {
-    opacity: 0.85;
-    -webkit-transition:
-        all 0.2s ease-out
-      ;
-      -moz-transition:
-        all 0.2s ease-out
-      ;
-      -o-transition:
-        all 0.2s ease-out
-      ;
-      -ms-transition:
-        all 0.2s ease-out
-      ;
-      transition:
-        all 0.2s ease-out
-      ;
-}
-
-.animated:hover {
-    cursor: pointer;
-}
-
-.animated:hover> .icon> i.icon {
-    color: #000;
-    -webkit-transform: scale(1.1);
-    -moz-transform: scale(1.1);
-    -o-transform: scale(1.1);
-    -ms-transform: scale(1.1);
-    transform: scale(1.1);
-}
-
-.menu.principal {
-    border-radius: 0;
-}
-
-.left-floated {
-    float: left;
-}
-
-.resourceUploaderPanel input:focus {
-    outline: none;
-}
-
-/* OVERRIDE SEMANTIC */
-
-body {
-    background: #fff;
-}
-
-.ui.grid {
-    margin-top:0;
-    font-size: inherit;
-}
-
-.ui.grid>* {
-    padding-left: auto !important;
-    padding-right: auto !important;
+.ui.modal.upper {
+    top: 20%;
 }
 
 .ui.modal > .header {
@@ -104,7 +24,6 @@ body {
     font-size: 1em;
     line-height: 1.4;
     padding: 2rem;
-    background: #fff;
 }
 
 .ui.modal> .ui.form> .actions {
@@ -112,18 +31,3 @@ body {
     border-bottom-right-radius: 0.2857rem;
 }
 
-.ui.form .field {
-    font-size: 14px;
-}
-
-.field input {
-    font-family: "Helvetica Neue", "Helvetica", Arial;
-}
-
-.ui.card .content img, .ui.cards>.card .content img {
-    width: auto;
-}
-
-i.grey.icon {
-  color: #bbbbbb !important;
-}

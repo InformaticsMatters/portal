@@ -1,9 +1,9 @@
-/*
- * # Semantic - Form Validation
+/*!
+ * # Semantic UI 2.0.0 - Form Validation
  * http://github.com/semantic-org/semantic-ui/
  *
  *
- * Copyright 2014 Contributor
+ * Copyright 2015 Contributors
  * Released under the MIT license
  * http://opensource.org/licenses/MIT
  *
@@ -11,55 +11,74 @@
 
 ;(function ( $, window, document, undefined ) {
 
-$.fn.form = function(fields, parameters) {
+"use strict";
+
+$.fn.form = function(parameters) {
   var
-    $allModules     = $(this),
+    $allModules      = $(this),
+    moduleSelector   = $allModules.selector || '',
 
-    settings        = $.extend(true, {}, $.fn.form.settings, parameters),
-    validation      = $.extend({}, $.fn.form.settings.defaults, fields),
+    time             = new Date().getTime(),
+    performance      = [],
 
-    namespace       = settings.namespace,
-    metadata        = settings.metadata,
-    selector        = settings.selector,
-    className       = settings.className,
-    error           = settings.error,
-
-    eventNamespace  = '.' + namespace,
-    moduleNamespace = 'module-' + namespace,
-
-    moduleSelector  = $allModules.selector || '',
-
-    time            = new Date().getTime(),
-    performance     = [],
-
-    query           = arguments[0],
-    methodInvoked   = (typeof query == 'string'),
-    queryArguments  = [].slice.call(arguments, 1),
+    query            = arguments[0],
+    legacyParameters = arguments[1],
+    methodInvoked    = (typeof query == 'string'),
+    queryArguments   = [].slice.call(arguments, 1),
     returnedValue
   ;
   $allModules
     .each(function() {
       var
-        $module    = $(this),
-        $field     = $(this).find(selector.field),
-        $group     = $(this).find(selector.group),
-        $message   = $(this).find(selector.message),
-        $prompt    = $(this).find(selector.prompt),
-        $submit    = $(this).find(selector.submit),
+        $module     = $(this),
+        element     = this,
 
-        formErrors = [],
+        formErrors  = [],
+        keyHeldDown = false,
 
-        element    = this,
-        instance   = $module.data(moduleNamespace),
+        // set at run-time
+        $field,
+        $group,
+        $message,
+        $prompt,
+        $submit,
+        $clear,
+        $reset,
+
+        settings,
+        validation,
+
+        metadata,
+        selector,
+        className,
+        error,
+
+        namespace,
+        moduleNamespace,
+        eventNamespace,
+
+        instance,
         module
       ;
 
       module      = {
 
         initialize: function() {
-          module.verbose('Initializing form validation', $module, validation, settings);
-          module.bindEvents();
-          module.instantiate();
+
+          // settings grabbed at run time
+          module.get.settings();
+          if(methodInvoked) {
+            if(instance === undefined) {
+              module.instantiate();
+            }
+            module.invoke(query);
+          }
+          else {
+            module.verbose('Initializing form validation', $module, settings);
+            module.bindEvents();
+            module.set.defaults();
+            module.instantiate();
+          }
         },
 
         instantiate: function() {
@@ -80,7 +99,14 @@ $.fn.form = function(fields, parameters) {
 
         refresh: function() {
           module.verbose('Refreshing selector cache');
-          $field = $module.find(selector.field);
+          $field      = $module.find(selector.field);
+          $group      = $module.find(selector.group);
+          $message    = $module.find(selector.message);
+          $prompt     = $module.find(selector.prompt);
+
+          $submit     = $module.find(selector.submit);
+          $clear      = $module.find(selector.clear);
+          $reset      = $module.find(selector.reset);
         },
 
         submit: function() {
@@ -93,7 +119,7 @@ $.fn.form = function(fields, parameters) {
         attachEvents: function(selector, action) {
           action = action || 'submit';
           $(selector)
-            .on('click', function(event) {
+            .on('click' + eventNamespace, function(event) {
               module[action]();
               event.preventDefault();
             })
@@ -101,32 +127,116 @@ $.fn.form = function(fields, parameters) {
         },
 
         bindEvents: function() {
-
-          if(settings.keyboardShortcuts) {
-            $field
-              .on('keydown' + eventNamespace, module.event.field.keydown)
-            ;
-          }
+          module.verbose('Attaching form events');
           $module
             .on('submit' + eventNamespace, module.validate.form)
+            .on('blur'   + eventNamespace, selector.field, module.event.field.blur)
+            .on('click'  + eventNamespace, selector.submit, module.submit)
+            .on('click'  + eventNamespace, selector.reset, module.reset)
+            .on('click'  + eventNamespace, selector.clear, module.clear)
           ;
-          $field
-            .on('blur' + eventNamespace, module.event.field.blur)
-          ;
-          // attach submit events
-          module.attachEvents($submit, 'submit');
-
+          if(settings.keyboardShortcuts) {
+            $module
+              .on('keydown' + eventNamespace, selector.field, module.event.field.keydown)
+            ;
+          }
           $field
             .each(function() {
               var
-                type       = $(this).prop('type'),
-                inputEvent = module.get.changeEvent(type)
+                $input     = $(this),
+                type       = $input.prop('type'),
+                inputEvent = module.get.changeEvent(type, $input)
               ;
               $(this)
                 .on(inputEvent + eventNamespace, module.event.field.change)
               ;
             })
           ;
+        },
+
+        clear: function() {
+          $field
+            .each(function () {
+              var
+                $field       = $(this),
+                $element     = $field.parent(),
+                $fieldGroup  = $field.closest($group),
+                $prompt      = $fieldGroup.find(selector.prompt),
+                defaultValue = $field.data(metadata.defaultValue) || '',
+                isCheckbox   = $element.is(selector.uiCheckbox),
+                isDropdown   = $element.is(selector.uiDropdown),
+                isErrored    = $fieldGroup.hasClass(className.error)
+              ;
+              if(isErrored) {
+                module.verbose('Resetting error on field', $fieldGroup);
+                $fieldGroup.removeClass(className.error);
+                $prompt.remove();
+              }
+              if(isDropdown) {
+                module.verbose('Resetting dropdown value', $element, defaultValue);
+                $element.dropdown('clear');
+              }
+              else if(isCheckbox) {
+                $field.prop('checked', false);
+              }
+              else {
+                module.verbose('Resetting field value', $field, defaultValue);
+                $field.val('');
+              }
+            })
+          ;
+        },
+
+        reset: function() {
+          $field
+            .each(function () {
+              var
+                $field       = $(this),
+                $element     = $field.parent(),
+                $fieldGroup  = $field.closest($group),
+                $prompt      = $fieldGroup.find(selector.prompt),
+                defaultValue = $field.data(metadata.defaultValue),
+                isCheckbox   = $element.is(selector.uiCheckbox),
+                isDropdown   = $element.is(selector.uiDropdown),
+                isErrored    = $fieldGroup.hasClass(className.error)
+              ;
+              if(defaultValue === undefined) {
+                defaultValue = '';
+              }
+              if(isErrored) {
+                module.verbose('Resetting error on field', $fieldGroup);
+                $fieldGroup.removeClass(className.error);
+                $prompt.remove();
+              }
+              if(isDropdown) {
+                module.verbose('Resetting dropdown value', $element, defaultValue);
+                $element.dropdown('restore defaults');
+              }
+              else if(isCheckbox) {
+                module.verbose('Resetting checkbox value', $element, defaultValue);
+                $field.prop('checked', defaultValue);
+              }
+              else {
+                module.verbose('Resetting field value', $field, defaultValue);
+                $field.val(defaultValue);
+              }
+            })
+          ;
+        },
+
+        is: {
+          valid: function() {
+            var
+              allValid = true
+            ;
+            module.verbose('Checking if form is valid');
+            $.each(validation, function(fieldName, field) {
+              if( !( module.validate.field(field) ) ) {
+                allValid = false;
+              }
+            });
+            return allValid;
+          }
         },
 
         removeEvents: function() {
@@ -161,32 +271,32 @@ $.fn.form = function(fields, parameters) {
                   .blur()
                 ;
               }
-              if(!event.ctrlKey && key == keyCode.enter && $field.is(selector.input) && $field.not(selector.checkbox).size() > 0 ) {
-                module.debug('Enter key pressed, submitting form');
-                $submit
-                  .addClass(className.down)
-                ;
-                $field
-                  .one('keyup' + eventNamespace, module.event.field.keyup)
-                ;
+              if(!event.ctrlKey && key == keyCode.enter && $field.is(selector.input) && $field.not(selector.checkbox).length > 0 ) {
+                if(!keyHeldDown) {
+                  $field
+                    .one('keyup' + eventNamespace, module.event.field.keyup)
+                  ;
+                  module.submit();
+                  module.debug('Enter pressed on input submitting form');
+                }
+                keyHeldDown = true;
               }
             },
             keyup: function() {
-              module.verbose('Doing keyboard shortcut form submit');
-              $submit.removeClass(className.down);
-              module.submit();
+              keyHeldDown = false;
             },
             blur: function() {
               var
-                $field      = $(this),
-                $fieldGroup = $field.closest($group)
+                $field          = $(this),
+                $fieldGroup     = $field.closest($group),
+                validationRules = module.get.validation($field)
               ;
               if( $fieldGroup.hasClass(className.error) ) {
-                module.debug('Revalidating field', $field,  module.get.validation($field));
-                module.validate.field( module.get.validation($field) );
+                module.debug('Revalidating field', $field, validationRules);
+                module.validate.field( validationRules );
               }
               else if(settings.on == 'blur' || settings.on == 'change') {
-                module.validate.field( module.get.validation($field) );
+                module.validate.field( validationRules );
               }
             },
             change: function() {
@@ -207,42 +317,177 @@ $.fn.form = function(fields, parameters) {
         },
 
         get: {
-          changeEvent: function(type) {
-            if(type == 'checkbox' || type == 'radio') {
+          changeEvent: function(type, $input) {
+            if(type == 'checkbox' || type == 'radio' || type == 'hidden' || $input.is('select')) {
               return 'change';
             }
             else {
-              return (document.createElement('input').oninput !== undefined)
-                ? 'input'
-                : (document.createElement('input').onpropertychange !== undefined)
-                  ? 'propertychange'
-                  : 'keyup'
-              ;
+              return module.get.inputEvent();
             }
+          },
+          inputEvent: function() {
+            return (document.createElement('input').oninput !== undefined)
+              ? 'input'
+              : (document.createElement('input').onpropertychange !== undefined)
+                ? 'propertychange'
+                : 'keyup'
+            ;
+          },
+          settings: function() {
+            var
+              firstProperty
+            ;
+            if($.isPlainObject(parameters)) {
+              var
+                keys             = Object.keys(parameters),
+                isLegacySettings = (keys.length > 0)
+                  ? (parameters[keys[0]].identifier !== undefined)
+                  : false
+              ;
+              if(isLegacySettings) {
+                // 1.x (ducktyped)
+                settings   = $.extend(true, {}, $.fn.form.settings, legacyParameters);
+                validation = $.extend({}, $.fn.form.settings.defaults, parameters);
+                module.error(settings.error.oldSyntax, element);
+                module.verbose('Extending settings from legacy parameters', validation, settings);
+              }
+              else {
+                // 2.x
+                settings   = $.extend(true, {}, $.fn.form.settings, parameters);
+                validation = $.extend({}, $.fn.form.settings.defaults, settings.fields);
+                module.verbose('Extending settings', validation, settings);
+              }
+            }
+            else {
+              settings   = $.fn.form.settings;
+              validation = $.fn.form.settings.defaults;
+              module.verbose('Using default form validation', validation, settings);
+            }
+
+            // shorthand
+            namespace       = settings.namespace;
+            metadata        = settings.metadata;
+            selector        = settings.selector;
+            className       = settings.className;
+            error           = settings.error;
+            moduleNamespace = 'module-' + namespace;
+            eventNamespace  = '.' + namespace;
+
+            // grab instance
+            instance = $module.data(moduleNamespace);
+
+            // refresh selector cache
+            module.refresh();
           },
           field: function(identifier) {
             module.verbose('Finding field with identifier', identifier);
-            if( $field.filter('#' + identifier).size() > 0 ) {
+            if( $field.filter('#' + identifier).length > 0 ) {
               return $field.filter('#' + identifier);
             }
-            else if( $field.filter('[name="' + identifier +'"]').size() > 0 ) {
+            else if( $field.filter('[name="' + identifier +'"]').length > 0 ) {
               return $field.filter('[name="' + identifier +'"]');
             }
-            else if( $field.filter('[data-' + metadata.validate + '="'+ identifier +'"]').size() > 0 ) {
+            else if( $field.filter('[name="' + identifier +'[]"]').length > 0 ) {
+              return $field.filter('[name="' + identifier +'[]"]');
+            }
+            else if( $field.filter('[data-' + metadata.validate + '="'+ identifier +'"]').length > 0 ) {
               return $field.filter('[data-' + metadata.validate + '="'+ identifier +'"]');
             }
             return $('<input/>');
+          },
+          fields: function(fields) {
+            var
+              $fields = $()
+            ;
+            $.each(fields, function(index, name) {
+              $fields = $fields.add( module.get.field(name) );
+            });
+            return $fields;
           },
           validation: function($field) {
             var
               rules
             ;
+            if(!validation) {
+              return false;
+            }
             $.each(validation, function(fieldName, field) {
-              if( module.get.field(field.identifier).get(0) == $field.get(0) ) {
+              if( module.get.field(field.identifier)[0] == $field[0] ) {
                 rules = field;
               }
             });
             return rules || false;
+          },
+          value: function (field) {
+            var
+              fields = [],
+              results
+            ;
+            fields.push(field);
+            results = module.get.values.call(element, fields);
+            return results[field];
+          },
+          values: function (fields) {
+            var
+              $fields = $.isArray(fields)
+                ? module.get.fields(fields)
+                : $field,
+              values = {}
+            ;
+            $fields.each(function(index, field) {
+              var
+                $field     = $(field),
+                type       = $field.prop('type'),
+                name       = $field.prop('name'),
+                value      = $field.val(),
+                isCheckbox = $field.is(selector.checkbox),
+                isRadio    = $field.is(selector.radio),
+                isMultiple = (name.indexOf('[]') !== -1),
+                isChecked  = (isCheckbox)
+                  ? $field.is(':checked')
+                  : false
+              ;
+              if(name) {
+                if(isMultiple) {
+                  name = name.replace('[]', '');
+                  if(!values[name]) {
+                    values[name] = [];
+                  }
+                  if(isCheckbox) {
+                    if(isChecked) {
+                      values[name].push(value);
+                    }
+                    else {
+                      module.debug('Omitted unchecked checkbox', $field);
+                      return true;
+                    }
+                  }
+                  else {
+                    values[name].push(value);
+                  }
+                }
+                else {
+                  if(isRadio) {
+                    if(isChecked) {
+                      values[name] = value;
+                    }
+                  }
+                  else if(isCheckbox) {
+                    if(isChecked) {
+                      values[name] = true;
+                    }
+                    else {
+                      module.debug('Omitted unchecked checkbox', $field);
+                      return true;
+                    }
+                  }
+                  else {
+                    values[name] = value;
+                  }
+                }
+              }
+            });
+            return values;
           }
         },
 
@@ -250,13 +495,13 @@ $.fn.form = function(fields, parameters) {
 
           field: function(identifier) {
             module.verbose('Checking for existence of a field with identifier', identifier);
-            if( $field.filter('#' + identifier).size() > 0 ) {
+            if( $field.filter('#' + identifier).length > 0 ) {
               return true;
             }
-            else if( $field.filter('[name="' + identifier +'"]').size() > 0 ) {
+            else if( $field.filter('[name="' + identifier +'"]').length > 0 ) {
               return true;
             }
-            else if( $field.filter('[data-' + metadata.validate + '="'+ identifier +'"]').size() > 0 ) {
+            else if( $field.filter('[data-' + metadata.validate + '="'+ identifier +'"]').length > 0 ) {
               return true;
             }
             return false;
@@ -269,8 +514,8 @@ $.fn.form = function(fields, parameters) {
             var
               $field       = module.get.field(identifier),
               $fieldGroup  = $field.closest($group),
-              $prompt      = $fieldGroup.find(selector.prompt),
-              promptExists = ($prompt.size() !== 0)
+              $prompt      = $fieldGroup.children(selector.prompt),
+              promptExists = ($prompt.length !== 0)
             ;
             errors = (typeof errors == 'string')
               ? [errors]
@@ -320,7 +565,7 @@ $.fn.form = function(fields, parameters) {
             var
               $field      = module.get.field(field.identifier),
               $fieldGroup = $field.closest($group),
-              $prompt     = $fieldGroup.find(selector.prompt)
+              $prompt     = $fieldGroup.children(selector.prompt)
             ;
             $fieldGroup
               .removeClass(className.error)
@@ -350,11 +595,86 @@ $.fn.form = function(fields, parameters) {
               .addClass(className.success)
             ;
           },
+          defaults: function () {
+            $field
+              .each(function () {
+                var
+                  $field     = $(this),
+                  isCheckbox = ($field.filter(selector.checkbox).length > 0),
+                  value      = (isCheckbox)
+                    ? $field.is(':checked')
+                    : $field.val()
+                ;
+                $field.data(metadata.defaultValue, value);
+              })
+            ;
+          },
           error: function() {
             $module
               .removeClass(className.success)
               .addClass(className.error)
             ;
+          },
+          value: function (field, value) {
+            var
+              fields = {}
+            ;
+            fields[field] = value;
+            return module.set.values.call(element, fields);
+          },
+          values: function (fields) {
+            if($.isEmptyObject(fields)) {
+              return;
+            }
+            $.each(fields, function(key, value) {
+              var
+                $field      = module.get.field(key),
+                $element    = $field.parent(),
+                isMultiple  = $.isArray(value),
+                isCheckbox  = $element.is(selector.uiCheckbox),
+                isDropdown  = $element.is(selector.uiDropdown),
+                isRadio     = ($field.is(selector.radio) && isCheckbox),
+                fieldExists = ($field.length > 0),
+                $multipleField
+              ;
+              if(fieldExists) {
+                if(isMultiple && isCheckbox) {
+                  module.verbose('Selecting multiple', value, $field);
+                  $element.checkbox('uncheck');
+                  $.each(value, function(index, value) {
+                    $multipleField = $field.filter('[value="' + value + '"]');
+                    $element       = $multipleField.parent();
+                    if($multipleField.length > 0) {
+                      $element.checkbox('check');
+                    }
+                  });
+                }
+                else if(isRadio) {
+                  module.verbose('Selecting radio value', value, $field);
+                  $field.filter('[value="' + value + '"]')
+                    .parent(selector.uiCheckbox)
+                      .checkbox('check')
+                  ;
+                }
+                else if(isCheckbox) {
+                  module.verbose('Setting checkbox value', value, $element);
+                  if(value === true) {
+                    $element.checkbox('check');
+                  }
+                  else {
+                    $element.checkbox('uncheck');
+                  }
+                }
+                else if(isDropdown) {
+                  module.verbose('Setting dropdown value', value, $element);
+                  $element.dropdown('set selected', value);
+                }
+                else {
+                  module.verbose('Setting field value', value, $field);
+                  $field.val(value);
+                }
+              }
+            });
           }
         },
 
@@ -362,20 +682,20 @@ $.fn.form = function(fields, parameters) {
 
           form: function(event) {
             var
-              allValid = true,
               apiRequest
             ;
+
+            // input keydown event will fire submit repeatedly by browser default
+            if(keyHeldDown) {
+              return false;
+            }
+
             // reset errors
             formErrors = [];
-            $.each(validation, function(fieldName, field) {
-              if( !( module.validate.field(field) ) ) {
-                allValid = false;
-              }
-            });
-            if(allValid) {
+            if( module.is.valid() ) {
               module.debug('Form has no validation errors, submitting');
               module.set.success();
-              return $.proxy(settings.onSuccess, this)(event);
+              return settings.onSuccess.call(element, event);
             }
             else {
               module.debug('Form has errors');
@@ -387,7 +707,7 @@ $.fn.form = function(fields, parameters) {
               if($module.data('moduleApi') !== undefined) {
                 event.stopImmediatePropagation();
               }
-              return $.proxy(settings.onFailure, this)(formErrors);
+              return settings.onFailure.call(element, formErrors);
             }
           },
 
@@ -398,7 +718,15 @@ $.fn.form = function(fields, parameters) {
               fieldValid  = true,
               fieldErrors = []
             ;
-            if(field.rules !== undefined) {
+            if($field.prop('disabled')) {
+              module.debug('Field is disabled. Skipping', field.identifier);
+              fieldValid = true;
+            }
+            else if(field.optional && $.trim($field.val()) === ''){
+              module.debug('Field is optional and empty. Skipping', field.identifier);
+              fieldValid = true;
+            }
+            else if(field.rules !== undefined) {
               $.each(field.rules, function(index, rule) {
                 if( module.has.field(field.identifier) && !( module.validate.rule(field, rule) ) ) {
                   module.debug('Field is invalid', field.identifier, rule.type);
@@ -409,12 +737,12 @@ $.fn.form = function(fields, parameters) {
             }
             if(fieldValid) {
               module.remove.prompt(field, fieldErrors);
-              $.proxy(settings.onValid, $field)();
+              settings.onValid.call($field);
             }
             else {
               formErrors = formErrors.concat(fieldErrors);
               module.add.prompt(field.identifier, fieldErrors);
-              $.proxy(settings.onInvalid, $field)(fieldErrors);
+              settings.onInvalid.call($field, fieldErrors);
               return false;
             }
             return true;
@@ -425,23 +753,34 @@ $.fn.form = function(fields, parameters) {
             var
               $field        = module.get.field(field.identifier),
               type          = validation.type,
-              value         = $.trim($field.val() + ''),
-
-              bracketRegExp = /\[(.*)\]/i,
-              bracket       = bracketRegExp.exec(type),
+              value         = $field.val(),
+              bracket       = type.match(settings.regExp.bracket),
               isValid       = true,
+              rule,
               ancillary,
               functionType
             ;
+            // cast to string
+            value = $.trim($field.val() + '');
+
             // if bracket notation is used, pass in extra parameters
-            if(bracket !== undefined && bracket !== null) {
+            if(bracket) {
               ancillary    = '' + bracket[1];
               functionType = type.replace(bracket[0], '');
-              isValid      = $.proxy(settings.rules[functionType], $module)(value, ancillary);
+              rule         = settings.rules[functionType];
+              if( !$.isFunction(rule) ) {
+                module.error(error.noRule, functionType);
+                return;
+              }
+              isValid = rule.call($field, value, ancillary);
             }
-            // normal notation
             else {
-              isValid = $.proxy(settings.rules[type], $field)(value);
+              rule = settings.rules[type];
+              if( !$.isFunction(rule) ) {
+                module.error(error.noRule, type);
+                return;
+              }
+              isValid = rule.call($field, value);
             }
             return isValid;
           }
@@ -515,7 +854,7 @@ $.fn.form = function(fields, parameters) {
               });
             }
             clearTimeout(module.performance.timer);
-            module.performance.timer = setTimeout(module.performance.display, 100);
+            module.performance.timer = setTimeout(module.performance.display, 500);
           },
           display: function() {
             var
@@ -531,8 +870,8 @@ $.fn.form = function(fields, parameters) {
             if(moduleSelector) {
               title += ' \'' + moduleSelector + '\'';
             }
-            if($allModules.size() > 1) {
-              title += ' ' + '(' + $allModules.size() + ')';
+            if($allModules.length > 1) {
+              title += ' ' + '(' + $allModules.length + ')';
             }
             if( (console.group !== undefined || console.table !== undefined) && performance.length > 0) {
               console.groupCollapsed(title);
@@ -585,7 +924,7 @@ $.fn.form = function(fields, parameters) {
               }
             });
           }
-          if ( $.isFunction( found ) ) {
+          if( $.isFunction( found ) ) {
             response = found.apply(context, passedArguments);
           }
           else if(found !== undefined) {
@@ -603,19 +942,7 @@ $.fn.form = function(fields, parameters) {
           return found;
         }
       };
-      if(methodInvoked) {
-        if(instance === undefined) {
-          module.initialize();
-        }
-        module.invoke(query);
-      }
-      else {
-        if(instance !== undefined) {
-          module.destroy();
-        }
-        module.initialize();
-      }
-
+      module.initialize();
     })
   ;
 
@@ -631,9 +958,10 @@ $.fn.form.settings = {
   namespace         : 'form',
 
   debug             : false,
-  verbose           : true,
+  verbose           : false,
   performance       : true,
 
+  fields            : false,
 
   keyboardShortcuts : true,
   on                : 'submit',
@@ -643,8 +971,7 @@ $.fn.form.settings = {
   revalidate        : true,
 
   transition        : 'scale',
-  duration          : 150,
-
+  duration          : 200,
 
   onValid           : function() {},
   onInvalid         : function() {},
@@ -652,33 +979,50 @@ $.fn.form.settings = {
   onFailure         : function() { return false; },
 
   metadata : {
-    validate: 'validate'
+    defaultValue : 'default',
+    validate     : 'validate'
+  },
+
+  regExp: {
+    bracket : /\[(.*)\]/i,
+    escape  : /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
+    email   : "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+    integer : /^\-?\d+$/,
+    flags   : /^\/(.*)\/(.*)?/,
+    url     : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
   },
 
   selector : {
-    message : '.error.message',
-    field   : 'input, textarea, select',
-    group   : '.field',
-    checkbox: 'input[type="checkbox"], input[type="radio"]',
-    input   : 'input',
-    prompt  : '.prompt',
-    submit  : '.submit'
+    checkbox   : 'input[type="checkbox"], input[type="radio"]',
+    clear      : '.clear',
+    field      : 'input, textarea, select',
+    group      : '.field',
+    input      : 'input',
+    message    : '.error.message',
+    prompt     : '.prompt.label',
+    radio      : 'input[type="radio"]',
+    reset      : '.reset:not([type="reset"])',
+    submit     : '.submit:not([type="submit"])',
+    uiCheckbox : '.ui.checkbox',
+    uiDropdown : '.ui.dropdown'
   },
 
   className : {
     error   : 'error',
-    success : 'success',
-    down    : 'down',
-    label   : 'ui label prompt'
+    label   : 'ui prompt label',
+    pressed : 'down',
+    success : 'success'
   },
 
-  // errors
   error: {
-    method   : 'The method you called is not defined.'
+    oldSyntax : 'Starting in 2.0 forms now only take a single settings object. Validation settings converted to new syntax automatically.',
+    noRule    : 'There is no rule matching the one you specified',
+    method    : 'The method you called is not defined.'
   },
-
 
   templates: {
+
+    // template that produces error message
     error: function(errors) {
       var
         html = '<ul class="list">'
@@ -689,6 +1033,8 @@ $.fn.form.settings = {
       html += '</ul>';
       return $(html);
     },
+
+    // template that produces label
     prompt: function(errors) {
       return $('<div/>')
         .addClass('ui red pointing prompt label')
@@ -698,87 +1044,61 @@ $.fn.form.settings = {
   },
 
   rules: {
+
+    // checkbox checked
     checked: function() {
-      return ($(this).filter(':checked').size() > 0);
+      return ($(this).filter(':checked').length > 0);
     },
-    empty: function(value) {
-      return !(value === undefined || '' === value);
+
+    // value contains text (insensitive)
+    contains: function(value, text) {
+      // escape regex characters
+      text = text.replace($.fn.form.settings.regExp.escape, "\\$&");
+      return (value.search( new RegExp(text, 'i') ) !== -1);
     },
+
+    // value contains text (case sensitive)
+    containsExactly: function(value, text) {
+      // escape regex characters
+      text = text.replace($.fn.form.settings.regExp.escape, "\\$&");
+      return (value.search( new RegExp(text) ) !== -1);
+    },
+
+    // is most likely an email
     email: function(value){
       var
-        emailRegExp = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", "i")
+        emailRegExp = new RegExp($.fn.form.settings.regExp.email, 'i')
       ;
       return emailRegExp.test(value);
     },
-    length: function(value, requiredLength) {
-      return (value !== undefined)
-        ? (value.length >= requiredLength)
-        : false
-      ;
+
+    // is not empty or blank string
+    empty: function(value) {
+      return !(value === undefined || '' === value || $.isArray(value) && value.length === 0);
     },
-    not: function(value, notValue) {
-      return (value != notValue);
-    },
-    contains: function(value, text) {
-      text = text.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-      return (value.search(text) !== -1);
-    },
-    is: function(value, text) {
-      return (value == text);
-    },
-    maxLength: function(value, maxLength) {
-      return (value !== undefined)
-        ? (value.length <= maxLength)
-        : false
-      ;
-    },
-    match: function(value, fieldIdentifier) {
-      // use either id or name of field
-      var
-        $form = $(this),
-        matchingValue
-      ;
-      if($form.find('#' + fieldIdentifier).size() > 0) {
-        matchingValue = $form.find('#' + fieldIdentifier).val();
-      }
-      else if($form.find('[name="' + fieldIdentifier +'"]').size() > 0) {
-        matchingValue = $form.find('[name="' + fieldIdentifier + '"]').val();
-      }
-      else if( $form.find('[data-validate="'+ fieldIdentifier +'"]').size() > 0 ) {
-        matchingValue = $form.find('[data-validate="'+ fieldIdentifier +'"]').val();
-      }
-      return (matchingValue !== undefined)
-        ? ( value.toString() == matchingValue.toString() )
-        : false
-      ;
-    },
-    url: function(value) {
-      var
-        urlRegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-      ;
-      return urlRegExp.test(value);
-    },
+
+    // is valid integer
     integer: function(value, range) {
       var
-        intRegExp = /^\-?\d+$/,
+        intRegExp = $.fn.form.settings.regExp.integer,
         min,
         max,
         parts
       ;
-      if (range === undefined || range === '' || range === '..') {
+      if(range === undefined || range === '' || range === '..') {
         // do nothing
       }
-      else if (range.indexOf('..') == -1) {
-        if (intRegExp.test(range)) {
+      else if(range.indexOf('..') == -1) {
+        if(intRegExp.test(range)) {
           min = max = range - 0;
         }
       }
       else {
         parts = range.split('..', 2);
-        if (intRegExp.test(parts[0])) {
+        if(intRegExp.test(parts[0])) {
           min = parts[0] - 0;
         }
-        if (intRegExp.test(parts[1])) {
+        if(intRegExp.test(parts[1])) {
           max = parts[1] - 0;
         }
       }
@@ -787,6 +1107,147 @@ $.fn.form.settings = {
         (min === undefined || value >= min) &&
         (max === undefined || value <= max)
       );
+    },
+
+    // is value (case insensitive)
+    is: function(value, text) {
+      text = (typeof text == 'string')
+        ? text.toLowerCase()
+        : text
+      ;
+      value = (typeof value == 'string')
+        ? value.toLowerCase()
+        : value
+      ;
+      return (value == text);
+    },
+
+    // is value
+    isExactly: function(value, text) {
+      return (value == text);
+    },
+
+    // is at least string length
+    length: function(value, requiredLength) {
+      return (value !== undefined)
+        ? (value.length >= requiredLength)
+        : false
+      ;
+    },
+
+    // matches another field
+    different: function(value, identifier) {
+      // use either id or name of field
+      var
+        $form = $(this),
+        matchingValue
+      ;
+      if( $('[data-validate="'+ identifier +'"]').length > 0 ) {
+        matchingValue = $('[data-validate="'+ identifier +'"]').val();
+      }
+      else if($('#' + identifier).length > 0) {
+        matchingValue = $('#' + identifier).val();
+      }
+      else if($('[name="' + identifier +'"]').length > 0) {
+        matchingValue = $('[name="' + identifier + '"]').val();
+      }
+      else if( $('[name="' + identifier +'[]"]').length > 0 ) {
+        matchingValue = $('[name="' + identifier +'[]"]');
+      }
+      return (matchingValue !== undefined)
+        ? ( value.toString() !== matchingValue.toString() )
+        : false
+      ;
+    },
+
+    // matches another field
+    match: function(value, identifier) {
+      // use either id or name of field
+      var
+        $form = $(this),
+        matchingValue
+      ;
+      if( $('[data-validate="'+ identifier +'"]').length > 0 ) {
+        matchingValue = $('[data-validate="'+ identifier +'"]').val();
+      }
+      else if($('#' + identifier).length > 0) {
+        matchingValue = $('#' + identifier).val();
+      }
+      else if($('[name="' + identifier +'"]').length > 0) {
+        matchingValue = $('[name="' + identifier + '"]').val();
+      }
+      else if( $('[name="' + identifier +'[]"]').length > 0 ) {
+        matchingValue = $('[name="' + identifier +'[]"]');
+      }
+      return (matchingValue !== undefined)
+        ? ( value.toString() == matchingValue.toString() )
+        : false
+      ;
+    },
+
+    maxCount: function(value, count) {
+      value = value.split(',');
+      return ($.isArray(value) && value.length <= count);
+    },
+
+    exactCount: function(value, count) {
+      value = value.split(',');
+      return ($.isArray(value) && value.length == count);
+    },
+
+    minCount: function(value, count) {
+      value = value.split(',');
+      return ($.isArray(value) && value.length >= count);
+    },
+
+    regExp: function(value, regExp) {
+      var
+        regExpParts = regExp.match($.fn.form.settings.regExp.flags),
+        flags
+      ;
+      // regular expression specified as /baz/gi (flags)
+      if(regExpParts) {
+        regExp = (regExpParts.length >= 2)
+          ? regExpParts[1]
+          : regExp
+        ;
+        flags = (regExpParts.length >= 3)
+          ? regExpParts[2]
+          : ''
+        ;
+      }
+      return value.match( new RegExp(regExp, flags) );
+    },
+
+    // string length is less than max length
+    maxLength: function(value, maxLength) {
+      return (value !== undefined)
+        ? (value.length <= maxLength)
+        : false
+      ;
+    },
+
+    // value is not value (case insensitive)
+    not: function(value, notValue) {
+      value = (typeof value == 'string')
+        ? value.toLowerCase()
+        : value
+      ;
+      notValue = (typeof notValue == 'string')
+        ? notValue.toLowerCase()
+        : notValue
+      ;
+      return (value != notValue);
+    },
+
+    // value is not value (case sensitive)
+    notExactly: function(value, notValue) {
+      return (value != notValue);
+    },
+
+    // value is most likely url
+    url: function(value) {
+      return $.fn.form.settings.regExp.url.match(value);
     }
   }
 
