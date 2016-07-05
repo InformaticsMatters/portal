@@ -27,7 +27,7 @@ import org.squonk.jobdef.JobStatus;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PopupContainerProvider;
-import portal.PortalHomePage;
+import portal.PortalWebApplication;
 import portal.notebook.api.*;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -161,13 +161,12 @@ public class NotebookCanvasPage extends WebPage {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/jquery-ui-simetrias.min.css")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/jquery-ui.min.js")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/dom.jsPlumb-1.7.5.js")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/lac.css")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/lac.js")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalHomePage.class, "resources/notebook.css")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalHomePage.class, "resources/notebook.js")));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/jquery-ui-simetrias.min.css")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/jquery-ui.min.js")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/dom.jsPlumb-1.7.5.js")));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/lac.css")));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/notebook.css")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/notebook.js")));
         response.render(OnDomReadyHeaderItem.forScript("initJsPlumb();"));
         if (notebookSession.getCurrentNotebookInfo() != null) {
             response.render(OnDomReadyHeaderItem.forScript("addCellsPaletteDragAndDropSupport();"));

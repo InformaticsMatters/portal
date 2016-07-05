@@ -369,7 +369,7 @@ div.ui-resizable-handle.ui-resizable-s {
     z-index: 100;
     margin: 20px;
     width: 150px;
-    padding 10px;
+    padding: 10px;
 }
 
 .notebook-versionTree-item:hover {

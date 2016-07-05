@@ -19,7 +19,6 @@ public class MenuPanel extends Panel {
     private SessionContext sessionContext;
     @Inject
     private LogoutHandler logoutHandler;
-    private AjaxLink leftSidebarLink;
 
     public MenuPanel(String id) {
         super(id);
@@ -29,17 +28,7 @@ public class MenuPanel extends Panel {
     private void addActions() {
         final AttributeAppender attributeAppender = AttributeModifier.append("class", "active");
 
-        AjaxLink homeLink = new AjaxLink("home") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                setResponsePage(PortalHomePage.class);
-                add(attributeAppender);
-            }
-        };
-        add(homeLink);
-
-        AjaxLink notebookLink = new AjaxLink("notebook") {
+        AjaxLink notebookLink = new AjaxLink("home") {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -48,16 +37,6 @@ public class MenuPanel extends Panel {
             }
         };
         add(notebookLink);
-
-        leftSidebarLink = new AjaxLink("leftSidebarLink") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                ajaxRequestTarget.appendJavaScript("leftSideBarToggle()");
-            }
-        };
-        add(leftSidebarLink);
-        leftSidebarLink.setVisible(false);
 
         add(new Link<String>("logout") {
 
@@ -78,9 +57,4 @@ public class MenuPanel extends Panel {
             return userDetails.getDisplayName();
         }
     }
-
-    public void setLeftSideItemVisible(boolean value) {
-        leftSidebarLink.setVisible(value);
-    }
-
 }

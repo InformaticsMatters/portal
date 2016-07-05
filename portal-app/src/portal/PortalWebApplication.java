@@ -5,6 +5,7 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.cdi.ConversationPropagation;
 import org.apache.wicket.protocol.http.WebApplication;
+import portal.notebook.webapp.NotebookCanvasPage;
 import portal.notebook.webapp.NotebookStructureImageResource;
 import toolkit.derby.DerbyUtils;
 
@@ -15,7 +16,7 @@ public class PortalWebApplication extends WebApplication {
 
     @Override
     public Class<? extends Page> getHomePage() {
-        return PortalHomePage.class;
+        return NotebookCanvasPage.class;
     }
 
     @Override
