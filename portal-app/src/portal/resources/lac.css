@@ -255,7 +255,6 @@
 
 .ui.grid {
     margin-top:0;
-    font-size: 0;
 }
 
 .ui.grid>* {
@@ -362,32 +361,7 @@
   right: 0;
 }
 
-.nb-vertical-left-menu {
-  text-align:center;
-  -moz-transform: rotate(-90deg) translateX(-90px) translateY(-90px);
-  -webkit-transform: rotate(-90deg) translateX(-90px) translateY(-90px);
-  -o-transform: rotate(-90deg) translateX(-90px) translateY(-90px);
-  transform: rotate(-90deg) translateX(-90px) translateY(-90px);
-  width: 200px;
-  height: 20px;
-  margin: 0;
-  padding: 0!important;
-  position: absolute;
-}
 
-.nb-vertical-right-menu {
-  text-align:center;
-  -moz-transform: rotate(90deg) translateX(90px) translateY(-90px);
-  -webkit-transform: rotate(90deg) translateX(90px) translateY(-90px);
-  -o-transform: rotate(90deg) translateX(90px) translateY(-90px);
-  transform: rotate(90deg) translateX(90px) translateY(-90px);
-  width: 200px;
-  height: 20px;
-  margin: 0;
-  padding: 0!important;
-  position: absolute;
-  right: 0;
-}
 
 .left-nav-item {
     height: 20px;

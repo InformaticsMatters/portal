@@ -2,6 +2,10 @@
     z-index: 3000;
 }
 
+.ui.form input[type=checkbox] {
+    vertical-align: middle;
+}
+
 li {
     list-style-type: none;
 }
@@ -199,6 +203,8 @@ div.ui-resizable-handle.ui-resizable-s {
     margin-right: -7px;
     float: right;
     font-size: 1rem;
+    min-height:0;
+    height: 19px;
 }
 
 .ui.menu.text.nbListMenu {
@@ -208,6 +214,8 @@ div.ui-resizable-handle.ui-resizable-s {
     margin-right: -7px;
     float: right;
     font-size: 1rem;
+    min-height:0;
+    height: 19px;
 }
 
 .ui.menu.text.notebookMenu a,
@@ -380,4 +388,37 @@ div.ui-resizable-handle.ui-resizable-s {
 .notebook-canvas-item-content .extra.line {
     border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
     margin-top: 10px;
+}
+
+.principal.menu {
+    border-radius:0;
+}
+
+.nb-vertical-left-menu {
+  text-align:center;
+  -moz-transform: rotate(-90deg) translateX(-91px) translateY(-90px);
+  -webkit-transform: rotate(-90deg) translateX(-91px) translateY(-90px);
+  -o-transform: rotate(-90deg) translateX(-91px) translateY(-90px);
+  transform: rotate(-90deg) translateX(-91px) translateY(-90px);
+  width: 200px;
+  height: 20px;
+  margin: 0;
+  padding: 0!important;
+  position: absolute;
+  font-size:0;
+}
+
+.nb-vertical-right-menu {
+  text-align:center;
+  -moz-transform: rotate(90deg) translateX(91px) translateY(-90px);
+  -webkit-transform: rotate(90deg) translateX(91px) translateY(-90px);
+  -o-transform: rotate(90deg) translateX(91px) translateY(-90px);
+  transform: rotate(90deg) translateX(91px) translateY(-90px);
+  width: 200px;
+  height: 20px;
+  margin: 0;
+  padding: 0!important;
+  position: absolute;
+  right: 0;
+  font-size:0;
 }
