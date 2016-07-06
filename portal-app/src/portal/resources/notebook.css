@@ -215,17 +215,8 @@ div.ui-resizable-handle.ui-resizable-s {
     font-size: 13px;
 }
 
-.nbListTable .icon {
-    display: none;
-}
-
 .nbListTable tr:hover {
-   /* background-color: #f7f7f7; */
     background-color: #EFFAFF;
-}
-
-.nbListTable tr.selected .icon {
-    display: block;
 }
 
 .nbListTable tr.selected td {

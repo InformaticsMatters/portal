@@ -65,9 +65,12 @@ public class NotebookListPanel extends Panel {
 
             @Override
             protected void populateItem(ListItem<NotebookInfo> listItem) {
+                Long currentId = notebookSession.getCurrentNotebookInfo() == null ? null : notebookSession.getCurrentNotebookInfo().getId();
+
                 NotebookInfo notebookInfo = listItem.getModelObject();
                 boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookInfo.getOwner());
                 boolean isShared = notebookInfo.getShared();
+                boolean isCurrentNotebook = listItem.getModelObject().getId().equals(currentId);
                 listItem.add(new Label("name", notebookInfo.getName()));
                 listItem.add(new Label("owner", notebookInfo.getOwner()));
 
@@ -85,7 +88,7 @@ public class NotebookListPanel extends Panel {
                     }
                 };
                 listItem.add(editLink);
-                editLink.setVisible(isOwner);
+                editLink.setVisible(isOwner && isCurrentNotebook);
 
                 AjaxLink changeStatusLink = new AjaxLink("changeStatus") {
 
@@ -106,23 +109,23 @@ public class NotebookListPanel extends Panel {
                     }
                 };
                 listItem.add(changeStatusLink);
-                changeStatusLink.setVisible(isOwner && notebookInfo.getShareable());
+                changeStatusLink.setVisible(isOwner && notebookInfo.getShareable() && isCurrentNotebook);
 
                 WebMarkupContainer publicNb = new WebMarkupContainer("publicNb");
                 changeStatusLink.add(publicNb);
-                publicNb.setVisible(isShared);
+                publicNb.setVisible(isShared && isCurrentNotebook);
 
                 WebMarkupContainer privateNb = new WebMarkupContainer("privateNb");
                 changeStatusLink.add(privateNb);
-                privateNb.setVisible(!isShared);
+                privateNb.setVisible(!isShared && isCurrentNotebook);
 
                 WebMarkupContainer publicNbLabel = new WebMarkupContainer("publicNbLabel");
                 listItem.add(publicNbLabel);
-                publicNbLabel.setVisible(isShared && (!isOwner || !notebookInfo.getShareable()));
+                publicNbLabel.setVisible(isShared && (!isOwner || !notebookInfo.getShareable()) && isCurrentNotebook);
 
                 WebMarkupContainer privateNbLabel = new WebMarkupContainer("privateNbLabel");
                 listItem.add(privateNbLabel);
-                privateNbLabel.setVisible(!isShared && (!isOwner || !notebookInfo.getShareable()));
+                privateNbLabel.setVisible(!isShared && (!isOwner || !notebookInfo.getShareable()) && isCurrentNotebook);
 
                 AjaxLink removeLink = new AjaxLink("remove") {
 
@@ -138,7 +141,7 @@ public class NotebookListPanel extends Panel {
                     }
                 };
                 listItem.add(removeLink);
-                removeLink.setVisible(isOwner);
+                removeLink.setVisible(isOwner && isCurrentNotebook);
 
                 listItem.add(new AjaxEventBehavior("onclick") {
 
@@ -155,20 +158,10 @@ public class NotebookListPanel extends Panel {
                     }
                 });
 
-                Long currentId = notebookSession.getCurrentNotebookInfo() == null ? null : notebookSession.getCurrentNotebookInfo().getId();
                 if (listItem.getModelObject().getId().equals(currentId)) {
                     selectedMarkupId = listItem.getMarkupId();
                 }
 
-
-
-               /* Label shared = new Label("shared");
-                if (notebookInfo.getShared()) {
-                    shared.setDefaultModel(Model.of("public"));
-                    shared.add(new AttributeModifier("class", "ui tiny blue label"));
-                }
-                listItem.add(shared);
-                shared.setVisible(isOwner);*/
             }
         };
         add(listView);
