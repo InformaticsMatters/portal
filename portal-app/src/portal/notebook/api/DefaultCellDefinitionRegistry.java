@@ -125,6 +125,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
         registerCellDefinition(new SmilesDeduplicatorCellDefinition());
         registerCellDefinition(new DatasetDockerProcessorCellDefinition());
+        registerCellDefinition(new CxnReactorCellDefinition());
     }
 
     private void registerCustomCellDefinitions() {
