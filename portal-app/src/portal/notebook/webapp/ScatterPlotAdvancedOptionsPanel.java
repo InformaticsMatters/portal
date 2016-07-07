@@ -19,7 +19,9 @@ import toolkit.wicket.semantic.NotifierProvider;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,6 +63,11 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
         DropDownChoice<String> y = new DropDownChoice<>("y", picklistItems);
         form.add(y);
+
+        List<String> sizes = new ArrayList<>();
+        sizes.addAll(ScatterPlotCanvasItemPanel.POINT_SIZES.keySet());
+        DropDownChoice<String> p = new DropDownChoice<>("pointSize", sizes);
+        form.add(p);
 
         CheckBox checkBox = new CheckBox("showAxisLabels");
         form.add(checkBox);
@@ -129,6 +136,14 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
         form.getModelObject().setColor(color);
     }
 
+    public String getPointSize() {
+        return form.getModelObject().getPointSize();
+    }
+
+    public void setPointSize(String pointSize) {
+        form.getModelObject().setPointSize(pointSize);
+    }
+
     public Boolean getShowAxisLabels() {
         return form.getModelObject().getShowAxisLabels();
     }
@@ -152,6 +167,7 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
         private String x;
         private String y;
         private String color;
+        private String pointSize;
         private Boolean showAxisLabels = Boolean.FALSE;
 
         public String getX() {
@@ -176,6 +192,14 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
         public void setColor(String color) {
             this.color = color;
+        }
+
+        public String getPointSize() {
+            return pointSize;
+        }
+
+        public void setPointSize(String pointSize) {
+            this.pointSize = pointSize;
         }
 
         public Boolean getShowAxisLabels() {

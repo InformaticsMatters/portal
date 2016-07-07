@@ -74,7 +74,7 @@ function buildScatterPlot(id, data, xLabel, yLabel) {
       .append("svg:circle")
           .attr("cx", function (d,i) { return x(d.x); } )
           .attr("cy", function (d) { return y(d.y); } )
-          .attr("r", 5)
+          .attr("r", function (d) { return d.size; } )
           .style("fill", function(d) { return colors(d.color); });
 
     var legend = g.selectAll(".legend")

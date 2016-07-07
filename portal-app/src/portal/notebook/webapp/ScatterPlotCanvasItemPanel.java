@@ -25,7 +25,9 @@ import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author simetrias
@@ -36,6 +38,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private static final String OPTION_X_AXIS = "xAxis";
     private static final String OPTION_Y_AXIS = "yAxis";
     private static final String OPTION_COLOR = "color";
+    private static final String OPTION_POINT_SIZE = "pointSize";
     private static final String OPTION_AXIS_LABELS = "axisLabels";
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
@@ -43,6 +46,19 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private NotebookSession notebookSession;
     @Inject
     private NotifierProvider notifierProvider;
+
+    protected static Map<String,Integer> POINT_SIZES = new LinkedHashMap<>();
+
+    static {
+        POINT_SIZES.put("Smallest", 1);
+        POINT_SIZES.put("Smaller", 2);
+        POINT_SIZES.put("Small", 3);
+        POINT_SIZES.put("Medium", 5);
+        POINT_SIZES.put("Large", 7);
+        POINT_SIZES.put("Larger", 9);
+        POINT_SIZES.put("Largest", 12);
+    }
+
 
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -108,6 +124,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         model.setX((String)cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue());
         model.setY((String)cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue());
         model.setColor((String)cellInstance.getOptionInstanceMap().get(OPTION_COLOR).getValue());
+        model.setPointSize((String)cellInstance.getOptionInstanceMap().get(OPTION_POINT_SIZE).getValue());
         model.setShowAxisLabels((Boolean)cellInstance.getOptionInstanceMap().get(OPTION_AXIS_LABELS).getValue());
     }
 
@@ -133,6 +150,10 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         String xFieldName = model.getX();
         String yFieldName = model.getY();
         String colorFieldName = model.getColor();
+        Integer size = POINT_SIZES.get(model.getPointSize());
+        if (size == null) {
+            size = 5;
+        }
         if (xFieldName != null || yFieldName != null) {
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
@@ -152,6 +173,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
                         if (color != null) {
                             dataItem.setColor(color);
                         }
+                        dataItem.setSize(size);
                         data[index] = dataItem;
                         index++;
                         // TODO - should we record how many records are not handled?
@@ -191,6 +213,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
                 cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).setValue(advancedOptionsPanel.getX());
                 cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).setValue(advancedOptionsPanel.getY());
                 cellInstance.getOptionInstanceMap().get(OPTION_COLOR).setValue(advancedOptionsPanel.getColor());
+                cellInstance.getOptionInstanceMap().get(OPTION_POINT_SIZE).setValue(advancedOptionsPanel.getPointSize());
                 cellInstance.getOptionInstanceMap().get(OPTION_AXIS_LABELS).setValue(advancedOptionsPanel.getShowAxisLabels());
                 notebookSession.storeCurrentEditable();
 
@@ -198,6 +221,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
                 model.setX(advancedOptionsPanel.getX());
                 model.setY(advancedOptionsPanel.getY());
                 model.setColor(advancedOptionsPanel.getColor());
+                model.setPointSize(advancedOptionsPanel.getPointSize());
                 model.setShowAxisLabels(advancedOptionsPanel.getShowAxisLabels());
                 onExecute();
             }
@@ -205,6 +229,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         advancedOptionsPanel.setX(form.getModelObject().getX());
         advancedOptionsPanel.setY(form.getModelObject().getY());
         advancedOptionsPanel.setColor(form.getModelObject().getColor());
+        advancedOptionsPanel.setPointSize(form.getModelObject().getPointSize());
         advancedOptionsPanel.setShowAxisLabels(form.getModelObject().getShowAxisLabels());
     }
 
@@ -231,6 +256,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         private String y;
         private DataItem[] data = {};
         private String color;
+        private String pointSize;
         private Boolean showAxisLabels = Boolean.FALSE;
 
         public String getX() {
@@ -277,6 +303,14 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
             this.color = color;
         }
 
+        public String getPointSize() {
+            return pointSize;
+        }
+
+        public void setPointSize(String pointSize) {
+            this.pointSize = pointSize;
+        }
+
         public Boolean getShowAxisLabels() {
             return showAxisLabels;
         }
@@ -291,6 +325,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         private float x;
         private float y;
         private Integer color;
+        private Integer size;
 
         public float getX() {
             return x;
@@ -314,6 +349,14 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
         public void setColor(Integer color) {
             this.color = color;
+        }
+
+        public Integer getSize() {
+            return size;
+        }
+
+        public void setSize(Integer size) {
+            this.size = size;
         }
     }
 }
