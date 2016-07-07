@@ -1,6 +1,9 @@
 package portal.notebook.webapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.squonk.dataset.Dataset;
+import org.squonk.dataset.DatasetMetadata;
+import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -25,16 +28,18 @@ import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author simetrias
  */
 public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
-    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data, ':xLabel', ':yLabel')";
+    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data, ':xLabel', ':yLabel', ':colorMode')";
     private static final String OPTION_X_AXIS = "xAxis";
     private static final String OPTION_Y_AXIS = "yAxis";
     private static final String OPTION_COLOR = "color";
@@ -150,22 +155,34 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         String xFieldName = model.getX();
         String yFieldName = model.getY();
         String colorFieldName = model.getColor();
-        Integer size = POINT_SIZES.get(model.getPointSize());
-        if (size == null) {
-            size = 5;
-        }
+        Integer sizeOpt = POINT_SIZES.get(model.getPointSize());
+        final int size = (sizeOpt == null ? 5 : sizeOpt);
         if (xFieldName != null || yFieldName != null) {
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
             if (variableInstance != null) {
-                List<MoleculeObject> dataset = notebookSession.squonkDatasetAsMolecules(variableInstance);
-                DataItem[] data = new DataItem[dataset.size()];
-                int index = 0;
-                for (MoleculeObject moleculeObject : dataset) {
-                    Float x = safeConvertToFloat(moleculeObject.getValue(xFieldName));
-                    Float y = safeConvertToFloat(moleculeObject.getValue(yFieldName));
-                    Integer color = (colorFieldName == null ? null : moleculeObject.getValue(colorFieldName, Integer.class));
+                Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
+                DatasetMetadata meta = dataset.getMetadata();
+                String colorMode = null;
+                // TODO - improve how the color mode is determined as some types could be handled as categorical or continuous.
+                // Allow user to specify?
+                if (colorFieldName != null) {
+                    Class colorFieldType = (Class)meta.getValueClassMappings().get(colorFieldName);
+                    if (colorFieldType != null) {
+                        if (Number.class.isAssignableFrom(colorFieldType)) {
+                            colorMode = "blue-red";
+                        } else {
+                            colorMode = "categorical";
+                        }
+                    }
+                }
+                model.setColorMode(colorMode);
+
+                List<DataItem> data = dataset.getStream().map((o) -> {
+                    Float x = safeConvertToFloat(o.getValue(xFieldName));
+                    Float y = safeConvertToFloat(o.getValue(yFieldName));
+                    Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
                     if (x != null && y != null) {
                         DataItem dataItem = new DataItem();
                         dataItem.setX(x);
@@ -174,12 +191,15 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
                             dataItem.setColor(color);
                         }
                         dataItem.setSize(size);
-                        data[index] = dataItem;
-                        index++;
+                        return dataItem;
+                    } else {
                         // TODO - should we record how many records are not handled?
+                        return null;
                     }
-                }
-                model.setData(data);
+                }).filter((d) -> d != null)
+                .collect(Collectors.toList());
+
+                model.setData(data.toArray(new DataItem[data.size()]));
             }
         }
     }
@@ -199,7 +219,9 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
             xLabel = model.getX() != null ? model.getX() : "";
             yLabel = model.getY() != null ? model.getY() : "";
         }
-        result = result.replace(":xLabel", xLabel).replace(":yLabel", yLabel);
+        result = result.replace(":xLabel", xLabel)
+                .replace(":yLabel", yLabel)
+                .replace(":colorMode", ""+model.getColorMode());
         return result;
     }
 
@@ -256,6 +278,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         private String y;
         private DataItem[] data = {};
         private String color;
+        private String colorMode;
         private String pointSize;
         private Boolean showAxisLabels = Boolean.FALSE;
 
@@ -303,6 +326,15 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
             this.color = color;
         }
 
+        public String getColorMode() {
+            return colorMode;
+        }
+
+        public void setColorMode(String colorMode) {
+            this.colorMode = colorMode;
+        }
+
+
         public String getPointSize() {
             return pointSize;
         }
@@ -324,7 +356,7 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
 
         private float x;
         private float y;
-        private Integer color;
+        private Object color;
         private Integer size;
 
         public float getX() {
@@ -343,11 +375,11 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
             this.y = y;
         }
 
-        public Integer getColor() {
+        public Object getColor() {
             return color;
         }
 
-        public void setColor(Integer color) {
+        public void setColor(Object color) {
             this.color = color;
         }
 
