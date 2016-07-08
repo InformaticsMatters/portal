@@ -78,8 +78,8 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
         ModelObject model = form.getModelObject();
-        model.setGroupsFieldName((String)cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue());
-        model.setValuesFieldName((String)cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue());
+        model.setGroupsFieldName((String) cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue());
+        model.setValuesFieldName((String) cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue());
     }
 
     @Override
@@ -132,23 +132,23 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
             if (variableInstance != null) {
                 Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
-                Map<Comparable, List<Float>> groupedData = dataset.getStream()
-                        .map((o) -> {
-                            Object group = o.getValue(groupsFieldName);
-                            Float value = safeConvertToFloat(o.getValue(valuesFieldName));
-                            if (group != null && value != null && group instanceof Comparable) {
-                                return new Datum((Comparable) group, value);
-                            } else {
-                                return null;
-                            }
-                        })
-                        .filter((Datum d) -> d != null)
-                        .collect(Collectors.groupingBy(Datum::getGroup, TreeMap::new,
-                                Collectors.mapping(Datum::getValue, toList())));
+                try (Stream<? extends BasicObject> stream = dataset.getStream()) {
+                    Map<Comparable, List<Float>> groupedData = stream.map((o) -> {
+                        Object group = o.getValue(groupsFieldName);
+                        Float value = safeConvertToFloat(o.getValue(valuesFieldName));
+                        if (group != null && value != null && group instanceof Comparable) {
+                            return new Datum((Comparable) group, value);
+                        } else {
+                            return null;
+                        }
+                    }).filter((Datum d) -> d != null)
+                            .collect(Collectors.groupingBy(Datum::getGroup, TreeMap::new,
+                                    Collectors.mapping(Datum::getValue, toList())));
 
-                model.setGroupsFieldName(groupsFieldName);
-                model.setValuesFieldName(valuesFieldName);
-                model.setPlotData(groupedData);
+                    model.setGroupsFieldName(groupsFieldName);
+                    model.setValuesFieldName(valuesFieldName);
+                    model.setPlotData(groupedData);
+                }
             }
         }
     }
@@ -158,8 +158,8 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         ModelObject model = form.getModelObject();
         return BUILD_PLOT_JS
                 .replace(":id", getMarkupId())
-                .replace(":width", ""+svgWidth)
-                .replace(":height", ""+svgHeight)
+                .replace(":width", "" + svgWidth)
+                .replace(":height", "" + svgHeight)
                 .replace(":groupsFieldName", model.getGroupsFieldName() == null ? "Group by field" : model.getGroupsFieldName())
                 .replace(":valuesFieldName", model.getValuesFieldName() == null ? "Values field" : model.getValuesFieldName())
                 .replace(":data", model.getPlotDataAsJson());
