@@ -47,7 +47,6 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private Form<ModelObject> form;
     private Label statusLabel;
     private BoxPlotAdvancedOptionsPanel advancedOptionsPanel;
-    private int svgWidth, svgHeight;
 
     public BoxPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -90,6 +89,7 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3.min.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/boxplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/boxplot.css")));
+        makeCanvasItemResizable(container, "fitScatterPlot", 300, 200);
         try {
             response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
         } catch (IOException e) {
@@ -160,8 +160,8 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 .replace(":id", getMarkupId())
                 .replace(":width", ""+svgWidth)
                 .replace(":height", ""+svgHeight)
-                .replace(":groupsFieldName", model.getGroupsFieldName() == null ? "" : model.getGroupsFieldName())
-                .replace(":valuesFieldName", model.getValuesFieldName() == null ? "" : model.getValuesFieldName())
+                .replace(":groupsFieldName", model.getGroupsFieldName() == null ? "Group by field" : model.getGroupsFieldName())
+                .replace(":valuesFieldName", model.getValuesFieldName() == null ? "Values field" : model.getValuesFieldName())
                 .replace(":data", model.getPlotDataAsJson());
     }
 

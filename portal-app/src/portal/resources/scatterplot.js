@@ -5,7 +5,7 @@ null: no coloring
 
 */
 
-function buildScatterPlot(id, data, xLabel, yLabel, colorModel) {
+function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, colorModel) {
     // this prevents #13, caused by server side generating
     // data with invalid (null) values
     if (data[0] == null) {
@@ -18,8 +18,8 @@ function buildScatterPlot(id, data, xLabel, yLabel, colorModel) {
     $plotContent.empty();
 
     var margin = {top: 5, right: 25, bottom: 18, left: 25};
-    var width = 440 - margin.left - margin.right;
-    var height = 220 - margin.top - margin.bottom;
+    var width = totalWidth - margin.left - margin.right; // 440
+    var height = totalHeight - margin.top - margin.bottom; // 220
 
     var colors = null
     switch(colorModel) {

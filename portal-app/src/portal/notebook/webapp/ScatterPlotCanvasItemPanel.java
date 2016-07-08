@@ -1,10 +1,6 @@
 package portal.notebook.webapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.squonk.dataset.Dataset;
-import org.squonk.dataset.DatasetMetadata;
-import org.squonk.types.BasicObject;
-import org.squonk.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -19,6 +15,9 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.dataset.Dataset;
+import org.squonk.dataset.DatasetMetadata;
+import org.squonk.types.BasicObject;
 import portal.PortalWebApplication;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
@@ -28,7 +27,6 @@ import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +37,7 @@ import java.util.stream.Collectors;
  */
 public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
-    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data, ':xLabel', ':yLabel', ':colorMode')";
+    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :width, :height, :data, ':xLabel', ':yLabel', ':colorMode')";
 
     public static final String OPTION_COLOR = "color";
     public static final String OPTION_POINT_SIZE = "pointSize";
@@ -71,6 +69,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             cellInstance.setSizeWidth(480);
             cellInstance.setSizeHeight(265);
         }
+        adjustSVGSize(cellInstance);
         addForm();
         loadModelFromPersistentData();
         addTitleBar();
@@ -82,6 +81,13 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         }
     }
 
+    private void adjustSVGSize(CellInstance cellInstance) {
+        // these are the adjustments needed to get the SVG to the right size.
+        // I don't understand the adjustments - they just work!
+        svgWidth = cellInstance.getSizeWidth() - 40;
+        svgHeight = cellInstance.getSizeHeight() - 45;
+    }
+
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
@@ -91,7 +97,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/scatterplot.css")));
         response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
         response.render(OnDomReadyHeaderItem.forScript("fitScatterPlot('" + getMarkupId() + "')"));
-        makeCanvasItemResizable(container, "fitScatterPlot", 480, 270);
+        makeCanvasItemResizable(container, "fitScatterPlot", 300, 200);
     }
 
     @Override
@@ -203,16 +209,23 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     private String buildPlotJs() {
         ModelObject model = form.getModelObject();
-        String result = BUILD_PLOT_JS.replace(":id", getMarkupId()).replace(":data", model.getDataAsJson());
+
         String xLabel = "";
         String yLabel = "";
         if (advancedOptionsPanel != null && Boolean.TRUE.equals(advancedOptionsPanel.getShowAxisLabels())) {
-            xLabel = model.getX() != null ? model.getX() : "";
-            yLabel = model.getY() != null ? model.getY() : "";
+            xLabel = model.getX() != null ? model.getX() : "X Axis";
+            yLabel = model.getY() != null ? model.getY() : "Y Axis";
         }
-        result = result.replace(":xLabel", xLabel)
+
+        String result = BUILD_PLOT_JS
+                .replace(":id", getMarkupId())
+                .replace(":width", ""+svgWidth)
+                .replace(":height", ""+svgHeight)
+                .replace(":xLabel", xLabel)
                 .replace(":yLabel", yLabel)
-                .replace(":colorMode", ""+model.getColorMode());
+                .replace(":colorMode", ""+model.getColorMode())
+                .replace(":data", model.getDataAsJson());
+
         return result;
     }
 
