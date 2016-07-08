@@ -319,7 +319,7 @@ function boxQuartiles(d) {
 
 })();
 
-function buildBoxPlot(id, data) {
+function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldName, data) {
 
     // Returns a function to compute the interquartile range.
     function iqr(k) {
@@ -342,9 +342,9 @@ function buildBoxPlot(id, data) {
 
     var labels = true; // show the text labels beside individual boxplots?
 
-    var margin = {top: 30, right: 50, bottom: 70, left: 50};
-    var width = 800 - margin.left - margin.right;
-    var height = 400 - margin.top - margin.bottom;
+    var margin = {top: 5, right: 30, bottom: 50, left: 40};
+    var width = totalWidth - margin.left - margin.right;
+    var height = totalHeight - margin.top - margin.bottom;
 
     var min = Infinity;
     var max = -Infinity;
@@ -395,16 +395,6 @@ function buildBoxPlot(id, data) {
         .attr("transform", function(d) { return "translate(" +  x(d[0])  + "," + margin.top + ")"; } )
       .call(chart.width(x.rangeBand()));
 
-
-    // add a title
-    svg.append("text")
-        .attr("x", (width / 2))
-        .attr("y", 0 + (margin.top / 2))
-        .attr("text-anchor", "middle")
-        .style("font-size", "18px")
-        //.style("text-decoration", "underline")
-        .text("Revenue 2012");
-
      // draw y axis
     svg.append("g")
         .attr("class", "y axis")
@@ -414,8 +404,7 @@ function buildBoxPlot(id, data) {
           .attr("y", 6)
           .attr("dy", ".71em")
           .style("text-anchor", "end")
-          .style("font-size", "16px")
-          .text("Revenue in €");
+          .text(valuesFieldName);
 
     // draw x axis
     svg.append("g")
@@ -424,11 +413,10 @@ function buildBoxPlot(id, data) {
       .call(xAxis)
       .append("text")             // text label for the x axis
         .attr("x", (width / 2) )
-        .attr("y",  10 )
+        .attr("y",  25)
         .attr("dy", ".71em")
         .style("text-anchor", "middle")
-        .style("font-size", "16px")
-        .text("Quarter");
+        .text(groupsFieldName);
 }
 
 

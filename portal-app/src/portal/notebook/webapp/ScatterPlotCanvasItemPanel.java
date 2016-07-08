@@ -37,14 +37,13 @@ import java.util.stream.Collectors;
 /**
  * @author simetrias
  */
-public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
+public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
     private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :data, ':xLabel', ':yLabel', ':colorMode')";
-    private static final String OPTION_X_AXIS = "xAxis";
-    private static final String OPTION_Y_AXIS = "yAxis";
-    private static final String OPTION_COLOR = "color";
-    private static final String OPTION_POINT_SIZE = "pointSize";
-    private static final String OPTION_AXIS_LABELS = "axisLabels";
+
+    public static final String OPTION_COLOR = "color";
+    public static final String OPTION_POINT_SIZE = "pointSize";
+    public static final String OPTION_AXIS_LABELS = "axisLabels";
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
     @Inject
@@ -113,14 +112,6 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
     public void onExecute() throws Exception {
         refreshPlotData();
         rebuildPlot();
-    }
-
-    @Override
-    public Panel getAdvancedOptionsPanel() {
-        if (advancedOptionsPanel == null) {
-            createAdvancedOptionsPanel();
-        }
-        return advancedOptionsPanel;
     }
 
     private void loadModelFromPersistentData() {
@@ -225,6 +216,14 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         return result;
     }
 
+    @Override
+    public Panel getAdvancedOptionsPanel() {
+        if (advancedOptionsPanel == null) {
+            createAdvancedOptionsPanel();
+        }
+        return advancedOptionsPanel;
+    }
+
     private void createAdvancedOptionsPanel() {
         advancedOptionsPanel = new ScatterPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
         advancedOptionsPanel.setCallbackHandler(new ScatterPlotAdvancedOptionsPanel.CallbackHandler() {
@@ -253,23 +252,6 @@ public class ScatterPlotCanvasItemPanel extends CanvasItemPanel {
         advancedOptionsPanel.setColor(form.getModelObject().getColor());
         advancedOptionsPanel.setPointSize(form.getModelObject().getPointSize());
         advancedOptionsPanel.setShowAxisLabels(form.getModelObject().getShowAxisLabels());
-    }
-
-    private Float safeConvertToFloat(Object o) {
-        if (o == null) {
-            return null;
-        }
-        if (o instanceof Float) {
-            return (Float) o;
-        } else if (o instanceof Number) {
-            return ((Number) o).floatValue();
-        } else {
-            try {
-                return new Float(o.toString());
-            } catch (NumberFormatException nfe) {
-                return null;
-            }
-        }
     }
 
     class ModelObject implements Serializable {

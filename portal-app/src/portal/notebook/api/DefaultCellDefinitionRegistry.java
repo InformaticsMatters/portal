@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
+import portal.notebook.webapp.AbstractD3CanvasItemPanel;
+import portal.notebook.webapp.ScatterPlotCanvasItemPanel;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -55,11 +57,16 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
-        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "xAxis", "x Axis", "Field to use for x axis values"));
-        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "yAxis", "y Axis", "Field to use for y axis values"));
-        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "color", "Color", "Field to use as color switch"));
-        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "pointSize", "Point size", "Size of points on plot"));
-        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, "axisLabels", "Show axis labels", "Controls whether the axis labels are visible"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS, "x Axis", "Field to use for x axis values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS, "y Axis", "Field to use for y axis values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_COLOR, "Color", "Field to use as color switch"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_POINT_SIZE, "Point size", "Size of points on plot"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(Boolean.class, ScatterPlotCanvasItemPanel.OPTION_AXIS_LABELS, "Show axis labels", "Controls whether the axis labels are visible"));
         return cellDefinition;
     }
 
@@ -86,6 +93,12 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
+                        "x Axis", "Field to use to group values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS,
+                        "y Axis", "Field for values"));
         return cellDefinition;
     }
 
