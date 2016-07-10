@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author simetrias
@@ -177,28 +178,30 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 }
                 model.setColorMode(colorMode);
 
-                List<DataItem> data = dataset.getStream().map((o) -> {
-                    Float x = safeConvertToFloat(o.getValue(xFieldName));
-                    Float y = safeConvertToFloat(o.getValue(yFieldName));
-                    Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
-                    if (x != null && y != null) {
-                        DataItem dataItem = new DataItem();
-                        dataItem.setUuid(o.getUUID().toString());
-                        dataItem.setX(x);
-                        dataItem.setY(y);
-                        if (color != null) {
-                            dataItem.setColor(color);
+                try (Stream<? extends BasicObject> stream = dataset.getStream()) {
+                    List<DataItem> data = stream.map((o) -> {
+                        Float x = safeConvertToFloat(o.getValue(xFieldName));
+                        Float y = safeConvertToFloat(o.getValue(yFieldName));
+                        Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
+                        if (x != null && y != null) {
+                            DataItem dataItem = new DataItem();
+                            dataItem.setUuid(o.getUUID().toString());
+                            dataItem.setX(x);
+                            dataItem.setY(y);
+                            if (color != null) {
+                                dataItem.setColor(color);
+                            }
+                            dataItem.setSize(size);
+                            return dataItem;
+                        } else {
+                            // TODO - should we record how many records are not handled?
+                            return null;
                         }
-                        dataItem.setSize(size);
-                        return dataItem;
-                    } else {
-                        // TODO - should we record how many records are not handled?
-                        return null;
-                    }
-                }).filter((d) -> d != null)
-                .collect(Collectors.toList());
+                    }).filter((d) -> d != null)
+                            .collect(Collectors.toList());
 
-                model.setData(data.toArray(new DataItem[data.size()]));
+                    model.setData(data.toArray(new DataItem[data.size()]));
+                }
             }
         }
     }

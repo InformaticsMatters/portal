@@ -278,14 +278,20 @@ public class NotebookSession implements Serializable {
         }
     }
 
+    /** Retrieve Dataset for this variable.
+     * This is based on an InputStream that is read, and must be closed once finished e.g. by closing the Stream.
+     *
+     * @param variableInstance
+     * @return
+     * @throws Exception
+     */
     public Dataset<? extends BasicObject> squonkDataset(VariableInstance variableInstance) throws Exception {
 
         String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
         DatasetMetadata meta = JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
-        try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
-            InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
-            return new Dataset<>(meta.getType(), gunzippedInputStream, meta);
-        }
+        InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
+        return new Dataset<>(meta.getType(), gunzippedInputStream, meta);
     }
 
 
