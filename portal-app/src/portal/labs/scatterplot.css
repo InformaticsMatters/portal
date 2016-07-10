@@ -1,0 +1,19 @@
+.chart {
+    border-color: lightgrey;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.main text, .legend text {
+    font: 10px sans-serif;
+}
+
+.axis line, .axis path {
+    shape-rendering: crispEdges;
+    stroke: black;
+    fill: none;
+}
+
+.svg-container circle {
+    fill: steelblue;
+}

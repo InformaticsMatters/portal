@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scatter plot labs</title>
+    <link rel="stylesheet" href="scatterplot.css">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.10.0/d3-legend.js"></script>
+    <script src="scatterplot.js"></script>
+
+    <style>
+
+    .chart {
+        border-color: lightgrey;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    </style>
+
+    <script>
+        var execute = function() {
+
+            var json = document.getElementById("data").value;
+            var data = JSON.parse(json);
+            var colorModel = document.getElementById("colorModel").value;
+            buildScatterPlot('scatterplot1', 500, 400, data, 'X Axis', 'Y Axis', colorModel);
+
+        }
+    </script>
+
+
+
+</head>
+<body>
+
+<form>
+    Data:
+    <textarea id="data" rows="10" cols="80">[
+{"uuid":"a", "x": 100, "y": 200, "color": 1, "size": 3},
+{"uuid":"b", "x": 120, "y": 220, "color": 2, "size": 4},
+{"uuid":"c", "x": 159, "y": 280, "color": 5, "size": 6},
+{"uuid":"d", "x": 110, "y": 209, "color": 1.4, "size": 7},
+{"uuid":"e", "x": 134, "y": 218, "color": 7.2, "size": 8},
+{"uuid":"f", "x": 139, "y": 243, "color": 3.4, "size": 30},
+{"uuid":"g", "x": 105, "y": 237, "color": 6.4, "size": 3},
+{"uuid":"h", "x": 127, "y": 202, "color": 2.5, "size": 4},
+{"uuid":"i", "x": 132, "y": 239, "color": 6.3, "size": 6},
+{"uuid":"j", "x": 181, "y": 289, "color": 1.4, "size": 7},
+{"uuid":"k", "x": 203, "y": 278, "color": 7.9, "size": 8}
+]</textarea>
+    <br/>
+    Color model:
+    <select id="colorModel">
+        <option value="blue-red">blue-red</option>
+        <option value="categorical">categorical</option>
+        <option value="none">none</option>
+    </select>
+    &nbsp;&nbsp;
+    <button type="button" onclick="execute();">Generate!</button>
+</form>
+         <hr/>
+
+       <div id="scatterplot1">Scatter plot demo!
+           <div id="container" class="svg-container"></div>
+       </div>
+
+<h3>Features to be developed</h3>
+<ul>
+<li>Handling and propagating selection</li>
+<li>Marking and filtering input based on an upstream selection</li>
+<li>Logarithmic and reversed scales</li>
+<li>Tooltip display for points</li>
+<li>Semantic zoom</li>
+</ul>
+<script>execute();</script>
+
+
+</body>
+</html>
