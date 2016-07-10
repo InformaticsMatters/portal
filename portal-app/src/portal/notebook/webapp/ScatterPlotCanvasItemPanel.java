@@ -93,6 +93,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         super.renderHead(container);
         IHeaderResponse response = container.getHeaderResponse();
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3.min.js")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3-legend.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/scatterplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/scatterplot.css")));
         response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
@@ -182,6 +183,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                     Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
                     if (x != null && y != null) {
                         DataItem dataItem = new DataItem();
+                        dataItem.setUuid(o.getUUID().toString());
                         dataItem.setX(x);
                         dataItem.setY(y);
                         if (color != null) {
@@ -349,10 +351,19 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     class DataItem implements Serializable {
 
+        private String uuid;
         private float x;
         private float y;
         private Object color;
         private Integer size;
+
+        public String getUuid() {
+            return uuid;
+        }
+
+        public void setUuid(String uuid) {
+            this.uuid = uuid;
+        }
 
         public float getX() {
             return x;

@@ -17,13 +17,7 @@ d3.box = function() {
   // For each small multiple…
   function box(g) {
     g.each(function(data, i) {
-      //d = d.map(value).sort(d3.ascending);
-	  //var boxIndex = data[0];
-	  //var boxIndex = 1;
 	  var d = data[1].sort(d3.ascending);
-
-	 // console.log(boxIndex);
-	  //console.log(d);
 
       var g = d3.select(this),
           n = d.length,
@@ -335,14 +329,15 @@ function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldN
       };
     }
 
-    $id = $('#' + id);
-    $plotContent = $id.find('.boxPlotContent');
+    var id = d3.select('#' + id);
+    var plotContent = id.select('.svg-container');  // .boxPlotContent'
 
-    $plotContent.empty();
+    plotContent.select("svg").remove()
+
 
     var labels = true; // show the text labels beside individual boxplots?
 
-    var margin = {top: 5, right: 30, bottom: 50, left: 40};
+    var margin = {top: 10, right: 20, bottom: 60, left: 50};
     var width = totalWidth - margin.left - margin.right;
     var height = totalHeight - margin.top - margin.bottom;
 
@@ -362,8 +357,7 @@ function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldN
         .domain([min, max])
         .showLabels(labels);
 
-    var svg = d3.select($plotContent[0])
-        .append("svg")
+    var svg = plotContent.append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .attr("class", "box")
@@ -372,7 +366,7 @@ function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldN
 
     // the x-axis
     var x = d3.scale.ordinal()
-        .domain( data.map(function(d) { console.log(d); return d[0] } ) )
+        .domain( data.map(function(d) { return d[0] } ) )
         .rangeRoundBands([0 , width], 0.7, 0.3);
 
     var xAxis = d3.svg.axis()
@@ -418,6 +412,3 @@ function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldN
         .style("text-anchor", "middle")
         .text(groupsFieldName);
 }
-
-
-

@@ -1,5 +1,5 @@
 /* colorModel values:
-null: no coloring
+'none': no coloring
 'categorical': discrete categories (needs integer or text values)
 'blue-red': scale from blue for min value to red for max value (needs continuous variables - float or integer)
 
@@ -12,40 +12,47 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
         data = [];
     }
 
-    $id = $('#' + id);
-    $plotContent = $id.find('.svg-container');
+    console.log("Data size: " + data.length)
 
-    $plotContent.empty();
+    var id = d3.select('#' + id);
+    var plotContent = id.select('.svg-container');
 
-    var margin = {top: 5, right: 25, bottom: 18, left: 25};
-    var width = totalWidth - margin.left - margin.right; // 440
-    var height = totalHeight - margin.top - margin.bottom; // 220
+    plotContent.select("svg").remove()
+
+    var margin = {top: 15, right: colorModel == 'none' ? 20 : 80, bottom: 25, left: 40};
+    var width = totalWidth - margin.left - margin.right;
+    var height = totalHeight - margin.top - margin.bottom;
 
     var colors = null
     switch(colorModel) {
 
         case 'categorical':
-            console.log("Using categorical color model");
-            colors = d3.scale.category10();
+            colors = d3.scale.category20();
             break;
 
         case 'blue-red':
             var min = d3.min(data, function(d) { return d.color; });
             var max = d3.max(data, function(d) { return d.color; });
-            console.log("Blue-Red color model: Min: " + min + " Max: " + max)
-            colors = d3.scale.linear().domain([min, max]).range(["blue","red"]);
+            colors = d3.scale.linear().domain([min, max]).range(["blue","red"]).nice();
             break;
     }
 
     var x = d3.scale.linear()
         .domain([d3.min(data, function(d) { return d.x; }), d3.max(data, function(d) { return d.x; })])
-        .range([0, width]);
+        .range([0, width])
+        .nice();
 
     var y = d3.scale.linear()
         .domain([d3.min(data, function(d) { return d.y; }), d3.max(data, function(d) { return d.y; })])
-        .range([height, 0]);
+        .range([height, 0])
+        .nice();
 
-    var chart = d3.select($plotContent[0])
+    var size = d3.scale.sqrt()
+        .domain([d3.min(data, function(d) { return d.size; }), d3.max(data, function(d) { return d.size; })])
+        .range([3, 20])
+        .nice();
+
+    var chart = plotContent
         .append('svg:svg')
         .attr('width', width + margin.right + margin.left)
         .attr('height', height + margin.top + margin.bottom)
@@ -55,7 +62,7 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
         .attr('width', width)
         .attr('height', height)
-        .attr('class', 'main') ;
+        .attr('class', 'main');
 
     var xAxis = d3.svg.axis()
         .scale(x)
@@ -91,34 +98,44 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
     var g = main.append("svg:g");
 
     g.selectAll("scatter-dots")
-      .data(data)
+      .data(data, function(d) { return d.uuid; })
       .enter()
       .append("svg:circle")
           .attr("cx", function (d,i) { return x(d.x); } )
           .attr("cy", function (d) { return y(d.y); } )
-          .attr("r", function (d) { return d.size; } )
-          .style("fill", function(d) { return colors(d.color); });
+          .attr("r", function (d) { return size(d.size); } )
+          .style("fill", function(d) { return colors == null ? null : colors(d.color); });
 
-    // TODO - handle legend for blue-red scale
-    if (colorModel == 1) {
-        var legend = g.selectAll(".legend")
-            .data(colors.domain())
-            .enter().append("g")
-            .attr("class", "legend")
-            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+    switch(colorModel) {
 
-        legend.append("rect")
-            .attr("x", width - 18)
-            .attr("width", 18)
-            .attr("height", 18)
-            .style("fill", colors);
+        case 'categorical':
 
-        legend.append("text")
-            .attr("x", width - 24)
-            .attr("y", 9)
-            .attr("dy", ".35em")
-            .style("text-anchor", "end")
-            .text(function(d) { return d;})
+            var legendG = chart.append("g")
+                 .attr("class", "legend")
+                 .attr("transform", "translate(" + (width + 50) + ",10)");
+
+            var legend = d3.legend.color()
+                .labelOffset(4)
+                .shapePadding(1)
+                .scale(colors);
+
+            legendG.call(legend);
+            break;
+
+        case 'blue-red':
+
+           var legendG = chart.append("g")
+             .attr("class", "legend")
+             .attr("transform", "translate(" + (width + 60) + ",10)");
+
+           var legend = d3.legend.color()
+               .cells(10)
+               .labelOffset(4)
+               .shapePadding(0)
+               .scale(colors);
+
+           legendG.call(legend);
+           break;
     }
 }
 
