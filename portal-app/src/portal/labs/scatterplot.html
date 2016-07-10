@@ -24,7 +24,7 @@
             var json = document.getElementById("data").value;
             var data = JSON.parse(json);
             var colorModel = document.getElementById("colorModel").value;
-            buildScatterPlot('scatterplot1', 500, 400, data, 'X Axis', 'Y Axis', colorModel);
+            buildScatterPlot('scatterplot1', 'X Axis', 'Y Axis', colorModel, data);
 
         }
     </script>
@@ -52,7 +52,8 @@
     <br/>
     Color model:
     <select id="colorModel">
-        <option value="blue-red">blue-red</option>
+        <option value="steelblue-brown">steelblue-brown</option>
+        <option value="steelblue-brown">blue-red</option>
         <option value="categorical">categorical</option>
         <option value="none">none</option>
     </select>
@@ -62,7 +63,7 @@
          <hr/>
 
        <div id="scatterplot1">Scatter plot demo!
-           <div id="container" class="svg-container"></div>
+           <div id="container" class="svg-container" style="width:400px;height:350px"></div>
        </div>
 
 <h3>Features to be developed</h3>

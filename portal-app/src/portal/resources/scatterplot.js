@@ -33,7 +33,19 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
         case 'blue-red':
             var min = d3.min(data, function(d) { return d.color; });
             var max = d3.max(data, function(d) { return d.color; });
-            colors = d3.scale.linear().domain([min, max]).range(["blue","red"]).nice();
+            colors = d3.scale.linear()
+                .domain([min, max])
+                .range(["blue", "red"])
+                .nice();
+            break;
+
+        case 'steelblue-brown':
+            var min = d3.min(data, function(d) { return d.color; });
+            var max = d3.max(data, function(d) { return d.color; });
+            colors = d3.scale.linear()
+                .domain([min, max])
+                .range(["steelblue", "brown"])
+                .nice();
             break;
     }
 
@@ -122,7 +134,7 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
             legendG.call(legend);
             break;
 
-        case 'blue-red':
+        default:
 
            var legendG = chart.append("g")
              .attr("class", "legend")

@@ -170,7 +170,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                     Class colorFieldType = (Class)meta.getValueClassMappings().get(colorFieldName);
                     if (colorFieldType != null) {
                         if (Number.class.isAssignableFrom(colorFieldType)) {
-                            colorMode = "blue-red";
+                            colorMode = "steelblue-brown";
                         } else {
                             colorMode = "categorical";
                         }

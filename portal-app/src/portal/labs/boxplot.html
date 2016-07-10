@@ -22,7 +22,7 @@
 
             var json = document.getElementById("data").value;
             var data = JSON.parse(json);
-            buildBoxPlot('boxplot1', 500, 300, 'Groups field', 'Values field', data)
+            buildBoxPlot('boxplot1', 'Groups field', 'Values field', data)
 
         }
     </script>
@@ -46,7 +46,7 @@
          <hr/>
 
        <div id="boxplot1">Box plot demo!
-           <div id="container" class="svg-container"></div>
+           <div id="container" class="svg-container" style="width:500px;height:300px"></div>
        </div>
 
 <h3>Features to be developed</h3>

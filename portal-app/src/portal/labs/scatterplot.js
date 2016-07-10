@@ -1,11 +1,11 @@
 /* colorModel values:
 'none': no coloring
 'categorical': discrete categories (needs integer or text values)
-'blue-red': scale from blue for min value to red for max value (needs continuous variables - float or integer)
+'blue-red', 'steelblue-brown': scales from min value to max values (needs continuous variables - float or integer)
 
 */
 
-function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, colorModel) {
+function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
     // this prevents #13, caused by server side generating
     // data with invalid (null) values
     if (data[0] == null) {
@@ -15,11 +15,15 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
     var id = d3.select('#' + id);
     var plotContent = id.select('.svg-container');
 
-    plotContent.select("svg").remove()
+    var svgWidth = plotContent.style("width").replace("px", "");
+    var svgHeight = plotContent.style("height").replace("px", "");
+    //console.log("Canvas width,height: " + svgWidth + "," + svgHeight);
+
+    plotContent.select("svg").remove();
 
     var margin = {top: 15, right: colorModel == 'none' ? 20 : 80, bottom: 25, left: 40};
-    var width = totalWidth - margin.left - margin.right;
-    var height = totalHeight - margin.top - margin.bottom;
+    var width = svgWidth - margin.left - margin.right;
+    var height = svgHeight - margin.top - margin.bottom;
 
     var colors = null
     switch(colorModel) {
@@ -28,10 +32,22 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
             colors = d3.scale.category20();
             break;
 
+        case 'steelblue-brown':
+            var min = d3.min(data, function(d) { return d.color; });
+            var max = d3.max(data, function(d) { return d.color; });
+            colors = d3.scale.linear()
+                .domain([min, max])
+                .range(["steelblue", "brown"])
+                .nice();
+            break;
+
         case 'blue-red':
             var min = d3.min(data, function(d) { return d.color; });
             var max = d3.max(data, function(d) { return d.color; });
-            colors = d3.scale.linear().domain([min, max]).range(["blue","red"]).nice();
+            colors = d3.scale.linear()
+                .domain([min, max])
+                .range(["blue", "red"])
+                .nice();
             break;
     }
 
@@ -120,7 +136,7 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
             legendG.call(legend);
             break;
 
-        case 'blue-red':
+        default:
 
            var legendG = chart.append("g")
              .attr("class", "legend")
