@@ -313,7 +313,7 @@ function boxQuartiles(d) {
 
 })();
 
-function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldName, data) {
+function buildBoxPlot(id, groupsFieldName, valuesFieldName, data) {
 
     if (data[0] == null) {
         data = [];
@@ -336,14 +336,18 @@ function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldN
     var id = d3.select('#' + id);
     var plotContent = id.select('.svg-container');  // .boxPlotContent'
 
+    var svgWidth = plotContent.style("width").replace("px", "");
+    var svgHeight = plotContent.style("height").replace("px", "");
+
+
     plotContent.select("svg").remove()
 
 
     var labels = true; // show the text labels beside individual boxplots?
 
     var margin = {top: 10, right: 20, bottom: 60, left: 50};
-    var width = totalWidth - margin.left - margin.right;
-    var height = totalHeight - margin.top - margin.bottom;
+    var width = svgWidth - margin.left - margin.right;
+    var height = svgHeight - margin.top - margin.bottom;
 
     var min = Infinity;
     var max = -Infinity;

@@ -27,35 +27,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-
 /**
- * @author simetrias
+ * @author Tim Dudgeon
  */
-public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
+public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
-    private static final String BUILD_PLOT_JS = "buildBoxPlot(':id', :width, :height, ':groupsFieldName', ':valuesFieldName', :data)";
+    private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', :data)";
 
     @Inject
     private NotebookSession notebookSession;
     private Form<ModelObject> form;
     private Label statusLabel;
-    private BoxPlotAdvancedOptionsPanel advancedOptionsPanel;
+    private ParallelCoordinatePlotAdvancedOptionsPanel advancedOptionsPanel;
 
-    public BoxPlotCanvasItemPanel(String id, Long cellId) {
+    public ParallelCoordinatePlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
         CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
-            cellInstance.setSizeWidth(480);
+            cellInstance.setSizeWidth(500);
             cellInstance.setSizeHeight(320);
         }
-        adjustSVGSize(cellInstance);
         addForm();
         loadModelFromPersistentData();
         addTitleBar();
@@ -67,19 +65,10 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         addStatus();
     }
 
-    private void adjustSVGSize(CellInstance cellInstance) {
-        // these are the adjustments needed to get the SVG to the right size.
-        // I don't understand the adjustments - they just work!
-        svgWidth = cellInstance.getSizeWidth();
-        svgHeight = cellInstance.getSizeHeight() - 75;
-    }
-
-
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
         ModelObject model = form.getModelObject();
-        model.setGroupsFieldName((String) cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue());
-        model.setValuesFieldName((String) cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue());
+        model.setFields((List<String>)cellInstance.getOptionInstanceMap().get(OPTION_FIELDS).getValue());
     }
 
     @Override
@@ -87,8 +76,9 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         super.renderHead(container);
         IHeaderResponse response = container.getHeaderResponse();
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3.min.js")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/boxplot.js")));
-        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/boxplot.css")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3.parcoords.js")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/parallelcoordinateplot.js")));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/parallelcoordinateplot.css")));
         makeCanvasItemResizable(container, "fitScatterPlot", 300, 200);
         try {
             response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
@@ -122,46 +112,37 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private void refreshPlotData() throws Exception {
-        BoxPlotCanvasItemPanel.ModelObject model = form.getModelObject();
-        String groupsFieldName = model.getGroupsFieldName();
-        String valuesFieldName = model.getValuesFieldName();
-
-        if (groupsFieldName != null || valuesFieldName != null) {
+        ParallelCoordinatePlotCanvasItemPanel.ModelObject model = form.getModelObject();
+        List<String> fields = model.getFields();
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
             if (variableInstance != null) {
                 Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
+                final AtomicInteger i = new AtomicInteger(0);
                 try (Stream<? extends BasicObject> stream = dataset.getStream()) {
-                    Map<Comparable, List<Float>> groupedData = stream.map((o) -> {
-                        Object group = o.getValue(groupsFieldName);
-                        Float value = safeConvertToFloat(o.getValue(valuesFieldName));
-                        if (group != null && value != null && group instanceof Comparable) {
-                            return new Datum((Comparable) group, value);
-                        } else {
-                            return null;
+                    List<Map<String,Object>> items = stream.sequential().map((o) -> {
+                        Map<String,Object> data = new LinkedHashMap<>();
+                        data.put("uuid", o.getUUID());
+                        data.put("idx", i.incrementAndGet());
+                        for (String field: fields) {
+                            Object val = o.getValue(field);
+                            if (val != null) {
+                                data.put(field, o.getValue(field));
+                            }
                         }
-                    }).filter((Datum d) -> d != null)
-                            .collect(Collectors.groupingBy(Datum::getGroup, TreeMap::new,
-                                    Collectors.mapping(Datum::getValue, toList())));
+                        return data;
+                    }).collect(Collectors.toList());
 
-                    model.setGroupsFieldName(groupsFieldName);
-                    model.setValuesFieldName(valuesFieldName);
-                    model.setPlotData(groupedData);
+                    model.setPlotData(items);
                 }
-            }
         }
     }
-
 
     private String buildPlotJs() throws IOException {
         ModelObject model = form.getModelObject();
         return BUILD_PLOT_JS
                 .replace(":id", getMarkupId())
-                .replace(":width", "" + svgWidth)
-                .replace(":height", "" + svgHeight)
-                .replace(":groupsFieldName", model.getGroupsFieldName() == null ? "Group by field" : model.getGroupsFieldName())
-                .replace(":valuesFieldName", model.getValuesFieldName() == null ? "Values field" : model.getValuesFieldName())
                 .replace(":data", model.getPlotDataAsJson());
     }
 
@@ -174,65 +155,54 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private void createAdvancedOptionsPanel() {
-        advancedOptionsPanel = new BoxPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new BoxPlotAdvancedOptionsPanel.CallbackHandler() {
+        advancedOptionsPanel = new ParallelCoordinatePlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
+        advancedOptionsPanel.setCallbackHandler(new ParallelCoordinatePlotAdvancedOptionsPanel.CallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() throws Exception {
                 CellInstance cellInstance = findCellInstance();
-                cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).setValue(advancedOptionsPanel.getX());
-                cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).setValue(advancedOptionsPanel.getY());
+                cellInstance.getOptionInstanceMap().get(OPTION_FIELDS).setValue(advancedOptionsPanel.getFields());
                 notebookSession.storeCurrentEditable();
 
                 ModelObject model = form.getModelObject();
-                model.setGroupsFieldName(advancedOptionsPanel.getX());
-                model.setValuesFieldName(advancedOptionsPanel.getY());
+                model.setFields(advancedOptionsPanel.getFields());
 
                 onExecute();
             }
         });
-        advancedOptionsPanel.setX(form.getModelObject().getGroupsFieldName());
-        advancedOptionsPanel.setY(form.getModelObject().getValuesFieldName());
+        advancedOptionsPanel.setFields(form.getModelObject().getFields());
     }
 
     class ModelObject implements Serializable {
 
-        private Map<Comparable, List<Float>> plotData;
+        private List<Map<String,Object>> plotData;
         /*
         need to create JSON like this:
 
         [
-        ["Q1",[20000,9879,5070,7343,9136,7943,10546,9385,8669,4000]],
-        ["Q2",[15000,9323,9395,8675,5354,6725,10899,9365,8238,7446]],
-        ["Q3",[8000,3294,17633,12121,4319,18712,17270,13676,6587,16754]],
-        ["Q4",[20000,5629,5752,7557,5125,5116,5828,6014,5995,8905]]
+        {"uuid":"uuid1","idx":1,"field_a":1.1,"field_b":5.1},
+        {"uuid":"uuid2","idx":2,"field_a":2.2,"field_b":5.2},
+        {"uuid":"uuid3","idx":3,"field_a":3.3,"field_b":5.3}
         ]
+
+        uuid and idx must be present. Other fields as needed.
          */
 
-        private String groupsFieldName;
-        private String valuesFieldName;
+        private List<String> fields;
 
-        public String getGroupsFieldName() {
-            return groupsFieldName;
+        public List<String> getFields() {
+            return fields;
         }
 
-        public void setGroupsFieldName(String groupsFieldName) {
-            this.groupsFieldName = groupsFieldName;
+        public void setFields(List<String> fields) {
+            this.fields = fields;
         }
 
-        public String getValuesFieldName() {
-            return valuesFieldName;
-        }
-
-        public void setValuesFieldName(String valuesFieldName) {
-            this.valuesFieldName = valuesFieldName;
-        }
-
-        public Map<Comparable, List<Float>> getPlotData() {
+        public List<Map<String,Object>> getPlotData() {
             return plotData;
         }
 
-        public void setPlotData(Map<Comparable, List<Float>> plotData) {
+        public void setPlotData(List<Map<String,Object>> plotData) {
             this.plotData = plotData;
         }
 
@@ -241,30 +211,11 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             if (plotData == null) {
                 return "[]";
             } else {
-                Stream<Object[]> items = plotData.entrySet().stream().sequential()
-                        .map((e) -> new Object[]{e.getKey(), e.getValue()});
-
-                InputStream is = JsonHandler.getInstance().marshalStreamToJsonArray(items, false);
-                return IOUtils.toString(is);
+                InputStream is = JsonHandler.getInstance().marshalStreamToJsonArray(plotData.stream(), false);
+                String json = IOUtils.toString(is);
+                return json;
             }
         }
     }
 
-    class Datum {
-        Comparable group;
-        Float value;
-
-        Datum(Comparable group, Float value) {
-            this.group = group;
-            this.value = value;
-        }
-
-        Comparable getGroup() {
-            return group;
-        }
-
-        Float getValue() {
-            return value;
-        }
-    }
 }

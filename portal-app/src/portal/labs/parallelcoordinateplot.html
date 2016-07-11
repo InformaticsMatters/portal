@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parallel coordinate plot labs</title>
+
+    <!-- Uses the Paralle coordinate plot plugin
+    https://github.com/syntagmatic/parallel-coordinates
+    -->
+
+    <link rel="stylesheet" type="text/css" href="http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.css">
+
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.js"></script>
+    <script src="parallelcoordinateplot.js"></script>
+
+    <style>
+
+    .chart {
+        border-color: lightgrey;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    </style>
+
+    <script>
+        var execute = function() {
+
+            var json = document.getElementById("data").value;
+            var data = JSON.parse(json);
+            buildParallelCoordinatePlot('pcp1', data);
+
+        }
+    </script>
+</head>
+<body>
+
+<form>
+    Data:
+    <textarea id="data" rows="10" cols="80">[
+{"uuid":"dad60167-c3a4-4106-be54-b9ab5ea42709","idx":1,"hbd_count":1,"mol_weight":126.1962,"logp":1.660767826666667,"hba_count":1},
+{"uuid":"809968f5-ab2d-4114-8275-652b1689bd0e","idx":2,"hbd_count":0,"mol_weight":509.354,"logp":2.7720529430000003,"hba_count":5},
+{"uuid":"de9a5dd2-560e-4f67-8535-dcf2004237b8","idx":3,"hbd_count":1,"mol_weight":257.334,"logp":2.7285961013333333,"hba_count":3},
+{"uuid":"d7ab591a-3092-44b0-b070-915f6e8cd3e1","idx":4,"hbd_count":0,"mol_weight":360.58,"logp":6.217064486666666,"hba_count":2},
+{"uuid":"877f1606-9630-467c-a62b-e732d4f422f6","idx":5,"hbd_count":0,"mol_weight":356.118,"logp":6.989923656,"hba_count":0},
+{"uuid":"a8de7e02-55f3-44aa-847d-38d32273f9c5","idx":6,"hbd_count":0,"mol_weight":490.523,"logp":2.5534403470000004,"hba_count":5},
+{"uuid":"062dd70d-ef70-4e05-805e-10f03d3703d4","idx":7,"hbd_count":1,"mol_weight":531.961,"logp":1.4057186340000003,"hba_count":6},
+{"uuid":"f99cb0ef-fc89-47ac-9540-085376ecd2d3","idx":8,"hbd_count":2,"mol_weight":317.257,"logp":4.123982395333333,"hba_count":2},
+{"uuid":"1e562115-bb90-406c-9e36-3505085d1ccd","idx":9,"hbd_count":0,"mol_weight":302.411,"logp":3.6890399879999993,"hba_count":2},
+{"uuid":"d234eb7c-f670-42ed-8bb9-4811521ee3c8","idx":10,"hbd_count":0,"mol_weight":234.36,"logp":4.137350115333333,"hba_count":2},
+{"uuid":"f9f0729e-4a4b-4d2a-8a8a-03ca86c3a3da","idx":11,"hbd_count":0,"mol_weight":206.307,"logp":3.0923053253333332,"hba_count":2},
+{"uuid":"195b6ef3-0f7e-4b29-9b64-27aa15eeedb4","idx":12,"hbd_count":0,"mol_weight":304.473,"logp":4.789832668000001,"hba_count":2},
+{"uuid":"c010c2ef-8be6-47c1-9857-a91554f2bce3","idx":13,"hbd_count":0,"mol_weight":254.35,"logp":4.103162533333333,"hba_count":2},
+{"uuid":"805e3958-138a-43ce-be3b-70c417ac58a4","idx":14,"hbd_count":0,"mol_weight":262.414,"logp":5.026487445333333,"hba_count":2},
+{"uuid":"8bfa2958-1823-4429-8c42-9eb4b30d35dc","idx":15,"hbd_count":0,"mol_weight":376.13,"logp":6.111250201333333,"hba_count":0},
+{"uuid":"881c035e-9e6f-4cf6-851f-7e64b562b6da","idx":16,"hbd_count":0,"mol_weight":268.377,"logp":4.459970488,"hba_count":2},
+{"uuid":"6b9bd9a5-d0fa-4d9e-bec7-fa73c8518d62","idx":17,"hbd_count":0,"mol_weight":246.391,"logp":5.600587729333333,"hba_count":0},
+{"uuid":"d866ca8f-78b0-4dc0-9f7b-2961df4e1abe","idx":18,"hbd_count":0,"mol_weight":278.39,"logp":4.258402419333334,"hba_count":2},
+{"uuid":"44a1dd83-71ec-4479-a5de-06955c9af218","idx":19,"hbd_count":5,"mol_weight":299.3196,"logp":-0.7688015170000001,"hba_count":7},
+{"uuid":"b2605a70-df97-43c0-942b-a29ec78c3f55","idx":20,"hbd_count":4,"mol_weight":341.208,"logp":1.0075513016666664,"hba_count":5},
+{"uuid":"87053423-12d3-4170-b305-5a265757a160","idx":21,"hbd_count":1,"mol_weight":322.3596,"logp":5.615359995000001,"hba_count":6},
+{"uuid":"c9451f52-ddc9-469c-a8a2-c46c6f7350eb","idx":22,"hbd_count":1,"mol_weight":241.2453,"logp":4.3905969413333334,"hba_count":4},
+{"uuid":"375661ea-7443-4f41-ac65-731a69029946","idx":23,"hbd_count":2,"mol_weight":144.1717,"logp":-1.4451156419999995,"hba_count":2},
+{"uuid":"e0292b6d-9cda-43c6-ac99-9683b0ae9551","idx":24,"hbd_count":2,"mol_weight":246.3034,"logp":-4.061229173258922,"hba_count":6},
+{"uuid":"2aeb83d0-e539-4a57-a059-779941b35484","idx":25,"hbd_count":2,"mol_weight":130.1451,"logp":-1.6746485256666666,"hba_count":2},
+{"uuid":"38664312-fddb-4afa-bfcb-5d86c92e6581","idx":26,"hbd_count":2,"mol_weight":223.2252,"logp":-1.7269186582324016,"hba_count":5},
+{"uuid":"cc40d6cd-a650-4898-8789-9d25c2a06c18","idx":27,"hbd_count":2,"mol_weight":175.1824,"logp":-2.9328974884545196,"hba_count":5},
+{"uuid":"f6811158-1865-447b-a2c7-2a19ebe87d5e","idx":28,"hbd_count":0,"mol_weight":298.381,"logp":5.7229977236666665,"hba_count":2},
+{"uuid":"54d6f45d-d482-4d5f-a4bb-0636569bd40f","idx":29,"hbd_count":2,"mol_weight":184.2355,"logp":1.105466937,"hba_count":2},
+{"uuid":"8f2d5185-3456-4146-903e-ca0e548ed403","idx":30,"hbd_count":0,"mol_weight":202.2475,"logp":1.948860792666667,"hba_count":2}
+]</textarea>
+    <br/>
+    <button type="button" onclick="execute();">Generate!</button>
+</form>
+         <hr/>
+
+       <div id="pcp1">Parallel coordinate plot demo!
+           <div class="svg-container parcoords" style="width:560px;height:250px"></div>
+       </div>
+
+<h3>Features implemented</h3>
+<ul>
+    <li>Reordering of axes using drag and drop</li>
+    <li>Invert axis by double click on axis title</li>
+    <li>Filter by dragging out region along axis</li>
+</ul>
+
+<h3>Features to be developed</h3>
+<ul>
+    <li>Redefine colour scale by single click on axis title</li>
+    <li>Propagating selection</li>
+    <li>Persisting configuration of axes and filters</li>
+</ul>
+<script>execute();</script>
+
+
+</body>
+</html>

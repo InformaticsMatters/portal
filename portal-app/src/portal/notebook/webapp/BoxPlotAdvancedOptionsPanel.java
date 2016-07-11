@@ -19,17 +19,15 @@ import toolkit.wicket.semantic.NotifierProvider;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
-public class ScatterPlotAdvancedOptionsPanel extends Panel {
-    private static final Logger LOGGER = Logger.getLogger(ScatterPlotAdvancedOptionsPanel.class.getName());
+public class BoxPlotAdvancedOptionsPanel extends Panel {
+    private static final Logger LOGGER = Logger.getLogger(BoxPlotAdvancedOptionsPanel.class.getName());
     private final Long cellId;
     private List<String> picklistItems;
     private Form<ModelObject> form;
@@ -41,7 +39,7 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
     @Inject
     private NotifierProvider notifierProvider;
 
-    public ScatterPlotAdvancedOptionsPanel(String id, Long cellId) {
+    public BoxPlotAdvancedOptionsPanel(String id, Long cellId) {
         super(id);
         setOutputMarkupId(true);
         this.cellId = cellId;
@@ -63,17 +61,6 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
         DropDownChoice<String> y = new DropDownChoice<>("y", picklistItems);
         form.add(y);
-
-        List<String> sizes = new ArrayList<>();
-        sizes.addAll(ScatterPlotCanvasItemPanel.POINT_SIZES.keySet());
-        DropDownChoice<String> p = new DropDownChoice<>("pointSize", sizes);
-        form.add(p);
-
-        CheckBox checkBox = new CheckBox("showAxisLabels");
-        form.add(checkBox);
-
-        DropDownChoice<String> color = new DropDownChoice<>("color", picklistItems);
-        form.add(color);
 
         add(form);
 
@@ -128,30 +115,6 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
         form.getModelObject().setY(y);
     }
 
-    public String getColor() {
-        return form.getModelObject().getColor();
-    }
-
-    public void setColor(String color) {
-        form.getModelObject().setColor(color);
-    }
-
-    public String getPointSize() {
-        return form.getModelObject().getPointSize();
-    }
-
-    public void setPointSize(String pointSize) {
-        form.getModelObject().setPointSize(pointSize);
-    }
-
-    public Boolean getShowAxisLabels() {
-        return form.getModelObject().getShowAxisLabels();
-    }
-
-    public void setShowAxisLabels(Boolean value) {
-        form.getModelObject().setShowAxisLabels(value);
-    }
-
     public void setCallbackHandler(CallbackHandler callbackHandler) {
         this.callbackHandler = callbackHandler;
     }
@@ -166,9 +129,6 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
 
         private String x;
         private String y;
-        private String color;
-        private String pointSize;
-        private Boolean showAxisLabels = Boolean.FALSE;
 
         public String getX() {
             return x;
@@ -186,28 +146,5 @@ public class ScatterPlotAdvancedOptionsPanel extends Panel {
             this.y = y;
         }
 
-        public String getColor() {
-            return color;
-        }
-
-        public void setColor(String color) {
-            this.color = color;
-        }
-
-        public String getPointSize() {
-            return pointSize;
-        }
-
-        public void setPointSize(String pointSize) {
-            this.pointSize = pointSize;
-        }
-
-        public Boolean getShowAxisLabels() {
-            return showAxisLabels;
-        }
-
-        public void setShowAxisLabels(Boolean showAxisLabels) {
-            this.showAxisLabels = showAxisLabels;
-        }
     }
 }

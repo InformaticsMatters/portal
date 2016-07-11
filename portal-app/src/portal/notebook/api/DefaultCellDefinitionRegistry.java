@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
+import portal.notebook.webapp.AbstractD3CanvasItemPanel;
+import portal.notebook.webapp.ScatterPlotCanvasItemPanel;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -50,15 +52,18 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
-        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "xAxis", "x Axis", "Field to use for x axis values"));
-        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "yAxis", "y Axis", "Field to use for y axis values"));
-        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "color", "Color", "Field to use as color switch"));
-        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, "axisLabels", "Show axis labels", "Controls whether the axis labels are visible"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS, "x Axis", "Field to use for x axis values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS, "y Axis", "Field to use for y axis values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_COLOR, "Color", "Field to use as color switch"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_POINT_SIZE, "Point size", "Size of points on plot"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(Boolean.class, ScatterPlotCanvasItemPanel.OPTION_AXIS_LABELS, "Show axis labels", "Controls whether the axis labels are visible"));
         return cellDefinition;
     }
 
@@ -80,11 +85,34 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
+                        "x Axis", "Field to use to group values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS,
+                        "y Axis", "Field for values"));
+        return cellDefinition;
+    }
+
+    private static CellDefinition createParallelCoordinatePlotCellDefinition() {
+        CellDefinition cellDefinition = new SimpleCellDefinition("ParallelCoordinatePlot", "Parallel coordinate plot", "icons/visualisation_chart.png",
+                new String[]{"parallel", "coordinate", "plot", "visualization", "visualisation", "viz"}, false);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
+                        "x Axis", "Field to use to group values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS,
+                        "y Axis", "Field for values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_FIELDS,
+                        "Fields", "Data Fields").withMinMaxValues(2, 20));
         return cellDefinition;
     }
 
@@ -119,7 +147,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
         registerCellDefinition(new DatasetFilterGroovyCellDefinition());
         registerCellDefinition(new TransformValuesCellDefinition());
-        registerCellDefinition(new ProcessDatasetTrustedGroovyScriptCellDefinition());
         registerCellDefinition(new DatasetSelectSliceCellDefinition());
         registerCellDefinition(new DatasetSelectRandomCellDefinition());
         registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
@@ -132,6 +159,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(createTableDisplayCellDefinition());
         registerCellDefinition(createScatterPlotCellDefinition());
         registerCellDefinition(createBoxPlotCellDefinition());
+        registerCellDefinition(createParallelCoordinatePlotCellDefinition());
         registerCellDefinition(create3DMolCellDefinition());
     }
 

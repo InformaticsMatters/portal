@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Box plot labs</title>
+    <link rel="stylesheet" href="boxplot.css">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="boxplot.js"></script>
+
+    <style>
+
+    .chart {
+        border-color: lightgrey;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    </style>
+
+    <script>
+        var execute = function() {
+
+            var json = document.getElementById("data").value;
+            var data = JSON.parse(json);
+            buildBoxPlot('boxplot1', 'Groups field', 'Values field', data)
+
+        }
+    </script>
+
+
+
+</head>
+<body>
+
+<form>
+    Data:
+    <textarea id="data" rows="10" cols="80">[
+["Q1",[20000,9879,5070,7343,9136,7943,10546,9385,8669,4000]],
+["Q2",[15000,9323,9395,8675,5354,6725,10899,9365,8238,7446]],
+["Q3",[8000,3294,17633,12121,4319,18712,17270,13676,6587,16754]],
+["Q4",[20000,5629,5752,7557,5125,5116,5828,6014,5995,8905]]
+]</textarea>
+    <br/>
+    <button type="button" onclick="execute();">Generate!</button>
+</form>
+         <hr/>
+
+       <div id="boxplot1">Box plot demo!
+           <div id="container" class="svg-container" style="width:500px;height:300px"></div>
+       </div>
+
+<h3>Features to be developed</h3>
+<ul>
+<li>Handling and propagating selection</li>
+</ul>
+<script>execute();</script>
+
+
+</body>
+</html>

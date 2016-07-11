@@ -1,6 +1,7 @@
 package portal.notebook.webapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,6 +263,10 @@ public class NotebookSession implements Serializable {
         return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
     }
 
+    /**
+     * @deprecated Use squonkDataset() instead as it provides more goodies and handles things other than molecules.
+     */
+    @Deprecated()
     public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) throws Exception {
 
         String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
@@ -271,6 +276,22 @@ public class NotebookSession implements Serializable {
             Dataset<MoleculeObject> dataset = new Dataset<>(MoleculeObject.class, gunzippedInputStream, meta);
             return dataset.getItems();
         }
+    }
+
+    /** Retrieve Dataset for this variable.
+     * This is based on an InputStream that is read, and must be closed once finished e.g. by closing the Stream.
+     *
+     * @param variableInstance
+     * @return
+     * @throws Exception
+     */
+    public Dataset<? extends BasicObject> squonkDataset(VariableInstance variableInstance) throws Exception {
+
+        String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        DatasetMetadata meta = JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
+        InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
+        return new Dataset<>(meta.getType(), gunzippedInputStream, meta);
     }
 
 
