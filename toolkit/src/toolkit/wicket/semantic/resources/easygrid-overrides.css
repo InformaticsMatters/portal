@@ -3,34 +3,19 @@
 div.imxt-vista {
     font-size: 13px;
     border-radius: 5px;
-    background: #002451;
-    border: 1px solid #00469e;
 }
 
 div.imxt-container1 {
     border-radius: 5px;
 }
 
-div.imxt-vista td.imxt-cell {
-    border-bottom: 1px solid #00469e;
-    border-right: 1px solid #00469e;
-}
-
 div.imxt-vista div.imxt-head-container {
     border: none;
-    border-bottom: 1px solid #00469e;
+    border-bottom: 1px solid #eee;
 }
 
 div.imxt-vista div.imxt-head-container1 {
     background: none;
-}
-
-div.imxt-vista table.imxt-head th {
-    border-right: 1px solid #00469e;
-}
-
-div.imxt-vista table.imxt-head th a.imxt-sort-header {
-    color: white;
 }
 
 div.imxt-vista table.imxt-head tr.imxt-columns {
@@ -41,7 +26,7 @@ div.imxt-vista table.imxt-head tr.imxt-columns {
 div.imxt-vista table.imxt-head th {
     padding: 5px 2px 5px 4px;
     font-weight: bold;
-    color: white;
+    color: rgba(0,0,0,.8);
     height: 21px;
 }
 
@@ -56,47 +41,40 @@ div.imxt-vista table.imxt-head th div.imxt-a {
 
 div.imxt-vista table.imxt-head th.imxt-prelight {
     background-image: none;
-    background-color: #004aa6;
 }
 
 div.imxt-vista table.imxt-head th.imxt-prelight a.imxt-sort-header:hover {
-	color: white;
+	color: rgba(0,0,0,.8);
 }
 
 div.imxt-vista table.imxt-head th.imxt-sorted {
     background-image: none;
-    background: transparent;
 }
 
 div.imxt-vista table.imxt-head th.imxt-prelight a.imxt-sort-header:hover {
-	color: white;
+	color: black;
 }
 
 div.imxt-vista tr.imxt-grid-row:hover td.imxt-cell,
 div.imxt-vista tr.imxt-grid-row:hover td.imxt-sorted {
-	background-color: #004aa6;
+	background-color: #F2F9FC;
 }
 
 div.imxt-vista tr.imxt-selected td.imxt-cell,
 div.imxt-vista tr.imxt-selected td.imxt-sorted {
-    background-color: #004aa6!important;
-    border-bottom: 1px solid #00469e;
+    background-color: #E7F5FF;
 }
 
 div.imxt-vista tr.imxt-selected:hover td.imxt-cell,
 div.imxt-vista tr.imxt-selected:hover td.imxt-sorted {
-    background-color: #004aa6;
-    border-bottom: 1px solid #00469e;
+    background-color: #E1F2FF;
 }
 
-div.imxt-vista tr.imxt-even td.imxt-sorted,
-div.imxt-vista tr.imxt-odd td.imxt-sorted {
-    background: transparent;
-}
+
 
 div.imxt-vista td.imxt-cell {
-    padding: 8px 2px 8px 4px;
-    height: 46px;
+    padding: 2px 2px 1px 4px;
+    height: 26px;
 }
 
 div.imxt-vista td.imxt-cell i.icon {
@@ -115,54 +93,15 @@ div.imxt-navigator-toolbar {
     font-size: 13px;
 }
 
-div.imxt-bottom-toolbar-container div.imxt-navigator-toolbar {
-    border-top: 1px solid #00469e;
-}
-
-div.imxt-navigator-toolbar {
-    background-color: #002451;
-}
-
 div.imxt-no-records-toolbar {
     font-size: 13px;
-    border-top: 1px solid #00469e;
+    border-top: 1px solid #eee;
     padding-left: 0.5em;
-    background-color: #002451;
+    background-color: #fcfcfc;
     padding: 0.2em 0.5em;
 }
 
-span.imxt-navigator-float span.imxt-paging-navigator-button,
-a.imxt-paging-navigator-button:hover {
-    color: #eee;
-    background-color: #003b84;
-    border: 1px solid #eee;
-    border-radius: 3px;
+span.imxt-navigator-float span.imxt-paging-navigator-button {
+    color: #F2F9FC;
 }
 
-a.imxt-paging-navigator-button {
-    color: #eee;
-}
-
-div.imxt-paging-navigator em,
-span.imxt-navigator-float span.imxt-paging-navigator-button em {
-    color: #eee;
-}
-
-div.imxt-vista tr.imxt-odd {
-	background-color: #003b84;
-
-}
-
-div.imxt-vista tr.imxt-even {
-	background-color: #002f6b;
-}
-
-.oneColorGrid table tr.imxt-odd {
-    background-color: #002f6b;
-}
-
-.rowActionsPanel ul {
-    margin: 0px;
-    padding: 0px;
-    list-style: none;
-}

@@ -1,3 +1,11 @@
+.separator10 {
+    height: 10px;
+}
+
+.ui.action.input:not([class*="left action"])>.button {
+    border-radius: 0 .28571429rem .28571429rem 0;
+}
+
 ._jsPlumb_overlay {
     z-index: 3000;
 }
@@ -231,7 +239,8 @@ div.ui-resizable-handle.ui-resizable-s {
     font-weight: bold;
 }
 
-.nbListTable td {
+.nbListTable td,
+.nbListTable th {
     padding: .6em .4em!important;
 }
 
