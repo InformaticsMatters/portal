@@ -85,7 +85,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private void adjustSVGSize(CellInstance cellInstance) {
         // these are the adjustments needed to get the SVG to the right size.
         // I don't understand the adjustments - they just work!
-        svgWidth = cellInstance.getSizeWidth() - 40;
+        svgWidth = cellInstance.getSizeWidth() - 20;
         svgHeight = cellInstance.getSizeHeight() - 45;
     }
 

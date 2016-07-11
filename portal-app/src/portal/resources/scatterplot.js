@@ -12,14 +12,12 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
         data = [];
     }
 
-    console.log("Data size: " + data.length)
-
     var id = d3.select('#' + id);
     var plotContent = id.select('.svg-container');
 
     plotContent.select("svg").remove()
 
-    var margin = {top: 15, right: colorModel == 'none' ? 20 : 80, bottom: 25, left: 40};
+    var margin = {top: 15, right: colorModel == 'none' ? 20 : 60, bottom: 25, left: 40};
     var width = totalWidth - margin.left - margin.right;
     var height = totalHeight - margin.top - margin.bottom;
 
@@ -115,7 +113,7 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
       .append("svg:circle")
           .attr("cx", function (d,i) { return x(d.x); } )
           .attr("cy", function (d) { return y(d.y); } )
-          .attr("r", function (d) { return size(d.size); } )
+          .attr("r", function (d) { return d.size; } )
           .style("fill", function(d) { return colors == null ? null : colors(d.color); });
 
     switch(colorModel) {
@@ -134,7 +132,8 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
             legendG.call(legend);
             break;
 
-        default:
+        case 'steelblue-brown':
+        case 'blue-red':
 
            var legendG = chart.append("g")
              .attr("class", "legend")
