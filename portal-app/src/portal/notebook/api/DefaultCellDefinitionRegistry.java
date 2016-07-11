@@ -52,9 +52,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(
@@ -88,9 +85,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(
@@ -99,6 +93,26 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS,
                         "y Axis", "Field for values"));
+        return cellDefinition;
+    }
+
+    private static CellDefinition createParallelCoordinatePlotCellDefinition() {
+        CellDefinition cellDefinition = new SimpleCellDefinition("ParallelCoordinatePlot", "Parallel coordinate plot", "icons/visualisation_chart.png",
+                new String[]{"parallel", "coordinate", "plot", "visualization", "visualisation", "viz"}, false);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
+                        "x Axis", "Field to use to group values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS,
+                        "y Axis", "Field for values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_FIELDS,
+                        "Fields", "Data Fields").withMinMaxValues(2, 20));
         return cellDefinition;
     }
 
@@ -145,6 +159,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(createTableDisplayCellDefinition());
         registerCellDefinition(createScatterPlotCellDefinition());
         registerCellDefinition(createBoxPlotCellDefinition());
+        registerCellDefinition(createParallelCoordinatePlotCellDefinition());
         registerCellDefinition(create3DMolCellDefinition());
     }
 

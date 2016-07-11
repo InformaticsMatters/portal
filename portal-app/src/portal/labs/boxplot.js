@@ -416,6 +416,3 @@ function buildBoxPlot(id, groupsFieldName, valuesFieldName, data) {
         .style("text-anchor", "middle")
         .text(groupsFieldName);
 }
-
-
-

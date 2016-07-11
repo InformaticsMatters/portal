@@ -2,7 +2,8 @@
 
 function buildParallelCoordinatePlot(id, data) {
 
-        console.log("Num Data items:" + data.length)
+        console.log("id: " +id);
+        console.log("Num Data items:" + data.length);
 
         var generateColorScale = function(dimension) {
             return d3.scale.linear()
