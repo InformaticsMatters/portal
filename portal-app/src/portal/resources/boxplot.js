@@ -315,6 +315,10 @@ function boxQuartiles(d) {
 
 function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldName, data) {
 
+    if (data[0] == null) {
+        data = [];
+    }
+
     // Returns a function to compute the interquartile range.
     function iqr(k) {
       return function(d, i) {

@@ -2,6 +2,11 @@
 
 function buildParallelCoordinatePlot(id, data) {
 
+        if (data[0] == null) {
+            data = [{"uuid":"uuid1","idx":1,"dummy1":1.1,"dummy2":2.2},{"uuid":"uuid2","idx":2,"dummy1":2.2,"dummy2":3.3}];
+        }
+
+
         console.log("Num Data items:" + data.length)
 
         var generateColorScale = function(dimension) {

@@ -126,7 +126,10 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                         data.put("uuid", o.getUUID());
                         data.put("idx", i.incrementAndGet());
                         for (String field: fields) {
-                            data.put(field, o.getValue(field));
+                            Object val = o.getValue(field);
+                            if (val != null) {
+                                data.put(field, o.getValue(field));
+                            }
                         }
                         return data;
                     }).collect(Collectors.toList());

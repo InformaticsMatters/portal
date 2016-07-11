@@ -2,6 +2,11 @@
 
 function buildParallelCoordinatePlot(id, data) {
 
+        if (data.length == 0 || data[0] == null) {
+            d3.parcoords()("#" + id + " .svg-container").selectAll().remove();
+            return;
+        }
+
         console.log("id: " +id);
         console.log("Num Data items:" + data.length);
 
