@@ -2,13 +2,15 @@
 
 function buildParallelCoordinatePlot(id, data) {
 
+        var svgSelector = "#" + id + " .svg-container";
+        d3.select(svgSelector).selectAll("*").remove();
+
         if (data.length == 0 || data[0] == null) {
-            d3.parcoords()("#" + id + " .svg-container").selectAll().remove();
             return;
         }
 
-        console.log("id: " +id);
-        console.log("Num Data items:" + data.length);
+        //console.log("id: " +id);
+        //console.log("Num Data items:" + data.length);
 
         var generateColorScale = function(dimension) {
             return d3.scale.linear()
@@ -22,7 +24,7 @@ function buildParallelCoordinatePlot(id, data) {
 
         var color = function(d) { return scale(d.idx); };
 
-        var parcoords = d3.parcoords()("#" + id + " .svg-container")
+        var parcoords = d3.parcoords()(svgSelector)
             .color(color)
             .alpha(0.4)
             .data(data)
