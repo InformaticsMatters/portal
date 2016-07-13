@@ -111,14 +111,64 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
 
     var g = main.append("svg:g");
 
-    g.selectAll("scatter-dots")
+    g.selectAll("circle")
       .data(data, function(d) { return d.uuid; })
       .enter()
-      .append("svg:circle")
+      .append("circle")
           .attr("cx", function (d,i) { return x(d.x); } )
           .attr("cy", function (d) { return y(d.y); } )
           .attr("r", function (d) { return size(d.size); } )
-          .style("fill", function(d) { return colors == null ? null : colors(d.color); });
+          .style("fill", function(d) { return colors == null ? null : colors(d.color); })
+          .style("hidden", "false");
+
+
+    var brush = d3.svg.brush()
+        .x(x)
+        .y(y)
+        .on("brush", brushed)
+        .on("brushend", brushended);
+
+    g.append("g")
+        .attr("class", "brush")
+        .call(brush);
+
+    updateSelection()
+
+    function brushed() {
+        var e = brush.extent();
+        g.selectAll("circle").classed("hidden", function(d) {
+            return e[0][0] > d.x || d.x > e[1][0]
+                  || e[0][1] > d.y || d.y > e[1][1];
+        });
+    }
+
+    function brushended() {
+        if (!d3.event.sourceEvent) return; // only transition after input
+        if (brush.empty()) {
+            g.selectAll(".hidden").classed("hidden", false);
+            updateSelection();
+        } else {
+
+            var ids = [];
+            g.selectAll("circle:not(.hidden)").each(function(d) {
+                ids.push(d.uuid);
+            })
+            //console.log(ids.length + " items selected: " + ids);
+            updateSelection(ids);
+        }
+    }
+
+    function updateSelection(ids) {
+        if (ids == null) {
+            d3.select("#selection").text('-- all --');
+        } else {
+            if (ids.length == 0) {
+                d3.select("#selection").text("-- none --");
+            } else {
+                d3.select("#selection").text(ids.join(","));
+            }
+        }
+    }
 
     switch(colorModel) {
 

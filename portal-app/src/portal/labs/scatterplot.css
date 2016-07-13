@@ -17,3 +17,13 @@
 .svg-container circle {
     fill: steelblue;
 }
+
+.brush .extent {
+    stroke: #bbb;
+    fill-opacity: .05;
+    shape-rendering: crispEdges;
+}
+
+circle.hidden {
+  fill: #ddd !important;
+}
