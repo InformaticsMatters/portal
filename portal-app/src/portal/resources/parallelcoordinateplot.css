@@ -3,7 +3,7 @@ http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.css
 */
 
 .parcoords > svg, .parcoords > canvas {
-  font: 14px sans-serif;
+  font: 10px sans-serif;
   position: absolute;
 }
 .parcoords > canvas {
