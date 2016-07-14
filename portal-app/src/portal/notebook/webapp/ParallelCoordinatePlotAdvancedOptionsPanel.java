@@ -2,9 +2,8 @@ package portal.notebook.webapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.squonk.dataset.DatasetMetadata;
@@ -56,7 +55,7 @@ public class ParallelCoordinatePlotAdvancedOptionsPanel extends Panel {
         form = new Form<>("form");
         form.setModel(new CompoundPropertyModel<>(new ModelObject()));
 
-        ListMultipleChoice<String> fields = new ListMultipleChoice<>("fields", picklistItems);
+        CheckBoxMultipleChoice<String> fields = new CheckBoxMultipleChoice<>("fields", picklistItems);
         fields.setMaxRows(10);
         form.add(fields);
 

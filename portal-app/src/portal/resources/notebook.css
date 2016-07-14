@@ -12,6 +12,7 @@
 
 .ui.form input[type=checkbox] {
     vertical-align: middle;
+    margin-right: 5px;
 }
 
 li {
