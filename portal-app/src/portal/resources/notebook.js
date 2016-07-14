@@ -122,7 +122,8 @@ function addCellsPaletteDragAndDropSupport() {
 function makeCanvasItemPlumbDraggable(selector) {
     jsPlumb.draggable($(selector), {
         containment: 'parent',
-        filter : ".ui-resizable-handle.ui-resizable-se.ui-icon.ui-icon-gripsmall-diagonal-se, canvas",
+        filter : ".titleBar, .titleBarContent, .tbCellName",
+        filterExclude:false,
         drag: function(params) {
             var positionx = params.pos[0];
             var cellWidth = $('#' + params.el.id).outerWidth();
