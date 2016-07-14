@@ -315,8 +315,12 @@ function boxQuartiles(d) {
 
 function buildBoxPlot(id, groupsFieldName, valuesFieldName, data) {
 
-    if (data[0] == null) {
-        data = [];
+    var svgSelector = "#" + id + " .svg-container"
+    d3.select(svgSelector).selectAll("*").remove();
+
+    if (data == null || data.length == 0 || data[0] == null) {
+        //console.log("No data - clearing and returning");
+        return;
     }
 
     // Returns a function to compute the interquartile range.

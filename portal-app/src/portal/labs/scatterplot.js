@@ -6,20 +6,19 @@
 */
 
 function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
-    // this prevents #13, caused by server side generating
-    // data with invalid (null) values
-    if (data[0] == null) {
-        data = [];
-    }
 
-    var id = d3.select('#' + id);
-    var plotContent = id.select('.svg-container');
+    var svgSelector = "#" + id + " .svg-container"
+    var plotContent = d3.select(svgSelector);
+    plotContent.selectAll("*").remove();
+
+    if (data == null || data.length == 0 || data[0] == null) {
+        //console.log("No data - clearing and returning");
+        return;
+    }
 
     var svgWidth = plotContent.style("width").replace("px", "");
     var svgHeight = plotContent.style("height").replace("px", "");
     //console.log("Canvas width,height: " + svgWidth + "," + svgHeight);
-
-    plotContent.select("svg").remove();
 
     var margin = {top: 15, right: colorModel == 'none' ? 20 : 80, bottom: 25, left: 40};
     var width = svgWidth - margin.left - margin.right;

@@ -5,7 +5,7 @@ function buildParallelCoordinatePlot(id, data) {
     var svgSelector = "#" + id + " .svg-container"
     d3.select(svgSelector).selectAll("*").remove();
 
-    if (data[0] == null) {
+    if (data == null || data.length == 0 || data[0] == null) {
         //console.log("No data - clearing and returning");
         return;
     }
