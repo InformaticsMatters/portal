@@ -4,6 +4,8 @@ import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.cdi.ConversationPropagation;
+import org.apache.wicket.markup.html.IPackageResourceGuard;
+import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.apache.wicket.protocol.http.WebApplication;
 import portal.notebook.webapp.NotebookCanvasPage;
 import portal.notebook.webapp.NotebookStructureImageResource;
@@ -23,6 +25,7 @@ public class PortalWebApplication extends WebApplication {
     protected void init() {
         super.init();
         checkDerbyServer();
+        allowExtraPatterns();
         BeanManager beanManager = CDI.current().getBeanManager();
         new CdiConfiguration(beanManager).setPropagation(ConversationPropagation.NONE).configure(this);
         getSharedResources().add("notebookStructureImageResource", new NotebookStructureImageResource());
@@ -35,6 +38,14 @@ public class PortalWebApplication extends WebApplication {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void allowExtraPatterns() {
+        IPackageResourceGuard packageResourceGuard = getResourceSettings().getPackageResourceGuard();
+        if (packageResourceGuard instanceof SecurePackageResourceGuard) {
+            SecurePackageResourceGuard guard = (SecurePackageResourceGuard) packageResourceGuard;
+            guard.addPattern("+*.woff2");
         }
     }
 
