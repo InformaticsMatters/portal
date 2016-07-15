@@ -20,17 +20,24 @@
     </style>
 
     <script>
-        var execute = function() {
-
+        function execute() {
+            console.log("executing");
             var json = document.getElementById("data").value;
             var data = JSON.parse(json);
             var colorModel = document.getElementById("colorModel").value;
             buildScatterPlot('scatterplot1', 'X Axis', 'Y Axis', colorModel, data);
+        }
 
+        function resize() {
+            var w = document.getElementById("w").value;
+            var h = document.getElementById("h").value;
+            console.log("resizing " + w + " " + h);
+            var plot = document.getElementById("container");
+            plot.style.width = w + "px";
+            plot.style.height = h + "px";
+            regenerateScatterPlot('scatterplot1');
         }
     </script>
-
-
 
 </head>
 <body>
@@ -60,6 +67,10 @@
     </select>
     &nbsp;&nbsp;
     <button type="button" onclick="execute();">Generate!</button>
+    <br/>
+    Width: <input id="w" type="text" value="400">&nbsp;&nbsp;
+    Height: <input id="h" type="text" value="350">&nbsp;&nbsp;
+    <button type="button" onclick="resize();">Resize!</button>
 </form>
     <hr/>
 

@@ -33,7 +33,8 @@ function buildParallelCoordinatePlot(id, data) {
         .render()
         .shadows()
         .reorderable()
-        .brushMode("1D-axes");  // enable brushing
+        .brushMode("1D-axes")  // enable brushing
+        .on("brush", brushed);
 
     // click label to activate coloring
     parcoords.svg.selectAll(".dimension")
@@ -49,6 +50,27 @@ function buildParallelCoordinatePlot(id, data) {
         scale = generateColorScale(parcoords.data(), dimension);
         parcoords.color(function(d) { return scale(d[dimension]); })
             .render();
+    }
+
+    function brushed(data) {
+        //console.log("Brushed: " + data.length);
+        var ids = [];
+        for (i = 0; i < data.length; i++) {
+            ids.push(data[i].uuid);
+        }
+        updateSelection(ids);
+    }
+
+    function updateSelection(ids) {
+        if (ids == null) {
+            d3.select("#selection").text('-- all --');
+        } else {
+            if (ids.length == 0) {
+                d3.select("#selection").text("-- none --");
+            } else {
+                d3.select("#selection").text(ids.join(","));
+            }
+        }
     }
 
 }
