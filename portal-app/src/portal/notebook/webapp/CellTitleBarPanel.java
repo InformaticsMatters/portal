@@ -146,7 +146,7 @@ public class CellTitleBarPanel extends Panel {
         popupContainerProvider.setPopupContentForPage(getPage(), bindingsPopupPanel);
         popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
         String js = "$('#:link')" +
-                ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.cellPopup.popup'), on : 'click'})" +
+                ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.bindingsPopup.popup'), on : 'click'})" +
                 ".popup('toggle').popup('destroy')";
         js = js.replace(":link", link.getMarkupId()).replace(":content", bindingsPopupPanel.getMarkupId());
         ajaxRequestTarget.appendJavaScript(js);

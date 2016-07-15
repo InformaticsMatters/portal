@@ -110,7 +110,8 @@ li {
 }
 
 .notebook-canvas-item-content .small.input > input[type=text],
-.cellPopup .small.input > input[type=text] {
+.cellPopup .small.input > input[type=text],
+.bindingsPopup .small.input > input[type=text]{
     padding: .5em 1em!important;
 }
 
@@ -154,6 +155,16 @@ li {
 
 .cellPopup .actions {
     text-align: right;
+}
+
+.cellPopup .table,
+.bindingsPopup .table {
+    font-size: 0.9em;
+}
+
+.bindingsPopup {
+    width: 400px;
+    max-width: 400px!important;
 }
 
 .fileUploadInput {
