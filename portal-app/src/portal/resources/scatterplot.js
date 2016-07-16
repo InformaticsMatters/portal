@@ -56,10 +56,10 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
             .range([height, 0])
             .nice();
 
-        var size = d3.scale.sqrt()
-            .domain([d3.min(data, function(d) { return d.size; }), d3.max(data, function(d) { return d.size; })])
-            .range([3, 20])
-            .nice();
+//        var size = d3.scale.sqrt()
+//            .domain([d3.min(data, function(d) { return d.size; }), d3.max(data, function(d) { return d.size; })])
+//            .range([3, 20])
+//            .nice();
 
         var chart = plotContent
             .append('svg:svg')
@@ -112,7 +112,7 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
           .append("circle")
               .attr("cx", function (d,i) { return x(d.x); } )
               .attr("cy", function (d) { return y(d.y); } )
-              .attr("r", function (d) { return size(d.size); } )
+              .attr("r", function (d) { return d.size; } )
               .style("fill", function(d) { return colors == null ? null : colors(d.color); })
               .style("hidden", "false");
 
