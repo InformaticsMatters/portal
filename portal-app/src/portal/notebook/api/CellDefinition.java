@@ -32,6 +32,7 @@ public abstract class CellDefinition implements Serializable {
     private String icon;
     private Boolean executable;
     private String[] tags;
+    private Integer initialWidth, initialHeight;
 
 
     public CellDefinition(String name, String description, String icon, String[] tags, Boolean executable) {
@@ -62,6 +63,29 @@ public abstract class CellDefinition implements Serializable {
     public CellDefinition withOutputVariable(String name, String description, VariableType variableType) {
         this.variableDefinitionList.add(new VariableDefinition(name, description, variableType));
         return this;
+    }
+
+    public Integer getInitialWidth() {
+        return initialWidth;
+    }
+
+    public void setInitialWidth(Integer initialWidth) {
+        this.initialWidth = initialWidth;
+    }
+
+    public Integer getInitialHeight() {
+        return initialHeight;
+    }
+
+    public void setInitialHeight(Integer initialHeight) {
+        this.initialHeight = initialHeight;
+    }
+
+    public CellDefinition withInitialDimensions(int width, int height) {
+        this.initialWidth = width;
+        this.initialHeight = height;
+        return this;
+
     }
 
     public List<BindingDefinition> getBindingDefinitionList() {

@@ -150,6 +150,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new DatasetSelectSliceCellDefinition());
         registerCellDefinition(new DatasetSelectRandomCellDefinition());
         registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
+        registerCellDefinition(new ProcessDatasetUntrustedPythonScriptCellDefinition());
         registerCellDefinition(new SmilesDeduplicatorCellDefinition());
         registerCellDefinition(new DatasetDockerProcessorCellDefinition());
         registerCellDefinition(new CxnReactorCellDefinition());

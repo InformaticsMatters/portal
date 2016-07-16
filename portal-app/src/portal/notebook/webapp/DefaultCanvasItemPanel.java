@@ -38,7 +38,15 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
-        Boolean executable = findCellInstance().getCellDefinition().getExecutable();
+        CellInstance cellInstance = findCellInstance();
+        CellDefinition cellDefinition = cellInstance.getCellDefinition();
+        if (cellDefinition.getInitialWidth() != null) {
+            cellInstance.setSizeWidth(cellDefinition.getInitialWidth());
+        }
+        if (cellDefinition.getInitialHeight() != null) {
+            cellInstance.setSizeHeight(cellDefinition.getInitialHeight());
+        }
+        Boolean executable = cellDefinition.getExecutable();
         // test for null shouldn´t be necessary. means bug somewhere else
         if (executable != null && executable) {
             addExecutionStatusTimerBehavior();
