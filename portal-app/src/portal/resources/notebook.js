@@ -177,8 +177,8 @@ function makeCanvasItemResizable(width, height, id, fitCallback) {
     });
 }
 
-function fitScatterPlot(id) {
  /*
+function fitScatterPlot(id) {
     var svg = d3.select(".main");
     var dim = Math.min(parseInt(d3.select(".chart").style("width")), parseInt(d3.select(".chart").style("height")));
     var width = dim - 80;
@@ -221,8 +221,8 @@ function fitScatterPlot(id) {
                 .attr("cx", function (d,i) { return x(d.x); } )
                 .attr("cy", function (d) { return y(d.y); } )
                 .attr("r", 5);
-                */
 }
+*/
 
 function fitTableDisplayGrid(id) {
     var $id = $('#' + id);

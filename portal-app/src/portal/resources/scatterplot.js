@@ -4,7 +4,6 @@
 'blue-red': scale from blue for min value to red for max value (needs continuous variables - float or integer)
 
 */
-
 function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, colorModel) {
 
     var svgSelector = "#" + id + " .svg-container"
@@ -196,6 +195,9 @@ function buildScatterPlot(id, totalWidth, totalHeight, data, xLabel, yLabel, col
                legendG.call(legend);
                break;
          }
+}
+
+function fitScatterPlot(id) {
 }
 
 

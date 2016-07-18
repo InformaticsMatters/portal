@@ -62,7 +62,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         } catch (Exception e) {
             e.printStackTrace();
         }
-        addStatus();
+//        addStatus();
     }
 
     private void loadModelFromPersistentData() {
@@ -79,7 +79,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3.parcoords.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/parallelcoordinateplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/parallelcoordinateplot.css")));
-        makeCanvasItemResizable(container, "fitScatterPlot", 300, 200);
+        makeCanvasItemResizable(container, "fitParallelCoordinatePlot", 350, 250);
         try {
             response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
         } catch (IOException e) {
