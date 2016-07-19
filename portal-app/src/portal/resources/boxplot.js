@@ -17,12 +17,15 @@ d3.box = function() {
   // For each small multiple…
   function box(g) {
     g.each(function(data, i) {
+
+
 	  var d = data[1].sort(d3.ascending);
 
       var g = d3.select(this),
           n = d.length,
           min = d[0],
           max = d[n - 1];
+
 
       // Compute quartiles. Must return exactly 3 elements.
       var quartileData = d.quartiles = quartiles(d);
@@ -313,11 +316,34 @@ function boxQuartiles(d) {
 
 })();
 
-function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldName, data) {
+var margin = {top: 10, right: 20, bottom: 60, left: 50};
 
-    if (data[0] == null) {
-        data = [];
+function buildBoxPlot(id, groupsFieldName, valuesFieldName, data) {
+
+    var svgSelection = d3.select("#" + id + " .svg-container");
+
+    svgSelection.node().data = data;
+    svgSelection.node().groupsFieldName = groupsFieldName;
+    svgSelection.node().valuesFieldName = valuesFieldName;
+
+    displayBoxPlot(id)
+}
+
+function displayBoxPlot(id) {
+
+    var idSelection = d3.select("#" + id);
+    var svgSelection = idSelection.select(".svg-container");
+    svgSelection.selectAll("*").remove();
+
+    var data = svgSelection.node().data;
+    var groupsFieldName = svgSelection.node().groupsFieldName;
+    var valuesFieldName = svgSelection.node().valuesFieldName;
+
+    if (data == undefined || data.length == 0 || data[0] == null) {
+        console.log("No data - clearing and returning");
+        return;
     }
+    console.log("Number of groups: " + data.length);
 
     // Returns a function to compute the interquartile range.
     function iqr(k) {
@@ -336,14 +362,18 @@ function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldN
     var id = d3.select('#' + id);
     var plotContent = id.select('.svg-container');  // .boxPlotContent'
 
-    plotContent.select("svg").remove()
+    var svgWidth = plotContent.style("width").replace("px", "");
+    var svgHeight = plotContent.style("height").replace("px", "");
+
+
+    //plotContent.select("svg").remove()
 
 
     var labels = true; // show the text labels beside individual boxplots?
 
-    var margin = {top: 10, right: 20, bottom: 60, left: 50};
-    var width = totalWidth - margin.left - margin.right;
-    var height = totalHeight - margin.top - margin.bottom;
+
+    var width = svgWidth - margin.left - margin.right;
+    var height = svgHeight - margin.top - margin.bottom;
 
     var min = Infinity;
     var max = -Infinity;
@@ -366,7 +396,7 @@ function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldN
         .attr("height", height + margin.top + margin.bottom)
         .attr("class", "box")
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     // the x-axis
     var x = d3.scale.ordinal()
@@ -390,6 +420,7 @@ function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldN
     svg.selectAll(".box")
       .data(data)
       .enter().append("g")
+        .attr("class", "boxcolumn")
         .attr("transform", function(d) { return "translate(" +  x(d[0])  + "," + margin.top + ")"; } )
       .call(chart.width(x.rangeBand()));
 
@@ -415,4 +446,26 @@ function buildBoxPlot(id, totalWidth, totalHeight, groupsFieldName, valuesFieldN
         .attr("dy", ".71em")
         .style("text-anchor", "middle")
         .text(groupsFieldName);
+}
+
+function fitBoxPlot(id) {
+
+    /* TODO: this resizing is not optimal as it relies on storing the data and regenerating the entire plot on each resize
+    * instead should regenrate the plot content without needign to rebind the data
+    */
+
+    var idSelection = d3.select('#' + id);
+    var plotContent = idSelection.select('.svg-container');  // .boxPlotContent'
+    var plotNode = plotContent.node();
+    var timerId = plotNode.timerId;
+    if (timerId != null) {
+        clearTimeout(timerId);
+    }
+
+    // apply resize using a timer to ensure it doesn't redraw too often
+    plotNode.timerId = setTimeout(function () {
+        // redrawing code
+        plotNode.timerId = null;
+        displayBoxPlot(id);
+    }, 200);
 }

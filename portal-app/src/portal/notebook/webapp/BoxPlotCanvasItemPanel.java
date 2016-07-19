@@ -40,7 +40,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
-    private static final String BUILD_PLOT_JS = "buildBoxPlot(':id', :width, :height, ':groupsFieldName', ':valuesFieldName', :data)";
+    private static final String BUILD_PLOT_JS = "buildBoxPlot(':id', ':groupsFieldName', ':valuesFieldName', :data)";
 
     @Inject
     private NotebookSession notebookSession;
@@ -55,7 +55,7 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             cellInstance.setSizeWidth(480);
             cellInstance.setSizeHeight(320);
         }
-        adjustSVGSize(cellInstance);
+        //adjustSVGSize(cellInstance);
         addForm();
         loadModelFromPersistentData();
         addTitleBar();
@@ -64,15 +64,15 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        addStatus();
+        //addStatus();
     }
 
-    private void adjustSVGSize(CellInstance cellInstance) {
-        // these are the adjustments needed to get the SVG to the right size.
-        // I don't understand the adjustments - they just work!
-        svgWidth = cellInstance.getSizeWidth();
-        svgHeight = cellInstance.getSizeHeight() - 75;
-    }
+//    private void adjustSVGSize(CellInstance cellInstance) {
+//        // these are the adjustments needed to get the SVG to the right size.
+//        // I don't understand the adjustments - they just work!
+//        svgWidth = cellInstance.getSizeWidth();
+//        svgHeight = cellInstance.getSizeHeight() - 75;
+//    }
 
 
     private void loadModelFromPersistentData() {
@@ -89,7 +89,7 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3.min.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/boxplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/boxplot.css")));
-        makeCanvasItemResizable(container, "fitScatterPlot", 300, 200);
+        makeCanvasItemResizable(container, "fitBoxPlot", 300, 200);
         try {
             response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
         } catch (IOException e) {
@@ -97,10 +97,10 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         }
     }
 
-    private void addStatus() {
-        statusLabel = createStatusLabel("cellStatus");
-        add(statusLabel);
-    }
+//    private void addStatus() {
+//        statusLabel = createStatusLabel("cellStatus");
+//        add(statusLabel);
+//    }
 
     private void addForm() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
@@ -158,8 +158,6 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         ModelObject model = form.getModelObject();
         return BUILD_PLOT_JS
                 .replace(":id", getMarkupId())
-                .replace(":width", "" + svgWidth)
-                .replace(":height", "" + svgHeight)
                 .replace(":groupsFieldName", model.getGroupsFieldName() == null ? "Group by field" : model.getGroupsFieldName())
                 .replace(":valuesFieldName", model.getValuesFieldName() == null ? "Values field" : model.getValuesFieldName())
                 .replace(":data", model.getPlotDataAsJson());
@@ -245,7 +243,9 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                         .map((e) -> new Object[]{e.getKey(), e.getValue()});
 
                 InputStream is = JsonHandler.getInstance().marshalStreamToJsonArray(items, false);
-                return IOUtils.toString(is);
+                String json = IOUtils.toString(is);
+                //System.out.println("JSON: " + json);
+                return json;
             }
         }
     }
