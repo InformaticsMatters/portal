@@ -450,7 +450,7 @@ function displayBoxPlot(id) {
 function fitBoxPlot(id) {
 
     /* TODO: this resizing is not optimal as it relies on storing the data and regenerating the entire plot on each resize
-    * instead should regenrate the plot content without needign to rebind the data
+    * instead should regenerate the plot content without needing to rebind the data
     */
 
     var idSelection = d3.select('#' + id);

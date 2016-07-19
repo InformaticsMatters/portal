@@ -1,37 +1,28 @@
-function fitParallelCoordinatePlot(id) {
-
-    var divContent = d3.select("#" + id);
-    var divWidth = divContent.style("width").replace("px", "");
-    var divHeight = divContent.style("height").replace("px", "");
-
-    console.log("New size: " + divWidth + " x " + divHeight);
-
-    var svgContent = d3.select("#" + id + " .svg-container");
-    var statusContent = d3.select("#" + id + " .extra.content");
-
-    svgContent.style("width", divWidth + "px");
-    svgContent.style("height", (divHeight - 40) + "px");
-
-//    d3.parcoords()("#" + id + " .svg-container")
-//        .width((divWidth - 20) + "px")
-//        .height((divHeight - 90) + "px")
-//        .render()
-//        .updateAxes();
-}
 
 
 
 function buildParallelCoordinatePlot(id, data) {
 
-    var svgSelector = "#" + id + " .svg-container"
-    d3.select(svgSelector).selectAll("*").remove();
-    fitParallelCoordinatePlot(id);
+    var svgSelection = d3.select("#" + id + " .svg-container");
+    svgSelection.node().data = data;
 
-    if (data[0] == null) {
+    displayParallelCoordinatePlot(id)
+}
+
+function displayParallelCoordinatePlot(id) {
+
+    var svgSelector = "#" + id + " .svg-container";
+    var svgSelection = d3.select(svgSelector);
+    svgSelection.selectAll("*").remove();
+
+    var data = svgSelection.node().data;
+
+    if (data == null || data.length == 0 || data[0] == null) {
         //console.log("No data - clearing and returning");
         return;
     }
-    var plotContent = d3.select(svgSelector);
+
+    //console.log("Num Data items:" + data.length)
 
     function generateColorScale(data, dimension) {
         var min = d3.min(data, function(d) { return d[dimension]; });
@@ -46,12 +37,6 @@ function buildParallelCoordinatePlot(id, data) {
     var scale = generateColorScale(data, 'idx');
 
     var parcoords = d3.parcoords()(svgSelector)
-        .margin({
-          top: 20,
-          left: 20,
-          right: 20,
-          bottom: 20
-        })
         .color(function(d) { return scale(d.idx); })
         .alpha(0.4)
         .data(data)
@@ -61,9 +46,7 @@ function buildParallelCoordinatePlot(id, data) {
         .shadows()
         .reorderable()
         .brushMode("1D-axes")  // enable brushing
-        .on("resize", function(dim) {
-            console.log("resized " + dim.width + " " + dim.height + " " + dim.margin);
-        });
+        .on("brush", brushed);
 
     // click label to activate coloring
     parcoords.svg.selectAll(".dimension")
@@ -81,4 +64,47 @@ function buildParallelCoordinatePlot(id, data) {
             .render();
     }
 
+    function brushed(data) {
+        //console.log("Brushed: " + data.length);
+        var ids = [];
+        for (i = 0; i < data.length; i++) {
+            ids.push(data[i].uuid);
+        }
+        updateSelection(ids);
+    }
+
+    function updateSelection(ids) {
+//        if (ids == null) {
+//            d3.select("#selection").text('-- all --');
+//        } else {
+//            if (ids.length == 0) {
+//                d3.select("#selection").text("-- none --");
+//            } else {
+//                d3.select("#selection").text(ids.join(","));
+//            }
+//        }
+    }
+
+}
+
+function fitParallelCoordinatePlot(id) {
+
+    /* TODO: this resizing is not optimal as it relies on storing the data and regenerating the entire plot on each resize
+    * instead should regenerate the plot content without needing to rebind the data
+    */
+
+    var idSelection = d3.select('#' + id);
+    var plotContent = idSelection.select('.svg-container');  // .boxPlotContent'
+    var plotNode = plotContent.node();
+    var timerId = plotNode.timerId;
+    if (timerId != null) {
+        clearTimeout(timerId);
+    }
+
+    // apply resize using a timer to ensure it doesn't redraw too often
+    plotNode.timerId = setTimeout(function () {
+        // redrawing code
+        plotNode.timerId = null;
+        displayParallelCoordinatePlot(id);
+    }, 200);
 }

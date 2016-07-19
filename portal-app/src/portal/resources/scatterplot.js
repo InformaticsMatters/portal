@@ -200,15 +200,15 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
     }
 
     function updateSelection(ids) {
-        if (ids == null) {
-            d3.select("#selection").text('-- all --');
-        } else {
-            if (ids.length == 0) {
-                d3.select("#selection").text("-- none --");
-            } else {
-                d3.select("#selection").text(ids.join(","));
-            }
-        }
+//        if (ids == null) {
+//            d3.select("#selection").text('-- all --');
+//        } else {
+//            if (ids.length == 0) {
+//                d3.select("#selection").text("-- none --");
+//            } else {
+//                d3.select("#selection").text(ids.join(","));
+//            }
+//        }
     }
 
 

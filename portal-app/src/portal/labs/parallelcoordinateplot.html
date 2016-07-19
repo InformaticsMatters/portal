@@ -26,11 +26,19 @@
 
     <script>
         var execute = function() {
-
             var json = document.getElementById("data").value;
             var data = JSON.parse(json);
             buildParallelCoordinatePlot('pcp1', data);
+        }
 
+        function resize() {
+            var w = document.getElementById("w").value;
+            var h = document.getElementById("h").value;
+            console.log("resizing " + w + " " + h);
+            var plot = document.getElementById("container");
+            plot.style.width = w + "px";
+            plot.style.height = h + "px";
+            fitParallelCoordinatePlot('pcp1');
         }
     </script>
 </head>
@@ -72,11 +80,16 @@
 ]</textarea>
     <br/>
     <button type="button" onclick="execute();">Generate!</button>
+    <br/>
+    <br/>
+    Width: <input id="w" type="text" value="560">&nbsp;&nbsp;
+    Height: <input id="h" type="text" value="250">&nbsp;&nbsp;
+    <button type="button" onclick="resize();">Resize!</button>
 </form>
          <hr/>
 
-       <div id="pcp1">Parallel coordinate plot demo!
-           <div class="svg-container parcoords" style="width:560px;height:250px"></div>
+       <div id="pcp1">Parallel coordinate plot demo
+           <div id="container" class="svg-container parcoords" style="width:560px;height:250px;"></div>
            <br/>
            Selection:<div id="selection"></div>
        </div>

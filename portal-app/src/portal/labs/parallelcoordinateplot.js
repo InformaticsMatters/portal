@@ -1,9 +1,24 @@
 
 
+
 function buildParallelCoordinatePlot(id, data) {
 
-    var svgSelector = "#" + id + " .svg-container"
-    d3.select(svgSelector).selectAll("*").remove();
+    var svgSelection = d3.select("#" + id + " .svg-container");
+    svgSelection.node().data = data;
+
+    displayParallelCoordinatePlot(id)
+}
+
+function displayParallelCoordinatePlot(id) {
+
+    var svgSelector = "#" + id + " .svg-container";
+    var svgSelection = d3.select(svgSelector);
+    svgSelection.selectAll("*").remove();
+
+    var data = svgSelection.node().data;
+
+    var width = svgSelection.style("width").replace("px", "");
+    var height = svgSelection.style("height").replace("px", "");
 
     if (data == null || data.length == 0 || data[0] == null) {
         //console.log("No data - clearing and returning");
@@ -73,4 +88,26 @@ function buildParallelCoordinatePlot(id, data) {
         }
     }
 
+}
+
+function fitParallelCoordinatePlot(id) {
+
+    /* TODO: this resizing is not optimal as it relies on storing the data and regenerating the entire plot on each resize
+    * instead should regenerate the plot content without needing to rebind the data
+    */
+
+    var idSelection = d3.select('#' + id);
+    var plotContent = idSelection.select('.svg-container');  // .boxPlotContent'
+    var plotNode = plotContent.node();
+    var timerId = plotNode.timerId;
+    if (timerId != null) {
+        clearTimeout(timerId);
+    }
+
+    // apply resize using a timer to ensure it doesn't redraw too often
+    plotNode.timerId = setTimeout(function () {
+        // redrawing code
+        plotNode.timerId = null;
+        displayParallelCoordinatePlot(id);
+    }, 200);
 }
