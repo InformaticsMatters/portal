@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  */
 public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
-    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', :width, :height, :data, ':xLabel', ':yLabel', ':colorMode')";
+    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', :data)";
 
     public static final String OPTION_COLOR = "color";
     public static final String OPTION_POINT_SIZE = "pointSize";
@@ -70,7 +70,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             cellInstance.setSizeWidth(480);
             cellInstance.setSizeHeight(265);
         }
-        adjustSVGSize(cellInstance);
         addForm();
         loadModelFromPersistentData();
         addTitleBar();
@@ -80,13 +79,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             LOGGER.warn("Error refreshing data", t);
             // TODO
         }
-    }
-
-    private void adjustSVGSize(CellInstance cellInstance) {
-        // these are the adjustments needed to get the SVG to the right size.
-        // I don't understand the adjustments - they just work!
-        svgWidth = cellInstance.getSizeWidth() - 20;
-        svgHeight = cellInstance.getSizeHeight() - 45;
     }
 
     @Override
@@ -224,8 +216,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
         String result = BUILD_PLOT_JS
                 .replace(":id", getMarkupId())
-                .replace(":width", ""+svgWidth)
-                .replace(":height", ""+svgHeight)
                 .replace(":xLabel", xLabel)
                 .replace(":yLabel", yLabel)
                 .replace(":colorMode", ""+model.getColorMode())

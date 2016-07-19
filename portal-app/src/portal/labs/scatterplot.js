@@ -17,7 +17,8 @@ var ScatterPlotConfig = function (xLabel, yLabel, colorModel, data) {
     this.xMax = d3.max(data, function(d) { return d.x; });
     this.yMin = d3.min(data, function(d) { return d.y; });
     this.yMax = d3.max(data, function(d) { return d.y; });
-    this.margin = {top: 15, right: colorModel == 'none' ? 20 : 80, bottom: 25, left: 40};
+    this.margin = {top: 15, right: colorModel == 'none' ? 20 : 80, bottom: 30, left: 40};
+    this.timerId = null
 
 
     this.sizeScale = d3.scale.sqrt()
@@ -133,7 +134,7 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
         .attr('class', 'main axis xaxis')
         .call(xAxis)
         .append("text")
-            .attr("class", "label")
+            .attr("class", "label xLabel")
             .attr("x", config.svgWidth)
             .attr("y", -6)
             .style("text-anchor", "end")
@@ -144,7 +145,7 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
         .attr('class', 'main axis yaxis')
         .call(yAxis)
         .append("text")
-            .attr("class", "label")
+            .attr("class", "label yLabel")
             .attr("transform", "rotate(-90)")
             .attr("y", 6)
             .attr("dy", ".71em")
@@ -152,7 +153,7 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
             .text(yLabel);
 
     var g = main.append("g")
-        .attr("id", id + "_points");
+        .attr("class", "points");
 
     g.selectAll("circle")
       .data(data, function(d) { return d.uuid; })
@@ -246,67 +247,96 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
 
 /** Regenerate the scatter plot when its containing div has been resized
 */
-function regenerateScatterPlot(id) {
-     var svgSelector = "#" + id + " .svg-container"
-     var plotContent = d3.select(svgSelector);
+function fitScatterPlot(id) {
+
+
+     var plotContent = d3.select("#" + id + " .svg-container");
+
+     // resize plot area
+
      var config = plotContent.node().plotConfig;
      if (config == null) {
         console.log("PlotConfig not found. Can't regenerate");
         return;
      }
+
+    // set display to none so that the current content does not mess with the resizing
+     plotContent.select(".chart").style("display", "none");
+     // adjsut size
      var divWidth = plotContent.style("width").replace("px", "");
      var divHeight = plotContent.style("height").replace("px", "");
+
+     //console.log("Resized: " + divWidth + ":" +  divHeight);
      config.setSize(divWidth, divHeight);
 
-    // resize plot area
-    d3.select("#" + id + " .chart")
-        .transition()
-        .style("width", divWidth)
-        .style("height", divHeight);
 
-    // reposition x axis
-    var xAxis = d3.svg.axis()
-        .scale(config.xScale)
-        .orient('bottom');
-    d3.select("#" + id + " .xaxis")
-        .call(xAxis)
-        .transition()
-        .attr('transform', 'translate(0,' + config.svgHeight + ')')
+     var timerId = config.timerId;
+     if (timerId != null) {
+        clearTimeout(timerId);
+     }
 
-    // reposition y axis
-    var yAxis = d3.svg.axis()
-        .scale(config.yScale)
-        .orient('left');
-    d3.select("#" + id + " .yaxis")
-        .transition()
-        .call(yAxis);
+     // apply resize using a timer to ensure it doesn't redraw too often
+     config.timerId = setTimeout(function () {
 
-    // reposition legend
-    switch(config.colorModel) {
-        case 'categorical':
+        // redrawing code
+         config.timerId = null;
 
-            d3.select("#" + id + " .legend")
-                .transition()
-                .attr("transform", "translate(" + (config.svgWidth + 50) + ",10)");
-            break;
+         //console.log("redrawing: [" + config.outerWidth + ":" + config.outerHeight + "] [" + config.svgWidth + ":" + config.svgHeight + "]");
 
-        default:
+         plotContent.select(".chart")
+             .style("display", "block")
+             .style("width", config.outerWidth)
+             .style("height", config.outerHeight);
 
-            d3.select("#" + id + " .legend")
-                .transition()
-                .attr("transform", "translate(" + (config.svgWidth + 50) + ",10)");
-            break;
-    }
+         plotContent.select(".main")
+             .style("width", config.svgWidth)
+             .style("height", config.svgHeight);
 
-    // reposition the points
-    var points = d3.select("#" + id + "_points");
-    points.selectAll("circle")
-           .attr("cx", function (d,i) { return config.xScale(d.x); } )
-           .attr("cy", function (d) { return config.yScale(d.y); } )
+         // reposition x axis
+         var xAxis = d3.svg.axis()
+             .scale(config.xScale)
+             .orient('bottom');
+         plotContent.select(".xaxis")
+             .call(xAxis)
+             .transition()
+             .attr('transform', 'translate(0,' + config.svgHeight + ')')
+         plotContent.select(".xLabel")
+            .attr("x", config.svgWidth);
 
-    // reposition the brush
-    // TODO - can't figure out how to do this yet
+         // reposition y axis
+         var yAxis = d3.svg.axis()
+             .scale(config.yScale)
+             .orient('left');
+         plotContent.select(".yaxis")
+             .transition()
+             .call(yAxis);
 
-}
+         // reposition legend
+         switch(config.colorModel) {
+             case 'categorical':
 
+                 plotContent(".legend")
+                     .transition()
+                     .attr("transform", "translate(" + (config.svgWidth + 50) + ",10)");
+                 break;
 
+             default:
+
+                 plotContent.select(".legend")
+                     .transition()
+                     .attr("transform", "translate(" + (config.svgWidth + 50) + ",10)");
+                 break;
+         }
+
+         // reposition the points
+         var points = plotContent.select(".points");
+         points.selectAll("circle")
+                .attr("cx", function (d,i) { return config.xScale(d.x); } )
+                .attr("cy", function (d) { return config.yScale(d.y); } )
+
+         // reposition the brush
+         // TODO - can't figure out how to do this yet
+
+     }, 200);
+
+ }
