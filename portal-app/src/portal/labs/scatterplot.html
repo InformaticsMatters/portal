@@ -2,100 +2,158 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Scatter plot labs</title>
+    <title>Resizeable Scatter plot</title>
+
     <link rel="stylesheet" href="scatterplot.css">
 
-    <script src="../resources/d3.min.js"></script>
-    <script src="../resources/d3-legend.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="scatterplot.js"></script>
-
-    <style>
-
-    .chart {
-        border-color: lightgrey;
-        border-style: solid;
-        border-width: 1px;
-    }
-
-    </style>
-
-    <script>
-        function execute() {
-            console.log("executing");
-            var json = document.getElementById("data").value;
-            var data = JSON.parse(json);
-            var colorModel = document.getElementById("colorModel").value;
-            buildScatterPlot('scatterplot1', 'X Axis', 'Y Axis', colorModel, data);
-        }
-
-        function resize() {
-                var w = document.getElementById("w").value;
-                var h = document.getElementById("h").value;
-                console.log("resizing " + w + " " + h);
-                var plot = document.getElementById("container");
-                plot.style.width = w + "px";
-                plot.style.height = h + "px";
-                fitScatterPlot('scatterplot1');
-        }
-    </script>
 
 </head>
 <body>
 
 <form>
-    Data:
-    <textarea id="data" rows="10" cols="80">[
-{"uuid":"a", "x": 100, "y": 200, "color": 1, "size": 3},
-{"uuid":"b", "x": 120, "y": 220, "color": 2, "size": 4},
-{"uuid":"c", "x": 159, "y": 280, "color": 5, "size": 6},
-{"uuid":"d", "x": 110, "y": 209, "color": 1.4, "size": 7},
-{"uuid":"e", "x": 134, "y": 218, "color": 7.2, "size": 8},
-{"uuid":"f", "x": 139, "y": 243, "color": 3.4, "size": 30},
-{"uuid":"g", "x": 105, "y": 237, "color": 6.4, "size": 3},
-{"uuid":"h", "x": 127, "y": 202, "color": 2.5, "size": 4},
-{"uuid":"i", "x": 132, "y": 239, "color": 6.3, "size": 6},
-{"uuid":"j", "x": 181, "y": 289, "color": 1.4, "size": 7},
-{"uuid":"k", "x": 203, "y": 278, "color": 7.9, "size": 8}
-]</textarea>
-    <br/>
-    Color model:
-    <select id="colorModel">
-        <option value="steelblue-brown">steelblue-brown</option>
-        <option value="steelblue-brown">blue-red</option>
-        <option value="categorical">categorical</option>
-        <option value="none">none</option>
-    </select>
-    &nbsp;&nbsp;
-    <button type="button" onclick="execute();">Generate!</button>
-    <br/>
     Width: <input id="w" type="text" value="400">&nbsp;&nbsp;
     Height: <input id="h" type="text" value="350">&nbsp;&nbsp;
-    <button type="button" onclick="resize();">Resize!</button>
+    <button type="button" class="resize">Resize!</button>
 </form>
-    <hr/>
+<form>
+    <button type="button" class="change">Change Data</button>
+</form>
+<hr/>
+<div id="scatterplot1">
+    <div id="container" class="svg-container"></div>
+</div>
 
-        <div id="scatterplot1">Scatter plot demo!
-        <div id="container" class="svg-container" style="width:400px;height:350px;"></div>
-            <br/>
-        Selection:<div id="selection"></div>
-    </div>
+<script>
+    // Below, we will now "use" the chart by submitting data
+  // and configuration to it as an encapsulated component.
+  // Notice that we have never used the "new" keyword.
+  //
+  // This is a separation of concerns. We can be sure
+  // that we haven't hard-coded and essential values
+  // or unnecessarily hidden events from our future selves
+  // who may need to use the chart again.
 
-<h3>Features implemented</h3>
-<ul>
-    <li>Coloring by categorical and continuous scales</li>
-    <li>Filter using brushing to select points</li>
-</ul>
+  var dataSet1 = [
+    {"uuid":"a", "x": 100, "y": 200, "color": 1, "size": 3},
+    {"uuid":"b", "x": 120, "y": 220, "color": 2, "size": 4},
+    {"uuid":"c", "x": 159, "y": 280, "color": 5, "size": 6},
+    {"uuid":"d", "x": 110, "y": 209, "color": 1.4, "size": 7},
+    {"uuid":"e", "x": 134, "y": 218, "color": 7.2, "size": 8},
+    {"uuid":"f", "x": 139, "y": 243, "color": 3.4, "size": 30},
+    {"uuid":"g", "x": 105, "y": 237, "color": 6.4, "size": 3},
+    {"uuid":"h", "x": 127, "y": 202, "color": 2.5, "size": 4},
+    {"uuid":"i", "x": 132, "y": 239, "color": 6.3, "size": 6},
+    {"uuid":"j", "x": 181, "y": 289, "color": 1.4, "size": 7},
+    {"uuid":"k", "x": 203, "y": 278, "color": 7.9, "size": 8}
+  ];
 
-<h3>Features to be developed</h3>
-<ul>
-    <li>Marking and filtering input based on an upstream selection</li>
-    <li>Logarithmic and reversed scales</li>
-    <li>Tooltip display for points</li>
-    <li>Semantic zoom</li>
-</ul>
+  var dataSet2 = [
+    {"uuid":"a", "x": 180, "y": 200, "color": 1, "size": 3},
+    {"uuid":"bu", "x": 520, "y": 120, "color": 2, "size": 4},
+    {"uuid":"c", "x": 159, "y": 380, "color": 5, "size": 6},
+    {"uuid":"d", "x": 210, "y": 289, "color": 1.4, "size": 7},
+    {"uuid":"ed", "x": 134, "y": 218, "color": 7.2, "size": 18},
+    {"uuid":"f", "x": 239, "y": 243, "color": 3.4, "size": 20},
+    {"uuid":"g", "x": 165, "y": 237, "color": 6.4, "size": 3},
+    {"uuid":"h", "x": 227, "y": 402, "color": 2.5, "size": 24},
+    {"uuid":"if", "x": 132, "y": 239, "color": 6.3, "size": 6},
+    {"uuid":"j", "x": 181, "y": 189, "color": 1.4, "size": 7},
+    {"uuid":"k", "x": 203, "y": 228, "color": 7.9, "size": 3},
+    {"uuid":"ac", "x": 100, "y": 200, "color": 1, "size": 5},
+    {"uuid":"bf", "x": 20, "y": 220, "color": 2, "size": 4},
+    {"uuid":"ce", "x": 199, "y": 280, "color": 5, "size": 1},
+    {"uuid":"ds", "x": 110, "y": 209, "color": 1.4, "size": 7},
+    {"uuid":"ew", "x": 164, "y": 218, "color": 7.2, "size": 8},
+    {"uuid":"fg", "x": 239, "y": 143, "color": 3.4, "size": 30},
+    {"uuid":"gg", "x": 135, "y": 237, "color": 6.4, "size": 3},
+    {"uuid":"hd", "x": 187, "y": 102, "color": 2.5, "size": 14},
+    {"uuid":"id", "x": 122, "y": 239, "color": 6.3, "size": 9},
+    {"uuid":"jh", "x": 189, "y": 189, "color": 1.4, "size": 3},
+  ];
 
-<script>execute();</script>
+    function selectionHandler(ids) {
+        if (ids == null) {
+            alert("No selection");
+        } else if (ids.length == 0) {
+            alert("Selection empty");
+        } else {
+            alert("Selection: " + ids.join(","));
+        }
+    }
+
+  // Here we're selecting the containing element.
+  // Doing this part outside of the reusable component
+  // leaves out component more flexible. I can pass in
+  // any element or any number of elements, and it will render them all.
+  var scatterplot1 = d3.selectAll('#scatterplot1 .svg-container');
+
+  // Initialise my plot with a configuration
+  // object. The plot just returns a function, but
+  // that function has other methods attached to it.
+  //
+  // D3 uses these kinds of "mixed types" often. For
+  // example, many times arrays also have methods attached
+  // to them, such as many layouts do. In javascript
+  // arrays and functions are also objects, so there's
+  // nothing actually crazy going on, but it can be confusing
+  // if you're not used to seeing it.
+  myScatterplot = scatterPlot({
+    id: 'scatterplot1',
+    xLabel: 'X Axis',
+    yLabel: 'Y Label',
+    selectionHandler: selectionHandler
+  });
+
+  // We could also pass these parameters into the
+  // configuration, but this shows how we can edit
+  // them after the fact.
+  myScatterplot
+  .width(400)
+  .height(350);
+
+  // Here we call the function that was returned
+  // in the implementation above. All the configuration
+  // and state is already in the function's closure.
+  // The only way to affect that state now is through
+  // the accessor methods (see resize handler below).
+  scatterplot1
+    .datum(dataSet1)
+    .call(myScatterplot);
+
+  resize = function() {
+    var w = document.getElementById("w").value;
+    var h = document.getElementById("h").value;
+
+    // Update the interior state of the component's
+    // width and height. Note that this does not
+    // redraw anything. We can chain these calls
+    // because we returned the whole object/function
+    // in these accessors. Since we're still
+    // chaining, we can just call the passed
+    // function at the end of our reconfiguration.
+    myScatterplot
+      .width(w)
+      .height(h)(scatterplot1); // This refreshes everything by re-running the rendering function.
+  };
+
+  var nextDataSet = dataSet2;
+
+  changeData = function() {
+    d3.select('#scatterplot1 .svg-container')
+      .datum(nextDataSet)
+      .call(myScatterplot);
+
+    nextDataSet = (nextDataSet === dataSet2) ? dataSet1 : dataSet2;
+
+    d3.select('button.change')
+    .text('Load New Data');
+  };
 
 
+  d3.select('button.resize').on('click', resize);
+  d3.select('button.change').on('click', changeData);
+</script>
 </body>
 </html>
