@@ -2,7 +2,6 @@
 'none': no coloring
 'categorical': discrete categories (needs integer or text values)
 'blue-red', 'steelblue-brown': scales from min value to max values (needs continuous variables - float or integer)
-
 */
 
 /** Class defintion that stores the key configuration properties and persists for the

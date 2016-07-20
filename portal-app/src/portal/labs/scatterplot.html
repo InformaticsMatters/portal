@@ -6,8 +6,10 @@
 
     <link rel="stylesheet" href="scatterplot.css">
 
-    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="../resources/d3.min.js"></script>
+    <script src="../resources/d3-legend.js"></script>
     <script src="scatterplot.js"></script>
+
 
 </head>
 <body>
@@ -22,7 +24,7 @@
 </form>
 <hr/>
 <div id="scatterplot1">
-    <div id="container" class="svg-container"></div>
+    <div id="container" class="svg-container" style="width:400px; height:350px"></div>
 </div>
 
 <script>
@@ -84,58 +86,20 @@
     }
 
   // Here we're selecting the containing element.
-  // Doing this part outside of the reusable component
-  // leaves out component more flexible. I can pass in
-  // any element or any number of elements, and it will render them all.
-  var scatterplot1 = d3.selectAll('#scatterplot1 .svg-container');
+  var selection = d3.selectAll('#scatterplot1 .svg-container');
 
-  // Initialise my plot with a configuration
-  // object. The plot just returns a function, but
-  // that function has other methods attached to it.
-  //
-  // D3 uses these kinds of "mixed types" often. For
-  // example, many times arrays also have methods attached
-  // to them, such as many layouts do. In javascript
-  // arrays and functions are also objects, so there's
-  // nothing actually crazy going on, but it can be confusing
-  // if you're not used to seeing it.
-  myScatterplot = scatterPlot({
-    id: 'scatterplot1',
-    xLabel: 'X Axis',
-    yLabel: 'Y Label',
-    selectionHandler: selectionHandler
-  });
 
-  // We could also pass these parameters into the
-  // configuration, but this shows how we can edit
-  // them after the fact.
-  myScatterplot
-  .width(400)
-  .height(350);
-
-  // Here we call the function that was returned
-  // in the implementation above. All the configuration
-  // and state is already in the function's closure.
-  // The only way to affect that state now is through
-  // the accessor methods (see resize handler below).
-  scatterplot1
-    .datum(dataSet1)
-    .call(myScatterplot);
+  myScatterplot = createScatterPlot(selection, 'X Axis', 'Y Axis', 'steelblue-brown', selectionHandler, dataSet1)
 
   resize = function() {
+
     var w = document.getElementById("w").value;
     var h = document.getElementById("h").value;
 
-    // Update the interior state of the component's
-    // width and height. Note that this does not
-    // redraw anything. We can chain these calls
-    // because we returned the whole object/function
-    // in these accessors. Since we're still
-    // chaining, we can just call the passed
-    // function at the end of our reconfiguration.
-    myScatterplot
-      .width(w)
-      .height(h)(scatterplot1); // This refreshes everything by re-running the rendering function.
+    selection.style("width", w+'px');
+    selection.style("height", h+'px');
+
+    resizeScatterPlot(selection);
   };
 
   var nextDataSet = dataSet2;

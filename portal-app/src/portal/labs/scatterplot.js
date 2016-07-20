@@ -2,6 +2,71 @@
 // based on this topic in the D3 google group:
 // https://groups.google.com/forum/#!topic/d3-js/ADH20I8DG9I
 
+/* This is a wrapper that generates the scatter plot within the selection and sets
+the scatter plot function to the element so that it can be retrieved later by the
+resizeScatterPlot() function. This avoids needing to store the scatterplot function
+as a variable (which would generally be the better approach).
+
+colorModel values:
+'none': no coloring
+'categorical': discrete categories (needs integer or text values)
+'blue-red', 'steelblue-brown': scales from min value to max values (needs continuous variables - float or integer)
+*/
+function createScatterPlot(selection, xAxisLabel, yAxisLabel, colorModel, selectionHandler, data) {
+
+    // Initialise my plot with a configuration
+    // object. The plot just returns a function, but
+    // that function has other methods attached to it.
+    //
+    // D3 uses these kinds of "mixed types" often. For
+    // example, many times arrays also have methods attached
+    // to them, such as many layouts do. In javascript
+    // arrays and functions are also objects, so there's
+    // nothing actually crazy going on, but it can be confusing
+    // if you're not used to seeing it.
+    var chart = scatterPlot({
+        xLabel: xAxisLabel,
+        yLabel: yAxisLabel,
+        colorModel: colorModel,
+        selectionHandler: selectionHandler
+    });
+
+    var width = +selection.style("width").replace("px", "");
+    var height = +selection.style("height").replace("px", "");
+    console.log("Size: " + width + " "  + height);
+
+    chart
+        .width(width)
+        .height(height);
+
+    // Here we call the function that was returned
+    // in the implementation above. All the configuration
+    // and state is already in the function's closure.
+    // The only way to affect that state now is through
+    // the accessor methods (see resize handler below).
+    selection
+        .datum(data)
+        .call(chart);
+
+      selection.node().chart = chart;
+      return chart;
+}
+
+/* Resize function for charts that have been created using the createScatterPlot() function.
+*/
+function resizeScatterPlot(selection) {
+
+      var width = +selection.style("width").replace("px", "");
+      var height = +selection.style("height").replace("px", "");
+      console.log("Size: " + width + " "  + height);
+
+      var chart = selection.node().chart;
+
+      chart
+        .width(width)
+        .height(height)(selection);
+}
+
 scatterPlot = function(config) {
   // We can simply maintain the values within the
   // function closure. This ensures they will remain private,
@@ -9,12 +74,14 @@ scatterPlot = function(config) {
   // in the accessors from now on.
   var xLabel = config.xLabel,
       yLabel = config.yLabel,
+      colorModel = config.colorModel ? config.colorModel : 'none',
       outerWidth = config.width,
       outerHeight = config.height,
       width,
       height,
       brushExtent = config.brushExtent || [[0,0,],[0,0]],
-      margin = {top: 15, right: 20, bottom: 25, left: 40};
+      //margin = {top: 15, right: 20, bottom: 25, left: 40};
+      margin = {top: 15, right: colorModel == 'none' ? 20 : 80, bottom: 30, left: 40};
 
   // This is the chart function that will be returned when
   // we first call the containing "plot" object. Note, we
@@ -44,6 +111,10 @@ scatterPlot = function(config) {
               .domain([yMin, yMax])
               .range([height, 0])
               .nice(),
+          colorScale = createColorScale(colorModel, data),
+          legend = createLegend(colorModel, colorScale),
+
+
           // "d3.svg.brush" here returns a function. Until we
           // call this function and pass in a selection,
           // it will not create anything for us.
@@ -151,6 +222,16 @@ scatterPlot = function(config) {
             .style("text-anchor", "end")
             .text(yLabel);
 
+      if (legend != null) {
+        // for some reason legend doesn't behave well if the same pattern is used
+        // so we delete the current one and create a new one
+        main.selectAll('.legend').remove();
+        main.append('g')
+            .attr("class", "legend")
+            .attr("transform", "translate(" + (width + 20) + ",10)")
+            .call(legend);
+      }
+
       var g = main.selectAll(".points")
         .data([true]);
 
@@ -166,6 +247,7 @@ scatterPlot = function(config) {
         .attr("cx", function (d,i) { return xScale(d.x); } )
         .attr("cy", function (d) { return yScale(d.y); } )
         .attr("r", function (d) { return sizeScale(d.size); } )
+        .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); })
         .style("hidden", "false");
 
       circles
@@ -174,6 +256,7 @@ scatterPlot = function(config) {
           .attr("cx", function (d,i) { return xScale(d.x); } )
           .attr("cy", function (d) { return yScale(d.y); } )
           .attr("r", function (d) { return sizeScale(d.size); } )
+          .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); })
           .style("hidden", "false");
 
       circles
@@ -259,7 +342,64 @@ scatterPlot = function(config) {
       }
 
     });
+
+    function createLegend(colorModel, colorScale) {
+
+        if (colorScale == null) {
+            return null;
+        }
+
+        switch(colorModel) {
+
+            case 'none':
+                return null;
+
+            case 'categorical':
+                return d3.legend.color()
+                    .labelOffset(4)
+                    .shapePadding(1)
+                    .scale(colorScale);
+
+            default:
+                return d3.legend.color()
+                   .cells(10)
+                   .labelOffset(4)
+                   .shapePadding(0)
+                   .scale(colorScale);
+        }
+    }
+
+      function createColorScale(colorModel, data) {
+             switch(colorModel) {
+
+                  case 'categorical':
+                    console.log("Using category20 color scale");
+                      return d3.scale.category20();
+
+                  case 'steelblue-brown':
+                      var min = d3.min(data, function(d) { return d.color; });
+                      var max = d3.max(data, function(d) { return d.color; });
+                      console.log("Using steelblue-brown color scale")
+                      return d3.scale.linear()
+                          .domain([min, max])
+                          .range(["steelblue", "brown"])
+                          .nice();
+
+                  case 'blue-red':
+                      var min = d3.min(data, function(d) { return d.color; });
+                      var max = d3.max(data, function(d) { return d.color; });
+                      console.log("Using default color scale");
+                      return d3.scale.linear()
+                          .domain([min, max])
+                          .range(["blue", "red"])
+                          .nice();
+
+                  default:
+                    return null;
+                }
+      }
   }
+
 
 
 
