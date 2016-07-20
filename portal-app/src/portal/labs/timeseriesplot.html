@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Time Series plot</title>
+    <script src="../resources/d3.min.js"></script>
+    <script src="timeseriesplot.js"></script>
+
+    <style>
+
+        #example {
+            margin-left: 20px;
+            font: 10px sans-serif;
+        }
+
+        #example line {
+            stroke: #000;
+            stroke-width: 1px;
+        }
+
+        .line {
+            fill: none;
+            stroke: #000;
+            stroke-width: 1.5px;
+        }
+
+        .area {
+            fill: #969696;
+        }
+    </style>
+</head>
+<body>
+<p id="example">
+
+<script>
+
+d3.csv("https://bost.ocks.org/mike/chart/sp500.csv", function(data) {
+  var formatDate = d3.time.format("%b %Y");
+
+//  d3.select("#example")
+//      .datum(data)
+//    .call(timeSeriesChart()
+//      .x(function(d) { return formatDate.parse(d.date); })
+//      .y(function(d) { return +d.price; }));
+
+    chart = timeSeriesChart("#example")
+        .datum(data)
+      .x(function(d) { return formatDate.parse(d.date); })
+      .y(function(d) { return +d.price; });
+
+});
+
+</script>
+
+</body>
+</html>
