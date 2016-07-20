@@ -181,6 +181,7 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
             return e[0][0] > d.x || d.x > e[1][0]
                   || e[0][1] > d.y || d.y > e[1][1];
         });
+        config.savedExtent = e;
     }
 
     function brushended() {
@@ -200,15 +201,15 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
     }
 
     function updateSelection(ids) {
-//        if (ids == null) {
-//            d3.select("#selection").text('-- all --');
-//        } else {
-//            if (ids.length == 0) {
-//                d3.select("#selection").text("-- none --");
-//            } else {
-//                d3.select("#selection").text(ids.join(","));
-//            }
-//        }
+        if (ids == null) {
+            d3.select("#selection").text('-- all --');
+        } else {
+            if (ids.length == 0) {
+                d3.select("#selection").text("-- none --");
+            } else {
+                d3.select("#selection").text(ids.join(","));
+            }
+        }
     }
 
 
@@ -248,6 +249,18 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
 /** Regenerate the scatter plot when its containing div has been resized
 */
 function fitScatterPlot(id) {
+        if (!this.timers) {
+            this.timers = {};
+        } else if (this.timers[id]) {
+            clearTimeout(this.timers[id]);
+        }
+        this.timers[id] = setTimeout(function () {
+            redrawScatterPlot(id);
+        }, 200);
+}
+
+
+function redrawScatterPlot(id) {
 
 
      var plotContent = d3.select("#" + id + " .svg-container");
@@ -274,12 +287,6 @@ function fitScatterPlot(id) {
      if (timerId != null) {
         clearTimeout(timerId);
      }
-
-     // apply resize using a timer to ensure it doesn't redraw too often
-     config.timerId = setTimeout(function () {
-
-        // redrawing code
-         config.timerId = null;
 
          //console.log("redrawing: [" + config.outerWidth + ":" + config.outerHeight + "] [" + config.svgWidth + ":" + config.svgHeight + "]");
 
@@ -331,12 +338,17 @@ function fitScatterPlot(id) {
          // reposition the points
          var points = plotContent.select(".points");
          points.selectAll("circle")
-                .attr("cx", function (d,i) { return config.xScale(d.x); } )
-                .attr("cy", function (d) { return config.yScale(d.y); } )
+            .transition()
+            .attr("cx", function (d,i) { return config.xScale(d.x); } )
+            .attr("cy", function (d) { return config.yScale(d.y); } )
 
          // reposition the brush
-         // TODO - can't figure out how to do this yet
+         if (config.savedExtent) {
+            config.brush.extent(config.savedExtent);
+            d3.select(".brush")
+                         .transition()
+                         .call(config.brush);
+         }
 
-     }, 200);
 
  }
