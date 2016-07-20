@@ -107,8 +107,8 @@ function buildScatterPlot(id, xLabel, yLabel, colorModel, data) {
     // create the svg
     var chart = plotContent
         .append('svg:svg')
-        .attr('width', config.outerWidth)
-        .attr('height', config.outerHeight)
+        .attr('width', '100%')
+        .attr('height', '100%')
         .attr('class', 'chart');
 
     // create the main plot are where the points are plotted
@@ -349,6 +349,5 @@ function redrawScatterPlot(id) {
                          .transition()
                          .call(config.brush);
          }
-
 
  }
