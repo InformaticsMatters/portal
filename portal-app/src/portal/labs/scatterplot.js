@@ -56,12 +56,17 @@ scatterPlot = function(config) {
         // This enables us to use d3's enter, update, and exit methods,
         // since a new enter selection will be created on the first run.
 
+      svg
+        .transition()
+        .attr('width', outerWidth)
+        .attr('height', outerHeight);
+
       // Enter SVG element
       svg.enter()
       // Only append the first time our chart function runs.
         .append('svg:svg')
-        .attr('width', '100%')
-        .attr('height', '100%')
+        .attr('width', outerWidth)
+        .attr('height', outerHeight)
         .attr('class', 'chart');
 
        // first we need the legend as its width needs to be determined.
