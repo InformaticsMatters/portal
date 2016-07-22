@@ -1,18 +1,10 @@
-// Start definition of reusable scatterplot.
-// based on this topic in the D3 google group:
-// https://groups.google.com/forum/#!topic/d3-js/ADH20I8DG9I
-
-/* This is a wrapper that generates the scatter plot within the selection and sets
+/*
+This is a wrapper that generates the scatter plot within the selection and sets
 the scatter plot function to the element so that it can be retrieved later by the
 resizeScatterPlot() function. This avoids needing to store the scatterplot function
 as a variable (which would generally be the better approach).
-
-colorModel values:
-'none': no coloring
-'categorical': discrete categories (needs integer or text values)
-'blue-red', 'steelblue-brown': scales from min value to max values (needs continuous variables - float or integer)
 */
-function createScatterPlot(selection, xAxisLabel, yAxisLabel, colorModel, selectionHandler, data) {
+function createScatterPlot(selection, xAxisLabel, yAxisLabel, colorModel, displayLegend, selectionHandler, data) {
 
     // Initialise my plot with a configuration
     // object. The plot just returns a function, but
@@ -28,12 +20,13 @@ function createScatterPlot(selection, xAxisLabel, yAxisLabel, colorModel, select
         xLabel: xAxisLabel,
         yLabel: yAxisLabel,
         colorModel: colorModel,
+        displayLegend: displayLegend,
         selectionHandler: selectionHandler
     });
 
     var width = +selection.style("width").replace("px", "");
     var height = +selection.style("height").replace("px", "");
-    console.log("Size: " + width + " "  + height);
+    //console.log("Size: " + width + " "  + height);
 
     chart
         .width(width)
@@ -52,13 +45,13 @@ function createScatterPlot(selection, xAxisLabel, yAxisLabel, colorModel, select
       return chart;
 }
 
-/* Resize function for charts that have been created using the createScatterPlot() function.
+/* Resize function for resizing charts that have been created using the createScatterPlot() function.
 */
 function resizeScatterPlot(selection) {
 
       var width = +selection.style("width").replace("px", "");
       var height = +selection.style("height").replace("px", "");
-      console.log("Size: " + width + " "  + height);
+      //console.log("Size: " + width + " "  + height);
 
       var chart = selection.node().chart;
 
@@ -67,7 +60,26 @@ function resizeScatterPlot(selection) {
         .height(height)(selection);
 }
 
+/* Mark function for marking points in charts that have been created using the createScatterPlot() function.
+*/
+function markScatterPlot(selection, ids) {
+    var chart = selection.node().chart;
+    chart.mark(new Set(ids))(selection);
+}
+
+
+/*
+Start definition of reusable scatterplot.
+based on this topic in the D3 google group:
+https://groups.google.com/forum/#!topic/d3-js/ADH20I8DG9I
+
+colorModel values:
+'none': no coloring
+'categorical': discrete categories (needs integer or text values)
+'blue-red', 'steelblue-brown': scales from min value to max values (needs continuous variables - float or integer)
+*/
 scatterPlot = function(config) {
+
   // We can simply maintain the values within the
   // function closure. This ensures they will remain private,
   // and the external environment will only be able to change them
@@ -75,13 +87,12 @@ scatterPlot = function(config) {
   var xLabel = config.xLabel,
       yLabel = config.yLabel,
       colorModel = config.colorModel ? config.colorModel : 'none',
+      displayLegend = config.displayLegend,
       outerWidth = config.width,
       outerHeight = config.height,
-      width,
-      height,
-      brushExtent = config.brushExtent || [[0,0,],[0,0]],
-      //margin = {top: 15, right: 20, bottom: 25, left: 40};
-      margin = {top: 15, right: colorModel == 'none' ? 20 : 80, bottom: 30, left: 40};
+      mark,
+      brushExtent = config.brushExtent || [[0,0,],[0,0]];
+
 
   // This is the chart function that will be returned when
   // we first call the containing "plot" object. Note, we
@@ -93,47 +104,27 @@ scatterPlot = function(config) {
   // Again, note, the first time "plot(...options)" is called
   // we return this function "chart".
   function chart(selection) {
+
     selection.each(function(data, i){
       var xMin = d3.min(data, function(d) { return d.x; }),
           xMax = d3.max(data, function(d) { return d.x; }),
           yMin = d3.min(data, function(d) { return d.y; }),
           yMax = d3.max(data, function(d) { return d.y; }),
+          margin = {top: 15, right: 15, bottom: 25, left: 40},
 
           sizeScale = d3.scale.sqrt()
                 .domain([d3.min(data, function(d) { return d.size; }), d3.max(data, function(d) { return d.size; })])
                 .range([3, 20])
                 .nice(),
-          xScale = d3.scale.linear()
-              .domain([xMin, xMax])
-              .range([0, width])
-              .nice(),
-          yScale = d3.scale.linear()
-              .domain([yMin, yMax])
-              .range([height, 0])
-              .nice(),
           colorScale = createColorScale(colorModel, data),
           legend = createLegend(colorModel, colorScale),
-
-
-          // "d3.svg.brush" here returns a function. Until we
-          // call this function and pass in a selection,
-          // it will not create anything for us.
-          // Even calling accessor/setter methods will
-          // not automatically update it. We must call the
-          // function this returns ("brush") later to
-          // initialise it.
-          brush = d3.svg.brush()
-             .x(xScale)
-             .y(yScale)
-             .extent(brushExtent)
-
           selectionHandler = config.selectionHandler;
 
-    // create the svg
-    var svg = d3.select(this).selectAll('.chart')
-      .data([true]); // This 1-element array acts as a null object or null data.
-                     // This enables us to use d3's enter, update, and exit methods,
-                     // since a new enter selection will be created on the first run.
+        // create the svg
+        var svg = d3.select(this).selectAll('.chart')
+            .data([true]); // This 1-element array acts as a null object or null data.
+        // This enables us to use d3's enter, update, and exit methods,
+        // since a new enter selection will be created on the first run.
 
       // Update the existing SVG element if it exists.
       svg
@@ -148,6 +139,47 @@ scatterPlot = function(config) {
         .attr('width', outerWidth)
         .attr('height', outerHeight)
         .attr('class', 'chart');
+
+       // first we need the legend as its width needs to be determined.
+       if (displayLegend && legend != null) {
+              // for some reason legend doesn't behave well if the data([true]) pattern is used
+              // so we delete the current one and create a new one
+              svg.selectAll('.legend').remove();
+              var l = svg.append('g')
+                  .attr("class", "legend")
+                  .attr("visibility", "hidden")
+                  .call(legend);
+
+              var legendWidth = Math.ceil(l.node().getBoundingClientRect().width);
+              //console.log("Legend width: " + legendWidth + " " + l.node().getBoundingClientRect().width);
+              margin.right = margin.right + legendWidth;
+              l.attr("transform", "translate(" + (outerWidth - legendWidth - 10) + ",10)")
+                .attr("visibility", "visible");
+        }
+
+        // now we can adjust the margins
+        var width = outerWidth - margin.left - margin.right;
+        var height = outerHeight - margin.top - margin.bottom;
+
+        var xScale = d3.scale.linear()
+                    .domain([xMin, xMax])
+                    .range([0, width])
+                    .nice();
+        var yScale = d3.scale.linear()
+                    .domain([yMin, yMax])
+                    .range([height, 0])
+                    .nice();
+      // "d3.svg.brush" here returns a function. Until we
+      // call this function and pass in a selection,
+      // it will not create anything for us.
+      // Even calling accessor/setter methods will
+      // not automatically update it. We must call the
+      // function this returns ("brush") later to
+      // initialise it.
+      var brush = d3.svg.brush()
+        .x(xScale)
+        .y(yScale)
+        .extent(brushExtent);
 
       // create the main scatterplot container group
       var main = svg.selectAll('.main')
@@ -198,10 +230,8 @@ scatterPlot = function(config) {
             .style("text-anchor", "end")
             .text(xLabel);
 
-
       var yaxis = main.selectAll('.yaxis')
           .data([true]);
-
 
       // Update Y Axis
       yaxis
@@ -222,16 +252,6 @@ scatterPlot = function(config) {
             .style("text-anchor", "end")
             .text(yLabel);
 
-      if (legend != null) {
-        // for some reason legend doesn't behave well if the same pattern is used
-        // so we delete the current one and create a new one
-        main.selectAll('.legend').remove();
-        main.append('g')
-            .attr("class", "legend")
-            .attr("transform", "translate(" + (width + 20) + ",10)")
-            .call(legend);
-      }
-
       var g = main.selectAll(".points")
         .data([true]);
 
@@ -247,8 +267,9 @@ scatterPlot = function(config) {
         .attr("cx", function (d,i) { return xScale(d.x); } )
         .attr("cy", function (d) { return yScale(d.y); } )
         .attr("r", function (d) { return sizeScale(d.size); } )
+        .attr("class", function(d) { return  mark == null ? null : (mark.has(d.uuid) ? "marked" : null); })
         .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); })
-        .style("hidden", "false");
+;
 
       circles
         .enter()
@@ -256,8 +277,9 @@ scatterPlot = function(config) {
           .attr("cx", function (d,i) { return xScale(d.x); } )
           .attr("cy", function (d) { return yScale(d.y); } )
           .attr("r", function (d) { return sizeScale(d.size); } )
+          .attr("class", function(d) { return  mark == null ? null : (mark.has(d.uuid) ? "marked" : null); })
           .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); })
-          .style("hidden", "false");
+          ;
 
       circles
         .exit() // The exit selection lets us remove dead data.
@@ -321,25 +343,34 @@ scatterPlot = function(config) {
       }
 
       function brushended() {
-              if (!d3.event.sourceEvent) return; // only transition after input
-              if (brush.empty()) {
-                  updateSelection();
-                  console.log("All selected");
-              } else {
-                  var ids = [];
-                  g.selectAll("circle:not(.hidden)").each(function(d) {
-                      ids.push(d.uuid);
-                  })
-                  console.log(ids.length + " items selected: " + ids);
-                  updateSelection(ids);
-              }
+        if (!d3.event.sourceEvent) return; // only transition after input
+        updateSelections();
       }
 
-      function updateSelection(selection) {
-        if (selectionHandler) {
-            selectionHandler(selection);
+      getSelections = function() {
+        var selected;
+        var selectedAndMarked;
+        if (!brush.empty()) {
+            selected = [];
+            selectedAndMarked = [];
+            g.selectAll("circle:not(.hidden)").each(function(d) {
+                selected.push(d.uuid);
+                if (mark && mark.has(d.uuid)) {
+                    selectedAndMarked.push(d.uuid);
+                }
+            });
         }
+        return [selected, selectedAndMarked];
       }
+
+      function updateSelections() {
+            var selections = getSelections();
+            if (selectionHandler) {
+                selectionHandler(selections[0], selections[1]);
+            }
+      }
+
+      updateSelections();
 
     });
 
@@ -373,13 +404,13 @@ scatterPlot = function(config) {
              switch(colorModel) {
 
                   case 'categorical':
-                    console.log("Using category20 color scale");
+                      //console.log("Using category20 color scale");
                       return d3.scale.category20();
 
                   case 'steelblue-brown':
                       var min = d3.min(data, function(d) { return d.color; });
                       var max = d3.max(data, function(d) { return d.color; });
-                      console.log("Using steelblue-brown color scale")
+                      //console.log("Using steelblue-brown color scale")
                       return d3.scale.linear()
                           .domain([min, max])
                           .range(["steelblue", "brown"])
@@ -388,7 +419,7 @@ scatterPlot = function(config) {
                   case 'blue-red':
                       var min = d3.min(data, function(d) { return d.color; });
                       var max = d3.max(data, function(d) { return d.color; });
-                      console.log("Using default color scale");
+                      //console.log("Using default color scale");
                       return d3.scale.linear()
                           .domain([min, max])
                           .range(["blue", "red"])
@@ -400,20 +431,15 @@ scatterPlot = function(config) {
       }
   }
 
-
-
-
   chart.width = function(_) {
     if (!arguments.length) return outerWidth;
     outerWidth = _;
-    width = outerWidth - margin.left - margin.right;
     return chart;
   };
 
   chart.height = function(_) {
     if (!arguments.length) return outerHeight;
     outerHeight = _;
-    height = outerHeight - margin.top - margin.bottom;
     return chart;
   };
 
@@ -422,6 +448,12 @@ scatterPlot = function(config) {
     data = _;
     return chart;
   };
+
+  chart.mark = function(_) {
+    if (!arguments.length) return mark;
+    mark = _;
+    return chart;
+  }
 
   return chart;
 

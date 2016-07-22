@@ -10,7 +10,6 @@
     <script src="../resources/d3-legend.js"></script>
     <script src="scatterplot.js"></script>
 
-
 </head>
 <body>
 
@@ -18,14 +17,17 @@
     Width: <input id="w" type="text" value="400">&nbsp;&nbsp;
     Height: <input id="h" type="text" value="350">&nbsp;&nbsp;
     <button type="button" class="resize">Resize!</button>
-</form>
-<form>
+    <p/>
     <button type="button" class="change">Change Data</button>
+    <p/>
+    Mark: <input id="m" type="text" value='["a","b","c"]'>&nbsp;&nbsp;<button type="button" class="mark">Mark Data</button>
 </form>
 <hr/>
 <div id="scatterplot1">
     <div id="container" class="svg-container" style="width:400px; height:350px"></div>
 </div>
+<br>
+<div id="selection"></div>
 
 <script>
     // Below, we will now "use" the chart by submitting data
@@ -75,21 +77,32 @@
     {"uuid":"jh", "x": 189, "y": 189, "color": 1.4, "size": 3},
   ];
 
-    function selectionHandler(ids) {
-        if (ids == null) {
-            alert("No selection");
-        } else if (ids.length == 0) {
-            alert("Selection empty");
+    function selectionHandler(selected, selectedAndMarked) {
+        var text = "Selection: ";
+
+        if (selected == null) {
+            text += "None";
+        } else if (selected.length == 0) {
+            text += "Empty";
         } else {
-            alert("Selection: " + ids.join(","));
+            text += selected.join(",");
         }
+        text += "<br>Selected and marked: ";
+
+        if (selectedAndMarked == null || selectedAndMarked.length == 0) {
+            text += "None";
+        } else {
+            text += selectedAndMarked.join(",");
+        }
+        //console.log(text);
+        document.getElementById("selection").innerHTML = text;
     }
 
   // Here we're selecting the containing element.
   var selection = d3.selectAll('#scatterplot1 .svg-container');
 
 
-  myScatterplot = createScatterPlot(selection, 'X Axis', 'Y Axis', 'steelblue-brown', selectionHandler, dataSet1)
+  myScatterplot = createScatterPlot(selection, 'X Axis', 'Y Axis', 'steelblue-brown', true, selectionHandler, dataSet1)
 
   resize = function() {
 
@@ -115,9 +128,18 @@
     .text('Load New Data');
   };
 
+  markData = function() {
+
+    var json = document.getElementById("m").value;
+    var marks = JSON.parse(json);
+
+    markScatterPlot(selection, marks);
+  }
+
 
   d3.select('button.resize').on('click', resize);
   d3.select('button.change').on('click', changeData);
+  d3.select('button.mark').on('click', markData);
 </script>
 </body>
 </html>

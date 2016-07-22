@@ -25,5 +25,17 @@
 }
 
 circle.hidden {
-  fill: #ddd !important;
+    fill: #ddd !important;
 }
+
+circle.marked {
+    stroke: #222 !important;
+    stroke-width: 2;
+}
+
+circle.hidden.marked {
+    stroke: #bbb !important;
+    stroke-width: 2;
+}
+
+
