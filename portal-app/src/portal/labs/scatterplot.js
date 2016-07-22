@@ -1,82 +1,4 @@
 /*
-This is a wrapper that generates the scatter plot within the selection and sets
-the scatter plot function to the element so that it can be retrieved later by the
-resizeScatterPlot() function. This avoids needing to store the scatterplot function
-as a variable (which would generally be the better approach).
-*/
-function createScatterPlot(selection, xAxisLabel, yAxisLabel, colorModel, displayLegend, selectionHandler, data) {
-
-    // Initialise my plot with a configuration
-    // object. The plot just returns a function, but
-    // that function has other methods attached to it.
-    //
-    // D3 uses these kinds of "mixed types" often. For
-    // example, many times arrays also have methods attached
-    // to them, such as many layouts do. In javascript
-    // arrays and functions are also objects, so there's
-    // nothing actually crazy going on, but it can be confusing
-    // if you're not used to seeing it.
-    var chart = scatterPlot({
-        xLabel: xAxisLabel,
-        yLabel: yAxisLabel,
-        colorModel: colorModel,
-        displayLegend: displayLegend,
-        selectionHandler: selectionHandler
-    });
-
-    var width = +selection.style("width").replace("px", "");
-    var height = +selection.style("height").replace("px", "");
-    //console.log("Size: " + width + " "  + height);
-
-    chart
-        .width(width)
-        .height(height);
-
-    // Here we call the function that was returned
-    // in the implementation above. All the configuration
-    // and state is already in the function's closure.
-    // The only way to affect that state now is through
-    // the accessor methods (see resize handler below).
-    selection
-        .datum(data)
-        .call(chart);
-
-      selection.node().chart = chart;
-      return chart;
-}
-
-/* Resize function for resizing charts that have been created using the createScatterPlot() function.
-*/
-function resizeScatterPlot(selection) {
-
-      var width = +selection.style("width").replace("px", "");
-      var height = +selection.style("height").replace("px", "");
-      //console.log("Size: " + width + " "  + height);
-
-      var chart = selection.node().chart;
-
-      chart
-        .width(width)
-        .height(height)(selection);
-}
-
-/* Mark function for marking points in charts that have been created using the createScatterPlot() function.
-*/
-function markScatterPlot(selection, ids) {
-    var chart = selection.node().chart;
-    chart.mark(new Set(ids))(selection);
-}
-
-/* Filter function for filtering points in charts that have been created using the createScatterPlot() function.
-*/
-function filterScatterPlot(selection, ids) {
-    var chart = selection.node().chart;
-    chart.filter(new Set(ids))(selection);
-}
-
-
-
-/*
 Start definition of reusable scatterplot.
 based on this topic in the D3 google group:
 https://groups.google.com/forum/#!topic/d3-js/ADH20I8DG9I
@@ -118,7 +40,7 @@ scatterPlot = function(config) {
           xMax = d3.max(data, function(d) { return d.x; }),
           yMin = d3.min(data, function(d) { return d.y; }),
           yMax = d3.max(data, function(d) { return d.y; }),
-          margin = {top: 15, right: 15, bottom: 25, left: 40},
+          margin = {top: 15, right: 30, bottom: 40, left: 40},
 
           sizeScale = d3.scale.sqrt()
                 .domain([d3.min(data, function(d) { return d.size; }), d3.max(data, function(d) { return d.size; })])
@@ -134,18 +56,12 @@ scatterPlot = function(config) {
         // This enables us to use d3's enter, update, and exit methods,
         // since a new enter selection will be created on the first run.
 
-      // Update the existing SVG element if it exists.
-      svg
-        .transition()
-        .attr('width', outerWidth)
-        .attr('height', outerHeight);
-
       // Enter SVG element
       svg.enter()
       // Only append the first time our chart function runs.
         .append('svg:svg')
-        .attr('width', outerWidth)
-        .attr('height', outerHeight)
+        .attr('width', '100%')
+        .attr('height', '100%')
         .attr('class', 'chart');
 
        // first we need the legend as its width needs to be determined.
@@ -159,6 +75,11 @@ scatterPlot = function(config) {
                   .call(legend);
 
               var legendWidth = Math.ceil(l.node().getBoundingClientRect().width);
+              if (!legendWidth) {
+                // TODO - resolve this - happens on Firefox
+                console.log("Legend width could not be deternined, Using default");
+                legendWidth = 45;
+              }
               //console.log("Legend width: " + legendWidth + " " + l.node().getBoundingClientRect().width);
               margin.right = margin.right + legendWidth;
               l.attr("transform", "translate(" + (outerWidth - legendWidth - 10) + ",10)")

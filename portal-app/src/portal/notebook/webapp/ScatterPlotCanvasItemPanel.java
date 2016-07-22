@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  */
 public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
-    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', :data)";
+    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, null, :data)";
 
     public static final String OPTION_COLOR = "color";
     public static final String OPTION_POINT_SIZE = "pointSize";

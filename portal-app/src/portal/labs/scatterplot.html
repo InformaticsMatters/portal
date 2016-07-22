@@ -104,17 +104,51 @@
   var selection = d3.selectAll('#scatterplot1 .svg-container');
 
 
-  myScatterplot = createScatterPlot(selection, 'X Axis', 'Y Axis', 'steelblue-brown', true, selectionHandler, dataSet1)
+  // Initialise my plot with a configuration
+    // object. The plot just returns a function, but
+    // that function has other methods attached to it.
+    //
+    // D3 uses these kinds of "mixed types" often. For
+    // example, many times arrays also have methods attached
+    // to them, such as many layouts do. In javascript
+    // arrays and functions are also objects, so there's
+    // nothing actually crazy going on, but it can be confusing
+    // if you're not used to seeing it.
+    var chart = scatterPlot({
+        xLabel: 'X Axis',
+        yLabel: 'Y Axis',
+        colorModel: 'steelblue-brown',
+        displayLegend: true,
+        selectionHandler: selectionHandler
+    });
+
+    var width = +selection.style("width").replace("px", "");
+    var height = +selection.style("height").replace("px", "");
+    //console.log("Size: " + width + " "  + height);
+
+    chart
+        .width(width)
+        .height(height);
+
+    // Here we call the function that was returned
+    // in the implementation above. All the configuration
+    // and state is already in the function's closure.
+    // The only way to affect that state now is through
+    // the accessor methods (see resize handler below).
+    selection
+        .datum(dataSet1)
+        .call(chart);
 
   resize = function() {
 
     var w = document.getElementById("w").value;
     var h = document.getElementById("h").value;
-
     selection.style("width", w+'px');
     selection.style("height", h+'px');
 
-    resizeScatterPlot(selection);
+    chart
+        .width(w)
+        .height(h)(selection);
   };
 
   var nextDataSet = dataSet2;
@@ -133,13 +167,13 @@
   markData = function() {
     var json = document.getElementById("m").value;
     var marks = json.trim().length == 0 ? null : JSON.parse(json);
-    markScatterPlot(selection, marks);
+    chart.mark(new Set(marks))(selection);
   }
 
   filterData = function() {
     var json = document.getElementById("f").value;
     var filt = json.trim().length == 0 ? null : JSON.parse(json);
-    filterScatterPlot(selection, filt);
+    chart.filter(new Set(filt))(selection);
   }
 
 
