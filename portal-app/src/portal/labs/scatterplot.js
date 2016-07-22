@@ -67,6 +67,14 @@ function markScatterPlot(selection, ids) {
     chart.mark(new Set(ids))(selection);
 }
 
+/* Filter function for filtering points in charts that have been created using the createScatterPlot() function.
+*/
+function filterScatterPlot(selection, ids) {
+    var chart = selection.node().chart;
+    chart.filter(new Set(ids))(selection);
+}
+
+
 
 /*
 Start definition of reusable scatterplot.
@@ -90,7 +98,7 @@ scatterPlot = function(config) {
       displayLegend = config.displayLegend,
       outerWidth = config.width,
       outerHeight = config.height,
-      mark,
+      mark, filter
       brushExtent = config.brushExtent || [[0,0,],[0,0]];
 
 
@@ -260,7 +268,10 @@ scatterPlot = function(config) {
           .attr("class", "points");
 
       var circles = g.selectAll("circle")
-        .data(data, function(d) { return d.uuid; });
+        .data(
+            filter == null ? data : data.filter(function(d) { return filter.has(d.uuid);} ), // the filtered data
+            function(d) { return d.uuid; } // the ID mapper
+        );
 
       circles
         .transition()
@@ -268,8 +279,7 @@ scatterPlot = function(config) {
         .attr("cy", function (d) { return yScale(d.y); } )
         .attr("r", function (d) { return sizeScale(d.size); } )
         .attr("class", function(d) { return  mark == null ? null : (mark.has(d.uuid) ? "marked" : null); })
-        .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); })
-;
+        .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); });
 
       circles
         .enter()
@@ -278,8 +288,7 @@ scatterPlot = function(config) {
           .attr("cy", function (d) { return yScale(d.y); } )
           .attr("r", function (d) { return sizeScale(d.size); } )
           .attr("class", function(d) { return  mark == null ? null : (mark.has(d.uuid) ? "marked" : null); })
-          .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); })
-          ;
+          .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); });
 
       circles
         .exit() // The exit selection lets us remove dead data.
@@ -454,6 +463,12 @@ scatterPlot = function(config) {
     mark = _;
     return chart;
   }
+
+  chart.filter = function(_) {
+      if (!arguments.length) return filter;
+      filter = _;
+      return chart;
+    }
 
   return chart;
 

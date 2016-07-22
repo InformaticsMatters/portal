@@ -20,6 +20,8 @@
     <p/>
     <button type="button" class="change">Change Data</button>
     <p/>
+    Filter: <input id="f" type="text" value='["a","b","c","d","e"]'>&nbsp;&nbsp;<button type="button" class="filter">Filter Data</button>
+    <p/>
     Mark: <input id="m" type="text" value='["a","b","c"]'>&nbsp;&nbsp;<button type="button" class="mark">Mark Data</button>
 </form>
 <hr/>
@@ -30,7 +32,7 @@
 <div id="selection"></div>
 
 <script>
-    // Below, we will now "use" the chart by submitting data
+  // Below, we will now "use" the chart by submitting data
   // and configuration to it as an encapsulated component.
   // Notice that we have never used the "new" keyword.
   //
@@ -129,17 +131,23 @@
   };
 
   markData = function() {
-
     var json = document.getElementById("m").value;
-    var marks = JSON.parse(json);
-
+    var marks = json.trim().length == 0 ? null : JSON.parse(json);
     markScatterPlot(selection, marks);
   }
+
+  filterData = function() {
+    var json = document.getElementById("f").value;
+    var filt = json.trim().length == 0 ? null : JSON.parse(json);
+    filterScatterPlot(selection, filt);
+  }
+
 
 
   d3.select('button.resize').on('click', resize);
   d3.select('button.change').on('click', changeData);
   d3.select('button.mark').on('click', markData);
+  d3.select('button.filter').on('click', filterData);
 </script>
 </body>
 </html>
