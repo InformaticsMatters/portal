@@ -20,9 +20,12 @@
     <p/>
     <button type="button" class="change">Change Data</button>
     <p/>
-    Filter: <input id="f" type="text" value='["a","b","c","d","e"]'>&nbsp;&nbsp;<button type="button" class="filter">Filter Data</button>
+    Filter: <input id="f" type="text" size="60" value='["a","b","c","d","e"]'>&nbsp;&nbsp;<button type="button" class="filter">Filter Data</button>
     <p/>
-    Mark: <input id="m" type="text" value='["a","b","c"]'>&nbsp;&nbsp;<button type="button" class="mark">Mark Data</button>
+    Mark: <input id="m" type="text" size="60" value='["a","b","c"]'>&nbsp;&nbsp;<button type="button" class="mark">Mark Data</button>
+    <p/>
+    State: <input id="s" type="text" size="60" value=''>&nbsp;&nbsp;<button type="button" class="state">Update state</button>
+
 </form>
 <hr/>
 <div id="scatterplot1">
@@ -98,6 +101,12 @@
         }
         //console.log(text);
         document.getElementById("selection").innerHTML = text;
+
+        var state = chart.state();
+        var json = JSON.stringify(state);
+        //console.log("State: " + json);
+        document.getElementById("s").value = json;
+
     }
 
   // Here we're selecting the containing element.
@@ -156,7 +165,7 @@
   changeData = function() {
     d3.select('#scatterplot1 .svg-container')
       .datum(nextDataSet)
-      .call(myScatterplot);
+      .call(chart);
 
     nextDataSet = (nextDataSet === dataSet2) ? dataSet1 : dataSet2;
 
@@ -176,12 +185,17 @@
     chart.filter(new Set(filt))(selection);
   }
 
-
+  updateState = function() {
+    var json = document.getElementById("s").value;
+    var state = json.trim().length == 0 ? null : JSON.parse(json);
+    chart.state(state)(selection);
+  }
 
   d3.select('button.resize').on('click', resize);
   d3.select('button.change').on('click', changeData);
   d3.select('button.mark').on('click', markData);
   d3.select('button.filter').on('click', filterData);
+  d3.select('button.state').on('click', updateState);
 </script>
 </body>
 </html>

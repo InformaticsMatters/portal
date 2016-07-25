@@ -35,7 +35,7 @@ scatterPlot = function(config) {
   // we return this function "chart".
   function chart(selection) {
 
-    selection.each(function(data, i){
+    selection.each(function(data, i) {
       var xMin = d3.min(data, function(d) { return d.x; }),
           xMax = d3.max(data, function(d) { return d.x; }),
           yMin = d3.min(data, function(d) { return d.y; }),
@@ -394,7 +394,24 @@ scatterPlot = function(config) {
       if (!arguments.length) return filter;
       filter = _;
       return chart;
-    }
+   }
+
+  /** Get/Set the persistent internal state of the plot.
+  * Currently this involves persisting the extent of the brush.
+  */
+  chart.state = function(_) {
+      if (!arguments.length) {
+        var state = {};
+        if (brushExtent[0][0] != 0 || brushExtent[0][1] != 0 || brushExtent[1][0] != 0 || brushExtent[1][1] != 0) {
+            state.brushExtent = brushExtent;
+        }
+        return state;
+      }
+      if (_.brushExtent) {
+        brushExtent = _.brushExtent;
+      }
+      return chart;
+  }
 
   return chart;
 
