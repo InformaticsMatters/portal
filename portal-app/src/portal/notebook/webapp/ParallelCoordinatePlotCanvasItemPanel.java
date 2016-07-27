@@ -39,7 +39,7 @@ import java.util.stream.Stream;
  */
 public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
-    private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', :data)";
+    private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', {}, :data)";
 
     @Inject
     private NotebookSession notebookSession;

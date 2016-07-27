@@ -1,5 +1,8 @@
-/* copied from
-http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.js
+/*
+This code coems from here: https://github.com/AutodeskFractal/parallel-coordinates/blob/master/d3.parcoords.js
+which is a fork of: https://github.com/syntagmatic/parallel-coordinates
+that fixes problems with brushes being lost on resizing - see here:
+https://github.com/AutodeskFractal/parallel-coordinates/pull/1
 */
 
 d3.parcoords = function(config) {
@@ -25,7 +28,9 @@ d3.parcoords = function(config) {
     bundleDimension: null,
     smoothness: 0.0,
     showControlPoints: false,
-    hideAxis : []
+    hideAxis : [],
+    flipAxes: [],
+    animationTime: 1100 // How long it takes to flip the axis when you double click
   };
 
   extend(__, config);
@@ -66,7 +71,7 @@ var pc = function(selection) {
 
   return pc;
 };
-var events = d3.dispatch.apply(this,["render", "resize", "highlight", "brush", "brushend", "axesreorder"].concat(d3.keys(__))),
+var events = d3.dispatch.apply(this,["render", "resize", "highlight", "brush", "brushend", "brushstart", "axesreorder"].concat(d3.keys(__))),
     w = function() { return __.width - __.margin.right - __.margin.left; },
     h = function() { return __.height - __.margin.top - __.margin.bottom; },
     flags = {
@@ -112,24 +117,32 @@ var side_effects = d3.dispatch.apply(this,d3.keys(__))
     if (flags.interactive){pc.render().updateAxes();}
   })
   .on("bundleDimension", function(d) {
-	  if (!d3.keys(__.dimensions).length) pc.detectDimensions();
-	  pc.autoscale();
-	  if (typeof d.value === "number") {
-		  if (d.value < d3.keys(__.dimensions).length) {
-			  __.bundleDimension = __.dimensions[d.value];
-		  } else if (d.value < __.hideAxis.length) {
-			  __.bundleDimension = __.hideAxis[d.value];
-		  }
-	  } else {
-		  __.bundleDimension = d.value;
-	  }
+      if (!d3.keys(__.dimensions).length) pc.detectDimensions();
+      pc.autoscale();
+      if (typeof d.value === "number") {
+          if (d.value < d3.keys(__.dimensions).length) {
+              __.bundleDimension = __.dimensions[d.value];
+          } else if (d.value < __.hideAxis.length) {
+              __.bundleDimension = __.hideAxis[d.value];
+          }
+      } else {
+          __.bundleDimension = d.value;
+      }
 
-	  __.clusterCentroids = compute_cluster_centroids(__.bundleDimension);
+      __.clusterCentroids = compute_cluster_centroids(__.bundleDimension);
     if (flags.interactive){pc.render();}
   })
   .on("hideAxis", function(d) {
-  	pc.dimensions(pc.applyDimensionDefaults());
-	  pc.dimensions(without(__.dimensions, d.value));
+    pc.dimensions(pc.applyDimensionDefaults());
+    pc.dimensions(without(__.dimensions, d.value));
+  })
+  .on("flipAxes", function(d) {
+    if (d.value && d.value.length) {
+        d.value.forEach(function(axis) {
+            flipAxisAndUpdatePCP(axis);
+        });
+        pc.updateAxes(0);
+    }
   });
 
 // expose the state of the chart
@@ -163,7 +176,7 @@ function getset(obj,state,events)  {
 };
 
 function extend(target, source) {
-  for (key in source) {
+  for (var key in source) {
     target[key] = source[key];
   }
   return target;
@@ -254,23 +267,31 @@ pc.autoscale = function() {
   // xscale
   xscale.rangePoints([0, w()], 1);
 
+  // Retina display, etc.
+  var devicePixelRatio = window.devicePixelRatio || 1;
+
   // canvas sizes
   pc.selection.selectAll("canvas")
       .style("margin-top", __.margin.top + "px")
       .style("margin-left", __.margin.left + "px")
-      .attr("width", w()+2)
-      .attr("height", h()+2);
+      .style("width", (w()+2) + "px")
+      .style("height", (h()+2) + "px")
+      .attr("width", (w()+2) * devicePixelRatio)
+      .attr("height", (h()+2) * devicePixelRatio);
 
   // default styles, needs to be set when canvas width changes
   ctx.foreground.strokeStyle = __.color;
   ctx.foreground.lineWidth = 1.4;
   ctx.foreground.globalCompositeOperation = __.composite;
   ctx.foreground.globalAlpha = __.alpha;
+  ctx.foreground.scale(devicePixelRatio, devicePixelRatio);
   ctx.brushed.strokeStyle = __.brushedColor;
   ctx.brushed.lineWidth = 1.4;
   ctx.brushed.globalCompositeOperation = __.composite;
   ctx.brushed.globalAlpha = __.alpha;
+  ctx.brushed.scale(devicePixelRatio, devicePixelRatio);
   ctx.highlight.lineWidth = 3;
+  ctx.highlight.scale(devicePixelRatio, devicePixelRatio);
 
   return this;
 };
@@ -278,21 +299,21 @@ pc.autoscale = function() {
 pc.scale = function(d, domain) {
   __.dimensions[d].yscale.domain(domain);
 
-	return this;
+  return this;
 };
 
 pc.flip = function(d) {
-	//__.dimensions[d].yscale.domain().reverse();					// does not work
+  //__.dimensions[d].yscale.domain().reverse();                               // does not work
   __.dimensions[d].yscale.domain(__.dimensions[d].yscale.domain().reverse()); // works
 
-	return this;
+  return this;
 };
 
 pc.commonScale = function(global, type) {
-	var t = type || "number";
-	if (typeof global === 'undefined') {
-		global = true;
-	}
+  var t = type || "number";
+  if (typeof global === 'undefined') {
+    global = true;
+  }
 
   // try to autodetect dimensions and create scales
   if (!d3.keys(__.dimensions).length) {
@@ -300,34 +321,34 @@ pc.commonScale = function(global, type) {
   }
   pc.autoscale();
 
-	// scales of the same type
-	var scales = d3.keys(__.dimensions).filter(function(p) {
-		return __.dimensions[p].type == t;
-	});
+  // scales of the same type
+  var scales = d3.keys(__.dimensions).filter(function(p) {
+    return __.dimensions[p].type == t;
+  });
 
-	if (global) {
-		var extent = d3.extent(scales.map(function(d,i) {
-				return __.dimensions[d].yscale.domain();
-			}).reduce(function(a,b) {
-				return a.concat(b);
-			}));
+  if (global) {
+    var extent = d3.extent(scales.map(function(d,i) {
+      return __.dimensions[d].yscale.domain();
+    }).reduce(function(a,b) {
+      return a.concat(b);
+    }));
 
-		scales.forEach(function(d) {
+    scales.forEach(function(d) {
       __.dimensions[d].yscale.domain(extent);
-		});
+    });
 
-	} else {
-		scales.forEach(function(d) {
+  } else {
+    scales.forEach(function(d) {
       __.dimensions[d].yscale.domain(d3.extent(__.data, function(d) { return +d[k]; }));
-		});
-	}
+    });
+  }
 
-	// update centroids
-	if (__.bundleDimension !== null) {
-		pc.bundleDimension(__.bundleDimension);
-	}
+  // update centroids
+  if (__.bundleDimension !== null) {
+    pc.bundleDimension(__.bundleDimension);
+  }
 
-	return this;
+  return this;
 };
 pc.detectDimensions = function() {
   pc.dimensions(pc.applyDimensionDefaults());
@@ -335,30 +356,30 @@ pc.detectDimensions = function() {
 };
 
 pc.applyDimensionDefaults = function(dims) {
-	var types = pc.detectDimensionTypes(__.data);
-	dims = dims ? dims : d3.keys(types);
+  var types = pc.detectDimensionTypes(__.data);
+  dims = dims ? dims : d3.keys(types);
   var newDims = {};
   var currIndex = 0;
   dims.forEach(function(k) {
     newDims[k] = __.dimensions[k] ? __.dimensions[k] : {};
     //Set up defaults
     newDims[k].orient= newDims[k].orient ? newDims[k].orient : 'left';
-    newDims[k].ticks= newDims[k].ticks ? newDims[k].ticks : 5;
-    newDims[k].innerTickSize= newDims[k].innerTickSize ? newDims[k].innerTickSize : 6;
-    newDims[k].outerTickSize= newDims[k].outerTickSize ? newDims[k].outerTickSize : 0;
-    newDims[k].tickPadding= newDims[k].tickPadding ? newDims[k].tickPadding : 3;
+    newDims[k].ticks= newDims[k].ticks != null ? newDims[k].ticks : 5;
+    newDims[k].innerTickSize= newDims[k].innerTickSize != null ? newDims[k].innerTickSize : 6;
+    newDims[k].outerTickSize= newDims[k].outerTickSize != null ? newDims[k].outerTickSize : 0;
+    newDims[k].tickPadding= newDims[k].tickPadding != null ? newDims[k].tickPadding : 3;
     newDims[k].type= newDims[k].type ? newDims[k].type : types[k];
 
-    newDims[k].index = newDims[k].index ? newDims[k].index : currIndex;
+    newDims[k].index = newDims[k].index != null ? newDims[k].index : currIndex;
     currIndex++;
   });
   return newDims;
 };
 
 pc.getOrderedDimensionKeys = function(){
-	return d3.keys(__.dimensions).sort(function(x, y){
-		return d3.ascending(__.dimensions[x].index, __.dimensions[y].index);
-	});
+  return d3.keys(__.dimensions).sort(function(x, y){
+    return d3.ascending(__.dimensions[x].index, __.dimensions[y].index);
+  });
 };
 
 // a better "typeof" from this post: http://stackoverflow.com/questions/7390426/better-way-to-get-type-of-a-javascript-variable
@@ -369,8 +390,8 @@ pc.toType = function(v) {
 // try to coerce to number before returning type
 pc.toTypeCoerceNumbers = function(v) {
   if ((parseFloat(v) == v) && (v != null)) {
-	return "number";
-}
+    return "number";
+  }
   return pc.toType(v);
 };
 
@@ -461,7 +482,8 @@ pc.renderBrushed.queue = function() {
   } else {
     brushedQueue([]); // This is needed to clear the currently brushed items
   }
-};function compute_cluster_centroids(d) {
+};
+function compute_cluster_centroids(d) {
 
 	var clusterCentroids = d3.map();
 	var clusterCounts = d3.map();
@@ -673,12 +695,20 @@ d3.rebind(pc, axis, "ticks", "orient", "tickValues", "tickSubdivide", "tickSize"
 function flipAxisAndUpdatePCP(dimension) {
   var g = pc.svg.selectAll(".dimension");
 
+  if (pc.brushMode() === "1D-axes" || pc.brushMode() === "1D-axes-multi") {
+    var state = pc.brushExtents();
+  }
+
   pc.flip(dimension);
 
   d3.select(this.parentElement)
     .transition()
-      .duration(1100)
+      .duration(__.animationTime)
       .call(axis.scale(__.dimensions[dimension].yscale));
+
+  if (pc.brushMode() === "1D-axes" || pc.brushMode() === "1D-axes-multi") {
+    pc.brushExtents(state);
+  }
 
   pc.render();
 }
@@ -758,10 +788,15 @@ pc.createAxes = function() {
 
 pc.removeAxes = function() {
   g.remove();
+  g = undefined;
   return this;
 };
 
-pc.updateAxes = function() {
+pc.updateAxes = function(animationTime) {
+  if (typeof animationTime === 'undefined') {
+    animationTime = __.animationTime;
+  }
+
   var g_data = pc.svg.selectAll(".dimension").data(pc.getOrderedDimensionKeys());
 
   // Enter
@@ -790,12 +825,12 @@ pc.updateAxes = function() {
   g_data.attr("opacity", 0);
   g_data.select(".axis")
     .transition()
-      .duration(1100)
+      .duration(animationTime)
       .each(function(d) { d3.select(this).call( pc.applyAxisConfig(axis, __.dimensions[d]) )
       });
   g_data.select(".label")
     .transition()
-      .duration(1100)
+      .duration(animationTime)
       .text(dimensionLabels)
       .attr("transform", "translate(0,-5) rotate(" + __.dimensionTitleRotation + ")");
 
@@ -803,13 +838,13 @@ pc.updateAxes = function() {
   g_data.exit().remove();
 
   g = pc.svg.selectAll(".dimension");
-  g.transition().duration(1100)
+  g.transition().duration(animationTime)
     .attr("transform", function(p) { return "translate(" + position(p) + ")"; })
     .style("opacity", 1);
 
   pc.svg.selectAll(".axis")
     .transition()
-      .duration(1100)
+      .duration(animationTime)
       .each(function(d) { d3.select(this).call( pc.applyAxisConfig(axis, __.dimensions[d]) );
       });
 
@@ -898,7 +933,7 @@ pc.reorderable = function() {
 pc.reorder = function(rowdata) {
   var firstDim = pc.getOrderedDimensionKeys()[0];
 
-	pc.sortDimensionsByRowData(rowdata);
+  pc.sortDimensionsByRowData(rowdata);
   // NOTE: this is relatively cheap given that:
   // number of dimensions < number of data items
   // Thus we check equality of order to prevent rerendering when this is the case.
@@ -926,7 +961,7 @@ pc.reorder = function(rowdata) {
 
 pc.sortDimensionsByRowData = function(rowdata) {
   var copy = __.dimensions;
-	var positionSortedKeys = d3.keys(__.dimensions).sort(function(a, b) {
+  var positionSortedKeys = d3.keys(__.dimensions).sort(function(a, b) {
     var pixelDifference = __.dimensions[a].yscale(rowdata[a]) - __.dimensions[b].yscale(rowdata[b]);
 
     // Array.sort is not necessarily stable, this means that if pixelDifference is zero
@@ -938,17 +973,17 @@ pc.sortDimensionsByRowData = function(rowdata) {
     return pixelDifference;
   });
   __.dimensions = {};
-	positionSortedKeys.forEach(function(p, i){
-		__.dimensions[p] = copy[p];
-		__.dimensions[p].index = i;
-	});
+  positionSortedKeys.forEach(function(p, i){
+    __.dimensions[p] = copy[p];
+    __.dimensions[p].index = i;
+  });
 }
 
 pc.sortDimensions = function() {
   var copy = __.dimensions;
   var positionSortedKeys = d3.keys(__.dimensions).sort(function(a, b) {
-  	return position(a) - position(b);
-	});
+    return position(a) - position(b);
+  });
   __.dimensions = {};
   positionSortedKeys.forEach(function(p, i){
     __.dimensions[p] = copy[p];
@@ -1010,6 +1045,7 @@ pc.brushModes = function() {
   return Object.getOwnPropertyNames(brush.modes);
 };
 
+var brushmodeObject;
 pc.brushMode = function(mode) {
   if (arguments.length === 0) {
     return brush.mode;
@@ -1032,6 +1068,10 @@ pc.brushMode = function(mode) {
     brush.modes[brush.mode].uninstall(pc);
     // Finally, we can install the requested one.
     brush.mode = mode;
+
+    // Reference brushmode object for later use at resize() function
+    brushmodeObject = brush.modes[brush.mode];
+
     brush.modes[brush.mode].install();
     if (mode === "None") {
       delete pc.brushPredicate;
@@ -1046,28 +1086,28 @@ pc.brushMode = function(mode) {
 // brush mode: 1D-Axes
 
 (function() {
-  var brushes = {};
+	var brushes = {};
 
-  function is_brushed(p) {
-    return !brushes[p].empty();
-  }
+	function is_brushed(p) {
+		return !brushes[p].empty();
+	}
 
   // data within extents
   function selected() {
     var actives = d3.keys(__.dimensions).filter(is_brushed),
         extents = actives.map(function(p) { return brushes[p].extent(); });
 
-    // We don't want to return the full data set when there are no axes brushed.
-    // Actually, when there are no axes brushed, by definition, no items are
-    // selected. So, let's avoid the filtering and just return false.
-    //if (actives.length === 0) return false;
+		// We don't want to return the full data set when there are no axes brushed.
+		// Actually, when there are no axes brushed, by definition, no items are
+		// selected. So, let's avoid the filtering and just return false.
+		//if (actives.length === 0) return false;
 
-    // Resolves broken examples for now. They expect to get the full dataset back from empty brushes
-    if (actives.length === 0) return __.data;
+		// Resolves broken examples for now. They expect to get the full dataset back from empty brushes
+		if (actives.length === 0) return __.data;
 
-    // test if within range
-    var within = {
-      "date": function(d,p,dimension) {
+		// test if within range
+		var within = {
+			"date": function(d,p,dimension) {
 	if (typeof __.dimensions[p].yscale.rangePoints === "function") { // if it is ordinal
           return extents[dimension][0] <= __.dimensions[p].yscale(d[p]) && __.dimensions[p].yscale(d[p]) <= extents[dimension][1]
         } else {
@@ -1139,7 +1179,10 @@ pc.brushMode = function(mode) {
 					brush.extent(extents[d]);
 
 					//redraw the brush
-					brush(brushSelections[d]);
+					brushSelections[d]
+						.transition()
+						.duration(0)
+						.call(brush);
 
 					//fire some events
 					brush.event(brushSelections[d]);
@@ -1148,6 +1191,8 @@ pc.brushMode = function(mode) {
 
 			//redraw the chart
 			pc.renderBrushed();
+
+			return pc;
 		}
   }
 
@@ -1158,63 +1203,82 @@ pc.brushMode = function(mode) {
       .y(__.dimensions[axis].yscale)
       .on("brushstart", function() {
 				if(d3.event.sourceEvent !== null) {
+					events.brushstart.call(pc, __.brushed);
 					d3.event.sourceEvent.stopPropagation();
 				}
 			})
-      .on("brush", function() {
-        brushUpdated(selected());
-      })
-      .on("brushend", function() {
-        events.brushend.call(pc, __.brushed);
-      });
+			.on("brush", function() {
+				brushUpdated(selected());
+			})
+			.on("brushend", function() {
+				events.brushend.call(pc, __.brushed);
+			});
 
-    brushes[axis] = brush;
-    return brush;
-  };
-  function brushReset(dimension) {
-    __.brushed = false;
-    if (g) {
-      g.selectAll('.brush')
-        .each(function(d) {
-          d3.select(this).call(
-            brushes[d].clear()
-          );
-        });
-      pc.renderBrushed();
-    }
-    return this;
-  };
+		brushes[axis] = brush;
+		return brush;
+	};
 
-  function install() {
-    if (!g) pc.createAxes();
+	function brushReset(dimension) {
+		if (dimension===undefined) {
+			__.brushed = false;
+			if (g) {
+				g.selectAll('.brush')
+					.each(function(d) {
+						d3.select(this)
+							.transition()
+							.duration(0)
+							.call(brushes[d].clear());
+					});
+				pc.renderBrushed();
+			}
+		}
+		else {
+			if (g) {
+				g.selectAll('.brush')
+					.each(function(d) {
+						if (d!=dimension) return;
+						d3.select(this)
+							.transition()
+							.duration(0)
+							.call(brushes[d].clear());
+						brushes[d].event(d3.select(this));
+					});
+				pc.renderBrushed();
+			}
+		}
+		return this;
+	};
 
-    // Add and store a brush for each axis.
-    g.append("svg:g")
-      .attr("class", "brush")
-      .each(function(d) {
-        d3.select(this).call(brushFor(d));
-      })
-      .selectAll("rect")
-        .style("visibility", null)
-        .attr("x", -15)
-        .attr("width", 30);
+	function install() {
+		if (!g) pc.createAxes();
 
-    pc.brushExtents = brushExtents;
-    pc.brushReset = brushReset;
-    return pc;
-  };
+		// Add and store a brush for each axis.
+		g.append("svg:g")
+			.attr("class", "brush")
+			.each(function(d) {
+				d3.select(this).call(brushFor(d));
+			})
+			.selectAll("rect")
+				.style("visibility", null)
+				.attr("x", -15)
+				.attr("width", 30);
 
-  brush.modes["1D-axes"] = {
-    install: install,
-    uninstall: function() {
-      g.selectAll(".brush").remove();
-      brushes = {};
-      delete pc.brushExtents;
-      delete pc.brushReset;
-    },
-    selected: selected,
-    brushState: brushExtents
-  }
+		pc.brushExtents = brushExtents;
+		pc.brushReset = brushReset;
+		return pc;
+	};
+
+	brush.modes["1D-axes"] = {
+		install: install,
+		uninstall: function() {
+			g.selectAll(".brush").remove();
+			brushes = {};
+			delete pc.brushExtents;
+			delete pc.brushReset;
+		},
+		selected: selected,
+		brushState: brushExtents
+	}
 })();
 // brush mode: 2D-strums
 // bl.ocks.org/syntagmatic/5441022
@@ -1610,17 +1674,67 @@ pc.brushMode = function(mode) {
     });
   };
 
-  function brushExtents() {
-    var extents = {};
-    d3.keys(__.dimensions).forEach(function(d) {
-      var brush = brushes[d];
-      if (brush !== undefined && !brush.empty()) {
-        var extent = brush.extent();
-        extents[d] = extent;
-      }
-    });
-    return extents;
+  function brushExtents(extents) {
+    if (typeof(extents) === 'undefined') {
+      extents = {};
+      d3.keys(__.dimensions).forEach(function (d) {
+        var brush = brushes[d];
+        if (brush !== undefined && !brush.empty()) {
+          var extent = brush.extent();
+          extents[d] = extent;
+        }
+      });
+      return extents;
+    }
+    else {
+      //first get all the brush selections
+      var brushSelections = {};
+      g.selectAll('.brush')
+          .each(function (d) {
+            brushSelections[d] = d3.select(this);
+
+          });
+
+      // loop over each dimension and update appropriately (if it was passed in through extents)
+      d3.keys(__.dimensions).forEach(function (d) {
+        if (extents[d] === undefined) {
+          return;
+        }
+
+        var brush = brushes[d];
+        if (brush !== undefined) {
+          //update the extent
+          brush.extent(extents[d]);
+
+          //redraw the brush
+          brushSelections[d]
+              .transition()
+              .duration(0)
+              .call(brush);
+
+          //fire some events
+          brush.event(brushSelections[d]);
+        }
+      });
+
+      //redraw the chart
+      pc.renderBrushed();
+
+      return pc;
+    }
   }
+
+  //function brushExtents() {
+  //  var extents = {};
+  //  d3.keys(__.dimensions).forEach(function(d) {
+  //    var brush = brushes[d];
+  //    if (brush !== undefined && !brush.empty()) {
+  //      var extent = brush.extent();
+  //      extents[d] = extent;
+  //    }
+  //  });
+  //  return extents;
+  //}
 
   function brushFor(axis) {
     var brush = d3.svg.multibrush();
@@ -1629,6 +1743,7 @@ pc.brushMode = function(mode) {
       .y(__.dimensions[axis].yscale)
       .on("brushstart", function() {
 				if(d3.event.sourceEvent !== null) {
+                    events.brushstart.call(pc, __.brushed);
 					d3.event.sourceEvent.stopPropagation();
 				}
       })
@@ -1895,15 +2010,15 @@ pc.brushMode = function(mode) {
 
   // [0, 2*PI] -> [-PI/2, PI/2]
   var signedAngle = function(angle) {
-	  var ret = angle;
-	  if (angle > Math.PI) {
-		ret = angle - 1.5 * Math.PI;
-		ret = angle - 1.5 * Math.PI;
-	  } else {
-	  	ret = angle - 0.5 * Math.PI;
-	   	ret = angle - 0.5 * Math.PI;
-	  }
-	  return -ret;
+    var ret = angle;
+    if (angle > Math.PI) {
+      ret = angle - 1.5 * Math.PI;
+      ret = angle - 1.5 * Math.PI;
+    } else {
+      ret = angle - 0.5 * Math.PI;
+      ret = angle - 0.5 * Math.PI;
+    }
+    return -ret;
   }
 
   /**
@@ -2171,7 +2286,6 @@ pc.brushMode = function(mode) {
   };
 
 }());
-
 pc.interactive = function() {
   flags.interactive = true;
   return this;
@@ -2186,14 +2300,20 @@ pc.g = function() { return g; };
 // rescale for height, width and margins
 // TODO currently assumes chart is brushable, and destroys old brushes
 pc.resize = function() {
+  // reference the current brushMode
+  var currentBrushMode = pc.brushMode();
+
+  // reinstalling brushes when resizing currently works for "1D-axes" and "1D-axes-multi"
+  if (currentBrushMode === "1D-axes" || currentBrushMode === "1D-axes-multi") {
+    //store the current brush state
+    var brushModeState = pc.brushExtents();
+  }
+
   // selection size
   pc.selection.select("svg")
     .attr("width", __.width)
     .attr("height", __.height)
   pc.svg.attr("transform", "translate(" + __.margin.left + "," + __.margin.top + ")");
-
-  // FIXME: the current brush state should pass through
-  if (flags.brushable) pc.brushReset();
 
   // scales
   pc.autoscale();
@@ -2202,6 +2322,15 @@ pc.resize = function() {
   if (g) pc.createAxes();
   if (flags.brushable) pc.brushable();
   if (flags.reorderable) pc.reorderable();
+
+  // reinstalling brushes when resizing currently works for "1D-axes" and "1D-axes-multi"
+  // createAxes() destroyed the brush elements, reinstall them and restore the brush state
+  if (currentBrushMode === "1D-axes" || currentBrushMode === "1D-axes-multi") {
+    // install() recreates the brush elements and their events, assigns empty brush extents
+    brushmodeObject.install();
+    // set the empty brush extents to the saved brush state
+    pc.brushExtents(brushModeState);
+  }
 
   events.resize.call(this, {width: __.width, height: __.height, margin: __.margin});
   return this;

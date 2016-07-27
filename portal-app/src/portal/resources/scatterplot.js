@@ -12,7 +12,7 @@ function fitScatterPlot(id) {
     var houter = div.style("height");
     var h = houter.replace("px", "") - title.style("height").replace("px", "");
     console.log("Resizing scatterplot : width=" + w + " outer height=" + houter + " inner height=" + h + "px");
-    plot.style("width", w);
+    plot.style("width", w + "px");
     plot.style("height", h + "px");
     resizeScatterPlot(plot);
 }

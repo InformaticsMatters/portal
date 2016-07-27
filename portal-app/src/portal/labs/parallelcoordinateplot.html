@@ -16,7 +16,7 @@
 
     <style>
 
-    .chart {
+    .svg-container {
         border-color: lightgrey;
         border-style: solid;
         border-width: 1px;
@@ -25,10 +25,19 @@
     </style>
 
     <script>
+
+        function selectionHandler(selected) {
+            alert("Selection: " + selected.join(","));
+        }
+
+        var parcoords;
         var execute = function() {
             var json = document.getElementById("data").value;
             var data = JSON.parse(json);
-            buildParallelCoordinatePlot('pcp1', data);
+
+            parcoords = createParallelCoordinatePlot("#container", {
+            //"selectionHandler": selectionHandler
+            }, data)
         }
 
         function resize() {
@@ -38,7 +47,16 @@
             var plot = document.getElementById("container");
             plot.style.width = w + "px";
             plot.style.height = h + "px";
-            fitParallelCoordinatePlot('pcp1');
+            parcoords
+                .width(w)
+                .height(h)
+                .createAxes()
+                .render();
+
+            // this is a hack to add back the event that allows the data to be re-coloured
+            // as this get's lost during the resize event
+            parcoords.svg.selectAll(".dimension")
+                .on("click", parcoords.change_color);
         }
     </script>
 </head>
