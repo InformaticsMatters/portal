@@ -16,13 +16,13 @@
 
     <div wicket:id="menuPanel"></div>
 
-    <div class="ui grid flex-1 workflow">
+    <div class="ui grid flex-1 workflow" style="-webkit-flex-flow: row; flex-flow: row;">
         <div class="nb-vertical-left-menu">
             <a class="left-nav-item verticalItem cellsToggle" wicket:id="cellsToggle">Cells</a>
             <a class="left-nav-item verticalItem nbListToggle" wicket:id="nbListToggle">Notebooks</a>
         </div>
 
-        <div class="column flex-column-1 left-column">
+        <div class="flex-column-1 left-column">
             <div style="height: 18px; margin-top: 6px; margin-bottom: -3px;">
                 <div class="ui menu text nbListMenu">
                     <a wicket:id="createNotebook" class="item">
@@ -35,7 +35,7 @@
             <div wicket:id="editNotebookPanel"></div>
         </div>
 
-        <div class="column flex-column-2 right-column">
+        <div class="flex-column-2 right-column">
             <div class="nbCanvasMenuContainer">
                 <div class="nbCanvasMenu">
                     <label wicket:id="nbInfo"></label>
