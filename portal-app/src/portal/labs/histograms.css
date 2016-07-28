@@ -1,0 +1,38 @@
+ html, body { margin: 0; padding: 0; font: 12px/20px monospace; }
+
+        .graph-wrapper { overflow: hidden; margin: 20px; }
+
+        svg { width: 100%; height: 150px; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+
+
+        g.background rect,
+        g.foreground rect { fill: #4581b3; stroke: none; shape-rendering: crispEdges; }
+
+        g.foreground rect { fill: #ccc; }
+
+        g.axis line,
+        g.axis path { fill: none; stroke: #000; stroke-width: 1px; shape-rendering: crispEdges; stroke-linecap: butt; stroke-linejoin: miter; }
+
+        g.brush rect.extent { fill: steelblue; fill-opacity: .125; }
+
+        g.brush .resize path { fill: #eee; stroke: #666; }
+
+        .delays, .distances {
+            margin-left: 20px;
+        }
+
+        .clippath-graph-dates rect { fill: #f00; }
+
+        rect.scrollbar { fill: #fefefe; stroke: #666; stroke-width: 1px; shape-rendering: crispEdges; }
+        g.axis { pointer-events: none; }
+
+        .graph-container { overflow: hidden; margin: 20px; }
+
+
+        .column {
+            background: #eee;
+            padding: 10px; width: 50%;
+            border-color: #bbb;
+            border-style: solid;
+            border-width: 1px;
+        }

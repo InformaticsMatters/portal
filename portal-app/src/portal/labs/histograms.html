@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="histograms.css"/>
+
+    <script type="text/javascript" src="https://dev.anuary.com/703dff31-b9be-543f-b6c6-61ae7fb4dd32/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="https://dev.anuary.com/703dff31-b9be-543f-b6c6-61ae7fb4dd32/crossfilter.v1.js"></script>
+    <script src="../resources/d3.min.js"></script>
+    <script type="text/javascript" src="https://dev.anuary.com/703dff31-b9be-543f-b6c6-61ae7fb4dd32/d3.crossfilter.ay-histogram.js"></script>
+    <script type="text/javascript" src="histograms.js"></script>
+
+</head>
+<body>
+<h1>Interdependent interactive histograms</h1>
+<p>Taken from <a href="https://github.com/gajus/interdependent-interactive-histograms">https://github.com/gajus/interdependent-interactive-histograms</a></p>
+<div class="graph-container">
+    <div>A</div>
+    <div class="column">
+        <svg class="histogram-a"></svg>
+    </div>
+    <div>B</div>
+    <div class="column">
+        <svg class="histogram-b"></svg>
+    </div>
+    <div>C</div>
+    <div class="column">
+        <svg class="histogram-c"></svg>
+    </div>
+    <div>D</div>
+    <div class="column">
+        <svg class="histogram-d"></svg>
+    </div>
+
+</div>
+
+<script>execute();</script>
+</body>
+</html>
