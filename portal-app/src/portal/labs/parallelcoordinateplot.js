@@ -24,6 +24,7 @@ function createParallelCoordinatePlot(selection, config, data) {
 
     var chart = d3.parcoords()(selection)
         .color(function(d) { return scale(d.idx); })
+        .margin({top: 18, right: 0, bottom: 22, left: 0})
         .alpha(0.4)
         .data(data)
         .hideAxis(["uuid"])

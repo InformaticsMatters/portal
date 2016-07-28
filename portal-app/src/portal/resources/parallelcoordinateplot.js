@@ -2,10 +2,11 @@ function resizeParallelCoordinatePanel(id) {
     var div = d3.select("#" + id);
     var plot = div.select(".svg-container");
     var title = div.select(".titleBar");
-    var w = div.style("width").replace("px", "");
+    var wouter = div.style("width").replace("px", "");
+    var w = wouter - 2;
     var houter = div.style("height").replace("px", "");
-    var h = houter - title.style("height").replace("px", "");
-    console.log("Resizing parallelCoordinatePlot : width=" + w + " outer height=" + houter + " inner height=" + h);
+    var h = houter - title.style("height").replace("px", "") - 5;
+    console.log("Resizing parallelCoordinatePlot : outer width= " + wouter + " width=" + w + " outer height=" + houter + " inner height=" + h);
     plot.style("width", w + "px");
     plot.style("height", h + "px");
     return {width:w, height:h};
@@ -69,6 +70,7 @@ function createParallelCoordinatePlot(selection, config, data) {
 
     var chart = d3.parcoords()(selection)
         .color(function(d) { return scale(d.idx); })
+        .margin({top: 18, right: 0, bottom: 22, left: 0})
         .alpha(0.4)
         .data(data)
         .hideAxis(["uuid"])
