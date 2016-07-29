@@ -5,33 +5,37 @@
 
     <script type="text/javascript" src="https://dev.anuary.com/703dff31-b9be-543f-b6c6-61ae7fb4dd32/crossfilter.v1.js"></script>
     <script src="../resources/d3.min.js"></script>
-    <script type="text/javascript" src="https://dev.anuary.com/703dff31-b9be-543f-b6c6-61ae7fb4dd32/d3.crossfilter.ay-histogram.js"></script>
+    <script type="text/javascript" src="d3.crossfilter.ay-histogram.js"></script>
     <script type="text/javascript" src="histograms.js"></script>
 
 </head>
 <body>
 <h1>Interdependent interactive histograms</h1>
 <p>Taken from <a href="https://github.com/gajus/interdependent-interactive-histograms">https://github.com/gajus/interdependent-interactive-histograms</a></p>
-<div class="graph-container">
-    <div>A</div>
+<div id="main" class="graph-container">
+
     <div class="column">
+        <div>A</div>
         <svg class="histogram-a"></svg>
     </div>
-    <div>B</div>
+
     <div class="column">
+        <div>B</div>
         <svg class="histogram-b"></svg>
     </div>
-    <div>C</div>
+
     <div class="column">
+        <div>C</div>
         <svg class="histogram-c"></svg>
     </div>
-    <div>D</div>
+
     <div class="column">
+        <div>D</div>
         <svg class="histogram-d"></svg>
     </div>
 
 </div>
 
-<script>execute();</script>
+<script>execute('main', {fields:['a', 'b', 'c', 'd']}, get_random_data());</script>
 </body>
 </html>
