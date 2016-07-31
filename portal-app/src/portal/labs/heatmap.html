@@ -35,14 +35,14 @@ for (i=0; i<30; i++) {
 var data = [];
 for (i=0; i<rows.length; i++) {
     for (j=0; j<cols.length; j++) {
-        var d = {row: i, col: j, value: Math.random()};
+        var d = {row: i, col: j, value: 20 * (Math.random() - 0.5)};
         data.push(d);
         //console.log(JSON.stringify(d));
     }
 }
 console.log("Generated " + data.length + " values");
 
-    execute({rowNames:rows, colNames:cols}, data);
+    execute({rowNames:rows, colNames:cols, cellSize: 14}, data);
 </script>
 
 </body>

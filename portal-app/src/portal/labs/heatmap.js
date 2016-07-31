@@ -1,22 +1,24 @@
 
 var execute = function(config, data) {
 
-    var colorScale = config.colorScale ? config.colorScale : d3.scale.linear().domain([0.0, 1.0]).range(['white', 'brown']),
+    var colorScale = config.colorScale ? config.colorScale :
+            d3.scale.linear()
+                .domain([d3.min(data, function(d) { return d.value}), d3.max(data, function(d) { return d.value})])
+                .range(['white', 'brown']),
         margin = config.margin ? config.margin : { top: 75, right: 50, bottom: 50, left: 75 },
         cellSize = config.cellSize ? config.cellSize : 12,
         rowNames = config.rowNames,
         colNames = config.colNames,
         width = cellSize * colNames.length,
         height = cellSize * rowNames.length,
-        transition = config.transition != null ? config.transition : 1000
-        ;
+        transition = config.transition != null ? config.transition : 1000;
 
   var svg = d3.select("#chart").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      ;
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
   var rowSortOrder=false;
   var colSortOrder=false;
   var rowLabels = svg.append("g")
@@ -32,8 +34,7 @@ var execute = function(config, data) {
       .attr("class", function (d,i) { return "rowLabel mono r"+i;} )
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
-      .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r",i,rowSortOrder);d3.select("#order").property("selectedIndex", 4).node().focus();;})
-      ;
+      .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r",i,rowSortOrder);d3.select("#order").property("selectedIndex", 4).node().focus();;});
 
   var colLabels = svg.append("g")
       .selectAll(".colLabelg")
@@ -48,8 +49,7 @@ var execute = function(config, data) {
       .attr("class",  function (d,i) { return "colLabel mono c"+i;} )
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
-      .on("click", function(d,i) {colSortOrder=!colSortOrder;  sortbylabel("c",i,colSortOrder);d3.select("#order").property("selectedIndex", 4).node().focus();;})
-      ;
+      .on("click", function(d,i) {colSortOrder=!colSortOrder;  sortbylabel("c",i,colSortOrder);d3.select("#order").property("selectedIndex", 4).node().focus();;});
 
   var heatMap = svg.append("g").attr("class","g3")
         .selectAll(".cellg")
@@ -90,8 +90,7 @@ var execute = function(config, data) {
                d3.selectAll(".rowLabel").classed("text-highlight",false);
                d3.selectAll(".colLabel").classed("text-highlight",false);
                d3.select("#tooltip").classed("hidden", true);
-        })
-        ;
+        });
 
 //  var legend = svg.selectAll(".legend")
 //      .data([-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10])
@@ -116,29 +115,24 @@ var execute = function(config, data) {
 
   function sortbylabel(rORc,i,sortOrder){
        var t = svg.transition().duration(transition);
-       var log2r=[];
+       var values=[];
        var sorted; // sorted is zero-based index
        d3.selectAll(".c"+rORc+i)
          .filter(function(ce){
-            log2r.push(ce.value);
-          })
-       ;
+            values.push(ce.value);
+          });
        if (rORc=="r") { // sort by row
-         sorted=d3.range(colNames.length).sort(function(a,b){ if(sortOrder){ return log2r[b]-log2r[a];}else{ return log2r[a]-log2r[b];}});
+         sorted=d3.range(colNames.length).sort(function(a,b){ if (sortOrder) { return values[b]-values[a];} else { return values[a]-values[b];}});
          t.selectAll(".cell")
-           .attr("x", function(d) { return sorted.indexOf(d.col) * cellSize; })
-           ;
+           .attr("x", function(d) { return sorted.indexOf(d.col) * cellSize; });
          t.selectAll(".colLabel")
-          .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })
-         ;
+          .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; });
        } else { // sort by column
-         sorted=d3.range(rowNames.length).sort(function(a,b){if(sortOrder){ return log2r[b]-log2r[a];}else{ return log2r[a]-log2r[b];}});
+         sorted=d3.range(rowNames.length).sort(function(a,b){if (sortOrder) { return values[b]-values[a];} else { return values[a]-values[b];}});
          t.selectAll(".cell")
-           .attr("y", function(d) { return sorted.indexOf(d.row) * cellSize; })
-           ;
+           .attr("y", function(d) { return sorted.indexOf(d.row) * cellSize; });
          t.selectAll(".rowLabel")
-          .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })
-         ;
+          .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; });
        }
   }
 
