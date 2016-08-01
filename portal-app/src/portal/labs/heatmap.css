@@ -1,3 +1,14 @@
+#chart {
+    overflow:auto;
+    width:660px;
+    height:480px;
+    border-color:lightgray;
+    border-style: solid;
+    border-width: 1px;
+
+}
+
+
  /* disable text selection */
     svg *::selection {
     background : transparent;
@@ -23,8 +34,8 @@
     }
 
     rect.cell-selected {
-    stroke: rgb(51,102,153);
-    stroke-width:0.5px;
+    stroke: black; //rgb(51,102,153);
+    stroke-width:1px;
     }
 
     rect.cell-hover {

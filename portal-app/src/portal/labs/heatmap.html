@@ -13,36 +13,35 @@
     <p><span id="value"></p>
 </div>
 
-Order:
-<select id="order">
-    <option value="default">default</option>
-    <option value="byrowandcol">by row and column name</option>
-    <option value="byrow">by row name</option>
-    <option value="bycol">by column name</option>
-</select>
-</select>
-<div id="chart" style='overflow:auto; width:960px; height:480px; border-color:lightgray; border-style: solid; border-width: 1px;'></div>
+Ordering:
+<button type="button" id="resetrows">Reset row order</button> &nbsp;
+<button type="button" id="resetcols">Reset column order</button> &nbsp;
+<button type="button" id="sortbyrowavg">Sort by row average</button>  &nbsp;
+<button type="button" id="sortbycolavg">Sort by column average</button>  &nbsp;
+<br><br>
+<div id="chart"></div>
 
 <script>
 
 var rows = [], cols = [];
-for (i=0; i<20; i++) {
+for (i=0; i<30; i++) {
     rows.push("row"+i);
 }
-for (i=0; i<30; i++) {
+for (i=0; i<40; i++) {
     cols.push("col"+i);
 }
 var data = [];
 for (i=0; i<rows.length; i++) {
+    var rowRnd = Math.random();
     for (j=0; j<cols.length; j++) {
-        var d = {row: i, col: j, value: 20 * (Math.random() - 0.5)};
+        var d = {row: i, col: j, value: 20 * rowRnd * Math.random()};
         data.push(d);
         //console.log(JSON.stringify(d));
     }
 }
 console.log("Generated " + data.length + " values");
 
-    execute({rowNames:rows, colNames:cols, cellSize: 14}, data);
+    execute("#chart", {rowNames:rows, colNames:cols, cellSize: 12}, data);
 </script>
 
 </body>
