@@ -23,6 +23,7 @@ public class MockVariable extends AbstractEntity {
         this.mockNotebookVersion = mockNotebookVersion;
     }
 
+    @Column(length = 4000)
     public String getValue() {
         return value;
     }

@@ -1,0 +1,44 @@
+<wicket:panel>
+    <div>
+        <form wicket:id="form" class="ui form">
+            <div class="field">
+                <label>Rows field</label>
+                <select wicket:id="rowsField" class="ui small input">
+                </select>
+            </div>
+            <div class="field">
+                <label>Columns field</label>
+                <select wicket:id="colsField" class="ui small input">
+                </select>
+            </div>
+            <div class="field">
+                <label>Values field</label>
+                <select wicket:id="valuesField" class="ui small input">
+                </select>
+            </div>
+            <div class="field">
+                <label>Collector function</label>
+                <select wicket:id="collector" class="ui small input">
+                </select>
+            </div>
+            <div class="field">
+                <label>Cell size</label>
+                <input wicket:id="cellSize" type="number" class="ui small input"></input>
+            </div>
+            <div class="field">
+                <label>Left margin</label>
+                <input wicket:id="leftMargin" type="number" class="ui small input"></input>
+            </div>
+            <div class="field">
+                <label>Top margin</label>
+                <input wicket:id="topMargin" type="number" class="ui small input"></input>
+            </div>
+
+            <div class="actions">
+                <input type="submit" wicket:id="save" style="width: 50px; padding: 5px;" class="ui mini button blue"
+                       value="Save">
+            </div>
+        </form>
+
+    </div>
+</wicket:panel>

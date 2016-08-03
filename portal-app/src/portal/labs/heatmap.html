@@ -9,9 +9,7 @@
 
 </head>
 <body>
-<div id="tooltip" class="hidden">
-    <p><span id="value"></p>
-</div>
+
 
 Ordering:
 <button type="button" id="resetrows">Reset row order</button> &nbsp;
@@ -19,29 +17,37 @@ Ordering:
 <button type="button" id="sortbyrowavg">Sort by row average</button>  &nbsp;
 <button type="button" id="sortbycolavg">Sort by column average</button>  &nbsp;
 <br><br>
-<div id="chart"></div>
+<div id="heatmap1" class="heatmap">
+    <div class="titleBar"></div>
+    <div class="svg-container" style="overflow:auto; width:660px; height:480px; border-color:lightgray; border-style: solid; border-width: 1px;">
+    </div>
+    <div class="tooltip hidden">
+        <p><span class="value"/></p>
+    </div>
+</div>
+
 
 <script>
 
-var rows = [], cols = [];
-for (i=0; i<30; i++) {
-    rows.push("row"+i);
-}
-for (i=0; i<40; i++) {
-    cols.push("col"+i);
-}
-var data = [];
-for (i=0; i<rows.length; i++) {
-    var rowRnd = Math.random();
-    for (j=0; j<cols.length; j++) {
-        var d = {row: i, col: j, value: 20 * rowRnd * Math.random()};
-        data.push(d);
-        //console.log(JSON.stringify(d));
+    var rows = [], cols = [];
+    for (i=0; i<30; i++) {
+        rows.push("row"+i);
     }
-}
-console.log("Generated " + data.length + " values");
+    for (i=0; i<40; i++) {
+        cols.push("col"+i);
+    }
+    var data = [];
+    for (i=0; i<rows.length; i++) {
+        var rowRnd = Math.random();
+        for (j=0; j<cols.length; j++) {
+            var d = {row: i, col: j, value: 20 * rowRnd * Math.random()};
+            data.push(d);
+            //console.log(JSON.stringify(d));
+        }
+    }
+    console.log("Generated " + data.length + " values");
 
-    execute("#chart", {rowNames:rows, colNames:cols, cellSize: 12}, data);
+    buildHeatmap("heatmap1", {rowNames:rows, colNames:cols, cellSize: 12}, data);
 </script>
 
 </body>

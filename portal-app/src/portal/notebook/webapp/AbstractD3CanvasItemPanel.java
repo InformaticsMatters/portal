@@ -37,4 +37,21 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
         }
     }
 
+    protected Double safeConvertToDouble(Object o) {
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof Double) {
+            return (Double) o;
+        } else if (o instanceof Number) {
+            return ((Number) o).doubleValue();
+        } else {
+            try {
+                return new Double(o.toString());
+            } catch (NumberFormatException nfe) {
+                return null;
+            }
+        }
+    }
+
 }

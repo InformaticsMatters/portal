@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.squonk.options.OptionDescriptor;
 import portal.SessionContext;
 import portal.notebook.webapp.AbstractD3CanvasItemPanel;
+import portal.notebook.webapp.HeatmapCanvasItemPanel;
 import portal.notebook.webapp.ScatterPlotCanvasItemPanel;
 
 import javax.annotation.PostConstruct;
@@ -116,6 +117,38 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         return cellDefinition;
     }
 
+    private static CellDefinition createHeatmapCellDefinition() {
+        CellDefinition cellDefinition = new SimpleCellDefinition("Heatmap", "Heat map", "icons/visualisation_chart.png", new String[]{"heatmap", "plot", "visualization", "visualisation", "viz"}, false);
+        BindingDefinition bindingDefinition = new BindingDefinition();
+        bindingDefinition.setDisplayName("Input");
+        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_ROWS_FIELD,
+                        "Rows field", "Field to use for the rows"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_COLS_FIELD,
+                        "Columns field", "Field to use for the columns"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_VALUES_FIELD,
+                        "Values field", "Field to use for the heatmap values"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_COLLECTOR,
+                        "Collect values using", "How to handle potentially repeated values during data collection"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(Integer.class, HeatmapCanvasItemPanel.OPTION_CELL_SIZE,
+                        "Cell size", "Size of each heatmap cell (in pixels)"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(Integer.class, HeatmapCanvasItemPanel.OPTION_LEFT_MARGIN,
+                        "Left margin", "Size of space needed for row labels (in pixels)"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(Integer.class, HeatmapCanvasItemPanel.OPTION_TOP_MARGIN,
+                        "Top margin", "Size of space needed for column labels (in pixels)"));
+
+        return cellDefinition;
+    }
+
     @PostConstruct
     public void init() {
         registerStandardCellDefinitions();
@@ -161,6 +194,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(createScatterPlotCellDefinition());
         registerCellDefinition(createBoxPlotCellDefinition());
         registerCellDefinition(createParallelCoordinatePlotCellDefinition());
+        registerCellDefinition(createHeatmapCellDefinition());
         registerCellDefinition(create3DMolCellDefinition());
     }
 

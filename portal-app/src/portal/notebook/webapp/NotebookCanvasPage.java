@@ -492,6 +492,8 @@ public class NotebookCanvasPage extends WebPage {
             return new BoxPlotCanvasItemPanel("item", cellInstance.getId());
         } else if ("ParallelCoordinatePlot".equals(cellType.getName())) {
             return new ParallelCoordinatePlotCanvasItemPanel("item", cellInstance.getId());
+        } else if ("Heatmap".equals(cellType.getName())) {
+            return new HeatmapCanvasItemPanel("item", cellInstance.getId());
         } else if ("3DMol".equals(cellType.getName())) {
             return new ThreeDimMolCanvasItemPanel("item", cellInstance.getId());
         } else {

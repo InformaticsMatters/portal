@@ -102,13 +102,18 @@ public class MockJobStatusService {
 
     Dataset<MoleculeObject> createMockDataset(String prefix) {
         List<MoleculeObject> mols = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        Random random = new Random();
+        for (int i = 0; i < 500; i++) {
             Map<String, Object> values = new LinkedHashMap<>();
+
             values.put("ID", i + 1);
             values.put(prefix, 1.1);
-            values.put("x Axis", new Random().nextInt(19) - 10);
-            values.put("y Axis", new Random().nextInt(19) - 10);
-            values.put("Color", new Random().nextInt(5) + 1);
+            values.put("x Axis", random.nextInt(19) - 10);
+            values.put("y Axis", random.nextInt(19) - 10);
+            values.put("Color", random.nextInt(5) + 1);
+            values.put("row", "row" + random.nextInt(10));
+            values.put("col", "col" + random.nextInt(10));
+
             mols.add(new MoleculeObject("Cn1cnc2n(C)c(=O)n(C)c(=O)c12", "smiles", values));
         }
         return new Dataset<>(MoleculeObject.class, mols);
