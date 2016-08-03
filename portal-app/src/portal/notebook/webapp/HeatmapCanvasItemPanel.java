@@ -68,7 +68,6 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private NotebookSession notebookSession;
     private Form<ModelObject> form;
     private Label statusLabel;
-    private HeatmapAdvancedOptionsPanel advancedOptionsPanel;
 
     public HeatmapCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -157,7 +156,8 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
                     Map<Pair, List<Object>> groupedData = stream.map((o) -> {
                         Object row = o.getValue(rowsFieldName);
                         Object col = o.getValue(colsFieldName);
-                        Float value = safeConvertToFloat(o.getValue(valuesFieldName));
+                        Object value = o.getValue(valuesFieldName);
+                        //LOG.info("Data: " + row + "," + col + " -> " +value);
                         if (row != null && col != null && value != null) {
                             return new Datum(new Pair(row, col), value);
                         } else {
@@ -167,6 +167,7 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
                             .collect(Collectors.groupingBy(Datum::getPair, HashMap::new,
                                     Collectors.mapping(Datum::getValue, toList())));
 
+                    LOG.info("Num data elements: " + groupedData.size());
                     model.setPlotData(groupedData);
                 }
             }
@@ -194,21 +195,18 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 .replace("_col_names_", colJson)
                 .replace("_data_", data);
 
-        LOG.info("Javascript: " + fn);
+        //LOG.info("Javascript: " + fn);
         return fn;
 
     }
 
     @Override
     public Panel getAdvancedOptionsPanel() {
-        if (advancedOptionsPanel == null) {
-            createAdvancedOptionsPanel();
-        }
-        return advancedOptionsPanel;
+        return createAdvancedOptionsPanel();
     }
 
-    private void createAdvancedOptionsPanel() {
-        advancedOptionsPanel = new HeatmapAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
+    private HeatmapAdvancedOptionsPanel createAdvancedOptionsPanel() {
+        HeatmapAdvancedOptionsPanel advancedOptionsPanel = new HeatmapAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
         advancedOptionsPanel.setCallbackHandler(new HeatmapAdvancedOptionsPanel.CallbackHandler() {
 
             @Override
@@ -242,6 +240,8 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
         advancedOptionsPanel.setCellSize(form.getModelObject().getSizeOrDefault());
         advancedOptionsPanel.setLeftMargin(form.getModelObject().getLeftMarginOrDefault());
         advancedOptionsPanel.setTopMargin(form.getModelObject().getTopMarginOrDefault());
+
+        return advancedOptionsPanel;
     }
 
     class ModelObject implements Serializable {
@@ -399,17 +399,20 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 }
                 final ValueCollector collector2 = collector1;
 
+                LOG.info("Generating JSON for " + plotData.size() + " elements");
                 Stream<Map> items = plotData.entrySet().stream().sequential()
                         .map((e) -> {
                             Map m = new LinkedHashMap();
-                            int r = rowNames.indexOf(e.getKey().row);
-                            int c = colNames.indexOf(e.getKey().col);
+                            int r = rowNames.indexOf(e.getKey().row.toString());
+                            int c = colNames.indexOf(e.getKey().col.toString());
+                            List values = e.getValue();
+                            //LOG.info("Handling: " + e.getKey().row + "/" + r + "," + e.getKey().col + "/" + c + " -> " + (values == null ? "null" : values.size()));
                             if (r < 0 || c < 0) {
                                 return null;
                             }
                             m.put("row", r);
                             m.put("col", c);
-                            List values = e.getValue();
+
                             switch (collector2) {
                                 case Count:
                                     m.put("value", values.size());
@@ -451,11 +454,12 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
                                     break;
                             }
                             return m;
-                        }).filter((m) -> m != null && m.get("value") != null);
+                        })
+                        .filter((m) -> m != null && m.get("value") != null);
 
                 InputStream is = JsonHandler.getInstance().marshalStreamToJsonArray(items, false);
                 String json = IOUtils.toString(is);
-                //System.out.println("JSON: " + json);
+                //LOG.fine("JSON: " + json);
                 return json;
             }
         }
@@ -485,7 +489,7 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
         Pair p;
         Object value;
 
-        Datum(Pair p, Float value) {
+        Datum(Pair p, Object value) {
             this.p = p;
             this.value = value;
         }
