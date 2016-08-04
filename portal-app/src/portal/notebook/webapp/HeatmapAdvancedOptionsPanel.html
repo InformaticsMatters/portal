@@ -1,25 +1,29 @@
 <wicket:panel>
     <div>
         <form wicket:id="form" class="ui form">
-            <div class="field">
-                <label>Rows field</label>
-                <select wicket:id="rowsField" class="ui small input">
-                </select>
+            <div class="two fields">
+                <div class="field">
+                    <label>Rows field</label>
+                    <select wicket:id="rowsField" class="ui small input">
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Columns field</label>
+                    <select wicket:id="colsField" class="ui small input">
+                    </select>
+                </div>
             </div>
-            <div class="field">
-                <label>Columns field</label>
-                <select wicket:id="colsField" class="ui small input">
-                </select>
-            </div>
-            <div class="field">
-                <label>Values field</label>
-                <select wicket:id="valuesField" class="ui small input">
-                </select>
-            </div>
-            <div class="field">
-                <label>Collector function</label>
-                <select wicket:id="collector" class="ui small input">
-                </select>
+            <div class="two fields">
+                <div class="field">
+                    <label>Values field</label>
+                    <select wicket:id="valuesField" class="ui small input">
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Collector function</label>
+                    <select wicket:id="collector" class="ui small input">
+                    </select>
+                </div>
             </div>
             <div class="field">
                 <label>Cell size</label>
@@ -31,14 +35,12 @@
             <div class="two fields">
                 <div class="field">
                     <label>Left margin</label>
-
                     <div class="ui small input">
                         <input wicket:id="leftMargin" type="number"/>
                     </div>
                 </div>
                 <div class="field">
                     <label>Top margin</label>
-
                     <div class="ui small input">
                         <input wicket:id="topMargin" type="number"/>
                     </div>

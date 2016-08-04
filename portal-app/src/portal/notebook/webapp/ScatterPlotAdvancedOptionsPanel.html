@@ -1,25 +1,29 @@
 <wicket:panel>
     <div>
         <form wicket:id="form" class="ui form">
-            <div class="field">
-                <label>X axis field</label>
-                <select wicket:id="x" class="ui small input">
-                </select>
+            <div class="two fields">
+                <div class="field">
+                    <label>X axis field</label>
+                    <select wicket:id="x" class="ui small input">
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Y axis field</label>
+                    <select wicket:id="y" class="ui small input">
+                    </select>
+                </div>
             </div>
-            <div class="field">
-                <label>Y axis field</label>
-                <select wicket:id="y" class="ui small input">
-                </select>
-            </div>
-            <div class="field">
-                <label>Color</label>
-                <select wicket:id="color" class="ui small input">
-                </select>
-            </div>
-            <div class="field">
-                <label>Point size</label>
-                <select wicket:id="pointSize" class="ui small input">
-                </select>
+            <div class="two fields">
+                <div class="field">
+                    <label>Color</label>
+                    <select wicket:id="color" class="ui small input">
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Point size</label>
+                    <select wicket:id="pointSize" class="ui small input">
+                    </select>
+                </div>
             </div>
             <div class="checkbox">
                 <input wicket:id="showAxisLabels" type="checkbox">
@@ -27,7 +31,8 @@
             </div>
 
             <div class="actions">
-                <input type="submit" wicket:id="save" style="width: 50px; padding: 5px;" class="ui mini button blue"
+                <input type="submit" wicket:id="save" style="width: 50px; padding: 5px;"
+                       class="ui mini button blue"
                        value="Save">
             </div>
         </form>
