@@ -3,14 +3,16 @@ package portal.notebook.webapp;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-
-import java.io.Serializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.squonk.types.NumberRange;
 
 /**
  * @author Tim Dudgeon
  */
 public class NumberRangeFieldEditorPanel<T extends Number & Comparable<T>> extends FieldEditorPanel {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NumberRangeFieldEditorPanel.class.getName());
 
     private final FieldEditorModel fieldEditorModel;
     private NumberTextField<T> minField;
@@ -29,34 +31,20 @@ public class NumberRangeFieldEditorPanel<T extends Number & Comparable<T>> exten
     }
 
     private void addComponents() {
-        CompoundPropertyModel<NumberRangeModelObject> model = new CompoundPropertyModel<>(new NumberRangeModelObject());
 
-        // TODO - need a way for the TypeDescriptor (available from the FieldEditorModel) to define the labels
-        add(new Label("minLabel", fieldEditorModel.getDisplayName() + " min"));
-        add(new Label("minLabel", fieldEditorModel.getDisplayName() + " max"));
-        minField = new NumberTextField<T>("min", model.bind("minValue"));
-        maxField = new NumberTextField<T>("max", model.bind("maxValue"));
+        Class cls = fieldEditorModel.getTypeDescriptor().getType();
+        NumberRange range = NumberRange.create(cls);
+
+        CompoundPropertyModel<NumberRange> model = new CompoundPropertyModel<>(range);
+
+        // TODO - allow the TypeDescriptor to specify min and max bounds
+        Label label = new Label("label", fieldEditorModel.getDisplayName());
+        //label.add(new AttributeModifier("title", "tooltip here"));
+        minField = new NumberTextField<T>("minValue", model.bind("minValue"), range.getType());
+        maxField = new NumberTextField<T>("maxValue", model.bind("maxValue"), range.getType());
+        add(label);
         add(minField);
         add(maxField);
-    }
-
-    // TODO - this would be moved out to an API class so that values could be submitted to server.
-    class NumberRangeModelObject implements Serializable {
-
-        private T minValue;
-        private T maxValue;
-
-        public NumberRangeModelObject() {}
-        public NumberRangeModelObject(T minValue, T maxValue) {
-            this.minValue = minValue;
-            this.maxValue = maxValue;
-        }
-
-        public T getMinValue() { return minValue; }
-        public void setMinValue(T value) { this.minValue = value; }
-
-        public T getMaxValue() { return maxValue; }
-        public void setMaxValue(T value) { this.maxValue = value; }
     }
 
 

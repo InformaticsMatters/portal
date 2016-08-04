@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.options.*;
 import org.squonk.options.types.Structure;
+import org.squonk.types.NumberRange;
 import portal.notebook.api.*;
 import toolkit.wicket.semantic.NotifierProvider;
 
@@ -160,6 +161,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             return new DoubleFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel(), typeDescriptor));
         } else if (typeDescriptor.getType() == Boolean.class) {
             return new BooleanFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel(), typeDescriptor));
+        } else if (NumberRange.class.isAssignableFrom(typeDescriptor.getType())) {
+            return new NumberRangeFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel(), typeDescriptor));
         } else if (typeDescriptor.getType() == File.class) {
             OptionUploadCallback callback = new OptionUploadCallback(optionInstance);
             return new FileFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor.getLabel(), typeDescriptor), callback);
