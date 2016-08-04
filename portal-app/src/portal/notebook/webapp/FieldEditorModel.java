@@ -1,18 +1,17 @@
 package portal.notebook.webapp;
 
+import org.squonk.options.OptionDescriptor;
 import org.squonk.options.TypeDescriptor;
 
 import java.io.Serializable;
 
 public class FieldEditorModel implements Serializable {
-    private final String displayName;
     private Object value;
-    private TypeDescriptor typeDescriptor;
+    private OptionDescriptor optionDescriptor;
 
-    protected FieldEditorModel(Object value, String displayName, TypeDescriptor typeDescriptor) {
+    protected FieldEditorModel(Object value, OptionDescriptor optionDescriptor) {
         this.value = value;
-        this.displayName = displayName;
-        this.typeDescriptor = typeDescriptor;
+        this.optionDescriptor = optionDescriptor;
     }
 
     public Object getValue() {
@@ -24,10 +23,14 @@ public class FieldEditorModel implements Serializable {
     }
 
     public String getDisplayName() {
-        return displayName;
+        return optionDescriptor == null ? null : optionDescriptor.getLabel();
+    }
+
+    public OptionDescriptor getOptionDescriptor() {
+        return optionDescriptor;
     }
 
     public TypeDescriptor getTypeDescriptor() {
-        return typeDescriptor;
+        return optionDescriptor == null ? null : optionDescriptor.getTypeDescriptor();
     }
 }
