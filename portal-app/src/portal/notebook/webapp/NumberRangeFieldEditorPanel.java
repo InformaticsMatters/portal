@@ -34,9 +34,12 @@ public class NumberRangeFieldEditorPanel<T extends Number & Comparable<T>> exten
 
     private void addComponents() {
 
-        OptionDescriptor optionDescriptor = fieldEditorModel.getOptionDescriptor();
+        OptionDescriptor<? extends NumberRange> optionDescriptor = fieldEditorModel.getOptionDescriptor();
         Class cls = optionDescriptor.getTypeDescriptor().getType();
-        NumberRange range = NumberRange.create(cls);
+        NumberRange range = (NumberRange)fieldEditorModel.getValue();
+        if (range == null) {
+            range = NumberRange.create(cls);
+        }
 
         CompoundPropertyModel<NumberRange> model = new CompoundPropertyModel<>(range);
 

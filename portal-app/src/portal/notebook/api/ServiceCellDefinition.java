@@ -114,10 +114,20 @@ public class ServiceCellDefinition extends CellDefinition {
             }
 
             for (Map.Entry<String,Object> e: options.entrySet()) {
-                step.withOption(e.getKey(), e.getValue());
+                String key = e.getKey();
+                Object value = e.getValue();
+                if (value != null) {
+                    LOG.info("Writing option: " + key + " [" + value.getClass().getName() + "] -> " + value );
+                    //if (key.startsWith("header.") || key.startsWith("query.")) {
+                    //    step.withOption(key, value.toString());
+                    //} else {
+                        step.withOption(key, value);
+                    //}
+                }
             }
 
             return buildJobDefinition(cellExecutionData, cell, step);
         }
+
     }
 }

@@ -92,7 +92,9 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
             }
             // ----- end of huge hack --------------
         } else {
-            td.putOptionValue(options, key, value);
+            if (value != null) {
+                td.putOptionValue(options, key, value);
+            }
         }
     }
 

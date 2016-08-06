@@ -7,6 +7,7 @@ import org.squonk.options.OptionDescriptor;
 import org.squonk.types.NumberRange;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Map;
 
 /**
  * Created by timbo on 29/01/16.
@@ -36,9 +37,10 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
         @Override
         protected JobDefinition buildJobDefinition(CellInstance cellInstance, CellExecutionData cellExecutionData) {
 
+            Map<String,Object> options = collectAllOptions(cellInstance);
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
-                    .withOptions(collectAllOptions(cellInstance));
+                    .withOptions(options);
 
             return buildJobDefinition(cellExecutionData, cellInstance, step1);
         }

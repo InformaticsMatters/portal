@@ -89,7 +89,7 @@
         <fileset dir="${basedir}/../lib/inmethod/6.9.0">
             <patternset refid="library.patterns"/>
         </fileset>
-        <fileset dir="${basedir}/../lib/jackson/2.6.4">
+        <fileset dir="${basedir}/../lib/jackson/2.7.2">
             <patternset refid="library.patterns"/>
         </fileset>
         <fileset dir="${basedir}/../lib/jchem/6.2.0_b787">

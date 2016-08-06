@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.TypeDescriptor;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
 public  class OptionInstance implements Serializable {
     private final static long serialVersionUID = 1l;
     private OptionDescriptor optionDescriptor;
+    @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
     private Object value;
 
     public Object getValue() {
