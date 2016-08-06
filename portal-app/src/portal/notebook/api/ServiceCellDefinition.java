@@ -118,11 +118,7 @@ public class ServiceCellDefinition extends CellDefinition {
                 Object value = e.getValue();
                 if (value != null) {
                     LOG.info("Writing option: " + key + " [" + value.getClass().getName() + "] -> " + value );
-                    //if (key.startsWith("header.") || key.startsWith("query.")) {
-                    //    step.withOption(key, value.toString());
-                    //} else {
-                        step.withOption(key, value);
-                    //}
+                    step.withOption(key, value);
                 }
             }
 
