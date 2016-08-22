@@ -124,7 +124,12 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private void notifyExecutionChanged(AjaxRequestTarget ajaxRequestTarget, Execution execution) {
         cellTitleBarPanel.applyExecutionStatus(execution);
         ajaxRequestTarget.add(cellTitleBarPanel);
-        cellChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), execution.getJobStatus(), ajaxRequestTarget);
+        CellInstance cell = findCellInstance();
+        if (cell != null) {
+            cellChangeManager.notifyExecutionStatusChanged(cell.getId(), execution.getJobStatus(), ajaxRequestTarget);
+        } else {
+            LOGGER.warn("Could not find cell" + cellId);
+        }
     }
 
     private void notifyCellStatus(AjaxRequestTarget ajaxRequestTarget) {
