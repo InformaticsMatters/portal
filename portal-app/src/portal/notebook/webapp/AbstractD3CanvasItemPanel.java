@@ -2,6 +2,8 @@ package portal.notebook.webapp;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.notebook.api.CellInstance;
+import portal.notebook.webapp.results.DatasetDetailsPanel;
+import toolkit.wicket.semantic.SemanticModalPanel;
 
 import java.util.logging.Logger;
 
@@ -16,13 +18,19 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
     public static final String OPTION_Y_AXIS = "yAxis";
     public static final String OPTION_FIELDS = "fields";
 
-    protected int svgWidth, svgHeight;
-
     public AbstractD3CanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
+        //addComponents();
     }
 
+    //protected void addComponents() {
+    //    addResultsViewerPanel();
+    //}
 
+    @Override
+    protected SemanticModalPanel createResultsViewerPanel() {
+        return new DatasetDetailsPanel("datasetDetails", "modalElement");
+    }
 
     protected Float safeConvertToFloat(Object o) {
         if (o == null) {

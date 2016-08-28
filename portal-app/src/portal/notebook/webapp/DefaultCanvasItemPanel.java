@@ -39,6 +39,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         setOutputMarkupId(true);
         addForm();
         addTitleBar();
+        addResultsViewerPanel();
         CellInstance cellInstance = findCellInstance();
         CellDefinition cellDefinition = cellInstance.getCellDefinition();
         if (cellDefinition.getInitialWidth() != null) {

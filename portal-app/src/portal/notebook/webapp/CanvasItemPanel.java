@@ -16,6 +16,7 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
 import toolkit.wicket.semantic.NotifierProvider;
+import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     @Inject
     private CellChangeManager cellChangeManager;
     private CellTitleBarPanel cellTitleBarPanel;
+    private SemanticModalPanel resultsPanel;
     private Execution oldExecution;
     @Inject
     private NotifierProvider notifierProvider;
@@ -39,6 +41,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
         this.cellId = cellId;
+        addResultsViewerPanel();
         try {
             updateStatusInfo();
         } catch (Throwable t) {
@@ -201,10 +204,32 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public String getStatusString() {
         if (cellStatusInfo == null) {
             return "";
-        } else if (cellStatusInfo.getMessage() == null){
+        } else if (cellStatusInfo.getMessage() == null) {
             return cellStatusInfo.toString() + ".";
         } else {
             return cellStatusInfo.toString() + ": " + cellStatusInfo.getMessage();
+        }
+    }
+
+    protected void addResultsViewerPanel() {
+        resultsPanel = createResultsViewerPanel();
+        if (resultsPanel != null) {
+            add(resultsPanel);
+        }
+    }
+
+    protected SemanticModalPanel createResultsViewerPanel() {
+        return null;
+    }
+
+    @Override
+    public void onShowResults() throws Exception {
+        if (resultsPanel != null) {
+            // TODO - also check if there are results
+            resultsPanel.showModal();
+        } else {
+            NotebookCanvasPage page = (NotebookCanvasPage) getPage();
+            page.getNoResultsPanel().showModal();
         }
     }
 
