@@ -141,18 +141,18 @@ public class CellTitleBarPanel extends Panel {
             }
         });
 
-//        add(new AjaxLink("expand") {
-//
-//            @Override
-//            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-//                try {
-//                    callbackHandler.onShowResults();
-//                } catch (Throwable t) {
-//                    LOGGER.log(Level.WARNING, "Error showing dataset details panel", t);
-//                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
-//                }
-//            }
-//        });
+        add(new AjaxLink("expand") {
+
+            @Override
+            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+                try {
+                    callbackHandler.onShowResults();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error showing dataset details panel", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
+            }
+        });
     }
 
     private void onBindingsLinkClicked(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {

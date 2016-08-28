@@ -226,11 +226,22 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public void onShowResults() throws Exception {
         if (resultsPanel != null) {
             // TODO - also check if there are results
-            resultsPanel.showModal();
+            resultsPanel.showModal(getExtraJavascriptForResultsViewer());
         } else {
             NotebookCanvasPage page = (NotebookCanvasPage) getPage();
             page.getNoResultsPanel().showModal();
         }
     }
+
+    /** Generate any extra JavaScript that is needed for the results viewer to function.
+     * Typically adding behaviours to DOM elements. You can include the token #:modalElement which will
+     * be substituted for the ID of the outermost DIV of the modal. This allows just that modal to be targetted.
+     *
+     * @return Empty String.
+     */
+    protected String getExtraJavascriptForResultsViewer() {
+        return "";
+    }
+
 
 }

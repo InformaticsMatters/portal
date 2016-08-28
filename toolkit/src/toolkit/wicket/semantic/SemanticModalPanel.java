@@ -30,13 +30,24 @@ public class SemanticModalPanel extends Panel {
     }
 
     public void showModal() {
+        showModal(null);
+    }
+
+    /** Show this modal panel
+     *
+     * @param extraJavascript Additional javascript that is executed after the modal is shown. Can be null.
+     */
+    public void showModal(String extraJavascript) {
         AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
         if (ajaxRequestTarget != null) {
             ajaxRequestTarget.add(getModalRootComponent());
             String template = "$('#:modalElement')" +
                     ".modal('setting', 'closable', false)" +
                     ".modal('setting', 'onApprove', function() { return false; })" +
-                    ".modal('show')";
+                    ".modal('show');\n";
+            if (extraJavascript != null && extraJavascript.length() > 0) {
+                template += extraJavascript;
+            }
             String script = template.replaceAll(":modalElement", modalElementComponent.getMarkupId());
             ajaxRequestTarget.appendJavaScript(script);
             if (parentModalPanel != null) {

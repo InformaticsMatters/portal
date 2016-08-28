@@ -68,4 +68,9 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
         }
     }
 
+    protected String getExtraJavascriptForResultsViewer() {
+        String js = super.getExtraJavascriptForResultsViewer();
+        return js += "$('#:modalElement .menu .item').tab();\n";
+    }
+
 }
