@@ -47,7 +47,8 @@ public class DatasetMetadataPanel extends Panel {
             protected void populateItem(ListItem<Field> item) {
                 Field f = item.getModelObject();
                 item.add(new Label("fieldName", f.name));
-                item.add(new Label("fieldType", f.type));
+                String propCount = f.properties.size() + (f.properties.size() == 1 ? " property" : " properties");
+                item.add(new Label("fieldDesc", "[" + f.type + ", " + propCount + "]" ));
                 item.add(new ListView<Property>("field", f.properties) {
 
                     @Override
