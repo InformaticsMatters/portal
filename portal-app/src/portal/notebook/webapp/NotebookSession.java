@@ -278,6 +278,15 @@ public class NotebookSession implements Serializable {
         }
     }
 
+    public DatasetMetadata<? extends BasicObject> squonkDatasetMetadata(VariableInstance variableInstance) throws Exception {
+        String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+
+        if (metaJson == null) {
+        return null;
+        } else {
+            return JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
+        }
+    }
     /** Retrieve Dataset for this variable.
      * This is based on an InputStream that is read, and must be closed once finished e.g. by closing the Stream.
      *

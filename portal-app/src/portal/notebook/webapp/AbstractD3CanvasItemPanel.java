@@ -1,10 +1,17 @@
 package portal.notebook.webapp;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import org.squonk.dataset.Dataset;
+import org.squonk.dataset.DatasetMetadata;
+import org.squonk.types.BasicObject;
 import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableDefinition;
+import portal.notebook.api.VariableInstance;
 import portal.notebook.webapp.results.DatasetDetailsPanel;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
+import javax.inject.Inject;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -18,19 +25,13 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
     public static final String OPTION_Y_AXIS = "yAxis";
     public static final String OPTION_FIELDS = "fields";
 
+    @Inject
+    protected NotebookSession notebookSession;
+
     public AbstractD3CanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
-        //addComponents();
     }
 
-    //protected void addComponents() {
-    //    addResultsViewerPanel();
-    //}
-
-    @Override
-    protected SemanticModalPanel createResultsViewerPanel() {
-        return new DatasetDetailsPanel("datasetDetails", "modalElement");
-    }
 
     protected Float safeConvertToFloat(Object o) {
         if (o == null) {
@@ -66,11 +67,6 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
                 return null;
             }
         }
-    }
-
-    protected String getExtraJavascriptForResultsViewer() {
-        String js = super.getExtraJavascriptForResultsViewer();
-        return js += "$('#:modalElement .menu .item').tab();\n";
     }
 
 }

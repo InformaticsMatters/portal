@@ -41,8 +41,6 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
     private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', {}, :data)";
 
-    @Inject
-    private NotebookSession notebookSession;
     private Form<ModelObject> form;
     private Label statusLabel;
     private ParallelCoordinatePlotAdvancedOptionsPanel advancedOptionsPanel;

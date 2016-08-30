@@ -1,34 +1,24 @@
 <wicket:panel>
-    <div wicket:id="modalElement" class="ui modal long fullscreen hidden">
-        <i class="close icon"></i>
-        <div class="header">
-            Results of cell XYZ: Dataset ABC
-        </div>
-        <div class="content datasetviewer">
 
-            <div class="ui top attached tabular menu">
-                <a class="active item" data-tab="data">Results</a>
-                <a class="item" data-tab="meta">Metadata</a>
-            </div>
-            <div class="ui bottom attached active tab segment" data-tab="data">
-                <p>Lots of data</p>
-                <p>Lots of data</p>
-                <p>Lots of data</p>
-                <p>Lots of data</p>
-                <p>Lots of data</p>
+    <div class="ui top attached tabular menu">
+        <a class="active item" data-tab="metadata">Metadata</a>
+        <a class="item" data-tab="data">Results</a>
 
-            </div>
-            <div class="ui bottom attached tab segment" data-tab="meta">
-                <p>Lots of metadata</p>
-                <p>Lots of metadata</p>
-
-            </div>
-
-        </div>
     </div>
 
-    <script type="text/javascript">
-    $('.modal .datasetviewer .menu .item').tab();
-    </script>
+    <div wicket:id="metadata" class="ui bottom attached active tab segment" data-tab="metadata">
+        <p>Lots of metadata</p>
+        <p>Lots of metadata</p>
+
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="data">
+        <p>Lots of data</p>
+        <p>Lots of data</p>
+        <p>Lots of data</p>
+        <p>Lots of data</p>
+        <p>Lots of data</p>
+
+    </div>
 
 </wicket:panel>

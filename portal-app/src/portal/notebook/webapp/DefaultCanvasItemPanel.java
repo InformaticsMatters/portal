@@ -11,6 +11,7 @@ import org.squonk.options.*;
 import org.squonk.options.types.Structure;
 import org.squonk.types.NumberRange;
 import portal.notebook.api.*;
+import portal.notebook.webapp.results.ResultsViewerPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
@@ -38,8 +39,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         optionEditorModelMap = new LinkedHashMap<>();
         setOutputMarkupId(true);
         addForm();
-        addTitleBar();
-        addResultsViewerPanel();
+        addTitleBarAndResultsViewer();
         CellInstance cellInstance = findCellInstance();
         CellDefinition cellDefinition = cellInstance.getCellDefinition();
         if (cellDefinition.getInitialWidth() != null) {

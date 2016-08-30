@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import org.squonk.dataset.DatasetMetadata;
 import org.squonk.jobdef.JobStatus;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -12,13 +13,16 @@ import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import portal.PopupContainerProvider;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellInstance;
+import portal.notebook.api.*;
 import portal.notebook.service.Execution;
+import portal.notebook.webapp.results.DatasetResultsHandler;
+import portal.notebook.webapp.results.ResultsHandler;
+import portal.notebook.webapp.results.ResultsViewerPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
@@ -31,21 +35,43 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     @Inject
     private CellChangeManager cellChangeManager;
     private CellTitleBarPanel cellTitleBarPanel;
-    private SemanticModalPanel resultsPanel;
     private Execution oldExecution;
     @Inject
     private NotifierProvider notifierProvider;
     private Label statusLabel;
     private CellStatusInfo cellStatusInfo;
 
+    private SemanticModalPanel resultsPanel;
+    protected ResultsHandler resultsHandler;
+
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
         this.cellId = cellId;
-        addResultsViewerPanel();
+
+        createResultsHandlers();
+
         try {
             updateStatusInfo();
         } catch (Throwable t) {
             LOGGER.warn("Error refreshing status", t);
+        }
+    }
+
+    protected void createResultsHandlers() {
+        CellInstance cellInstance = findCellInstance();
+        CellDefinition cellDefinition = cellInstance.getCellDefinition();
+        List<VariableDefinition> varDefs = cellDefinition.getVariableDefinitionList();
+        // TODO - handle multiple outputs (resultsHandler should become an array and results viewer should handle multiple types)
+        // TODO - handle other result types
+        if (varDefs != null && varDefs.size() > 0) {
+            for (VariableDefinition varDef : varDefs) {
+                String name = varDef.getName();
+                VariableType type = varDef.getVariableType();
+                if (type == VariableType.DATASET) {
+                    resultsHandler = new DatasetResultsHandler(name, notebookSession, cellInstance);
+                    return;
+                }
+            }
         }
     }
 
@@ -63,11 +89,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         LOGGER.info(js);
 
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
-    }
-
-    protected void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", findCellInstance(), this);
-        add(cellTitleBarPanel);
     }
 
     protected void makeCanvasItemResizable(HtmlHeaderContainer container, String fitCallbackFunction, int minWidth, int minHeight) {
@@ -211,37 +232,49 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         }
     }
 
-    protected void addResultsViewerPanel() {
-        resultsPanel = createResultsViewerPanel();
-        if (resultsPanel != null) {
+    @Override
+    public void onShowResults() throws Exception {
+        if (resultsHandler != null) {
+            boolean hasResults = resultsHandler.preparePanelForDisplay();
+            if (hasResults) {
+                resultsPanel.showModal(resultsHandler.getExtraJavascriptForResultsViewer());
+                return;
+            }
+        }
+        NotebookCanvasPage page = (NotebookCanvasPage) getPage();
+        page.getNoResultsPanel().showModal();
+    }
+
+    /**
+     * Adds a title bar as the Wicket ID titleBar.
+     * This method is defined in this base class but must be called at the right moment from a subclass
+     * if you want a title bar to appear which you probably do.
+     */
+    protected void addTitleBar() {
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", findCellInstance(), this);
+        add(cellTitleBarPanel);
+    }
+
+    /**
+     * Adds a results viewer as the Wicket ID resultsViewer.
+     * This appears in the modal popup when the expand button in the title bar is clicked.
+     * This method is defined in this base class but must be called at the right moment from a subclass
+     * for cells that have output variables that have a supported viewer.
+     * Which results viewer(s) appear depends on the resultHandlers that are defined. If none are defined then
+     * you get a generic popup saying viewing results is not supported.
+     */
+    protected void addResultsViewer() {
+        if (resultsHandler != null) {
+            resultsPanel = new ResultsViewerPanel("resultsViewer", "modalViewer", resultsHandler);
             add(resultsPanel);
         }
     }
 
-    protected SemanticModalPanel createResultsViewerPanel() {
-        return null;
-    }
-
-    @Override
-    public void onShowResults() throws Exception {
-        if (resultsPanel != null) {
-            // TODO - also check if there are results
-            resultsPanel.showModal(getExtraJavascriptForResultsViewer());
-        } else {
-            NotebookCanvasPage page = (NotebookCanvasPage) getPage();
-            page.getNoResultsPanel().showModal();
-        }
-    }
-
-    /** Generate any extra JavaScript that is needed for the results viewer to function.
-     * Typically adding behaviours to DOM elements. You can include the token #:modalElement which will
-     * be substituted for the ID of the outermost DIV of the modal. This allows just that modal to be targetted.
-     *
-     * @return Empty String.
+    /**
+     * Add title bar and results viewer.
      */
-    protected String getExtraJavascriptForResultsViewer() {
-        return "";
+    protected void addTitleBarAndResultsViewer() {
+        addTitleBar();
+        addResultsViewer();
     }
-
-
 }

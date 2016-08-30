@@ -45,10 +45,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     public static final String OPTION_AXIS_LABELS = "axisLabels";
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
-    @Inject
-    private NotebookSession notebookSession;
-    @Inject
-    private NotifierProvider notifierProvider;
 
     protected static Map<String,Integer> POINT_SIZES = new LinkedHashMap<>();
 
