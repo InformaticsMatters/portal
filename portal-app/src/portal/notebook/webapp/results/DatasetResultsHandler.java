@@ -1,11 +1,14 @@
 package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 import portal.notebook.webapp.NotebookSession;
+
+import java.util.List;
 
 /**
  * Created by timbo on 28/08/2016.
@@ -34,9 +37,9 @@ public class DatasetResultsHandler implements ResultsHandler {
 
     public boolean preparePanelForDisplay() throws Exception {
 
-        DatasetMetadata meta = fetchOutputMetadata();
-        panel.setDatasetMetadata(meta);
-        return meta != null;
+        Dataset dataset = fetchDataset();
+        panel.setDataset(dataset);
+        return dataset != null;
 
     }
 
@@ -52,6 +55,17 @@ public class DatasetResultsHandler implements ResultsHandler {
             meta = notebookSession.squonkDatasetMetadata(variableInstance);
         }
         return meta;
+    }
+
+
+    private Dataset fetchDataset() throws Exception {
+
+        VariableInstance variableInstance = cellInstance.getVariableInstanceMap().get(variableName);
+        Dataset<? extends BasicObject> data = null;
+        if (variableInstance != null) {
+            data = notebookSession.squonkDataset(variableInstance);
+        }
+        return data;
     }
 
 

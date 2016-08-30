@@ -455,3 +455,9 @@ div.ui-resizable-handle.ui-resizable-s {
   right: 0;
   font-size:0;
 }
+
+
+.resultsViewer .card {
+    width: 225px!important;
+
+}

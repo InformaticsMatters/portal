@@ -125,18 +125,4 @@ public class DatasetMetadataPanel extends Panel {
         List<Property> properties;
     }
 
-    class Property implements Serializable {
-        String key;
-        Object value;
-
-        Property() {
-        }
-
-        Property(String key, Object value) {
-            this.key = key;
-            this.value = value;
-        }
-
-    }
-
 }
