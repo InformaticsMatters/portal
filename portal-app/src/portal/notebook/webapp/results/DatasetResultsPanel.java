@@ -31,11 +31,17 @@ public class DatasetResultsPanel extends Panel {
     }
 
     private void addComponents() {
+
+
+
         add(new ListView<Datum>("structureCard", new ResultsListModel()) {
 
             @Override
             protected void populateItem(ListItem<Datum> listItem) {
                 Datum d = listItem.getModelObject();
+
+                listItem.add(new Label("uuid", d.UUID));
+
                 listItem.add(new ListView<Property>("fields", new ObjectPropertiesModel(d)) {
 
                     @Override
@@ -58,7 +64,6 @@ public class DatasetResultsPanel extends Panel {
         @Override
         protected List<Property> load() {
             List<Property> list = new ArrayList<>();
-            list.add(new Property("UUID", d.UUID));
             d.fieldTypes.forEach((k,v) -> {
                 list.add(new Property(k, d.object.getValue(k)));
             });

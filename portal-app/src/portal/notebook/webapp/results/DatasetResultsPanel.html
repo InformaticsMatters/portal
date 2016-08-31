@@ -1,28 +1,33 @@
 <wicket:panel>
 
 
-    <div class="ui cards">
+    <div class="ui five column grid">
 
-        <div wicket:id="structureCard" class="transparent card">
+        <div wicket:id="structureCard" class="column">
+            <div class="ui fluid card">
 
-            <div class="image">
-                <img class="ui medium image" src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Caffeine.svg">
-            </div>
-            <div class="content floated">
-                <table class="ui very basic collapsing celled small compact table">
+                <div class="image">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Caffeine.svg">
+                </div>
+                <div class="content">
 
-                    <tbody>
-                    <tr wicket:id="fields">
+                    <div wicket:id="uuid"></div>
 
-                        <td wicket:id="fieldkey">Prop name</td>
-                        <td wicket:id="fieldvalue">Prop value</td>
+                    <table class="ui very basic collapsing celled small compact table">
 
-                    </tr>
-                    </tbody>
-                </table>
+                        <tbody>
+                        <tr wicket:id="fields">
+
+                            <td wicket:id="fieldkey">Prop name</td>
+                            <td wicket:id="fieldvalue">Prop value</td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        
+
     </div>
 
 
