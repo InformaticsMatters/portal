@@ -81,10 +81,6 @@ public class DatasetMetadataPanel extends Panel {
             return results;
         }
 
-        @Override
-        public void detach() {
-            super.detach();
-        }
     }
 
     class FieldPropertiesModel extends LoadableDetachableModel<List<Field>> {

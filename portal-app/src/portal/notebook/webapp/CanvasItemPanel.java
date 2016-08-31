@@ -1,7 +1,5 @@
 package portal.notebook.webapp;
 
-import org.squonk.dataset.DatasetMetadata;
-import org.squonk.jobdef.JobStatus;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;

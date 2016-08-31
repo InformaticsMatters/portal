@@ -16,11 +16,21 @@ import java.util.stream.Collectors;
  */
 public class DatasetDetailsPanel extends Panel {
 
-    private final CompoundPropertyModel<DatasetMetadata> datasetMetadataModel = new CompoundPropertyModel<>(new DatasetMetadata(BasicObject.class));
-    private final CompoundPropertyModel<List<? extends BasicObject>> resultsModel = new CompoundPropertyModel<>(Collections.emptyList());
+    private final CompoundPropertyModel<DatasetMetadata> datasetMetadataModel;
+    private final CompoundPropertyModel<List<? extends BasicObject>> resultsModel;
 
     public DatasetDetailsPanel(String id) {
         super(id);
+
+        // create dummy data as we need something to render
+        DatasetMetadata dummyMeta = new DatasetMetadata(BasicObject.class);
+        dummyMeta.getValueClassMappings().put("dummy", String.class);
+        datasetMetadataModel = new CompoundPropertyModel<>(dummyMeta);
+
+        BasicObject dummyObject = new BasicObject();
+        dummyObject.putValue("dummy", "dummy property");
+        resultsModel = new CompoundPropertyModel<>(Collections.singletonList(dummyObject));
+
         addContent();
     }
 

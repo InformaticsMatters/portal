@@ -297,6 +297,9 @@ public class NotebookSession implements Serializable {
     public Dataset<? extends BasicObject> squonkDataset(VariableInstance variableInstance) throws Exception {
 
         String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        if (metaJson == null) {
+            return null;
+        }
         DatasetMetadata meta = JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
         InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
         InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
