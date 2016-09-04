@@ -21,12 +21,12 @@ public class BasicObjectCardPanel<T extends BasicObject> extends Panel {
         super(id);
         this.classMappings = classMappings;
         this.o = o;
-        addContent();
+        addContent(o);
     }
 
-    private void addContent() {
+    private void addContent(T o) {
 
-        handleMainContent();
+        handleMainContent(o);
 
         add(new Label("uuid", o.getUUID()));
         RepeatingView tableRows = new RepeatingView("fields");
@@ -41,7 +41,7 @@ public class BasicObjectCardPanel<T extends BasicObject> extends Panel {
         });
     }
 
-    protected void handleMainContent() {
+    protected void handleMainContent(T o) {
         // noop for BasicObject
     }
 

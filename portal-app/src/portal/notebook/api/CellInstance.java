@@ -21,6 +21,7 @@ public class CellInstance implements Serializable {
     private Integer positionTop;
     private Integer sizeWidth;
     private Integer sizeHeight;
+    private final Map<String,Object> settings = new LinkedHashMap<>();
 
     public String getName() {
         return name;
@@ -90,4 +91,12 @@ public class CellInstance implements Serializable {
         this.sizeHeight = sizeHeight;
     }
 
+    /** Get the settings for this cell. These are things that are not related to bindings etc.
+     * An example is the number of columns to use the for the results viewer
+     *
+     * @return
+     */
+    public Map<String, Object> getSettings() {
+        return settings;
+    }
 }

@@ -10,6 +10,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.core.client.StructureIOClient;
 import portal.PopupContainerProvider;
 import portal.notebook.api.*;
 import portal.notebook.service.Execution;
@@ -41,6 +42,8 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
     private SemanticModalPanel resultsPanel;
     protected ResultsHandler resultsHandler;
+    @Inject
+    private StructureIOClient structureIOClient;
 
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
@@ -66,7 +69,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                 String name = varDef.getName();
                 VariableType type = varDef.getVariableType();
                 if (type == VariableType.DATASET) {
-                    resultsHandler = new DatasetResultsHandler(name, notebookSession, cellInstance);
+                    resultsHandler = new DatasetResultsHandler(name, notebookSession, structureIOClient, cellInstance);
                     return;
                 }
             }

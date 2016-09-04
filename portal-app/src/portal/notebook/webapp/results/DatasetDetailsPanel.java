@@ -1,50 +1,72 @@
 package portal.notebook.webapp.results;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
+import org.squonk.types.MoleculeObject;
 
-import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * Created by timbo on 27/08/2016.
  */
 public class DatasetDetailsPanel extends Panel {
 
-    private final CompoundPropertyModel<DatasetMetadata> datasetMetadataModel;
-    private final CompoundPropertyModel<List<? extends BasicObject>> resultsModel;
+    private final IModel<DatasetMetadata> datasetMetadataModel;
+    private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
+    private final IModel<List<? extends BasicObject>> resultsModel;
+    private final IModel<Map<String,Object>> settingsModel;
+    private Class<? extends BasicObject> datasetType;
 
-    public DatasetDetailsPanel(String id) {
+    public DatasetDetailsPanel(String id, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
         super(id);
+        this.cellDatasetProvider = cellDatasetProvider;
+        this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata)null);
+        this.resultsModel = new CompoundPropertyModel<>(Collections.singletonList(null));
+        this.settingsModel = new Model(new LinkedHashMap<String,Object>());
 
-        // create dummy data as we need something to render
-        DatasetMetadata dummyMeta = new DatasetMetadata(BasicObject.class);
-        dummyMeta.getValueClassMappings().put("dummy", String.class);
-        datasetMetadataModel = new CompoundPropertyModel<>(dummyMeta);
-
-        BasicObject dummyObject = new BasicObject();
-        dummyObject.putValue("dummy", "dummy property");
-        resultsModel = new CompoundPropertyModel<>(Collections.singletonList(dummyObject));
-
-        addContent();
+        addDummyContent();
     }
 
-    public <T extends BasicObject> void setDataset(Dataset<T> dataset) throws IOException {
+
+    public <T extends BasicObject> boolean prepare(Dataset<T> dataset) throws Exception {
+        if (dataset == null) {
+            addDummyContent();
+            datasetType = null;
+            return false;
+        }
+        if (datasetType == null || datasetType != dataset.getType()) {
+            datasetType = dataset.getType();
+            addRealContent();
+        }
         datasetMetadataModel.setObject(dataset == null ? null : dataset.getMetadata());
-        // TODO - need a better way to handle large datsets
-        List<T> results = dataset == null ? null : dataset.getStream().limit(100).collect(Collectors.toList());
-        resultsModel.setObject(results);
+        settingsModel.setObject(cellDatasetProvider.getCellInstance().getSettings());
+        return true;
     }
 
-    private void addContent() {
+    private void addRealContent() {
 
-        add(new DatasetResultsPanel("results", datasetMetadataModel, resultsModel));
-        add(new DatasetMetadataPanel("metadata", datasetMetadataModel));
-
+        addOrReplace(new DatasetResultsPanel("results", datasetMetadataModel, resultsModel, settingsModel, cellDatasetProvider));
+        addOrReplace(new DatasetMetadataPanel("metadata", datasetMetadataModel));
+        if (datasetType == MoleculeObject.class) {
+            addOrReplace(new MoleculeObjectExportPanel("export", cellDatasetProvider));
+        } else {
+            addOrReplace(new WebMarkupContainer("export"));
+        }
     }
+
+    private void addDummyContent() {
+        addOrReplace(new WebMarkupContainer("results"));
+        addOrReplace(new WebMarkupContainer("metadata"));
+        addOrReplace(new WebMarkupContainer("export"));
+    }
+
 }

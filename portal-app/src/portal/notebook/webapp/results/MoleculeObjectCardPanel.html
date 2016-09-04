@@ -1,18 +1,20 @@
 <wicket:panel>
 
-
         <div class="ui fluid card">
 
             <div class="image">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Caffeine.svg">
+                <img wicket:id="structureImage"/>
             </div>
             <div class="content">
-
-                <div wicket:id="uuid"></div>
 
                 <table class="ui very basic collapsing celled small compact table">
 
                     <tbody>
+
+                    <tr>
+                        <td wicket:id="uuid" colspan="2"></td>
+                    </tr>
+
                     <tr wicket:id="fields">
 
                         <td wicket:id="fieldkey">Prop name</td>
@@ -23,6 +25,5 @@
                 </table>
             </div>
         </div>
-    
 
 </wicket:panel>

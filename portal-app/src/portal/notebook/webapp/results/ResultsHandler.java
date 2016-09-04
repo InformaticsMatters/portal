@@ -1,6 +1,7 @@
 package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.notebook.api.CellInstance;
 
 import java.io.Serializable;
 
@@ -10,6 +11,8 @@ import java.io.Serializable;
 public interface ResultsHandler extends Serializable {
 
     String getVariableName();
+
+    CellInstance getCellInstance();
 
     /** Get the Wicket panel that displays the results
      *

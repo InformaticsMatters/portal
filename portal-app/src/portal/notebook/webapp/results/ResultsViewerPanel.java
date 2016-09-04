@@ -1,5 +1,6 @@
 package portal.notebook.webapp.results;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
@@ -18,7 +19,9 @@ public class ResultsViewerPanel extends SemanticModalPanel {
 
     private void addContent() {
 
-        Panel p = resultsHandler.getPanel();
-        getModalRootComponent().add(p);
+        getModalRootComponent().add(resultsHandler.getPanel());
+
+        getModalRootComponent().add(new Label("cellName", resultsHandler.getCellInstance().getName()));
+        getModalRootComponent().add(new Label("variableName", resultsHandler.getVariableName()));
     }
 }
