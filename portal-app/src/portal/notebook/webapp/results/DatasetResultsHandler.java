@@ -21,16 +21,16 @@ public class DatasetResultsHandler implements ResultsHandler {
     private final String variableName;
     private final NotebookSession notebookSession;
     private final StructureIOClient structureIOClient;
-    private final CellInstance cellInstance;
+    private final Long cellId;
     private DatasetDetailsPanel panel;
     private final CellDatasetProvider cellDatasetProvider;
 
-    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, StructureIOClient structureIOClient, CellInstance cellInstance) {
+    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, StructureIOClient structureIOClient, Long cellId) {
         this.variableName = variableName;
         this.notebookSession = notebookSession;
         this.structureIOClient = structureIOClient;
-        this.cellInstance = cellInstance;
-        this.cellDatasetProvider = new CellDatasetProvider(cellInstance, notebookSession, structureIOClient, variableName);
+        this.cellId = cellId;
+        this.cellDatasetProvider = new CellDatasetProvider(cellId, notebookSession, structureIOClient, variableName);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class DatasetResultsHandler implements ResultsHandler {
 
     @Override
     public CellInstance getCellInstance() {
-        return cellInstance;
+        return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
     }
 
     @Override
@@ -66,24 +66,24 @@ public class DatasetResultsHandler implements ResultsHandler {
 
     static class CellDatasetProvider implements DatasetProvider, Serializable {
 
-        private final CellInstance cell;
-        private final NotebookSession session;
+        private final Long cellId;
+        private final NotebookSession notebookSession;
         private final StructureIOClient structureIOClient;
         private final String variable;
 
-        CellDatasetProvider(CellInstance cell, NotebookSession session, StructureIOClient structureIOClient, String variable) {
-            this.cell = cell;
-            this.session = session;
+        CellDatasetProvider(Long cellId, NotebookSession session, StructureIOClient structureIOClient, String variable) {
+            this.cellId = cellId;
+            this.notebookSession = session;
             this.structureIOClient = structureIOClient;
             this.variable = variable;
         }
 
         @Override
         public Dataset getDataset() throws Exception {
-            VariableInstance variableInstance = cell.getVariableInstanceMap().get(variable);
+            VariableInstance variableInstance = getCellInstance().getVariableInstanceMap().get(variable);
             Dataset<? extends BasicObject> data = null;
             if (variableInstance != null) {
-                data = session.squonkDataset(variableInstance);
+                data = notebookSession.squonkDataset(variableInstance);
             }
             return data;
         }
@@ -91,10 +91,10 @@ public class DatasetResultsHandler implements ResultsHandler {
         @Override
         public DatasetMetadata getMetadata() throws Exception {
 
-            VariableInstance variableInstance = cell.getVariableInstanceMap().get(variable);
+            VariableInstance variableInstance = getCellInstance().getVariableInstanceMap().get(variable);
             DatasetMetadata<? extends BasicObject> meta = null;
             if (variableInstance != null) {
-                meta = session.squonkDatasetMetadata(variableInstance);
+                meta = notebookSession.squonkDatasetMetadata(variableInstance);
             }
             return meta;
         }
@@ -104,7 +104,16 @@ public class DatasetResultsHandler implements ResultsHandler {
         }
 
         public CellInstance getCellInstance() {
-            return cell;
+            return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
+        }
+
+        public void saveNotebook() {
+            try {
+                notebookSession.storeCurrentEditable();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

@@ -23,7 +23,6 @@ public class DatasetDetailsPanel extends Panel {
     private final IModel<DatasetMetadata> datasetMetadataModel;
     private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
     private final IModel<List<? extends BasicObject>> resultsModel;
-    private final IModel<Map<String,Object>> settingsModel;
     private Class<? extends BasicObject> datasetType;
 
     public DatasetDetailsPanel(String id, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
@@ -31,7 +30,6 @@ public class DatasetDetailsPanel extends Panel {
         this.cellDatasetProvider = cellDatasetProvider;
         this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata)null);
         this.resultsModel = new CompoundPropertyModel<>(Collections.singletonList(null));
-        this.settingsModel = new Model(new LinkedHashMap<String,Object>());
 
         addDummyContent();
     }
@@ -48,13 +46,12 @@ public class DatasetDetailsPanel extends Panel {
             addRealContent();
         }
         datasetMetadataModel.setObject(dataset == null ? null : dataset.getMetadata());
-        settingsModel.setObject(cellDatasetProvider.getCellInstance().getSettings());
         return true;
     }
 
     private void addRealContent() {
 
-        addOrReplace(new DatasetResultsPanel("results", datasetMetadataModel, resultsModel, settingsModel, cellDatasetProvider));
+        addOrReplace(new DatasetResultsPanel("results", datasetMetadataModel, resultsModel, cellDatasetProvider));
         addOrReplace(new DatasetMetadataPanel("metadata", datasetMetadataModel));
         if (datasetType == MoleculeObject.class) {
             addOrReplace(new MoleculeObjectExportPanel("export", cellDatasetProvider));

@@ -147,12 +147,15 @@ public class NotebookInstance implements Serializable {
                     cell.getPositionLeft(),
                     cell.getSizeWidth(), // TODO set to null if cell is not resizable
                     cell.getSizeHeight() // TODO set to null if cell is not resizable
+
             );
+            cellDTO.getSettings().putAll(cell.getSettings());
+
             notebookCanvasDTO.addCell(cellDTO);
             for (BindingInstance b : cell.getBindingInstanceMap().values()) {
                 VariableInstance variableInstance = b.getVariableInstance();
                 NotebookCanvasDTO.BindingDTO bindingDTO = new NotebookCanvasDTO.BindingDTO(
-                        b.getName(), // this is correct. It is NOT hte variable key. dto prop name should be "name"
+                        b.getName(), // this is correct. It is NOT the variable key. dto prop name should be "name"
                         variableInstance == null ? null : variableInstance.getCellId(), // Long producerId
                         variableInstance == null ? null : variableInstance.getVariableDefinition().getName() // String producerVariableName TODO - is this correct?
                 );
@@ -161,6 +164,7 @@ public class NotebookInstance implements Serializable {
             for (OptionInstance option : cell.getOptionInstanceMap().values()) {
                 cellDTO.addOption(option.getOptionDescriptor().getkey(), option.getValue());
             }
+
         }
     }
 
@@ -189,6 +193,8 @@ public class NotebookInstance implements Serializable {
                     cellInstance.setPositionTop(cellDTO.getTop());
                     cellInstance.setSizeHeight(cellDTO.getHeight());
                     cellInstance.setSizeWidth(cellDTO.getWidth());
+                    cellInstance.getSettings().putAll(cellDTO.getSettings());
+
                     configureCellInstance(cellInstance);
                     cellInstanceList.add(cellInstance);
                     for (Map.Entry<String, Object> e : cellDTO.getOptions().entrySet()) {

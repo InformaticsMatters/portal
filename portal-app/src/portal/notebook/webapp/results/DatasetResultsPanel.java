@@ -34,7 +34,6 @@ public class DatasetResultsPanel extends Panel {
 
     private IModel<DatasetMetadata> datasetMetadataModel;
     private IModel<List<? extends BasicObject>> resultsModel;
-    private IModel<Map<String, Object>> settingsModel;
     private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
     private static final int DEFAULT_COLS = 5;
     private static final int DEFAULT_NUM_RECORDS = 100;
@@ -48,11 +47,10 @@ public class DatasetResultsPanel extends Panel {
     private static final String[] NUMBERS = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen"};
 
 
-    public DatasetResultsPanel(String id, IModel<DatasetMetadata> datasetMetadataModel, IModel<List<? extends BasicObject>> resultsModel, IModel<Map<String, Object>> settingsModel, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
+    public DatasetResultsPanel(String id, IModel<DatasetMetadata> datasetMetadataModel, IModel<List<? extends BasicObject>> resultsModel, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
         super(id);
         this.datasetMetadataModel = datasetMetadataModel;
         this.resultsModel = resultsModel;
-        this.settingsModel = settingsModel;
         this.cellDatasetProvider = cellDatasetProvider;
         setOutputMarkupId(true);
 
@@ -66,9 +64,14 @@ public class DatasetResultsPanel extends Panel {
         addComponents();
     }
 
+    private Map<String,Object> cellSettings() {
+        return cellDatasetProvider.getCellInstance().getSettings();
+    }
+
     private void addComponents() {
 
-        Integer cols = safeGetInteger(settingsModel.getObject(), SETTING_COLS, 5);
+        Integer cols = safeGetInteger(cellSettings(), SETTING_COLS, 5);
+        gridModel.setObject(generateGridClass(cols));
 
         final WebMarkupContainer grid = new WebMarkupContainer("grid");
         grid.setOutputMarkupId(true);
@@ -87,7 +90,9 @@ public class DatasetResultsPanel extends Panel {
                     @Override
                     protected void onUpdate(final AjaxRequestTarget target) {
 
-                        Map<String, Object> settings = settingsModel.getObject();
+                        // get the correct cell instance every time as it might have changed
+                        Map<String,Object> settings = cellSettings();
+
                         Integer cols = safeGetInteger(settings, SETTING_COLS, null);
 
                         Integer value = (Integer) getComponent().getDefaultModelObject();
@@ -97,7 +102,6 @@ public class DatasetResultsPanel extends Panel {
                                 value = 5;
                             }
                             settings.put(SETTING_COLS, value);
-
                             String gridClass = generateGridClass(value);
                             gridModel.setObject(gridClass);
 
@@ -106,6 +110,9 @@ public class DatasetResultsPanel extends Panel {
                                 //target.appendJavaScript("console.log('" + gridClass + "');");
                                 target.appendJavaScript(js);
                             }
+
+                            // TODO - should find a finer-grain way to handle this - save when modal closes?
+                            cellDatasetProvider.saveNotebook();
                         }
                     }
                 })
