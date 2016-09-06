@@ -3,6 +3,7 @@ package portal.notebook.webapp;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -10,6 +11,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,7 @@ import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,16 +65,50 @@ public class NotebookListPanel extends Panel {
     }
 
     private void addNotebookList() {
-        listView = new ListView<NotebookInfo>("notebook", new PropertyModel<List<NotebookInfo>>(this, "notebookInfoList")) {
+
+        final IModel<List<NotebookInfo>> model = new IModel<List<NotebookInfo>>() {
+
+            List<NotebookInfo> items;
+
+            @Override
+            public void detach() {
+                items = null;
+            }
+
+            @Override
+            public List<NotebookInfo> getObject() {
+                if (items == null) {
+                    return Collections.emptyList();
+                } else {
+                    return items;
+                }
+            }
+
+            @Override
+            public void setObject(List<NotebookInfo> items) {
+                this.items = items;
+            }
+        };
+
+        listView = new ListView<NotebookInfo>("notebook", model) {
+
+
+            @Override
+            protected void onBeforeRender() {
+                model.setObject(getNotebookInfoList());
+                super.onBeforeRender();
+            }
 
             @Override
             protected void populateItem(ListItem<NotebookInfo> listItem) {
-                Long currentId = notebookSession.getCurrentNotebookInfo() == null ? null : notebookSession.getCurrentNotebookInfo().getId();
+
+                NotebookInfo currentNotebookInfo = notebookSession.getCurrentNotebookInfo();
+                Long currentId = currentNotebookInfo == null ? null : currentNotebookInfo.getId();
 
                 NotebookInfo notebookInfo = listItem.getModelObject();
                 boolean isOwner = sessionContext.getLoggedInUserDetails().getUserid().equals(notebookInfo.getOwner());
                 boolean isShared = notebookInfo.getShared();
-                boolean isCurrentNotebook = listItem.getModelObject().getId().equals(currentId);
+                boolean isCurrentNotebook = notebookInfo.getId().equals(currentId);
                 listItem.add(new Label("name", notebookInfo.getName()));
                 listItem.add(new Label("owner", notebookInfo.getOwner()));
 
@@ -79,7 +117,7 @@ public class NotebookListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         try {
-                            editNotebookPanel.configureForEdit(listItem.getModelObject().getId());
+                            editNotebookPanel.configureForEdit(notebookInfo.getId());
                             editNotebookPanel.showModal();
                         } catch (Throwable t) {
                             LOGGER.warn("Error configuring for edit", t);
@@ -132,7 +170,7 @@ public class NotebookListPanel extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                         try {
-                            editNotebookPanel.configureForRemove(listItem.getModelObject().getId());
+                            editNotebookPanel.configureForRemove(notebookInfo.getId());
                             editNotebookPanel.showModal();
                         } catch (Throwable t) {
                             LOGGER.warn("Error configuring for remove", t);
@@ -158,7 +196,7 @@ public class NotebookListPanel extends Panel {
                     }
                 });
 
-                if (listItem.getModelObject().getId().equals(currentId)) {
+                if (notebookInfo.getId().equals(currentId)) {
                     selectedMarkupId = listItem.getMarkupId();
                 }
 
