@@ -294,9 +294,13 @@ function initCellSizeAndPosition(id, left, top, width, height) {
         $id.height(height);
     }
 
+    $parent = $id.parent();
+    if (top < 0) { top = 0; }
     if (top != 0) {
-        $parent = $id.parent();
         $parent.css('top', top + 'px');
+    }
+    if (left < 0) { left = 0; }
+    if (left != 0) {
         $parent.css('left', left + 'px');
     }
 }
