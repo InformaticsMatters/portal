@@ -23,9 +23,7 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
-import toolkit.wicket.semantic.NotifierProvider;
 
-import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,15 +35,11 @@ import java.util.stream.Stream;
  * @author simetrias
  */
 public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
-    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, null, :data)";
-
     public static final String OPTION_COLOR = "color";
     public static final String OPTION_POINT_SIZE = "pointSize";
     public static final String OPTION_AXIS_LABELS = "axisLabels";
-    private Form<ModelObject> form;
-    private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
+    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, null, :data)";
     protected static Map<String,Integer> POINT_SIZES = new LinkedHashMap<>();
 
     static {
@@ -57,6 +51,9 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         POINT_SIZES.put("Larger", 9);
         POINT_SIZES.put("Largest", 12);
     }
+
+    private Form<ModelObject> form;
+    private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
 
 
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {

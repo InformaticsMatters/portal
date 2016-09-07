@@ -23,15 +23,15 @@ public class DatasetDetailsPanel extends Panel {
     private final IModel<DatasetMetadata> datasetMetadataModel;
     private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
     private final IModel<List<? extends BasicObject>> resultsModel;
-    private final IModel<Map<String,Object>> settingsModel;
+    private final IModel<Map<String, Object>> settingsModel;
     private Class<? extends BasicObject> datasetType;
 
     public DatasetDetailsPanel(String id, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
         super(id);
         this.cellDatasetProvider = cellDatasetProvider;
-        this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata)null);
+        this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata) null);
         this.resultsModel = new CompoundPropertyModel<>(Collections.singletonList(null));
-        this.settingsModel = new Model(new LinkedHashMap<String,Object>());
+        this.settingsModel = new Model(new LinkedHashMap<String, Object>());
 
         addDummyContent();
     }

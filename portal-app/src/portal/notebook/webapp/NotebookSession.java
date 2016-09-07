@@ -282,7 +282,7 @@ public class NotebookSession implements Serializable {
         String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
 
         if (metaJson == null) {
-        return null;
+            return null;
         } else {
             return JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
         }

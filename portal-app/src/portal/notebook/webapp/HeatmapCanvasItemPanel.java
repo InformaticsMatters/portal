@@ -22,7 +22,6 @@ import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -39,8 +38,6 @@ import static java.util.stream.Collectors.toList;
  */
 public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
-    private static final Logger LOG = Logger.getLogger(HeatmapCanvasItemPanel.class.getName());
-
     public static final String OPTION_ROWS_FIELD = "rowsField";
     public static final String OPTION_COLS_FIELD = "colsField";
     public static final String OPTION_VALUES_FIELD = "valuesField";
@@ -48,25 +45,18 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
     public static final String OPTION_CELL_SIZE = "cellSize";
     public static final String OPTION_LEFT_MARGIN = "leftMargin";
     public static final String OPTION_TOP_MARGIN = "topMargin";
-
+    private static final Logger LOG = Logger.getLogger(HeatmapCanvasItemPanel.class.getName());
     private static final int DEFAULT_CELL_SIZE = 12;
     private static final int DEFAULT_LEFT_MARGIN = 75;
     private static final int DEFAULT_TOP_MARGIN = 75;
-
-    protected enum ValueCollector {
-        Count, Sum, Average, First, Last
-    }
-
     private static final String BUILD_PLOT_JS = "buildHeatmap(\"_id_\", {" +
             "\"cellSize\": _size_, " +
             "\"margin\" : { \"top\": _margin_top_, \"right\": 20, \"bottom\": 20, \"left\": _margin_left_ }, " +
             "\"rowNames\": _row_names_, " +
             "\"colNames\": _col_names_" +
             "}, _data_)";
-
     private Form<ModelObject> form;
     private Label statusLabel;
-
     public HeatmapCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
 
@@ -87,7 +77,6 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
         }
         //addStatus();
     }
-
 
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
@@ -116,15 +105,15 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
         }
     }
 
-//    private void addStatus() {
-//        statusLabel = createStatusLabel("cellStatus");
-//        add(statusLabel);
-//    }
-
     private void addForm() {
         form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
         add(form);
     }
+
+//    private void addStatus() {
+//        statusLabel = createStatusLabel("cellStatus");
+//        add(statusLabel);
+//    }
 
     @Override
     public Form getExecuteFormComponent() {
@@ -174,7 +163,6 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
             }
         }
     }
-
 
     private String buildPlotJs() throws IOException {
         ModelObject model = form.getModelObject();
@@ -245,6 +233,10 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
         return advancedOptionsPanel;
     }
 
+    protected enum ValueCollector {
+        Count, Sum, Average, First, Last
+    }
+
     class ModelObject implements Serializable {
 
         private Map<Pair, List<Object>> plotData;
@@ -294,20 +286,16 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
             return collector;
         }
 
-        public String getCollectorOrDefault() {
-            return collector == null ? ValueCollector.Count.toString() : collector;
-        }
-
         public void setCollector(String collector) {
             this.collector = collector;
         }
 
-        public Integer getCellSize() {
-            return cellSize;
+        public String getCollectorOrDefault() {
+            return collector == null ? ValueCollector.Count.toString() : collector;
         }
 
-        public Integer getSizeOrDefault() {
-            return cellSize == null ? DEFAULT_CELL_SIZE : cellSize;
+        public Integer getCellSize() {
+            return cellSize;
         }
 
         public void setCellSize(Integer cellSize) {
@@ -321,12 +309,12 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
             }
         }
 
-        public Integer getLeftMargin() {
-            return leftMargin;
+        public Integer getSizeOrDefault() {
+            return cellSize == null ? DEFAULT_CELL_SIZE : cellSize;
         }
 
-        public Integer getLeftMarginOrDefault() {
-            return leftMargin == null ? DEFAULT_LEFT_MARGIN : leftMargin;
+        public Integer getLeftMargin() {
+            return leftMargin;
         }
 
         public void setLeftMargin(Integer leftMargin) {
@@ -340,12 +328,12 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
             }
         }
 
-        public Integer getTopMargin() {
-            return topMargin;
+        public Integer getLeftMarginOrDefault() {
+            return leftMargin == null ? DEFAULT_LEFT_MARGIN : leftMargin;
         }
 
-        public Integer getTopMarginOrDefault() {
-            return topMargin == null ? DEFAULT_TOP_MARGIN : topMargin;
+        public Integer getTopMargin() {
+            return topMargin;
         }
 
         public void setTopMargin(Integer topMargin) {
@@ -357,6 +345,10 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
             } else {
                 this.topMargin = topMargin;
             }
+        }
+
+        public Integer getTopMarginOrDefault() {
+            return topMargin == null ? DEFAULT_TOP_MARGIN : topMargin;
         }
 
         public Map<Pair, List<Object>> getPlotData() {

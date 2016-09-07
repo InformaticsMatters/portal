@@ -27,6 +27,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CanvasItemPanel.class);
     private final Long cellId;
+    protected ResultsHandler resultsHandler;
     @Inject
     private NotebookSession notebookSession;
     @Inject
@@ -39,9 +40,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private NotifierProvider notifierProvider;
     private Label statusLabel;
     private CellStatusInfo cellStatusInfo;
-
     private SemanticModalPanel resultsPanel;
-    protected ResultsHandler resultsHandler;
     @Inject
     private StructureIOClient structureIOClient;
 

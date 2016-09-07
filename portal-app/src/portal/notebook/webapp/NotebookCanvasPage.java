@@ -29,7 +29,6 @@ import portal.MenuPanel;
 import portal.PopupContainerProvider;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
-import portal.notebook.webapp.results.DatasetDetailsPanel;
 import portal.notebook.webapp.results.NoResultsPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;

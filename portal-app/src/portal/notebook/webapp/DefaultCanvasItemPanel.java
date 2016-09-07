@@ -11,7 +11,6 @@ import org.squonk.options.*;
 import org.squonk.options.types.Structure;
 import org.squonk.types.NumberRange;
 import portal.notebook.api.*;
-import portal.notebook.webapp.results.ResultsViewerPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;

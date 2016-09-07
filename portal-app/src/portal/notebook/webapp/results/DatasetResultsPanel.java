@@ -31,21 +31,18 @@ import java.util.stream.Stream;
 public class DatasetResultsPanel extends Panel {
 
     private static final Logger LOG = Logger.getLogger(DatasetResultsPanel.class.getName());
-
-    private IModel<DatasetMetadata> datasetMetadataModel;
-    private IModel<List<? extends BasicObject>> resultsModel;
-    private IModel<Map<String, Object>> settingsModel;
-    private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
     private static final int DEFAULT_COLS = 5;
     private static final int DEFAULT_NUM_RECORDS = 100;
     private static final int MAX_RECORDS = 1000;
     private static final String SETTING_COLS = "resultsviewer.results.cols";
+    private static final String[] NUMBERS = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen"};
+    private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
+    private IModel<DatasetMetadata> datasetMetadataModel;
+    private IModel<List<? extends BasicObject>> resultsModel;
+    private IModel<Map<String, Object>> settingsModel;
     private IModel gridModel = new Model(generateGridClass(DEFAULT_COLS));
-
     private int limit = DEFAULT_NUM_RECORDS;
     private int offset = 0;
-
-    private static final String[] NUMBERS = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen"};
 
 
     public DatasetResultsPanel(String id, IModel<DatasetMetadata> datasetMetadataModel, IModel<List<? extends BasicObject>> resultsModel, IModel<Map<String, Object>> settingsModel, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
@@ -115,13 +112,13 @@ public class DatasetResultsPanel extends Panel {
         IModel<Integer> offsetModel = new Model<>(0);
 
         form.add(new NumberTextField<>("limit", limitModel)
-                .setMinimum(0)
-                .setMaximum(1000)
+                        .setMinimum(0)
+                        .setMaximum(1000)
 //                .setStep(100)
         );
 
         form.add(new NumberTextField<>("offset", offsetModel)
-                .setMinimum(0)
+                        .setMinimum(0)
 //                .setStep(100)
         );
 

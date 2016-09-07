@@ -11,7 +11,6 @@ import portal.notebook.api.VariableInstance;
 import portal.notebook.webapp.NotebookSession;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by timbo on 28/08/2016.
@@ -22,8 +21,8 @@ public class DatasetResultsHandler implements ResultsHandler {
     private final NotebookSession notebookSession;
     private final StructureIOClient structureIOClient;
     private final CellInstance cellInstance;
-    private DatasetDetailsPanel panel;
     private final CellDatasetProvider cellDatasetProvider;
+    private DatasetDetailsPanel panel;
 
     public DatasetResultsHandler(String variableName, NotebookSession notebookSession, StructureIOClient structureIOClient, CellInstance cellInstance) {
         this.variableName = variableName;
@@ -52,7 +51,7 @@ public class DatasetResultsHandler implements ResultsHandler {
     }
 
     private DatasetDetailsPanel getPanelImpl() {
-        return (DatasetDetailsPanel)getPanel();
+        return (DatasetDetailsPanel) getPanel();
     }
 
     public boolean preparePanelForDisplay() throws Exception {
