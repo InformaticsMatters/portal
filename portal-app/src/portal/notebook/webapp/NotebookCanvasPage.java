@@ -163,7 +163,7 @@ public class NotebookCanvasPage extends WebPage {
         response.render(JavaScriptHeaderItem.forReference(SemanticResourceReference.get()));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/jquery-ui-simetrias.min.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/jquery-ui.min.js")));
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/dom.jsPlumb-1.7.5.js")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/jsPlumb-2.1.5.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/lac.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/notebook.css")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/notebook.js")));
