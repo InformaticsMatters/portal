@@ -112,8 +112,12 @@ function addCellsPaletteDragAndDropSupport() {
             var left = event.layerX - mouseOffsetX;
             var top = event.layerY - mouseOffsetY;
 
-            if (top < -10) {
-                top = -10
+            if (top < -0) {
+                top = 0
+            }
+
+            if (left < -0) {
+                left = 0
             }
             event.preventDefault();
             onNotebookCanvasPaletteDrop(dropDataType, dropDataId, left, top);
