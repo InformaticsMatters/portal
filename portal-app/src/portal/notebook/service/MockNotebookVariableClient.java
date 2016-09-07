@@ -239,7 +239,7 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         String jsonString = mockNotebookVersion.getJson() == null ? null : new String(mockNotebookVersion.getJson());
         NotebookCanvasDTO dto = jsonString == null ? null : JsonHandler.getInstance().objectFromJson(jsonString, NotebookCanvasDTO.class);
         Long parentId = mockNotebookVersion.getParent() == null ? null : mockNotebookVersion.getParent().getId();
-        return new NotebookSavepointDTO(mockNotebookVersion.getId(), mockNotebookVersion.getMockNotebook().getId(), parentId, mockNotebookSavepoint.getCreator(), mockNotebookVersion.getCreatedDate(), mockNotebookVersion.getLastUpdatedDate(),  mockNotebookSavepoint.getDescription(), mockNotebookSavepoint.getDescription(), dto);
+        return new NotebookSavepointDTO(mockNotebookVersion.getId(), mockNotebookVersion.getMockNotebook().getId(), parentId, mockNotebookSavepoint.getCreator(), mockNotebookVersion.getCreatedDate(), mockNotebookVersion.getLastUpdatedDate(), mockNotebookSavepoint.getDescription(), mockNotebookSavepoint.getDescription(), dto);
     }
 
 
@@ -299,6 +299,19 @@ public class MockNotebookVariableClient implements NotebookVariableClient {
         byteArrayOutputStream.flush();
         mockVariable.setStreamValue(byteArrayOutputStream.toByteArray());
     }
+
+    @Override
+    public void deleteVariable(Long notebookId, Long editableId, Long cellId, String variableName) throws Exception {
+
+        TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookVersion.id = :editableId and o.cellId = :cellId and o.name = :name", MockVariable.class);
+        variableQuery.setParameter("editableId", editableId);
+        variableQuery.setParameter("cellId", cellId);
+        variableQuery.setParameter("name", variableName);
+        for (MockVariable mockVariable : variableQuery.getResultList()) {
+            entityManager.remove(mockVariable);
+        }
+    }
+
 
     private MockVariable findMockVariable(Long editableId, Long cellId, String name) {
         TypedQuery<MockVariable> variableQuery = entityManager.createQuery("select o from MockVariable o where o.mockNotebookVersion.id = :editableId and o.cellId = :cellId and o.name = :name", MockVariable.class);

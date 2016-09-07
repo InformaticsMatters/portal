@@ -1,0 +1,27 @@
+<wicket:panel>
+
+    <h3>Export Structures and data to file</h3>
+
+    <table class="ui very basic collapsing celled table">
+        <tbody>
+        <tr>
+            <td>Results as JSON:</td>
+            <td><a wicket:id="resultsLink"><span wicket:id="resultsFilename">results.json</span></a></td>
+            <td><a wicket:id="resultsgzLink"><span wicket:id="resultsgzFilename">results.json.gz</span></a></td>
+        </tr>
+
+        <tr>
+            <td>Metadata as JSON:</td>
+            <td><a wicket:id="metadataLink"><span wicket:id="metadataFilename">metadata.json</span></a></td>
+            <td><a wicket:id="metadatagzLink"><span wicket:id="metadatagzFilename">metadata.json.gz</span></a></td>
+        </tr>
+
+        <tr>
+            <td>Results as SDF:</td>
+            <td><a wicket:id="sdfLink"><span wicket:id="sdfFilename">results.sdf</span></a></td>
+            <td><a wicket:id="sdfgzLink"><span wicket:id="sdfgzFilename">results.sdf.gz</span></a></td>
+        </tr>
+        </tbody>
+    </table>
+
+</wicket:panel>

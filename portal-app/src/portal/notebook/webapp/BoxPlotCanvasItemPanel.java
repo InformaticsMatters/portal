@@ -42,8 +42,6 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     private static final String BUILD_PLOT_JS = "buildBoxPlot(':id', ':groupsFieldName', ':valuesFieldName', :data)";
 
-    @Inject
-    private NotebookSession notebookSession;
     private Form<ModelObject> form;
     private Label statusLabel;
     private BoxPlotAdvancedOptionsPanel advancedOptionsPanel;
@@ -55,7 +53,6 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             cellInstance.setSizeWidth(480);
             cellInstance.setSizeHeight(320);
         }
-        //adjustSVGSize(cellInstance);
         addForm();
         loadModelFromPersistentData();
         addTitleBar();
@@ -66,13 +63,6 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         }
         //addStatus();
     }
-
-//    private void adjustSVGSize(CellInstance cellInstance) {
-//        // these are the adjustments needed to get the SVG to the right size.
-//        // I don't understand the adjustments - they just work!
-//        svgWidth = cellInstance.getSizeWidth();
-//        svgHeight = cellInstance.getSizeHeight() - 75;
-//    }
 
 
     private void loadModelFromPersistentData() {

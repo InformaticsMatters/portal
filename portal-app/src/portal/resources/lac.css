@@ -72,7 +72,7 @@
 	border:1px dotted red;
 }
 
-.card{
+.cells .card {
     display: inline-block!important;
       width: 120px!important;
       background: #ffffff!important;

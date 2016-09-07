@@ -64,21 +64,22 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
             "\"colNames\": _col_names_" +
             "}, _data_)";
 
-    @Inject
-    private NotebookSession notebookSession;
     private Form<ModelObject> form;
     private Label statusLabel;
 
     public HeatmapCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
+
         CellInstance cellInstance = findCellInstance();
         if (cellInstance.getSizeWidth() == null || cellInstance.getSizeWidth() == 0) {
             cellInstance.setSizeWidth(400); // initial size
             cellInstance.setSizeHeight(400);
         }
         addForm();
+
         loadModelFromPersistentData();
         addTitleBar();
+
         try {
             refreshPlotData();
         } catch (Exception e) {

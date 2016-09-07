@@ -29,6 +29,8 @@ import portal.MenuPanel;
 import portal.PopupContainerProvider;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
+import portal.notebook.webapp.results.DatasetDetailsPanel;
+import portal.notebook.webapp.results.NoResultsPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
 
@@ -74,6 +76,7 @@ public class NotebookCanvasPage extends WebPage {
     private ListView<Long> canvasItemRepeater;
 
     private EditNotebookPanel editNotebookPanel;
+    private NoResultsPanel noResultsPanel;
     private SaveCopyPanel saveCopyPanel;
 
     @Inject
@@ -105,6 +108,11 @@ public class NotebookCanvasPage extends WebPage {
         addNotebookCellTypesPanel();
         addVersionTreePanel();
         addVersionTreeNodeSelectionBehavior();
+        addNoResultsModalPanel();
+    }
+
+    protected NoResultsPanel getNoResultsPanel() {
+        return noResultsPanel;
     }
 
     private void configureExecutionStatusListener() {
@@ -501,6 +509,11 @@ public class NotebookCanvasPage extends WebPage {
         }
     }
 
+    private void addNoResultsModalPanel() {
+        noResultsPanel = new NoResultsPanel("noResults", "modalElement");
+        add(noResultsPanel);
+    }
+
     private void addCanvasItemDraggedBehavior() {
         AbstractDefaultAjaxBehavior onCanvasItemDragStopBehavior = new AbstractDefaultAjaxBehavior() {
 
@@ -615,6 +628,7 @@ public class NotebookCanvasPage extends WebPage {
         };
         add(onVersionTreeNodeSelectionBehavior);
     }
+
 
     private void addResizeBehavior() {
         AbstractDefaultAjaxBehavior onNotebookCanvasItemResizedBehavior = new AbstractDefaultAjaxBehavior() {

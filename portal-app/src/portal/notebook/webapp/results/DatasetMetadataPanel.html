@@ -1,0 +1,56 @@
+<wicket:panel>
+    <form wicket:id="meta">
+
+
+        <div class="ui two column grid">
+            <div class="stretched row">
+                <div class="column">
+                    <div class="ui segment">
+                        <h4>Dataset properties</h4>
+                        <table class="ui very basic collapsing celled table">
+                            <tbody>
+                            <tr wicket:id="properties">
+
+                                <td wicket:id="key">Prop name</td>
+                                <td wicket:id="value">Prop value</td>
+
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui segment">
+                        <h4>Field properties</h4>
+                        <div class="ui accordion">
+                            <wicket:container wicket:id="fields">
+                                <div class="title">
+                                    <i class="dropdown icon"></i>
+                                    <strong wicket:id="fieldName"></strong>&nbsp;
+                                    <span wicket:id="fieldDesc"></span>
+                                </div>
+                                <div class="content">
+
+                                    <table class="ui very basic collapsing celled table">
+                                        <tbody>
+                                        <tr wicket:id="field">
+
+                                            <td wicket:id="fieldkey">Prop name</td>
+                                            <td wicket:id="fieldvalue">Prop value</td>
+
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </wicket:container>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</wicket:panel>

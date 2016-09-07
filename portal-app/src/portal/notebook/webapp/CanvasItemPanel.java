@@ -1,6 +1,5 @@
 package portal.notebook.webapp;
 
-import org.squonk.jobdef.JobStatus;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -11,13 +10,18 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.core.client.StructureIOClient;
 import portal.PopupContainerProvider;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellInstance;
+import portal.notebook.api.*;
 import portal.notebook.service.Execution;
+import portal.notebook.webapp.results.DatasetResultsHandler;
+import portal.notebook.webapp.results.ResultsHandler;
+import portal.notebook.webapp.results.ResultsViewerPanel;
 import toolkit.wicket.semantic.NotifierProvider;
+import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
@@ -36,13 +40,39 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private Label statusLabel;
     private CellStatusInfo cellStatusInfo;
 
+    private SemanticModalPanel resultsPanel;
+    protected ResultsHandler resultsHandler;
+    @Inject
+    private StructureIOClient structureIOClient;
+
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
         this.cellId = cellId;
+
+        createResultsHandlers();
+
         try {
             updateStatusInfo();
         } catch (Throwable t) {
             LOGGER.warn("Error refreshing status", t);
+        }
+    }
+
+    protected void createResultsHandlers() {
+        CellInstance cellInstance = findCellInstance();
+        CellDefinition cellDefinition = cellInstance.getCellDefinition();
+        List<VariableDefinition> varDefs = cellDefinition.getVariableDefinitionList();
+        // TODO - handle multiple outputs (resultsHandler should become an array and results viewer should handle multiple types)
+        // TODO - handle other result types
+        if (varDefs != null && varDefs.size() > 0) {
+            for (VariableDefinition varDef : varDefs) {
+                String name = varDef.getName();
+                VariableType type = varDef.getVariableType();
+                if (type == VariableType.DATASET) {
+                    resultsHandler = new DatasetResultsHandler(name, notebookSession, structureIOClient, cellInstance);
+                    return;
+                }
+            }
         }
     }
 
@@ -60,11 +90,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         LOGGER.info(js);
 
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
-    }
-
-    protected void addTitleBar() {
-        cellTitleBarPanel = new CellTitleBarPanel("titleBar", findCellInstance(), this);
-        add(cellTitleBarPanel);
     }
 
     protected void makeCanvasItemResizable(HtmlHeaderContainer container, String fitCallbackFunction, int minWidth, int minHeight) {
@@ -124,7 +149,12 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private void notifyExecutionChanged(AjaxRequestTarget ajaxRequestTarget, Execution execution) {
         cellTitleBarPanel.applyExecutionStatus(execution);
         ajaxRequestTarget.add(cellTitleBarPanel);
-        cellChangeManager.notifyExecutionStatusChanged(findCellInstance().getId(), execution.getJobStatus(), ajaxRequestTarget);
+        CellInstance cell = findCellInstance();
+        if (cell != null) {
+            cellChangeManager.notifyExecutionStatusChanged(cell.getId(), execution.getJobStatus(), ajaxRequestTarget);
+        } else {
+            LOGGER.warn("Could not find cell" + cellId);
+        }
     }
 
     private void notifyCellStatus(AjaxRequestTarget ajaxRequestTarget) {
@@ -196,11 +226,56 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public String getStatusString() {
         if (cellStatusInfo == null) {
             return "";
-        } else if (cellStatusInfo.getMessage() == null){
+        } else if (cellStatusInfo.getMessage() == null) {
             return cellStatusInfo.toString() + ".";
         } else {
             return cellStatusInfo.toString() + ": " + cellStatusInfo.getMessage();
         }
     }
 
+    @Override
+    public void onShowResults() throws Exception {
+        if (resultsHandler != null) {
+            boolean hasResults = resultsHandler.preparePanelForDisplay();
+            if (hasResults) {
+                resultsPanel.showModal(resultsHandler.getExtraJavascriptForResultsViewer());
+                return;
+            }
+        }
+        NotebookCanvasPage page = (NotebookCanvasPage) getPage();
+        page.getNoResultsPanel().showModal();
+    }
+
+    /**
+     * Adds a title bar as the Wicket ID titleBar.
+     * This method is defined in this base class but must be called at the right moment from a subclass
+     * if you want a title bar to appear which you probably do.
+     */
+    protected void addTitleBar() {
+        cellTitleBarPanel = new CellTitleBarPanel("titleBar", findCellInstance(), this);
+        add(cellTitleBarPanel);
+    }
+
+    /**
+     * Adds a results viewer as the Wicket ID resultsViewer.
+     * This appears in the modal popup when the expand button in the title bar is clicked.
+     * This method is defined in this base class but must be called at the right moment from a subclass
+     * for cells that have output variables that have a supported viewer.
+     * Which results viewer(s) appear depends on the resultHandlers that are defined. If none are defined then
+     * you get a generic popup saying viewing results is not supported.
+     */
+    protected void addResultsViewer() {
+        if (resultsHandler != null) {
+            resultsPanel = new ResultsViewerPanel("resultsViewer", "modalViewer", resultsHandler);
+            add(resultsPanel);
+        }
+    }
+
+    /**
+     * Add title bar and results viewer.
+     */
+    protected void addTitleBarAndResultsViewer() {
+        addTitleBar();
+        addResultsViewer();
+    }
 }

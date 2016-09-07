@@ -1,14 +1,14 @@
 package portal.notebook.webapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.squonk.types.BasicObject;
-import org.squonk.types.MoleculeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.client.NotebookVariableClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.notebook.api.*;
+import org.squonk.types.BasicObject;
+import org.squonk.types.MoleculeObject;
 import org.squonk.types.io.JsonHandler;
 import org.squonk.util.IOUtils;
 import portal.SessionContext;
@@ -278,6 +278,15 @@ public class NotebookSession implements Serializable {
         }
     }
 
+    public DatasetMetadata<? extends BasicObject> squonkDatasetMetadata(VariableInstance variableInstance) throws Exception {
+        String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+
+        if (metaJson == null) {
+        return null;
+        } else {
+            return JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
+        }
+    }
     /** Retrieve Dataset for this variable.
      * This is based on an InputStream that is read, and must be closed once finished e.g. by closing the Stream.
      *
@@ -288,6 +297,9 @@ public class NotebookSession implements Serializable {
     public Dataset<? extends BasicObject> squonkDataset(VariableInstance variableInstance) throws Exception {
 
         String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        if (metaJson == null) {
+            return null;
+        }
         DatasetMetadata meta = JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
         InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
         InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
