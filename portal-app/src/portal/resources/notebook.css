@@ -25,6 +25,7 @@ li {
     flex-direction: row;
     overflow: auto;
     height: 0px;
+    padding: 3px!important;
 }
 
 .notebook-canvas-item {

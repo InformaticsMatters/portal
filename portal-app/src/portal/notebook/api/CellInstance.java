@@ -1,7 +1,5 @@
 package portal.notebook.api;
 
-import org.squonk.options.TypeDescriptor;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -10,18 +8,17 @@ import java.util.Map;
 @XmlRootElement
 public class CellInstance implements Serializable {
     private final static long serialVersionUID = 1l;
-
-    private CellDefinition cellDefinition;
     private final Map<String, BindingInstance> bindingInstanceMap = new LinkedHashMap<>();
     private final Map<String, VariableInstance> variableInstanceMap = new LinkedHashMap<>();
     private final Map<String, OptionInstance> optionInstanceMap = new LinkedHashMap<>();
+    private final Map<String, Object> settings = new LinkedHashMap<>();
+    private CellDefinition cellDefinition;
     private Long id;
     private String name;
     private Integer positionLeft;
     private Integer positionTop;
     private Integer sizeWidth;
     private Integer sizeHeight;
-    private final Map<String,Object> settings = new LinkedHashMap<>();
 
     public String getName() {
         return name;
@@ -91,7 +88,8 @@ public class CellInstance implements Serializable {
         this.sizeHeight = sizeHeight;
     }
 
-    /** Get the settings for this cell. These are things that are not related to bindings etc.
+    /**
+     * Get the settings for this cell. These are things that are not related to bindings etc.
      * An example is the number of columns to use the for the results viewer
      *
      * @return

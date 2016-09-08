@@ -112,8 +112,12 @@ function addCellsPaletteDragAndDropSupport() {
             var left = event.layerX - mouseOffsetX;
             var top = event.layerY - mouseOffsetY;
 
-            if (top < -10) {
-                top = -10
+            if (top < 0) {
+                top = 0
+            }
+
+            if (left < 0) {
+                left = 0
             }
             event.preventDefault();
             onNotebookCanvasPaletteDrop(dropDataType, dropDataId, left, top);
@@ -294,21 +298,18 @@ function initCellSizeAndPosition(id, left, top, width, height) {
         $id.height(height);
     }
 
-    $parent = $id.parent();
-    if (top < 0) { top = 0; }
-    if (top != 0) {
+    if ((top != 0) || (left != 0)) {
+        $parent = $id.parent();
         $parent.css('top', top + 'px');
-    }
-    if (left < 0) { left = 0; }
-    if (left != 0) {
         $parent.css('left', left + 'px');
     }
 }
 
 var sourceEndpointOptions = {
-    anchor: ["Continuous", {shape: "Rectangle", faces:["bottom", "right"]}],
-    isSource: true,
+    endpoint: 'Dot',
+    anchor: ["Continuous", { faces:[ "bottom", "right" ] } ],
     maxConnections: -1,
+    isSource: true,
     paintStyle: {
         fillStyle: "#7AB02C",
         radius: 10
@@ -316,12 +317,17 @@ var sourceEndpointOptions = {
     connectorStyle: {
         lineWidth: 2,
         strokeStyle: "#61B7CF"
-    }
+    } ,
+    dragOptions:{
+              drag:function(e, ui) {
+                jsPlumb.repaintEverything();
+              }
+          }
 };
 
 var targetEndpointOptions = {
     endpoint: 'Dot',
-    anchor: ["Continuous", {shape: "Rectangle", faces:["top", "left"]}],
+    anchor:["Continuous", { faces:[ "top", "left" ] } ],
     maxConnections: -1,
     isTarget: true,
     paintStyle: {
@@ -333,6 +339,7 @@ var targetEndpointOptions = {
 
 function addSourceEndpoint(itemId, endpointId, labelText) {
     var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: endpointId});
+
     sourceEndpoint.bind("mouseover", function(sourceEndpoint) {
         sourceEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [1.5, 1.5]}]);
     });

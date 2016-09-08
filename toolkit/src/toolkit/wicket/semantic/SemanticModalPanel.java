@@ -33,7 +33,8 @@ public class SemanticModalPanel extends Panel {
         showModal(null);
     }
 
-    /** Show this modal panel
+    /**
+     * Show this modal panel
      *
      * @param extraJavascript Additional javascript that is executed after the modal is shown. Can be null.
      */
