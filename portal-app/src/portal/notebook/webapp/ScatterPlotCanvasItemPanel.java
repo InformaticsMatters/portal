@@ -1,15 +1,22 @@
 package portal.notebook.webapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.form.NumberTextField;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
@@ -18,15 +25,14 @@ import org.slf4j.LoggerFactory;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
+import org.squonk.types.NumberRange;
 import portal.PortalWebApplication;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
+import portal.notebook.api.*;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,15 +44,22 @@ import java.util.stream.Stream;
  */
 public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
-    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, null, :data)";
+    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, :data)";
+    private static final String PROP_EXTENTS = "extents";
 
     public static final String OPTION_COLOR = "color";
     public static final String OPTION_POINT_SIZE = "pointSize";
     public static final String OPTION_AXIS_LABELS = "axisLabels";
+    public static final String SELECTION_X_RANGE ="selectionXRange";
+    public static final String SELECTION_Y_RANGE ="selectionYRange";
+    public static final String SELECTION_SELECTED ="selectionSelected";
+    public static final String SELECTION_SELECTED_MARKED ="selectionSelectedMarked";
+
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
+    private final ModelObject model = new ModelObject();
 
-    protected static Map<String,Integer> POINT_SIZES = new LinkedHashMap<>();
+    protected static Map<String, Integer> POINT_SIZES = new LinkedHashMap<>();
 
     static {
         POINT_SIZES.put("Smallest", 1);
@@ -70,7 +83,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         loadModelFromPersistentData();
         addTitleBar();
         try {
-            refreshPlotData();
+            refreshPlotData(false);
         } catch (Throwable t) {
             LOGGER.warn("Error refreshing data", t);
             // TODO
@@ -106,23 +119,99 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     @Override
     public void onExecute() throws Exception {
-        refreshPlotData();
+        refreshPlotData(true);
         rebuildPlot();
     }
 
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
-        ModelObject model = form.getModelObject();
-        model.setX((String)cellInstance.getOptionInstanceMap().get(OPTION_X_AXIS).getValue());
-        model.setY((String)cellInstance.getOptionInstanceMap().get(OPTION_Y_AXIS).getValue());
-        model.setColor((String)cellInstance.getOptionInstanceMap().get(OPTION_COLOR).getValue());
-        model.setPointSize((String)cellInstance.getOptionInstanceMap().get(OPTION_POINT_SIZE).getValue());
-        model.setShowAxisLabels((Boolean)cellInstance.getOptionInstanceMap().get(OPTION_AXIS_LABELS).getValue());
+        Map<String,OptionInstance> options = cellInstance.getOptionInstanceMap();
+        model.setX((String) options.get(OPTION_X_AXIS).getValue());
+        model.setY((String) options.get(OPTION_Y_AXIS).getValue());
+        model.setColor((String) options.get(OPTION_COLOR).getValue());
+        model.setPointSize((String) options.get(OPTION_POINT_SIZE).getValue());
+        model.setShowAxisLabels((Boolean) options.get(OPTION_AXIS_LABELS).getValue());
+        model.setXRange((NumberRange<Float>)options.get(SELECTION_X_RANGE).getValue());
+        model.setYRange((NumberRange<Float>)options.get(SELECTION_Y_RANGE).getValue());
+        model.setSelectedIDs((String)options.get(SELECTION_SELECTED).getValue());
+        model.setSelectedMarkedIDs((String)options.get(SELECTION_SELECTED_MARKED).getValue());
     }
 
     private void addForm() {
-        form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
+
+        form = new Form("form");
+        form.setOutputMarkupId(true);
+
+        CellInstance cellInstance = findCellInstance();
+        Map<String,OptionInstance> options = cellInstance.getOptionInstanceMap();
+        NumberRange<Float> xRange = (NumberRange<Float>)options.get(SELECTION_X_RANGE).getValue();
+        NumberRange<Float> yRange = (NumberRange<Float>)options.get(SELECTION_Y_RANGE).getValue();
+
         add(form);
+        TextField brushXMin = new HiddenField("brushxmin", new Model(xRange == null ? null : xRange.getMinValue()));
+        form.add(brushXMin);
+        TextField brushXMax = new HiddenField("brushxmax", new Model(xRange == null ? null : xRange.getMaxValue()));
+        form.add(brushXMax);
+        TextField brushYMin = new HiddenField("brushymin", new Model(yRange == null ? null : yRange.getMinValue()));
+        form.add(brushYMin);
+        TextField brushYMax = new HiddenField("brushymax", new Model(yRange == null ? null : yRange.getMaxValue()));
+        form.add(brushYMax);
+        TextField selectedIds = new HiddenField("selectedIds", new Model("")); // never read
+        form.add(selectedIds);
+
+        AjaxButton selectionButton = new AjaxButton("selection") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+
+                String xmin = brushXMin.getValue();
+                String xmax = brushXMax.getValue();
+                String ymin = brushYMin.getValue();
+                String ymax = brushYMax.getValue();
+                String selectionRaw = selectedIds.getValue();
+                String selection = (selectionRaw == null || selectionRaw.isEmpty()) ? null : selectionRaw;
+                //System.out.println("============ extents: " + xmin + " " + xmax + " " + ymin + " " + ymax);
+
+                CellInstance cellInstance = findCellInstance();
+                NumberRange<Float> xRange = null, yRange = null;
+                try {
+                    if ((xmin != null && !xmin.isEmpty()) || (xmax != null && !xmax.isEmpty())) {
+                        xRange = new NumberRange.Float(
+                                (xmin == null || xmin.isEmpty()) ? null : new Float(xmin),
+                                (xmax == null || xmax.isEmpty()) ? null : new Float(xmax));
+                    }
+                    if ((ymin != null && !ymin.isEmpty()) || (ymax != null && !ymax.isEmpty())) {
+                        yRange = new NumberRange.Float(
+                                (ymin == null || ymin.isEmpty()) ? null : new Float(ymin),
+                                (ymax == null || ymax.isEmpty()) ? null : new Float(ymax));
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn("Failed to build selection ranges");
+                    return;
+                }
+
+                cellInstance.getOptionInstanceMap().get(SELECTION_X_RANGE).setValue(xRange);
+                cellInstance.getOptionInstanceMap().get(SELECTION_Y_RANGE).setValue(yRange);
+                cellInstance.getOptionInstanceMap().get(SELECTION_SELECTED).setValue(selection);
+
+                model.setXRange(xRange);
+                model.setYRange(yRange);
+                model.setSelectedIDs(selection);
+
+                //System.out.println("========= SCATTER SETTINGS: " + settings);
+
+                try {
+                    notebookSession.storeCurrentEditable();
+                } catch (Exception e) {
+                    LOGGER.warn("Failed to save selections", e);
+                }
+
+//                if (target != null) {
+//                    target.appendJavaScript("console.log('selections updated');");
+//                }
+            }
+        };
+        selectionButton.setDefaultFormProcessing(false);
+        form.add(selectionButton);
     }
 
     private boolean isChangedCellBoundCell(Long changedCellId) {
@@ -133,12 +222,10 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private void invalidatePlotData() {
-        ModelObject model = form.getModelObject();
         model.setData(new DataItem[]{});
     }
 
-    private void refreshPlotData() throws Exception {
-        ModelObject model = form.getModelObject();
+    private void refreshPlotData(boolean readDataset) throws Exception {
         String xFieldName = model.getX();
         String yFieldName = model.getY();
         String colorFieldName = model.getColor();
@@ -148,14 +235,15 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
+            Dataset<? extends BasicObject> dataset = (readDataset ? notebookSession.squonkDataset(variableInstance) : null);
+
             if (variableInstance != null) {
-                Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
-                DatasetMetadata meta = dataset.getMetadata();
+                DatasetMetadata meta = dataset == null ? notebookSession.squonkDatasetMetadata(variableInstance) : dataset.getMetadata();
                 String colorMode = null;
                 // TODO - improve how the color mode is determined as some types could be handled as categorical or continuous.
                 // Allow user to specify?
                 if (colorFieldName != null) {
-                    Class colorFieldType = (Class)meta.getValueClassMappings().get(colorFieldName);
+                    Class colorFieldType = (Class) meta.getValueClassMappings().get(colorFieldName);
                     if (colorFieldType != null) {
                         if (Number.class.isAssignableFrom(colorFieldType)) {
                             colorMode = "steelblue-brown";
@@ -166,29 +254,33 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 }
                 model.setColorMode(colorMode);
 
-                try (Stream<? extends BasicObject> stream = dataset.getStream()) {
-                    List<DataItem> data = stream.map((o) -> {
-                        Float x = safeConvertToFloat(o.getValue(xFieldName));
-                        Float y = safeConvertToFloat(o.getValue(yFieldName));
-                        Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
-                        if (x != null && y != null) {
-                            DataItem dataItem = new DataItem();
-                            dataItem.setUuid(o.getUUID().toString());
-                            dataItem.setX(x);
-                            dataItem.setY(y);
-                            if (color != null) {
-                                dataItem.setColor(color);
+                if (readDataset) {
+                    try (Stream<? extends BasicObject> stream = dataset.getStream()) {
+                        List<DataItem> data = stream.map((o) -> {
+                            Float x = safeConvertToFloat(o.getValue(xFieldName));
+                            Float y = safeConvertToFloat(o.getValue(yFieldName));
+                            Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
+                            if (x != null && y != null) {
+                                DataItem dataItem = new DataItem();
+                                dataItem.setUuid(o.getUUID().toString());
+                                dataItem.setX(x);
+                                dataItem.setY(y);
+                                if (color != null) {
+                                    dataItem.setColor(color);
+                                }
+                                dataItem.setSize(size);
+                                return dataItem;
+                            } else {
+                                // TODO - should we record how many records are not handled?
+                                return null;
                             }
-                            dataItem.setSize(size);
-                            return dataItem;
-                        } else {
-                            // TODO - should we record how many records are not handled?
-                            return null;
-                        }
-                    }).filter((d) -> d != null)
-                            .collect(Collectors.toList());
+                        }).filter((d) -> d != null)
+                                .collect(Collectors.toList());
 
-                    model.setData(data.toArray(new DataItem[data.size()]));
+                        model.setData(data.toArray(new DataItem[data.size()]));
+                    }
+                } else {
+                    model.setData(new DataItem[0]);
                 }
             }
         }
@@ -201,7 +293,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private String buildPlotJs() {
-        ModelObject model = form.getModelObject();
 
         String xLabel = "";
         String yLabel = "";
@@ -214,7 +305,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 .replace(":id", getMarkupId())
                 .replace(":xLabel", xLabel)
                 .replace(":yLabel", yLabel)
-                .replace(":colorMode", ""+model.getColorMode())
+                .replace(":colorMode", "" + model.getColorMode())
                 .replace(":data", model.getDataAsJson());
 
         return result;
@@ -242,7 +333,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 cellInstance.getOptionInstanceMap().get(OPTION_AXIS_LABELS).setValue(advancedOptionsPanel.getShowAxisLabels());
                 notebookSession.storeCurrentEditable();
 
-                ModelObject model = form.getModelObject();
                 model.setX(advancedOptionsPanel.getX());
                 model.setY(advancedOptionsPanel.getY());
                 model.setColor(advancedOptionsPanel.getColor());
@@ -251,11 +341,11 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 onExecute();
             }
         });
-        advancedOptionsPanel.setX(form.getModelObject().getX());
-        advancedOptionsPanel.setY(form.getModelObject().getY());
-        advancedOptionsPanel.setColor(form.getModelObject().getColor());
-        advancedOptionsPanel.setPointSize(form.getModelObject().getPointSize());
-        advancedOptionsPanel.setShowAxisLabels(form.getModelObject().getShowAxisLabels());
+        advancedOptionsPanel.setX(model.getX());
+        advancedOptionsPanel.setY(model.getY());
+        advancedOptionsPanel.setColor(model.getColor());
+        advancedOptionsPanel.setPointSize(model.getPointSize());
+        advancedOptionsPanel.setShowAxisLabels(model.getShowAxisLabels());
     }
 
     class ModelObject implements Serializable {
@@ -267,6 +357,10 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         private String colorMode;
         private String pointSize;
         private Boolean showAxisLabels = Boolean.FALSE;
+        private NumberRange<Float> xRange;
+        private NumberRange<Float> yRange;
+        private String selectedIDs;
+        private String selectedMarkedIDs;
 
         public String getX() {
             return x;
@@ -335,6 +429,38 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
         public void setShowAxisLabels(Boolean showAxisLabels) {
             this.showAxisLabels = showAxisLabels;
+        }
+
+        public NumberRange getXRange() {
+            return xRange;
+        }
+
+        public void setXRange(NumberRange<Float> xRange) {
+            this.xRange = xRange;
+        }
+
+        public NumberRange<Float> getYRange() {
+            return yRange;
+        }
+
+        public void setYRange(NumberRange<Float> yRange) {
+            this.yRange = yRange;
+        }
+
+        public String getSelectedIDs() {
+            return selectedIDs;
+        }
+
+        public void setSelectedIDs(String selectedIDs) {
+            this.selectedIDs = selectedIDs;
+        }
+
+        public String getSelectedMarkedIDs() {
+            return selectedMarkedIDs;
+        }
+
+        public void setSelectedMarkedIDs(String selectedMarkedIDs) {
+            this.selectedMarkedIDs = selectedMarkedIDs;
         }
     }
 

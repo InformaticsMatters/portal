@@ -24,8 +24,13 @@
     <p/>
     Mark: <input id="m" type="text" size="60" value='["a","b","c"]'>&nbsp;&nbsp;<button type="button" class="mark">Mark Data</button>
     <p/>
-    State: <input id="s" type="text" size="60" value=''>&nbsp;&nbsp;<button type="button" class="state">Update state</button>
-
+    X range: <input id="xmin" type="number">&nbsp;-&nbsp;<input id="xmax" type="number">
+    <p/>
+    Y range: <input id="ymin" type="number">&nbsp;-&nbsp;<input id="ymax" type="number">
+    <button type="button" class="brush">Update selection</button>
+    <p/>
+    Selected: <textarea id="selected"></textarea>
+    Marked: <textarea id="marked"></textarea>
 </form>
 <hr/>
 <div id="scatterplot1">
@@ -82,7 +87,47 @@
     {"uuid":"jh", "x": 189, "y": 189, "color": 1.4, "size": 3},
   ];
 
-    function selectionHandler(selected, selectedAndMarked) {
+    var selectionHandler = function() {
+
+    }
+
+    selectionHandler.readExtents = function() {
+        var xmin = document.getElementById("xmin").value;
+        var xmax = document.getElementById("xmax").value;
+        var ymin = document.getElementById("ymin").value;
+        var ymax = document.getElementById("ymax").value;
+
+        return [[xmin ? xmin : 0, ymin ? ymin : 0], [xmax ? xmax : 0, ymax ? ymax : 0]];
+    }
+
+    selectionHandler.writeSelections = function(extents, selected, selectedAndMarked) {
+
+        document.getElementById("xmin").value = (extents ? extents[0][0] : "");
+        document.getElementById("xmax").value = (extents ? extents[1][0] : "");
+        document.getElementById("ymin").value = (extents ? extents[0][1] : "");
+        document.getElementById("ymax").value = (extents ? extents[1][1] : "");
+
+
+        var s = "";
+        if (selected) {
+            selected.forEach(function(id, i) {
+                if (i > 0) { s += ','; }
+                s += id;
+            });
+        }
+        document.getElementById("selected").value = s;
+
+        var m = "";
+        if (selectedAndMarked) {
+            selectedAndMarked.forEach(function(id, i) {
+                if (i > 0) { m += ','; }
+                m += id;
+            });
+        }
+        document.getElementById("marked").value = m;
+
+
+
         var text = "Selection: ";
 
         if (selected == null) {
@@ -101,11 +146,6 @@
         }
         //console.log(text);
         document.getElementById("selection").innerHTML = text;
-
-        var state = chart.state();
-        var json = JSON.stringify(state);
-        //console.log("State: " + json);
-        document.getElementById("s").value = json;
 
     }
 
@@ -191,11 +231,17 @@
     chart.state(state)(selection);
   }
 
+  updateBrush = function() {
+    var extent = [[document.getElementById("xmin").value, document.getElementById("ymin").value],
+    [document.getElementById("xmax").value, document.getElementById("ymax").value]];
+    chart.brush(extent)(selection);
+  }
+
   d3.select('button.resize').on('click', resize);
   d3.select('button.change').on('click', changeData);
   d3.select('button.mark').on('click', markData);
   d3.select('button.filter').on('click', filterData);
-  d3.select('button.state').on('click', updateState);
+  d3.select('button.brush').on('click', updateBrush);
 </script>
 </body>
 </html>

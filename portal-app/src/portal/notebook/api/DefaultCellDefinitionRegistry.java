@@ -4,6 +4,7 @@ package portal.notebook.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.types.NumberRange;
 import portal.SessionContext;
 import portal.notebook.webapp.AbstractD3CanvasItemPanel;
 import portal.notebook.webapp.HeatmapCanvasItemPanel;
@@ -55,6 +56,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        // these ones are the options that appear in the advanced options dialog
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS, "x Axis", "Field to use for x axis values"));
         cellDefinition.getOptionDefinitionList().add(
@@ -65,6 +67,16 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
                 new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_POINT_SIZE, "Point size", "Size of points on plot"));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(Boolean.class, ScatterPlotCanvasItemPanel.OPTION_AXIS_LABELS, "Show axis labels", "Controls whether the axis labels are visible"));
+        // these ones are related to selection of points in the plot
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.SELECTION_X_RANGE, "Selected X", "Selected X range"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.SELECTION_Y_RANGE, "Selected Y", "Selected Y range"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.SELECTION_SELECTED, "Selected IDs", "Selected IDs"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.SELECTION_SELECTED_MARKED, "Selected marked IDs", "Selected marked IDs"));
+
         return cellDefinition;
     }
 

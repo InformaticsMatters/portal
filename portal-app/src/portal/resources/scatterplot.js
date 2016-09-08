@@ -1,6 +1,42 @@
-function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend, selectionHandler, data) {
+
+
+function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend, data) {
     var selector = "#" + id + " .svg-container";
-    console.log("Building scatterplot " + id + " with data size of " + (data == null ? "null" : data.length));
+    var form = d3.select('#' + id + ' form');
+
+    var selectionHandler = function() {
+
+    }
+
+    selectionHandler.readExtents = function() {
+        var xmin = form.select('.brushxmin').attr('value');
+        var xmax = form.select('.brushxmax').attr('value');
+        var ymin = form.select('.brushymin').attr('value');
+        var ymax = form.select('.brushymax').attr('value');
+
+        return [[xmin ? xmin : 0, ymin ? ymin : 0], [xmax ? xmax : 0, ymax ? ymax : 0]];
+     };
+
+    selectionHandler.writeSelections = function(extents, selected, selectedAndMarked) {
+        console.log("Extents: " + extents);
+        //console.log("Selected: " + selected);
+
+        // brush extents
+        form.select('.brushxmin').attr('value', extents ? extents[0][0] : "");
+        form.select('.brushxmax').attr('value', extents ? extents[1][0] : "");
+        form.select('.brushymin').attr('value', extents ? extents[0][1] : "");
+        form.select('.brushymax').attr('value', extents ? extents[1][1] : "");
+
+        // selected IDs
+        var selectedJson = (selected == null ? null : JSON.stringify(selected));
+        //console.log("Selected: " + selectedJson);
+        form.select('.selectedIds').attr('value', selectedJson);
+
+        // submit
+        form.select('.selection').node().click();
+    };
+
+    //console.log("Building scatterplot " + id + " with data size of " + (data == null ? "null" : data.length));
     createScatterPlot(d3.select(selector), xAxisLabel, yAxisLabel, colorModel, displayLegend, selectionHandler, data);
 }
 
@@ -11,7 +47,7 @@ function fitScatterPlot(id) {
     var w = div.style("width");
     var houter = div.style("height");
     var h = houter.replace("px", "") - title.style("height").replace("px", "");
-    console.log("Resizing scatterplot : width=" + w + " outer height=" + houter + " inner height=" + h + "px");
+    //console.log("Resizing scatterplot : width=" + w + " outer height=" + houter + " inner height=" + h + "px");
     plot.style("width", w + "px");
     plot.style("height", h + "px");
     resizeScatterPlot(plot);
@@ -94,7 +130,6 @@ function filterScatterPlot(selection, ids) {
 }
 
 
-
 /*
 Start definition of reusable scatterplot.
 based on this topic in the D3 google group:
@@ -117,8 +152,11 @@ scatterPlot = function(config) {
       displayLegend = config.displayLegend,
       outerWidth = config.width,
       outerHeight = config.height,
-      mark, filter
-      brushExtent = config.brushExtent || [[0,0,],[0,0]];
+      mark, filter,
+      selectionHandler = config.selectionHandler,
+      brushExtent = selectionHandler ? selectionHandler.readExtents() : [[0,0,],[0,0]];
+
+      //console.log("Initialized with extents: " + brushExtent);
 
 
   // This is the chart function that will be returned when
@@ -132,16 +170,11 @@ scatterPlot = function(config) {
   // we return this function "chart".
   function chart(selection) {
 
-    selection.each(function(data, i){
-
-      if (data == undefined || data.length == 0 || data[0] == null) {
-            return;
-      }
-
-      var xMin = d3.min(data, function(d) { return d.x; }),
-          xMax = d3.max(data, function(d) { return d.x; }),
-          yMin = d3.min(data, function(d) { return d.y; }),
-          yMax = d3.max(data, function(d) { return d.y; }),
+    selection.each(function(data, i) {
+      var xMin = data.length ? d3.min(data, function(d) { return d.x; }) : 0,
+          xMax = data.length ? d3.max(data, function(d) { return d.x; }) : 0,
+          yMin = data.length ? d3.min(data, function(d) { return d.y; }) : 0,
+          yMax = data.length ? d3.max(data, function(d) { return d.y; }) : 0,
           margin = {top: 15, right: 30, bottom: 40, left: 40},
 
           sizeScale = d3.scale.sqrt()
@@ -152,15 +185,12 @@ scatterPlot = function(config) {
           legend = createLegend(colorModel, colorScale),
           selectionHandler = config.selectionHandler;
 
-          //console.log("Generating scatter plot with data size " + data.length);
-
         // create the svg
         var svg = d3.select(this).selectAll('.chart')
             .data([true]); // This 1-element array acts as a null object or null data.
         // This enables us to use d3's enter, update, and exit methods,
         // since a new enter selection will be created on the first run.
 
-      // Update the existing SVG element if it exists.
       svg
         .transition()
         .attr('width', outerWidth)
@@ -190,7 +220,7 @@ scatterPlot = function(config) {
                 console.log("Legend width could not be deternined, Using default");
                 legendWidth = 45;
               }
-              //console.log("Legend width: " + legendWidth + " " + l.node().getBoundingClientRect().width + " " + l.node().clientWidth);
+              //console.log("Legend width: " + legendWidth + " " + l.node().getBoundingClientRect().width);
               margin.right = margin.right + legendWidth;
               l.attr("transform", "translate(" + (outerWidth - legendWidth - 10) + ",10)")
                 .attr("visibility", "visible");
@@ -200,7 +230,7 @@ scatterPlot = function(config) {
         var width = outerWidth - margin.left - margin.right;
         var height = outerHeight - margin.top - margin.bottom;
 
-        //console.log("Outer: " + outerWidth + ":" + outerHeight + " Inner: " + width + ":" + height + " Margin: " + margin.top + ":" + margin.bottom + ":" + margin.left + ":" + margin.right)
+        //console.log(width + " " + height + " " + xMin + " " + xMax + " " + yMin + " " + yMax);
 
         var xScale = d3.scale.linear()
                     .domain([xMin, xMax])
@@ -302,7 +332,10 @@ scatterPlot = function(config) {
 
       var circles = g.selectAll("circle")
         .data(
-            filter == null ? data : data.filter(function(d) { return filter.has(d.uuid);} ), // the filtered data
+            filter == null ? data : data.filter(function(d) {
+                var b = filter.has(d.uuid);
+                return b;
+                } ), // the filtered data
             function(d) { return d.uuid; } // the ID mapper
         );
 
@@ -319,7 +352,7 @@ scatterPlot = function(config) {
           .append("circle")
           .attr("cx", function (d,i) { return xScale(d.x); } )
           .attr("cy", function (d) { return yScale(d.y); } )
-          .attr("r", function (d) { return d.size; } )
+          .attr("r", function (d) { return sizeScale(d.size); } )
           .attr("class", function(d) { return  mark == null ? null : (mark.has(d.uuid) ? "marked" : null); })
           .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); });
 
@@ -373,6 +406,7 @@ scatterPlot = function(config) {
         if (brush.empty()) {
             // empty brush so we select all
             g.selectAll("circle").classed("hidden", false);
+
         } else {
             brushExtent = brush.extent();
             g.selectAll("circle").classed("hidden", function(d) {
@@ -405,14 +439,18 @@ scatterPlot = function(config) {
         return [selected, selectedAndMarked];
       }
 
-      function updateSelections() {
-            var selections = getSelections();
+      updateSelections = function() {
+
             if (selectionHandler) {
-                selectionHandler(selections[0], selections[1]);
+                if (brush.empty()) {
+                    selectionHandler.writeSelections(null, null, null);
+                } else {
+                    var selections = getSelections();
+                    //console.log("updating selections " + selections[0].length + " " + selections[1].length);
+                    selectionHandler.writeSelections(brush.extent(), selections[0], selections[1]);
+                }
             }
       }
-
-      updateSelections();
 
     });
 
@@ -501,24 +539,13 @@ scatterPlot = function(config) {
       if (!arguments.length) return filter;
       filter = _;
       return chart;
-  }
+   }
 
-  /** Get/Set the persistent internal state of the plot.
-  * Currently this involves persisting the extent of the brush.
-  */
-  chart.state = function(_) {
-      if (!arguments.length) {
-        var state = {};
-        if (brushExtent[0][0] != 0 || brushExtent[0][1] != 0 || brushExtent[1][0] != 0 || brushExtent[1][1] != 0) {
-            state.brushExtent = brushExtent;
-        }
-        return state;
+   chart.brush = function(_) {
+         if (!arguments.length) return brushExtent;
+         brushExtent = _;
+         return chart;
       }
-      if (_.brushExtent) {
-        brushExtent = _.brushExtent;
-      }
-      return chart;
-  }
 
   return chart;
 

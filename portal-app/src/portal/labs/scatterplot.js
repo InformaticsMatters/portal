@@ -20,8 +20,11 @@ scatterPlot = function(config) {
       displayLegend = config.displayLegend,
       outerWidth = config.width,
       outerHeight = config.height,
-      mark, filter
-      brushExtent = config.brushExtent || [[0,0,],[0,0]];
+      mark, filter,
+      selectionHandler = config.selectionHandler,
+      brushExtent = selectionHandler ? selectionHandler.readExtents() : [[0,0,],[0,0]];
+
+      //console.log("Initialized with extents: " + brushExtent);
 
 
   // This is the chart function that will be returned when
@@ -36,10 +39,10 @@ scatterPlot = function(config) {
   function chart(selection) {
 
     selection.each(function(data, i) {
-      var xMin = d3.min(data, function(d) { return d.x; }),
-          xMax = d3.max(data, function(d) { return d.x; }),
-          yMin = d3.min(data, function(d) { return d.y; }),
-          yMax = d3.max(data, function(d) { return d.y; }),
+      var xMin = data.length ? d3.min(data, function(d) { return d.x; }) : 0,
+          xMax = data.length ? d3.max(data, function(d) { return d.x; }) : 0,
+          yMin = data.length ? d3.min(data, function(d) { return d.y; }) : 0,
+          yMax = data.length ? d3.max(data, function(d) { return d.y; }) : 0,
           margin = {top: 15, right: 30, bottom: 40, left: 40},
 
           sizeScale = d3.scale.sqrt()
@@ -94,6 +97,8 @@ scatterPlot = function(config) {
         // now we can adjust the margins
         var width = outerWidth - margin.left - margin.right;
         var height = outerHeight - margin.top - margin.bottom;
+
+        //console.log(width + " " + height + " " + xMin + " " + xMax + " " + yMin + " " + yMax);
 
         var xScale = d3.scale.linear()
                     .domain([xMin, xMax])
@@ -195,7 +200,10 @@ scatterPlot = function(config) {
 
       var circles = g.selectAll("circle")
         .data(
-            filter == null ? data : data.filter(function(d) { return filter.has(d.uuid);} ), // the filtered data
+            filter == null ? data : data.filter(function(d) {
+                var b = filter.has(d.uuid);
+                return b;
+                } ), // the filtered data
             function(d) { return d.uuid; } // the ID mapper
         );
 
@@ -266,6 +274,7 @@ scatterPlot = function(config) {
         if (brush.empty()) {
             // empty brush so we select all
             g.selectAll("circle").classed("hidden", false);
+
         } else {
             brushExtent = brush.extent();
             g.selectAll("circle").classed("hidden", function(d) {
@@ -298,14 +307,18 @@ scatterPlot = function(config) {
         return [selected, selectedAndMarked];
       }
 
-      function updateSelections() {
-            var selections = getSelections();
+      updateSelections = function() {
+
             if (selectionHandler) {
-                selectionHandler(selections[0], selections[1]);
+                if (brush.empty()) {
+                    selectionHandler.writeSelections(null, null, null);
+                } else {
+                    var selections = getSelections();
+                    //console.log("updating selections " + selections[0].length + " " + selections[1].length);
+                    selectionHandler.writeSelections(brush.extent(), selections[0], selections[1]);
+                }
             }
       }
-
-      updateSelections();
 
     });
 
@@ -396,22 +409,11 @@ scatterPlot = function(config) {
       return chart;
    }
 
-  /** Get/Set the persistent internal state of the plot.
-  * Currently this involves persisting the extent of the brush.
-  */
-  chart.state = function(_) {
-      if (!arguments.length) {
-        var state = {};
-        if (brushExtent[0][0] != 0 || brushExtent[0][1] != 0 || brushExtent[1][0] != 0 || brushExtent[1][1] != 0) {
-            state.brushExtent = brushExtent;
-        }
-        return state;
+   chart.brush = function(_) {
+         if (!arguments.length) return brushExtent;
+         brushExtent = _;
+         return chart;
       }
-      if (_.brushExtent) {
-        brushExtent = _.brushExtent;
-      }
-      return chart;
-  }
 
   return chart;
 
