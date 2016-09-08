@@ -46,7 +46,8 @@ li {
 }
 
 .notebook-canvas-item-content {
-    width: 265px;
+    /*width: 265px;*/
+    width: 100%;
 }
 
 .notebook-canvas-item-content > .titleBar {

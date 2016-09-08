@@ -25,6 +25,9 @@ public class DataTransformPotionsCellDefinition extends CellDefinition {
         getOptionDefinitionList().add(new OptionDescriptor<>(new MultiLineTextTypeDescriptor(10, 80, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
                 OPT_POTION, "Potion Definition",
                 "Definition of the transforms to perform"));
+
+        setInitialWidth(400);
+
     }
 
     @Override

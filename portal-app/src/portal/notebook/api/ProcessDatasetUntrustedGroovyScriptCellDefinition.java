@@ -23,8 +23,8 @@ public class ProcessDatasetUntrustedGroovyScriptCellDefinition extends CellDefin
         getOptionDefinitionList().add(new OptionDescriptor<>(
                 new MultiLineTextTypeDescriptor(20, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
                 "script", "Groovy Script", "Groovy script to execute"));
-        //setInitialWidth(400);
-        //setInitialHeight(275);
+
+        setInitialWidth(400);
     }
 
     @Override
