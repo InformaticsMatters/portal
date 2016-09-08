@@ -4,16 +4,13 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by timbo on 27/08/2016.
@@ -28,7 +25,7 @@ public class DatasetDetailsPanel extends Panel {
     public DatasetDetailsPanel(String id, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
         super(id);
         this.cellDatasetProvider = cellDatasetProvider;
-        this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata)null);
+        this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata) null);
         this.resultsModel = new CompoundPropertyModel<>(Collections.singletonList(null));
 
         addDummyContent();

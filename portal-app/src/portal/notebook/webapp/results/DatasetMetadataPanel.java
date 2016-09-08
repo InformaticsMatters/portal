@@ -6,13 +6,15 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.squonk.dataset.DatasetMetadata;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by timbo on 27/08/2016.
@@ -49,7 +51,7 @@ public class DatasetMetadataPanel extends Panel {
                 Field f = item.getModelObject();
                 item.add(new Label("fieldName", f.name));
                 String propCount = f.properties.size() + (f.properties.size() == 1 ? " property" : " properties");
-                item.add(new Label("fieldDesc", "[" + f.type + ", " + propCount + "]" ));
+                item.add(new Label("fieldDesc", "[" + f.type + ", " + propCount + "]"));
                 item.add(new ListView<Property>("field", f.properties) {
 
                     @Override
@@ -102,7 +104,7 @@ public class DatasetMetadataPanel extends Panel {
                 DatasetMetadata.PropertiesHolder ph = phs.get(f.name);
                 List<Property> props = new ArrayList<>();
                 if (ph != null) {
-                    Map<String,DatasetMetadata.PropertiesHolder> fldProps = meta.getFieldMetaPropsMap();
+                    Map<String, DatasetMetadata.PropertiesHolder> fldProps = meta.getFieldMetaPropsMap();
                     Map<String, Object> map = fldProps.get(f.name).getValues();
                     for (Map.Entry<String, Object> e : map.entrySet()) {
                         props.add(new Property(e.getKey(), e.getValue()));

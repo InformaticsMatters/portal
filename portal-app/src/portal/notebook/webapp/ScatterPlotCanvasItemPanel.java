@@ -1,7 +1,6 @@
 package portal.notebook.webapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -10,13 +9,10 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
-import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
@@ -28,11 +24,8 @@ import org.squonk.types.BasicObject;
 import org.squonk.types.NumberRange;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
-import toolkit.wicket.semantic.NotifierProvider;
 
-import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +36,7 @@ import java.util.stream.Stream;
  * @author simetrias
  */
 public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
     private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, :data)";
     private static final String PROP_EXTENTS = "extents";

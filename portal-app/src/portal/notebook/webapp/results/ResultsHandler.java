@@ -14,13 +14,15 @@ public interface ResultsHandler extends Serializable {
 
     CellInstance getCellInstance();
 
-    /** Get the Wicket panel that displays the results
+    /**
+     * Get the Wicket panel that displays the results
      *
      * @return
      */
     Panel getPanel();
 
-    /** The panel is about to be displayed so prepare it with any data that it needs.
+    /**
+     * The panel is about to be displayed so prepare it with any data that it needs.
      *
      * @return true if there are results to show
      * @throws Exception

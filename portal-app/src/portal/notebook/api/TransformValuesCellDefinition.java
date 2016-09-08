@@ -25,6 +25,8 @@ public class TransformValuesCellDefinition extends CellDefinition {
         getOptionDefinitionList().add(new OptionDescriptor<>(new MultiLineTextTypeDescriptor(10, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
                 OPT_TRANSFORMS, "Transform Definitions",
                 "Definition of the transforms to perform"));
+
+        setInitialWidth(400);
     }
 
     @Override

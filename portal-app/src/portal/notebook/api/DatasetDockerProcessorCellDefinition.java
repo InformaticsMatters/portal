@@ -50,7 +50,7 @@ public class DatasetDockerProcessorCellDefinition extends CellDefinition impleme
                 "Command", "The command that will be executed e.g. to execute bash script inside container")
                 .withMinMaxValues(1,1));
 
-
+        setInitialWidth(400);
     }
 
     @Override
