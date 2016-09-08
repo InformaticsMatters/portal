@@ -46,7 +46,6 @@ li {
 }
 
 .notebook-canvas-item-content {
-    /*width: 265px;*/
     width: 100%;
 }
 
@@ -393,7 +392,6 @@ div.ui-resizable-handle.ui-resizable-s {
 .notebook-canvas-item-content .select2-dropdown-open .select2-choice div b {
 	margin-top: 0.7em !important;
 }
-
 
 .notebook-versionTree-item {
     background: #ffffff;

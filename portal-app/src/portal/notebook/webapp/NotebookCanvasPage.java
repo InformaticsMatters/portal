@@ -63,7 +63,7 @@ public class NotebookCanvasPage extends WebPage {
     boolean nbListVisible = true;
     boolean cellsVisible = true;
     boolean canvasVisible = true;
-    boolean versionTreeVisible = true;
+    boolean versionTreeVisible = false;
     private AjaxLink nbListToggle;
     private AjaxLink cellsToggle;
     private AjaxLink canvasToggle;
