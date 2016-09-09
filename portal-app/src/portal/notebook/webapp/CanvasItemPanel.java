@@ -22,6 +22,7 @@ import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.logging.Level;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
@@ -56,6 +57,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             LOGGER.warn("Error refreshing status", t);
         }
     }
+
 
     protected void createResultsHandlers() {
         CellInstance cellInstance = findCellInstance();
@@ -276,5 +278,20 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     protected void addTitleBarAndResultsViewer() {
         addTitleBar();
         addResultsViewer();
+    }
+
+    protected boolean saveNotebook() {
+        try {
+            notebookSession.storeCurrentEditable();
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Failed to save selections", e);
+            notifyMessage("Error", "Failed to save notebook: " + e.getLocalizedMessage());
+            return false;
+        }
+    }
+
+    protected void notifyMessage(String title, String message) {
+        notifierProvider.getNotifier(getPage()).notify(title, message);
     }
 }

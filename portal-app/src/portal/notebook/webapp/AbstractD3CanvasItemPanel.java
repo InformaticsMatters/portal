@@ -1,6 +1,7 @@
 package portal.notebook.webapp;
 
 import javax.inject.Inject;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

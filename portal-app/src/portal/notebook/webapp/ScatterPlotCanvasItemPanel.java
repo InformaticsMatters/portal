@@ -80,7 +80,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             refreshPlotData(false);
         } catch (Throwable t) {
             LOGGER.warn("Error refreshing data", t);
-            // TODO
+            notifyMessage("Error", "Failed to refresh data" + t.getLocalizedMessage());
         }
     }
 
@@ -180,6 +180,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Failed to build selection ranges");
+                    notifyMessage("Error", "Failed to build selection ranges" + e.getLocalizedMessage());
                     return;
                 }
 
@@ -193,11 +194,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
                 //System.out.println("========= SCATTER SETTINGS: " + settings);
 
-                try {
-                    notebookSession.storeCurrentEditable();
-                } catch (Exception e) {
-                    LOGGER.warn("Failed to save selections", e);
-                }
+                saveNotebook();
 
 //                if (target != null) {
 //                    target.appendJavaScript("console.log('selections updated');");
@@ -388,7 +385,8 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 outputStream.flush();
                 return outputStream.toString();
             } catch (Throwable t) {
-                throw new RuntimeException(t);
+                notifyMessage("Error", "Failed to generate data: " + t.getLocalizedMessage());
+                return "[]";
             }
         }
 

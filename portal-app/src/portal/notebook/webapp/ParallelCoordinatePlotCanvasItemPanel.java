@@ -1,15 +1,18 @@
 package portal.notebook.webapp;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.IOUtils;
@@ -17,10 +20,7 @@ import org.squonk.dataset.Dataset;
 import org.squonk.types.BasicObject;
 import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
+import portal.notebook.api.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,9 +40,15 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
     private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', {}, :data)";
 
+    public static final String SETTINGS_AXES ="axes";
+    public static final String SETTINGS_EXTENTS ="extents";
+    public static final String SETTINGS_COLOR_DIMENSION ="colorDimension";
+    public static final String SETTINGS_SELECTED_IDS ="selectedIds";
+
     private Form<ModelObject> form;
     private Label statusLabel;
     private ParallelCoordinatePlotAdvancedOptionsPanel advancedOptionsPanel;
+    private final ModelObject model = new ModelObject();
 
     public ParallelCoordinatePlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -64,8 +70,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
-        ModelObject model = form.getModelObject();
-        model.setFields((List<String>)cellInstance.getOptionInstanceMap().get(OPTION_FIELDS).getValue());
+        Map<String,OptionInstance> options = cellInstance.getOptionInstanceMap();
+        model.setFields((List<String>)options.get(OPTION_FIELDS).getValue());
     }
 
     @Override
@@ -90,8 +96,73 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     }
 
     private void addForm() {
-        form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
+
+        TextField selection = new HiddenField("selection", new Model(""));
+        TextField axes = new HiddenField("axes", new Model(""));
+        TextField extents = new HiddenField("extents", new Model(""));
+        TextField colorDimension = new HiddenField("colorDimension", new Model(""));
+
+        form = new Form("form") {
+            @Override
+            protected void onBeforeRender() {
+                super.onBeforeRender();
+                CellInstance cell = findCellInstance();
+                Map<String,OptionInstance> options = cell.getOptionInstanceMap();
+                selection.getModel().setObject(""); // never read
+                axes.getModel().setObject(options.get(SETTINGS_AXES).getValue());
+                extents.getModel().setObject(options.get(SETTINGS_EXTENTS).getValue());
+                colorDimension.getModel().setObject(options.get(SETTINGS_COLOR_DIMENSION).getValue());
+            }
+        };
+
         add(form);
+        form.add(selection);
+        form.add(extents);
+        form.add(axes);
+        form.add(colorDimension);
+
+        AjaxButton selectionButton = new AjaxButton("updateSelection") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                String selectedIdsValue = selection.getValue();
+                String extentsValue = extents.getValue();
+                if (selectedIdsValue != null && selectedIdsValue.isEmpty()) {
+                    selectedIdsValue = null;
+                }
+                if (extentsValue != null && extentsValue.isEmpty()) {
+                    extentsValue = null;
+                }
+
+                findCellInstance().getOptionInstanceMap().get(SETTINGS_SELECTED_IDS).setValue(selectedIdsValue);
+                findCellInstance().getOptionInstanceMap().get(SETTINGS_EXTENTS).setValue(extentsValue);
+
+                saveNotebook();
+            }
+        };
+        selectionButton.setDefaultFormProcessing(false);
+        form.add(selectionButton);
+
+        AjaxButton axesButton = new AjaxButton("updateAxes") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                String axesValue = axes.getValue();
+                //System.out.println("Axes: " + axesValue);
+                if (axesValue.isEmpty()) {
+                    axesValue = null;
+                }
+                String colorDimensionValue = colorDimension.getValue();
+                if (colorDimensionValue.isEmpty()) {
+                    colorDimensionValue = null;
+                }
+
+                findCellInstance().getOptionInstanceMap().get(SETTINGS_AXES).setValue(axesValue);
+                findCellInstance().getOptionInstanceMap().get(SETTINGS_COLOR_DIMENSION).setValue(colorDimensionValue);
+
+                saveNotebook();
+            }
+        };
+        axesButton.setDefaultFormProcessing(false);
+        form.add(axesButton);
     }
 
     @Override
@@ -109,7 +180,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     }
 
     private void refreshPlotData() throws Exception {
-        ParallelCoordinatePlotCanvasItemPanel.ModelObject model = form.getModelObject();
+
         List<String> fields = model.getFields();
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
@@ -137,7 +208,6 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     }
 
     private String buildPlotJs() throws IOException {
-        ModelObject model = form.getModelObject();
         return BUILD_PLOT_JS
                 .replace(":id", getMarkupId())
                 .replace(":data", model.getPlotDataAsJson());
@@ -161,13 +231,12 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                 cellInstance.getOptionInstanceMap().get(OPTION_FIELDS).setValue(advancedOptionsPanel.getFields());
                 notebookSession.storeCurrentEditable();
 
-                ModelObject model = form.getModelObject();
                 model.setFields(advancedOptionsPanel.getFields());
 
                 onExecute();
             }
         });
-        advancedOptionsPanel.setFields(form.getModelObject().getFields());
+        advancedOptionsPanel.setFields(model.getFields());
     }
 
     class ModelObject implements Serializable {
@@ -213,6 +282,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                 return json;
             }
         }
+
     }
 
 }

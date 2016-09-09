@@ -8,6 +8,7 @@ import org.squonk.types.NumberRange;
 import portal.SessionContext;
 import portal.notebook.webapp.AbstractD3CanvasItemPanel;
 import portal.notebook.webapp.HeatmapCanvasItemPanel;
+import portal.notebook.webapp.ParallelCoordinatePlotCanvasItemPanel;
 import portal.notebook.webapp.ScatterPlotCanvasItemPanel;
 
 import javax.annotation.PostConstruct;
@@ -128,6 +129,18 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_FIELDS,
                         "Fields", "Data Fields").withMinMaxValues(2, 20));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.SETTINGS_AXES,
+                        "Axes", "Axes configuration"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.SETTINGS_SELECTED_IDS,
+                        "Selection", "Selection"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.SETTINGS_EXTENTS,
+                        "Extents", "Brush extents"));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.SETTINGS_COLOR_DIMENSION,
+                        "Colour dimension", "Dimension for colouring values"));
         return cellDefinition;
     }
 
