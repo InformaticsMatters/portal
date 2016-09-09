@@ -53,8 +53,7 @@ public class DatasetResultsHandler implements ResultsHandler {
     }
 
     public boolean preparePanelForDisplay() throws Exception {
-        Dataset dataset = cellDatasetProvider.getDataset();
-        return getPanelImpl().prepare(dataset);
+        return getPanelImpl().prepare(cellDatasetProvider.getMetadata());
     }
 
     public String getExtraJavascriptForResultsViewer() {

@@ -32,17 +32,17 @@ public class DatasetDetailsPanel extends Panel {
     }
 
 
-    public <T extends BasicObject> boolean prepare(Dataset<T> dataset) throws Exception {
-        if (dataset == null) {
+    public <T extends BasicObject> boolean prepare(DatasetMetadata<T> meta) throws Exception {
+        if (meta == null) {
             addDummyContent();
             datasetType = null;
             return false;
         }
-        if (datasetType == null || datasetType != dataset.getType()) {
-            datasetType = dataset.getType();
+        if (datasetType == null || datasetType != meta.getType()) {
+            datasetType = meta.getType();
             addRealContent();
         }
-        datasetMetadataModel.setObject(dataset == null ? null : dataset.getMetadata());
+        datasetMetadataModel.setObject(meta);
         return true;
     }
 

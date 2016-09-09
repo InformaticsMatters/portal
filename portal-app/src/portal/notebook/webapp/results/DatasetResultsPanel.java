@@ -260,13 +260,17 @@ public class DatasetResultsPanel extends Panel {
             limit = DEFAULT_NUM_RECORDS;
         }
         Stream<T> stream = dataset.getStream();
-        if (offset != 0) {
-            stream = stream.skip((long) offset);
+        try {
+            if (offset != 0) {
+                stream = stream.skip((long) offset);
+            }
+            stream = stream.limit((long) limit);
+            List<T> records = stream.collect(Collectors.toList());
+            resultsModel.setObject(records);
+            LOG.fine("Loaded records. offset=" + offset + " limit=" + limit + " size=" + records.size());
+        } finally {
+            stream.close();
         }
-        stream = stream.limit((long) limit);
-        List<T> records = stream.collect(Collectors.toList());
-        resultsModel.setObject(records);
-        stream.close();
-        LOG.fine("Loaded records. offset=" + offset + " limit=" + limit + " size=" + records.size());
+
     }
 }
