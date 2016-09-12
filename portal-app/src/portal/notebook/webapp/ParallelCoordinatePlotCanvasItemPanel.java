@@ -40,10 +40,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
     private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', {}, :data)";
 
-    public static final String SETTINGS_AXES ="axes";
-    public static final String SETTINGS_EXTENTS ="extents";
-    public static final String SETTINGS_COLOR_DIMENSION ="colorDimension";
-    public static final String SETTINGS_SELECTED_IDS ="selectedIds";
+    public static final String OPTION_COLOR_DIMENSION ="colorDimension";
 
     private Form<ModelObject> form;
     private Label statusLabel;
@@ -109,9 +106,9 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                 CellInstance cell = findCellInstance();
                 Map<String,OptionInstance> options = cell.getOptionInstanceMap();
                 selection.getModel().setObject(""); // never read
-                axes.getModel().setObject(options.get(SETTINGS_AXES).getValue());
-                extents.getModel().setObject(options.get(SETTINGS_EXTENTS).getValue());
-                colorDimension.getModel().setObject(options.get(SETTINGS_COLOR_DIMENSION).getValue());
+                axes.getModel().setObject(options.get(OPTION_AXES).getValue());
+                extents.getModel().setObject(options.get(OPTION_EXTENTS).getValue());
+                colorDimension.getModel().setObject(options.get(OPTION_COLOR_DIMENSION).getValue());
             }
         };
 
@@ -133,8 +130,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                     extentsValue = null;
                 }
 
-                findCellInstance().getOptionInstanceMap().get(SETTINGS_SELECTED_IDS).setValue(selectedIdsValue);
-                findCellInstance().getOptionInstanceMap().get(SETTINGS_EXTENTS).setValue(extentsValue);
+                findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selectedIdsValue);
+                findCellInstance().getOptionInstanceMap().get(OPTION_EXTENTS).setValue(extentsValue);
 
                 saveNotebook();
             }
@@ -155,8 +152,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                     colorDimensionValue = null;
                 }
 
-                findCellInstance().getOptionInstanceMap().get(SETTINGS_AXES).setValue(axesValue);
-                findCellInstance().getOptionInstanceMap().get(SETTINGS_COLOR_DIMENSION).setValue(colorDimensionValue);
+                findCellInstance().getOptionInstanceMap().get(OPTION_AXES).setValue(axesValue);
+                findCellInstance().getOptionInstanceMap().get(OPTION_COLOR_DIMENSION).setValue(colorDimensionValue);
 
                 saveNotebook();
             }

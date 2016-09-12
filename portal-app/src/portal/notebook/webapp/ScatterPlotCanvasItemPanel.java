@@ -39,15 +39,12 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
     private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, :data)";
-    private static final String PROP_EXTENTS = "extents";
 
     public static final String OPTION_COLOR = "color";
     public static final String OPTION_POINT_SIZE = "pointSize";
     public static final String OPTION_AXIS_LABELS = "axisLabels";
-    public static final String SELECTION_X_RANGE ="selectionXRange";
-    public static final String SELECTION_Y_RANGE ="selectionYRange";
-    public static final String SELECTION_SELECTED ="selectionSelected";
-    public static final String SELECTION_SELECTED_MARKED ="selectionSelectedMarked";
+    public static final String OPTION_SELECTED_X_RANGE ="selectionXRange";
+    public static final String OPTION_SELECTED_Y_RANGE ="selectionYRange";
 
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
@@ -125,32 +122,37 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         model.setColor((String) options.get(OPTION_COLOR).getValue());
         model.setPointSize((String) options.get(OPTION_POINT_SIZE).getValue());
         model.setShowAxisLabels((Boolean) options.get(OPTION_AXIS_LABELS).getValue());
-        model.setXRange((NumberRange<Float>)options.get(SELECTION_X_RANGE).getValue());
-        model.setYRange((NumberRange<Float>)options.get(SELECTION_Y_RANGE).getValue());
-        model.setSelectedIDs((String)options.get(SELECTION_SELECTED).getValue());
-        model.setSelectedMarkedIDs((String)options.get(SELECTION_SELECTED_MARKED).getValue());
     }
 
     private void addForm() {
 
-        form = new Form("form");
+        TextField brushXMin = new HiddenField("brushxmin", new Model());
+        TextField brushXMax = new HiddenField("brushxmax", new Model());
+        TextField brushYMin = new HiddenField("brushymin", new Model());
+        TextField brushYMax = new HiddenField("brushymax", new Model());
+        TextField selectedIds = new HiddenField("selectedIds", new Model(""));
+
+        form = new Form("form"){
+            @Override
+            protected void onBeforeRender() {
+                super.onBeforeRender();
+                CellInstance cell = findCellInstance();
+                Map<String,OptionInstance> options = cell.getOptionInstanceMap();
+                NumberRange<Float> xRange = (NumberRange<Float>)options.get(OPTION_SELECTED_X_RANGE).getValue();
+                NumberRange<Float> yRange = (NumberRange<Float>)options.get(OPTION_SELECTED_Y_RANGE).getValue();
+                brushXMin.getModel().setObject(xRange == null ? null : xRange.getMinValue());
+                brushXMax.getModel().setObject(xRange == null ? null : xRange.getMaxValue());
+                brushYMin.getModel().setObject(yRange == null ? null : yRange.getMinValue());
+                brushYMax.getModel().setObject(yRange == null ? null : yRange.getMaxValue());
+                selectedIds.getModel().setObject(""); // never read
+            }
+        };
         form.setOutputMarkupId(true);
-
-        CellInstance cellInstance = findCellInstance();
-        Map<String,OptionInstance> options = cellInstance.getOptionInstanceMap();
-        NumberRange<Float> xRange = (NumberRange<Float>)options.get(SELECTION_X_RANGE).getValue();
-        NumberRange<Float> yRange = (NumberRange<Float>)options.get(SELECTION_Y_RANGE).getValue();
-
         add(form);
-        TextField brushXMin = new HiddenField("brushxmin", new Model(xRange == null ? null : xRange.getMinValue()));
         form.add(brushXMin);
-        TextField brushXMax = new HiddenField("brushxmax", new Model(xRange == null ? null : xRange.getMaxValue()));
         form.add(brushXMax);
-        TextField brushYMin = new HiddenField("brushymin", new Model(yRange == null ? null : yRange.getMinValue()));
         form.add(brushYMin);
-        TextField brushYMax = new HiddenField("brushymax", new Model(yRange == null ? null : yRange.getMaxValue()));
         form.add(brushYMax);
-        TextField selectedIds = new HiddenField("selectedIds", new Model("")); // never read
         form.add(selectedIds);
 
         AjaxButton selectionButton = new AjaxButton("selection") {
@@ -184,15 +186,9 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                     return;
                 }
 
-                cellInstance.getOptionInstanceMap().get(SELECTION_X_RANGE).setValue(xRange);
-                cellInstance.getOptionInstanceMap().get(SELECTION_Y_RANGE).setValue(yRange);
-                cellInstance.getOptionInstanceMap().get(SELECTION_SELECTED).setValue(selection);
-
-                model.setXRange(xRange);
-                model.setYRange(yRange);
-                model.setSelectedIDs(selection);
-
-                //System.out.println("========= SCATTER SETTINGS: " + settings);
+                cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_X_RANGE).setValue(xRange);
+                cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_Y_RANGE).setValue(yRange);
+                cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
 
                 saveNotebook();
 
@@ -348,10 +344,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         private String colorMode;
         private String pointSize;
         private Boolean showAxisLabels = Boolean.FALSE;
-        private NumberRange<Float> xRange;
-        private NumberRange<Float> yRange;
-        private String selectedIDs;
-        private String selectedMarkedIDs;
 
         public String getX() {
             return x;
@@ -423,37 +415,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             this.showAxisLabels = showAxisLabels;
         }
 
-        public NumberRange getXRange() {
-            return xRange;
-        }
-
-        public void setXRange(NumberRange<Float> xRange) {
-            this.xRange = xRange;
-        }
-
-        public NumberRange<Float> getYRange() {
-            return yRange;
-        }
-
-        public void setYRange(NumberRange<Float> yRange) {
-            this.yRange = yRange;
-        }
-
-        public String getSelectedIDs() {
-            return selectedIDs;
-        }
-
-        public void setSelectedIDs(String selectedIDs) {
-            this.selectedIDs = selectedIDs;
-        }
-
-        public String getSelectedMarkedIDs() {
-            return selectedMarkedIDs;
-        }
-
-        public void setSelectedMarkedIDs(String selectedMarkedIDs) {
-            this.selectedMarkedIDs = selectedMarkedIDs;
-        }
     }
 
     class DataItem implements Serializable {

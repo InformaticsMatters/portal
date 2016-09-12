@@ -72,13 +72,13 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
         // these ones are related to selection of points in the plot
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.SELECTION_X_RANGE, "Selected X", "Selected X range"));
+                new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_X_RANGE, "Selected X", "Selected X range"));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.SELECTION_Y_RANGE, "Selected Y", "Selected Y range"));
+                new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_Y_RANGE, "Selected Y", "Selected Y range"));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.SELECTION_SELECTED, "Selected IDs", "Selected IDs"));
-        cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.SELECTION_SELECTED_MARKED, "Selected marked IDs", "Selected marked IDs"));
+                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_IDS, "Selected IDs", "Selected IDs"));
+//        cellDefinition.getOptionDefinitionList().add(
+//                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
 
         return cellDefinition;
     }
@@ -130,16 +130,16 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_FIELDS,
                         "Fields", "Data Fields").withMinMaxValues(2, 20));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.SETTINGS_AXES,
+                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.OPTION_AXES,
                         "Axes", "Axes configuration"));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.SETTINGS_SELECTED_IDS,
+                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.OPTION_SELECTED_IDS,
                         "Selection", "Selection"));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.SETTINGS_EXTENTS,
+                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.OPTION_EXTENTS,
                         "Extents", "Brush extents"));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.SETTINGS_COLOR_DIMENSION,
+                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.OPTION_COLOR_DIMENSION,
                         "Colour dimension", "Dimension for colouring values"));
         return cellDefinition;
     }
