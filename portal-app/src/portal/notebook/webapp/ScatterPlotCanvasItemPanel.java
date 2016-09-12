@@ -188,7 +188,8 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_X_RANGE).setValue(xRange);
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_Y_RANGE).setValue(yRange);
-                cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
+                // removed until something ready to consume
+                //cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
 
                 saveNotebook();
 

@@ -130,8 +130,9 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                     extentsValue = null;
                 }
 
-                findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selectedIdsValue);
                 findCellInstance().getOptionInstanceMap().get(OPTION_EXTENTS).setValue(extentsValue);
+                // removed until something ready to consume
+                //findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selectedIdsValue);
 
                 saveNotebook();
             }
