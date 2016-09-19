@@ -28,7 +28,10 @@ import java.io.UncheckedIOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,6 +39,8 @@ import java.util.stream.Stream;
  * @author Tim Dudgeon
  */
 public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
+
+    private static final Logger LOG = Logger.getLogger(ParallelCoordinatePlotCanvasItemPanel.class.getName());
 
     private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', {}, :data)";
 
@@ -67,9 +72,6 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         CellInstance cellInstance = findCellInstance();
         Map<String, OptionInstance> options = cellInstance.getOptionInstanceMap();
         model.setFields((List<String>) options.get(OPTION_FIELDS).getValue());
-
-        String selectionJson = (String) options.get(OPTION_SELECTED_IDS).getValue();
-        readSelectionJson(selectionJson);
     }
 
     @Override
@@ -121,21 +123,22 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         AjaxButton selectionButton = new AjaxButton("updateSelection") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                String selectedIdsValue = selection.getValue();
+                String selectedIdsJson = selection.getValue();
                 String extentsValue = extents.getValue();
-                if (selectedIdsValue != null && selectedIdsValue.isEmpty()) {
-                    selectedIdsValue = null;
+                if (selectedIdsJson != null && selectedIdsJson.isEmpty()) {
+                    selectedIdsJson = null;
                 }
                 if (extentsValue != null && extentsValue.isEmpty()) {
                     extentsValue = null;
                 }
 
-                findCellInstance().getOptionInstanceMap().get(OPTION_EXTENTS).setValue(extentsValue);
-                findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selectedIdsValue);
+                CellInstance cell = findCellInstance();
+                cell.getOptionInstanceMap().get(OPTION_EXTENTS).setValue(extentsValue);
+
+                List<UUID> selection = readSelectionJson(selectedIdsJson);
+                cell.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
 
                 saveNotebook();
-
-                readSelectionJson(selectedIdsValue);
 
                 cellStatusChanged(null, target);
             }
@@ -230,10 +233,16 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
             b.append("No data");
         } else {
             b.append(numRecords).append(" records, ");
-            if (selectedUUIDs == null) {
-                b.append("No selection");
-            } else {
-                b.append(selectedUUIDs.size()).append(" selected");
+            try {
+                List<UUID> selectedUUIDs = (List<UUID>) findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).getValue();
+                if (selectedUUIDs == null) {
+                    b.append("No selection");
+                } else {
+                    b.append(selectedUUIDs.size()).append(" selected");
+                }
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Failed to read selection", e);
+                b.append("Error reading selection");
             }
         }
         return b.toString();

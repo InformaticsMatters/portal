@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by timbo on 07/07/2016.
@@ -25,8 +27,6 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
     private static final Logger LOG = Logger.getLogger(AbstractD3CanvasItemPanel.class.getName());
     @Inject
     protected NotebookSession notebookSession;
-
-    protected List<UUID> selectedUUIDs = new ArrayList<>();
 
     public AbstractD3CanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -69,24 +69,17 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
         }
     }
 
-    protected void readSelectionJson(String json) {
-        if (json == null) {
-            selectedUUIDs = null;
-        } else {
+    protected List<UUID> readSelectionJson(String json) {
+        if (json != null) {
             try {
-                Iterator<String> iter = JsonHandler.getInstance().iteratorFromJson(json, String.class);
-                List<UUID> uuids = new ArrayList<>();
-                while (iter.hasNext()) {
-                    uuids.add(UUID.fromString(iter.next()));
-                }
-                selectedUUIDs = uuids;
+                Stream<UUID> stream = JsonHandler.getInstance().streamFromJson(json, UUID.class);
+                return stream.collect(Collectors.toList());
             } catch (Exception e) {
                 notifyMessage("Error", "Invalid selection");
                 LOG.log(Level.WARNING, "Invalid selection", e);
-                selectedUUIDs = null;
             }
         }
+        return null;
     }
-
 
 }

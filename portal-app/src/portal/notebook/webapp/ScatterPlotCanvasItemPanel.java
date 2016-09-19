@@ -7,31 +7,29 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import org.squonk.types.NumberRange;
-import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,7 +38,7 @@ import java.util.stream.Stream;
  */
 public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScatterPlotCanvasItemPanel.class);
+    private static final Logger LOG = Logger.getLogger(ScatterPlotCanvasItemPanel.class.getName());
     private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, :data)";
 
     public static final String OPTION_COLOR = "color";
@@ -80,7 +78,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         try {
             refreshPlotData(false);
         } catch (Throwable t) {
-            LOGGER.warn("Error refreshing data", t);
+            LOG.log(Level.WARNING, "Error refreshing data", t);
             notifyMessage("Error", "Failed to refresh data" + t.getLocalizedMessage());
         }
     }
@@ -130,9 +128,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         model.setColor((String) options.get(OPTION_COLOR).getValue());
         model.setPointSize((String) options.get(OPTION_POINT_SIZE).getValue());
         model.setShowAxisLabels((Boolean) options.get(OPTION_AXIS_LABELS).getValue());
-
-        String selectionJson = (String) options.get(OPTION_SELECTED_IDS).getValue();
-        readSelectionJson(selectionJson);
     }
 
     private void addForm() {
@@ -175,7 +170,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 String ymin = brushYMin.getValue();
                 String ymax = brushYMax.getValue();
                 String selectionRaw = selectedIds.getValue();
-                String selection = (selectionRaw == null || selectionRaw.isEmpty()) ? null : selectionRaw;
+                String selectionJson = (selectionRaw == null || selectionRaw.isEmpty()) ? null : selectionRaw;
                 //System.out.println("============ extents: " + xmin + " " + xmax + " " + ymin + " " + ymax);
 
                 CellInstance cellInstance = findCellInstance();
@@ -192,17 +187,18 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                                 (ymax == null || ymax.isEmpty()) ? null : new Float(ymax));
                     }
                 } catch (Exception e) {
-                    LOGGER.warn("Failed to build selection ranges");
+                    LOG.warning("Failed to build selection ranges");
                     notifyMessage("Error", "Failed to build selection ranges" + e.getLocalizedMessage());
                     return;
                 }
 
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_X_RANGE).setValue(xRange);
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_Y_RANGE).setValue(yRange);
+
+                List<UUID> selection = readSelectionJson(selectionJson);
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
 
                 saveNotebook();
-                readSelectionJson(selection);
 
                 cellStatusChanged(null, target);
             }
@@ -309,16 +305,23 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     public String getStatusString() {
+
         StringBuilder b = new StringBuilder();
         DataItem[] data = model.getData();
         if (data == null || data.length == 0) {
             b.append("No data");
         } else {
             b.append(data.length).append(" records, ");
-            if (selectedUUIDs == null) {
-                b.append("No selection");
-            } else {
-                b.append(selectedUUIDs.size()).append(" selected");
+            try {
+                List<UUID> selectedUUIDs = (List<UUID>) findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).getValue();
+                if (selectedUUIDs == null) {
+                    b.append("No selection");
+                } else {
+                    b.append(selectedUUIDs.size()).append(" selected");
+                }
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Failed to read selection", e);
+                b.append("Error reading selection");
             }
         }
         return b.toString();
