@@ -18,7 +18,7 @@ function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend,
      };
 
     selectionHandler.writeSelections = function(extents, selected, selectedAndMarked) {
-        console.log("Extents: " + extents);
+        //console.log("Extents: " + extents);
         //console.log("Selected: " + selected);
 
         // brush extents
@@ -403,12 +403,12 @@ scatterPlot = function(config) {
       // whereas we could not call the brushed function from the
       // former draw function from within the former redraw function.
       function brushed() {
+        brushExtent = brush.extent();
         if (brush.empty()) {
             // empty brush so we select all
             g.selectAll("circle").classed("hidden", false);
 
         } else {
-            brushExtent = brush.extent();
             g.selectAll("circle").classed("hidden", function(d) {
                 return brushExtent[0][0] > d.x ||
                     d.x > brushExtent[1][0] ||
