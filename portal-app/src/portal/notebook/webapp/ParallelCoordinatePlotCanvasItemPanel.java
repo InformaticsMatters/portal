@@ -6,7 +6,6 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -40,10 +39,9 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
     private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', {}, :data)";
 
-    public static final String OPTION_COLOR_DIMENSION ="colorDimension";
+    public static final String OPTION_COLOR_DIMENSION = "colorDimension";
 
     private Form<ModelObject> form;
-    private Label statusLabel;
     private ParallelCoordinatePlotAdvancedOptionsPanel advancedOptionsPanel;
     private final ModelObject model = new ModelObject();
 
@@ -57,18 +55,21 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         addForm();
         loadModelFromPersistentData();
         addTitleBar();
+        addStatus();
         try {
             refreshPlotData();
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        addStatus();
     }
 
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
-        Map<String,OptionInstance> options = cellInstance.getOptionInstanceMap();
-        model.setFields((List<String>)options.get(OPTION_FIELDS).getValue());
+        Map<String, OptionInstance> options = cellInstance.getOptionInstanceMap();
+        model.setFields((List<String>) options.get(OPTION_FIELDS).getValue());
+
+        String selectionJson = (String) options.get(OPTION_SELECTED_IDS).getValue();
+        readSelectionJson(selectionJson);
     }
 
     @Override
@@ -88,8 +89,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     }
 
     private void addStatus() {
-        statusLabel = createStatusLabel("cellStatus");
-        add(statusLabel);
+        add(createStatusLabel("cellStatus"));
     }
 
     private void addForm() {
@@ -104,7 +104,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
             protected void onBeforeRender() {
                 super.onBeforeRender();
                 CellInstance cell = findCellInstance();
-                Map<String,OptionInstance> options = cell.getOptionInstanceMap();
+                Map<String, OptionInstance> options = cell.getOptionInstanceMap();
                 selection.getModel().setObject(""); // never read
                 axes.getModel().setObject(options.get(OPTION_AXES).getValue());
                 extents.getModel().setObject(options.get(OPTION_EXTENTS).getValue());
@@ -131,10 +131,13 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                 }
 
                 findCellInstance().getOptionInstanceMap().get(OPTION_EXTENTS).setValue(extentsValue);
-                // removed until something ready to consume
-                //findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selectedIdsValue);
+                findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selectedIdsValue);
 
                 saveNotebook();
+
+                readSelectionJson(selectedIdsValue);
+
+                cellStatusChanged(null, target);
             }
         };
         selectionButton.setDefaultFormProcessing(false);
@@ -180,28 +183,37 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     private void refreshPlotData() throws Exception {
 
         List<String> fields = model.getFields();
-            CellInstance cellInstance = findCellInstance();
-            BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-            VariableInstance variableInstance = bindingInstance.getVariableInstance();
-            if (variableInstance != null) {
-                Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
-                final AtomicInteger i = new AtomicInteger(0);
-                try (Stream<? extends BasicObject> stream = dataset.getStream()) {
-                    List<Map<String,Object>> items = stream.sequential().map((o) -> {
-                        Map<String,Object> data = new LinkedHashMap<>();
-                        data.put("uuid", o.getUUID());
-                        data.put("idx", i.incrementAndGet());
-                        for (String field: fields) {
-                            Object val = o.getValue(field);
-                            if (val != null) {
-                                data.put(field, o.getValue(field));
-                            }
-                        }
-                        return data;
-                    }).collect(Collectors.toList());
+        if (fields == null) {
+            // no data bound yet
+            return;
+        }
+        CellInstance cellInstance = findCellInstance();
+        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        VariableInstance variableInstance = bindingInstance.getVariableInstance();
 
-                    model.setPlotData(items);
-                }
+        if (variableInstance == null) {
+            return;
+        }
+        Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
+        if (dataset != null) {
+            final AtomicInteger i = new AtomicInteger(0);
+            try (Stream<? extends BasicObject> stream = dataset.getStream()) {
+                List<Map<String, Object>> items = stream.sequential().map((o) -> {
+                    Map<String, Object> data = new LinkedHashMap<>();
+                    data.put("uuid", o.getUUID());
+                    data.put("idx", i.incrementAndGet());
+                    for (String field : fields) {
+                        Object val = o.getValue(field);
+                        if (val != null) {
+                            data.put(field, o.getValue(field));
+                        }
+                    }
+                    return data;
+                }).collect(Collectors.toList());
+
+                model.setPlotData(items);
+                model.setSize(i.get());
+            }
         }
     }
 
@@ -209,6 +221,22 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         return BUILD_PLOT_JS
                 .replace(":id", getMarkupId())
                 .replace(":data", model.getPlotDataAsJson());
+    }
+
+    public String getStatusString() {
+        StringBuilder b = new StringBuilder();
+        Integer numRecords = model.getSize();
+        if (numRecords == null || numRecords == 0) {
+            b.append("No data");
+        } else {
+            b.append(numRecords).append(" records, ");
+            if (selectedUUIDs == null) {
+                b.append("No selection");
+            } else {
+                b.append(selectedUUIDs.size()).append(" selected");
+            }
+        }
+        return b.toString();
     }
 
     @Override
@@ -239,7 +267,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
     class ModelObject implements Serializable {
 
-        private List<Map<String,Object>> plotData;
+        private List<Map<String, Object>> plotData;
         /*
         need to create JSON like this:
 
@@ -252,6 +280,9 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         uuid and idx must be present. Other fields as needed.
          */
 
+
+        private Integer size = null;
+
         private List<String> fields;
 
         public List<String> getFields() {
@@ -262,12 +293,20 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
             this.fields = fields;
         }
 
-        public List<Map<String,Object>> getPlotData() {
+        public List<Map<String, Object>> getPlotData() {
             return plotData;
         }
 
-        public void setPlotData(List<Map<String,Object>> plotData) {
+        public void setPlotData(List<Map<String, Object>> plotData) {
             this.plotData = plotData;
+        }
+
+        public Integer getSize() {
+            return size;
+        }
+
+        public void setSize(Integer size) {
+            this.size = size;
         }
 
         private String getPlotDataAsJson() throws IOException {

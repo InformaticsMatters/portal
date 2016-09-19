@@ -44,10 +44,13 @@ function fitScatterPlot(id) {
     var div = d3.select("#" + id);
     var plot = div.select(".svg-container");
     var title = div.select(".titleBar");
+    var status = div.select(".extra.content.line");
     var w = div.style("width");
     var houter = div.style("height");
-    var h = houter.replace("px", "") - title.style("height").replace("px", "");
-    //console.log("Resizing scatterplot : width=" + w + " outer height=" + houter + " inner height=" + h + "px");
+    var titleH = title.style("height").replace("px", "");
+    var statusH = status.style("height").replace("px", "");
+    var h = houter.replace("px", "") - titleH - statusH;
+    //console.log("Resizing scatterplot : width=" + w + " outer height=" + houter + " inner height=" + h + "px" + " titleH=" + titleH + " statusH=" + statusH);
     plot.style("width", w + "px");
     plot.style("height", h + "px");
     resizeScatterPlot(plot);

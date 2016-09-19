@@ -1,6 +1,12 @@
 package portal.notebook.webapp;
 
+import org.squonk.types.io.JsonHandler;
+
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +25,8 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
     private static final Logger LOG = Logger.getLogger(AbstractD3CanvasItemPanel.class.getName());
     @Inject
     protected NotebookSession notebookSession;
+
+    protected List<UUID> selectedUUIDs = new ArrayList<>();
 
     public AbstractD3CanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -60,5 +68,25 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
             }
         }
     }
+
+    protected void readSelectionJson(String json) {
+        if (json == null) {
+            selectedUUIDs = null;
+        } else {
+            try {
+                Iterator<String> iter = JsonHandler.getInstance().iteratorFromJson(json, String.class);
+                List<UUID> uuids = new ArrayList<>();
+                while (iter.hasNext()) {
+                    uuids.add(UUID.fromString(iter.next()));
+                }
+                selectedUUIDs = uuids;
+            } catch (Exception e) {
+                notifyMessage("Error", "Invalid selection");
+                LOG.log(Level.WARNING, "Invalid selection", e);
+                selectedUUIDs = null;
+            }
+        }
+    }
+
 
 }

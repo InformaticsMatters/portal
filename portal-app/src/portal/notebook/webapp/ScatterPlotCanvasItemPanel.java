@@ -7,11 +7,13 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -22,13 +24,14 @@ import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import org.squonk.types.NumberRange;
+import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,8 +46,8 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     public static final String OPTION_COLOR = "color";
     public static final String OPTION_POINT_SIZE = "pointSize";
     public static final String OPTION_AXIS_LABELS = "axisLabels";
-    public static final String OPTION_SELECTED_X_RANGE ="selectionXRange";
-    public static final String OPTION_SELECTED_Y_RANGE ="selectionYRange";
+    public static final String OPTION_SELECTED_X_RANGE = "selectionXRange";
+    public static final String OPTION_SELECTED_Y_RANGE = "selectionYRange";
 
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
@@ -73,12 +76,17 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         addForm();
         loadModelFromPersistentData();
         addTitleBar();
+        addStatus();
         try {
             refreshPlotData(false);
         } catch (Throwable t) {
             LOGGER.warn("Error refreshing data", t);
             notifyMessage("Error", "Failed to refresh data" + t.getLocalizedMessage());
         }
+    }
+
+    private void addStatus() {
+        add(createStatusLabel("cellStatus"));
     }
 
     @Override
@@ -116,12 +124,15 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
-        Map<String,OptionInstance> options = cellInstance.getOptionInstanceMap();
+        Map<String, OptionInstance> options = cellInstance.getOptionInstanceMap();
         model.setX((String) options.get(OPTION_X_AXIS).getValue());
         model.setY((String) options.get(OPTION_Y_AXIS).getValue());
         model.setColor((String) options.get(OPTION_COLOR).getValue());
         model.setPointSize((String) options.get(OPTION_POINT_SIZE).getValue());
         model.setShowAxisLabels((Boolean) options.get(OPTION_AXIS_LABELS).getValue());
+
+        String selectionJson = (String) options.get(OPTION_SELECTED_IDS).getValue();
+        readSelectionJson(selectionJson);
     }
 
     private void addForm() {
@@ -132,14 +143,14 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         TextField brushYMax = new HiddenField("brushymax", new Model());
         TextField selectedIds = new HiddenField("selectedIds", new Model(""));
 
-        form = new Form("form"){
+        form = new Form("form") {
             @Override
             protected void onBeforeRender() {
                 super.onBeforeRender();
                 CellInstance cell = findCellInstance();
-                Map<String,OptionInstance> options = cell.getOptionInstanceMap();
-                NumberRange<Float> xRange = (NumberRange<Float>)options.get(OPTION_SELECTED_X_RANGE).getValue();
-                NumberRange<Float> yRange = (NumberRange<Float>)options.get(OPTION_SELECTED_Y_RANGE).getValue();
+                Map<String, OptionInstance> options = cell.getOptionInstanceMap();
+                NumberRange<Float> xRange = (NumberRange<Float>) options.get(OPTION_SELECTED_X_RANGE).getValue();
+                NumberRange<Float> yRange = (NumberRange<Float>) options.get(OPTION_SELECTED_Y_RANGE).getValue();
                 brushXMin.getModel().setObject(xRange == null ? null : xRange.getMinValue());
                 brushXMax.getModel().setObject(xRange == null ? null : xRange.getMaxValue());
                 brushYMin.getModel().setObject(yRange == null ? null : yRange.getMinValue());
@@ -188,14 +199,12 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_X_RANGE).setValue(xRange);
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_Y_RANGE).setValue(yRange);
-                // removed until something ready to consume
-                //cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
+                cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
 
                 saveNotebook();
+                readSelectionJson(selection);
 
-//                if (target != null) {
-//                    target.appendJavaScript("console.log('selections updated');");
-//                }
+                cellStatusChanged(null, target);
             }
         };
         selectionButton.setDefaultFormProcessing(false);
@@ -297,6 +306,22 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 .replace(":data", model.getDataAsJson());
 
         return result;
+    }
+
+    public String getStatusString() {
+        StringBuilder b = new StringBuilder();
+        DataItem[] data = model.getData();
+        if (data == null || data.length == 0) {
+            b.append("No data");
+        } else {
+            b.append(data.length).append(" records, ");
+            if (selectedUUIDs == null) {
+                b.append("No selection");
+            } else {
+                b.append(selectedUUIDs.size()).append(" selected");
+            }
+        }
+        return b.toString();
     }
 
     @Override
