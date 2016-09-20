@@ -2,7 +2,8 @@
 
 function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend, data) {
     var selector = "#" + id + " .svg-container";
-    var form = d3.select('#' + id + ' form');
+    var form = d3.select('#' + id + ' form.scatterplot');
+
 
     var selectionHandler = function() {
 
@@ -43,7 +44,7 @@ function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend,
 function fitScatterPlot(id) {
     var div = d3.select("#" + id);
     var plot = div.select(".svg-container");
-    var title = div.select(".titleBar");
+    var title = div.select(".headers");
     var w = div.style("width");
     var houter = div.style("height");
     var h = houter.replace("px", "") - title.style("height").replace("px", "");

@@ -1,9 +1,13 @@
 package portal.notebook.webapp;
 
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
@@ -153,6 +157,27 @@ public class CellTitleBarPanel extends Panel {
                 }
             }
         });
+
+
+        AjaxEventBehavior event = new AjaxEventBehavior("onload") {
+            @Override
+            protected void onEvent(final AjaxRequestTarget target) {
+                target.appendJavaScript("console.log('setting up dropdown');");
+                target.appendJavaScript("$('.ui.dropdown').dropdown();");
+            }
+        };
+    }
+
+    @Override
+    public void renderHead(HtmlHeaderContainer container) {
+        super.renderHead(container);
+        IHeaderResponse response = container.getHeaderResponse();
+        // enable the dropdown menu - maybe a better place to do this?
+        response.render(OnDomReadyHeaderItem.forScript(
+                "$('#" + getMarkupId() +
+                " .ui.dropdown').dropdown({action: 'hide', onChange: function(value, text) {" +
+                        "applyCellMenuAction('" + getParent().getMarkupId() + "', value);" +
+                        "}})"));
     }
 
     private void onBindingsLinkClicked(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {

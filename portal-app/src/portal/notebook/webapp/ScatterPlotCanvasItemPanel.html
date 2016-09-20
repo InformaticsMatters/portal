@@ -1,7 +1,8 @@
 <wicket:panel>
     <div class="notebook-canvas-item-content resizableCellContent">
-        <div wicket:id="titleBar" class="titleBar"></div>
-        <form wicket:id="form" style="display: none;" class="ui form content">
+        <div wicket:id="titleBar" class="headers"></div>
+
+        <form wicket:id="form" style="display: none;" class="scatterplot ui form content">
             <input wicket:id="brushxmin" class="brushxmin" type="hidden"/>
             <input wicket:id="brushxmax" class="brushxmax" type="hidden"/>
             <input wicket:id="brushymin" class="brushymin" type="hidden"/>
@@ -11,6 +12,7 @@
             <button wicket:id="selection" class="selection">selection</button>
 
         </form>
+
         <div class="svg-container"></div>
 
     </div>

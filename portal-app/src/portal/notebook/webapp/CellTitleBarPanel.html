@@ -1,8 +1,33 @@
 <wicket:panel>
-    <div class="titleBarContent">
+    <div class="titleBar">
+
+        <form>
+            <div class="left floated ui dropdown">
+                <i class="sidebar grey icon"></i>
+                <div class="menu">
+                    <div class="ui checkbox item" data-value="description">
+                        <input type="checkbox" name="visibility" value="description" class="description">
+                        <label>Show Description</label>
+                    </div>
+                    <div class="ui checkbox item" data-value="content">
+                        <input type="checkbox" checked name="visibility" value="content" class="content">
+                        <label>Show Content</label>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="item bindings" data-value="bindings">
+                        <i class="icon orange unlink flipped horizontally"></i>
+                        Edit Bindings
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
         <div class="name left floated">
             <label class="tbCellName" wicket:id="cellName"/>
         </div>
+
+
         <div style="float: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
         <div style="float: right;"><a wicket:id="expand"><i class="icon grey expand"></i></a></div>
 
@@ -12,6 +37,11 @@
         </div>
         <div style="float: right;"><a wicket:id="advanced"><i class="icon blue setting"></i></a></div>
         <div style="clear: both;"></div>
+    </div>
+
+    <div class="descriptionContent">
+        Description goes here and can
+        potentially contain a <strong>lot of text</strong> and other things
     </div>
 
 </wicket:panel>

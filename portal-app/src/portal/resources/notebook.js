@@ -390,4 +390,27 @@ function applySavedCanvasSize(width, height) {
     $plumbContainer.css("height", height);
 }
 
+function applyCellMenuAction(id, value) {
+    console.log("Applying action " + value + " for #" + id);
+    if (value == 'content' || value == 'description')  {
+        var checkbox = $('#' + id + ' form .' + value);
+        var wasChecked = checkbox.prop('checked');
+        console.log(value + " was checked: " + wasChecked);
+        checkbox.prop('checked', !wasChecked);
+        console.log(value + " is now checked: " + checkbox.prop('checked'));
+        if (value == 'description')  {
+             var panel = $('#' + id + " .descriptionContent");
+             if (wasChecked) {
+                console.log('hiding description');
+                panel.hide();
+             } else {
+                console.log('showing description');
+                panel.show();
+             }
+        }
+    }
+
+
+}
+
 
