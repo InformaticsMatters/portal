@@ -1,8 +1,16 @@
 package portal.notebook.webapp;
 
+import org.squonk.types.io.JsonHandler;
+
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by timbo on 07/07/2016.
@@ -59,6 +67,19 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
                 return null;
             }
         }
+    }
+
+    protected List<UUID> readSelectionJson(String json) {
+        if (json != null) {
+            try {
+                Stream<UUID> stream = JsonHandler.getInstance().streamFromJson(json, UUID.class);
+                return stream.collect(Collectors.toList());
+            } catch (Exception e) {
+                notifyMessage("Error", "Invalid selection");
+                LOG.log(Level.WARNING, "Invalid selection", e);
+            }
+        }
+        return null;
     }
 
 }

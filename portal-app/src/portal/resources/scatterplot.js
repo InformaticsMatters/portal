@@ -19,7 +19,7 @@ function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend,
      };
 
     selectionHandler.writeSelections = function(extents, selected, selectedAndMarked) {
-        console.log("Extents: " + extents);
+        //console.log("Extents: " + extents);
         //console.log("Selected: " + selected);
 
         // brush extents
@@ -44,11 +44,14 @@ function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend,
 function fitScatterPlot(id) {
     var div = d3.select("#" + id);
     var plot = div.select(".svg-container");
-    var title = div.select(".headers");
+    var headers = div.select(".headers");
+    var status = div.select(".extra.content.line");
     var w = div.style("width");
     var houter = div.style("height");
-    var h = houter.replace("px", "") - title.style("height").replace("px", "");
-    //console.log("Resizing scatterplot : width=" + w + " outer height=" + houter + " inner height=" + h + "px");
+    var headersH = headers.style("height").replace("px", "");
+    var statusH = status.style("height").replace("px", "");
+    var h = houter.replace("px", "") - headersH - statusH;
+    //console.log("Resizing scatterplot : width=" + w + " outer height=" + houter + " inner height=" + h + "px" + " titleH=" + titleH + " statusH=" + statusH);
     plot.style("width", w + "px");
     plot.style("height", h + "px");
     resizeScatterPlot(plot);
@@ -404,12 +407,12 @@ scatterPlot = function(config) {
       // whereas we could not call the brushed function from the
       // former draw function from within the former redraw function.
       function brushed() {
+        brushExtent = brush.extent();
         if (brush.empty()) {
             // empty brush so we select all
             g.selectAll("circle").classed("hidden", false);
 
         } else {
-            brushExtent = brush.extent();
             g.selectAll("circle").classed("hidden", function(d) {
                 return brushExtent[0][0] > d.x ||
                     d.x > brushExtent[1][0] ||

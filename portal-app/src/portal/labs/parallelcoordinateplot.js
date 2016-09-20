@@ -61,32 +61,20 @@ function createParallelCoordinatePlot(selection, config, data) {
 
 
     function brushended(data) {
-        //console.log("Brushed: " + data.length);
-        var ids = [];
-        for (i = 0; i < data.length; i++) {
-            ids.push(data[i].uuid);
-        }
-        updateSelection(ids);
         var extents = chart.brushExtents();
-        //console.log("Brush extents: " + JSON.stringify(extents));
-
+        if (Object.keys(extents).length === 0) {
+            updateSelection(null, null);
+        } else {
+            var ids = [];
+            for (i = 0; i < data.length; i++) {
+                ids.push(data[i].uuid);
+            }
+            updateSelection(extents, ids);
+        }
     }
     // example of how to set the extents
     //chart.brushExtents({"hbd_count":[1.490,2.33],"hba_count":[1.0,3.60]});
 
-    chart.persistentState = function(_) {
-        // TODO - also need to handle the column order and the colour column
-        if (!arguments.length) {
-            var state = {};
-            var extents = chart.brushExtents();
-            if (extents.length > 0) {
-                state.brushExtents = extents;
-            }
-            return state;
-        }
-        // TODO - implement setting? Or does this only happen via config when creating?
-        return chart;
-    }
 
     return chart;
 }

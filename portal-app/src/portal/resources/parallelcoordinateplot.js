@@ -2,11 +2,14 @@ function resizeParallelCoordinatePanel(id) {
     var div = d3.select("#" + id);
     var plot = div.select(".svg-container");
     var title = div.select(".titleBar");
+    var status = div.select(".extra.content.line");
     var wouter = div.style("width").replace("px", "");
     var w = wouter - 2;
     var houter = div.style("height").replace("px", "");
-    var h = houter - title.style("height").replace("px", "") - 5;
-    console.log("Resizing parallelCoordinatePlot : outer width= " + wouter + " width=" + w + " outer height=" + houter + " inner height=" + h);
+    var titleH = title.style("height").replace("px", "");
+    var statusH = status.style("height").replace("px", "");
+    var h = houter - titleH - statusH;
+    //console.log("Resizing parallelCoordinatePlot : outer width= " + wouter + " width=" + w + " outer height=" + houter + " inner height=" + h);
     plot.style("width", w + "px");
     plot.style("height", h + "px");
     return {width:w, height:h};
@@ -180,30 +183,19 @@ function createParallelCoordinatePlot(selection, config, selectionHandler, data)
     chart.on("axesreorder.settings", saveAxes);
 
     function brushended(data) {
-        //console.log("Brushed: " + data.length);
-        var ids = [];
-        for (i = 0; i < data.length; i++) {
-            ids.push(data[i].uuid);
+        var extents = chart.brushExtents();
+        if (Object.keys(extents).length === 0) {
+            updateSelection(null, null);
+        } else {
+            var ids = [];
+            for (i = 0; i < data.length; i++) {
+                ids.push(data[i].uuid);
+            }
+            updateSelection(extents, ids);
         }
-        updateSelection(chart.brushExtents(), ids);
-
     }
     // example of how to set the extents
     //chart.brushExtents({"hbd_count":[1.490,2.33],"hba_count":[1.0,3.60]});
-
-    chart.persistentState = function(_) {
-        // TODO - also need to handle the column order and the colour column
-        if (!arguments.length) {
-            var state = {};
-            var extents = chart.brushExtents();
-            if (extents.length > 0) {
-                state.brushExtents = extents;
-            }
-            return state;
-        }
-        // TODO - implement setting? Or does this only happen via config when creating?
-        return chart;
-    }
 
     return chart;
 }
