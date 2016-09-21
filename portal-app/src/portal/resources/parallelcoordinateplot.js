@@ -1,14 +1,14 @@
 function resizeParallelCoordinatePanel(id) {
     var div = d3.select("#" + id);
     var plot = div.select(".svg-container");
-    var title = div.select(".titleBar");
+    var headers = div.select(".headers");
     var status = div.select(".extra.content.line");
     var wouter = div.style("width").replace("px", "");
     var w = wouter - 2;
     var houter = div.style("height").replace("px", "");
-    var titleH = title.style("height").replace("px", "");
+    var headersH = headers.style("height").replace("px", "");
     var statusH = status.style("height").replace("px", "");
-    var h = houter - titleH - statusH;
+    var h = houter - headersH - statusH;
     //console.log("Resizing parallelCoordinatePlot : outer width= " + wouter + " width=" + w + " outer height=" + houter + " inner height=" + h);
     plot.style("width", w + "px");
     plot.style("height", h + "px");
@@ -23,7 +23,7 @@ function buildParallelCoordinatePlot(id, config, data) {
     var selector = "#" + id;
     var outerDiv = d3.selectAll(selector);
     var plot = outerDiv.select(".svg-container");
-    var form = outerDiv.select('form');
+    var form = outerDiv.select('#' + id + ' form.parallelcoordinateplot');
 
     var selectionHandler = function() { }
 

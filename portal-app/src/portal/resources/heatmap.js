@@ -4,31 +4,6 @@ function fitHeatmap(id) {
 
 }
 
-function buildHeatmapXXX(id, config, xxx) {
-    var rows = [], cols = [];
-    for (i=0; i<30; i++) {
-        rows.push("row"+i);
-    }
-    for (i=0; i<40; i++) {
-        cols.push("col"+i);
-    }
-    var data = [];
-    for (i=0; i<rows.length; i++) {
-        var rowRnd = Math.random();
-        for (j=0; j<cols.length; j++) {
-            var d = {row: i, col: j, value: 20 * rowRnd * Math.random()};
-            data.push(d);
-            //console.log(JSON.stringify(d));
-        }
-    }
-    console.log("Generated " + data.length + " values");
-
-    config.rowNames = rows;
-    config.colNames = cols;
-    if (!config.cellSize) config.cellSize = 12;
-    buildHeatmapImpl(id, config, data);
-}
-
 function buildHeatmap(id, config, data) {
 
     var colorScale = config.colorScale ? config.colorScale :
@@ -368,9 +343,9 @@ function resizeHeatmap(selection) {
 
     var divW = +selection.style("width").replace("px", ""),
         divH = +selection.style("height").replace("px", ""),
-        title = selection.select(".titleBar"),
-        titleH = title.style("height").replace("px", ""),
-        chartH = divH - titleH - 20,
+        headers = selection.select(".headers"),
+        headersH = headers.style("height").replace("px", ""),
+        chartH = divH - headersH - 20,
         chartW = divW - 10;
 
     //console.log("Resizing heatmap : div width=" + divW + " div height=" + divH + " chart width=" + chartW+ " chart height=" + chartH);

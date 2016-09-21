@@ -1,25 +1,38 @@
 <wicket:panel>
     <div class="titleBar">
 
-        <form>
+        <form wicket:id="form">
             <div class="left floated ui dropdown">
-                <i class="sidebar grey icon"></i>
+                <i class="grey icon sidebar"></i>
                 <div class="menu">
-                    <div class="ui checkbox item" data-value="description">
-                        <input type="checkbox" name="visibility" value="description" class="description">
+                    <div class="ui checkbox item" data-value="showDescription">
+                        <input wicket:id="showDescription" type="checkbox" name="visibility" value="showDescription" class="showDescription">
                         <label>Show Description</label>
                     </div>
-                    <div class="ui checkbox item" data-value="content">
-                        <input type="checkbox" checked name="visibility" value="content" class="content">
-                        <label>Show Content</label>
+                    <div class="ui checkbox item" data-value="showContent">
+                        <input wicket:id="showContent" type="checkbox" checked name="visibility" value="showContent" class="showContent">
+                        <label>Show Main Content</label>
                     </div>
                     <div class="divider"></div>
-                    <div class="item bindings" data-value="bindings">
-                        <i class="icon orange unlink flipped horizontally"></i>
+                    <div class="item" data-value="editDescription">
+                        <i class="blue write icon"></i>
+                        Edit Description
+                    </div>
+                    <div class="item" data-value="bindings">
+                        <i class="orange unlinkify icon"></i>
                         Edit Bindings
+                    </div>
+                    <div class="divider"></div>
+                    <div class="item" data-value="delete">
+                        <i class="grey remove icon"></i>
+                        Delete Cell
                     </div>
                 </div>
             </div>
+            <input type="button" wicket:id="changeVisibilityButton" class="changeVisibilityButton" style="display: none;"/>
+            <input type="button" wicket:id="editDescriptionButton" class="editDescriptionButton" style="display: none;"/>
+            <input type="button" wicket:id="bindingsButton" class="bindingsButton" style="display: none;"/>
+            <input type="button" wicket:id="deleteButton" class="deleteButton" style="display: none;"/>
         </form>
 
 
@@ -28,20 +41,15 @@
         </div>
 
 
-        <div style="float: right;"><a wicket:id="remove"><i class="icon grey remove"></i></a></div>
         <div style="float: right;"><a wicket:id="expand"><i class="icon grey expand"></i></a></div>
-
         <div style="float: right;"><a wicket:id="submit"><i class="icon green play"></i></a></div>
         <div style="float: right;"><a wicket:id="wait"><i class="icon green wait"></i></a></div>
-        <div style="float: right;"><a wicket:id="bindings"><i class="icon orange unlink flipped horizontally"></i></a>
-        </div>
-        <div style="float: right;"><a wicket:id="advanced"><i class="icon blue setting"></i></a></div>
+         <div style="float: right;"><a wicket:id="advanced"><i class="icon blue setting"></i></a></div>
         <div style="clear: both;"></div>
     </div>
 
-    <div class="descriptionContent">
-        Description goes here and can
-        potentially contain a <strong>lot of text</strong> and other things
+    <div wicket:id="descriptionContent" class="hidden descriptionContent">
+        Description goes here
     </div>
 
 </wicket:panel>

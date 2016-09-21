@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.notebook.api.CellInstance;
@@ -36,6 +37,11 @@ public class FileExportCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public WebMarkupContainer getContentPanel() {
         return form;
     }
 

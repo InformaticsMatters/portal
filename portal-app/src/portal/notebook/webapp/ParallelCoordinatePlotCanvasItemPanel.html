@@ -1,8 +1,8 @@
 <wicket:panel>
     <div class="notebook-canvas-item-content resizableCellContent">
-        <div wicket:id="titleBar" class="titleBar"></div>
+        <div wicket:id="titleBar" class="headers"></div>
 
-        <form wicket:id="form" style="display: none;" class="ui form content">
+        <form wicket:id="form" style="display: none;" class="parallelcoordinateplot ui form content">
             <input wicket:id="selection" class="selection" type="hidden"/>
             <input wicket:id="extents" class="extents" type="hidden"/>
             <input wicket:id="axes" class="axes" type="hidden"/>
@@ -13,7 +13,7 @@
 
         </form>
 
-        <div class="svg-container parcoords"></div>
+        <div class="main svg-container parcoords"></div>
 
         <div class="extra content line">
             <span wicket:id="cellStatus"></span>

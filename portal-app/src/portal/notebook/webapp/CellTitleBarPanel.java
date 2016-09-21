@@ -1,17 +1,25 @@
 package portal.notebook.webapp;
 
-import org.apache.wicket.ajax.AjaxEventBehavior;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import portal.PopupContainerProvider;
 import portal.notebook.api.CellInstance;
 import portal.notebook.service.Execution;
+import portal.notebook.webapp.cell.CellDescriptionEditorPanel;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 import toolkit.wicket.semantic.NotifierProvider;
 
@@ -24,11 +32,16 @@ import java.util.logging.Logger;
  * @author simetrias
  */
 public class CellTitleBarPanel extends Panel {
-    private static final Logger LOGGER = Logger.getLogger(CellTitleBarPanel.class.getName());
-    private final CellInstance cellInstance;
+    private static final Logger LOG = Logger.getLogger(CellTitleBarPanel.class.getName());
+    public static final String SETTING_DESCRIPTION = "cellDescription";
+    private static final String SETTING_SHOW_DESCRIPTION = "showCellDescription";
+    private static final String SETTING_SHOW_CONTENT = "showCellContent";
+
+    private final Long cellId;
     private final CallbackHandler callbackHandler;
     private BindingsPopupPanel bindingsPopupPanel;
     private AdvancedPopupPanel advancedPopupPanel;
+    private MultiLineLabel descriptionLabel;
     private IndicatingAjaxSubmitLink submitLink;
     private AjaxLink waitLink;
     @Inject
@@ -41,19 +54,23 @@ public class CellTitleBarPanel extends Panel {
     public CellTitleBarPanel(String id, CellInstance cellInstance, CallbackHandler callbackHandler) {
         super(id);
         setOutputMarkupId(true);
-        this.cellInstance = cellInstance;
+        this.cellId = cellInstance.getId();
         this.callbackHandler = callbackHandler;
         addTitleBarCssToggler();
-        addToolbarControls();
+        addControls(cellInstance);
         initExecutionStatus();
+    }
+
+    private CellInstance findCellInstance() {
+        return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
     }
 
     private void initExecutionStatus() {
         try {
-            Execution lastExecution = notebookSession.findExecution(getCellInstance().getId());
+            Execution lastExecution = notebookSession.findExecution(cellId);
             applyExecutionStatus(lastExecution);
         } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error findingExecution", t);
+            LOG.log(Level.WARNING, "Error findingExecution", t);
             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
         }
     }
@@ -66,7 +83,7 @@ public class CellTitleBarPanel extends Panel {
                 try {
                     return isFailed();
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error checking status", t);
+                    LOG.log(Level.WARNING, "Error checking status", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                     return true;
                 }
@@ -74,19 +91,10 @@ public class CellTitleBarPanel extends Panel {
         }));
     }
 
-    private void addToolbarControls() {
+    private void addControls(CellInstance cellInstance) {
         add(new Label("cellName", cellInstance.getName().toLowerCase()));
 
         bindingsPopupPanel = new BindingsPopupPanel("content", cellInstance);
-        AjaxLink bindingsLink = new AjaxLink("bindings") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                onBindingsLinkClicked(this, ajaxRequestTarget);
-            }
-        };
-        bindingsLink.setOutputMarkupId(true);
-        add(bindingsLink);
 
         AjaxLink advancedLink = new AjaxLink("advanced") {
 
@@ -113,7 +121,7 @@ public class CellTitleBarPanel extends Panel {
                     callbackHandler.onExecute();
                     target.add(CellTitleBarPanel.this);
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error executing " + getCellInstance().getName(), t);
+                    LOG.log(Level.WARNING, "Error executing " + findCellInstance().getName(), t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
@@ -132,19 +140,6 @@ public class CellTitleBarPanel extends Panel {
         waitLink.setOutputMarkupId(true);
         add(waitLink);
 
-        add(new AjaxLink("remove") {
-
-            @Override
-            public void onClick(AjaxRequestTarget ajaxRequestTarget) {
-                try {
-                    getCallbackHandler().onRemove(cellInstance);
-                } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error removing cell", t);
-                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
-                }
-            }
-        });
-
         add(new AjaxLink("expand") {
 
             @Override
@@ -152,20 +147,138 @@ public class CellTitleBarPanel extends Panel {
                 try {
                     callbackHandler.onShowResults();
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error showing dataset details panel", t);
+                    LOG.log(Level.WARNING, "Error showing dataset details panel", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
         });
 
+        boolean showDescription = findShowElement(cellInstance, SETTING_SHOW_DESCRIPTION, false);
+        boolean showContent = findShowElement(cellInstance, SETTING_SHOW_CONTENT, true);
+        System.out.println("Show description: " + showDescription);
+        descriptionLabel = new MultiLineLabel("descriptionContent", new IModel<String>() {
 
-        AjaxEventBehavior event = new AjaxEventBehavior("onload") {
             @Override
-            protected void onEvent(final AjaxRequestTarget target) {
-                target.appendJavaScript("console.log('setting up dropdown');");
-                target.appendJavaScript("$('.ui.dropdown').dropdown();");
+            public void detach() {
             }
-        };
+
+            @Override
+            public String getObject() {
+                CellInstance cellInstance = findCellInstance();
+                return cellInstance == null ? "" : findDescription(cellInstance);
+            }
+
+            @Override
+            public void setObject(String o) {
+            }
+        });
+        descriptionLabel.add(new ToggleCssAttributeModifier("hidden", (ToggleCssAttributeModifier.Toggler) () -> {
+            boolean b = findShowElement(findCellInstance(), SETTING_SHOW_DESCRIPTION, false);
+            System.out.println("Description should be visible: " + b);
+            return !b;
+        }
+        ));
+
+        descriptionLabel.setOutputMarkupId(true);
+        add(descriptionLabel);
+
+        WebMarkupContainer contentPanel = callbackHandler.getContentPanel();
+        if (contentPanel != null) {
+            System.out.println("Setting content visible: " + showContent);
+            contentPanel.setVisible(showContent);
+        }
+
+        Form form = new Form("form");
+        add(form);
+
+
+        CheckBox showDescriptionCheckbox = new CheckBox("showDescription", new Model<>(showDescription));
+        form.add(showDescriptionCheckbox);
+        CheckBox showContentCheckbox = new CheckBox("showContent", new Model<>(showContent));
+        form.add(showContentCheckbox);
+
+        form.add(new AjaxSubmitLink("changeVisibilityButton") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                boolean newDescriptionVisible = showDescriptionCheckbox.getModelObject();
+                boolean newContentVisible = showContentCheckbox.getModelObject();
+                System.out.println("Setting description visible: " + newDescriptionVisible);
+
+                CellInstance cellInstance = findCellInstance();
+                cellInstance.getSettings().put(CellTitleBarPanel.SETTING_SHOW_DESCRIPTION, newDescriptionVisible);
+                cellInstance.getSettings().put(CellTitleBarPanel.SETTING_SHOW_CONTENT, newContentVisible);
+
+                if (contentPanel != null) {
+                    System.out.println("Setting content visible: " + newContentVisible);
+                    contentPanel.setVisible(newContentVisible);
+                }
+
+                target.add(CellTitleBarPanel.this.getParent());
+
+                try {
+                    NotebookCanvasPage page = (NotebookCanvasPage) getPage();
+                    page.getNotebookSession().storeCurrentEditable();
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, "Error saving panels visibility", e);
+                    notifierProvider.getNotifier(getPage()).notify("Error saving panels visibility", e.getMessage());
+                }
+            }
+        });
+
+        form.add(new AjaxSubmitLink("editDescriptionButton") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                System.out.println("Need to edit description");
+                CellDescriptionEditorPanel editor = ((NotebookCanvasPage) getPage()).getCellDescriptionEditorPanel();
+                if (editor != null) {
+                    editor.configure(cellId, CellTitleBarPanel.this);
+                    editor.showModal();
+                }
+            }
+        });
+
+        form.add(new AjaxSubmitLink("bindingsButton") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                System.out.println("Need to edit bindings");
+                try {
+                    onBindingsLinkClicked(this, target);
+                } catch (Throwable t) {
+                    LOG.log(Level.WARNING, "Error removing cell", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
+            }
+        });
+
+        form.add(new AjaxSubmitLink("deleteButton") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                System.out.println("Need to delete cell");
+                try {
+                    getCallbackHandler().onRemove(findCellInstance());
+                } catch (Throwable t) {
+                    LOG.log(Level.WARNING, "Error removing cell", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
+            }
+        });
+    }
+
+    private String findDescription(CellInstance cellInstance) {
+        String description = (String) cellInstance.getSettings().get(SETTING_DESCRIPTION);
+        if (description == null) {
+            description = cellInstance.getCellDefinition().getDescription();
+        }
+        if (description == null) {
+            description = "No description found";
+        }
+        System.out.println("Description: " + description);
+        return description;
+    }
+
+    private boolean findShowElement(CellInstance cellInstance, String prop, boolean defaultValue) {
+        Boolean showDescription = (Boolean) cellInstance.getSettings().get(prop);
+        return showDescription == null ? defaultValue : showDescription;
     }
 
     @Override
@@ -175,12 +288,12 @@ public class CellTitleBarPanel extends Panel {
         // enable the dropdown menu - maybe a better place to do this?
         response.render(OnDomReadyHeaderItem.forScript(
                 "$('#" + getMarkupId() +
-                " .ui.dropdown').dropdown({action: 'hide', onChange: function(value, text) {" +
+                        " .ui.dropdown').dropdown({action: 'hide', onChange: function(value, text) {" +
                         "applyCellMenuAction('" + getParent().getMarkupId() + "', value);" +
                         "}})"));
     }
 
-    private void onBindingsLinkClicked(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {
+    private void onBindingsLinkClicked(AbstractLink link, AjaxRequestTarget ajaxRequestTarget) {
         popupContainerProvider.setPopupContentForPage(getPage(), bindingsPopupPanel);
         popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
         String js = "$('#:link')" +
@@ -207,12 +320,8 @@ public class CellTitleBarPanel extends Panel {
     }
 
     private boolean isFailed() {
-        Execution lastExecution = notebookSession.findExecution(cellInstance.getId());
+        Execution lastExecution = notebookSession.findExecution(cellId);
         return lastExecution != null && Boolean.FALSE.equals(lastExecution.getJobSuccessful());
-    }
-
-    public CellInstance getCellInstance() {
-        return cellInstance;
     }
 
     public CallbackHandler getCallbackHandler() {
@@ -231,6 +340,9 @@ public class CellTitleBarPanel extends Panel {
             return null;
         }
 
+        WebMarkupContainer getContentPanel();
+
         void onShowResults() throws Exception;
     }
+
 }

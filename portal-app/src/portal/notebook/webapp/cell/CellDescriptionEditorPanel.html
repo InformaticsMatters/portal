@@ -1,19 +1,13 @@
 <wicket:panel>
     <div wicket:id="modalElement" class="ui modal hidden">
+        <i class="close icon"></i>
 
         <div class="header">
-            <label wicket:id="title"></label>
+            Description for cell <span wicket:id="cellName">cell name</span>
         </div>
         <form wicket:id="form" class="ui form">
             <div class="content">
-                <div class="field">
-                    <label>Name</label>
-                    <input type="text" wicket:id="name">
-                </div>
-                <div class="field">
-                    <label>Description</label>
-                    <input type="text" wicket:id="description">
-                </div>
+                <textarea wicket:id="description" cols="80" rows="10">Description goes here</textarea>
             </div>
             <div class="actions">
                 <div wicket:id="cancel" style="width: 78px;" class="ui small black button">

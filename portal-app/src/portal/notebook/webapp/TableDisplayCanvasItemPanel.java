@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.squonk.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -141,6 +142,11 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public WebMarkupContainer getContentPanel() {
         return form;
     }
 

@@ -43,10 +43,15 @@ li {
     -webkit-box-shadow: 0px 0px 5px #999!important;
     -moz-box-shadow: 0px 0px 5px #999!important;
     border: 1px solid #aaa!important;
+    z-index: 101;
 }
 
 .notebook-canvas-item-content {
     width: 100%;
+}
+
+.notebook-canvas-item-content .hidden {
+    display: none;
 }
 
 .notebook-canvas-item-content .titleBar {
@@ -64,7 +69,10 @@ li {
   box-shadow: none;
   font-size: 0.9em;
   border-bottom: 1px solid #ddd;
-  display: none;
+}
+
+.notebook-canvas-item-content .bindingsPopup {
+     z-index: 500;
 }
 
 
@@ -104,20 +112,18 @@ li {
     white-space: nowrap;
 }
 
-.notebook-canvas-item-content .icon.remove,
+.notebook-canvas-item-content .icon.sidebar,
 .notebook-canvas-item-content .icon.expand,
 .notebook-canvas-item-content .icon.play,
-.notebook-canvas-item-content .icon.setting,
-.notebook-canvas-item-content .icon.unlink {
+.notebook-canvas-item-content .icon.setting {
     visibility: hidden;
     margin-right: 0 !important;
 }
 
-.notebook-canvas-item-content:hover .icon.remove,
+.notebook-canvas-item-content:hover .icon.sidebar,
 .notebook-canvas-item-content:hover .icon.play,
 .notebook-canvas-item-content:hover .icon.expand,
-.notebook-canvas-item-content:hover .icon.setting,
-.notebook-canvas-item-content:hover .icon.unlink {
+.notebook-canvas-item-content:hover .icon.setting {
     visibility: visible;
     margin-right: 0 !important;
 }
@@ -465,13 +471,11 @@ div.ui-resizable-handle.ui-resizable-s {
   font-size:0;
 }
 
-
-.resultsViewer .toolbar {
-
-
-}
-
-.resultsViewer .card {
-
-
+/* this seems missing from sematic 2.0.0 -> 2.2.4 resulting in modal buttons not being displayed correctly
+- could be removed if fixed in future update? */
+.ui.modal .actions {
+    background: #f9fafb;
+    padding: 1rem;
+    border-top: 1px solid rgba(34,36,38,.15);
+    text-align: right;
 }

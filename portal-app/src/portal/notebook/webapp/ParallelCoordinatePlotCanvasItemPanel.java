@@ -6,6 +6,7 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -171,6 +172,11 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
     @Override
     public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public WebMarkupContainer getContentPanel() {
         return form;
     }
 

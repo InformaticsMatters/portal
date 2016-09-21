@@ -29,6 +29,7 @@ import portal.MenuPanel;
 import portal.PopupContainerProvider;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
+import portal.notebook.webapp.cell.CellDescriptionEditorPanel;
 import portal.notebook.webapp.results.NoResultsPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -76,6 +77,7 @@ public class NotebookCanvasPage extends WebPage {
 
     private EditNotebookPanel editNotebookPanel;
     private NoResultsPanel noResultsPanel;
+    private CellDescriptionEditorPanel cellDescriptionEditorPanel;
     private SaveCopyPanel saveCopyPanel;
 
     @Inject
@@ -108,10 +110,15 @@ public class NotebookCanvasPage extends WebPage {
         addVersionTreePanel();
         addVersionTreeNodeSelectionBehavior();
         addNoResultsModalPanel();
+        addCellDescriptionEditorPanel();
     }
 
     protected NoResultsPanel getNoResultsPanel() {
         return noResultsPanel;
+    }
+
+    protected CellDescriptionEditorPanel getCellDescriptionEditorPanel() {
+        return cellDescriptionEditorPanel;
     }
 
     private void configureExecutionStatusListener() {
@@ -307,7 +314,7 @@ public class NotebookCanvasPage extends WebPage {
 
             @Override
             public void onCancel() {
-
+                editNotebookPanel.hideModal();
             }
         });
     }
@@ -511,6 +518,11 @@ public class NotebookCanvasPage extends WebPage {
     private void addNoResultsModalPanel() {
         noResultsPanel = new NoResultsPanel("noResults", "modalElement");
         add(noResultsPanel);
+    }
+
+    private void addCellDescriptionEditorPanel() {
+        cellDescriptionEditorPanel = new CellDescriptionEditorPanel("cellDescriptionEditor", "modalElement");
+        add(cellDescriptionEditorPanel);
     }
 
     private void addCanvasItemDraggedBehavior() {
@@ -773,4 +785,13 @@ public class NotebookCanvasPage extends WebPage {
         }
         return stringBuilder.toString();
     }
+
+    public void notifyMessage(String title, String message) {
+        notifierProvider.getNotifier(getPage()).notify(title, message);
+    }
+
+    public NotebookSession getNotebookSession() {
+        return notebookSession;
+    }
+
 }

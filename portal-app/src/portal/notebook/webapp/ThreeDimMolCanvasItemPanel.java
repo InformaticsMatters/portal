@@ -3,6 +3,7 @@ package portal.notebook.webapp;
 import chemaxon.formats.MolExporter;
 import chemaxon.formats.MolImporter;
 import chemaxon.struc.Molecule;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.squonk.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -92,6 +93,11 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public Form getExecuteFormComponent() {
+        return form;
+    }
+
+    @Override
+    public WebMarkupContainer getContentPanel() {
         return form;
     }
 

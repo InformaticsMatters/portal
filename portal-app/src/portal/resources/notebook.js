@@ -392,25 +392,22 @@ function applySavedCanvasSize(width, height) {
 
 function applyCellMenuAction(id, value) {
     console.log("Applying action " + value + " for #" + id);
-    if (value == 'content' || value == 'description')  {
+    if (value == 'showContent' || value == 'showDescription')  {
         var checkbox = $('#' + id + ' form .' + value);
         var wasChecked = checkbox.prop('checked');
-        console.log(value + " was checked: " + wasChecked);
         checkbox.prop('checked', !wasChecked);
-        console.log(value + " is now checked: " + checkbox.prop('checked'));
-        if (value == 'description')  {
-             var panel = $('#' + id + " .descriptionContent");
-             if (wasChecked) {
-                console.log('hiding description');
-                panel.hide();
-             } else {
-                console.log('showing description');
-                panel.show();
-             }
-        }
+        var submit = $('#' + id + ' form .changeVisibilityButton');
+        submit.trigger('click');
+    } else if (value == 'editDescription') {
+        var submit = $('#' + id + ' form .editDescriptionButton');
+        submit.trigger('click');
+    } else if (value == 'bindings') {
+        var submit = $('#' + id + ' form .bindingsButton');
+        submit.trigger('click');
+    } else if (value == 'delete') {
+        var submit = $('#' + id + ' form .deleteButton');
+        submit.trigger('click');
     }
-
-
 }
 
 
