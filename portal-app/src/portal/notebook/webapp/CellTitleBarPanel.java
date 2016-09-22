@@ -184,7 +184,7 @@ public class CellTitleBarPanel extends Panel {
         WebMarkupContainer mainPanel = callbackHandler.getContentPanel();
         if (mainPanel != null) {
             mainPanel.add(new ToggleCssAttributeModifier("hidden", (ToggleCssAttributeModifier.Toggler) () -> {
-                boolean b = findShowElement(findCellInstance(), SETTING_SHOW_CONTENT, false);
+                boolean b = findShowElement(findCellInstance(), SETTING_SHOW_CONTENT, true);
                 LOG.fine("Main content should be visible: " + b);
                 return !b;
             }

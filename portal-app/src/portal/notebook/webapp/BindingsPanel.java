@@ -103,7 +103,8 @@ public class BindingsPanel extends Panel {
             return null;
         }
         CellInstance producerCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(variableInstance.getCellId());
-        return producerCellInstance.getName() + " " + variableInstance.getVariableDefinition().getDisplayName();
+        return (producerCellInstance == null ? "Producer unknown" : producerCellInstance.getName()) + " " + variableInstance.getVariableDefinition().getDisplayName();
+
     }
 
 

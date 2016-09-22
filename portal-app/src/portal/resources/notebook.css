@@ -479,3 +479,10 @@ div.ui-resizable-handle.ui-resizable-s {
     border-top: 1px solid rgba(34,36,38,.15);
     text-align: right;
 }
+
+/* fix for layout issue for file input as semantic 2.0.0 -> 2.2.4 caused problems by including file inputs
+in styling and added border and padding */
+.ui.form input[type="file"] {
+  padding: 2px;
+  border: 0px;
+}
