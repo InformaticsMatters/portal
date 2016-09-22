@@ -1,26 +1,18 @@
 package portal.notebook.webapp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.squonk.dataset.DatasetMetadata;
 import portal.PopupContainerProvider;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
-import portal.notebook.webapp.cell.CellUtils;
-import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
-import toolkit.wicket.semantic.NotifierProvider;
 import portal.notebook.webapp.HeatmapCanvasItemPanel.ValueCollector;
+import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -28,29 +20,15 @@ import java.util.stream.Collectors;
 /**
  * @author simetrias
  */
-public class HeatmapAdvancedOptionsPanel extends Panel {
+public class HeatmapAdvancedOptionsPanel extends AbstractDatasetAdvancedOptionsPanel {
     private static final Logger LOGGER = Logger.getLogger(HeatmapAdvancedOptionsPanel.class.getName());
-    private final Long cellId;
-    private List<String> picklistItems;
     private Form<ModelObject> form;
-    private CallbackHandler callbackHandler;
-    @Inject
-    private NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
-    @Inject
-    private NotifierProvider notifierProvider;
 
     public HeatmapAdvancedOptionsPanel(String id, Long cellId) {
-        super(id);
+        super(id, cellId);
         setOutputMarkupId(true);
-        this.cellId = cellId;
-        try {
-            loadPicklist();
-        } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error loading picklist", t);
-            // TODO
-        }
         addComponents();
     }
 
@@ -59,14 +37,14 @@ public class HeatmapAdvancedOptionsPanel extends Panel {
         form.setModel(new CompoundPropertyModel<>(new ModelObject()));
 
         // TODO - restrict to string and integer
-        DropDownChoice<String> rows = new DropDownChoice<>("rowsField", picklistItems);
+        DropDownChoice<String> rows = new DropDownChoice<>("rowsField", fieldNamesModel);
         form.add(rows);
 
         // TODO - restrict to string and integer
-        DropDownChoice<String> cols = new DropDownChoice<>("colsField", picklistItems);
+        DropDownChoice<String> cols = new DropDownChoice<>("colsField", fieldNamesModel);
         form.add(cols);
 
-        DropDownChoice<String> values = new DropDownChoice<>("valuesField", picklistItems);
+        DropDownChoice<String> values = new DropDownChoice<>("valuesField", fieldNamesModel);
         form.add(values);
 
         // TODO - if values data type is not numeric restrict to count as the only option
@@ -97,15 +75,12 @@ public class HeatmapAdvancedOptionsPanel extends Panel {
                     popupContainerProvider.refreshContainer(getPage(), target);
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error storing notebook", t);
-                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                    callbackHandler.notifyMessage("Error", t.getMessage());
                 }
             }
         });
     }
 
-    private void loadPicklist() throws Exception {
-        picklistItems = CellUtils.fieldNamesSorted(notebookSession, cellId, CellDefinition.VAR_NAME_INPUT);
-    }
 
     public String getRowsField() {
         return form.getModelObject().getRowsField();
@@ -161,16 +136,6 @@ public class HeatmapAdvancedOptionsPanel extends Panel {
 
     public void setTopMargin(Integer size) {
         form.getModelObject().setTopMargin(size);
-    }
-
-    public void setCallbackHandler(CallbackHandler callbackHandler) {
-        this.callbackHandler = callbackHandler;
-    }
-
-    public interface CallbackHandler extends Serializable {
-
-        void onApplyAdvancedOptions() throws Exception;
-
     }
 
     private class ModelObject implements Serializable {

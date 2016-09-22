@@ -7,7 +7,6 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -338,7 +337,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     private void createAdvancedOptionsPanel() {
         advancedOptionsPanel = new ScatterPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new ScatterPlotAdvancedOptionsPanel.CallbackHandler() {
+        advancedOptionsPanel.setCallbackHandler(new DefaultCallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() throws Exception {
@@ -357,6 +356,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 model.setShowAxisLabels(advancedOptionsPanel.getShowAxisLabels());
                 onExecute();
             }
+
         });
         advancedOptionsPanel.setX(model.getX());
         advancedOptionsPanel.setY(model.getY());

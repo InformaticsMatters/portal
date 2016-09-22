@@ -259,7 +259,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
     private void createAdvancedOptionsPanel() {
         advancedOptionsPanel = new ParallelCoordinatePlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new ParallelCoordinatePlotAdvancedOptionsPanel.CallbackHandler() {
+        advancedOptionsPanel.setCallbackHandler(new DefaultCallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() throws Exception {
@@ -271,6 +271,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
                 onExecute();
             }
+
         });
         advancedOptionsPanel.setFields(model.getFields());
     }

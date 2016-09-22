@@ -1,6 +1,7 @@
 package portal.notebook.webapp;
 
 import org.squonk.types.io.JsonHandler;
+import portal.notebook.api.CellInstance;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -80,6 +81,21 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
             }
         }
         return null;
+    }
+
+    abstract class DefaultCallbackHandler implements AbstractDatasetAdvancedOptionsPanel.CallbackHandler {
+
+
+        @Override
+        public void notifyMessage(String title, String message) {
+            AbstractD3CanvasItemPanel.this.notifyMessage(title, message);
+        }
+
+        @Override
+        public NotebookSession getNotebookSesion() {
+            return AbstractD3CanvasItemPanel.this.notebookSession;
+        }
+
     }
 
 }

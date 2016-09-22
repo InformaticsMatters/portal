@@ -163,7 +163,7 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     private void createAdvancedOptionsPanel() {
         advancedOptionsPanel = new BoxPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new BoxPlotAdvancedOptionsPanel.CallbackHandler() {
+        advancedOptionsPanel.setCallbackHandler(new DefaultCallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() throws Exception {

@@ -7,6 +7,8 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.squonk.dataset.DatasetMetadata;
 import portal.PopupContainerProvider;
 import portal.notebook.api.BindingInstance;
@@ -19,50 +21,35 @@ import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
-public class BoxPlotAdvancedOptionsPanel extends Panel {
+public class BoxPlotAdvancedOptionsPanel extends AbstractDatasetAdvancedOptionsPanel {
     private static final Logger LOGGER = Logger.getLogger(BoxPlotAdvancedOptionsPanel.class.getName());
-    private final Long cellId;
-    private List<String> picklistItems;
+
     private Form<ModelObject> form;
-    private CallbackHandler callbackHandler;
-    @Inject
-    private NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
-    @Inject
-    private NotifierProvider notifierProvider;
 
     public BoxPlotAdvancedOptionsPanel(String id, Long cellId) {
-        super(id);
+        super(id, cellId);
         setOutputMarkupId(true);
-        this.cellId = cellId;
-        try {
-            loadPicklist();
-        } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error loading picklist", t);
-            // TODO
-        }
         addComponents();
     }
+
 
     private void addComponents() {
         form = new Form<>("form");
         form.setModel(new CompoundPropertyModel<>(new ModelObject()));
 
-        DropDownChoice<String> x = new DropDownChoice<>("x", picklistItems);
+        DropDownChoice<String> x = new DropDownChoice<>("x", fieldNamesModel);
         form.add(x);
 
-        DropDownChoice<String> y = new DropDownChoice<>("y", picklistItems);
+        DropDownChoice<String> y = new DropDownChoice<>("y", fieldNamesModel);
         form.add(y);
 
         add(form);
@@ -78,14 +65,10 @@ public class BoxPlotAdvancedOptionsPanel extends Panel {
                     popupContainerProvider.refreshContainer(getPage(), target);
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error storing notebook", t);
-                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                    callbackHandler.notifyMessage("Error", t.getLocalizedMessage());
                 }
             }
         });
-    }
-
-    private void loadPicklist() throws Exception {
-        picklistItems = CellUtils.fieldNamesSorted(notebookSession, cellId, CellDefinition.VAR_NAME_INPUT);
     }
 
     public String getX() {
@@ -104,15 +87,6 @@ public class BoxPlotAdvancedOptionsPanel extends Panel {
         form.getModelObject().setY(y);
     }
 
-    public void setCallbackHandler(CallbackHandler callbackHandler) {
-        this.callbackHandler = callbackHandler;
-    }
-
-    public interface CallbackHandler extends Serializable {
-
-        void onApplyAdvancedOptions() throws Exception;
-
-    }
 
     private class ModelObject implements Serializable {
 

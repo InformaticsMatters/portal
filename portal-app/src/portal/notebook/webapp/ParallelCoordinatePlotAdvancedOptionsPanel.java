@@ -1,64 +1,39 @@
 package portal.notebook.webapp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.squonk.dataset.DatasetMetadata;
 import portal.PopupContainerProvider;
-import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellDefinition;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
-import portal.notebook.webapp.cell.CellUtils;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
-import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
-public class ParallelCoordinatePlotAdvancedOptionsPanel extends Panel {
+public class ParallelCoordinatePlotAdvancedOptionsPanel extends AbstractDatasetAdvancedOptionsPanel {
     private static final Logger LOGGER = Logger.getLogger(ParallelCoordinatePlotAdvancedOptionsPanel.class.getName());
-    private final Long cellId;
-    private List<String> picklistItems;
     private Form<ModelObject> form;
-    private CallbackHandler callbackHandler;
-    @Inject
-    private NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
-    @Inject
-    private NotifierProvider notifierProvider;
 
     public ParallelCoordinatePlotAdvancedOptionsPanel(String id, Long cellId) {
-        super(id);
+        super(id, cellId);
         setOutputMarkupId(true);
-        this.cellId = cellId;
-        try {
-            loadPicklist();
-        } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error loading picklist", t);
-            // TODO
-        }
         addComponents();
     }
+
 
     private void addComponents() {
         form = new Form<>("form");
         form.setModel(new CompoundPropertyModel<>(new ModelObject()));
 
-        CheckBoxMultipleChoice<String> fields = new CheckBoxMultipleChoice<>("fields", picklistItems);
+        CheckBoxMultipleChoice<String> fields = new CheckBoxMultipleChoice<>("fields", fieldNamesModel);
         fields.setMaxRows(10);
         form.add(fields);
 
@@ -75,15 +50,12 @@ public class ParallelCoordinatePlotAdvancedOptionsPanel extends Panel {
                     popupContainerProvider.refreshContainer(getPage(), target);
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error storing notebook", t);
-                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                    callbackHandler.notifyMessage("Error", t.getLocalizedMessage());
                 }
             }
         });
     }
 
-    private void loadPicklist() throws Exception {
-        picklistItems = CellUtils.fieldNamesSorted(notebookSession, cellId, CellDefinition.VAR_NAME_INPUT);
-    }
 
     public List<String> getFields() {
         return form.getModelObject().getFields();
@@ -91,16 +63,6 @@ public class ParallelCoordinatePlotAdvancedOptionsPanel extends Panel {
 
     public void setFields(List<String> fields) {
         form.getModelObject().setFields(fields);
-    }
-
-    public void setCallbackHandler(CallbackHandler callbackHandler) {
-        this.callbackHandler = callbackHandler;
-    }
-
-    public interface CallbackHandler extends Serializable {
-
-        void onApplyAdvancedOptions() throws Exception;
-
     }
 
     private class ModelObject implements Serializable {

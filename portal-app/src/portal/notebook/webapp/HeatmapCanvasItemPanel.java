@@ -5,7 +5,6 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
@@ -111,11 +110,6 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
         add(form);
     }
 
-//    private void addStatus() {
-//        statusLabel = createStatusLabel("cellStatus");
-//        add(statusLabel);
-//    }
-
     @Override
     public Form getExecuteFormComponent() {
         return form;
@@ -197,7 +191,7 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     private HeatmapAdvancedOptionsPanel createAdvancedOptionsPanel() {
         HeatmapAdvancedOptionsPanel advancedOptionsPanel = new HeatmapAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new HeatmapAdvancedOptionsPanel.CallbackHandler() {
+        advancedOptionsPanel.setCallbackHandler(new DefaultCallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() throws Exception {
@@ -222,6 +216,7 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
                 onExecute();
             }
+
         });
         advancedOptionsPanel.setRowsField(form.getModelObject().getRowsField());
         advancedOptionsPanel.setColsField(form.getModelObject().getColsField());
