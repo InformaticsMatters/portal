@@ -179,7 +179,7 @@ scatterPlot = function(config) {
           xMax = data.length ? d3.max(data, function(d) { return d.x; }) : 0,
           yMin = data.length ? d3.min(data, function(d) { return d.y; }) : 0,
           yMax = data.length ? d3.max(data, function(d) { return d.y; }) : 0,
-          margin = {top: 15, right: 30, bottom: 40, left: 40},
+          margin = {top: 15, right: 30, bottom: 25, left: 40},
 
           sizeScale = d3.scale.sqrt()
                 .domain([d3.min(data, function(d) { return d.size; }), d3.max(data, function(d) { return d.size; })])

@@ -146,11 +146,6 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public WebMarkupContainer getContentPanel() {
-        return form;
-    }
-
-    @Override
     public void onExecute() {
         try {
             notebookSession.reloadCurrentVersion();

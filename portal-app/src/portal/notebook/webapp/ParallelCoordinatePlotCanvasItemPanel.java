@@ -176,11 +176,6 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     }
 
     @Override
-    public WebMarkupContainer getContentPanel() {
-        return form;
-    }
-
-    @Override
     public void onExecute() throws Exception {
         refreshPlotData();
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);

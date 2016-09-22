@@ -391,7 +391,7 @@ function applySavedCanvasSize(width, height) {
 }
 
 function applyCellMenuAction(id, value) {
-    console.log("Applying action " + value + " for #" + id);
+    //console.log("Applying action " + value + " for #" + id);
     if (value == 'showContent' || value == 'showDescription')  {
         var checkbox = $('#' + id + ' form .' + value);
         var wasChecked = checkbox.prop('checked');

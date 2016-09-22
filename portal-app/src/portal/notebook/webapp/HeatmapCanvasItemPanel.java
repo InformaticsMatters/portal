@@ -122,11 +122,6 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     @Override
-    public WebMarkupContainer getContentPanel() {
-        return form;
-    }
-
-    @Override
     public void onExecute() throws Exception {
         refreshPlotData();
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);

@@ -116,11 +116,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     @Override
-    public WebMarkupContainer getContentPanel() {
-        return form;
-    }
-
-    @Override
     public void onExecute() throws Exception {
         refreshPlotData(true);
         rebuildPlot();

@@ -92,7 +92,7 @@ public class CellTitleBarPanel extends Panel {
     }
 
     private void addControls(CellInstance cellInstance) {
-        add(new Label("cellName", cellInstance.getName().toLowerCase()));
+        add(new Label("cellName", cellInstance.getName()));
 
         bindingsPopupPanel = new BindingsPopupPanel("content", cellInstance);
 
@@ -155,7 +155,6 @@ public class CellTitleBarPanel extends Panel {
 
         boolean showDescription = findShowElement(cellInstance, SETTING_SHOW_DESCRIPTION, false);
         boolean showContent = findShowElement(cellInstance, SETTING_SHOW_CONTENT, true);
-        System.out.println("Show description: " + showDescription);
         descriptionLabel = new MultiLineLabel("descriptionContent", new IModel<String>() {
 
             @Override
@@ -174,7 +173,7 @@ public class CellTitleBarPanel extends Panel {
         });
         descriptionLabel.add(new ToggleCssAttributeModifier("hidden", (ToggleCssAttributeModifier.Toggler) () -> {
             boolean b = findShowElement(findCellInstance(), SETTING_SHOW_DESCRIPTION, false);
-            System.out.println("Description should be visible: " + b);
+            LOG.fine("Description should be visible: " + b);
             return !b;
         }
         ));
@@ -182,36 +181,38 @@ public class CellTitleBarPanel extends Panel {
         descriptionLabel.setOutputMarkupId(true);
         add(descriptionLabel);
 
-        WebMarkupContainer contentPanel = callbackHandler.getContentPanel();
-        if (contentPanel != null) {
-            System.out.println("Setting content visible: " + showContent);
-            contentPanel.setVisible(showContent);
+        WebMarkupContainer mainPanel = callbackHandler.getContentPanel();
+        if (mainPanel != null) {
+            mainPanel.add(new ToggleCssAttributeModifier("hidden", (ToggleCssAttributeModifier.Toggler) () -> {
+                boolean b = findShowElement(findCellInstance(), SETTING_SHOW_CONTENT, false);
+                LOG.fine("Main content should be visible: " + b);
+                return !b;
+            }
+            ));
         }
 
         Form form = new Form("form");
         add(form);
 
-
         CheckBox showDescriptionCheckbox = new CheckBox("showDescription", new Model<>(showDescription));
         form.add(showDescriptionCheckbox);
-        CheckBox showContentCheckbox = new CheckBox("showContent", new Model<>(showContent));
-        form.add(showContentCheckbox);
+        WebMarkupContainer showContentPanel = new WebMarkupContainer("showContentPanel");
+        form.add(showContentPanel);
+        CheckBox showContentCheckbox = new CheckBox("showContentCheckbox", new Model<>(showContent));
+        showContentPanel.setVisible(callbackHandler.getContentPanel() != null);
+        showContentPanel.add(showContentCheckbox);
 
         form.add(new AjaxSubmitLink("changeVisibilityButton") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 boolean newDescriptionVisible = showDescriptionCheckbox.getModelObject();
                 boolean newContentVisible = showContentCheckbox.getModelObject();
-                System.out.println("Setting description visible: " + newDescriptionVisible);
+                LOG.fine("Setting description visible: " + newDescriptionVisible);
+                LOG.fine("Setting main content visible: " + newContentVisible);
 
                 CellInstance cellInstance = findCellInstance();
                 cellInstance.getSettings().put(CellTitleBarPanel.SETTING_SHOW_DESCRIPTION, newDescriptionVisible);
                 cellInstance.getSettings().put(CellTitleBarPanel.SETTING_SHOW_CONTENT, newContentVisible);
-
-                if (contentPanel != null) {
-                    System.out.println("Setting content visible: " + newContentVisible);
-                    contentPanel.setVisible(newContentVisible);
-                }
 
                 target.add(CellTitleBarPanel.this.getParent());
 
@@ -228,7 +229,7 @@ public class CellTitleBarPanel extends Panel {
         form.add(new AjaxSubmitLink("editDescriptionButton") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                System.out.println("Need to edit description");
+                LOG.fine("Editing description");
                 CellDescriptionEditorPanel editor = ((NotebookCanvasPage) getPage()).getCellDescriptionEditorPanel();
                 if (editor != null) {
                     editor.configure(cellId, CellTitleBarPanel.this);
@@ -240,7 +241,7 @@ public class CellTitleBarPanel extends Panel {
         form.add(new AjaxSubmitLink("bindingsButton") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                System.out.println("Need to edit bindings");
+                LOG.fine("Editing bindings");
                 try {
                     onBindingsLinkClicked(this, target);
                 } catch (Throwable t) {
@@ -253,7 +254,7 @@ public class CellTitleBarPanel extends Panel {
         form.add(new AjaxSubmitLink("deleteButton") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                System.out.println("Need to delete cell");
+                LOG.fine("Deleting cell");
                 try {
                     getCallbackHandler().onRemove(findCellInstance());
                 } catch (Throwable t) {
@@ -272,7 +273,7 @@ public class CellTitleBarPanel extends Panel {
         if (description == null) {
             description = "No description found";
         }
-        System.out.println("Description: " + description);
+        LOG.finer("Cell Description: " + description);
         return description;
     }
 
@@ -340,7 +341,9 @@ public class CellTitleBarPanel extends Panel {
             return null;
         }
 
-        WebMarkupContainer getContentPanel();
+        default WebMarkupContainer getContentPanel() {
+            return null;
+        }
 
         void onShowResults() throws Exception;
     }
