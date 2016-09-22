@@ -12,6 +12,7 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
+import portal.notebook.webapp.cell.CellUtils;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 import toolkit.wicket.semantic.NotifierProvider;
 
@@ -19,6 +20,8 @@ import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -79,21 +82,7 @@ public class ParallelCoordinatePlotAdvancedOptionsPanel extends Panel {
     }
 
     private void loadPicklist() throws Exception {
-        picklistItems = new ArrayList<>();
-        CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
-        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-        VariableInstance variableInstance = bindingInstance.getVariableInstance();
-        if (variableInstance != null) {
-            loadFieldNames(variableInstance);
-        }
-    }
-
-    private void loadFieldNames(VariableInstance variableInstance) throws Exception {
-        String string = notebookSession.readTextValue(variableInstance);
-        if (string != null) {
-            DatasetMetadata datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
-            picklistItems.addAll(datasetMetadata.getValueClassMappings().keySet());
-        }
+        picklistItems = CellUtils.fieldNamesSorted(notebookSession, cellId, CellDefinition.VAR_NAME_INPUT);
     }
 
     public List<String> getFields() {
