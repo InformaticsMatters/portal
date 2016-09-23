@@ -337,6 +337,39 @@ var targetEndpointOptions = {
     }
 };
 
+
+var sourceEndpointOptions2 = {
+    endpoint: 'Dot',
+    anchor: ["Continuous", { faces:[ "bottom", "right" ] } ],
+    maxConnections: -1,
+    isSource: true,
+    paintStyle: {
+        fillStyle: "#666",
+        radius: 10
+    },
+    connectorStyle: {
+        lineWidth: 2,
+        strokeStyle: "#bbb"
+    } ,
+    dragOptions:{
+              drag:function(e, ui) {
+                jsPlumb.repaintEverything();
+              }
+          }
+};
+
+var targetEndpointOptions2 = {
+    endpoint: 'Dot',
+    anchor:["Continuous", { faces:[ "top", "left" ] } ],
+    maxConnections: -1,
+    isTarget: true,
+    paintStyle: {
+        strokeStyle: "#666",
+        radius: 9,
+        lineWidth: 3
+    }
+};
+
 function addSourceEndpoint(itemId, endpointId, labelText) {
     var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: endpointId});
 
@@ -357,6 +390,28 @@ function addTargetEndpoint(itemId, endpointId, labelText) {
         targetEndpoint.removeOverlay("label");
     });
 }
+
+function addSourceEndpoint2(itemId, endpointId, labelText) {
+    var sourceEndpoint2 = jsPlumb.addEndpoint(itemId, sourceEndpointOptions2, {uuid: endpointId});
+
+    sourceEndpoint2.bind("mouseover", function(sourceEndpoint2) {
+        sourceEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [1.5, 1.5]}]);
+    });
+    sourceEndpoint2.bind("mouseout", function(sourceEndpoint2) {
+        sourceEndpoint.removeOverlay("label");
+    });
+}
+
+function addTargetEndpoint2(itemId, endpointId, labelText) {
+    var targetEndpoint2 = jsPlumb.addEndpoint(itemId, targetEndpointOptions2, {uuid: endpointId});
+    targetEndpoint2.bind("mouseover", function(targetEndpoint2) {
+        targetEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [-0.5, -0.5]}]);
+    });
+    targetEndpoint2.bind("mouseout", function(targetEndpoint2) {
+        targetEndpoint.removeOverlay("label");
+    });
+}
+
 
 function addConnection(sourceEndpointUuid, targetEndpointUuid) {
     jsPlumb.connect({
