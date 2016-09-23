@@ -344,12 +344,12 @@ var sourceEndpointOptions2 = {
     maxConnections: -1,
     isSource: true,
     paintStyle: {
-        fillStyle: "#666",
+        fillStyle: "#FC8A02",
         radius: 10
     },
     connectorStyle: {
         lineWidth: 2,
-        strokeStyle: "#bbb"
+        strokeStyle: "#FFCA60"
     } ,
     dragOptions:{
               drag:function(e, ui) {
@@ -364,7 +364,7 @@ var targetEndpointOptions2 = {
     maxConnections: -1,
     isTarget: true,
     paintStyle: {
-        strokeStyle: "#666",
+        strokeStyle: "#FC8A02",
         radius: 9,
         lineWidth: 3
     }
