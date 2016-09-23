@@ -19,7 +19,7 @@
     shape-rendering: crispEdges;
 }
 
-circle.hidden {
+circle.deselected {
     fill: #ddd !important;
 }
 
@@ -28,7 +28,7 @@ circle.marked {
     stroke-width: 2;
 }
 
-circle.hidden.marked {
+circle.deselected.marked {
     stroke: #bbb !important;
     stroke-width: 2;
 }

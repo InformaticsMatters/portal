@@ -55,6 +55,7 @@ public class SaveCopyPanel extends SemanticModalPanel {
         form.setModel(new CompoundPropertyModel<>(new SaveCopyData()));
 
         descriptionField = new TextField<>("description");
+        descriptionField.setRequired(true);
         form.add(descriptionField);
 
         submitAction = new AjaxSubmitLink("submit") {
@@ -77,6 +78,7 @@ public class SaveCopyPanel extends SemanticModalPanel {
             @Override
             public void onClick(AjaxRequestTarget ajaxRequestTarget) {
                 callbacks.onCancel();
+                hideModal();
             }
         };
         form.add(cancelAction);
