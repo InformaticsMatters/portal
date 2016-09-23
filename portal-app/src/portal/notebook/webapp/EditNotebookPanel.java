@@ -16,7 +16,6 @@ import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.logging.Level;
 
 public class EditNotebookPanel extends SemanticModalPanel {
 
@@ -71,10 +70,11 @@ public class EditNotebookPanel extends SemanticModalPanel {
         getModalRootComponent().add(form);
         form.setModel(new CompoundPropertyModel<>(new EditNotebookData()));
 
-        nameField = new TextField<String>("name");
+        nameField = new TextField<>("name");
+        nameField.setRequired(true);
         form.add(nameField);
 
-        descriptionField = new TextField<String>("description");
+        descriptionField = new TextField<>("description");
         form.add(descriptionField);
 
         submitAction = new AjaxSubmitLink("submit") {

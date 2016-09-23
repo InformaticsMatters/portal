@@ -410,10 +410,10 @@ scatterPlot = function(config) {
         brushExtent = brush.extent();
         if (brush.empty()) {
             // empty brush so we select all
-            g.selectAll("circle").classed("hidden", false);
+            g.selectAll("circle").classed("deselected", false);
 
         } else {
-            g.selectAll("circle").classed("hidden", function(d) {
+            g.selectAll("circle").classed("deselected", function(d) {
                 return brushExtent[0][0] > d.x ||
                     d.x > brushExtent[1][0] ||
                     brushExtent[0][1] > d.y ||
@@ -433,7 +433,7 @@ scatterPlot = function(config) {
         if (!brush.empty()) {
             selected = [];
             selectedAndMarked = [];
-            g.selectAll("circle:not(.hidden)").each(function(d) {
+            g.selectAll("circle:not(.deselected)").each(function(d) {
                 selected.push(d.uuid);
                 if (mark && mark.has(d.uuid)) {
                     selectedAndMarked.push(d.uuid);
