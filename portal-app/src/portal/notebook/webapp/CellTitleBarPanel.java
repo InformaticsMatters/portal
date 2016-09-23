@@ -215,6 +215,8 @@ public class CellTitleBarPanel extends Panel {
                 cellInstance.getSettings().put(CellTitleBarPanel.SETTING_SHOW_CONTENT, newContentVisible);
 
                 target.add(CellTitleBarPanel.this.getParent());
+                // repaint everything jsPlumb related for this cell
+                target.appendJavaScript("jsPlumb.repaintEverything(':itemId')".replaceAll(":itemId", "#" + CellTitleBarPanel.this.getMarkupId()));
 
                 try {
                     NotebookCanvasPage page = (NotebookCanvasPage) getPage();
