@@ -316,7 +316,7 @@ var sourceEndpointOptions = {
     },
     connectorStyle: {
         lineWidth: 2,
-        strokeStyle: "#61B7CF"
+        strokeStyle: "#CEEBA3"
     } ,
     dragOptions:{
               drag:function(e, ui) {
