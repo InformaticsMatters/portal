@@ -6,7 +6,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -282,7 +281,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         target.add(this);
         target.appendJavaScript(buildPlotJs());
-        target.appendJavaScript("fitScatterPlot('" + getMarkupId() + "')");
     }
 
     private String buildPlotJs() {
@@ -308,8 +306,10 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
         StringBuilder b = new StringBuilder();
         DataItem[] data = model.getData();
-        if (data == null || data.length == 0) {
-            b.append("No data");
+        if (model.getX() == null || model.getY() == null) {
+            b.append("X and Y fields need to be specified");
+        } else if (data == null || data.length == 0) {
+            b.append("Loading ...");
         } else {
             b.append(data.length).append(" records, ");
             try {
@@ -427,7 +427,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         public void setColorMode(String colorMode) {
             this.colorMode = colorMode;
         }
-
 
         public String getPointSize() {
             return pointSize;

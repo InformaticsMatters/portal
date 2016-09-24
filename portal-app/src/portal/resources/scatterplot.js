@@ -1,16 +1,19 @@
-
+/* scatter plot javascript functions */
 
 function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend, data) {
 
-    console.log("buildScatterPlot");
+    //console.log("buildScatterPlot");
 
-    var selector = "#" + id + " .svg-container";
-    var form = d3.select('#' + id + ' form.scatterplot');
+    var selector = '#' + id + ' .svg-container';
+    var outerDiv = d3.select("#" + id);
+    var plot = outerDiv.select('.svg-container');
+    var form = outerDiv.select('form.scatterplot');
 
+    // this sets the size of the SVG
+    fixSizes(outerDiv, plot);
 
-    var selectionHandler = function() {
-
-    }
+    // callback for selections etc.
+    var selectionHandler = function() { }
 
     selectionHandler.readExtents = function() {
         var xmin = form.select('.brushxmin').attr('value');
@@ -41,26 +44,29 @@ function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend,
     };
 
     //console.log("Building scatterplot " + id + " with data size of " + (data == null ? "null" : data.length));
-    createScatterPlot(d3.select(selector), xAxisLabel, yAxisLabel, colorModel, displayLegend, selectionHandler, data);
+    createScatterPlot(plot, xAxisLabel, yAxisLabel, colorModel, displayLegend, selectionHandler, data);
 }
 
+/* Called from Java tier when plot is resized */
 function fitScatterPlot(id) {
+    var outerDiv = d3.select("#" + id);
+    var plot = outerDiv.select(".svg-container");
+    fixSizes(outerDiv, plot)
+    resizeScatterPlot(plot);
+}
 
-    console.log("fitScatterPlot");
-
-    var div = d3.select("#" + id);
-    var plot = div.select(".svg-container");
-    var headers = div.select(".headers");
-    var status = div.select(".extra.content.line");
-    var w = div.style("width");
-    var houter = div.style("height");
+/* set the size of the svg based on the outer size */
+function fixSizes(outerDiv, plot) {
+    var headers = outerDiv.select(".headers");
+    var status = outerDiv.select(".extra.content.line");
+    var w = outerDiv.style("width");
+    var houter = outerDiv.style("height");
     var headersH = headers.style("height").replace("px", "");
     var statusH = status.style("height").replace("px", "");
     var h = houter.replace("px", "") - headersH - statusH;
     //console.log("Resizing scatterplot : width=" + w + " outer height=" + houter + " inner height=" + h + "px" + " titleH=" + titleH + " statusH=" + statusH);
     plot.style("width", w + "px");
     plot.style("height", h + "px");
-    resizeScatterPlot(plot);
 }
 
 /*
@@ -180,9 +186,7 @@ scatterPlot = function(config) {
   // we return this function "chart".
   function chart(selection) {
 
-    console.log("chart()");
-
-    var start = new Date().getTime();
+    //var start = new Date().getTime();
 
     selection.each(function(data, i) {
 
@@ -206,8 +210,7 @@ scatterPlot = function(config) {
         // This enables us to use d3's enter, update, and exit methods,
         // since a new enter selection will be created on the first run.
 
-      svg
-        .transition().duration(10)
+      svg.transition().duration(10)
         .attr('width', outerWidth)
         .attr('height', outerHeight);
 
@@ -525,8 +528,8 @@ scatterPlot = function(config) {
                 }
       }
 
-      var end = new Date().getTime();
-      console.log("chart took " + (end - start));
+      //var end = new Date().getTime();
+      //console.log("chart took " + (end - start));
   }
 
   chart.width = function(_) {
