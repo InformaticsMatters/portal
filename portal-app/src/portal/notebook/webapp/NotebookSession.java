@@ -46,7 +46,6 @@ public class NotebookSession implements Serializable {
     private Datasets datasets;
 
     public List<NotebookInfo> listNotebookInfo() throws Exception {
-        LOGGER.info("list");
         List<NotebookInfo> list = new ArrayList<>();
         for (NotebookDTO notebookDTO : notebookVariableClient.listNotebooks(sessionContext.getLoggedInUserDetails().getUserid())) {
             NotebookInfo notebookInfo = NotebookInfo.fromNotebookDTO(notebookDTO);

@@ -95,8 +95,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/d3-legend.js")));
         response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PortalWebApplication.class, "resources/scatterplot.js")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PortalWebApplication.class, "resources/scatterplot.css")));
-        response.render(OnDomReadyHeaderItem.forScript(buildPlotJs()));
-        response.render(OnDomReadyHeaderItem.forScript("fitScatterPlot('" + getMarkupId() + "')"));
         makeCanvasItemResizable(container, "fitScatterPlot", 300, 200);
     }
 
@@ -219,6 +217,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private void refreshPlotData(boolean readDataset) throws Exception {
+
         String xFieldName = model.getX();
         String yFieldName = model.getY();
         String colorFieldName = model.getColor();
@@ -283,6 +282,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         target.add(this);
         target.appendJavaScript(buildPlotJs());
+        target.appendJavaScript("fitScatterPlot('" + getMarkupId() + "')");
     }
 
     private String buildPlotJs() {

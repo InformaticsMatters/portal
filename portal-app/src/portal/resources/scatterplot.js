@@ -1,6 +1,9 @@
 
 
 function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend, data) {
+
+    console.log("buildScatterPlot");
+
     var selector = "#" + id + " .svg-container";
     var form = d3.select('#' + id + ' form.scatterplot');
 
@@ -42,6 +45,9 @@ function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend,
 }
 
 function fitScatterPlot(id) {
+
+    console.log("fitScatterPlot");
+
     var div = d3.select("#" + id);
     var plot = div.select(".svg-container");
     var headers = div.select(".headers");
@@ -174,7 +180,12 @@ scatterPlot = function(config) {
   // we return this function "chart".
   function chart(selection) {
 
+    console.log("chart()");
+
+    var start = new Date().getTime();
+
     selection.each(function(data, i) {
+
       var xMin = data.length ? d3.min(data, function(d) { return d.x; }) : 0,
           xMax = data.length ? d3.max(data, function(d) { return d.x; }) : 0,
           yMin = data.length ? d3.min(data, function(d) { return d.y; }) : 0,
@@ -196,7 +207,7 @@ scatterPlot = function(config) {
         // since a new enter selection will be created on the first run.
 
       svg
-        .transition()
+        .transition().duration(10)
         .attr('width', outerWidth)
         .attr('height', outerHeight);
 
@@ -208,11 +219,12 @@ scatterPlot = function(config) {
         .attr('height', outerHeight)
         .attr('class', 'chart');
 
-       // first we need the legend as its width needs to be determined.
-       if (displayLegend && legend != null) {
+        svg.selectAll('.legend').remove();
+        // first we need the legend as its width needs to be determined.
+        if (displayLegend && legend != null && data.length) {
               // for some reason legend doesn't behave well if the data([true]) pattern is used
               // so we delete the current one and create a new one
-              svg.selectAll('.legend').remove();
+
               var l = svg.append('g')
                   .attr("class", "legend")
                   .attr("visibility", "hidden")
@@ -221,7 +233,7 @@ scatterPlot = function(config) {
               var legendWidth = Math.ceil(l.node().getBoundingClientRect().width);
               if (!legendWidth) {
                 // TODO - resolve this - happens on Firefox
-                console.log("Legend width could not be deternined, Using default");
+                console.log("Legend width could not be determined, Using default");
                 legendWidth = 45;
               }
               //console.log("Legend width: " + legendWidth + " " + l.node().getBoundingClientRect().width);
@@ -260,7 +272,8 @@ scatterPlot = function(config) {
       var main = svg.selectAll('.main')
         .data([true]);
 
-      main.transition()
+      main
+          .transition().duration(10)
           .attr('width', width)
           .attr('height', height);
 
@@ -286,7 +299,7 @@ scatterPlot = function(config) {
 
       // Update X Axis
       xaxis
-      .transition()
+      .transition().duration(10)
       .attr('transform', 'translate(0,' + height + ')')
       .call(xAxis)
       .selectAll('.label')
@@ -310,7 +323,7 @@ scatterPlot = function(config) {
 
       // Update Y Axis
       yaxis
-        .transition()
+        .transition().duration(10)
         .call(yAxis);
 
       // Append the new Y Axis if Needed
@@ -344,7 +357,6 @@ scatterPlot = function(config) {
         );
 
       circles
-        .transition()
         .attr("cx", function (d,i) { return xScale(d.x); } )
         .attr("cy", function (d) { return yScale(d.y); } )
         .attr("r", function (d) { return d.size; } )
@@ -362,7 +374,6 @@ scatterPlot = function(config) {
 
       circles
         .exit() // The exit selection lets us remove dead data.
-          .transition()
           .style('opacity', 0)
           .remove();
 
@@ -371,7 +382,7 @@ scatterPlot = function(config) {
 
       // Update the existing brush element.
       brushRect
-        .transition()
+        .transition().duration(10)
         .each("end", brushed)
         .call(brush);
 
@@ -513,6 +524,9 @@ scatterPlot = function(config) {
                     return null;
                 }
       }
+
+      var end = new Date().getTime();
+      console.log("chart took " + (end - start));
   }
 
   chart.width = function(_) {

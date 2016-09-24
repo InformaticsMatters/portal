@@ -223,7 +223,7 @@ public class NotebookCanvasPage extends WebPage {
                     js = js.replace(":width", canvasWidth).replace(":height", canvasHeight);
                     response.render(OnDomReadyHeaderItem.forScript(js));
 
-                    LOGGER.info("Applied saved canvas size: " + canvasWidth + ", " + canvasHeight);
+                    LOGGER.fine("Applied saved canvas size: " + canvasWidth + ", " + canvasHeight);
                 }
             }
 
