@@ -33,9 +33,10 @@ import java.io.Serializable;
  */
 public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
-    private static final String JS_INIT_VIEWER = "init3DMolViewer(':data', ':format')";
+    private static final String JS_INIT_VIEWER = "init3DMolViewer(':id', ':data', ':format')";
     private static final String JS_SET_VIEWER_DATA = "set3DMolViewerData(':data', ':format')";
     private Form<ModelObject> form;
+    private WebMarkupContainer webglPanel;
     private ThreeDimMolAdvancedOptionsPanel advancedOptionsPanel;
     @Inject
     private NotebookSession notebookSession;
@@ -49,6 +50,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
             cellInstance.setSizeHeight(250);
         }
         addForm();
+        addWebglPanel();
         addTitleBar();
         addStatus();
     }
@@ -77,6 +79,9 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+
+        // TODO - convert this to support selections/filters from other cells
+
         super.processCellChanged(changedCellId, ajaxRequestTarget);
         CellInstance cellInstance = findCellInstance();
         BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
@@ -84,6 +89,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
             boolean isOfInterest = variableInstance != null && changedCellId.equals(variableInstance.getCellId());
             if (isOfInterest) {
+                // TODO - support multiple section - input should be Dataset<MoleculeObject>
                 MoleculeObject moleculeObject = notebookSession.readMoleculeValue(variableInstance);
                 String data = convertToFormat(moleculeObject.getSource(), "sdf");
                 ajaxRequestTarget.appendJavaScript(JS_SET_VIEWER_DATA.replace(":data", convertForJavaScript(data)).replace(":format", "sdf"));
@@ -98,7 +104,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public WebMarkupContainer getContentPanel() {
-        return form;
+        return null;
     }
 
     @Override
@@ -118,11 +124,17 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
         add(form);
     }
 
+    private void addWebglPanel() {
+        webglPanel = new WebMarkupContainer("gldiv");
+        webglPanel.setOutputMarkupId(true);
+        add(webglPanel);
+    }
+
     private void loadInitialSampleData(IHeaderResponse response) {
         // String data = convertForJavaScript(getSampleData("/portal/resources/kinase_inhibs.sdf"));
         String sampleData = getSampleData("/portal/resources/caffeine.mol");
         String data = convertForJavaScript(convertToFormat(sampleData, "sdf"));
-        String js = JS_INIT_VIEWER.replace(":data", data).replace(":format", "sdf");
+        String js = JS_INIT_VIEWER.replace(":id", webglPanel.getMarkupId()).replace(":data", data).replace(":format", "sdf");
         response.render(OnDomReadyHeaderItem.forScript(js));
     }
 
@@ -131,6 +143,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
             if (input == null || input.isEmpty()) {
                 return null;
             } else {
+                // TODO - remove dependency on Marvin
                 Molecule molecule = MolImporter.importMol(input);
                 return MolExporter.exportToFormat(molecule, format);
             }

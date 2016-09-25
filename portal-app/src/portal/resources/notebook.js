@@ -251,7 +251,7 @@ function fit3DViewer(id) {
     var $id = $('#' + id);
     var containerh = $id.outerHeight();
 
-    var $viewer = $id.find("#gldiv");
+    var $viewer = $id.find(".gldiv");
     var $viewerTop = $viewer.position().top;
 
     var $status = $id.find(".extra.content");

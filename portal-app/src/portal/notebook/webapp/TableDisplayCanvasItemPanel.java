@@ -132,6 +132,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void storeCurrentSelection(UUID uuid) throws Exception {
+        // TODO - allow multiple selection
         VariableInstance variableInstance = findCellInstance().getVariableInstanceMap().get("selection");
         MoleculeObject moleculeObject = notebookSession.findMoleculeObjectByRow(datasetDescriptorId, uuid);
         notebookSession.writeMoleculeValue(variableInstance, moleculeObject);

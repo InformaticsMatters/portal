@@ -1,15 +1,16 @@
 <wicket:panel xmlns:wicket="http://www.w3.org/1999/xhtml">
     <div class="notebook-canvas-item-content resizableCellContent">
-        <div wicket:id="titleBar" class="titleBar"></div>
-        <div>
-            <form wicket:id="form" class="ui form content">
-            </form>
-            <div id="gldiv" style="width: 100%;position: absolute;">
-            </div>
+        <div wicket:id="titleBar" class="headers"></div>
+
+        <form wicket:id="form" class="ui form content">
+        </form>
+
+        <div wicket:id="gldiv" class="main gldiv" style="width: 100%;position: absolute;">
         </div>
 
         <div class="extra content line">
             <span wicket:id="cellStatus"></span>
         </div>
+
     </div>
 </wicket:panel>

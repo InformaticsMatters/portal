@@ -80,8 +80,8 @@ var readText = function(input, func) {
     }
 };
 
-function init3DMolViewer(data, format) {
-    glviewer = $3Dmol.createViewer("gldiv", {defaultcolors : $3Dmol.rasmolElementColors});
+function init3DMolViewer(id, data, format) {
+    glviewer = $3Dmol.createViewer(id, {defaultcolors : $3Dmol.rasmolElementColors});
     glviewer.setBackgroundColor(0xffffff);
 
     glviewer.addModel(data, format);
