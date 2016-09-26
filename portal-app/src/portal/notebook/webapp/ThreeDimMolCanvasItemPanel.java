@@ -90,6 +90,8 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
             boolean isOfInterest = variableInstance != null && changedCellId.equals(variableInstance.getCellId());
             if (isOfInterest) {
                 // TODO - support multiple section - input should be Dataset<MoleculeObject>
+                // It should them be converted to SDF using StructureIOClient (to avoid depenedency on Marvin)
+                // and then set to the 3DMol viewer as SDF.
                 MoleculeObject moleculeObject = notebookSession.readMoleculeValue(variableInstance);
                 String data = convertToFormat(moleculeObject.getSource(), "sdf");
                 ajaxRequestTarget.appendJavaScript(JS_SET_VIEWER_DATA.replace(":data", convertForJavaScript(data)).replace(":format", "sdf"));
