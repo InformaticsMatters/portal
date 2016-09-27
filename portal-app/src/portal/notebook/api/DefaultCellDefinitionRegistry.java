@@ -60,15 +60,15 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         // these ones are the options that appear in the advanced options dialog
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS, "x Axis", "Field to use for x axis values", Mode.User));
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS, "x Axis", "Field to use for x axis values", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS, "y Axis", "Field to use for y axis values", Mode.User));
+                new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS, "y Axis", "Field to use for y axis values", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_COLOR, "Color", "Field to use as color switch", Mode.User));
+                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_COLOR, "Color", "Field to use as color switch", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_POINT_SIZE, "Point size", "Size of points on plot", Mode.User));
+                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_POINT_SIZE, "Point size", "Size of points on plot", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(Boolean.class, ScatterPlotCanvasItemPanel.OPTION_AXIS_LABELS, "Show axis labels", "Controls whether the axis labels are visible", Mode.User)
+                new OptionDescriptor<>(Boolean.class, ScatterPlotCanvasItemPanel.OPTION_AXIS_LABELS, "Show axis labels", "Controls whether the axis labels are visible", Mode.Advanced)
                         .withDefaultValue(true));
 
         // these ones are related to selection of points in the plot
@@ -106,10 +106,10 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
-                        "x Axis", "Field to use to group values", Mode.User));
+                        "x Axis", "Field to use to group values", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS,
-                        "y Axis", "Field for values", Mode.User));
+                        "y Axis", "Field for values", Mode.Advanced));
         return cellDefinition;
     }
 
@@ -123,16 +123,16 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
-                        "x Axis", "Field to use to group values", Mode.User));
+                        "x Axis", "Field to use to group values", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS,
-                        "y Axis", "Field for values", Mode.User));
+                        "y Axis", "Field for values", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_FIELDS,
-                        "Fields", "Data Fields", Mode.User).withMinMaxValues(2, 20));
+                        "Fields", "Data Fields", Mode.Advanced).withMinMaxValues(2, 20));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.OPTION_AXES,
-                        "Axes", "Axes configuration", Mode.User));
+                        "Axes", "Axes configuration", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.OPTION_SELECTED_IDS,
                         "Selection", "Selection", Mode.Output));
@@ -154,25 +154,25 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_ROWS_FIELD,
-                        "Rows field", "Field to use for the rows", Mode.User));
+                        "Rows field", "Field to use for the rows", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_COLS_FIELD,
-                        "Columns field", "Field to use for the columns", Mode.User));
+                        "Columns field", "Field to use for the columns", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_VALUES_FIELD,
-                        "Values field", "Field to use for the heatmap values", Mode.User));
+                        "Values field", "Field to use for the heatmap values", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_COLLECTOR,
-                        "Collect values using", "How to handle potentially repeated values during data collection", Mode.User));
+                        "Collect values using", "How to handle potentially repeated values during data collection", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(Integer.class, HeatmapCanvasItemPanel.OPTION_CELL_SIZE,
-                        "Cell size", "Size of each heatmap cell (in pixels)", Mode.User));
+                        "Cell size", "Size of each heatmap cell (in pixels)", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(Integer.class, HeatmapCanvasItemPanel.OPTION_LEFT_MARGIN,
-                        "Left margin", "Size of space needed for row labels (in pixels)", Mode.User));
+                        "Left margin", "Size of space needed for row labels (in pixels)", Mode.Advanced));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(Integer.class, HeatmapCanvasItemPanel.OPTION_TOP_MARGIN,
-                        "Top margin", "Size of space needed for column labels (in pixels)", Mode.User));
+                        "Top margin", "Size of space needed for column labels (in pixels)", Mode.Advanced));
 
         return cellDefinition;
     }
