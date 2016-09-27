@@ -7,6 +7,7 @@ import org.squonk.jobdef.JobDefinition;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.FileTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.OptionDescriptor.Mode;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -26,11 +27,11 @@ public class SdfUploadCellDefinition extends CellDefinition {
         getVariableDefinitionList().add(variableDefinition);
         variableDefinition = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);
         getVariableDefinitionList().add(variableDefinition);
-        getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"sdf"}), OPT_FILE_UPLOAD, "SD File", "Upload SD file"));
+        getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"sdf"}), OPT_FILE_UPLOAD, "SD File", "Upload SD file", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(
                 String.class, OPT_NAME_FIELD_NAME,
-                "Name field name", "Name of the field to use for the molecule name (the part before the CTAB block)")
-                .withMinValues(0));
+                "Name field name", "Name of the field to use for the molecule name (the part before the CTAB block)", Mode.User)
+                .withMinMaxValues(0,1));
     }
 
     @Override

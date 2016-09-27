@@ -2,6 +2,7 @@ package portal.notebook.api;
 
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.OptionDescriptor.Mode;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.logging.Logger;
@@ -22,8 +23,8 @@ public class DatasetSelectSliceCellDefinition extends CellDefinition {
         super(CELL_NAME, "Generate a slice of the dataset", "icons/filter.png", new String[]{"filter", "slice", "dataset"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
         getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
-        getOptionDefinitionList().add(new OptionDescriptor<>(Integer.class, OPTION_SKIP, "Number to skip", "The number of records to skip"));
-        getOptionDefinitionList().add(new OptionDescriptor<>(Integer.class, OPTION_COUNT, "Number to include", "The number of records to include after skipping"));
+        getOptionDefinitionList().add(new OptionDescriptor<>(Integer.class, OPTION_SKIP, "Number to skip", "The number of records to skip", Mode.User));
+        getOptionDefinitionList().add(new OptionDescriptor<>(Integer.class, OPTION_COUNT, "Number to include", "The number of records to include after skipping", Mode.User));
     }
 
     @Override

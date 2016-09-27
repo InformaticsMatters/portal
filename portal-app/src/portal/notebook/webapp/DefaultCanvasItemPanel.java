@@ -70,7 +70,8 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         List<OptionInstance> optionList = new ArrayList<>();
         CellInstance cellInstance = findCellInstance();
         for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
-            if (optionInstance.getOptionDescriptor().isVisible()) {
+            OptionDescriptor od = optionInstance.getOptionDescriptor();
+            if (od.isVisible() && od.isMode(OptionDescriptor.Mode.User)) {
                 optionList.add(optionInstance);
             }
         }
@@ -81,7 +82,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
                 try {
                     addOptionEditor(listItem);
                 } catch (Throwable t) {
-                    LOGGER.warn("Error popualting item", t);
+                    LOGGER.warn("Error populating item", t);
                 }
             }
         };

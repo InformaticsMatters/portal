@@ -7,6 +7,7 @@ import org.squonk.jobdef.JobDefinition;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.FileTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.OptionDescriptor.Mode;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -28,12 +29,12 @@ public class CsvUploadCellDefinition extends CellDefinition {
         variableDefinition  = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);
         getVariableDefinitionList().add(variableDefinition);
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"csv", "tab", "txt"}),
-                OPT_FILE_UPLOAD, "CSV/TAB File", "Upload comma or tab separated text file"));
-        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_FILE_TYPE, "File type", "Type of CSV or TAB file")
+                OPT_FILE_UPLOAD, "CSV/TAB File", "Upload comma or tab separated text file", Mode.User));
+        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_FILE_TYPE, "File type", "Type of CSV or TAB file", Mode.User)
                 .withValues(new String[]{"TDF", "EXCEL", "MYSQL", "RFC4180", "DEFAULT"})
                 .withDefaultValue("DEFAULT"));
         getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, OPT_FIRST_LINE_IS_HEADER, "First line is header",
-                "First line contains field names"));
+                "First line contains field names", Mode.User));
 
     }
 

@@ -2,6 +2,7 @@ package portal.notebook.api;
 
 import org.squonk.jobdef.JobStatus;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.OptionDescriptor.Mode;
 import org.squonk.options.SimpleTypeDescriptor;
 
 import java.util.Date;
@@ -11,11 +12,11 @@ public class TestCellDefinition extends CellDefinition {
 
     public TestCellDefinition() {
         super("test", "Test", "icons/file_upload_basic.png", new String[]{"test"});
-        OptionDescriptor<String> optionDescriptor = new OptionDescriptor<>(new SimpleTypeDescriptor<>(String.class), "invisible", "Invisible", "Invisible option", null, "default", false, false, null, null);
+        OptionDescriptor<String> optionDescriptor = new OptionDescriptor<>(new SimpleTypeDescriptor<>(String.class), "invisible", "Invisible", "Invisible option", null, "default", false, false, null, null, Mode.User);
         getOptionDefinitionList().add(optionDescriptor);
-        optionDescriptor = new OptionDescriptor<>(new SimpleTypeDescriptor<>(String.class), "readonly", "Read-only", "Read-only option", null, "default", true, false, null, null);
+        optionDescriptor = new OptionDescriptor<>(new SimpleTypeDescriptor<>(String.class), "readonly", "Read-only", "Read-only option", null, "default", true, false, null, null, Mode.User);
         getOptionDefinitionList().add(optionDescriptor);
-        optionDescriptor = new OptionDescriptor<>(new SimpleTypeDescriptor<>(String.class), "editableWithDefault", "Editable w/default", "Editable with default", null, "default", true, true, null, null);
+        optionDescriptor = new OptionDescriptor<>(new SimpleTypeDescriptor<>(String.class), "editableWithDefault", "Editable w/default", "Editable with default", null, "default", true, true, null, null, Mode.User);
         getOptionDefinitionList().add(optionDescriptor);
     }
 

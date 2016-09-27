@@ -5,6 +5,7 @@ import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.CxnReactor;
 import org.squonk.jobdef.JobDefinition;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.OptionDescriptor.Mode;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -269,12 +270,12 @@ public class CxnReactorCellDefinition extends CellDefinition {
 
         getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
 
-        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, CxnReactor.OPTION_REACTION, "Reaction", "Reaction from the ChemAxon reaction library")
+        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, CxnReactor.OPTION_REACTION, "Reaction", "Reaction from the ChemAxon reaction library", Mode.User)
             .withValues(REACTIONS)
             .withMinMaxValues(1,1));
-        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, CxnReactor.OPTION_IGNORE_REACTIVITY, "Ignore reactivity rules", "Ignore reactivity rules when reacting"));
-        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, CxnReactor.OPTION_IGNORE_SELECTIVITY, "Ignore selectivity rules", "Ignore selectivity rules when reacting"));
-        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, CxnReactor.OPTION_IGNORE_TOLERANCE, "Ignore tolerance rules", "Ignore tolerance rules when reacting"));
+        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, CxnReactor.OPTION_IGNORE_REACTIVITY, "Ignore reactivity rules", "Ignore reactivity rules when reacting", Mode.User));
+        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, CxnReactor.OPTION_IGNORE_SELECTIVITY, "Ignore selectivity rules", "Ignore selectivity rules when reacting", Mode.User));
+        getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, CxnReactor.OPTION_IGNORE_TOLERANCE, "Ignore tolerance rules", "Ignore tolerance rules when reacting", Mode.User));
 
     }
 

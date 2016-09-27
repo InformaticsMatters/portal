@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class DatasetsFieldOptionDescriptor extends OptionDescriptor<String> {
 
     public DatasetsFieldOptionDescriptor(String key, String label, String description) {
-        super(new SimpleTypeDescriptor<>(String.class), key, label, description, new String[0], null, true, true, 1, 1);
+        super(new SimpleTypeDescriptor<>(String.class), key, label, description, new String[0], null, true, true, 1, 1, Mode.User);
     }
 
 }

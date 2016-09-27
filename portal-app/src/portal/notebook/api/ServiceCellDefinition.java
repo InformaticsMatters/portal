@@ -1,7 +1,6 @@
 package portal.notebook.api;
 
 import org.squonk.jobdef.JobDefinition;
-import org.squonk.core.AccessMode;
 import org.squonk.core.ServiceDescriptor;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
@@ -37,9 +36,8 @@ public class ServiceCellDefinition extends CellDefinition {
     }
 
     private OptionDescriptor findOptionDescriptorForBody() {
-        AccessMode accessMode = serviceDescriptor.getAccessModes()[0];
-        if (accessMode.getParameters() != null) {
-            for (OptionDescriptor od : accessMode.getParameters()) {
+        if (serviceDescriptor.getOptions() != null) {
+            for (OptionDescriptor od : serviceDescriptor.getOptions()) {
                 if (OPTION_BODY.equalsIgnoreCase(od.getkey())) {
                     return od;
                 }
@@ -87,12 +85,12 @@ public class ServiceCellDefinition extends CellDefinition {
         @Override
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
-            AccessMode accessMode = serviceDescriptor.getAccessModes()[0];
-            LOG.info("Building JobDefinition for service " + accessMode.getExecutionEndpoint());
 
-            StepDefinition step = new StepDefinition(accessMode.getAdapterClassName())
+            LOG.info("Building JobDefinition for service " + serviceDescriptor.getExecutionEndpoint());
+
+            StepDefinition step = new StepDefinition(serviceDescriptor.getExecutorClassName())
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
-                    .withOption(OPT_SERVICE_ENDPOINT, serviceDescriptor.getAccessModes()[0].getExecutionEndpoint());
+                    .withOption(OPT_SERVICE_ENDPOINT, serviceDescriptor.getExecutionEndpoint());
 
             Map<String, Object> options = collectAllOptions(cell);
 
@@ -113,11 +111,11 @@ public class ServiceCellDefinition extends CellDefinition {
                 step = step.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key);
             }
 
-            for (Map.Entry<String,Object> e: options.entrySet()) {
+            for (Map.Entry<String, Object> e : options.entrySet()) {
                 String key = e.getKey();
                 Object value = e.getValue();
                 if (value != null) {
-                    LOG.info("Writing option: " + key + " [" + value.getClass().getName() + "] -> " + value );
+                    LOG.info("Writing option: " + key + " [" + value.getClass().getName() + "] -> " + value);
                     step.withOption(key, value);
                 }
             }

@@ -47,15 +47,14 @@ public class RestServiceCellsProvider implements ServiceCellsProvider {
 
     private ServiceCellDefinition buildCellDefinitionForServiceDescriptor(ServiceDescriptor serviceDescriptor) {
         ServiceCellDefinition result = new ServiceCellDefinition(serviceDescriptor);
-        OptionDescriptor[] parameters = serviceDescriptor.getAccessModes()[0].getParameters();
-        if (parameters != null) {
-            logger.info(parameters.length + " parameters found for service " + serviceDescriptor.getName());
-            for (OptionDescriptor parameter : parameters) {
-                logger.info("property type: " + parameter.getTypeDescriptor().getType());
-                result.getOptionDefinitionList().add(parameter);
+        OptionDescriptor[] options = serviceDescriptor.getOptions();
+        if (options != null) {
+            logger.info(options.length + " parameters found for service " + serviceDescriptor.getName());
+            for (OptionDescriptor option : options) {
+                logger.info("property type: " + option.getTypeDescriptor().getType());
+                result.getOptionDefinitionList().add(option);
             }
         }
-
         return result;
     }
 }

@@ -3,6 +3,7 @@ package portal.notebook.api;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.OptionDescriptor.Mode;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -22,7 +23,7 @@ public class DatasetFilterGroovyCellDefinition extends CellDefinition {
         getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(
                 new MultiLineTextTypeDescriptor(20, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
-                "script", "Filter (Groovy expression)", "Filter as groovy expression. e.g. logp < 5 && molweight < 500"));
+                "script", "Filter (Groovy expression)", "Filter as groovy expression. e.g. logp < 5 && molweight < 500", Mode.User));
     }
 
     @Override

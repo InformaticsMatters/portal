@@ -3,6 +3,7 @@ package portal.notebook.api;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.OptionDescriptor.Mode;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.logging.Logger;
@@ -24,7 +25,7 @@ public class DataTransformPotionsCellDefinition extends CellDefinition {
         getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
         getOptionDefinitionList().add(new OptionDescriptor<>(new MultiLineTextTypeDescriptor(10, 80, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
                 OPT_POTION, "Potion Definition",
-                "Definition of the transforms to perform"));
+                "Definition of the transforms to perform", Mode.User));
 
         setInitialWidth(400);
 
