@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3DMol viewer</title>
+
+    <script src="3Dmol-min.js"></script>
+    <!--script src="../resources/3Dmol-nojquery-min.js"></script-->
+    <script src="threedimmol.js"></script>
+
+    <script src="molecules.js"></script>
+</head>
+<body>
+
+<h1>3DMol examples</h1>
+
+<h2>Example 0</h2>
+<div id="example0" style="height: 300px; width: 300px; position: relative; border: 1px; border-style: solid;"
+     class='viewer_3Dmoljs' data-pdb='2POR' data-backgroundcolor='0xffffff' data-style='stick'></div>
+
+
+<h2>Example 1</h2>
+<div id="example1.1" style="height: 300px; width: 300px; position: relative; border: 1px; border-style: solid;"
+     class='viewer_3Dmoljs'
+     data-href='cluster_3_1.sdf' data-type='sdf' data-backgroundcolor='0xffffff' data-style='stick'
+     data-options='multimodel:true;onemol:true'></div>
+
+<h2>Example 2</h2>
+<div id="example2" style="height: 300px; width: 300px; position: relative; border: 1px; border-style: solid;"></div>
+
+<script>
+
+    var example2 = $("#example2");
+    // Viewer config - properties 'defaultcolors' and 'callback'
+    var config = {defaultcolors: $3Dmol.rasmolElementColors };
+
+    // Create GLViewer
+    var viewer2 = $3Dmol.createViewer(example2, config);
+    viewer2.setBackgroundColor('white');
+
+    var m = viewer2.addModel(caffeine, "sdf");
+    viewer2.setStyle({}, {stick: {}});
+    viewer2.zoomTo();
+    viewer2.render();
+
+</script>
+
+
+<h2>Example 3</h2>
+<div id="example3" style="height: 300px; width: 300px; position: relative; border: 1px; border-style: solid;"></div>
+
+<script>
+
+    var example3 = $("#example3");
+    // Viewer config - properties 'defaultcolors' and 'callback'
+    var config = {defaultcolors: $3Dmol.rasmolElementColors };
+
+    // Create GLViewer
+    var viewer3 = $3Dmol.createViewer(example3, config);
+    viewer3.setBackgroundColor('white');
+
+    console.log('adding dhfr');
+    var model1 = viewer3.addModels(dhfr, "sdf", {multimodel: true});
+    //var model2 = viewer3.addModel(caffeine, "sdf");
+    //console.log('Generated ' + models.length + ' models');
+    viewer3.setStyle({}, {stick: {}});
+    viewer3.zoomTo();
+    viewer3.render();
+
+</script>
+
+
+
+<h2>Example 4</h2>
+<div id="example4" style="height: 300px; width: 300px; position: relative; border: 1px; border-style: solid;"></div>
+
+<script>
+
+    var example4 = $("#example4");
+    var config = {defaultcolors: $3Dmol.rasmolElementColors };
+    var viewer4 = $3Dmol.createViewer(example4, config);
+    viewer4.setBackgroundColor('white');
+
+    var models = viewer4.addModels(dhfr, "sdf");
+    //var model2 = viewer4.addModel(caffeine, "sdf");
+    console.log('Generated ' + models.length + ' models');
+    viewer4.setStyle({}, {stick: {}});
+    viewer4.zoomTo();
+    viewer4.render();
+
+</script>
+
+
+</body>
+</html>

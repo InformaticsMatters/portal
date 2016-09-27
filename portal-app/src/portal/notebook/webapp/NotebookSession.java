@@ -345,6 +345,7 @@ public class NotebookSession implements Serializable {
     }
 
     public void writeMoleculeValue(VariableInstance variableInstance, MoleculeObject moleculeObject) throws Exception {
+
         ObjectMapper objectMapper = new ObjectMapper();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         objectMapper.writeValue(byteArrayOutputStream, moleculeObject);

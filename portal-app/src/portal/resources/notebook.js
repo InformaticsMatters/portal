@@ -310,6 +310,7 @@ var sourceEndpointOptions = {
     anchor: ["Continuous", { faces:[ "bottom", "right" ] } ],
     maxConnections: -1,
     isSource: true,
+    scope: "data",
     paintStyle: {
         fillStyle: "#7AB02C",
         radius: 10
@@ -330,6 +331,7 @@ var targetEndpointOptions = {
     anchor:["Continuous", { faces:[ "top", "left" ] } ],
     maxConnections: -1,
     isTarget: true,
+    scope: "data",
     paintStyle: {
         strokeStyle: "#7AB02C",
         radius: 9,
@@ -343,6 +345,7 @@ var sourceEndpointOptions2 = {
     anchor: ["Continuous", { faces:[ "bottom", "right" ] } ],
     maxConnections: -1,
     isSource: true,
+    scope: "options",
     paintStyle: {
         fillStyle: "#FC8A02",
         radius: 10
@@ -363,6 +366,7 @@ var targetEndpointOptions2 = {
     anchor:["Continuous", { faces:[ "top", "left" ] } ],
     maxConnections: -1,
     isTarget: true,
+    scope: "options",
     paintStyle: {
         strokeStyle: "#FC8A02",
         radius: 9,
