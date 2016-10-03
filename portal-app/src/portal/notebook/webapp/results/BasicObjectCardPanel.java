@@ -7,7 +7,10 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.squonk.types.BasicObject;
 
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by timbo on 31/08/16.
@@ -15,11 +18,11 @@ import java.util.Map;
 public class BasicObjectCardPanel<T extends BasicObject> extends Panel {
 
     protected final T o;
-    protected final Map<String, Class> classMappings;
+    protected final Map<String, Class> classMappings = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     public BasicObjectCardPanel(String id, Map<String, Class> classMappings, T o) {
         super(id);
-        this.classMappings = classMappings;
+        this.classMappings.putAll(classMappings);
         this.o = o;
         addContent(o);
     }
@@ -29,6 +32,7 @@ public class BasicObjectCardPanel<T extends BasicObject> extends Panel {
         handleMainContent(o);
 
         add(new Label("uuid", o.getUUID()));
+
         RepeatingView tableRows = new RepeatingView("fields");
         add(tableRows);
 

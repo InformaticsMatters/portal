@@ -478,14 +478,10 @@ div.ui-resizable-handle.ui-resizable-s {
     width: 100%;
 }
 
-/*
-.resultscard table td {
-    word-wrap: break-word;
+.resultscard .ui.collapsing.table td.key {
+    width: 33%;
 }
 
-.resultscard table td > p {
-    word-wrap: break-word;
-}
 */
 
 /* this seems missing from sematic 2.0.0 -> 2.2.4 resulting in modal buttons not being displayed correctly
