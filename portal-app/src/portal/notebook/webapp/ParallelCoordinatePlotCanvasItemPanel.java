@@ -16,6 +16,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.IOUtils;
 import org.squonk.dataset.Dataset;
+import org.squonk.dataset.DatasetSelection;
 import org.squonk.types.BasicObject;
 import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
@@ -25,10 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -135,7 +133,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                 CellInstance cell = findCellInstance();
                 cell.getOptionInstanceMap().get(OPTION_EXTENTS).setValue(extentsValue);
 
-                List<UUID> selection = readSelectionJson(selectedIdsJson);
+                // selection is supplied as JSON array of UUIDs
+                DatasetSelection selection = readSelectionJson(selectedIdsJson);
                 cell.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
 
                 saveNotebook();
@@ -199,12 +198,21 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         }
         Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
         if (dataset != null) {
-            final AtomicInteger i = new AtomicInteger(0);
+            final AtomicInteger idx = new AtomicInteger(0);
             try (Stream<? extends BasicObject> stream = dataset.getStream()) {
-                List<Map<String, Object>> items = stream.sequential().map((o) -> {
+
+                Stream<? extends BasicObject> input = stream;
+                // apply the selection filter, if any
+                Set<UUID> selectionFilter = readFilter(OPTION_FILTER_IDS);
+                if (selectionFilter != null && selectionFilter.size() > 0) {
+                    input = input.filter((o) -> selectionFilter.contains(o.getUUID()));
+                }
+
+                // convert to data
+                List<Map<String, Object>> items = input.sequential().map((o) -> {
                     Map<String, Object> data = new LinkedHashMap<>();
                     data.put("uuid", o.getUUID());
-                    data.put("idx", i.incrementAndGet());
+                    data.put("idx", idx.incrementAndGet());
                     for (String field : fields) {
                         Object val = o.getValue(field);
                         if (val != null) {
@@ -214,8 +222,9 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                     return data;
                 }).collect(Collectors.toList());
 
+                // set data
                 model.setPlotData(items);
-                model.setSize(i.get());
+                model.setSize(idx.get());
             }
         }
     }
@@ -234,11 +243,11 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         } else {
             b.append(numRecords).append(" records, ");
             try {
-                List<UUID> selectedUUIDs = (List<UUID>) findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).getValue();
-                if (selectedUUIDs == null) {
+                DatasetSelection selection = (DatasetSelection) findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).getValue();
+                if (selection == null || selection.getUuids().size() == 0) {
                     b.append("No selection");
                 } else {
-                    b.append(selectedUUIDs.size()).append(" selected");
+                    b.append(selection.getUuids().size()).append(" selected");
                 }
             } catch (Exception e) {
                 LOG.log(Level.WARNING, "Failed to read selection", e);

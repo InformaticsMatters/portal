@@ -11,6 +11,7 @@ import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.core.client.StructureIOClient;
+import org.squonk.dataset.DatasetSelection;
 import portal.PopupContainerProvider;
 import portal.notebook.api.*;
 import portal.notebook.service.Execution;
@@ -22,11 +23,18 @@ import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CanvasItemPanel.class);
+
+    public static final String OPTION_SELECTED_IDS ="selectionSelected";
+    public static final String OPTION_SELECTED_MARKED_IDS ="selectionSelectedMarked";
+    public static final String OPTION_FILTER_IDS = "filteredIDs";
+
     private final Long cellId;
     protected ResultsHandler resultsHandler;
     @Inject
@@ -285,7 +293,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             notebookSession.storeCurrentEditable();
             return true;
         } catch (Exception e) {
-            LOGGER.error("Failed to save selections", e);
+            LOGGER.error("Failed to save notebook", e);
             notifyMessage("Error", "Failed to save notebook: " + e.getLocalizedMessage());
             return false;
         }
@@ -293,5 +301,10 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
     protected void notifyMessage(String title, String message) {
         notifierProvider.getNotifier(getPage()).notify(title, message);
+    }
+
+    protected Set<UUID> readFilter(String optionName) {
+        // TODO - implement reading the selection that is provided by the supplier cell
+        return null;
     }
 }

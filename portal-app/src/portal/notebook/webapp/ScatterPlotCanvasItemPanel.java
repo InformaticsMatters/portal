@@ -17,16 +17,14 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.dataset.DatasetSelection;
 import org.squonk.types.BasicObject;
 import org.squonk.types.NumberRange;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -192,7 +190,8 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_X_RANGE).setValue(xRange);
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_Y_RANGE).setValue(yRange);
 
-                List<UUID> selection = readSelectionJson(selectionJson);
+                // selection is supplied as JSON array of UUIDs
+                DatasetSelection selection = readSelectionJson(selectionJson);
                 cellInstance.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
 
                 saveNotebook();
@@ -247,7 +246,16 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
                 if (readDataset) {
                     try (Stream<? extends BasicObject> stream = dataset.getStream()) {
-                        List<DataItem> data = stream.map((o) -> {
+
+                        Stream<? extends BasicObject> input = stream;
+                        // apply the selection filter, if any
+                        Set<UUID> selectionFilter = readFilter(OPTION_FILTER_IDS);
+                        if (selectionFilter != null && selectionFilter.size() > 0) {
+                            input = input.filter((o) -> selectionFilter.contains(o.getUUID()));
+                        }
+
+                        // convert to DataItems
+                        Stream<DataItem> items = input.map((o) -> {
                             Float x = safeConvertToFloat(o.getValue(xFieldName));
                             Float y = safeConvertToFloat(o.getValue(yFieldName));
                             Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
@@ -265,9 +273,10 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                                 // TODO - should we record how many records are not handled?
                                 return null;
                             }
-                        }).filter((d) -> d != null)
-                                .collect(Collectors.toList());
+                        }).filter((d) -> d != null);
 
+                        // set result
+                        List<DataItem> data = items.collect(Collectors.toList());
                         model.setData(data.toArray(new DataItem[data.size()]));
                     }
                 } else {
@@ -313,11 +322,11 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         } else {
             b.append(data.length).append(" records, ");
             try {
-                List<UUID> selectedUUIDs = (List<UUID>) findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).getValue();
-                if (selectedUUIDs == null) {
+                DatasetSelection selection = (DatasetSelection) findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).getValue();
+                if (selection == null || selection.getUuids().size() == 0) {
                     b.append("No selection");
                 } else {
-                    b.append(selectedUUIDs.size()).append(" selected");
+                    b.append(selection.getUuids().size()).append(" selected");
                 }
             } catch (Exception e) {
                 LOG.log(Level.WARNING, "Failed to read selection", e);
