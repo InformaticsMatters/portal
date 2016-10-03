@@ -471,6 +471,23 @@ div.ui-resizable-handle.ui-resizable-s {
   font-size:0;
 }
 
+.resultscard .ui.collapsing.table {
+    table-layout: fixed;
+    word-wrap: break-word;
+    overflow: hidden;
+    width: 100%;
+}
+
+/*
+.resultscard table td {
+    word-wrap: break-word;
+}
+
+.resultscard table td > p {
+    word-wrap: break-word;
+}
+*/
+
 /* this seems missing from sematic 2.0.0 -> 2.2.4 resulting in modal buttons not being displayed correctly
 - could be removed if fixed in future update? */
 .ui.modal .actions {
