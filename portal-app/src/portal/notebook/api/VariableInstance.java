@@ -1,13 +1,12 @@
 package portal.notebook.api;
 
-import portal.notebook.api.VariableDefinition;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
 public class VariableInstance implements Serializable {
-    private final static long serialVersionUID = 1l;
+
+    private final static long serialVersionUID = 1L;
     private Long cellId;
     private VariableDefinition variableDefinition;
     private boolean dirty = false;

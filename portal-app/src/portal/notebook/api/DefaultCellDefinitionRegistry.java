@@ -79,18 +79,14 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
                 new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_Y_RANGE, "Selected Y", "Selected Y range", Mode.Ignore));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_SELECTED_IDS, "Selection", "Selected IDs", Mode.Output));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "ID filter", Mode.Input));
         // cellDefinition.getOptionDefinitionList().add(
         //      new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
 
-        /* inputs
-        cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS,
-                        "Filter", "ID filter", Mode.Input));
-        */
-
         // the option bindings
         OptionBindingDefinition optionBindingDefinition = new OptionBindingDefinition();
-        optionBindingDefinition.setName("Filter"); // FIXME really lost on constant definitions here
+        optionBindingDefinition.setName(CanvasItemPanel.OPTION_FILTER_IDS);
         cellDefinition.getOptionBindingDefinitionList().add(optionBindingDefinition);
 
         return cellDefinition;
