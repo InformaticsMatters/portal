@@ -2,9 +2,11 @@ package portal.notebook.webapp.results;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -17,7 +19,9 @@ import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
+import org.squonk.types.MoleculeObjectHighlightable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -36,11 +40,14 @@ public class DatasetResultsPanel extends Panel {
     private static final int DEFAULT_NUM_RECORDS = 100;
     private static final int MAX_RECORDS = 1000;
     private static final String SETTING_COLS = "resultsviewer.results.cols";
+    private static final String SETTING_HIGHLIGHTER = "resultsviewer.results.highlighter";
     private static final String[] NUMBERS = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen"};
+    protected static final String HIGHLIGHTER_NONE = "None";
     private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
     private IModel<DatasetMetadata> datasetMetadataModel;
     private IModel<List<? extends BasicObject>> resultsModel;
-    private IModel<Map<String, Object>> settingsModel;
+    private Model<String> highlighterModel = new Model<>();
+    private IModel<List<String>> highlighterChoicesModel;
     private IModel gridModel = new Model(generateGridClass(DEFAULT_COLS));
     private int limit = DEFAULT_NUM_RECORDS;
     private int offset = 0;
@@ -63,13 +70,14 @@ public class DatasetResultsPanel extends Panel {
         addComponents();
     }
 
-    private Map<String,Object> cellSettings() {
+    private Map<String, Object> cellSettings() {
         return cellDatasetProvider.getCellInstance().getSettings();
     }
 
     private void addComponents() {
 
-        Integer cols = safeGetInteger(cellSettings(), SETTING_COLS, 5);
+        Map<String, Object> settings = cellSettings();
+        Integer cols = safeGetInteger(settings, SETTING_COLS, 5);
         gridModel.setObject(generateGridClass(cols));
 
         final WebMarkupContainer grid = new WebMarkupContainer("grid");
@@ -81,31 +89,38 @@ public class DatasetResultsPanel extends Panel {
         form.setOutputMarkupId(true);
         add(form);
 
-        form.add(new NumberTextField<>("cols", new Model<>(cols))
+
+        Model<Integer> colsModel = new Model<>(cols);
+        form.add(new NumberTextField<>("cols", colsModel)
                 .setMinimum(1)
                 .setMaximum(15)
                 .add(new OnChangeAjaxBehavior() {
+
+                    // TODO - bug here. If the value is set using keyboard then you get an exception:
+                    // java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String
+                    // this happens even with an empty opUpdate() method, but only happens if the OnChangeAjaxBehavior is added.
+                    // Could be a Wicket bug?
 
                     @Override
                     protected void onUpdate(final AjaxRequestTarget target) {
 
                         // get the correct cell instance every time as it might have changed
-                        Map<String,Object> settings = cellSettings();
+                        Map<String, Object> settings = cellSettings();
 
                         Integer cols = safeGetInteger(settings, SETTING_COLS, null);
 
-                        Integer value = (Integer) getComponent().getDefaultModelObject();
+                        Integer value = colsModel.getObject();
                         if (value != null && cols != value) {
 
                             if (value < 1 || value > 15) {
                                 value = 5;
                             }
                             settings.put(SETTING_COLS, value);
-                            String gridClass = generateGridClass(value);
-                            gridModel.setObject(gridClass);
+                            String gridCssClass = generateGridClass(value);
+                            gridModel.setObject(gridCssClass);
 
                             if (target != null) {
-                                String js = "$('#" + grid.getMarkupId() + "').attr('class', '" + gridClass + "');";
+                                String js = "$('#" + grid.getMarkupId() + "').attr('class', '" + gridCssClass + "');";
                                 //target.appendJavaScript("console.log('" + gridClass + "');");
                                 target.appendJavaScript(js);
                             }
@@ -216,15 +231,68 @@ public class DatasetResultsPanel extends Panel {
             }
         });
 
+        highlighterChoicesModel = new IModel<List<String>>() {
 
+            @Override
+            public void detach() {
+            }
+
+            @Override
+            public List<String> getObject() {
+                DatasetMetadata meta = datasetMetadataModel.getObject();
+                Map<String, Class> typesMapppings = meta.getValueClassMappings();
+                List<String> results = new ArrayList<>();
+                results.add(HIGHLIGHTER_NONE);
+
+                typesMapppings.forEach((fld, cls) -> {
+                    if (MoleculeObjectHighlightable.class.isAssignableFrom(cls)) {
+                        results.add(fld);
+                    }
+                });
+                return results;
+            }
+
+            @Override
+            public void setObject(List<String> o) {
+                // never set
+            }
+        };
+
+        String currentHighlighter = (String)settings.get(SETTING_HIGHLIGHTER);
+        highlighterModel.setObject(currentHighlighter == null ? HIGHLIGHTER_NONE : currentHighlighter);
+        DropDownChoice<String> highlightersChoice = new DropDownChoice<>("highlighters", highlighterModel, highlighterChoicesModel);
+        highlightersChoice.setOutputMarkupId(true);
+        highlightersChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            protected void onUpdate(AjaxRequestTarget target) {
+                String chosen = highlightersChoice.getModelObject();
+
+                Map<String, Object> settings = cellSettings();
+                String current = (String) settings.get(SETTING_HIGHLIGHTER);
+                if (chosen == null && current == null) {
+                    // do nothing
+                } else if (chosen == null) {
+                    settings.remove(SETTING_HIGHLIGHTER);
+                    cellDatasetProvider.saveNotebook();
+                } else if (current != null && !current.equals(chosen)) {
+                    settings.put(SETTING_HIGHLIGHTER, chosen);
+                    cellDatasetProvider.saveNotebook();
+                }
+                target.add(grid);
+            }
+
+        });
+        form.add(highlightersChoice);
+        
         grid.add(new ListView<BasicObject>("card", resultsModel) {
 
             @Override
             protected void populateItem(ListItem<BasicObject> listItem) {
                 BasicObject o = listItem.getModelObject();
-                Map<String, Class> mappings = datasetMetadataModel.getObject().getValueClassMappings();
+                DatasetMetadata meta = datasetMetadataModel.getObject();
+                Map<String, Class> mappings = meta.getValueClassMappings();
+
                 if (o instanceof MoleculeObject) {
-                    listItem.add(new MoleculeObjectCardPanel("column", mappings, (MoleculeObject) o, cellDatasetProvider.getStructureIOClient()));
+                    listItem.add(new MoleculeObjectCardPanel("column", mappings, (MoleculeObject) o, datasetMetadataModel, cellDatasetProvider.getStructureIOClient(), highlighterModel));
                 } else {
                     listItem.add(new BasicObjectCardPanel("column", mappings, o));
                 }

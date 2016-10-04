@@ -2,21 +2,25 @@
 
     <form wicket:id="form" class="ui segment toolbar">
 
-        <span class="ui small labeled input"><span class="ui label">Cols:</span>
-        <input wicket:id="cols" type="number" style="width: 70px;"></span>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span class="ui labeled input"><span class="ui label">Cols:</span>
+        <input wicket:id="cols" type="number" style="width: 60px;"></span>
 
-        <span class="ui small labeled input"><span class="ui label">Num results:</span>
-        <input wicket:id="limit" type="number" step="100" min="0" max="1000" value="100" style="width: 90px;"></span>
-        <span class="ui small labeled input"><span class="ui label">Offset:</span>
+        <span class="ui labeled input"><span class="ui label">Results:</span>
+        <input wicket:id="limit" type="number" step="100" min="0" max="1000" value="100" style="width: 75px;"></span>
+        <span class="ui labeled input"><span class="ui label">Offset:</span>
         <input wicket:id="offset" type="number" step="100" min="0" style="width: 90px;"></span>
 
-        <div class="small ui buttons">
+        <div class="ui buttons">
             <button wicket:id="fetch" class="ui compact button primary">Fetch</button>
             <div class="or"></div>
             <button wicket:id="next" class="ui compact button primary">Next</button>
             <div class="or"></div>
             <button wicket:id="all" class="ui compact button primary">1000</button>
+        </div>
+
+        <div class="ui labeled input">
+            <span class="ui label">Highlight:</span>
+            <select wicket:id="highlighters" class="ui compact dropdown" style="background:white;"> </select>
         </div>
 
     </form>

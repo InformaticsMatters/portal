@@ -1,10 +1,15 @@
 package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.squonk.core.client.StructureIOClient;
+import org.squonk.dataset.DatasetMetadata;
 import org.squonk.io.DepictionParameters;
 import org.squonk.types.MoleculeObject;
+import org.squonk.types.MoleculeObjectHighlightable;
+import org.squonk.types.Scale;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -16,11 +21,17 @@ public class MoleculeObjectCardPanel extends BasicObjectCardPanel<MoleculeObject
 
     private static final Logger LOG = Logger.getLogger(MoleculeObjectCardPanel.class.getName());
 
-    private StructureIOClient client;
+    private final IModel<DatasetMetadata> datasetMetadataModel;
+    private final StructureIOClient client;
+    private final Model<String> highlighterModel;
 
-    MoleculeObjectCardPanel(String id, Map<String, Class> classMappings, MoleculeObject mo, StructureIOClient client) {
+
+    MoleculeObjectCardPanel(String id, Map<String, Class> classMappings, MoleculeObject mo, IModel<DatasetMetadata> datasetMetadataModel, StructureIOClient client, Model<String> highlighterModel) {
         super(id, classMappings, mo);
+        this.datasetMetadataModel = datasetMetadataModel;
         this.client = client;
+        this.highlighterModel = highlighterModel;
+
     }
 
     @Override
@@ -37,7 +48,18 @@ public class MoleculeObjectCardPanel extends BasicObjectCardPanel<MoleculeObject
 
             @Override
             protected byte[] getImageData(Attributes attributes) {
-                return client.renderImage(mo.getSource(), mo.getFormat(), DepictionParameters.OutputFormat.svg, new DepictionParameters(30, 20));
+                DepictionParameters params = new DepictionParameters(30, 20);
+                String highlighterFieldName = highlighterModel.getObject();
+                if (highlighterFieldName != null && !DatasetResultsPanel.HIGHLIGHTER_NONE.equals(highlighterFieldName)) {
+                    MoleculeObjectHighlightable highlightable = (MoleculeObjectHighlightable)mo.getValue(highlighterFieldName);
+                    Scale scale = (Scale)datasetMetadataModel.getObject().getFieldMetaProp(highlighterFieldName, DatasetMetadata.PROP_SCALE);
+                    if (highlightable != null && scale != null) {
+                        highlightable.highlight(params, scale.getFromColor(), scale.getToColor(),
+                                scale.getFromValue(), scale.getToValue(),
+                                DepictionParameters.HighlightMode.region, false);
+                    }
+                }
+                return client.renderImage(mo.getSource(), mo.getFormat(), DepictionParameters.OutputFormat.svg, params);
             }
         });
 

@@ -476,10 +476,11 @@ div.ui-resizable-handle.ui-resizable-s {
     word-wrap: break-word;
     overflow: hidden;
     width: 100%;
+    font-size: 0.8em;
 }
 
 .resultscard .ui.collapsing.table td.key {
-    width: 33%;
+    width: 40%;
 }
 
 */

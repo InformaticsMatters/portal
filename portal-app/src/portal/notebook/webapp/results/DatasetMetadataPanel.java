@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.types.HTMLRenderable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,7 +41,14 @@ public class DatasetMetadataPanel extends Panel {
             protected void populateItem(ListItem<Property> item) {
                 Property p = item.getModelObject();
                 item.add(new Label("key", p.key));
-                item.add(new MultiLineLabel("value", p.value.toString()));
+                Object value = p.value;
+                if (value instanceof HTMLRenderable) {
+                    Label l = new Label("value", ((HTMLRenderable)p.value).renderAsHTML());
+                    l.setEscapeModelStrings(false);
+                    item.add(l);
+                } else {
+                    item.add(new MultiLineLabel("value", p.value.toString()));
+                }
             }
         });
 
@@ -58,7 +66,14 @@ public class DatasetMetadataPanel extends Panel {
                     protected void populateItem(ListItem<Property> item) {
                         Property p = item.getModelObject();
                         item.add(new Label("fieldkey", p.key));
-                        item.add(new MultiLineLabel("fieldvalue", p.value.toString()));
+                        Object value = p.value;
+                        if (value instanceof HTMLRenderable) {
+                            Label l = new Label("fieldvalue", ((HTMLRenderable)p.value).renderAsHTML());
+                            l.setEscapeModelStrings(false);
+                            item.add(l);
+                        } else {
+                            item.add(new MultiLineLabel("fieldvalue", p.value.toString()));
+                        }
                     }
                 });
             }
