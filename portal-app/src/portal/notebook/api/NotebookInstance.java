@@ -111,9 +111,15 @@ public class NotebookInstance implements Serializable {
             binding.setBindingDefinition(bindingDefinition);
             cellInstance.getBindingInstanceMap().put(bindingDefinition.getName(), binding);
         }
+        for (OptionBindingDefinition optionBindingDefinition : cellDefinition.getOptionBindingDefinitionList()) {
+            OptionBindingInstance binding = new OptionBindingInstance();
+            binding.setOptionBindingDefinition(optionBindingDefinition);
+            cellInstance.getOptionBindingInstanceMap().put(optionBindingDefinition.getName(), binding);
+        }
         for (OptionDescriptor optionDescriptor : cellDefinition.getOptionDefinitionList()) {
             OptionInstance option = new OptionInstance();
             option.setOptionDescriptor(optionDescriptor);
+            option.setCellId(cellInstance.getId());
             cellInstance.getOptionInstanceMap().put(optionDescriptor.getkey(), option);
         }
         return cellInstance;

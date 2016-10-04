@@ -25,6 +25,7 @@ public abstract class CellDefinition implements Serializable {
     public static final String VAR_DISPLAYNAME_FILECONTENT = "File Content";
     private final static long serialVersionUID = 1L;
     private final List<BindingDefinition> bindingDefinitionList = new ArrayList<>();
+    private final List<OptionBindingDefinition> optionBindingDefinitionList = new ArrayList<>();
     private final List<VariableDefinition> variableDefinitionList = new ArrayList<>();
     private final List<OptionDescriptor> optionDefinitionList = new ArrayList<>();
     private String name;
@@ -92,6 +93,9 @@ public abstract class CellDefinition implements Serializable {
         return this.bindingDefinitionList;
     }
 
+    public List<OptionBindingDefinition> getOptionBindingDefinitionList() {
+        return this.optionBindingDefinitionList;
+    }
     public List<VariableDefinition> getVariableDefinitionList() {
         return this.variableDefinitionList;
     }

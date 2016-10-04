@@ -7,8 +7,10 @@ import java.util.Map;
 
 @XmlRootElement
 public class CellInstance implements Serializable {
-    private final static long serialVersionUID = 1l;
+
+    private final static long serialVersionUID = 1L;
     private final Map<String, BindingInstance> bindingInstanceMap = new LinkedHashMap<>();
+    private final Map<String, OptionBindingInstance> optionBindingInstanceMap = new LinkedHashMap<>();
     private final Map<String, VariableInstance> variableInstanceMap = new LinkedHashMap<>();
     private final Map<String, OptionInstance> optionInstanceMap = new LinkedHashMap<>();
     private final Map<String, Object> settings = new LinkedHashMap<>();
@@ -38,6 +40,10 @@ public class CellInstance implements Serializable {
 
     public Map<String, BindingInstance> getBindingInstanceMap() {
         return bindingInstanceMap;
+    }
+
+    public Map<String, OptionBindingInstance> getOptionBindingInstanceMap() {
+        return optionBindingInstanceMap;
     }
 
     public Map<String, VariableInstance> getVariableInstanceMap() {
