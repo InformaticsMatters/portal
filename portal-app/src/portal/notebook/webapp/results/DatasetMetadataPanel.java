@@ -1,7 +1,6 @@
 package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -9,8 +8,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.squonk.dataset.DatasetMetadata;
-import org.squonk.types.HTMLRenderable;
-import org.squonk.types.depict.HTMLRenderers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
