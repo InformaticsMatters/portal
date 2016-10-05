@@ -35,19 +35,13 @@ import java.util.stream.Stream;
  */
 public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
-    private static final Logger LOG = Logger.getLogger(ScatterPlotCanvasItemPanel.class.getName());
-    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, :data)";
-
     public static final String OPTION_COLOR = "color";
     public static final String OPTION_POINT_SIZE = "pointSize";
     public static final String OPTION_AXIS_LABELS = "axisLabels";
     public static final String OPTION_SELECTED_X_RANGE = "selectionXRange";
     public static final String OPTION_SELECTED_Y_RANGE = "selectionYRange";
-
-    private Form<ModelObject> form;
-    private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
-    private final ModelObject model = new ModelObject();
-
+    private static final Logger LOG = Logger.getLogger(ScatterPlotCanvasItemPanel.class.getName());
+    private static final String BUILD_PLOT_JS = "buildScatterPlot(':id', ':xLabel', ':yLabel', ':colorMode', true, :data)";
     protected static Map<String, Integer> POINT_SIZES = new LinkedHashMap<>();
 
     static {
@@ -59,6 +53,10 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         POINT_SIZES.put("Larger", 9);
         POINT_SIZES.put("Largest", 12);
     }
+
+    private final ModelObject model = new ModelObject();
+    private Form<ModelObject> form;
+    private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
 
 
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {
@@ -215,7 +213,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private void refreshPlotData(boolean readDataset) throws Exception {
-
         String xFieldName = model.getX();
         String yFieldName = model.getY();
         String colorFieldName = model.getColor();

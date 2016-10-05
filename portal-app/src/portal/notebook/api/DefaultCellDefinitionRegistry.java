@@ -51,11 +51,14 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     private static CellDefinition createScatterPlotCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("ScatterPlot", "Scatter plot", "icons/visualisation_chart.png", new String[]{"scatter", "plot", "visualization", "visualisation", "viz"}, false);
+
+        // the data bindings
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+
         // these ones are the options that appear in the advanced options dialog
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS, "x Axis", "Field to use for x axis values", Mode.Advanced));
@@ -76,13 +79,15 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
                 new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_Y_RANGE, "Selected Y", "Selected Y range", Mode.Ignore));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_SELECTED_IDS, "Selection", "Selected IDs", Mode.Output));
-//        cellDefinition.getOptionDefinitionList().add(
-//                new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
-
-        // inputs
         cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS,
-                        "Filter", "ID filter", Mode.Input));
+                new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "ID filter", Mode.Input));
+        // cellDefinition.getOptionDefinitionList().add(
+        //      new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
+
+        // the option bindings
+        OptionBindingDefinition optionBindingDefinition = new OptionBindingDefinition();
+        optionBindingDefinition.setName(CanvasItemPanel.OPTION_FILTER_IDS);
+        cellDefinition.getOptionBindingDefinitionList().add(optionBindingDefinition);
 
         return cellDefinition;
     }

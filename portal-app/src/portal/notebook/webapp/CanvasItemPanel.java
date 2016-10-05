@@ -25,16 +25,13 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CanvasItemPanel.class);
 
     public static final String OPTION_SELECTED_IDS ="selectionSelected";
     public static final String OPTION_SELECTED_MARKED_IDS ="selectionSelectedMarked";
     public static final String OPTION_FILTER_IDS = "filteredIDs";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CanvasItemPanel.class);
     private final Long cellId;
     protected ResultsHandler resultsHandler;
     @Inject
@@ -303,8 +300,15 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         notifierProvider.getNotifier(getPage()).notify(title, message);
     }
 
-    protected Set<UUID> readFilter(String optionName) {
-        // TODO - implement reading the selection that is provided by the supplier cell
-        return null;
+    protected Set<UUID> readFilter(String optionBindingName) {
+        CellInstance cellInstance = findCellInstance();
+        OptionBindingInstance optionBindingInstance = cellInstance.getOptionBindingInstanceMap().get(optionBindingName);
+        OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
+        Set<UUID> result = null;
+        if (optionInstance != null) {
+            DatasetSelection datasetSelection = (DatasetSelection) optionInstance.getValue();
+            result = datasetSelection.getUuids();
+        }
+        return result;
     }
 }
