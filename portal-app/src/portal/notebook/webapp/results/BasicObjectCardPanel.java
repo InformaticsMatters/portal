@@ -2,13 +2,10 @@ package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.squonk.types.BasicObject;
 
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -16,6 +13,7 @@ import java.util.TreeMap;
  * Created by timbo on 31/08/16.
  */
 public class BasicObjectCardPanel<T extends BasicObject> extends Panel {
+
 
     protected final T o;
     protected final Map<String, Class> classMappings = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -41,7 +39,7 @@ public class BasicObjectCardPanel<T extends BasicObject> extends Panel {
             tableRows.add(props);
             props.add(new Label("fieldkey", k));
             Object value = o.getValue(k);
-            props.add(new MultiLineLabel("fieldvalue", value == null ? "" : value.toString()));
+            props.add(ResultsUtils.generateContent("fieldvalue", value));
         });
     }
 
