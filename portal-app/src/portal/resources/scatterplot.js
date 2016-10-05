@@ -4,7 +4,6 @@ function buildScatterPlot(id, xAxisLabel, yAxisLabel, colorModel, displayLegend,
 
     //console.log("buildScatterPlot");
 
-    var selector = '#' + id + ' .svg-container';
     var outerDiv = d3.select("#" + id);
     var plot = outerDiv.select('.svg-container');
     var form = outerDiv.select('form.scatterplot');
@@ -441,7 +440,7 @@ scatterPlot = function(config) {
         updateSelections();
       }
 
-      getSelections = function() {
+      function getSelections() {
         var selected;
         var selectedAndMarked;
         if (!brush.empty()) {
@@ -457,7 +456,7 @@ scatterPlot = function(config) {
         return [selected, selectedAndMarked];
       }
 
-      updateSelections = function() {
+      function updateSelections() {
 
             if (selectionHandler) {
                 if (brush.empty()) {

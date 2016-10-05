@@ -29,7 +29,7 @@ public class TestCellDefinition extends CellDefinition {
         @Override
         public JobStatus execute(CellInstance cell, CellExecutionData data) throws Exception {
             for (OptionInstance optionInstance : cell.getOptionInstanceMap().values()) {
-                System.out.println(optionInstance.getOptionDescriptor().getkey() + ": " + optionInstance.getValue());
+                System.out.println(optionInstance.getOptionDescriptor().getKey() + ": " + optionInstance.getValue());
             }
             return JobStatus.create(null /* JobDefinition */, "username", new Date(), null).withStatus(JobStatus.Status.COMPLETED, 0, 0, null);
         }

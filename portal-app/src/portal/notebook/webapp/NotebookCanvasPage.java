@@ -24,6 +24,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.squonk.jobdef.JobStatus;
+import org.squonk.options.OptionDescriptor;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PopupContainerProvider;
@@ -159,9 +160,9 @@ public class NotebookCanvasPage extends WebPage {
 
     private void processCellChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         notebookSession.reloadCurrentVersion();
-        for (int i = 0; i< canvasItemRepeater.size(); i++) {
-            ListItem listItem = (ListItem)canvasItemRepeater.get(i);
-            CanvasItemPanel canvasItemPanel = (CanvasItemPanel)listItem.get(0);
+        for (int i = 0; i < canvasItemRepeater.size(); i++) {
+            ListItem listItem = (ListItem) canvasItemRepeater.get(i);
+            CanvasItemPanel canvasItemPanel = (CanvasItemPanel) listItem.get(0);
             try {
                 canvasItemPanel.processCellChanged(cellId, ajaxRequestTarget);
             } catch (Throwable t) {
@@ -696,13 +697,15 @@ public class NotebookCanvasPage extends WebPage {
         String targetEndpointUuid = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
         String sourceCellMarkupId = sourceEndpointUuid.substring(0, sourceEndpointUuid.indexOf("-"));
         String targetCellMarkupId = targetEndpointUuid.substring(0, targetEndpointUuid.indexOf("-"));
-        String sourceVariableName = sourceEndpointUuid.substring(sourceEndpointUuid.indexOf("-") + 1);
-        String targetVariableName = targetEndpointUuid.substring(targetEndpointUuid.indexOf("-") + 1);
+        String sourceName = sourceEndpointUuid.substring(sourceEndpointUuid.indexOf("-") + 1);
+        String targetName = targetEndpointUuid.substring(targetEndpointUuid.indexOf("-") + 1);
 
-        CellInstance sourceCellInstance = null;
-        CellInstance targetCellInstance = null;
-        VariableInstance source = null;
-        BindingInstance target = null;
+        CellInstance sourceCellInstance;
+        CellInstance targetCellInstance;
+        VariableInstance dataConnectionSource = null;
+        BindingInstance dataConnectionTarget = null;
+        OptionInstance optionConnectionSource = null;
+        OptionBindingInstance optionConnectionTarget = null;
 
         Iterator<Component> iterator = canvasItemRepeater.iterator();
         while (iterator.hasNext()) {
@@ -710,20 +713,31 @@ public class NotebookCanvasPage extends WebPage {
             CanvasItemPanel canvasItemPanel = (CanvasItemPanel) ((ListItem) component).get(0);
             if (sourceCellMarkupId.equals(component.getMarkupId())) {
                 sourceCellInstance = canvasItemPanel.findCellInstance();
-                source = sourceCellInstance.getVariableInstanceMap().get(sourceVariableName);
+                dataConnectionSource = sourceCellInstance.getVariableInstanceMap().get(sourceName);
+                optionConnectionSource = sourceCellInstance.getOptionInstanceMap().get(sourceName);
             }
             if (targetCellMarkupId.equals(component.getMarkupId())) {
                 targetCellInstance = canvasItemPanel.findCellInstance();
-                target = targetCellInstance.getBindingInstanceMap().get(targetVariableName);
+                dataConnectionTarget = targetCellInstance.getBindingInstanceMap().get(targetName);
+                optionConnectionTarget = targetCellInstance.getOptionBindingInstanceMap().get(targetName);
             }
         }
-        if (source != null && target != null) {
-            applyBinding(source, target);
+        if (dataConnectionSource != null && dataConnectionTarget != null) {
+            applyDataBinding(dataConnectionSource, dataConnectionTarget);
+        }
+        if (optionConnectionSource != null && optionConnectionTarget != null) {
+            applyOptionBinding(optionConnectionSource, optionConnectionTarget);
         }
     }
 
-    private void applyBinding(VariableInstance variableInstance, BindingInstance bindingInstance) throws Exception {
+    private void applyDataBinding(VariableInstance variableInstance, BindingInstance bindingInstance) throws Exception {
         bindingInstance.setVariableInstance(variableInstance);
+        notebookSession.storeCurrentEditable();
+        getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
+    }
+
+    private void applyOptionBinding(OptionInstance optionInstance, OptionBindingInstance optionBindingInstance) throws Exception {
+        optionBindingInstance.setOptionInstance(optionInstance);
         notebookSession.storeCurrentEditable();
         getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
     }
@@ -768,6 +782,15 @@ public class NotebookCanvasPage extends WebPage {
                     stringBuilder.append(js);
                 }
             }
+            for (OptionBindingInstance optionBindingInstance : targetCellInstance.getOptionBindingInstanceMap().values()) {
+                OptionInstance source = optionBindingInstance.getOptionInstance();
+                if (source != null) {
+                    String sourceEndpointUuid = CANVAS_ITEM_PREFIX + source.getCellId() + "-" + source.getOptionDescriptor().getKey();
+                    String targetEndpointUuid = targetCellMarkupId + "-" + optionBindingInstance.getKey();
+                    String js = "addConnection('" + sourceEndpointUuid + "', '" + targetEndpointUuid + "');";
+                    stringBuilder.append(js);
+                }
+            }
         }
         return stringBuilder.toString();
     }
@@ -782,6 +805,16 @@ public class NotebookCanvasPage extends WebPage {
         for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
             String endpointId = itemId + "-" + bindingInstance.getName();
             stringBuilder.append("addTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + bindingInstance.getName() + "');");
+        }
+        for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
+            if (optionInstance.getOptionDescriptor().isMode(OptionDescriptor.Mode.Output)) {
+                String endpointId = itemId + "-" + optionInstance.getOptionDescriptor().getKey(); // temporarily using key as id
+                stringBuilder.append("addOptionSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + optionInstance.getOptionDescriptor().getLabel() + "');");
+            }
+        }
+        for (OptionBindingInstance optionBindingInstance : cellInstance.getOptionBindingInstanceMap().values()) {
+            String endpointId = itemId + "-" + optionBindingInstance.getKey();
+            stringBuilder.append("addOptionTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + optionBindingInstance.getName() + "');");
         }
         return stringBuilder.toString();
     }

@@ -297,7 +297,6 @@ function initCellSizeAndPosition(id, left, top, width, height) {
     if (height != 0) {
         $id.height(height);
     }
-
     if ((top != 0) || (left != 0)) {
         $parent = $id.parent();
         $parent.css('top', top + 'px');
@@ -307,7 +306,7 @@ function initCellSizeAndPosition(id, left, top, width, height) {
 
 var sourceEndpointOptions = {
     endpoint: 'Dot',
-    anchor: ["Continuous", { faces:[ "bottom", "right" ] } ],
+    anchor: ["Continuous", {faces:["bottom", "right"]}],
     maxConnections: -1,
     isSource: true,
     scope: "data",
@@ -318,17 +317,17 @@ var sourceEndpointOptions = {
     connectorStyle: {
         lineWidth: 2,
         strokeStyle: "#CEEBA3"
-    } ,
+    },
     dragOptions:{
-              drag:function(e, ui) {
-                jsPlumb.repaintEverything();
-              }
-          }
+        drag: function(e, ui) {
+            jsPlumb.repaintEverything();
+        }
+    }
 };
 
 var targetEndpointOptions = {
     endpoint: 'Dot',
-    anchor:["Continuous", { faces:[ "top", "left" ] } ],
+    anchor:["Continuous", {faces:["top", "left"]}],
     maxConnections: -1,
     isTarget: true,
     scope: "data",
@@ -339,10 +338,9 @@ var targetEndpointOptions = {
     }
 };
 
-
-var sourceEndpointOptions2 = {
+var optionSourceEndpointOptions = {
     endpoint: 'Dot',
-    anchor: ["Continuous", { faces:[ "bottom", "right" ] } ],
+    anchor: ["Continuous", {faces:["bottom", "right"]}],
     maxConnections: -1,
     isSource: true,
     scope: "options",
@@ -353,17 +351,17 @@ var sourceEndpointOptions2 = {
     connectorStyle: {
         lineWidth: 2,
         strokeStyle: "#FFCA60"
-    } ,
+    },
     dragOptions:{
-              drag:function(e, ui) {
-                jsPlumb.repaintEverything();
-              }
-          }
+        drag: function(e, ui) {
+            jsPlumb.repaintEverything();
+        }
+    }
 };
 
-var targetEndpointOptions2 = {
+var optionTargetEndpointOptions = {
     endpoint: 'Dot',
-    anchor:["Continuous", { faces:[ "top", "left" ] } ],
+    anchor:["Continuous", {faces:["top", "left"]}],
     maxConnections: -1,
     isTarget: true,
     scope: "options",
@@ -395,27 +393,25 @@ function addTargetEndpoint(itemId, endpointId, labelText) {
     });
 }
 
-function addSourceEndpoint2(itemId, endpointId, labelText) {
-    var sourceEndpoint2 = jsPlumb.addEndpoint(itemId, sourceEndpointOptions2, {uuid: endpointId});
-
-    sourceEndpoint2.bind("mouseover", function(sourceEndpoint2) {
-        sourceEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [1.5, 1.5]}]);
+function addOptionSourceEndpoint(itemId, endpointId, labelText) {
+    var optionSourceEndpoint = jsPlumb.addEndpoint(itemId, optionSourceEndpointOptions, {uuid: endpointId});
+    optionSourceEndpoint.bind("mouseover", function(optionSourceEndpoint) {
+        optionSourceEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [1.5, 1.5]}]);
     });
-    sourceEndpoint2.bind("mouseout", function(sourceEndpoint2) {
-        sourceEndpoint.removeOverlay("label");
-    });
-}
-
-function addTargetEndpoint2(itemId, endpointId, labelText) {
-    var targetEndpoint2 = jsPlumb.addEndpoint(itemId, targetEndpointOptions2, {uuid: endpointId});
-    targetEndpoint2.bind("mouseover", function(targetEndpoint2) {
-        targetEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [-0.5, -0.5]}]);
-    });
-    targetEndpoint2.bind("mouseout", function(targetEndpoint2) {
-        targetEndpoint.removeOverlay("label");
+    optionSourceEndpoint.bind("mouseout", function(optionSourceEndpoint) {
+        optionSourceEndpoint.removeOverlay("label");
     });
 }
 
+function addOptionTargetEndpoint(itemId, endpointId, labelText) {
+    var optionTargetEndpoint = jsPlumb.addEndpoint(itemId, optionTargetEndpointOptions, {uuid: endpointId});
+    optionTargetEndpoint.bind("mouseover", function(optionTargetEndpoint) {
+        optionTargetEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [-0.5, -0.5]}]);
+    });
+    optionTargetEndpoint.bind("mouseout", function(optionTargetEndpoint) {
+        optionTargetEndpoint.removeOverlay("label");
+    });
+}
 
 function addConnection(sourceEndpointUuid, targetEndpointUuid) {
     jsPlumb.connect({
