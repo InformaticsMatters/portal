@@ -303,11 +303,13 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     protected Set<UUID> readFilter(String optionBindingName) {
         CellInstance cellInstance = findCellInstance();
         OptionBindingInstance optionBindingInstance = cellInstance.getOptionBindingInstanceMap().get(optionBindingName);
-        OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
         Set<UUID> result = null;
-        if (optionInstance != null) {
-            DatasetSelection datasetSelection = (DatasetSelection) optionInstance.getValue();
-            result = datasetSelection.getUuids();
+        if (optionBindingInstance != null) {
+            OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
+            if (optionInstance != null) {
+                DatasetSelection datasetSelection = (DatasetSelection) optionInstance.getValue();
+                result = datasetSelection.getUuids();
+            }
         }
         return result;
     }

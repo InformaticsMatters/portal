@@ -7,15 +7,21 @@ import java.io.Serializable;
 public class OptionBindingDefinition implements Serializable {
 
     private final static long serialVersionUID = 1L;
+    private String key;
     private String name;
     private String displayName;
 
     public OptionBindingDefinition() {
     }
 
-    public OptionBindingDefinition(String name, String displayName) {
+    public OptionBindingDefinition(String key, String name, String displayName) {
+        this.key = key;
         this.name = name;
         this.displayName = displayName;
+    }
+
+    public String getKey() {
+        return this.key;
     }
 
     public String getName() {

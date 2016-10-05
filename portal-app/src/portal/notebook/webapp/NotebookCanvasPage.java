@@ -785,8 +785,8 @@ public class NotebookCanvasPage extends WebPage {
             for (OptionBindingInstance optionBindingInstance : targetCellInstance.getOptionBindingInstanceMap().values()) {
                 OptionInstance source = optionBindingInstance.getOptionInstance();
                 if (source != null) {
-                    String sourceEndpointUuid = CANVAS_ITEM_PREFIX + source.getCellId() + "-" + source.getOptionDescriptor().getkey();
-                    String targetEndpointUuid = targetCellMarkupId + "-" + optionBindingInstance.getName();
+                    String sourceEndpointUuid = CANVAS_ITEM_PREFIX + source.getCellId() + "-" + source.getOptionDescriptor().getKey();
+                    String targetEndpointUuid = targetCellMarkupId + "-" + optionBindingInstance.getKey();
                     String js = "addConnection('" + sourceEndpointUuid + "', '" + targetEndpointUuid + "');";
                     stringBuilder.append(js);
                 }
@@ -808,12 +808,12 @@ public class NotebookCanvasPage extends WebPage {
         }
         for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
             if (optionInstance.getOptionDescriptor().isMode(OptionDescriptor.Mode.Output)) {
-                String endpointId = itemId + "-" + optionInstance.getOptionDescriptor().getkey(); // temporarily using key as id
-                stringBuilder.append("addOptionSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + optionInstance.getOptionDescriptor().getkey() + "');");
+                String endpointId = itemId + "-" + optionInstance.getOptionDescriptor().getKey(); // temporarily using key as id
+                stringBuilder.append("addOptionSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + optionInstance.getOptionDescriptor().getLabel() + "');");
             }
         }
         for (OptionBindingInstance optionBindingInstance : cellInstance.getOptionBindingInstanceMap().values()) {
-            String endpointId = itemId + "-" + optionBindingInstance.getName();
+            String endpointId = itemId + "-" + optionBindingInstance.getKey();
             stringBuilder.append("addOptionTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + optionBindingInstance.getName() + "');");
         }
         return stringBuilder.toString();

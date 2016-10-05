@@ -14,6 +14,11 @@ public class OptionBindingInstance implements Serializable {
     private boolean dirty = true;
 
     @JsonIgnore
+    public String getKey() {
+        return optionBindingDefinition.getKey();
+    }
+
+    @JsonIgnore
     public String getName() {
         return optionBindingDefinition.getName();
     }

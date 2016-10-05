@@ -164,7 +164,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 String ymax = brushYMax.getValue();
                 String selectionRaw = selectedIds.getValue();
                 String selectionJson = (selectionRaw == null || selectionRaw.isEmpty()) ? null : selectionRaw;
-                //System.out.println("============ extents: " + xmin + " " + xmax + " " + ymin + " " + ymax);
+                System.out.println(form.getMarkupId() + " ============ extents: " + xmin + " " + xmax + " " + ymin + " " + ymax);
 
                 CellInstance cellInstance = findCellInstance();
                 NumberRange<Float> xRange = null, yRange = null;

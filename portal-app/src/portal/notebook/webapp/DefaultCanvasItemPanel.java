@@ -134,7 +134,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         OptionInstance optionInstance = listItem.getModelObject();
         FieldEditorPanel fieldEditorPanel = createOptionEditor(optionInstance);
         fieldEditorPanel.enableEditor(optionInstance.getOptionDescriptor().isEditable());
-        optionEditorModelMap.put(optionInstance.getOptionDescriptor().getkey(), fieldEditorPanel.getFieldEditorModel());
+        optionEditorModelMap.put(optionInstance.getOptionDescriptor().getKey(), fieldEditorPanel.getFieldEditorModel());
         listItem.add(fieldEditorPanel);
     }
 
@@ -220,13 +220,13 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         @Override
         public void onUpload(String fileName, InputStream inputStream) {
             try {
-                String optionName = optionInstance.getOptionDescriptor().getkey();
+                String optionName = optionInstance.getOptionDescriptor().getKey();
                 OptionInstance liveOptionInstance = findCellInstance().getOptionInstanceMap().get(optionName);
                 liveOptionInstance.setValue(fileName);
                 notebookSession.storeCurrentEditable();
                 VariableInstance variableInstance = findVariableInstanceForFileOption();
                 if (variableInstance == null) {
-                    throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getkey());
+                    throw new RuntimeException("Variable not found for option " + optionInstance.getOptionDescriptor().getKey());
                 }
                 notebookSession.writeTextValue(variableInstance, fileName);
                 notebookSession.writeStreamValue(variableInstance, inputStream);

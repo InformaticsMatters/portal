@@ -35,10 +35,19 @@ public class NotebookInstance implements Serializable {
         return null;
     }
 
-    public VariableInstance findVariableByCellId(Long producerId, String name) {
+    private VariableInstance findVariableByCellId(Long producerId, String name) {
         for (CellInstance cell : cellInstanceList) {
             if (cell.getId().equals(producerId)) {
                 return cell.getVariableInstanceMap().get(name);
+            }
+        }
+        return null;
+    }
+
+    private OptionInstance findOptionByCellId(Long producerId, String key) {
+        for (CellInstance cell : cellInstanceList) {
+            if (cell.getId().equals(producerId)) {
+                return cell.getOptionInstanceMap().get(key);
             }
         }
         return null;
@@ -114,13 +123,13 @@ public class NotebookInstance implements Serializable {
         for (OptionBindingDefinition optionBindingDefinition : cellDefinition.getOptionBindingDefinitionList()) {
             OptionBindingInstance binding = new OptionBindingInstance();
             binding.setOptionBindingDefinition(optionBindingDefinition);
-            cellInstance.getOptionBindingInstanceMap().put(optionBindingDefinition.getName(), binding);
+            cellInstance.getOptionBindingInstanceMap().put(optionBindingDefinition.getKey(), binding);
         }
         for (OptionDescriptor optionDescriptor : cellDefinition.getOptionDefinitionList()) {
             OptionInstance option = new OptionInstance();
             option.setOptionDescriptor(optionDescriptor);
             option.setCellId(cellInstance.getId());
-            cellInstance.getOptionInstanceMap().put(optionDescriptor.getkey(), option);
+            cellInstance.getOptionInstanceMap().put(optionDescriptor.getKey(), option);
         }
         return cellInstance;
     }
@@ -134,6 +143,12 @@ public class NotebookInstance implements Serializable {
                 VariableInstance variableInstance = bindingInstance.getVariableInstance();
                 if (variableInstance != null && variableInstance.getCellId().equals(id)) {
                     bindingInstance.setVariableInstance(null);
+                }
+            }
+            for (OptionBindingInstance optionBindingInstance : otherCellInstance.getOptionBindingInstanceMap().values()) {
+                OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
+                if (optionInstance != null && optionInstance.getCellId().equals(id)) {
+                    optionBindingInstance.setOptionInstance(null);
                 }
             }
         }
@@ -168,9 +183,17 @@ public class NotebookInstance implements Serializable {
                 cellDTO.addBinding(bindingDTO);
             }
             for (OptionInstance option : cell.getOptionInstanceMap().values()) {
-                cellDTO.addOption(option.getOptionDescriptor().getkey(), option.getValue());
+                cellDTO.addOption(option.getOptionDescriptor().getKey(), option.getValue());
             }
-
+            for (OptionBindingInstance b : cell.getOptionBindingInstanceMap().values()) {
+                OptionInstance optionInstance = b.getOptionInstance();
+                NotebookCanvasDTO.OptionBindingDTO bindingDTO = new NotebookCanvasDTO.OptionBindingDTO(
+                        b.getKey(),
+                        optionInstance == null ? null : optionInstance.getCellId(),
+                        optionInstance == null ? null : optionInstance.getOptionDescriptor().getKey()
+                );
+                cellDTO.addOptionBinding(bindingDTO);
+            }
         }
     }
 
@@ -220,6 +243,13 @@ public class NotebookInstance implements Serializable {
                         if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
                             VariableInstance variableInstance = findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
                             bindingInstance.setVariableInstance(variableInstance);
+                        }
+                    }
+                    for (NotebookCanvasDTO.OptionBindingDTO bindingDTO : cellDTO.getOptionBindings()) {
+                        OptionBindingInstance bindingInstance = cellInstance.getOptionBindingInstanceMap().get(bindingDTO.getOptionKey());
+                        if (bindingInstance != null && bindingDTO.getProducerKey() != null) {
+                            OptionInstance optionInstance = findOptionByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerKey());
+                            bindingInstance.setOptionInstance(optionInstance);
                         }
                     }
                 }

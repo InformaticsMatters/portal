@@ -38,7 +38,7 @@ public class ServiceCellDefinition extends CellDefinition {
     private OptionDescriptor findOptionDescriptorForBody() {
         if (serviceDescriptor.getOptions() != null) {
             for (OptionDescriptor od : serviceDescriptor.getOptions()) {
-                if (OPTION_BODY.equalsIgnoreCase(od.getkey())) {
+                if (OPTION_BODY.equalsIgnoreCase(od.getKey())) {
                     return od;
                 }
             }
