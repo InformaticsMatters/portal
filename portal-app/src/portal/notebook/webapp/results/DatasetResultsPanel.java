@@ -282,7 +282,7 @@ public class DatasetResultsPanel extends Panel {
 
         });
         form.add(highlightersChoice);
-        
+
         grid.add(new ListView<BasicObject>("card", resultsModel) {
 
             @Override
