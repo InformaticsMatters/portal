@@ -17,6 +17,8 @@ import java.util.List;
 )
 public abstract class CellDefinition implements Serializable {
 
+    public enum UpdateMode {MANUAL, AUTO}
+
     public static final String VAR_NAME_INPUT = "input";
     public static final String VAR_NAME_OUTPUT = "output";
     public static final String VAR_NAME_FILECONTENT = "fileContent";

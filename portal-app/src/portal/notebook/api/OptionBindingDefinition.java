@@ -11,10 +11,10 @@ public class OptionBindingDefinition implements Serializable {
 
     private final static long serialVersionUID = 1L;
     private final OptionDescriptor optionDescriptor;
-    private final CellInstance.UpdateMode updateMode;
+    private final CellDefinition.UpdateMode updateMode;
 
 
-    public OptionBindingDefinition(OptionDescriptor optionDescriptor, CellInstance.UpdateMode updateMode) {
+    public OptionBindingDefinition(OptionDescriptor optionDescriptor, CellDefinition.UpdateMode updateMode) {
         this.optionDescriptor = optionDescriptor;
         this.updateMode = updateMode;
     }
@@ -23,7 +23,7 @@ public class OptionBindingDefinition implements Serializable {
         return optionDescriptor;
     }
 
-    public CellInstance.UpdateMode getUpdateMode() {
+    public CellDefinition.UpdateMode getUpdateMode() {
         return updateMode;
     }
 

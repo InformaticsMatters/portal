@@ -9,9 +9,6 @@ import java.util.Map;
 public class CellInstance implements Serializable {
 
     private final static long serialVersionUID = 1L;
-
-    public enum UpdateMode {MANUAL, AUTO}
-
     private final Map<String, BindingInstance> bindingInstanceMap = new LinkedHashMap<>();
     private final Map<String, OptionBindingInstance> optionBindingInstanceMap = new LinkedHashMap<>();
     private final Map<String, VariableInstance> variableInstanceMap = new LinkedHashMap<>();

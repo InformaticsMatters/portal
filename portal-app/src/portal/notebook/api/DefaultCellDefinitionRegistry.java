@@ -86,7 +86,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         //      new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
 
         // the option bindings
-        cellDefinition.getOptionBindingDefinitionList().add(new OptionBindingDefinition(filterOptionDescriptor, CellInstance.UpdateMode.AUTO));
+        cellDefinition.getOptionBindingDefinitionList().add(new OptionBindingDefinition(filterOptionDescriptor, CellDefinition.UpdateMode.AUTO));
 
         return cellDefinition;
     }
