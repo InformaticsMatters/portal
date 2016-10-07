@@ -24,8 +24,8 @@ public class OptionBindingInstance implements Serializable {
     }
 
     @JsonIgnore
-    public String getDisplayName() {
-        return optionBindingDefinition.getDisplayName();
+    public String getDescription() {
+        return optionBindingDefinition.getDescription();
     }
 
     public OptionInstance getOptionInstance() {

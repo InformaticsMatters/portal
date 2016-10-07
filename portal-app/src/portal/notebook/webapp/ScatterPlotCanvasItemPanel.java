@@ -203,6 +203,9 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     private boolean isChangedCellBoundCell(Long changedCellId) {
         CellInstance cellInstance = findCellInstance();
+        if (cellInstance == null) {
+            return false;
+        }
         BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
         VariableInstance variableInstance = bindingInstance.getVariableInstance();
         return variableInstance != null && changedCellId.equals(variableInstance.getCellId());

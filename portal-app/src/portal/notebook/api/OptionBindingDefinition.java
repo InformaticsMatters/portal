@@ -1,5 +1,8 @@
 package portal.notebook.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.squonk.options.OptionDescriptor;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -7,36 +10,35 @@ import java.io.Serializable;
 public class OptionBindingDefinition implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    private String key;
-    private String name;
-    private String displayName;
+    private final OptionDescriptor optionDescriptor;
+    private final CellInstance.UpdateMode updateMode;
 
-    public OptionBindingDefinition() {
+
+    public OptionBindingDefinition(OptionDescriptor optionDescriptor, CellInstance.UpdateMode updateMode) {
+        this.optionDescriptor = optionDescriptor;
+        this.updateMode = updateMode;
     }
 
-    public OptionBindingDefinition(String key, String name, String displayName) {
-        this.key = key;
-        this.name = name;
-        this.displayName = displayName;
+    public OptionDescriptor getOptionDescriptor() {
+        return optionDescriptor;
     }
 
+    public CellInstance.UpdateMode getUpdateMode() {
+        return updateMode;
+    }
+
+    @JsonIgnore
     public String getKey() {
-        return this.key;
+        return optionDescriptor.getKey();
     }
 
+    @JsonIgnore
     public String getName() {
-        return this.name;
+        return optionDescriptor.getLabel();
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    @JsonIgnore
+    public String getDescription() {
+        return optionDescriptor.getDescription();
     }
 }

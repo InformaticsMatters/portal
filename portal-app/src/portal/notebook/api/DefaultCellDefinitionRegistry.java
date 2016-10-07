@@ -72,21 +72,21 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
                 new OptionDescriptor<>(Boolean.class, ScatterPlotCanvasItemPanel.OPTION_AXIS_LABELS, "Show axis labels", "Controls whether the axis labels are visible", Mode.Advanced)
                         .withDefaultValue(true));
 
-        // outputs - these are related to selection of points in the plot
+        // option outputs - these are related to selection of points in the plot
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_X_RANGE, "Selected X", "Selected X range", Mode.Ignore));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(NumberRange.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_Y_RANGE, "Selected Y", "Selected Y range", Mode.Ignore));
-        cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_SELECTED_IDS, "Selection", "Selected IDs", Mode.Output));
-        cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)", Mode.Input));
+        cellDefinition.getOptionDefinitionList().add(new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_SELECTED_IDS, "Selection", "Selected IDs", Mode.Output));
+
+        // option inputs
+        OptionDescriptor filterOptionDescriptor = new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)", Mode.Input);
+        cellDefinition.getOptionDefinitionList().add(filterOptionDescriptor);
         // cellDefinition.getOptionDefinitionList().add(
         //      new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
 
         // the option bindings
-        OptionBindingDefinition optionBindingDefinition = new OptionBindingDefinition(CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)");
-        cellDefinition.getOptionBindingDefinitionList().add(optionBindingDefinition);
+        cellDefinition.getOptionBindingDefinitionList().add(new OptionBindingDefinition(filterOptionDescriptor, CellInstance.UpdateMode.AUTO));
 
         return cellDefinition;
     }
@@ -220,6 +220,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new ChemblActivitiesFetcherCellDefinition());
         registerCellDefinition(new CsvUploadCellDefinition());
         registerCellDefinition(new SdfUploadCellDefinition());
+        registerCellDefinition(new SmilesStructuresCellDefinition());
         registerCellDefinition(new DatasetMergerCellDefinition());
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
         registerCellDefinition(new DatasetFilterGroovyCellDefinition());
