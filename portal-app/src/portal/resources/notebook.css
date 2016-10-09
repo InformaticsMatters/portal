@@ -483,9 +483,9 @@ div.ui-resizable-handle.ui-resizable-s {
     width: 40%;
 }
 
-*/
-
-/* this seems missing from sematic 2.0.0 -> 2.2.4 resulting in modal buttons not being displayed correctly
+/* this seems missing from sematic 2.0.0 -> 2.2.4  as it seems to assume the actions are a direct
+child of the modal, whereas we use actions within a form.
+It results in modal buttons not being displayed correctly
 - could be removed if fixed in future update? */
 .ui.modal .actions {
     background: #f9fafb;
