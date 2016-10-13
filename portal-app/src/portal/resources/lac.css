@@ -68,6 +68,10 @@
 	border:1px dotted green;
 }
 
+.plumbContainer .titleBar .active {
+    border: none;
+}
+
 .plumbContainer .hover {
 	border:1px dotted red;
 }
