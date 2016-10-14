@@ -156,6 +156,8 @@ function makeCanvasItemPlumbDraggable(selector) {
                $('.notebookContainer').css("max-height", outerContainerHeight);
                $('#plumbContainer').css("height", newHeight);
             }
+
+
         },
 
         stop: function(params) {
@@ -304,6 +306,8 @@ function initCellSizeAndPosition(id, left, top, width, height) {
     }
 }
 
+var needsRepaintFix = true;
+
 var sourceEndpointOptions = {
     endpoint: 'Dot',
     anchor: ["Continuous", {faces:["bottom", "right"]}],
@@ -318,11 +322,17 @@ var sourceEndpointOptions = {
         lineWidth: 2,
         strokeStyle: "#CEEBA3"
     },
-    dragOptions:{
-        drag: function(e, ui) {
-            jsPlumb.repaintEverything();
-        }
-    }
+     dragOptions:{
+         start: function(e, ui) {
+                     needsRepaintFix = true;
+                 },
+         drag: function(e, ui) {
+             if(needsRepaintFix){
+                 jsPlumb.repaintEverything();
+                 needsRepaintFix = false;
+             }
+         }
+     }
 };
 
 var targetEndpointOptions = {
@@ -352,11 +362,17 @@ var optionSourceEndpointOptions = {
         lineWidth: 2,
         strokeStyle: "#FFCA60"
     },
-    dragOptions:{
-        drag: function(e, ui) {
-            jsPlumb.repaintEverything();
-        }
-    }
+      dragOptions:{
+          start: function(e, ui) {
+                      needsRepaintFix = true;
+                  },
+          drag: function(e, ui) {
+              if(needsRepaintFix){
+                  jsPlumb.repaintEverything();
+                  needsRepaintFix = false;
+              }
+          }
+      }
 };
 
 var optionTargetEndpointOptions = {
