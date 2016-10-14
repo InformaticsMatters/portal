@@ -308,7 +308,9 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
             if (optionInstance != null) {
                 DatasetSelection datasetSelection = (DatasetSelection) optionInstance.getValue();
-                result = datasetSelection.getUuids();
+                if (datasetSelection != null) {
+                    result = datasetSelection.getUuids();
+                }
             }
         }
         return result;
