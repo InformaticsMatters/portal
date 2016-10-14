@@ -20,7 +20,7 @@ scatterPlot = function(config) {
       displayLegend = config.displayLegend,
       outerWidth = config.width,
       outerHeight = config.height,
-      mark, filter,
+      mark,
       selectionHandler = config.selectionHandler,
       brushExtent = selectionHandler ? selectionHandler.readExtents() : [[0,0,],[0,0]];
 
@@ -38,11 +38,14 @@ scatterPlot = function(config) {
   // we return this function "chart".
   function chart(selection) {
 
+    //var start = new Date().getTime();
+
     selection.each(function(data, i) {
-      var xMin = data.length ? d3.min(data, function(d) { return d.x; }) : 0,
-          xMax = data.length ? d3.max(data, function(d) { return d.x; }) : 0,
-          yMin = data.length ? d3.min(data, function(d) { return d.y; }) : 0,
-          yMax = data.length ? d3.max(data, function(d) { return d.y; }) : 0,
+
+      var xMin = data.length ? d3.min(data, function(d) { return d.xl == null ? d.x : d.xl; }) : 0,
+          xMax = data.length ? d3.max(data, function(d) { return d.xu == null ? d.x : d.xu; }) : 0,
+          yMin = data.length ? d3.min(data, function(d) { return d.yl == null ? d.y : d.yl; }) : 0,
+          yMax = data.length ? d3.max(data, function(d) { return d.yu == null ? d.y : d.yu; }) : 0,
           margin = {top: 15, right: 30, bottom: 25, left: 40},
 
           sizeScale = d3.scale.sqrt()
@@ -59,8 +62,7 @@ scatterPlot = function(config) {
         // This enables us to use d3's enter, update, and exit methods,
         // since a new enter selection will be created on the first run.
 
-      svg
-        .transition()
+      svg.transition().duration(10)
         .attr('width', outerWidth)
         .attr('height', outerHeight);
 
@@ -72,11 +74,12 @@ scatterPlot = function(config) {
         .attr('height', outerHeight)
         .attr('class', 'chart');
 
-       // first we need the legend as its width needs to be determined.
-       if (displayLegend && legend != null) {
+        svg.selectAll('.legend').remove();
+        // first we need the legend as its width needs to be determined.
+        if (displayLegend && legend != null && data.length) {
               // for some reason legend doesn't behave well if the data([true]) pattern is used
               // so we delete the current one and create a new one
-              svg.selectAll('.legend').remove();
+
               var l = svg.append('g')
                   .attr("class", "legend")
                   .attr("visibility", "hidden")
@@ -124,7 +127,8 @@ scatterPlot = function(config) {
       var main = svg.selectAll('.main')
         .data([true]);
 
-      main.transition()
+      main
+          .transition().duration(10)
           .attr('width', width)
           .attr('height', height);
 
@@ -150,7 +154,7 @@ scatterPlot = function(config) {
 
       // Update X Axis
       xaxis
-      .transition()
+      .transition().duration(10)
       .attr('transform', 'translate(0,' + height + ')')
       .call(xAxis)
       .selectAll('.label')
@@ -174,7 +178,7 @@ scatterPlot = function(config) {
 
       // Update Y Axis
       yaxis
-        .transition()
+        .transition().duration(10)
         .call(yAxis);
 
       // Append the new Y Axis if Needed
@@ -198,44 +202,59 @@ scatterPlot = function(config) {
           .append("g")
           .attr("class", "points");
 
-      var circles = g.selectAll("circle")
+      var elements = g.selectAll(".element")
         .data(
-            filter == null ? data : data.filter(function(d) {
-                var b = filter.has(d.uuid);
-                return b;
-                } ), // the filtered data
-            function(d) { return d.uuid; } // the ID mapper
+            data, function(d) { return d.uuid; } // the ID mapper
         );
 
-      circles
-        .transition()
-        .attr("cx", function (d,i) { return xScale(d.x); } )
-        .attr("cy", function (d) { return yScale(d.y); } )
-        .attr("r", function (d) { return sizeScale(d.size); } )
-        .attr("class", function(d) { return  mark == null ? null : (mark.has(d.uuid) ? "marked" : null); })
-        .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); });
+        elements
+            .enter()
+            .append("g")
+            .attr("class", "element");
 
-      circles
-        .enter()
-          .append("circle")
-          .attr("cx", function (d,i) { return xScale(d.x); } )
-          .attr("cy", function (d) { return yScale(d.y); } )
-          .attr("r", function (d) { return sizeScale(d.size); } )
-          .attr("class", function(d) { return  mark == null ? null : (mark.has(d.uuid) ? "marked" : null); })
-          .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); });
+         elements
+            .exit() // The exit selection lets us remove dead data.
+            .style('opacity', 0)
+            .remove();
 
-      circles
-        .exit() // The exit selection lets us remove dead data.
-          .transition()
-          .style('opacity', 0)
-          .remove();
+        // X error bars
+        elements
+            .filter(function(d) {
+                return d.xl != null && d.xu != null;
+            })
+            .append("line")
+            .attr("class", "xerror")
+            .call(drawXErrorBars);
+
+        // Y error bars
+        elements
+            .filter(function(d) {
+                return d.yl != null && d.yu != null;
+            })
+            .append("line")
+            .attr("class", "yerror")
+            .call(drawYErrorBars);
+
+        // the points - draw after the error bars so that they are on top
+        elements
+            .append("circle")
+            .call(drawCircle);
+
+        elements.selectAll("line.xerror")
+            .call(drawXErrorBars);
+
+        elements.selectAll("line.yerror")
+            .call(drawYErrorBars);
+
+        elements.selectAll("circle")
+            .call(drawCircle);
 
       var brushRect = main.selectAll('.brush')
           .data([true]);
 
       // Update the existing brush element.
       brushRect
-        .transition()
+        .transition().duration(10)
         .each("end", brushed)
         .call(brush);
 
@@ -264,6 +283,43 @@ scatterPlot = function(config) {
         // Also, since we are calling the brush event binding only on the first
         // run, we will not have memory leaks from rebinding events.
 
+
+        // draw the circle and its error bars
+        function drawCircle(circle) {
+            circle.attr("cx", function (d,i) { return xScale(d.x); } )
+                .attr("cy", function (d) { return yScale(d.y); } )
+                .attr("r", function (d) { return sizeScale(d.size); } )
+                .attr("class", function(d) { return  mark == null ? null : (mark.has(d.uuid) ? "marked" : null); })
+                .style("fill", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); });
+
+            return circle;
+        }
+
+
+        function drawXErrorBars(line) {
+
+            line
+                .attr("x1", function(d) { return xScale(d.xl); })
+                .attr("y1", function(d) { return yScale(d.y); })
+                .attr("x2", function(d) { return xScale(d.xu); })
+                .attr("y2", function(d) { return yScale(d.y); });
+
+            return line;
+        }
+
+
+
+        function drawYErrorBars(line) {
+
+            line
+                .attr("x1", function(d) { return xScale(d.x); })
+                .attr("y1", function(d) { return yScale(d.yl); })
+                .attr("x2", function(d) { return xScale(d.x); })
+                .attr("y2", function(d) { return yScale(d.yu); });
+
+            return line;
+        }
+
       // Because "brushed" is inside
       // the chart function closure, we can access them
       // in the chart function. Since we no longer have a separate
@@ -271,12 +327,12 @@ scatterPlot = function(config) {
       // whereas we could not call the brushed function from the
       // former draw function from within the former redraw function.
       function brushed() {
+        brushExtent = brush.extent();
         if (brush.empty()) {
             // empty brush so we select all
             g.selectAll("circle").classed("deselected", false);
 
         } else {
-            brushExtent = brush.extent();
             g.selectAll("circle").classed("deselected", function(d) {
                 return brushExtent[0][0] > d.x ||
                     d.x > brushExtent[1][0] ||
@@ -291,7 +347,7 @@ scatterPlot = function(config) {
         updateSelections();
       }
 
-      getSelections = function() {
+      function getSelections() {
         var selected;
         var selectedAndMarked;
         if (!brush.empty()) {
@@ -307,7 +363,7 @@ scatterPlot = function(config) {
         return [selected, selectedAndMarked];
       }
 
-      updateSelections = function() {
+      function updateSelections() {
 
             if (selectionHandler) {
                 if (brush.empty()) {
@@ -377,6 +433,9 @@ scatterPlot = function(config) {
                     return null;
                 }
       }
+
+      //var end = new Date().getTime();
+      //console.log("chart took " + (end - start));
   }
 
   chart.width = function(_) {
@@ -402,12 +461,6 @@ scatterPlot = function(config) {
     mark = _;
     return chart;
   }
-
-  chart.filter = function(_) {
-      if (!arguments.length) return filter;
-      filter = _;
-      return chart;
-   }
 
    chart.brush = function(_) {
          if (!arguments.length) return brushExtent;

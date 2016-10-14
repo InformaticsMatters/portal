@@ -5,12 +5,14 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import portal.PopupContainerProvider;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,10 +21,15 @@ import java.util.logging.Logger;
  * @author simetrias
  */
 public class ScatterPlotAdvancedOptionsPanel extends AbstractDatasetAdvancedOptionsPanel {
+
+    static final String FIELD_RECORD_NUMBER = "[Record number]";
+
     private static final Logger LOGGER = Logger.getLogger(ScatterPlotAdvancedOptionsPanel.class.getName());
     private Form<ModelObject> form;
     @Inject
     private PopupContainerProvider popupContainerProvider;
+
+    private FieldModelWrapper xyFields;
 
     public ScatterPlotAdvancedOptionsPanel(String id, Long cellId) {
         super(id, cellId);
@@ -34,10 +41,12 @@ public class ScatterPlotAdvancedOptionsPanel extends AbstractDatasetAdvancedOpti
         form = new Form<>("form");
         form.setModel(new CompoundPropertyModel<>(new ModelObject()));
 
-        DropDownChoice<String> x = new DropDownChoice<>("x", fieldNamesModel);
+        xyFields = new FieldModelWrapper(fieldNamesModel, Arrays.asList(FIELD_RECORD_NUMBER));
+
+        DropDownChoice<String> x = new DropDownChoice<>("x", xyFields);
         form.add(x);
 
-        DropDownChoice<String> y = new DropDownChoice<>("y", fieldNamesModel);
+        DropDownChoice<String> y = new DropDownChoice<>("y", xyFields);
         form.add(y);
 
         List<String> sizes = new ArrayList<>();
@@ -156,6 +165,41 @@ public class ScatterPlotAdvancedOptionsPanel extends AbstractDatasetAdvancedOpti
 
         public void setShowAxisLabels(Boolean showAxisLabels) {
             this.showAxisLabels = showAxisLabels;
+        }
+    }
+
+    class FieldModelWrapper implements IModel<List<String>> {
+
+        private final IModel<List<String>> fields;
+        private final List<String> initialItems;
+
+        FieldModelWrapper(IModel<List<String>> fields, List<String> initialItems) {
+            this.fields = fields;
+            this.initialItems = initialItems;
+        }
+
+        @Override
+        public List<String> getObject() {
+            List<String> allItems = new ArrayList<>();
+            allItems.addAll(initialItems);
+            allItems.addAll(fields.getObject());
+            return allItems;
+        }
+
+        @Override
+        public void setObject(List<String> o) {
+            // never called
+        }
+
+        @Override
+        public void detach() { /* noop */ }
+
+        List<String> getInitialItems() {
+            return initialItems;
+        }
+
+        List<String> getFields() {
+            return fields.getObject();
         }
     }
 }

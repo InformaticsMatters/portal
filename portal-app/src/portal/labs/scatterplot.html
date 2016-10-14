@@ -18,11 +18,8 @@
     Height: <input id="h" type="text" value="350">&nbsp;&nbsp;
     <button type="button" class="resize">Resize!</button>
     <p/>
-    <button type="button" class="change">Change Data</button>
-    <p/>
-    Filter: <input id="f" type="text" size="60" value='["a","b","c","d","e"]'>&nbsp;&nbsp;<button type="button" class="filter">Filter Data</button>
-    <p/>
-    Mark: <input id="m" type="text" size="60" value='["a","b","c"]'>&nbsp;&nbsp;<button type="button" class="mark">Mark Data</button>
+    Mark: <input id="m" type="text" size="60" value='["a","b","c"]'>&nbsp;&nbsp;
+    <button type="button" class="mark">Mark Data</button>
     <p/>
     X range: <input id="xmin" type="number">&nbsp;-&nbsp;<input id="xmax" type="number">
     <p/>
@@ -31,13 +28,36 @@
     <p/>
     Selected: <textarea id="selected"></textarea>
     Marked: <textarea id="marked"></textarea>
+
+    <div>
+        <div style="float:left;">
+            <textarea rows="25" cols="60" id="data">[
+    {"uuid":"a", "x": 100, "y": 200, "color": 1, "size": 3},
+    {"uuid":"b", "x": 120, "y": 220, "color": 2, "size": 4},
+    {"uuid":"c", "x": 159, "y": 280, "color": 5, "size": 6},
+    {"uuid":"d", "x": 110, "y": 209, "color": 1.4, "size": 7},
+    {"uuid":"e", "x": 134, "y": 218, "color": 7.2, "size": 8, "xl":80,"xu":160, "yl":205,"yu":250},
+    {"uuid":"f", "x": 139, "y": 243, "color": 3.4, "size": 30,"xl":120,"xu":180, "yl":225,"yu":260},
+    {"uuid":"g", "x": 105, "y": 237, "color": 6.4, "size": 3},
+    {"uuid":"h", "x": 127, "y": 202, "color": 2.5, "size": 4},
+    {"uuid":"i", "x": 132, "y": 239, "color": 6.3, "size": 6},
+    {"uuid":"j", "x": 181, "y": 289, "color": 1.4, "size": 7},
+    {"uuid":"k", "x": 203, "y": 278, "color": 7.9, "size": 8}
+  ]</textarea>
+            <br>
+            <button type="button" class="change">Change Data</button>
+        </div>
+
+        <div id="scatterplot1" style="float:left;">
+            <div id="container" class="svg-container" style="width:400px; height:350px"></div>
+        </div>
+    </div>
+
+
 </form>
-<hr/>
-<div id="scatterplot1">
-    <div id="container" class="svg-container" style="width:400px; height:350px"></div>
-</div>
-<br>
-<div id="selection"></div>
+
+
+
 
 <script>
   // Below, we will now "use" the chart by submitting data
@@ -48,44 +68,6 @@
   // that we haven't hard-coded and essential values
   // or unnecessarily hidden events from our future selves
   // who may need to use the chart again.
-
-  var dataSet1 = [
-    {"uuid":"a", "x": 100, "y": 200, "color": 1, "size": 3},
-    {"uuid":"b", "x": 120, "y": 220, "color": 2, "size": 4},
-    {"uuid":"c", "x": 159, "y": 280, "color": 5, "size": 6},
-    {"uuid":"d", "x": 110, "y": 209, "color": 1.4, "size": 7},
-    {"uuid":"e", "x": 134, "y": 218, "color": 7.2, "size": 8},
-    {"uuid":"f", "x": 139, "y": 243, "color": 3.4, "size": 30},
-    {"uuid":"g", "x": 105, "y": 237, "color": 6.4, "size": 3},
-    {"uuid":"h", "x": 127, "y": 202, "color": 2.5, "size": 4},
-    {"uuid":"i", "x": 132, "y": 239, "color": 6.3, "size": 6},
-    {"uuid":"j", "x": 181, "y": 289, "color": 1.4, "size": 7},
-    {"uuid":"k", "x": 203, "y": 278, "color": 7.9, "size": 8}
-  ];
-
-  var dataSet2 = [
-    {"uuid":"a", "x": 180, "y": 200, "color": 1, "size": 3},
-    {"uuid":"bu", "x": 520, "y": 120, "color": 2, "size": 4},
-    {"uuid":"c", "x": 159, "y": 380, "color": 5, "size": 6},
-    {"uuid":"d", "x": 210, "y": 289, "color": 1.4, "size": 7},
-    {"uuid":"ed", "x": 134, "y": 218, "color": 7.2, "size": 18},
-    {"uuid":"f", "x": 239, "y": 243, "color": 3.4, "size": 20},
-    {"uuid":"g", "x": 165, "y": 237, "color": 6.4, "size": 3},
-    {"uuid":"h", "x": 227, "y": 402, "color": 2.5, "size": 24},
-    {"uuid":"if", "x": 132, "y": 239, "color": 6.3, "size": 6},
-    {"uuid":"j", "x": 181, "y": 189, "color": 1.4, "size": 7},
-    {"uuid":"k", "x": 203, "y": 228, "color": 7.9, "size": 3},
-    {"uuid":"ac", "x": 100, "y": 200, "color": 1, "size": 5},
-    {"uuid":"bf", "x": 20, "y": 220, "color": 2, "size": 4},
-    {"uuid":"ce", "x": 199, "y": 280, "color": 5, "size": 1},
-    {"uuid":"ds", "x": 110, "y": 209, "color": 1.4, "size": 7},
-    {"uuid":"ew", "x": 164, "y": 218, "color": 7.2, "size": 8},
-    {"uuid":"fg", "x": 239, "y": 143, "color": 3.4, "size": 30},
-    {"uuid":"gg", "x": 135, "y": 237, "color": 6.4, "size": 3},
-    {"uuid":"hd", "x": 187, "y": 102, "color": 2.5, "size": 14},
-    {"uuid":"id", "x": 122, "y": 239, "color": 6.3, "size": 9},
-    {"uuid":"jh", "x": 189, "y": 189, "color": 1.4, "size": 3},
-  ];
 
     var selectionHandler = function() {
 
@@ -126,27 +108,6 @@
         }
         document.getElementById("marked").value = m;
 
-
-
-        var text = "Selection: ";
-
-        if (selected == null) {
-            text += "None";
-        } else if (selected.length == 0) {
-            text += "Empty";
-        } else {
-            text += selected.join(",");
-        }
-        text += "<br>Selected and marked: ";
-
-        if (selectedAndMarked == null || selectedAndMarked.length == 0) {
-            text += "None";
-        } else {
-            text += selectedAndMarked.join(",");
-        }
-        //console.log(text);
-        document.getElementById("selection").innerHTML = text;
-
     }
 
   // Here we're selecting the containing element.
@@ -184,8 +145,13 @@
     // and state is already in the function's closure.
     // The only way to affect that state now is through
     // the accessor methods (see resize handler below).
+
+    var json = document.getElementById("data").value;
+    var data = json.trim().length == 0 ? null : JSON.parse(json);
+
+
     selection
-        .datum(dataSet1)
+        .datum(data)
         .call(chart);
 
   resize = function() {
@@ -200,17 +166,14 @@
         .height(h)(selection);
   };
 
-  var nextDataSet = dataSet2;
-
   changeData = function() {
+
+    var json = document.getElementById("data").value;
+    var data = json.trim().length == 0 ? null : JSON.parse(json);
+
     d3.select('#scatterplot1 .svg-container')
-      .datum(nextDataSet)
+      .datum(data)
       .call(chart);
-
-    nextDataSet = (nextDataSet === dataSet2) ? dataSet1 : dataSet2;
-
-    d3.select('button.change')
-    .text('Load New Data');
   };
 
   markData = function() {
@@ -219,11 +182,6 @@
     chart.mark(new Set(marks))(selection);
   }
 
-  filterData = function() {
-    var json = document.getElementById("f").value;
-    var filt = json.trim().length == 0 ? null : JSON.parse(json);
-    chart.filter(new Set(filt))(selection);
-  }
 
   updateState = function() {
     var json = document.getElementById("s").value;
@@ -240,8 +198,8 @@
   d3.select('button.resize').on('click', resize);
   d3.select('button.change').on('click', changeData);
   d3.select('button.mark').on('click', markData);
-  d3.select('button.filter').on('click', filterData);
   d3.select('button.brush').on('click', updateBrush);
+
 </script>
 </body>
 </html>

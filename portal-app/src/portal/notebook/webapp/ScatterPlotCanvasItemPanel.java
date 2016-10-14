@@ -25,6 +25,7 @@ import portal.notebook.api.*;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -164,7 +165,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 String ymax = brushYMax.getValue();
                 String selectionRaw = selectedIds.getValue();
                 String selectionJson = (selectionRaw == null || selectionRaw.isEmpty()) ? null : selectionRaw;
-                System.out.println(form.getMarkupId() + " ============ extents: " + xmin + " " + xmax + " " + ymin + " " + ymax);
 
                 CellInstance cellInstance = findCellInstance();
                 NumberRange<Float> xRange = null, yRange = null;
@@ -245,6 +245,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 model.setColorMode(colorMode);
 
                 if (readDataset) {
+                    AtomicInteger counter = new AtomicInteger(0);
                     try (Stream<? extends BasicObject> stream = dataset.getStream()) {
 
                         Stream<? extends BasicObject> input = stream;
@@ -256,8 +257,19 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
                         // convert to DataItems
                         Stream<DataItem> items = input.map((o) -> {
-                            Float x = safeConvertToFloat(o.getValue(xFieldName));
-                            Float y = safeConvertToFloat(o.getValue(yFieldName));
+                            int count = counter.incrementAndGet();
+                            Float x;
+                            if (ScatterPlotAdvancedOptionsPanel.FIELD_RECORD_NUMBER.equals(xFieldName)) {
+                                x = (float)count;
+                            } else {
+                                x = safeConvertToFloat(o.getValue(xFieldName));
+                            }
+                            Float y;
+                            if (ScatterPlotAdvancedOptionsPanel.FIELD_RECORD_NUMBER.equals(yFieldName)) {
+                                y = (float)count;
+                            } else {
+                                y = safeConvertToFloat(o.getValue(yFieldName));
+                            }
                             Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
                             if (x != null && y != null) {
                                 DataItem dataItem = new DataItem();
