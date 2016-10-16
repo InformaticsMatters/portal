@@ -1,59 +1,62 @@
-.chart {
+.scatterplot .chart {
     border-color: lightgrey;
     border-style: solid;
     border-width: 1px;
 }
 
-.main text, .legend text {
+.scatterplot .main text, .legend text {
     font: 10px sans-serif;
 }
 
-.chart {
+.scatterplot .chart {
     border-color: green;
     border-style: solid;
     border-width: 1px;
 }
 
-.main {
+.scatterplot .main {
     border-color: orange;
     border-style: solid;
     border-width: 1px;
 }
 
-.axis line, .axis path {
+.scatterplot .axis line, .axis path {
     shape-rendering: crispEdges;
     stroke: black;
     fill: none;
 }
 
-.svg-container circle {
+.scatterplot .svg-container circle {
     fill: steelblue;
 }
 
-.brush .extent {
+.scatterplot .brush .extent {
     stroke: #bbb;
     fill-opacity: .05;
     shape-rendering: crispEdges;
 }
 
-circle.deselected {
+.scatterplot circle.deselected {
     fill: #ddd !important;
 }
 
-circle.marked {
+.scatterplot circle.marked {
     stroke: #222 !important;
     stroke-width: 2;
 }
 
-circle.deselected.marked {
+.scatterplot circle.deselected.marked {
     stroke: #bbb !important;
     stroke-width: 2;
 }
 
-g.element line {
+.scatterplot g.element line {
     shape-rendering: crispEdges;
-    stroke: gray;
-    fill: none;
+    stroke-width: 1;
+}
+
+.scatterplot g.element line.deselected {
+    stroke: #ddd !important;
 }
 
 

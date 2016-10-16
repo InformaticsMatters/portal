@@ -284,7 +284,7 @@ scatterPlot = function(config) {
         // run, we will not have memory leaks from rebinding events.
 
 
-        // draw the circle and its error bars
+        // draw the circle
         function drawCircle(circle) {
             circle.attr("cx", function (d,i) { return xScale(d.x); } )
                 .attr("cy", function (d) { return yScale(d.y); } )
@@ -295,19 +295,17 @@ scatterPlot = function(config) {
             return circle;
         }
 
-
         function drawXErrorBars(line) {
 
             line
                 .attr("x1", function(d) { return xScale(d.xl); })
                 .attr("y1", function(d) { return yScale(d.y); })
                 .attr("x2", function(d) { return xScale(d.xu); })
-                .attr("y2", function(d) { return yScale(d.y); });
+                .attr("y2", function(d) { return yScale(d.y); })
+                .style("stroke", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); });
 
             return line;
         }
-
-
 
         function drawYErrorBars(line) {
 
@@ -315,7 +313,8 @@ scatterPlot = function(config) {
                 .attr("x1", function(d) { return xScale(d.x); })
                 .attr("y1", function(d) { return yScale(d.yl); })
                 .attr("x2", function(d) { return xScale(d.x); })
-                .attr("y2", function(d) { return yScale(d.yu); });
+                .attr("y2", function(d) { return yScale(d.yu); })
+                .style("stroke", function(d) { return colorScale == null ? "steelblue" : colorScale(d.color); });
 
             return line;
         }
@@ -328,12 +327,12 @@ scatterPlot = function(config) {
       // former draw function from within the former redraw function.
       function brushed() {
         brushExtent = brush.extent();
+        var elements = g.selectAll(".element");
         if (brush.empty()) {
             // empty brush so we select all
-            g.selectAll("circle").classed("deselected", false);
-
+            elements.selectAll("circle, line").classed("deselected", false);
         } else {
-            g.selectAll("circle").classed("deselected", function(d) {
+            elements.selectAll("circle, line").classed("deselected", function(d) {
                 return brushExtent[0][0] > d.x ||
                     d.x > brushExtent[1][0] ||
                     brushExtent[0][1] > d.y ||
@@ -375,7 +374,6 @@ scatterPlot = function(config) {
                 }
             }
       }
-
     });
 
     function createLegend(colorModel, colorScale) {
