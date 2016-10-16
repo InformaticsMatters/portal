@@ -44,7 +44,7 @@ function execute(id, config, data) {
             console.log("MinMax[" + name + "]: " + min + " " + max + " -> " + binWidth);
             xdata[name].group = xdata[name].dimension.group(function(x){
                 var bin = Math.floor(x / binWidth) * binWidth;
-                console.log(x + " -> " + bin);
+                //console.log(x + " -> " + bin);
                 return bin;
             });
 
