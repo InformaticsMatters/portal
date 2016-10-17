@@ -38,15 +38,12 @@ import java.util.stream.Stream;
  */
 public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
-    private static final Logger LOG = Logger.getLogger(ParallelCoordinatePlotCanvasItemPanel.class.getName());
-
-    private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', {}, :data)";
-
     public static final String OPTION_COLOR_DIMENSION = "colorDimension";
-
+    private static final Logger LOG = Logger.getLogger(ParallelCoordinatePlotCanvasItemPanel.class.getName());
+    private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', {}, :data)";
+    private final ModelObject model = new ModelObject();
     private Form<ModelObject> form;
     private ParallelCoordinatePlotAdvancedOptionsPanel advancedOptionsPanel;
-    private final ModelObject model = new ModelObject();
 
     public ParallelCoordinatePlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -119,6 +116,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         form.add(colorDimension);
 
         AjaxButton selectionButton = new AjaxButton("updateSelection") {
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 String selectedIdsJson = selection.getValue();
@@ -139,7 +137,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
                 saveNotebook();
 
-                cellStatusChanged(null, target);
+
+                updateAndNotifyCellStatus(target);
             }
         };
         selectionButton.setDefaultFormProcessing(false);

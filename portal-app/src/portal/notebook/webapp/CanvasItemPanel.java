@@ -141,7 +141,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                     boolean executionChanged = executionChanged(lastExecution);
                     if (executionChanged) {
                         notifyExecutionChanged(ajaxRequestTarget, lastExecution);
-                        notifyCellStatus(ajaxRequestTarget);
+                        updateAndNotifyCellStatus(ajaxRequestTarget);
                     }
                     oldExecution = lastExecution;
                 } catch (Throwable t) {
@@ -152,7 +152,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         });
     }
 
-    private void notifyExecutionChanged(AjaxRequestTarget ajaxRequestTarget, Execution execution) {
+    protected void notifyExecutionChanged(AjaxRequestTarget ajaxRequestTarget, Execution execution) {
         cellTitleBarPanel.applyExecutionStatus(execution);
         ajaxRequestTarget.add(cellTitleBarPanel);
         CellInstance cell = findCellInstance();
@@ -163,9 +163,20 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         }
     }
 
-    private void notifyCellStatus(AjaxRequestTarget ajaxRequestTarget) {
+    protected void notifyOptionBindingChanged(String name, AjaxRequestTarget ajaxRequestTarget) {
+        CellInstance cell = findCellInstance();
+        if (cell != null) {
+            cellChangeManager.notifyOptionBindingChanged(cell.getId(), name, ajaxRequestTarget);
+        } else {
+            LOGGER.warn("Could not find cell" + cellId);
+        }
+    }
+
+    protected void updateAndNotifyCellStatus(AjaxRequestTarget ajaxRequestTarget) {
         updateStatusInfo();
-        cellStatusChanged(cellStatusInfo, ajaxRequestTarget);
+        if (statusLabel != null) {
+            ajaxRequestTarget.add(statusLabel);
+        }
     }
 
     protected void updateStatusInfo() {
@@ -182,7 +193,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         }
     }
 
-
     private Boolean bindingsComplete(CellInstance cellInstance) {
         for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
             if (bindingInstance.getVariableInstance() == null) {
@@ -192,15 +202,9 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         return true;
     }
 
-    protected void cellStatusChanged(CellStatusInfo cellStatusInfo, AjaxRequestTarget ajaxRequestTarget) {
-        if (statusLabel != null) {
-            ajaxRequestTarget.add(statusLabel);
-        }
-    }
-
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         if (changedCellId.equals(getCellId())) {
-            notifyCellStatus(ajaxRequestTarget);
+            updateAndNotifyCellStatus(ajaxRequestTarget);
         }
     }
 

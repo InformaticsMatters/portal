@@ -59,7 +59,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
 
-
     public ScatterPlotCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
         CellInstance cellInstance = findCellInstance();
@@ -97,7 +96,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         super.processCellChanged(changedCellId, ajaxRequestTarget);
-        if (isChangedCellBoundCell(changedCellId)) {
+        if (doesCellChangeRequireRefresh(changedCellId)) {
             invalidatePlotData();
             onExecute();
         }
@@ -125,7 +124,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private void addForm() {
-
         TextField brushXMin = new HiddenField("brushxmin", new Model());
         TextField brushXMax = new HiddenField("brushxmax", new Model());
         TextField brushYMin = new HiddenField("brushymin", new Model());
@@ -156,9 +154,9 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         form.add(selectedIds);
 
         AjaxButton selectionButton = new AjaxButton("selection") {
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-
                 String xmin = brushXMin.getValue();
                 String xmax = brushXMax.getValue();
                 String ymin = brushYMin.getValue();
@@ -194,21 +192,37 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
                 saveNotebook();
 
-                cellStatusChanged(null, target);
+                notifyOptionBindingChanged(OPTION_SELECTED_IDS, target);
+                updateAndNotifyCellStatus(target);
             }
         };
         selectionButton.setDefaultFormProcessing(false);
         form.add(selectionButton);
     }
 
-    private boolean isChangedCellBoundCell(Long changedCellId) {
+    private boolean doesCellChangeRequireRefresh(Long changedCellId) {
         CellInstance cellInstance = findCellInstance();
         if (cellInstance == null) {
             return false;
         }
+
+        // we check if changed cell is bound to us via the special data input connection
         BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
         VariableInstance variableInstance = bindingInstance.getVariableInstance();
-        return variableInstance != null && changedCellId.equals(variableInstance.getCellId());
+        boolean requiresRefresh = variableInstance != null && changedCellId.equals(variableInstance.getCellId());
+
+        if (!requiresRefresh) {
+            // we check if changed cell is bound to us via some option input connection
+            for (OptionBindingInstance optionBindingInstance : cellInstance.getOptionBindingInstanceMap().values()) {
+                OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
+                if (optionInstance != null && changedCellId.equals(optionInstance.getCellId())) {
+                    requiresRefresh = true;
+                    break;
+                }
+            }
+        }
+
+        return requiresRefresh;
     }
 
     private void invalidatePlotData() {
@@ -305,7 +319,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private String buildPlotJs() {
-
         String xLabel = "";
         String yLabel = "";
         if (advancedOptionsPanel != null && Boolean.TRUE.equals(advancedOptionsPanel.getShowAxisLabels())) {
@@ -324,7 +337,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     public String getStatusString() {
-
         StringBuilder b = new StringBuilder();
         DataItem[] data = model.getData();
         if (model.getX() == null || model.getY() == null) {

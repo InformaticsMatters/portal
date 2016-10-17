@@ -124,13 +124,14 @@ public class NotebookCanvasPage extends WebPage {
 
     private void configureExecutionStatusListener() {
         cellChangeManager.setListener(new CellChangeManager.Listener() {
+
             @Override
             public void onExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget) {
                 if (JobStatus.Status.COMPLETED.equals(jobStatus) || JobStatus.Status.ERROR.equals(jobStatus)) {
                     try {
-                        processCellChange(cellId, ajaxRequestTarget);
+                        broadcastCellChange(cellId, ajaxRequestTarget);
                     } catch (Throwable t) {
-                        LOGGER.log(Level.WARNING, "Error processing cell change", t);
+                        LOGGER.log(Level.WARNING, "Error processing cell execution status change", t);
                         notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                     }
                 }
@@ -139,9 +140,9 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onVariableChanged(Long cellId, String variableName, AjaxRequestTarget ajaxRequestTarget) {
                 try {
-                    processCellChange(cellId, ajaxRequestTarget);
+                    broadcastCellChange(cellId, ajaxRequestTarget);
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error processing change", t);
+                    LOGGER.log(Level.WARNING, "Error processing variable change", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
@@ -149,16 +150,26 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             public void onBindingChanged(Long cellId, String name, AjaxRequestTarget ajaxRequestTarget) {
                 try {
-                    processCellChange(cellId, ajaxRequestTarget);
+                    broadcastCellChange(cellId, ajaxRequestTarget);
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error processing change", t);
+                    LOGGER.log(Level.WARNING, "Error processing data binding change", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
+            }
+
+            @Override
+            public void onOptionBindingChanged(Long cellId, String name, AjaxRequestTarget ajaxRequestTarget) {
+                try {
+                    broadcastCellChange(cellId, ajaxRequestTarget);
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error processing option binding change", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
         });
     }
 
-    private void processCellChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+    private void broadcastCellChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         notebookSession.reloadCurrentVersion();
         for (int i = 0; i < canvasItemRepeater.size(); i++) {
             ListItem listItem = (ListItem) canvasItemRepeater.get(i);
