@@ -153,7 +153,7 @@ function buildHeatmap(id, config, data) {
 
 // Change ordering of cells
 
-    d3.select("#row_sorter").on("change",function(){
+    selection.select(".row_sorter").on("change",function(){
         var option = this.value;
         console.log('row sort: ' + option);
         if (option == 'row_default') {
@@ -168,7 +168,7 @@ function buildHeatmap(id, config, data) {
             orderByRowAvg(false);
         }
     });
-    d3.select("#col_sorter").on("change",function(){
+    selection.select(".col_sorter").on("change",function(){
         var option = this.value;
         console.log('col sort: ' + this.value);
         if (option == 'col_default') {

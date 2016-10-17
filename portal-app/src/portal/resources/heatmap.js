@@ -30,28 +30,48 @@ function buildHeatmap(id, config, data) {
     });
 
     // sort function
-    function sorter(a, b) {
+    function averageSorter(a, b) {
             if (a.val !== null && b.val !== null) return a.val - b.val;
             if (a.val === null && b.val === null) return 0;
             if (a.val === null) return -1;
             if (b.val === null) return 1;
     }
 
-    // function to generate sort by average position
+    // function to generate sort by average value
     function sortByAverages(elements) {
         elements.forEach(function(element, i) {
             var c = element.count;
             if (c > 0) {
                 element.avg = element.sum / c;
+                //console.log("Sorted: " + i + " " + element.name + " " + element.avg);
             }
         });
-        var sortedElements = elements.map(function(d,i) { return {idx:i, val:d.avg}}).sort(sorter);
+        var sortedElements = elements.map(function(d,i) { return {idx:i, val:d.avg}}).sort(averageSorter);
         sortedElements.forEach(function(e,i) { elements[e.idx].sortedByAvg = i});
     }
 
-    // generate the sort by average indices
+    function sortByNames(elements) {
+        var sortedElements = elements.map(function(d,i) { return {idx:i, name:d.name}})
+            .sort(function(a,b) {
+                if (a.name == b.name) {
+                    var r = 0
+                } else if (a.name > b.name) {
+                    var r = 1;
+                } else {
+                    var r = -1;
+                }
+                return r;
+            });
+        sortedElements.forEach(function(e,i) {
+            elements[e.idx].sortedByName = i;
+        });
+    }
+
+    // generate the sort indices
     sortByAverages(rows);
     sortByAverages(cols);
+    sortByNames(rows);
+    sortByNames(cols);
 
   var selection = d3.select("#" + id);
 
@@ -139,108 +159,163 @@ function buildHeatmap(id, config, data) {
 
 // Change ordering of cells
 
-    function sortbylabel(rORc,i,sortOrder){
-        var t = svg.transition().duration(transition);
-        var values=[];
-        var sorted; // sorted is zero-based index
-        d3.selectAll(".c"+rORc+i)
-            .filter(function(ce) { values.push(ce.value); });
-        if (rORc=="r") { // sort by row
-            sorted=d3.range(cols.length).sort(function(a,b){ if (sortOrder) { return values[b]-values[a];} else { return values[a]-values[b];}});
-            t.selectAll(".cell")
-                .attr("x", function(d) { return sorted.indexOf(d.col) * cellSize; });
-            t.selectAll(".colLabel")
-                .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; });
-            rowIndexes = sorted;
-            //console.log("Rows: " + JSON.stringify(sorted));
-       } else { // sort by column
-            sorted=d3.range(rows.length).sort(function(a,b){if (sortOrder) { return values[b]-values[a];} else { return values[a]-values[b];}});
-            t.selectAll(".cell")
-                .attr("y", function(d) { return sorted.indexOf(d.row) * cellSize; });
-            t.selectAll(".rowLabel")
-                .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; });
-            colIndexes = sorted;
-            //console.log("Cols: " + JSON.stringify(sorted));
-       }
-  }
-
-    d3.select("#resetrows").on("click",function(){ order("byrowdefault"); });
-    d3.select("#resetcols").on("click",function(){ order("bycoldefault"); });
-    d3.select("#sortbyrowavg").on("click",function(){ order("byrowavg"); });
-    d3.select("#sortbycolavg").on("click",function(){ order("bycolavg"); });
-
-    var byrowavgDesc = false;
-    var bycolavgDesc = false;
-    function order(value){
-        if (value=="byrowdefault"){
-            var t = svg.transition().duration(transition);
-            t.selectAll(".cell")
-                .attr("y", function(d) { return (d.row) * cellSize; });
-
-            t.selectAll(".rowLabel")
-                .attr("y", function (d, i) { return i * cellSize; });
-
-            rowIndexes = d3.range(rows.length);
-            //console.log("Rows: " + JSON.stringify(rowIndexes));
-
-        } else if (value=="bycoldefault"){
-            var t = svg.transition().duration(transition);
-            t.selectAll(".cell")
-                .attr("x", function(d) { return (d.col) * cellSize; });
-            t.selectAll(".colLabel")
-                .attr("y", function (d, i) { return i * cellSize; }) ;
-
-            colIndexes = d3.range(cols.length);
-            //console.log("Cols: " + JSON.stringify(colIndexes));
-
-        } else if (value=="byrowavg"){
-            var t = svg.transition().duration(transition);
-
-            t.selectAll(".cell")
-                .attr("y", function(d) {
-                    var idx = rows[d.row].sortedByAvg;
-                    return (byrowavgDesc ? idx : rows.length - idx) * cellSize;
-                });
-
-            t.selectAll(".rowLabel")
-                .attr("y", function (d, i) {
-                    var idx = rows[i].sortedByAvg;
-                    return (byrowavgDesc ? idx : rows.length - idx) * cellSize;
-                });
-
-            var indexes = Array(rows.length);
-            rows.forEach(function(d,i) {
-                indexes[byrowavgDesc ? d.sortedByAvg : rows.length - d.sortedByAvg - 1] =  i;
-            });
-            rowIndexes = indexes;
-            //console.log("Rows: " + JSON.stringify(indexes));
-
-            byrowavgDesc = !byrowavgDesc;
-
-        } else if (value=="bycolavg"){
-            var t = svg.transition().duration(transition);
-            t.selectAll(".cell")
-                .attr("x", function(d) {
-                    var idx = cols[d.col].sortedByAvg;
-                    return (bycolavgDesc ? idx : cols.length - idx) * cellSize;
-                });
-
-            t.selectAll(".colLabel")
-                .attr("y", function (d, i) {
-                    var idx = cols[i].sortedByAvg;
-                    return (bycolavgDesc ? idx : cols.length - idx) * cellSize;
-                });
-
-            var indexes = Array(cols.length);
-            cols.forEach(function(d,i) {
-                indexes[bycolavgDesc ? d.sortedByAvg : cols.length - d.sortedByAvg - 1] =  i;
-            });
-            colIndexes = indexes;
-            //console.log("Cols: " + JSON.stringify(indexes));
-
-            bycolavgDesc = !bycolavgDesc;
+    selection.select(".row_sorter").on("change",function(){
+        var option = this.value;
+        console.log('row sort: ' + option);
+        if (option == 'row_default') {
+            orderByRowDefault();
+        } else if (option == 'row_name_asc') {
+            orderByRowName(true);
+        } else if (option == 'row_name_desc') {
+            orderByRowName(false);
+        } else if (option == 'row_avg_asc') {
+            orderByRowAvg(true);
+        } else if (option == 'row_avg_desc') {
+            orderByRowAvg(false);
         }
+    });
+    selection.select(".col_sorter").on("change",function(){
+        var option = this.value;
+        console.log('col sort: ' + this.value);
+        if (option == 'col_default') {
+            orderByColDefault();
+        } else if (option == 'col_name_asc') {
+            orderByColName(true);
+        } else if (option == 'col_name_desc') {
+            orderByColName(false);
+        } else if (option == 'col_avg_asc') {
+            orderByColAvg(true);
+        } else if (option == 'col_avg_desc') {
+            orderByColAvg(false);
+        }
+    });
+
+    function orderByRowDefault() {
+        var t = svg.transition().duration(transition);
+        t.selectAll(".cell")
+            .attr("y", function(d) { return (d.row) * cellSize; });
+        t.selectAll(".rowLabel")
+            .attr("y", function (d, i) { return i * cellSize; });
+        rowIndexes = d3.range(rows.length);
     }
+
+    function orderByColDefault() {
+        var t = svg.transition().duration(transition);
+        t.selectAll(".cell")
+            .attr("x", function(d) { return (d.col) * cellSize; });
+        t.selectAll(".colLabel")
+            .attr("y", function (d, i) { return i * cellSize; });
+        rowIndexes = d3.range(cols.length);
+    }
+
+    function orderByRowName(desc) {
+        var t = svg.transition().duration(transition);
+        t.selectAll(".cell")
+            .attr("y", function(d) {
+                var idx = rows[d.row].sortedByName;
+                return (desc ? idx : rows.length - idx) * cellSize;
+            });
+        t.selectAll(".rowLabel")
+            .attr("y", function (d, i) {
+                var idx = rows[i].sortedByName;
+                return (desc ? idx : rows.length - idx) * cellSize;
+            });
+
+        var indexes = Array(rows.length);
+        rows.forEach(function(d,i) {
+            indexes[desc ? d.sortedByName : rows.length - d.sortedByName - 1] =  i;
+        });
+        rowIndexes = indexes;
+    }
+
+    function orderByColName(desc) {
+        var t = svg.transition().duration(transition);
+        t.selectAll(".cell")
+            .attr("x", function(d) {
+                var idx = cols[d.col].sortedByName;
+                return (desc ? idx : cols.length - idx) * cellSize;
+            });
+        t.selectAll(".colLabel")
+            .attr("y", function (d, i) {
+                var idx = cols[i].sortedByName;
+                return (desc ? idx : cols.length - idx) * cellSize;
+            });
+
+        var indexes = Array(cols.length);
+        cols.forEach(function(d,i) {
+            indexes[desc ? d.sortedByName : cols.length - d.sortedByName - 1] =  i;
+        });
+        colIndexes = indexes;
+    }
+
+    function orderByRowAvg(desc) {
+        var t = svg.transition().duration(transition);
+
+        t.selectAll(".cell")
+            .attr("y", function(d) {
+                var idx = rows[d.row].sortedByAvg;
+                return (desc ? idx : rows.length - idx) * cellSize;
+            });
+
+        t.selectAll(".rowLabel")
+            .attr("y", function (d, i) {
+                var idx = rows[i].sortedByAvg;
+                return (desc ? idx : rows.length - idx) * cellSize;
+            });
+
+        var indexes = Array(rows.length);
+        rows.forEach(function(d,i) {
+            indexes[desc ? d.sortedByAvg : rows.length - d.sortedByAvg - 1] =  i;
+        });
+        rowIndexes = indexes;
+    }
+
+    function orderByColAvg(desc) {
+        var t = svg.transition().duration(transition);
+        t.selectAll(".cell")
+            .attr("x", function(d) {
+                var idx = cols[d.col].sortedByAvg;
+                return (desc ? idx : cols.length - idx) * cellSize;
+            });
+
+        t.selectAll(".colLabel")
+            .attr("y", function (d, i) {
+                var idx = cols[i].sortedByAvg;
+                return (desc ? idx : cols.length - idx) * cellSize;
+            });
+
+        var indexes = Array(cols.length);
+        cols.forEach(function(c,i) {
+            indexes[desc ? c.sortedByAvg : cols.length - c.sortedByAvg - 1] =  i;
+        });
+        colIndexes = indexes;
+    }
+
+    function sortbylabel(rORc,i,sortOrder){
+            var t = svg.transition().duration(transition);
+            var values=[];
+            var sorted; // sorted is zero-based index
+            d3.selectAll(".c"+rORc+i)
+                .filter(function(ce) { values.push(ce.value); });
+            if (rORc=="r") { // sort by row
+                sorted=d3.range(cols.length).sort(function(a,b){ if (sortOrder) { return values[b]-values[a];} else { return values[a]-values[b];}});
+                t.selectAll(".cell")
+                    .attr("x", function(d) { return sorted.indexOf(d.col) * cellSize; });
+                t.selectAll(".colLabel")
+                    .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; });
+                rowIndexes = sorted;
+                //console.log("Rows: " + JSON.stringify(sorted));
+           } else { // sort by column
+                sorted=d3.range(rows.length).sort(function(a,b){if (sortOrder) { return values[b]-values[a];} else { return values[a]-values[b];}});
+                t.selectAll(".cell")
+                    .attr("y", function(d) { return sorted.indexOf(d.row) * cellSize; });
+                t.selectAll(".rowLabel")
+                    .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; });
+                colIndexes = sorted;
+                //console.log("Cols: " + JSON.stringify(sorted));
+           }
+    }
+
 
   var sa=d3.select(".g3")
       .on("mousedown", function() {
@@ -343,9 +418,9 @@ function resizeHeatmap(selection) {
 
     var divW = +selection.style("width").replace("px", ""),
         divH = +selection.style("height").replace("px", ""),
-        headers = selection.select(".headers"),
-        headersH = headers.style("height").replace("px", ""),
-        chartH = divH - headersH - 20,
+        title = selection.select(".titleBar"),
+        titleH = title.style("height").replace("px", ""),
+        chartH = divH - titleH - 20,
         chartW = divW - 10;
 
     //console.log("Resizing heatmap : div width=" + divW + " div height=" + divH + " chart width=" + chartW+ " chart height=" + chartH);

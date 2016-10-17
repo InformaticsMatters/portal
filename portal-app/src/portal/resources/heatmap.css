@@ -72,9 +72,16 @@
         display: none;
     }
 
-    .heatmap .tooltip p {
-        margin: 0;
-        font-family: sans-serif;
-        font-size: 10px;
-        line-height: 14px;
-    }
+.heatmap .tooltip p {
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 10px;
+    line-height: 14px;
+}
+
+.heatmap .toolbar {
+    padding: 0px 10px 6px 10px;
+    border-bottom-color:lightgray;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}

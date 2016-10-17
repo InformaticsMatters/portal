@@ -3,6 +3,28 @@
         <form wicket:id="form" class="ui form content">
         </form>
         <div wicket:id="titleBar" class="headers"></div>
+        <div class="toolbar">
+            <div class="ui labeled input">
+                <span class="ui label">Row order:</span>
+                <select class="ui compact dropdown row_sorter">
+                    <option value="row_default">Default</option>
+                    <option value="row_name_asc">Name (asc)</option>
+                    <option value="row_name_desc">Name (desc)</option>
+                    <option value="row_avg_asc">Row avg (asc)</option>
+                    <option value="row_avg_desc">Row avg (desc)</option>
+                </select>
+            </div>
+            <div class="ui labeled input">
+                <span class="ui label">Col order:</span>
+                <select class="ui compact dropdown col_sorter">
+                    <option value="col_default">Default</option>
+                    <option value="col_name_asc">Name (asc)</option>
+                    <option value="col_name_desc">Name (desc)</option>
+                    <option value="col_avg_asc">Col avg (asc)</option>
+                    <option value="col_avg_desc">Col avg (desc)</option>
+                </select>
+            </div>
+        </div>
         <div class="main svg-container" style="overflow:auto;">
         </div>
         <div class="tooltip hidden">
