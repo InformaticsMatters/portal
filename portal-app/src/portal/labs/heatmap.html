@@ -10,13 +10,24 @@
 </head>
 <body>
 
+Row order:
+<select id="row_sorter">
+    <option value="row_default">Default</option>
+    <option value="row_name_asc">Name (asc)</option>
+    <option value="row_name_desc">Name (desc)</option>
+    <option value="row_avg_asc">Row avg (asc)</option>
+    <option value="row_avg_desc">Row avg (desc)</option>
+</select>
 
-Ordering:
-<button type="button" id="resetrows">Reset row order</button> &nbsp;
-<button type="button" id="resetcols">Reset column order</button> &nbsp;
-<button type="button" id="sortbyrowavg">Sort by row average</button>  &nbsp;
-<button type="button" id="sortbycolavg">Sort by column average</button>  &nbsp;
-<br><br>
+Col order:
+<select id="col_sorter">
+    <option value="col_default">Default</option>
+    <option value="col_name_asc">Name (asc)</option>
+    <option value="col_name_desc">Name (desc)</option>
+    <option value="col_avg_asc">Col avg (asc)</option>
+    <option value="col_avg_desc">Col avg (desc)</option>
+</select>
+<br>
 <div id="heatmap1" class="heatmap">
     <div class="titleBar"></div>
     <div class="svg-container" style="overflow:auto; width:660px; height:480px; border-color:lightgray; border-style: solid; border-width: 1px;">
