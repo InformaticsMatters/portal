@@ -132,9 +132,11 @@ function resizeScatterPlot(selection) {
 
 /* Mark function for marking points in charts that have been created using the createScatterPlot() function.
 */
-function markScatterPlot(selection, ids) {
+function markScatterPlot(id, markedIds) {
+    console.log('Marking ' + markedIds.length + " records")
+    var selection = d3.select("#" + id + " .svg-container");
     var chart = selection.node().chart;
-    chart.mark(new Set(ids))(selection);
+    chart.mark(new Set(markedIds))(selection);
 }
 
 /* Filter function for filtering points in charts that have been created using the createScatterPlot() function.

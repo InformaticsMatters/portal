@@ -258,7 +258,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
             try {
                 DatasetSelection selection = (DatasetSelection) findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).getValue();
                 if (selection == null || selection.getUuids().size() == 0) {
-                    b.append("No selection");
+                    b.append("0 selected");
                 } else {
                     b.append(selection.getUuids().size()).append(" selected");
                 }

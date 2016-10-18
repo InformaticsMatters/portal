@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -20,6 +21,7 @@ import org.squonk.dataset.DatasetMetadata;
 import org.squonk.dataset.DatasetSelection;
 import org.squonk.types.BasicObject;
 import org.squonk.types.NumberRange;
+import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
 
@@ -234,6 +236,10 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 model.setColorMode(colorMode);
 
                 if (readDataset) {
+
+                    Set<UUID> marked = readFilter(OPTION_MARKED_IDS);
+                    model.setMarked(marked);
+
                     AtomicInteger counter = new AtomicInteger(0);
                     try (Stream<? extends BasicObject> stream = dataset.getStream()) {
 
@@ -249,13 +255,13 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
                             int count = counter.incrementAndGet();
                             Float x;
                             if (ScatterPlotAdvancedOptionsPanel.FIELD_RECORD_NUMBER.equals(xFieldName)) {
-                                x = (float)count;
+                                x = (float) count;
                             } else {
                                 x = safeConvertToFloat(o.getValue(xFieldName));
                             }
                             Float y;
                             if (ScatterPlotAdvancedOptionsPanel.FIELD_RECORD_NUMBER.equals(yFieldName)) {
-                                y = (float)count;
+                                y = (float) count;
                             } else {
                                 y = safeConvertToFloat(o.getValue(yFieldName));
                             }
@@ -291,6 +297,31 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         target.add(this);
         target.appendJavaScript(buildPlotJs());
+
+        String marked = buildMarkJs();
+        if (marked != null) {
+            target.appendJavaScript(marked);
+        }
+    }
+
+    private String buildMarkJs() {
+        Set<UUID> marked = model.getMarked();
+        if (marked != null && marked.size() > 0) {
+            try {
+                LOG.info("Marking " + marked.size() + " records");
+                String json = JsonHandler.getInstance().objectToJson(marked);
+                String result = "markScatterPlot(':id', :data)"
+                        .replace(":id", getMarkupId())
+                        .replace(":data", json);
+
+                return result;
+
+            } catch (JsonProcessingException e) {
+                LOG.log(Level.WARNING, "Failed to build json for marked IDs", e);
+                notifyMessage("Error", "Failed to build json for marked IDs");
+            }
+        }
+        return null;
     }
 
     private String buildPlotJs() {
@@ -320,10 +351,16 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             b.append("Loading ...");
         } else {
             b.append(data.length).append(" records, ");
+            Set<UUID> marked = model.getMarked();
+            if (marked == null || marked.size() == 0) {
+                b.append("0 marked, ");
+            } else {
+                b.append(marked.size()).append(" marked, ");
+            }
             try {
                 DatasetSelection selection = (DatasetSelection) findCellInstance().getOptionInstanceMap().get(OPTION_SELECTED_IDS).getValue();
                 if (selection == null || selection.getUuids().size() == 0) {
-                    b.append("No selection");
+                    b.append("0 selected");
                 } else {
                     b.append(selection.getUuids().size()).append(" selected");
                 }
@@ -378,6 +415,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         private String x;
         private String y;
         private DataItem[] data = {};
+        private Set<UUID> marked = null;
         private String color;
         private String colorMode;
         private String pointSize;
@@ -405,6 +443,14 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
         public void setData(DataItem[] data) {
             this.data = data;
+        }
+
+        public Set<UUID> getMarked() {
+            return marked;
+        }
+
+        public void setMarked(Set<UUID> marked) {
+            this.marked = marked;
         }
 
         private String getDataAsJson() {

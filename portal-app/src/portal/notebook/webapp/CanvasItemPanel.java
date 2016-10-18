@@ -29,7 +29,7 @@ import java.util.UUID;
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
     public static final String OPTION_SELECTED_IDS = "selectionSelected";
-    public static final String OPTION_SELECTED_MARKED_IDS = "selectionSelectedMarked";
+    public static final String OPTION_MARKED_IDS = "selectionMarked";
     public static final String OPTION_FILTER_IDS = "filteredIDs";
     private static final Logger LOGGER = LoggerFactory.getLogger(CanvasItemPanel.class);
     private final Long cellId;
