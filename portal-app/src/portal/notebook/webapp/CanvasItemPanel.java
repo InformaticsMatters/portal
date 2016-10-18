@@ -28,8 +28,8 @@ import java.util.UUID;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
-    public static final String OPTION_SELECTED_IDS ="selectionSelected";
-    public static final String OPTION_SELECTED_MARKED_IDS ="selectionSelectedMarked";
+    public static final String OPTION_SELECTED_IDS = "selectionSelected";
+    public static final String OPTION_SELECTED_MARKED_IDS = "selectionSelectedMarked";
     public static final String OPTION_FILTER_IDS = "filteredIDs";
     private static final Logger LOGGER = LoggerFactory.getLogger(CanvasItemPanel.class);
     private final Long cellId;
@@ -319,4 +319,31 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         }
         return result;
     }
+
+    protected boolean doesCellChangeRequireRefresh(Long changedCellId, String... dataBindingNames) {
+        CellInstance cellInstance = findCellInstance();
+        if (cellInstance == null) {
+            return false;
+        }
+
+        // we check if changed cell is bound to us via the data inputs
+        for (String input : dataBindingNames) {
+            BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(input);
+            VariableInstance variableInstance = bindingInstance.getVariableInstance();
+            if (variableInstance != null && changedCellId.equals(variableInstance.getCellId())) {
+                return true;
+            }
+        }
+
+        // we check if changed cell is bound to us via some option input connection
+        for (OptionBindingInstance optionBindingInstance : cellInstance.getOptionBindingInstanceMap().values()) {
+            OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
+            if (optionInstance != null && changedCellId.equals(optionInstance.getCellId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

@@ -137,7 +137,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
                 saveNotebook();
 
-
+                notifyOptionBindingChanged(OPTION_SELECTED_IDS, target);
                 updateAndNotifyCellStatus(target);
             }
         };
@@ -180,6 +180,20 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         String js = buildPlotJs();
         target.appendJavaScript(js);
     }
+
+    @Override
+    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        super.processCellChanged(changedCellId, ajaxRequestTarget);
+        if (doesCellChangeRequireRefresh(changedCellId, CellDefinition.VAR_NAME_INPUT)) {
+            invalidatePlotData();
+            onExecute();
+        }
+    }
+
+    private void invalidatePlotData() {
+        model.setPlotData(Collections.emptyList());
+    }
+
 
     private void refreshPlotData() throws Exception {
 

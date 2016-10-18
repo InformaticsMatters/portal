@@ -96,7 +96,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     @Override
     public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         super.processCellChanged(changedCellId, ajaxRequestTarget);
-        if (doesCellChangeRequireRefresh(changedCellId)) {
+        if (doesCellChangeRequireRefresh(changedCellId, CellDefinition.VAR_NAME_INPUT)) {
             invalidatePlotData();
             onExecute();
         }
@@ -198,31 +198,6 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         };
         selectionButton.setDefaultFormProcessing(false);
         form.add(selectionButton);
-    }
-
-    private boolean doesCellChangeRequireRefresh(Long changedCellId) {
-        CellInstance cellInstance = findCellInstance();
-        if (cellInstance == null) {
-            return false;
-        }
-
-        // we check if changed cell is bound to us via the special data input connection
-        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-        VariableInstance variableInstance = bindingInstance.getVariableInstance();
-        boolean requiresRefresh = variableInstance != null && changedCellId.equals(variableInstance.getCellId());
-
-        if (!requiresRefresh) {
-            // we check if changed cell is bound to us via some option input connection
-            for (OptionBindingInstance optionBindingInstance : cellInstance.getOptionBindingInstanceMap().values()) {
-                OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
-                if (optionInstance != null && changedCellId.equals(optionInstance.getCellId())) {
-                    requiresRefresh = true;
-                    break;
-                }
-            }
-        }
-
-        return requiresRefresh;
     }
 
     private void invalidatePlotData() {

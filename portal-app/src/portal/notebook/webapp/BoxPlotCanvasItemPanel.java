@@ -5,7 +5,6 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -26,9 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,8 +38,8 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     private static final String BUILD_PLOT_JS = "buildBoxPlot(':id', ':groupsFieldName', ':valuesFieldName', :data)";
 
+    private final ModelObject model;
     private Form<ModelObject> form;
-    private Label statusLabel;
     private BoxPlotAdvancedOptionsPanel advancedOptionsPanel;
 
     public BoxPlotCanvasItemPanel(String id, Long cellId) {
@@ -52,6 +49,7 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             cellInstance.setSizeWidth(480);
             cellInstance.setSizeHeight(320);
         }
+        model = new ModelObject();
         addForm();
         loadModelFromPersistentData();
         addTitleBar();
@@ -60,9 +58,7 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //addStatus();
     }
-
 
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
@@ -86,13 +82,8 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         }
     }
 
-//    private void addStatus() {
-//        statusLabel = createStatusLabel("cellStatus");
-//        add(statusLabel);
-//    }
-
     private void addForm() {
-        form = new Form<>("form", new CompoundPropertyModel<>(new ModelObject()));
+        form = new Form<>("form", new CompoundPropertyModel<>(model));
         add(form);
     }
 
@@ -110,6 +101,19 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         target.appendJavaScript(js);
     }
 
+    @Override
+    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        super.processCellChanged(changedCellId, ajaxRequestTarget);
+        if (doesCellChangeRequireRefresh(changedCellId, CellDefinition.VAR_NAME_INPUT)) {
+            invalidatePlotData();
+            onExecute();
+        }
+    }
+
+    private void invalidatePlotData() {
+        model.setPlotData(Collections.emptyMap());
+    }
+
     private void refreshPlotData() throws Exception {
         BoxPlotCanvasItemPanel.ModelObject model = form.getModelObject();
         String groupsFieldName = model.getGroupsFieldName();
@@ -122,7 +126,15 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             if (variableInstance != null) {
                 Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
                 try (Stream<? extends BasicObject> stream = dataset.getStream()) {
-                    Map<Comparable, List<Float>> groupedData = stream.map((o) -> {
+
+                    Stream<? extends BasicObject> input = stream;
+                    // apply the selection filter, if any
+                    Set<UUID> selectionFilter = readFilter(OPTION_FILTER_IDS);
+                    if (selectionFilter != null && selectionFilter.size() > 0) {
+                        input = input.filter((o) -> selectionFilter.contains(o.getUUID()));
+                    }
+
+                    Map<Comparable, List<Float>> groupedData = input.map((o) -> {
                         Object group = o.getValue(groupsFieldName);
                         Float value = safeConvertToFloat(o.getValue(valuesFieldName));
                         if (group != null && value != null && group instanceof Comparable) {

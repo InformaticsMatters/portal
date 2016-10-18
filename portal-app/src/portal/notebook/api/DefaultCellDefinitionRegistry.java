@@ -46,6 +46,16 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         variableDefinition.setDisplayName("Selection");
         variableDefinition.setVariableType(VariableType.STRING);
         cellDefinition.getVariableDefinitionList().add(variableDefinition);
+
+        // option inputs
+        OptionDescriptor filterOptionDescriptor = new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)", Mode.Input);
+        cellDefinition.getOptionDefinitionList().add(filterOptionDescriptor);
+        // cellDefinition.getOptionDefinitionList().add(
+        //      new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
+
+        // the option bindings
+        cellDefinition.getOptionBindingDefinitionList().add(new OptionBindingDefinition(filterOptionDescriptor, CellDefinition.UpdateMode.AUTO));
+
         return cellDefinition;
     }
 
@@ -117,6 +127,16 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS,
                         "y Axis", "Field for values", Mode.Advanced));
+
+        // option inputs
+        OptionDescriptor filterOptionDescriptor = new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)", Mode.Input);
+        cellDefinition.getOptionDefinitionList().add(filterOptionDescriptor);
+        // cellDefinition.getOptionDefinitionList().add(
+        //      new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
+
+        // the option bindings
+        cellDefinition.getOptionBindingDefinitionList().add(new OptionBindingDefinition(filterOptionDescriptor, CellDefinition.UpdateMode.AUTO));
+
         return cellDefinition;
     }
 
@@ -152,11 +172,14 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
                 new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.OPTION_COLOR_DIMENSION,
                         "Colour dimension", "Dimension for colouring values", Mode.Ignore));
 
-        // inputs
-        cellDefinition.getOptionDefinitionList().add(
-                new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS,
-                        "Filter", "ID filter", Mode.Input));
+        // option inputs
+        OptionDescriptor filterOptionDescriptor = new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)", Mode.Input);
+        cellDefinition.getOptionDefinitionList().add(filterOptionDescriptor);
+        // cellDefinition.getOptionDefinitionList().add(
+        //      new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
 
+        // the option bindings
+        cellDefinition.getOptionBindingDefinitionList().add(new OptionBindingDefinition(filterOptionDescriptor, CellDefinition.UpdateMode.AUTO));
 
         return cellDefinition;
     }
