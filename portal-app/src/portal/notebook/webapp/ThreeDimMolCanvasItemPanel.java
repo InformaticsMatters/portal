@@ -78,16 +78,16 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+    public void processCellChanged(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
 
         // TODO - convert this to support selections/filters from other cells
 
-        super.processCellChanged(changedCellId, ajaxRequestTarget);
+        super.processCellChanged(evt, ajaxRequestTarget);
         CellInstance cellInstance = findCellInstance();
         BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
         if (bindingInstance != null) {
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
-            boolean isOfInterest = variableInstance != null && changedCellId.equals(variableInstance.getCellId());
+            boolean isOfInterest = variableInstance != null && evt.getSourceCellId().equals(variableInstance.getCellId());
             if (isOfInterest) {
                 // TODO - support multiple section - input should be Dataset<MoleculeObject>
                 // It should them be converted to SDF using StructureIOClient (to avoid depenedency on Marvin)

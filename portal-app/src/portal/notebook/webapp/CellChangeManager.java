@@ -11,27 +11,27 @@ public class CellChangeManager implements Serializable {
 
     private Listener listener;
 
-    public void notifyExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget) {
+    public void notifyDataBindingChanged(CellChangeEvent.DataBinding evt, AjaxRequestTarget ajaxRequestTarget) {
         if (listener != null) {
-            listener.onExecutionStatusChanged(cellId, jobStatus, ajaxRequestTarget);
+            listener.onDataBindingChanged(evt, ajaxRequestTarget);
         }
     }
 
-    public void notifyVariableChanged(Long cellId, String variableName, AjaxRequestTarget ajaxRequestTarget) {
+    public void notifyOptionBindingChanged(CellChangeEvent.OptionBinding evt, AjaxRequestTarget ajaxRequestTarget) {
         if (listener != null) {
-            listener.onVariableChanged(cellId, variableName, ajaxRequestTarget);
+            listener.onOptionBindingChanged(evt, ajaxRequestTarget);
         }
     }
 
-    public void notifyBindingChanged(Long cellId, String name, AjaxRequestTarget ajaxRequestTarget) {
+    public void notifyDataValuesChanged(CellChangeEvent.DataValues evt, AjaxRequestTarget ajaxRequestTarget) {
         if (listener != null) {
-            listener.onBindingChanged(cellId, name, ajaxRequestTarget);
+            listener.onDataValuesChanged(evt, ajaxRequestTarget);
         }
     }
 
-    public void notifyOptionBindingChanged(Long cellId, String name, AjaxRequestTarget ajaxRequestTarget) {
+    public void notifyOptionValuesChanged(CellChangeEvent.OptionValues evt, AjaxRequestTarget ajaxRequestTarget) {
         if (listener != null) {
-            listener.onOptionBindingChanged(cellId, name, ajaxRequestTarget);
+            listener.onOptionValuesChanged(evt, ajaxRequestTarget);
         }
     }
 
@@ -40,12 +40,13 @@ public class CellChangeManager implements Serializable {
     }
 
     public interface Listener {
-        void onExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget);
 
-        void onVariableChanged(Long cellId, String variableName, AjaxRequestTarget ajaxRequestTarget);
+        void onDataBindingChanged(CellChangeEvent.DataBinding evt, AjaxRequestTarget ajaxRequestTarget);
 
-        void onBindingChanged(Long cellId, String name, AjaxRequestTarget ajaxRequestTarget);
+        void onOptionBindingChanged(CellChangeEvent.OptionBinding evt, AjaxRequestTarget ajaxRequestTarget);
 
-        void onOptionBindingChanged(Long cellId, String name, AjaxRequestTarget ajaxRequestTarget);
+        void onDataValuesChanged(CellChangeEvent.DataValues evt, AjaxRequestTarget ajaxRequestTarget);
+
+        void onOptionValuesChanged(CellChangeEvent.OptionValues evt, AjaxRequestTarget ajaxRequestTarget);
     }
 }

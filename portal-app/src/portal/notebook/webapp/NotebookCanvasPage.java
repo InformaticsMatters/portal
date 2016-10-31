@@ -102,6 +102,7 @@ public class NotebookCanvasPage extends WebPage {
         addCanvasPaletteDropBehavior();
         addCanvasItemDraggedBehavior();
         addCanvasNewConnectionBehavior();
+        addCanvasDetachConnectionBehavior();
         addConnectionsRenderBehavior();
         addResizeBehavior();
         addEditNotebookPanel();
@@ -126,31 +127,9 @@ public class NotebookCanvasPage extends WebPage {
         cellChangeManager.setListener(new CellChangeManager.Listener() {
 
             @Override
-            public void onExecutionStatusChanged(Long cellId, JobStatus.Status jobStatus, AjaxRequestTarget ajaxRequestTarget) {
-                if (JobStatus.Status.COMPLETED.equals(jobStatus) || JobStatus.Status.ERROR.equals(jobStatus)) {
-                    try {
-                        broadcastCellChange(cellId, ajaxRequestTarget);
-                    } catch (Throwable t) {
-                        LOGGER.log(Level.WARNING, "Error processing cell execution status change", t);
-                        notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
-                    }
-                }
-            }
-
-            @Override
-            public void onVariableChanged(Long cellId, String variableName, AjaxRequestTarget ajaxRequestTarget) {
+            public void onDataBindingChanged(CellChangeEvent.DataBinding evt, AjaxRequestTarget ajaxRequestTarget) {
                 try {
-                    broadcastCellChange(cellId, ajaxRequestTarget);
-                } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error processing variable change", t);
-                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
-                }
-            }
-
-            @Override
-            public void onBindingChanged(Long cellId, String name, AjaxRequestTarget ajaxRequestTarget) {
-                try {
-                    broadcastCellChange(cellId, ajaxRequestTarget);
+                    broadcastCellChange(evt, ajaxRequestTarget);
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error processing data binding change", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
@@ -158,30 +137,52 @@ public class NotebookCanvasPage extends WebPage {
             }
 
             @Override
-            public void onOptionBindingChanged(Long cellId, String name, AjaxRequestTarget ajaxRequestTarget) {
+            public void onDataValuesChanged(CellChangeEvent.DataValues evt, AjaxRequestTarget ajaxRequestTarget) {
                 try {
-                    broadcastCellChange(cellId, ajaxRequestTarget);
+                    broadcastCellChange(evt, ajaxRequestTarget);
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error processing data binding change", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
+            }
+
+            @Override
+            public void onOptionBindingChanged(CellChangeEvent.OptionBinding evt, AjaxRequestTarget ajaxRequestTarget) {
+                try {
+                    broadcastCellChange(evt, ajaxRequestTarget);
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error processing option binding change", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
+            }
+
+            @Override
+            public void onOptionValuesChanged(CellChangeEvent.OptionValues evt, AjaxRequestTarget ajaxRequestTarget) {
+                try {
+                    broadcastCellChange(evt, ajaxRequestTarget);
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error processing data binding change", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
         });
     }
 
-    private void broadcastCellChange(Long cellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+    private void broadcastCellChange(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         notebookSession.reloadCurrentVersion();
         for (int i = 0; i < canvasItemRepeater.size(); i++) {
             ListItem listItem = (ListItem) canvasItemRepeater.get(i);
             CanvasItemPanel canvasItemPanel = (CanvasItemPanel) listItem.get(0);
             try {
-                canvasItemPanel.processCellChanged(cellId, ajaxRequestTarget);
+                canvasItemPanel.processCellChanged(evt, ajaxRequestTarget);
             } catch (Throwable t) {
                 LOGGER.log(Level.WARNING, "Error loading data", t);
                 notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
             }
         }
     }
+
+
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -607,7 +608,7 @@ public class NotebookCanvasPage extends WebPage {
             @Override
             protected void respond(AjaxRequestTarget target) {
                 try {
-                    onNewCanvasConnection();
+                    onChangeCanvasConnection(true);
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Error while handling Ajax request in behavior", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
@@ -625,6 +626,33 @@ public class NotebookCanvasPage extends WebPage {
             }
         };
         add(onNotebookCanvasNewConnectionBehavior);
+    }
+
+    private void addCanvasDetachConnectionBehavior() {
+        AbstractDefaultAjaxBehavior onNotebookCanvasDetachConnectionBehavior = new AbstractDefaultAjaxBehavior() {
+
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                try {
+                    onChangeCanvasConnection(false);
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Error while handling Ajax request in behavior", t);
+                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                }
+            }
+
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                super.renderHead(component, response);
+
+                CharSequence callBackScript = getCallbackFunction(
+                        CallbackParameter.explicit(SOURCE_ID),
+                        CallbackParameter.explicit(TARGET_ID));
+                callBackScript = "onNotebookCanvasDetachConnection=" + callBackScript + ";";
+                response.render(OnDomReadyHeaderItem.forScript(callBackScript));
+            }
+        };
+        add(onNotebookCanvasDetachConnectionBehavior);
     }
 
     private void addVersionTreeNodeSelectionBehavior() {
@@ -703,7 +731,7 @@ public class NotebookCanvasPage extends WebPage {
         getRequestCycle().find(AjaxRequestTarget.class).add(getPage());
     }
 
-    private void onNewCanvasConnection() throws Exception {
+    private void onChangeCanvasConnection(boolean add) throws Exception {
         String sourceEndpointUuid = getRequest().getRequestParameters().getParameterValue(SOURCE_ID).toString();
         String targetEndpointUuid = getRequest().getRequestParameters().getParameterValue(TARGET_ID).toString();
         String sourceCellMarkupId = sourceEndpointUuid.substring(0, sourceEndpointUuid.indexOf("-"));
@@ -711,12 +739,13 @@ public class NotebookCanvasPage extends WebPage {
         String sourceName = sourceEndpointUuid.substring(sourceEndpointUuid.indexOf("-") + 1);
         String targetName = targetEndpointUuid.substring(targetEndpointUuid.indexOf("-") + 1);
 
-        CellInstance sourceCellInstance;
-        CellInstance targetCellInstance;
+        CellInstance sourceCellInstance = null;
+        CellInstance targetCellInstance = null;
         VariableInstance dataConnectionSource = null;
         BindingInstance dataConnectionTarget = null;
         OptionInstance optionConnectionSource = null;
         OptionBindingInstance optionConnectionTarget = null;
+
 
         Iterator<Component> iterator = canvasItemRepeater.iterator();
         while (iterator.hasNext()) {
@@ -733,24 +762,54 @@ public class NotebookCanvasPage extends WebPage {
                 optionConnectionTarget = targetCellInstance.getOptionBindingInstanceMap().get(targetName);
             }
         }
+        AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
         if (dataConnectionSource != null && dataConnectionTarget != null) {
-            applyDataBinding(dataConnectionSource, dataConnectionTarget);
+            applyChangeDataBinding(ajaxRequestTarget, add, sourceEndpointUuid, targetEndpointUuid, dataConnectionSource, dataConnectionTarget);
+            CellChangeEvent.DataBinding evt = new CellChangeEvent.DataBinding(
+                    sourceCellInstance.getId(), dataConnectionSource.getVariableDefinition().getName(),
+                    targetCellInstance.getId(), dataConnectionTarget.getName(),
+                    add ? CellChangeEvent.BindingChangeType.Bind : CellChangeEvent.BindingChangeType.Unbind);
+            cellChangeManager.notifyDataBindingChanged(evt, ajaxRequestTarget);
+
         }
         if (optionConnectionSource != null && optionConnectionTarget != null) {
-            applyOptionBinding(optionConnectionSource, optionConnectionTarget);
+            applyChangeOptionBinding(ajaxRequestTarget, add, sourceEndpointUuid, targetEndpointUuid, optionConnectionSource, optionConnectionTarget);
+            CellChangeEvent.OptionBinding evt = new CellChangeEvent.OptionBinding(
+                    sourceCellInstance.getId(), optionConnectionSource.getOptionDescriptor().getKey(),
+                    targetCellInstance.getId(), optionConnectionTarget.getKey(),
+                    add ? CellChangeEvent.BindingChangeType.Bind : CellChangeEvent.BindingChangeType.Unbind);
+            cellChangeManager.notifyOptionBindingChanged(evt, ajaxRequestTarget);
         }
     }
 
-    private void applyDataBinding(VariableInstance variableInstance, BindingInstance bindingInstance) throws Exception {
-        bindingInstance.setVariableInstance(variableInstance);
+    private void applyChangeDataBinding(
+            AjaxRequestTarget ajaxTarget, boolean add,
+            String sourceEndpointUuid, String targetEndpointUuid,
+            VariableInstance variableInstance, BindingInstance bindingInstance) throws Exception {
+
+        bindingInstance.setVariableInstance(add ? variableInstance : null);
         notebookSession.storeCurrentEditable();
-        getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
+
+        String js = (add ? "add" : "detach") +
+                "Connection('" + sourceEndpointUuid + "', '" + targetEndpointUuid + "'); " +
+                "jsPlumb.repaintEverything()";
+
+        ajaxTarget.appendJavaScript(js);
     }
 
-    private void applyOptionBinding(OptionInstance optionInstance, OptionBindingInstance optionBindingInstance) throws Exception {
-        optionBindingInstance.setOptionInstance(optionInstance);
+    private void applyChangeOptionBinding(
+            AjaxRequestTarget ajaxTarget, boolean add,
+            String sourceEndpointUuid, String targetEndpointUuid,
+            OptionInstance optionInstance, OptionBindingInstance optionBindingInstance) throws Exception {
+
+        optionBindingInstance.setOptionInstance(add ? optionInstance: null);
         notebookSession.storeCurrentEditable();
-        getRequestCycle().find(AjaxRequestTarget.class).add(NotebookCanvasPage.this);
+
+        String js = (add ? "add" : "detach") +
+                "Connection('" + sourceEndpointUuid + "', '" + targetEndpointUuid + "'); " +
+                "jsPlumb.repaintEverything()";
+
+        ajaxTarget.appendJavaScript(js);
     }
 
     private void addConnectionsRenderBehavior() {
@@ -774,6 +833,7 @@ public class NotebookCanvasPage extends WebPage {
         };
         add(behavior);
     }
+
 
     private String buildConnectionsJS() {
         StringBuilder stringBuilder = new StringBuilder();

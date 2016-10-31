@@ -8,10 +8,9 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.squonk.core.client.StructureIOClient;
 import org.squonk.dataset.DatasetSelection;
+import org.squonk.jobdef.JobStatus.Status;
 import portal.PopupContainerProvider;
 import portal.notebook.api.*;
 import portal.notebook.service.Execution;
@@ -22,16 +21,16 @@ import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
     public static final String OPTION_SELECTED_IDS = "selectionSelected";
     public static final String OPTION_MARKED_IDS = "selectionMarked";
     public static final String OPTION_FILTER_IDS = "filteredIDs";
-    private static final Logger LOGGER = LoggerFactory.getLogger(CanvasItemPanel.class);
+    private static final Logger LOGGER = Logger.getLogger(CanvasItemPanel.class.getName());
     private final Long cellId;
     protected ResultsHandler resultsHandler;
     @Inject
@@ -59,7 +58,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         try {
             updateStatusInfo();
         } catch (Throwable t) {
-            LOGGER.warn("Error refreshing status", t);
+            LOGGER.log(Level.WARNING, "Error refreshing status", t);
         }
     }
 
@@ -93,7 +92,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         js = js.replace(":width", Integer.toString(model.getSizeWidth() == null ? 265 : model.getSizeWidth()));
         js = js.replace(":height", Integer.toString(model.getSizeHeight() == null ? 0 : model.getSizeHeight()));
 
-        LOGGER.debug(js);
+        LOGGER.finer(js);
 
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
@@ -106,6 +105,10 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     public CellInstance findCellInstance() {
+        return findCellInstance(cellId);
+    }
+
+    public CellInstance findCellInstance(Long cellId) {
         return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
     }
 
@@ -121,7 +124,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             notebookSession.storeCurrentEditable();
             fireContentChanged();
         } catch (Throwable t) {
-            LOGGER.warn("Error removing cell", t);
+            LOGGER.log(Level.WARNING, "Error removing cell", t);
             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
         }
     }
@@ -145,7 +148,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                     }
                     oldExecution = lastExecution;
                 } catch (Throwable t) {
-                    LOGGER.warn("Error refreshing status", t);
+                    LOGGER.log(Level.WARNING, "Error refreshing status", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
@@ -157,18 +160,20 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         ajaxRequestTarget.add(cellTitleBarPanel);
         CellInstance cell = findCellInstance();
         if (cell != null) {
-            cellChangeManager.notifyExecutionStatusChanged(cell.getId(), execution.getJobStatus(), ajaxRequestTarget);
+            CellChangeEvent.DataValues evt = new CellChangeEvent.DataValues(cellId, CellChangeEvent.SOURCE_ALL_DATA, execution.getJobStatus());
+            cellChangeManager.notifyDataValuesChanged(evt, ajaxRequestTarget);
         } else {
-            LOGGER.warn("Could not find cell" + cellId);
+            LOGGER.log(Level.WARNING, "Could not find cell" + cellId);
         }
     }
 
-    protected void notifyOptionBindingChanged(String name, AjaxRequestTarget ajaxRequestTarget) {
+    protected void notifyOptionValuesChanged(String name, AjaxRequestTarget ajaxRequestTarget) {
         CellInstance cell = findCellInstance();
         if (cell != null) {
-            cellChangeManager.notifyOptionBindingChanged(cell.getId(), name, ajaxRequestTarget);
+            CellChangeEvent.OptionValues evt = new CellChangeEvent.OptionValues(cell.getId(), name);
+            cellChangeManager.notifyOptionValuesChanged(evt, ajaxRequestTarget);
         } else {
-            LOGGER.warn("Could not find cell" + cellId);
+            LOGGER.warning("Could not find cell" + cellId);
         }
     }
 
@@ -202,8 +207,8 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         return true;
     }
 
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
-        if (changedCellId.equals(getCellId())) {
+    public void processCellChanged(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        if (evt.getSourceCellId().equals(getCellId())) {
             updateAndNotifyCellStatus(ajaxRequestTarget);
         }
     }
@@ -294,7 +299,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             notebookSession.storeCurrentEditable();
             return true;
         } catch (Exception e) {
-            LOGGER.error("Failed to save notebook", e);
+            LOGGER.log(Level.SEVERE, "Failed to save notebook", e);
             notifyMessage("Error", "Failed to save notebook: " + e.getLocalizedMessage());
             return false;
         }
@@ -320,29 +325,101 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         return result;
     }
 
-    protected boolean doesCellChangeRequireRefresh(Long changedCellId, String... dataBindingNames) {
+    /** Allows cells to specify what jobs statuses cause data to be refreshed.
+     * Default is to update when jobStatus is null, COMPLETED or ERROR.
+     *
+     * @param jobStatus
+     * @return
+     */
+    protected boolean doesJobStatusRequireRefresh(Status jobStatus) {
+         return jobStatus == null || Status.COMPLETED == jobStatus || Status.ERROR == jobStatus;
+    }
+
+    protected boolean doesCellChangeRequireRefresh(CellChangeEvent evt) {
+
         CellInstance cellInstance = findCellInstance();
-        if (cellInstance == null) {
+        LOGGER.fine("CellChangeEvent received by cell " + cellInstance.getName() + " [" + getCellId() + "]" + ": " + evt);
+        CellInstance changedCell = findCellInstance(evt.getSourceCellId());
+        if (cellInstance == null || changedCell == null) {
             return false;
         }
 
-        // we check if changed cell is bound to us via the data inputs
-        for (String input : dataBindingNames) {
-            BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(input);
-            VariableInstance variableInstance = bindingInstance.getVariableInstance();
-            if (variableInstance != null && changedCellId.equals(variableInstance.getCellId())) {
-                return true;
+        // variable values have changed due to cell execution
+        if (evt instanceof CellChangeEvent.DataValues) {
+            CellChangeEvent.DataValues dvevt = (CellChangeEvent.DataValues) evt;
+            if (doesJobStatusRequireRefresh(dvevt.getJobStatus())) {
+                for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
+                    VariableInstance variableInstance = bindingInstance.getVariableInstance();
+                    if (variableInstance != null
+                            && dvevt.getSourceCellId().equals(variableInstance.getCellId())
+                            && (dvevt.getSourceName() == null
+                            || CellChangeEvent.SOURCE_ALL_DATA.equals(dvevt.getSourceName())
+                            || dvevt.getSourceName().equals(variableInstance.getVariableDefinition().getName()))
+                            ) {
+                        LOGGER.fine("  NEEDS DATA REFRESH");
+                        return true;
+                    }
+                }
             }
         }
 
-        // we check if changed cell is bound to us via some option input connection
-        for (OptionBindingInstance optionBindingInstance : cellInstance.getOptionBindingInstanceMap().values()) {
-            OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
-            if (optionInstance != null && changedCellId.equals(optionInstance.getCellId())) {
-                return true;
+        // variable bindings have changed
+        if (evt instanceof CellChangeEvent.DataBinding) {
+            CellChangeEvent.DataBinding dbevt = (CellChangeEvent.DataBinding) evt;
+            // check if we were the target
+            if (dbevt.getTargetCellId().equals(cellInstance.getId())) {
+                BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(dbevt.getTargetName());
+                LOGGER.fine("  Checking " + bindingInstance);
+                if (bindingInstance != null) {
+                    VariableInstance variableInstance = bindingInstance.getVariableInstance();
+                    if (dbevt.getType() == CellChangeEvent.BindingChangeType.Bind && variableInstance != null
+                            && dbevt.getSourceCellId().equals(variableInstance.getCellId())
+                            && dbevt.getSourceName().equals(variableInstance.getVariableDefinition().getName())) {
+                        LOGGER.fine("  NEEDS DATA REFRESH");
+                        return true;
+                    } else if (dbevt.getType() == CellChangeEvent.BindingChangeType.Unbind) {
+                        LOGGER.fine("  NEEDS DATA REFRESH");
+                        return true;
+                    }
+                }
             }
         }
 
+        // option values have changed
+        if (evt instanceof CellChangeEvent.OptionValues) {
+            CellChangeEvent.OptionValues ovevt = (CellChangeEvent.OptionValues) evt;
+            for (OptionBindingInstance optionBindingInstance : cellInstance.getOptionBindingInstanceMap().values()) {
+                OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
+                if (optionInstance != null
+                        && ovevt.getSourceCellId().equals(optionInstance.getCellId())
+                        && ovevt.getSourceName().equals(optionInstance.getOptionDescriptor().getKey())) {
+                    LOGGER.fine("  NEEDS OPTION REFRESH");
+                    return true;
+                }
+            }
+        }
+
+        // option binding has changed
+        if (evt instanceof CellChangeEvent.OptionBinding) {
+            CellChangeEvent.OptionBinding obevt = (CellChangeEvent.OptionBinding) evt;
+            // check if we were the target
+            if (obevt.getTargetCellId().equals(cellInstance.getId())) {
+                OptionBindingInstance optionBindingInstance = cellInstance.getOptionBindingInstanceMap().get(obevt.getTargetName());
+                OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
+                if (obevt.getType() == CellChangeEvent.BindingChangeType.Bind
+                        && optionInstance != null
+                        && obevt.getSourceCellId().equals(optionInstance.getCellId())
+                        && obevt.getSourceName().equals(optionInstance.getOptionDescriptor().getKey())) {
+                    LOGGER.fine("  NEEDS OPTION REFRESH");
+                    return true;
+                } else if (obevt.getType() == CellChangeEvent.BindingChangeType.Unbind) {
+                    LOGGER.fine("  NEEDS OPTION REFRESH");
+                    return true;
+                }
+            }
+        }
+
+        LOGGER.fine("  NO REFRESH");
         return false;
     }
 

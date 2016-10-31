@@ -187,53 +187,6 @@ function makeCanvasItemResizable(width, height, id, fitCallback) {
     });
 }
 
- /*
-function fitScatterPlot(id) {
-    var svg = d3.select(".main");
-    var dim = Math.min(parseInt(d3.select(".chart").style("width")), parseInt(d3.select(".chart").style("height")));
-    var width = dim - 80;
-    var height = dim - 80;
-
-    var x = d3.scale.linear();
-
-         var y = d3.scale.linear();
-
-    var r = d3.scale.linear();
-
-        var xAxis = d3.svg.axis();
-
-        var yAxis = d3.svg.axis();
-
-      x.range([0, width]);
-      y.range([height, 0]);
-      // Update the axis and text with the new scale
-      svg.select('.x.axis')
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-
-      svg.select('.x.axis').select('.label')
-            .attr("x",width);
-
-        svg.select('.y.axis')
-          .call(yAxis);
-
-    // Update the tick marks
-      xAxis.ticks(dim / 75);
-      yAxis.ticks(dim / 75);
-
-      // Update the circles
-      r.range([dim / 90, dim / 35])
-
-      var g =  d3.select(".main");
-
-          g.selectAll("scatter-dots")
-            .append("svg:circle")
-                .attr("cx", function (d,i) { return x(d.x); } )
-                .attr("cy", function (d) { return y(d.y); } )
-                .attr("r", 5);
-}
-*/
-
 function fitTableDisplayGrid(id) {
     var $id = $('#' + id);
     var containerh = $id.outerHeight();
@@ -439,13 +392,32 @@ function addConnection(sourceEndpointUuid, targetEndpointUuid) {
     });
 }
 
+function detachConnection(sourceEndpointUuid, targetEndpointUuid) {
+    // TODO - find way to retrieve specific connections based on the UUIDs
+    var cons = jsPlumb.getConnections("*");
+    for (i=0; i<cons.length; i++) {
+        var c = cons[i];
+        if (c.endpoints[0].getUuid() === sourceEndpointUuid && c.endpoints[1].getUuid() === targetEndpointUuid) {
+            jsPlumb.detach(c, {fireEvent:false, forceDetach:true});
+            break;
+        }
+    }
+}
+
 function initJsPlumb() {
     jsPlumb.setContainer($('#plumbContainer'));
 
-    jsPlumb.bind("beforeDrop", function (i, c) {
+    jsPlumb.bind("beforeDrop", function (i) {
         var sourceId = i.connection.endpoints[0].getUuid();
         var targetId = i.dropEndpoint.getUuid();
         onNotebookCanvasNewConnection(sourceId, targetId);
+        return false;
+    });
+
+    jsPlumb.bind("beforeDetach", function (c) {
+        var sourceId = c.endpoints[0].getUuid();
+        var targetId = c.endpoints[1].getUuid();
+        onNotebookCanvasDetachConnection(sourceId, targetId);
         return false;
     });
 }

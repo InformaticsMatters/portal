@@ -47,4 +47,9 @@ public class BindingInstance implements Serializable {
     public void setBindingDefinition(BindingDefinition bindingDefinition) {
         this.bindingDefinition = bindingDefinition;
     }
+
+    @Override
+    public String toString() {
+        return "BindingInstance [" + getName() + " " + variableInstance + "]";
+    }
 }

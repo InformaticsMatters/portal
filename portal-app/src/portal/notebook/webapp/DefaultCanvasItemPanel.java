@@ -189,14 +189,14 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
-        super.processCellChanged(changedCellId, ajaxRequestTarget);
+    public void processCellChanged(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        super.processCellChanged(evt, ajaxRequestTarget);
         boolean refresh = false;
         for (int i = 0; i < optionListView.size(); i++) {
             ListItem listItem = (ListItem) optionListView.get(i);
             FieldEditorPanel fieldEditorPanel = (FieldEditorPanel) listItem.get(0);
             try {
-                if (fieldEditorPanel.processCellChanged(changedCellId, ajaxRequestTarget)) {
+                if (fieldEditorPanel.processCellChanged(evt.getSourceCellId(), ajaxRequestTarget)) {
                     refresh = true;
                 }
             } catch (Throwable t) {
@@ -209,6 +209,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             ajaxRequestTarget.add(this);
         }
     }
+
 
     class OptionUploadCallback implements FileFieldEditorPanel.Callback {
         private final OptionInstance optionInstance;

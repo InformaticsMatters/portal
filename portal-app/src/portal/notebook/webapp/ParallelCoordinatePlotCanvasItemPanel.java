@@ -137,7 +137,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
                 saveNotebook();
 
-                notifyOptionBindingChanged(OPTION_SELECTED_IDS, target);
+                notifyOptionValuesChanged(OPTION_SELECTED_IDS, target);
                 updateAndNotifyCellStatus(target);
             }
         };
@@ -182,9 +182,9 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
-        super.processCellChanged(changedCellId, ajaxRequestTarget);
-        if (doesCellChangeRequireRefresh(changedCellId, CellDefinition.VAR_NAME_INPUT)) {
+    public void processCellChanged(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        super.processCellChanged(evt, ajaxRequestTarget);
+        if (doesCellChangeRequireRefresh(evt)) {
             invalidatePlotData();
             onExecute();
         }

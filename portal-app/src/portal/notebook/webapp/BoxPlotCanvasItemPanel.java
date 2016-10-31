@@ -102,9 +102,9 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
-        super.processCellChanged(changedCellId, ajaxRequestTarget);
-        if (doesCellChangeRequireRefresh(changedCellId, CellDefinition.VAR_NAME_INPUT)) {
+    public void processCellChanged(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        super.processCellChanged(evt, ajaxRequestTarget);
+        if (doesCellChangeRequireRefresh(evt)) {
             invalidatePlotData();
             onExecute();
         }

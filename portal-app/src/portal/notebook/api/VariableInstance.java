@@ -39,4 +39,8 @@ public class VariableInstance implements Serializable {
         return cellId + "." + variableDefinition.getName();
     }
 
+    @Override
+    public String toString() {
+        return "VariableInstance [cellId: " + getCellId() + " " + variableDefinition + "]";
+    }
 }

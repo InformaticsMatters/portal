@@ -389,12 +389,12 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
                 final ValueCollector collector2 = collector1;
 
                 LOG.info("Generating JSON for " + plotData.size() + " elements");
-                Stream<Map> items = plotData.entrySet().stream().sequential()
+                Stream<Map<String,Object>> items = plotData.entrySet().stream().sequential()
                         .map((e) -> {
-                            Map m = new LinkedHashMap();
+                            Map<String,Object> m = new LinkedHashMap<>();
                             int r = rowNames.indexOf(e.getKey().row.toString());
                             int c = colNames.indexOf(e.getKey().col.toString());
-                            List values = e.getValue();
+                            List<Object> values = e.getValue();
                             //LOG.info("Handling: " + e.getKey().row + "/" + r + "," + e.getKey().col + "/" + c + " -> " + (values == null ? "null" : values.size()));
                             if (r < 0 || c < 0) {
                                 return null;

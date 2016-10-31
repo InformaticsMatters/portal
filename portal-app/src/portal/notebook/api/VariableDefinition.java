@@ -58,4 +58,8 @@ public class VariableDefinition implements Serializable {
         this.displayName = displayName;
     }
 
+    @Override
+    public String toString() {
+        return "VariableDefinition [name: " + name + " type: " + variableType + "]";
+    }
 }

@@ -64,20 +64,13 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
-        super.processCellChanged(changedCellId, ajaxRequestTarget);
-        try {
-            CellInstance cellInstance = findCellInstance();
-            BindingInstance binding = cellInstance.getBindingInstanceMap().get("input");
-            if (binding.getVariableInstance() != null && binding.getVariableInstance().getCellId().equals(changedCellId)) {
-                load();
-                ajaxRequestTarget.add(this);
-            }
-        } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error loading data", t);
-            notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
-        }
+    public void processCellChanged(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        super.processCellChanged(evt, ajaxRequestTarget);
 
+        if (doesCellChangeRequireRefresh(evt)) {
+            load();
+            ajaxRequestTarget.add(this);
+        }
     }
 
     private void addForm() {
@@ -138,7 +131,8 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         notebookSession.writeMoleculeValue(variableInstance, moleculeObject);
         notebookSession.storeCurrentEditable();
         AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        cellChangeManager.notifyVariableChanged(getCellId(), variableInstance.getVariableDefinition().getName(), target);
+        CellChangeEvent.DataValues evt = new CellChangeEvent.DataValues(getCellId(), variableInstance.getVariableDefinition().getName(), null);
+        cellChangeManager.notifyDataValuesChanged(evt, target);
     }
 
     @Override

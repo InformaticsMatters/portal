@@ -95,10 +95,11 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         makeCanvasItemResizable(container, "fitScatterPlot", 300, 200);
     }
 
+
     @Override
-    public void processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
-        super.processCellChanged(changedCellId, ajaxRequestTarget);
-        if (doesCellChangeRequireRefresh(changedCellId, CellDefinition.VAR_NAME_INPUT)) {
+    public void processCellChanged(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        super.processCellChanged(evt, ajaxRequestTarget);
+        if (doesCellChangeRequireRefresh(evt)) {
             invalidatePlotData();
             onExecute();
         }
@@ -194,7 +195,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
                 saveNotebook();
 
-                notifyOptionBindingChanged(OPTION_SELECTED_IDS, target);
+                notifyOptionValuesChanged(OPTION_SELECTED_IDS, target);
                 updateAndNotifyCellStatus(target);
             }
         };
@@ -216,9 +217,9 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
-            Dataset<? extends BasicObject> dataset = (readDataset ? notebookSession.squonkDataset(variableInstance) : null);
 
             if (variableInstance != null) {
+                Dataset<? extends BasicObject> dataset = readDataset ? notebookSession.squonkDataset(variableInstance) : null;
                 DatasetMetadata meta = dataset == null ? notebookSession.squonkDatasetMetadata(variableInstance) : dataset.getMetadata();
                 String colorMode = null;
                 // TODO - improve how the color mode is determined as some types could be handled as categorical or continuous.

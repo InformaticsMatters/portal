@@ -39,7 +39,6 @@ public class CellTitleBarPanel extends Panel {
 
     private final Long cellId;
     private final CallbackHandler callbackHandler;
-    private BindingsPopupPanel bindingsPopupPanel;
     private AdvancedPopupPanel advancedPopupPanel;
     private MultiLineLabel descriptionLabel;
     private IndicatingAjaxSubmitLink submitLink;
@@ -93,8 +92,6 @@ public class CellTitleBarPanel extends Panel {
 
     private void addControls(CellInstance cellInstance) {
         add(new Label("cellName", cellInstance.getName()));
-
-        bindingsPopupPanel = new BindingsPopupPanel("content", cellInstance);
 
         AjaxLink advancedLink = new AjaxLink("advanced") {
 
@@ -240,19 +237,6 @@ public class CellTitleBarPanel extends Panel {
             }
         });
 
-        form.add(new AjaxSubmitLink("bindingsButton") {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                LOG.fine("Editing bindings");
-                try {
-                    onBindingsLinkClicked(this, target);
-                } catch (Throwable t) {
-                    LOG.log(Level.WARNING, "Error removing cell", t);
-                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
-                }
-            }
-        });
-
         form.add(new AjaxSubmitLink("deleteButton") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -294,16 +278,6 @@ public class CellTitleBarPanel extends Panel {
                         " .ui.dropdown').dropdown({action: 'hide', onChange: function(value, text) {" +
                         "applyCellMenuAction('" + getParent().getMarkupId() + "', value);" +
                         "}})"));
-    }
-
-    private void onBindingsLinkClicked(AbstractLink link, AjaxRequestTarget ajaxRequestTarget) {
-        popupContainerProvider.setPopupContentForPage(getPage(), bindingsPopupPanel);
-        popupContainerProvider.refreshContainer(getPage(), ajaxRequestTarget);
-        String js = "$('#:link')" +
-                ".popup({simetriasPatch: true, popup: $('#:content').find('.ui.bindingsPopup.popup'), on : 'click'})" +
-                ".popup('toggle').popup('destroy')";
-        js = js.replace(":link", link.getMarkupId()).replace(":content", bindingsPopupPanel.getMarkupId());
-        ajaxRequestTarget.appendJavaScript(js);
     }
 
     private void onAdvancedLinkClicked(AjaxLink link, AjaxRequestTarget ajaxRequestTarget) {
