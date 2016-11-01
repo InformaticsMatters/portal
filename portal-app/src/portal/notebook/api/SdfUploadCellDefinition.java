@@ -25,7 +25,7 @@ public class SdfUploadCellDefinition extends CellDefinition {
         super(CELL_NAME, "SDF upload", "icons/file_upload_molecule.png", new String[]{"file", "upload", "sdf"});
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
         getVariableDefinitionList().add(variableDefinition);
-        variableDefinition = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);
+        variableDefinition = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_MOLS);
         getVariableDefinitionList().add(variableDefinition);
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"sdf"}), OPT_FILE_UPLOAD, "SD File", "Upload SD file", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(

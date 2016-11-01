@@ -36,10 +36,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         VariableDefinition variableDefinition = new VariableDefinition();
         variableDefinition.setName("selection");
@@ -66,7 +63,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
 
         // these ones are the options that appear in the advanced options dialog
@@ -107,10 +104,8 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.FILE);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STREAM);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_MOLS);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         return cellDefinition;
     }
@@ -120,7 +115,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
@@ -145,7 +140,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
@@ -188,7 +183,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         BindingDefinition bindingDefinition = new BindingDefinition();
         bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET);
+        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_ROWS_FIELD,

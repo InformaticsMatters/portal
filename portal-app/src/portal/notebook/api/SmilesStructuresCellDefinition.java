@@ -21,7 +21,7 @@ public class SmilesStructuresCellDefinition extends CellDefinition {
 
     public SmilesStructuresCellDefinition() {
         super(CELL_NAME, "Read structures from smiles", "icons/molecules.png", new String[]{"smiles", "dataset"});
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_MOLS));
         getOptionDefinitionList().add(new OptionDescriptor<>(new MultiLineTextTypeDescriptor(10, 80, MultiLineTextTypeDescriptor.MIME_TYPE_TEXT_PLAIN),
                 OPTION_SMILES, "Smiles",
                 "Smiles as text, with optional name", Mode.User));

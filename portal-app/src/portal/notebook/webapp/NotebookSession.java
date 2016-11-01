@@ -222,7 +222,7 @@ public class NotebookSession implements Serializable {
 
     public IDatasetDescriptor loadDatasetFromVariable(VariableInstance variableInstance) throws Exception {
         VariableType variableType = variableInstance.getVariableDefinition().getVariableType();
-        if (variableType.equals(VariableType.DATASET)) {
+        if (variableType.equals(VariableType.DATASET_MOLS)) {
             return loadDatasetFromDatasetVariable(variableInstance);
         } else if (variableType.equals(VariableType.FILE)) {
             return loadDatasetFromFileVariable(variableInstance);

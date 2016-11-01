@@ -25,6 +25,7 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.squonk.jobdef.JobStatus;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.options.TypeDescriptor;
 import portal.FooterPanel;
 import portal.MenuPanel;
 import portal.PopupContainerProvider;
@@ -41,6 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author simetrias
@@ -871,23 +873,51 @@ public class NotebookCanvasPage extends WebPage {
         StringBuilder stringBuilder = new StringBuilder();
         for (VariableInstance variableInstance : cellInstance.getVariableInstanceMap().values()) {
             String endpointId = itemId + "-" + variableInstance.getVariableDefinition().getName();
-            stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + variableInstance.getVariableDefinition().getName() + "');");
+            stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + buildDataEndpointText(variableInstance.getVariableDefinition()) + "');");
         }
         for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
             String endpointId = itemId + "-" + bindingInstance.getName();
-            stringBuilder.append("addTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + bindingInstance.getName() + "');");
+            stringBuilder.append("addTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + buildDataEndpointText(bindingInstance) + "');");
         }
         for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
             if (optionInstance.getOptionDescriptor().isMode(OptionDescriptor.Mode.Output)) {
-                String endpointId = itemId + "-" + optionInstance.getOptionDescriptor().getKey(); // temporarily using key as id
-                stringBuilder.append("addOptionSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + optionInstance.getOptionDescriptor().getLabel() + "');");
+                String endpointId = itemId + "-" + optionInstance.getOptionDescriptor().getKey();
+                stringBuilder.append("addOptionSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + buildOptionEndpointText(optionInstance.getOptionDescriptor()) + "');");
             }
         }
         for (OptionBindingInstance optionBindingInstance : cellInstance.getOptionBindingInstanceMap().values()) {
             String endpointId = itemId + "-" + optionBindingInstance.getKey();
-            stringBuilder.append("addOptionTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + optionBindingInstance.getName() + "');");
+            stringBuilder.append("addOptionTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + buildOptionEndpointText(optionBindingInstance) + "');");
         }
         return stringBuilder.toString();
+    }
+
+    private String buildDataEndpointText(BindingInstance bindingInstance) {
+        return String.format("%s[%s]", bindingInstance.getName(), bindingInstance.getBindingDefinition().getAcceptedVariableTypeList().stream().map(t -> buildTypeFromVariableType(t)).collect(Collectors.joining(",")));
+    }
+
+    private String buildDataEndpointText(VariableDefinition variableDefinition) {
+        return String.format("%s[%s]", variableDefinition.getName(), buildTypeFromVariableDefinition(variableDefinition));
+    }
+
+    private String buildOptionEndpointText(OptionBindingInstance bindingInstance) {
+        return String.format("%s[%s]", bindingInstance.getName(), buildTypeFromTypeDescriptor(bindingInstance.getOptionBindingDefinition().getOptionDescriptor().getTypeDescriptor()));
+    }
+
+    private String buildOptionEndpointText(OptionDescriptor optionDescriptor) {
+        return String.format("%s[%s]", optionDescriptor.getLabel(), buildTypeFromTypeDescriptor(optionDescriptor.getTypeDescriptor()));
+    }
+
+    private String buildTypeFromTypeDescriptor(TypeDescriptor td) {
+        return td.getType().getSimpleName();
+    }
+
+    private String buildTypeFromVariableType(VariableType vt) {
+        return vt.getName();
+    }
+
+    private String buildTypeFromVariableDefinition(VariableDefinition vd) {
+        return buildTypeFromVariableType(vd.getVariableType());
     }
 
     public void notifyMessage(String title, String message) {

@@ -265,10 +265,10 @@ public class CxnReactorCellDefinition extends CellDefinition {
     public CxnReactorCellDefinition() {
         super(CELL_NAME, "Reaction enumeration", "icons/molecule_generator.png", new String[]{"enumeration", "reaction", "library", "dataset"});
 
-        getBindingDefinitionList().add(new BindingDefinition(INPUT_R1, "Reactants 1", VariableType.DATASET));
-        getBindingDefinitionList().add(new BindingDefinition(INPUT_R2, "Reactants 2", VariableType.DATASET));
+        getBindingDefinitionList().add(new BindingDefinition(INPUT_R1, "Reactants 1", VariableType.DATASET_MOLS));
+        getBindingDefinitionList().add(new BindingDefinition(INPUT_R2, "Reactants 2", VariableType.DATASET_MOLS));
 
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_MOLS));
 
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, CxnReactor.OPTION_REACTION, "Reaction", "Reaction from the ChemAxon reaction library", Mode.User)
             .withValues(REACTIONS)

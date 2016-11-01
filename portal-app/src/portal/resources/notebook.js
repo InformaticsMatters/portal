@@ -343,7 +343,6 @@ var optionTargetEndpointOptions = {
 
 function addSourceEndpoint(itemId, endpointId, labelText) {
     var sourceEndpoint = jsPlumb.addEndpoint(itemId, sourceEndpointOptions, {uuid: endpointId});
-
     sourceEndpoint.bind("mouseover", function(sourceEndpoint) {
         sourceEndpoint.addOverlay(["Label", {label: labelText, id: "label", location: [1.5, 1.5]}]);
     });

@@ -73,7 +73,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             for (VariableDefinition varDef : varDefs) {
                 String name = varDef.getName();
                 VariableType type = varDef.getVariableType();
-                if (type == VariableType.DATASET) {
+                if (VariableType.DATASET_ANY.supports(VariableType.DATASET_MOLS)) {
                     resultsHandler = new DatasetResultsHandler(name, notebookSession, structureIOClient, cellInstance.getId());
                     return;
                 }

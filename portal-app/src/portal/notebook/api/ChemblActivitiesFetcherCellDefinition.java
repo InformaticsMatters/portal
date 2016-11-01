@@ -22,7 +22,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
 
     public ChemblActivitiesFetcherCellDefinition() {
         super(CELL_NAME, "ChEMBL activities fetcher", "icons/import_external_service.png", new String[]{"chembl", "assay", "rest"});
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_MOLS));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_ASSAY_ID, "Assay ID", "ChEMBL Asssay ID", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_PREFIX, "Prefix", "Prefix for result fields", Mode.User));
 

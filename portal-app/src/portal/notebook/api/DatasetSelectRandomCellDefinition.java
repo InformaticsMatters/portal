@@ -21,8 +21,8 @@ public class DatasetSelectRandomCellDefinition extends CellDefinition {
 
     public DatasetSelectRandomCellDefinition() {
         super(CELL_NAME, "Generate a slice of the dataset", "icons/filter.png", new String[]{"filter", "random", "dataset"});
-        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET_ANY));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_ANY));
         getOptionDefinitionList().add(new OptionDescriptor<>(Float.class, OPTION_RANDOM, "Random fraction", "The fraction or records to randomly select (between 0 and 1, default 0.001)", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(Integer.class, OPTION_COUNT, "Max records", "The max number of records to include, default 1000", Mode.User));
     }

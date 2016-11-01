@@ -13,7 +13,6 @@ import portal.notebook.api.VariableType;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,7 +48,7 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
         boolean first = true;
         for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
-            if (variableInstance != null && variableInstance.getVariableDefinition().getVariableType().equals(VariableType.DATASET)) {
+            if (variableInstance != null && variableInstance.getVariableDefinition().getVariableType().equals(VariableType.DATASET_MOLS)) {
                 Set<String> fieldNames = extractFieldNames(variableInstance);
                 if (first) {
                     picklistItems.addAll(fieldNames);

@@ -26,7 +26,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
         super(CELL_NAME, "CSV upload", "icons/file_upload_basic.png", new String[]{"file", "upload", "csv", "tab"});
         VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VAR_DISPLAYNAME_FILECONTENT, VariableType.FILE);
         getVariableDefinitionList().add(variableDefinition);
-        variableDefinition  = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET);
+        variableDefinition  = new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_BASIC);
         getVariableDefinitionList().add(variableDefinition);
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"csv", "tab", "txt"}),
                 OPT_FILE_UPLOAD, "CSV/TAB File", "Upload comma or tab separated text file", Mode.User));

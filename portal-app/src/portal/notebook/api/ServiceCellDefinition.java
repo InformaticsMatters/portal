@@ -6,6 +6,8 @@ import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
+import org.squonk.types.BasicObject;
+import org.squonk.types.MoleculeObject;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Map;
@@ -29,10 +31,23 @@ public class ServiceCellDefinition extends CellDefinition {
         setExecutable(Boolean.TRUE);
         if (findOptionDescriptorForBody() == null) {
             // if one of the options is defined as the body then we don't want an input endpoint
-            getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET));
+            getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, determineVariableType(serviceDescriptor.getInputType(), serviceDescriptor.getInputClass())));
         }
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, determineVariableType(serviceDescriptor.getOutputType(), serviceDescriptor.getOutputClass())));
         LOG.info("Creating service cell " + serviceDescriptor.getName() + " with icon " + serviceDescriptor.getIcon());
+    }
+
+    private VariableType determineVariableType(ServiceDescriptor.DataType dataType, Class cls) {
+        if (dataType == ServiceDescriptor.DataType.STREAM) {
+            if (cls == MoleculeObject.class) {
+                return VariableType.DATASET_MOLS;
+            } else if (cls == BasicObject.class) {
+                return VariableType.DATASET_BASIC;
+            }
+        }
+
+        // this shouldn't happen
+        return VariableType.DATASET_ANY;
     }
 
     private OptionDescriptor findOptionDescriptorForBody() {
