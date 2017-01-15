@@ -2,6 +2,7 @@ package portal.notebook.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.core.ServiceConfig;
 import org.squonk.core.ServiceDescriptor;
 import org.squonk.core.client.ServicesClient;
 import org.squonk.options.OptionDescriptor;
@@ -27,34 +28,27 @@ public class RestServiceCellsProvider implements ServiceCellsProvider {
     @Override
     public List<ServiceCellDefinition> listServiceCellDefinition() {
         ArrayList<ServiceCellDefinition> result = new ArrayList<>();
-        for (ServiceDescriptor serviceDescriptor : listServiceDescriptors()) {
-            result.add(buildCellDefinitionForServiceDescriptor(serviceDescriptor));
+        for (ServiceConfig serviceConfig : listServiceConfigss()) {
+            result.add(buildCellDefinitionForServiceDescriptor(serviceConfig));
         }
         return result;
     }
 
-    private List<ServiceDescriptor> listServiceDescriptors() {
+    private List<ServiceConfig> listServiceConfigss() {
         ServicesClient servicesClient = new ServicesClient();
-        List<ServiceDescriptor> serviceDescriptors;
+        List<ServiceConfig> serviceConfigs;
         try {
-            serviceDescriptors = servicesClient.getServiceDescriptors(sessionContext.getLoggedInUserDetails().getUserid());
+            serviceConfigs = servicesClient.getServiceConfigs(sessionContext.getLoggedInUserDetails().getUserid());
         } catch (Throwable e) {
-            serviceDescriptors = new ArrayList<>();
+            serviceConfigs = new ArrayList<>();
             logger.error(null, e);
         }
-        return serviceDescriptors;
+        return serviceConfigs;
     }
 
-    private ServiceCellDefinition buildCellDefinitionForServiceDescriptor(ServiceDescriptor serviceDescriptor) {
-        ServiceCellDefinition result = new ServiceCellDefinition(serviceDescriptor);
-        OptionDescriptor[] options = serviceDescriptor.getOptions();
-        if (options != null) {
-            logger.info(options.length + " parameters found for service " + serviceDescriptor.getName());
-            for (OptionDescriptor option : options) {
-                logger.info("property type: " + option.getTypeDescriptor().getType());
-                result.getOptionDefinitionList().add(option);
-            }
-        }
+    private ServiceCellDefinition buildCellDefinitionForServiceDescriptor(ServiceConfig serviceConfig) {
+        ServiceCellDefinition result = new ServiceCellDefinition(serviceConfig);
         return result;
     }
+
 }

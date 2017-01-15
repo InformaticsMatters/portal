@@ -2,14 +2,14 @@ package portal.notebook.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squonk.core.ServiceDescriptor;
-import org.squonk.core.ServiceDescriptor.DataType;
+import org.squonk.core.ServiceConfig;
+import org.squonk.io.IODescriptor;
+import org.squonk.io.IODescriptors;
 import org.squonk.options.DatasetFieldTypeDescriptor;
 import org.squonk.options.FieldActionTypeDescriptor;
 import org.squonk.options.MoleculeTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
-import org.squonk.types.MoleculeObject;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
@@ -23,51 +23,61 @@ import java.util.List;
 @Alternative
 public class MockServiceCellsProvider implements ServiceCellsProvider {
 
-    public static final ServiceDescriptor[] MOCK_SERVICE_DESCRIPTORS = new ServiceDescriptor[]{
-            new ServiceDescriptor(
+    /*
+            String id,
+            String name,
+            String description,
+            String[] tags,
+            String resourceUrl,
+            String icon,
+            Class inputClass,
+            Class outputClass,
+            IODescriptor.DataType inputType,
+            IODescriptor.DataType outputType,
+            OptionDescriptor[] options,
+            ServiceConfig.Status status,
+            Date statusLastChecked
+            String executorClassName
+     */
+
+    public static final ServiceConfig[] MOCK_SERVICE_DESCRIPTORS = new ServiceConfig[]{
+            new ServiceConfig(
                     "mock.nooptions", // key
-                    "Simple no options", // name
-                    "Simple no options", // description
+                    "Simple no options name", // name
+                    "Simple no options desc", // description
                     new String[]{"tag1", "tag2", "tag3"}, // tags for searching
-                    null, // resource URL e.g. wiki page that describes the service
-                    MoleculeObject.class, // inputClass
-                    MoleculeObject.class, // outputClass
-                    DataType.STREAM, // inputTypes
-                    DataType.STREAM, // outputTypes
+                    "http://some.where/docs", // resource URL e.g. wiki page that describes the service
                     "default_icon.png",
-                    "http://www.somewhere.com/logp", // endpoint
-                    false, // URL is relative
-                    null, null),
-            new ServiceDescriptor(
+                    new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("input")},
+                    new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("output")},
+                    null, // options
+                    null, null, // status
+                    "executor.class.Name"
+            ),
+            new ServiceConfig(
                     "mock.clustering",
                     "Mock clustering",
                     "Mock clustering with 2 integer options",
                     new String[]{"tag2", "tag4", "tag6"},
-                    null,
-                    MoleculeObject.class, // inputClass
-                    MoleculeObject.class, // outputClass
-                    DataType.STREAM, // inputTypes
-                    DataType.STREAM, // outputTypes
+                    "http://some.where/docs",
                     "default_icon.png",
-                    "http://www.somewhere.com/clustering", // endpoint
-                    false, // URL is relative
+                    new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("input")},
+                    new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("output")},
                     new OptionDescriptor[]{
                             new OptionDescriptor<>(Integer.class, "header.min_clusters", "Min clusters", "Minimum number of clusters to generate", Mode.User).withDefaultValue(5),
                             new OptionDescriptor<>(Integer.class, "header.max_clusters", "Max clusters", "Maximum number of clusters to generate", Mode.User).withDefaultValue(10)
-                    }, null),
-            new ServiceDescriptor(
+                    },
+                    null, null, // status
+                    "executor.class.Name"),
+            new ServiceConfig(
                     "mock.screening",
                     "Mock screening",
                     "Mock screening with molecule and float and pick list options",
                     new String[]{"tag1", "tag3", "tag5"},
-                    null,
-                    MoleculeObject.class, // inputClass
-                    MoleculeObject.class, // outputClass
-                    DataType.STREAM, // inputTypes
-                    DataType.STREAM, // outputTypes
+                    "http://some.where/docs",
                     "default_icon.png",
-                    "http://www.somewhere.com/screening", // endpoint
-                    false, // URL is relative
+                    new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("input")},
+                    new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("output")},
                     new OptionDescriptor[]{
                             new OptionDescriptor<>(new MoleculeTypeDescriptor(MoleculeTypeDescriptor.MoleculeType.DISCRETE, new String[]{"smiles"}),
                                     "header.query_structure", "Query Structure", "Structure to us as the query", Mode.User),
@@ -76,20 +86,19 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                             new OptionDescriptor<>(String.class, "header.descriptor", "descriptor", "Molecular descriptor", Mode.User)
                                     .withValues(new String[]{"Chemical hashed fingerprint", "ECFP4"})
                                     .withDefaultValue("ECFP4")
-                    }, null),
-            new ServiceDescriptor(
+                    },
+                    null, null, // status
+                    "executor.class.Name"
+            ),
+            new ServiceConfig(
                     "mock.deduplication",
                     "Mock deduplication",
                     "Mock deduplication with filed pick list options",
                     new String[]{"tag1", "tag3", "tag5"},
-                    null,
-                    MoleculeObject.class, // inputClass
-                    MoleculeObject.class, // outputClass
-                    DataType.STREAM, // inputTypes
-                    DataType.STREAM, // outputTypes
+                    "http://some.where/docs",
                     "default_icon.png",
-                    "http://www.somewhere.com/screening", // endpoint
-                    false, // URL is relative
+                    new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("input")},
+                    new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("output")},
                     new OptionDescriptor[]{
                             new OptionDescriptor<>(new DatasetFieldTypeDescriptor(new Class[]{String.class}),
                                     "cansmiles", "Canonical smiles field", "File with canonical smiles that identifies identical structures", Mode.User),
@@ -105,31 +114,24 @@ public class MockServiceCellsProvider implements ServiceCellsProvider {
                             new OptionDescriptor<>(new FieldActionTypeDescriptor(new String[]{"First", "Last", "Min", "Max", "Append", "Distinct"}),
                                     "fieldHandling", "Field handling", "How to handle the individual fields", Mode.User)
                                     .withMinMaxValues(1, 1)
-
-                    }, null)
+                    },
+                    null, null, // status
+                    "executor.class.Name"
+            )
     };
     private static final Logger logger = LoggerFactory.getLogger(MockServiceCellsProvider.class);
 
     @Override
     public List<ServiceCellDefinition> listServiceCellDefinition() {
         List<ServiceCellDefinition> result = new ArrayList<>();
-        for (ServiceDescriptor serviceDescriptor : MOCK_SERVICE_DESCRIPTORS) {
-            result.add(buildCellDefinitionForServiceDescriptor(serviceDescriptor));
+        for (ServiceConfig serviceConfig : MOCK_SERVICE_DESCRIPTORS) {
+            result.add(buildCellDefinitionForServiceDescriptor(serviceConfig));
         }
         return result;
     }
 
-    private ServiceCellDefinition buildCellDefinitionForServiceDescriptor(ServiceDescriptor serviceDescriptor) {
-        ServiceCellDefinition result = new ServiceCellDefinition(serviceDescriptor);
-        OptionDescriptor[] options = serviceDescriptor.getOptions();
-        if (options != null) {
-            logger.info(options.length + " parameters found for service " + serviceDescriptor.getName());
-            for (OptionDescriptor option : options) {
-                logger.info("property type: " + option.getTypeDescriptor().getType());
-                result.getOptionDefinitionList().add(option);
-            }
-        }
-
+    private ServiceCellDefinition buildCellDefinitionForServiceDescriptor(ServiceConfig serviceConfig) {
+        ServiceCellDefinition result = new ServiceCellDefinition(serviceConfig);
         return result;
     }
 }

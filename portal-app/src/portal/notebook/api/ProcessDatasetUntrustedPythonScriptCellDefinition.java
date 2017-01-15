@@ -19,8 +19,8 @@ public class ProcessDatasetUntrustedPythonScriptCellDefinition extends CellDefin
 
     public ProcessDatasetUntrustedPythonScriptCellDefinition() {
         super(CELL_NAME, "Python Script (untrusted)", "icons/program.png", new String[]{"script", "python", "dataset", "docker", "programming"});
-        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET_ANY));
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_ANY));
+        getBindingDefinitionList().add(new BindingDefinition("input", VariableType.DATASET_ANY));
+        getVariableDefinitionList().add(new VariableDefinition("output", VariableType.DATASET_ANY));
         getOptionDefinitionList().add(new OptionDescriptor<>(
                 new MultiLineTextTypeDescriptor(20, 60, MultiLineTextTypeDescriptor.MIME_TYPE_SCRIPT_GROOVY),
                 "script", "Python Script", "Python script to execute", Mode.User));

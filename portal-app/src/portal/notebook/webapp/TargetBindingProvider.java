@@ -19,7 +19,7 @@ public class TargetBindingProvider extends TextChoiceProvider<BindingInstance> {
 
     @Override
     protected String getDisplayText(BindingInstance bindingModel) {
-        return bindingModel.getDisplayName();
+        return bindingModel.getName();
     }
 
     @Override

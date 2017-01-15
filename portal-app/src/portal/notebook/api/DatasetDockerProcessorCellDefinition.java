@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import org.squonk.io.IODescriptor;
 import org.squonk.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
@@ -31,8 +32,8 @@ public class DatasetDockerProcessorCellDefinition extends CellDefinition impleme
 
     public DatasetDockerProcessorCellDefinition() {
         super(CELL_NAME, "Process dataset using Docker container", "icons/program.png", new String[]{"program", "code", "dataset", "docker"});
-        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET_MOLS));
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_MOLS));
+        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VariableType.DATASET_MOLS));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VariableType.DATASET_MOLS));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPTION_DOCKER_IMAGE,
                 "Docker image name", "The name of the Docker image to use", Mode.User)
                 .withMinMaxValues(1,1));
@@ -139,7 +140,8 @@ public class DatasetDockerProcessorCellDefinition extends CellDefinition impleme
 
             LOG.info("Docker cell using variables " + inputVarName + " and " + outputVarName);
 
-            return buildJobDefinition(cellExecutionData, cellInstance, steps.toArray(new StepDefinition[steps.size()]));
+            // TODO - fix this or replace with better cell
+            return buildJobDefinition(cellExecutionData, cellInstance, new IODescriptor[0], new IODescriptor[0], steps.toArray(new StepDefinition[steps.size()]));
         }
     }
 

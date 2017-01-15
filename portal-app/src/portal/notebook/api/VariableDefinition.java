@@ -8,21 +8,19 @@ public class VariableDefinition implements Serializable {
 
     private final static long serialVersionUID = 1L;
     private String name;
-    private String displayName;
     private VariableType variableType;
     private Object defaultValue;
 
     public VariableDefinition() {
     }
 
-    public VariableDefinition(String name, String displayName, VariableType variableType) {
+    public VariableDefinition(String name, VariableType variableType) {
         this.name = name;
         this.variableType = variableType;
-        this.displayName = displayName;
     }
 
-    public VariableDefinition(String name, String displayName, VariableType variableType, Object defaultValue) {
-        this(name, displayName, variableType);
+    public VariableDefinition(String name, VariableType variableType, Object defaultValue) {
+        this(name, variableType);
         this.defaultValue = defaultValue;
     }
 
@@ -48,14 +46,6 @@ public class VariableDefinition implements Serializable {
 
     public void setDefaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
-    }
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     @Override

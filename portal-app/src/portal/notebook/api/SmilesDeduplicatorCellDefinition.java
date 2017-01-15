@@ -19,8 +19,8 @@ public class SmilesDeduplicatorCellDefinition extends CellDefinition {
 
     public SmilesDeduplicatorCellDefinition() {
         super(CELL_NAME, "Deduplicate structures using canonical smiles field", "icons/program_filter.png", new String[]{"smiles", "deduplicate", "duplicate", "filter", "dataset"});
-        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET_MOLS));
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_MOLS));
+        getBindingDefinitionList().add(new BindingDefinition("input", VariableType.DATASET_MOLS));
+        getVariableDefinitionList().add(new VariableDefinition("output", VariableType.DATASET_MOLS));
         getOptionDefinitionList().add(new OptionDescriptor<>(new DatasetFieldTypeDescriptor(new Class[] {String.class}),
                        StepDefinitionConstants.SmilesDeduplicator.OPTION_CANONICAL_SMILES_FIELD,
                 "Canonical smiles field", "Field with canonical smiles that identifies identical structures", Mode.User)

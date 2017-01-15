@@ -2,6 +2,8 @@ package portal.notebook.api;
 
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.io.IODescriptor;
+import org.squonk.io.IODescriptors;
 import org.squonk.jobdef.JobDefinition;
 import org.squonk.notebook.api.VariableKey;
 
@@ -24,15 +26,18 @@ class SimpleJobCellExecutor extends AbstractJobCellExecutor {
     @Override
     protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
-        VariableKey key = createVariableKey(cell, CellDefinition.VAR_NAME_INPUT);
+        VariableKey key = createVariableKey(cell, "input");
+        IODescriptor[] inputs = IODescriptors.createMoleculeObjectDatasetArray("input");
+        IODescriptor[] outputs = IODescriptors.createMoleculeObjectDatasetArray("output");
 
         StepDefinition step = new StepDefinition(stepClassName)
-                .withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key)
-                .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, CellDefinition.VAR_NAME_OUTPUT);
+                .withInputs(inputs)
+                .withOutputs(outputs)
+                .withInputVariableMapping("input", key);
 
         handleOptions(step, cell);
 
-        return buildJobDefinition(cellExecutionData, cell, step);
+        return buildJobDefinition(cellExecutionData, cell, inputs, outputs, step);
     }
 
     /** Hook to allow option handling to be customised.

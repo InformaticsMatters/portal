@@ -269,7 +269,7 @@ public class NotebookSession implements Serializable {
     public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) throws Exception {
 
         String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
-        DatasetMetadata meta = JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
+        DatasetMetadata<MoleculeObject> meta = JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
         try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
             InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
             Dataset<MoleculeObject> dataset = new Dataset<>(MoleculeObject.class, gunzippedInputStream, meta);

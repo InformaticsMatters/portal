@@ -21,10 +21,7 @@ public abstract class CellDefinition implements Serializable {
 
     public static final String VAR_NAME_INPUT = "input";
     public static final String VAR_NAME_OUTPUT = "output";
-    public static final String VAR_NAME_FILECONTENT = "fileContent";
-    public static final String VAR_DISPLAYNAME_INPUT = "Input";
-    public static final String VAR_DISPLAYNAME_OUTPUT = "Output";
-    public static final String VAR_DISPLAYNAME_FILECONTENT = "File Content";
+    public static final String VAR_NAME_FILECONTENT = "fileContent";;
     private final static long serialVersionUID = 1L;
     private final List<BindingDefinition> bindingDefinitionList = new ArrayList<>();
     private final List<OptionBindingDefinition> optionBindingDefinitionList = new ArrayList<>();
@@ -58,13 +55,13 @@ public abstract class CellDefinition implements Serializable {
     public CellDefinition() {
     }
 
-    public CellDefinition withOutputVariable(String name, String description, VariableType variableType, Object defaultValue) {
-        this.variableDefinitionList.add(new VariableDefinition(name, description, variableType, defaultValue));
+    public CellDefinition withOutputVariable(String name, VariableType variableType, Object defaultValue) {
+        this.variableDefinitionList.add(new VariableDefinition(name, variableType, defaultValue));
         return this;
     }
 
-    public CellDefinition withOutputVariable(String name, String description, VariableType variableType) {
-        this.variableDefinitionList.add(new VariableDefinition(name, description, variableType));
+    public CellDefinition withOutputVariable(String name, VariableType variableType) {
+        this.variableDefinitionList.add(new VariableDefinition(name, variableType));
         return this;
     }
 

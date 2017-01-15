@@ -11,21 +11,17 @@ import java.util.List;
 public class BindingDefinition implements Serializable {
     private final static long serialVersionUID = 1l;
     private String name;
-    private String displayName;
     private final List<VariableType> acceptedVariableTypeList = new ArrayList<>();
 
     public BindingDefinition() {
     }
 
-    public BindingDefinition(String name, String displayName, VariableType... acceptedVariableTypes) {
+    public BindingDefinition(String name, VariableType... acceptedVariableTypes) {
         this.name = name;
-        this.displayName = displayName;
         if (acceptedVariableTypes != null) {
             this.acceptedVariableTypeList.addAll(Arrays.asList(acceptedVariableTypes));
         }
     }
-
-
 
     public String getName() {
         return this.name;
@@ -33,14 +29,6 @@ public class BindingDefinition implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public List<VariableType> getAcceptedVariableTypeList() {

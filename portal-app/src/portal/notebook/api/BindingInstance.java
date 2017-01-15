@@ -17,11 +17,6 @@ public class BindingInstance implements Serializable {
         return bindingDefinition.getName();
     }
 
-    @JsonIgnore
-    public String getDisplayName() {
-        return bindingDefinition.getDisplayName();
-    }
-
     public VariableInstance getVariableInstance() {
         return variableInstance;
     }

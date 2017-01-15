@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import org.squonk.io.IODescriptor;
 import org.squonk.jobdef.ExecuteCellUsingStepsJobDefinition;
 import org.squonk.jobdef.JobDefinition;
 import org.squonk.jobdef.JobStatus;
@@ -84,6 +85,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
                 Structure converted = StructureFieldEditorPanel.convertMolecule(mol, mtd.getFormats());
                 if (converted != null) {
                     LOG.info("Converted mol to: " + converted.getFormat());
+                    LOG.info("Putting value " + key + " = " + converted.getSource());
                     mtd.putOptionValue(options, key, converted);
                 } else {
                     LOG.info("No converted molecule");
@@ -131,9 +133,27 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
      * @param steps
      * @return
      */
-    protected StepsCellExecutorJobDefinition buildJobDefinition(CellExecutionData cellExData, CellInstance cell, StepDefinition... steps) {
+    protected StepsCellExecutorJobDefinition buildJobDefinition(CellExecutionData cellExData, CellInstance cell, IODescriptor[] inputs, IODescriptor[] outputs, StepDefinition... steps) {
         StepsCellExecutorJobDefinition jobdef = new ExecuteCellUsingStepsJobDefinition();
-        jobdef.configureCellAndSteps(cellExData.getNotebookId(), cellExData.getEditableId(), cell.getId(), steps);
+        jobdef.configureCellAndSteps(cellExData.getNotebookId(), cellExData.getEditableId(), cell.getId(), inputs, outputs, steps);
+        return jobdef;
+    }
+
+    /** Build the JobDefinition using the specified StepDefinition(s) where there is just one input and one output
+     *
+     * @param cellExData
+     * @param cell
+     * @param input
+     * @param output
+     * @param steps
+     * @return
+     */
+    protected StepsCellExecutorJobDefinition buildJobDefinition(CellExecutionData cellExData, CellInstance cell, IODescriptor input, IODescriptor output, StepDefinition... steps) {
+        StepsCellExecutorJobDefinition jobdef = new ExecuteCellUsingStepsJobDefinition();
+        jobdef.configureCellAndSteps(cellExData.getNotebookId(), cellExData.getEditableId(), cell.getId(),
+                input == null ? null :new IODescriptor[] {input},
+                output == null ? null : new IODescriptor[] {output},
+                steps);
         return jobdef;
     }
 

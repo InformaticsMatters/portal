@@ -2,6 +2,8 @@ package portal.notebook.api;
 
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.io.IODescriptor;
+import org.squonk.io.IODescriptors;
 import org.squonk.jobdef.JobDefinition;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
@@ -22,7 +24,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
 
     public ChemblActivitiesFetcherCellDefinition() {
         super(CELL_NAME, "ChEMBL activities fetcher", "icons/import_external_service.png", new String[]{"chembl", "assay", "rest"});
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_MOLS));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VariableType.DATASET_MOLS));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_ASSAY_ID, "Assay ID", "ChEMBL Asssay ID", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_PREFIX, "Prefix", "Prefix for result fields", Mode.User));
 
@@ -38,12 +40,17 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
         @Override
         protected JobDefinition buildJobDefinition(CellInstance cellInstance, CellExecutionData cellExecutionData) {
 
+            IODescriptor[] outputs = IODescriptors.createMoleculeObjectDatasetArray("output");
+
             Map<String,Object> options = collectAllOptions(cellInstance);
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
+                    .withOutputs(outputs)
                     .withOptions(options);
 
-            return buildJobDefinition(cellExecutionData, cellInstance, step1);
+            return buildJobDefinition(cellExecutionData, cellInstance,
+                    null, // inputs
+                    outputs, // outputs
+                    step1);
         }
     }
 }

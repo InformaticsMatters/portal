@@ -1,9 +1,11 @@
 package portal.notebook.api;
 
-import org.squonk.jobdef.JobDefinition;
-import org.squonk.core.ServiceDescriptor;
+import org.squonk.core.ServiceConfig;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.io.IODescriptor;
+import org.squonk.io.IOMultiplicity;
+import org.squonk.jobdef.JobDefinition;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.types.BasicObject;
@@ -23,22 +25,40 @@ public class ServiceCellDefinition extends CellDefinition {
     private final static long serialVersionUID = 1l;
     private static final String SERVICE_ICON = "default_icon.png";
     private static final Logger LOG = Logger.getLogger(ServiceCellDefinition.class.getName());
-    private ServiceDescriptor serviceDescriptor;
+    private ServiceConfig serviceConfig;
     private static final String OPTION_BODY = StepDefinitionConstants.OPTION_BODY;
 
-    public ServiceCellDefinition(ServiceDescriptor serviceDescriptor) {
-        this.serviceDescriptor = serviceDescriptor;
+    public ServiceCellDefinition(ServiceConfig serviceConfig) {
+        LOG.info("Creating service cell " + serviceConfig.getName() + " with icon " + serviceConfig.getIcon());
+        this.serviceConfig = serviceConfig;
         setExecutable(Boolean.TRUE);
-        if (findOptionDescriptorForBody() == null) {
-            // if one of the options is defined as the body then we don't want an input endpoint
-            getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, determineVariableType(serviceDescriptor.getInputType(), serviceDescriptor.getInputClass())));
+        OptionDescriptor[] options = serviceConfig.getOptionDescriptors();
+        if (options != null) {
+            LOG.info(options.length + " options found for service " + serviceConfig.getName());
+            for (OptionDescriptor option : options) {
+                LOG.info("option: " + option.getLabel() + " type: " + option.getTypeDescriptor().getType());
+                getOptionDefinitionList().add(option);
+            }
         }
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, determineVariableType(serviceDescriptor.getOutputType(), serviceDescriptor.getOutputClass())));
-        LOG.info("Creating service cell " + serviceDescriptor.getName() + " with icon " + serviceDescriptor.getIcon());
+
+        // TODO - this check should be unnecessary once all services are defined correctly
+        // if one of the options is defined as the body then we don't want an input endpoint
+        if (findOptionDescriptorForBody() == null) {
+            for (IODescriptor input : serviceConfig.getInputDescriptors()) {
+                getBindingDefinitionList().add(new BindingDefinition(input.getName(), determineVariableType(input.getMultiplicity(), input.getPrimaryType())));
+            }
+        }
+
+        IODescriptor[] outputs = serviceConfig.getOutputDescriptors();
+        if (outputs != null && outputs.length > 0) {
+            for (IODescriptor output : serviceConfig.getOutputDescriptors()) {
+                getVariableDefinitionList().add(new VariableDefinition(output.getName(), determineVariableType(output.getMultiplicity(), output.getPrimaryType())));
+            }
+        }
     }
 
-    private VariableType determineVariableType(ServiceDescriptor.DataType dataType, Class cls) {
-        if (dataType == ServiceDescriptor.DataType.STREAM) {
+    private VariableType determineVariableType(IOMultiplicity multiplicity, Class cls) {
+        if (multiplicity == IOMultiplicity.ARRAY) {
             if (cls == MoleculeObject.class) {
                 return VariableType.DATASET_MOLS;
             } else if (cls == BasicObject.class) {
@@ -51,8 +71,8 @@ public class ServiceCellDefinition extends CellDefinition {
     }
 
     private OptionDescriptor findOptionDescriptorForBody() {
-        if (serviceDescriptor.getOptions() != null) {
-            for (OptionDescriptor od : serviceDescriptor.getOptions()) {
+        if (serviceConfig.getOptionDescriptors() != null) {
+            for (OptionDescriptor od : serviceConfig.getOptionDescriptors()) {
                 if (OPTION_BODY.equalsIgnoreCase(od.getKey())) {
                     return od;
                 }
@@ -61,8 +81,8 @@ public class ServiceCellDefinition extends CellDefinition {
         return null;
     }
 
-    public ServiceDescriptor getServiceDescriptor() {
-        return serviceDescriptor;
+    public ServiceConfig getServiceConfig() {
+        return serviceConfig;
     }
 
     @Override
@@ -72,12 +92,12 @@ public class ServiceCellDefinition extends CellDefinition {
 
     @Override
     public String getName() {
-        return serviceDescriptor.getName();
+        return serviceConfig.getName();
     }
 
     @Override
     public String getDescription() {
-        return serviceDescriptor.getDescription();
+        return serviceConfig.getDescription();
     }
 
     @Override
@@ -87,12 +107,12 @@ public class ServiceCellDefinition extends CellDefinition {
 
     @Override
     public String[] getTags() {
-        return serviceDescriptor.getTags();
+        return serviceConfig.getTags();
     }
 
     @Override
     public String getIcon() {
-        return serviceDescriptor.getIcon();
+        return serviceConfig.getIcon();
     }
 
     class Executor extends AbstractJobCellExecutor {
@@ -101,11 +121,9 @@ public class ServiceCellDefinition extends CellDefinition {
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
 
-            LOG.info("Building JobDefinition for service " + serviceDescriptor.getExecutionEndpoint());
+            LOG.info("Building JobDefinition for service " + serviceConfig.getId());
 
-            StepDefinition step = new StepDefinition(serviceDescriptor.getExecutorClassName())
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
-                    .withOption(OPT_SERVICE_ENDPOINT, serviceDescriptor.getExecutionEndpoint());
+            StepDefinition step = new StepDefinition(serviceConfig.getExecutorClassName(), serviceConfig.getId());
 
             Map<String, Object> options = collectAllOptions(cell);
 
@@ -117,14 +135,27 @@ public class ServiceCellDefinition extends CellDefinition {
                 step = step.withOption(OPTION_BODY, body);
             } else {
                 // only define an input binding if one of the options is not specified as the body
-                VariableKey key = createVariableKey(cell, VAR_NAME_INPUT);
-                if (key != null) {
-                    LOG.info("Using input variable " + key.getCellId() + ":" + key.getVariableName() + " as variable " + VAR_NAME_INPUT);
-                } else {
-                    LOG.info("Input variable " + VAR_NAME_INPUT + " not found");
+//                VariableKey key = createVariableKey(cell, VAR_NAME_INPUT);
+//                if (key != null) {
+//                    LOG.info("Using input variable " + key.getCellId() + ":" + key.getVariableName() + " as variable " + VAR_NAME_INPUT);
+//                } else {
+//                    LOG.info("Input variable " + VAR_NAME_INPUT + " not found");
+//                }
+                //step = step.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key);
+                for (IODescriptor iod : serviceConfig.getInputDescriptors()) {
+                    VariableKey key = createVariableKey(cell, iod.getName());
+                    if (key != null) {
+                        LOG.info("Using input variable " + key.getCellId() + ":" + key.getVariableName() + " as variable " + iod.getName());
+                    } else {
+                        LOG.info("Input variable " + iod.getName() + " not found");
+                    }
+                    step.withInputVariableMapping(iod.getName(), key);
                 }
-                step = step.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key);
             }
+
+//            for (IODescriptor iod : serviceConfig.getOutputDescriptors()) {
+//                step.withOutputVariableMapping(iod.getName(), iod.getName());
+//            }
 
             for (Map.Entry<String, Object> e : options.entrySet()) {
                 String key = e.getKey();
@@ -135,7 +166,7 @@ public class ServiceCellDefinition extends CellDefinition {
                 }
             }
 
-            return buildJobDefinition(cellExecutionData, cell, step);
+            return buildJobDefinition(cellExecutionData, cell, serviceConfig.getInputDescriptors(), serviceConfig.getOutputDescriptors(), step);
         }
 
     }

@@ -21,8 +21,8 @@ public class DatasetSorterCellDefinition extends CellDefinition {
 
     public DatasetSorterCellDefinition() {
         super(CELL_NAME, "Sort the dataset", "icons/filter.png", new String[]{"sort", "dataset"});
-        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VAR_DISPLAYNAME_INPUT, VariableType.DATASET_ANY));
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_ANY));
+        getBindingDefinitionList().add(new BindingDefinition("input", VariableType.DATASET_ANY));
+        getVariableDefinitionList().add(new VariableDefinition("output", VariableType.DATASET_ANY));
         getOptionDefinitionList().add(new OptionDescriptor<>(new MultiLineTextTypeDescriptor(10, 80, MultiLineTextTypeDescriptor.MIME_TYPE_TEXT_PLAIN),
                 OPTION_DIRECTIVES, "Sort directives",
                 "Definition of the sort directives: field_name ASC|DESC", Mode.User));

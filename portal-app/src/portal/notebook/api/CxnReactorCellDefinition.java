@@ -3,6 +3,8 @@ package portal.notebook.api;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.CxnReactor;
+import org.squonk.io.IODescriptor;
+import org.squonk.io.IODescriptors;
 import org.squonk.jobdef.JobDefinition;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
@@ -265,10 +267,10 @@ public class CxnReactorCellDefinition extends CellDefinition {
     public CxnReactorCellDefinition() {
         super(CELL_NAME, "Reaction enumeration", "icons/molecule_generator.png", new String[]{"enumeration", "reaction", "library", "dataset"});
 
-        getBindingDefinitionList().add(new BindingDefinition(INPUT_R1, "Reactants 1", VariableType.DATASET_MOLS));
-        getBindingDefinitionList().add(new BindingDefinition(INPUT_R2, "Reactants 2", VariableType.DATASET_MOLS));
+        getBindingDefinitionList().add(new BindingDefinition(INPUT_R1, VariableType.DATASET_MOLS));
+        getBindingDefinitionList().add(new BindingDefinition(INPUT_R2, VariableType.DATASET_MOLS));
 
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VAR_DISPLAYNAME_OUTPUT, VariableType.DATASET_MOLS));
+        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VariableType.DATASET_MOLS));
 
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, CxnReactor.OPTION_REACTION, "Reaction", "Reaction from the ChemAxon reaction library", Mode.User)
             .withValues(REACTIONS)
@@ -289,14 +291,22 @@ public class CxnReactorCellDefinition extends CellDefinition {
         @Override
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
+            IODescriptor[] inputs = new IODescriptor[] {
+                    IODescriptors.createMoleculeObjectDataset(INPUT_R1),
+                    IODescriptors.createMoleculeObjectDataset(INPUT_R2)
+            };
+            IODescriptor[] outputs = new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("output")};
+
             StepDefinition step1 = new StepDefinition(CxnReactor.CLASSNAME)
+                    .withInputs(inputs)
+                    .withOutputs(outputs)
                     .withInputVariableMapping(CxnReactor.VARIABLE_R1, createVariableKey(cell, INPUT_R1))
                     .withInputVariableMapping(CxnReactor.VARIABLE_R2, createVariableKey(cell, INPUT_R2))
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cell));
 
 
-            return buildJobDefinition(cellExecutionData, cell, step1);
+            return buildJobDefinition(cellExecutionData, cell, inputs, outputs, step1);
         }
     }
 

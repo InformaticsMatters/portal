@@ -19,7 +19,7 @@ public class SourceVariableProvider extends TextChoiceProvider<VariableInstance>
 
     @Override
     protected String getDisplayText(VariableInstance variableModel) {
-        return variableModel.getVariableDefinition().getDisplayName();
+        return variableModel.getVariableDefinition().getName();
     }
 
     @Override

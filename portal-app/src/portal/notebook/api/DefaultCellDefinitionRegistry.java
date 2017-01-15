@@ -34,13 +34,11 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     private static CellDefinition createTableDisplayCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "icons/visualisation_table.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
         VariableDefinition variableDefinition = new VariableDefinition();
         variableDefinition.setName("selection");
-        variableDefinition.setDisplayName("Selection");
         variableDefinition.setVariableType(VariableType.STRING);
         cellDefinition.getVariableDefinitionList().add(variableDefinition);
 
@@ -61,7 +59,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
         // the data bindings
         BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
@@ -102,7 +99,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     private static CellDefinition create3DMolCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("3DMol", "3D viewer", "icons/view.png", new String[]{"3d", "viewer", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_MOLS);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
@@ -113,7 +109,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     private static CellDefinition createBoxPlotCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("BoxPlot", "Box plot", "icons/visualisation_chart.png", new String[]{"box", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
@@ -138,7 +133,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("ParallelCoordinatePlot", "Parallel coordinate plot", "icons/visualisation_chart.png",
                 new String[]{"parallel", "coordinate", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
@@ -181,7 +175,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     private static CellDefinition createHeatmapCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("Heatmap", "Heat map", "icons/visualisation_chart.png", new String[]{"heatmap", "plot", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setDisplayName("Input");
         bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
         bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
         cellDefinition.getBindingDefinitionList().add(bindingDefinition);
