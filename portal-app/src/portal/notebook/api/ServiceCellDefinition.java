@@ -34,9 +34,9 @@ public class ServiceCellDefinition extends CellDefinition {
         setExecutable(Boolean.TRUE);
         OptionDescriptor[] options = serviceConfig.getOptionDescriptors();
         if (options != null) {
-            LOG.info(options.length + " options found for service " + serviceConfig.getName());
+            LOG.fine(options.length + " options found for service " + serviceConfig.getName());
             for (OptionDescriptor option : options) {
-                LOG.info("option: " + option.getLabel() + " type: " + option.getTypeDescriptor().getType());
+                LOG.finer("option: " + option.getLabel() + " type: " + option.getTypeDescriptor().getType());
                 getOptionDefinitionList().add(option);
             }
         }
