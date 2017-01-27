@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  * @author simetrias
  */
 public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
-    private static final Logger LOGGER = Logger.getLogger(TableDisplayCanvasItemPanel.class.getName());
+    private static final Logger LOG = Logger.getLogger(TableDisplayCanvasItemPanel.class.getName());
     private Form<ModelObject> form;
     private TableDisplayVisualizer tableDisplayVisualizer;
     @Inject
@@ -50,7 +50,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
         try {
             load();
         } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error loading data", t);
+            LOG.log(Level.WARNING, "Error loading data", t);
             // TODO
         }
         addStatus();
@@ -83,10 +83,12 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() throws Exception {
+        LOG.info("Loading table data");
         BindingInstance bindingModel = findCellInstance().getBindingInstanceMap().get("input");
         VariableInstance variableInstance = bindingModel == null ? null : bindingModel.getVariableInstance();
-        String value = variableInstance == null ? null : notebookSession.readTextValue(variableInstance);
-        boolean assigned = value != null;
+        String metaJson = variableInstance == null ? null : notebookSession.readTextValue(variableInstance);
+        LOG.info("Metadata: " + metaJson);
+        boolean assigned = metaJson != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {
             datasetDescriptorId = null;
@@ -114,7 +116,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
                         storeCurrentSelection(row.getUuid());
                     }
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error persisting selection", t);
+                    LOG.log(Level.WARNING, "Error persisting selection", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
