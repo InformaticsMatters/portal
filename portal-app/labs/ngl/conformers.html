@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+<script src="ngl.js"></script>
+<script>
+
+    function defaultStructureRepresentation( component ) {
+
+        // bail out if the component does not contain a structure
+        if( component.type !== "structure" ) return;
+
+        // array of representations so that we can show/hide them
+        var representations = [];
+
+        // function that shows/hides a model when user clicks on checkbox
+        var showHideModel = function(evt) {
+            var cb = evt.target;
+            //console.log(cb.value + " -> " + cb.checked);
+            representations[cb.value].setVisibility(cb.checked);
+        }
+
+        // simplistic approach for colouring each molecule differntly. Replace with something smarter.
+        var colors = ["violet", "indigo", "blue", "cyan", "green", "yellow", "orange", "brown", "red"]
+
+        var componentsDiv =  document.getElementById("components");
+        // template for the HTML for each model checkbox. %s gets substituted for the model index
+        var cbTemplate = '<label><input id="model%s" type="checkbox" checked name="model%s" value="%s"/>Model %s</label>';
+
+        // setup each model with a representation and a checkbox to show/hide it
+        component.structure.eachModel(function(model) {
+            console.log("Setting up model " + model.index);
+
+            // create the checkbox
+            var div = document.createElement('div');
+            div.className = 'component';
+
+            var html = cbTemplate.replace(/%s/g, model.index);
+            //console.log(html);
+
+            div.innerHTML = html;
+            componentsDiv.appendChild(div);
+            var cb = document.getElementById("model" + model.index);
+            cb.onclick = showHideModel;
+
+            // create the representation and add it to the array
+            representations.push(component.addRepresentation( "licorice", {
+                sele: "/" + model.index,
+                multipleBond: true,
+                // note that this only seems to change the colour of the carbons - the nitrogens stay blue
+                colorValue: colors[model.index % colors.length]
+            }));
+
+        });
+    }
+
+    document.addEventListener( "DOMContentLoaded", function() {
+        var stage = new NGL.Stage( "viewport", { backgroundColor: "white" } );
+        stage.loadFile( "conformers.sdf.gz" ).then( defaultStructureRepresentation );
+    } );
+
+    </script>
+
+    <div id="components"></div>
+    <div id="viewport" style="width:600px; height:500px;"></div>
+</body>
+</html>
