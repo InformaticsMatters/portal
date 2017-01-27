@@ -1,8 +1,6 @@
 package portal.notebook.webapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.squonk.client.NotebookVariableClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
@@ -24,11 +22,12 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 @SessionScoped
 public class NotebookSession implements Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotebookSession.class);
+    private static final Logger LOG = Logger.getLogger(NotebookSession.class.getName());
     private final DateFormat versionDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
     private NotebookInstance currentNotebookInstance;
     private NotebookInfo currentNotebookInfo;
@@ -140,7 +139,7 @@ public class NotebookSession implements Serializable {
             doStoreCurrentEditable();
             reloadCurrentVersion();
         } else {
-            LOGGER.warn("Not editable version");
+            LOG.warning("Not editable version");
         }
     }
 
@@ -249,7 +248,7 @@ public class NotebookSession implements Serializable {
             } else if (ext.equals("tab")) {
                 return Datasets.parseTsv(inputStream);
             } else {
-                LOGGER.warn("Unrecognised format: " + ext);
+                LOG.warning("Unrecognised format: " + ext);
                 return new ArrayList<>();
             }
         } finally {
@@ -259,6 +258,7 @@ public class NotebookSession implements Serializable {
 
     public IDatasetDescriptor loadDatasetFromDatasetVariable(VariableInstance variableInstance) throws Exception {
         List<MoleculeObject> list = squonkDatasetAsMolecules(variableInstance);
+        LOG.info("Read dataset of size " + list.size());
         return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
     }
 
