@@ -63,6 +63,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void loadModelFromPersistentData() {
         CellInstance cellInstance = findCellInstance();
         Map<String, OptionInstance> options = cellInstance.getOptionInstanceMap();
@@ -91,21 +92,21 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
     private void addForm() {
 
-        TextField selection = new HiddenField("selection", new Model(""));
-        TextField axes = new HiddenField("axes", new Model(""));
-        TextField extents = new HiddenField("extents", new Model(""));
-        TextField colorDimension = new HiddenField("colorDimension", new Model(""));
+        TextField<String> selection = new HiddenField<>("selection", new Model<>(""));
+        TextField<String> axes = new HiddenField<>("axes", new Model<>(""));
+        TextField<String> extents = new HiddenField<>("extents", new Model<>(""));
+        TextField<String> colorDimension = new HiddenField<>("colorDimension", new Model<>(""));
 
-        form = new Form("form") {
+        form = new Form<ModelObject>("form") {
             @Override
             protected void onBeforeRender() {
                 super.onBeforeRender();
                 CellInstance cell = findCellInstance();
                 Map<String, OptionInstance> options = cell.getOptionInstanceMap();
                 selection.getModel().setObject(""); // never read
-                axes.getModel().setObject(options.get(OPTION_AXES).getValue());
-                extents.getModel().setObject(options.get(OPTION_EXTENTS).getValue());
-                colorDimension.getModel().setObject(options.get(OPTION_COLOR_DIMENSION).getValue());
+                axes.getModel().setObject((String)options.get(OPTION_AXES).getValue());
+                extents.getModel().setObject((String)options.get(OPTION_EXTENTS).getValue());
+                colorDimension.getModel().setObject((String)options.get(OPTION_COLOR_DIMENSION).getValue());
             }
         };
 

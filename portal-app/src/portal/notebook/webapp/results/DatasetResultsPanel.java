@@ -48,7 +48,7 @@ public class DatasetResultsPanel extends Panel {
     private IModel<List<? extends BasicObject>> resultsModel;
     private Model<String> highlighterModel = new Model<>();
     private IModel<List<String>> highlighterChoicesModel;
-    private IModel gridModel = new Model(generateGridClass(DEFAULT_COLS));
+    private IModel<String> gridModel = new Model<>(generateGridClass(DEFAULT_COLS));
     private int limit = DEFAULT_NUM_RECORDS;
     private int offset = 0;
 
@@ -239,7 +239,7 @@ public class DatasetResultsPanel extends Panel {
 
             @Override
             public List<String> getObject() {
-                DatasetMetadata meta = datasetMetadataModel.getObject();
+                DatasetMetadata<? extends BasicObject> meta = datasetMetadataModel.getObject();
                 Map<String, Class> typesMapppings = meta.getValueClassMappings();
                 List<String> results = new ArrayList<>();
                 results.add(HIGHLIGHTER_NONE);
@@ -288,7 +288,7 @@ public class DatasetResultsPanel extends Panel {
             @Override
             protected void populateItem(ListItem<BasicObject> listItem) {
                 BasicObject o = listItem.getModelObject();
-                DatasetMetadata meta = datasetMetadataModel.getObject();
+                DatasetMetadata<BasicObject> meta = datasetMetadataModel.getObject();
                 Map<String, Class> mappings = meta.getValueClassMappings();
 
                 if (o instanceof MoleculeObject) {

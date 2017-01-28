@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * @author simetrias
  */
-public class StructureFieldEditorPanel extends FieldEditorPanel {
+public class StructureFieldEditorPanel extends FieldEditorPanel<String> {
 
     public static final Rectangle RECTANGLE = new Rectangle(200, 130);
     private static final Logger LOGGER = LoggerFactory.getLogger(StructureFieldEditorPanel.class);
@@ -35,7 +35,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
     private NonCachingImage sketchThumbnail;
     private Model<String> model;
 
-    public StructureFieldEditorPanel(String id, String uniqueMarvinName, FieldEditorModel fieldEditorModel) {
+    public StructureFieldEditorPanel(String id, String uniqueMarvinName, FieldEditorModel<String> fieldEditorModel) {
         super(id, fieldEditorModel);
         this.uniqueMarvinName = uniqueMarvinName;
         addComponents();
@@ -45,7 +45,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel {
         model = new Model<String>(){
             @Override
             public String getObject() {
-                return (String)getFieldEditorModel().getValue();
+                return getFieldEditorModel().getValue();
             }
 
             @Override

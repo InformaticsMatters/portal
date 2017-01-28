@@ -1,8 +1,8 @@
 package portal.notebook.webapp.cell;
 
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.types.BasicObject;
 import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 import portal.notebook.webapp.NotebookSession;
@@ -12,13 +12,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.apache.poi.hslf.record.RecordTypes.List;
-
 /**
  * Created by timbo on 22/09/2016.
  */
 public class CellUtils {
 
+    @SuppressWarnings("unchecked")
     public static List<String> fieldNamesSorted(NotebookSession notebookSession, Long cellId, String variableName) throws Exception {
         List<String> fieldNames = new ArrayList<>();
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);

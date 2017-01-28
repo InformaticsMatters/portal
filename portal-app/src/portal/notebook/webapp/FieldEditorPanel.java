@@ -4,17 +4,17 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 
 
-public abstract class FieldEditorPanel extends Panel {
+public abstract class FieldEditorPanel<T> extends Panel {
 
-    private final FieldEditorModel fieldEditorModel;
+    private final FieldEditorModel<T> fieldEditorModel;
 
-    public FieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
+    public FieldEditorPanel(String id, FieldEditorModel<T> fieldEditorModel) {
         super(id);
         this.fieldEditorModel = fieldEditorModel;
         setOutputMarkupId(true);
     }
 
-    public FieldEditorModel getFieldEditorModel() {
+    public FieldEditorModel<T> getFieldEditorModel() {
         return fieldEditorModel;
     }
 

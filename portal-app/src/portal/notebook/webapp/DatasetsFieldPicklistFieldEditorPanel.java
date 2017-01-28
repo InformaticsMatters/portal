@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.Model;
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.types.BasicObject;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
@@ -20,7 +21,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
+public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel<String> {
     private static final Logger LOGGER = Logger.getLogger(DatasetsFieldPicklistFieldEditorPanel.class.getName());
     private final Long cellId;
     private List<String> picklistItems;
@@ -28,9 +29,9 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     private NotebookSession notebookSession;
     @Inject
     private NotifierProvider notifierProvider;
-    private DropDownChoice picklistChoice;
+    private DropDownChoice<String> picklistChoice;
 
-    public DatasetsFieldPicklistFieldEditorPanel(String id, FieldEditorModel fieldEditorModel, Long cellId) {
+    public DatasetsFieldPicklistFieldEditorPanel(String id, FieldEditorModel<String> fieldEditorModel, Long cellId) {
         super(id, fieldEditorModel);
         this.cellId = cellId;
         try {
@@ -64,7 +65,7 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     private Set<String> extractFieldNames(VariableInstance variableInstance) throws Exception {
         String string = notebookSession.readTextValue(variableInstance);
         if (string != null) {
-            DatasetMetadata datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
+            DatasetMetadata<? extends BasicObject> datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
             return datasetMetadata.getValueClassMappings().keySet();
         } else {
             return new HashSet<>();
@@ -72,10 +73,10 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     }
 
     private void addComponents() {
-        Model model = new Model<String>() {
+        Model<String> model = new Model<String>() {
             @Override
             public String getObject() {
-                return (String) getFieldEditorModel().getValue();
+                return getFieldEditorModel().getValue();
             }
 
             @Override
@@ -84,7 +85,7 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel {
             }
         };
         add(new Label("label", getFieldEditorModel().getDisplayName()));
-        picklistChoice = new DropDownChoice("picklist", model, picklistItems);
+        picklistChoice = new DropDownChoice<>("picklist", model, picklistItems);
         add(picklistChoice);
     }
 

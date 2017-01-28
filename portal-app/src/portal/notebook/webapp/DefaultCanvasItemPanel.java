@@ -138,6 +138,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         listItem.add(fieldEditorPanel);
     }
 
+    @SuppressWarnings("unchecked")
     private FieldEditorPanel createOptionEditor(OptionInstance optionInstance) {
         OptionDescriptor optionDescriptor = optionInstance.getOptionDescriptor();
         TypeDescriptor typeDescriptor = optionDescriptor.getTypeDescriptor();

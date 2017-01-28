@@ -10,13 +10,13 @@ import java.io.Serializable;
 /**
  * @author simetrias
  */
-public class IntegerFieldEditorPanel extends FieldEditorPanel {
+public class IntegerFieldEditorPanel extends FieldEditorPanel<Integer> {
 
 
-    private final FieldEditorModel fieldEditorModel;
+    private final FieldEditorModel<Integer> fieldEditorModel;
     private NumberTextField<Integer> textField;
 
-    public IntegerFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
+    public IntegerFieldEditorPanel(String id, FieldEditorModel<Integer> fieldEditorModel) {
         super(id, fieldEditorModel);
         this.fieldEditorModel = fieldEditorModel;
         addComponents();

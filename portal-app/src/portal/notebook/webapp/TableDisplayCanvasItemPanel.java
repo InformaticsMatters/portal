@@ -65,6 +65,7 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
 
     @Override
     public void processCellChanged(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
+        LOG.fine("Table cell changed");
         super.processCellChanged(evt, ajaxRequestTarget);
 
         if (doesCellChangeRequireRefresh(evt)) {
@@ -83,11 +84,11 @@ public class TableDisplayCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void load() throws Exception {
-        LOG.info("Loading table data");
+        LOG.fine("Loading table data");
         BindingInstance bindingModel = findCellInstance().getBindingInstanceMap().get("input");
         VariableInstance variableInstance = bindingModel == null ? null : bindingModel.getVariableInstance();
         String metaJson = variableInstance == null ? null : notebookSession.readTextValue(variableInstance);
-        LOG.info("Metadata: " + metaJson);
+        LOG.fine("Metadata: " + metaJson);
         boolean assigned = metaJson != null;
         IDatasetDescriptor descriptor = assigned ? loadDescriptor() : null;
         if (descriptor == null) {

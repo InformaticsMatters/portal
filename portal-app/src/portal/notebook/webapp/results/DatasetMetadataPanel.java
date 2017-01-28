@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.types.BasicObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class DatasetMetadataPanel extends Panel {
     }
 
     private void addContent() {
-        Form form = new Form("meta");
+        Form<DatasetMetadata> form = new Form<>("meta");
         add(form);
         form.setModel(datasetMetadataModel);
 
@@ -71,14 +72,14 @@ public class DatasetMetadataPanel extends Panel {
 
         @Override
         protected List<Property> load() {
-            DatasetMetadata meta = datasetMetadataModel.getObject();
+            DatasetMetadata<? extends BasicObject> meta = datasetMetadataModel.getObject();
             if (meta == null) {
                 return Collections.emptyList();
             }
             List<Property> results = new ArrayList<>();
             results.add(new Property("size", meta.getSize()));
             results.add(new Property("type", meta.getType().getSimpleName()));
-            Map<String, Object> props = datasetMetadataModel.getObject().getProperties();
+            Map<String, Object> props = meta.getProperties();
             for (Map.Entry<String, Object> e : props.entrySet()) {
                 results.add(new Property(e.getKey(), e.getValue()));
             }

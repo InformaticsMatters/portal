@@ -12,15 +12,15 @@ import org.squonk.types.NumberRange;
 /**
  * @author Tim Dudgeon
  */
-public class NumberRangeFieldEditorPanel<T extends Number & Comparable<T>> extends FieldEditorPanel {
+public class NumberRangeFieldEditorPanel<T extends Number & Comparable<T>> extends FieldEditorPanel<NumberRange<T>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NumberRangeFieldEditorPanel.class.getName());
 
-    private final FieldEditorModel fieldEditorModel;
+    private final FieldEditorModel<? extends NumberRange<T>> fieldEditorModel;
     private NumberTextField<T> minField;
     private NumberTextField<T> maxField;
 
-    public NumberRangeFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
+    public NumberRangeFieldEditorPanel(String id, FieldEditorModel<NumberRange<T>> fieldEditorModel) {
         super(id, fieldEditorModel);
         this.fieldEditorModel = fieldEditorModel;
         addComponents();
@@ -32,11 +32,12 @@ public class NumberRangeFieldEditorPanel<T extends Number & Comparable<T>> exten
         maxField.setEnabled(editable);
     }
 
+    @SuppressWarnings("unchecked")
     private void addComponents() {
 
         OptionDescriptor<? extends NumberRange> optionDescriptor = fieldEditorModel.getOptionDescriptor();
         Class cls = optionDescriptor.getTypeDescriptor().getType();
-        NumberRange range = (NumberRange)fieldEditorModel.getValue();
+        NumberRange<T> range = fieldEditorModel.getValue();
         if (range == null) {
             range = NumberRange.create(cls);
         }

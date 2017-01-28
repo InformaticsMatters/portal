@@ -20,6 +20,7 @@ public class AbstractDatasetAdvancedOptionsPanel extends Panel {
     private static final Logger LOG = Logger.getLogger(AbstractDatasetAdvancedOptionsPanel.class.getName());
 
     protected final Long cellId;
+    @SuppressWarnings("unchecked")
     protected final IModel<List<String>> fieldNamesModel = new Model();
     protected CallbackHandler callbackHandler;
 

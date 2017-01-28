@@ -25,7 +25,7 @@ public class FileFieldEditorPanel extends FieldEditorPanel {
         void onUpload(String fileName, InputStream inputStream);
     }
 
-    public FileFieldEditorPanel(String id, FieldEditorModel fieldEditorModel, Callback callback) {
+    public FileFieldEditorPanel(String id, FieldEditorModel<String> fieldEditorModel, Callback callback) {
         super(id, fieldEditorModel);
         this.callback = callback;
         setOutputMarkupId(true);

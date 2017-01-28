@@ -71,6 +71,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     protected void putOptionValue(Map<String, Object> options, TypeDescriptor td, String key, Object value) {
         LOG.info("Handling option " + key + " -> " + value);
         // ----- start of huge hack --------------

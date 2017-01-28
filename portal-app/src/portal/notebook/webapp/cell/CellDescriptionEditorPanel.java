@@ -58,7 +58,7 @@ public class CellDescriptionEditorPanel extends SemanticModalPanel {
         form.setOutputMarkupId(true);
         getModalRootComponent().add(form);
 
-        editor = new TextArea<>("description", new PropertyModel(this, "description"));
+        editor = new TextArea<>("description", new PropertyModel<>(this, "description"));
         form.add(editor);
 
         AjaxSubmitLink submitAction = new AjaxSubmitLink("submit") {

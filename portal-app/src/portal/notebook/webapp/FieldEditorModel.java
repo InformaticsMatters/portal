@@ -5,20 +5,20 @@ import org.squonk.options.TypeDescriptor;
 
 import java.io.Serializable;
 
-public class FieldEditorModel implements Serializable {
-    private Object value;
-    private OptionDescriptor optionDescriptor;
+public class FieldEditorModel<T> implements Serializable {
+    private T value;
+    private OptionDescriptor<T> optionDescriptor;
 
-    protected FieldEditorModel(Object value, OptionDescriptor optionDescriptor) {
+    protected FieldEditorModel(T value, OptionDescriptor<T> optionDescriptor) {
         this.value = value;
         this.optionDescriptor = optionDescriptor;
     }
 
-    public Object getValue() {
+    public T getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(T value) {
         this.value = value;
     }
 
@@ -26,11 +26,11 @@ public class FieldEditorModel implements Serializable {
         return optionDescriptor == null ? null : optionDescriptor.getLabel();
     }
 
-    public OptionDescriptor getOptionDescriptor() {
+    public OptionDescriptor<T> getOptionDescriptor() {
         return optionDescriptor;
     }
 
-    public TypeDescriptor getTypeDescriptor() {
+    public TypeDescriptor<T> getTypeDescriptor() {
         return optionDescriptor == null ? null : optionDescriptor.getTypeDescriptor();
     }
 }

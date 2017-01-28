@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.squonk.client.NotebookVariableClient;
 import org.squonk.dataset.Dataset;
@@ -105,7 +106,7 @@ public class NotebookSession implements Serializable {
         Map<Long, AbstractNotebookVersionDTO> map = buildCurrentNotebookVersionMap();
         AbstractNotebookVersionDTO versionDTO = map.get(versionId);
         if (versionDTO instanceof NotebookSavepointDTO) {
-                versionDTO = notebookVariableClient.createEditable(currentNotebookInfo.getId(), versionId, sessionContext.getLoggedInUserDetails().getUserid());
+            versionDTO = notebookVariableClient.createEditable(currentNotebookInfo.getId(), versionId, sessionContext.getLoggedInUserDetails().getUserid());
         }
         currentNotebookInstance = new NotebookInstance();
         currentNotebookInstance.loadNotebookCanvasDTO(versionDTO.getCanvasDTO(), cellDefinitionRegistry);
@@ -221,7 +222,7 @@ public class NotebookSession implements Serializable {
 
     public IDatasetDescriptor loadDatasetFromVariable(VariableInstance variableInstance) throws Exception {
         VariableType variableType = variableInstance.getVariableDefinition().getVariableType();
-        if (variableType.equals(VariableType.DATASET_MOLS)) {
+        if (variableType.equals(VariableType.DATASET_MOLS) || variableType.equals(VariableType.DATASET_BASIC) || variableType.equals(VariableType.DATASET_ANY)) {
             return loadDatasetFromDatasetVariable(variableInstance);
         } else if (variableType.equals(VariableType.FILE)) {
             return loadDatasetFromFileVariable(variableInstance);
@@ -258,7 +259,7 @@ public class NotebookSession implements Serializable {
 
     public IDatasetDescriptor loadDatasetFromDatasetVariable(VariableInstance variableInstance) throws Exception {
         List<MoleculeObject> list = squonkDatasetAsMolecules(variableInstance);
-        LOG.info("Read dataset of size " + list.size());
+        LOG.fine("Read dataset of size " + list.size());
         return datasets.createDatasetFromMolecules(list, variableInstance.getCellId() + "." + variableInstance.getVariableDefinition().getName());
     }
 
@@ -269,7 +270,7 @@ public class NotebookSession implements Serializable {
     public List<MoleculeObject> squonkDatasetAsMolecules(VariableInstance variableInstance) throws Exception {
 
         String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
-        DatasetMetadata<MoleculeObject> meta = JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
+        DatasetMetadata<MoleculeObject> meta = JsonHandler.getInstance().objectFromJson(metaJson, new TypeReference<DatasetMetadata<MoleculeObject>>() {});
         try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
             InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
             Dataset<MoleculeObject> dataset = new Dataset<>(MoleculeObject.class, gunzippedInputStream, meta);
@@ -277,7 +278,8 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public DatasetMetadata<? extends BasicObject> squonkDatasetMetadata(VariableInstance variableInstance) throws Exception {
+    @SuppressWarnings("unchecked")
+    public DatasetMetadata squonkDatasetMetadata(VariableInstance variableInstance) throws Exception {
         String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
 
         if (metaJson == null) {
@@ -286,6 +288,7 @@ public class NotebookSession implements Serializable {
             return JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
         }
     }
+
     /** Retrieve Dataset for this variable.
      * This is based on an InputStream that is read, and must be closed once finished e.g. by closing the Stream.
      *
@@ -293,6 +296,7 @@ public class NotebookSession implements Serializable {
      * @return
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     public Dataset<? extends BasicObject> squonkDataset(VariableInstance variableInstance) throws Exception {
 
         String metaJson = notebookVariableClient.readTextValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);

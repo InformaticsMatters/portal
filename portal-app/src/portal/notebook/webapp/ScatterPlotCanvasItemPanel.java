@@ -127,14 +127,15 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private void addForm() {
-        TextField brushXMin = new HiddenField("brushxmin", new Model());
-        TextField brushXMax = new HiddenField("brushxmax", new Model());
-        TextField brushYMin = new HiddenField("brushymin", new Model());
-        TextField brushYMax = new HiddenField("brushymax", new Model());
-        TextField selectedIds = new HiddenField("selectedIds", new Model(""));
+        TextField<Float> brushXMin = new HiddenField<>("brushxmin", new Model<>());
+        TextField<Float> brushXMax = new HiddenField<>("brushxmax", new Model<>());
+        TextField<Float> brushYMin = new HiddenField<>("brushymin", new Model<>());
+        TextField<Float> brushYMax = new HiddenField<>("brushymax", new Model<>());
+        TextField<String> selectedIds = new HiddenField<>("selectedIds", new Model<>(""));
 
-        form = new Form("form") {
+        form = new Form<ModelObject>("form") {
             @Override
+            @SuppressWarnings("unchecked")
             protected void onBeforeRender() {
                 super.onBeforeRender();
                 CellInstance cell = findCellInstance();

@@ -13,7 +13,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DoubleFieldEditorPanel extends FieldEditorPanel {
+public class DoubleFieldEditorPanel extends FieldEditorPanel<Double> {
     private static final Logger LOGGER = Logger.getLogger(DoubleFieldEditorPanel.class.getName());
     private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
     @Inject
@@ -21,7 +21,7 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel {
     private TextField<String> textField;
 
 
-    public DoubleFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
+    public DoubleFieldEditorPanel(String id, FieldEditorModel<Double> fieldEditorModel) {
         super(id, fieldEditorModel);
         DecimalFormatSymbols symbols = decimalFormat.getDecimalFormatSymbols();
         symbols.setDecimalSeparator('.');

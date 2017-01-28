@@ -152,6 +152,7 @@ public class MoleculeObjectExportPanel extends Panel {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         InputStream fetchResults(boolean gzip) throws Exception {
             InputStream sdf = cellDatasetProvider.getStructureIOClient().molConvert(cellDatasetProvider.getDataset(), "sdf", false);
             return gzip ? new GZIPInputStream(sdf) : sdf;

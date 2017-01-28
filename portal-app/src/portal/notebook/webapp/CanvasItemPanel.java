@@ -30,7 +30,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     public static final String OPTION_SELECTED_IDS = "selectionSelected";
     public static final String OPTION_MARKED_IDS = "selectionMarked";
     public static final String OPTION_FILTER_IDS = "filteredIDs";
-    private static final Logger LOGGER = Logger.getLogger(CanvasItemPanel.class.getName());
+    private static final Logger LOG = Logger.getLogger(CanvasItemPanel.class.getName());
     private final Long cellId;
     protected ResultsHandler resultsHandler;
     @Inject
@@ -58,7 +58,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         try {
             updateStatusInfo();
         } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error refreshing status", t);
+            LOG.log(Level.WARNING, "Error refreshing status", t);
         }
     }
 
@@ -74,7 +74,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                 String name = varDef.getName();
                 VariableType type = varDef.getVariableType();
                 if (VariableType.DATASET_ANY.supports(type)) {
-                    LOGGER.fine("Creating results handler for variable " + name + " in cell " + cellInstance.getName());
+                    LOG.fine("Creating results handler for variable " + name + " in cell " + cellInstance.getName());
                     resultsHandler = new DatasetResultsHandler(name, notebookSession, structureIOClient, cellInstance.getId());
                     return;
                 }
@@ -93,7 +93,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         js = js.replace(":width", Integer.toString(model.getSizeWidth() == null ? 265 : model.getSizeWidth()));
         js = js.replace(":height", Integer.toString(model.getSizeHeight() == null ? 0 : model.getSizeHeight()));
 
-        LOGGER.finer(js);
+        LOG.finer(js);
 
         container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(js));
     }
@@ -125,7 +125,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             notebookSession.storeCurrentEditable();
             fireContentChanged();
         } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error removing cell", t);
+            LOG.log(Level.WARNING, "Error removing cell", t);
             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
         }
     }
@@ -149,7 +149,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                     }
                     oldExecution = lastExecution;
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error refreshing status", t);
+                    LOG.log(Level.WARNING, "Error refreshing status", t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
             }
@@ -164,7 +164,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             CellChangeEvent.DataValues evt = new CellChangeEvent.DataValues(cellId, CellChangeEvent.SOURCE_ALL_DATA, execution.getJobStatus());
             cellChangeManager.notifyDataValuesChanged(evt, ajaxRequestTarget);
         } else {
-            LOGGER.log(Level.WARNING, "Could not find cell" + cellId);
+            LOG.log(Level.WARNING, "Could not find cell" + cellId);
         }
     }
 
@@ -174,7 +174,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             CellChangeEvent.OptionValues evt = new CellChangeEvent.OptionValues(cell.getId(), name);
             cellChangeManager.notifyOptionValuesChanged(evt, ajaxRequestTarget);
         } else {
-            LOGGER.warning("Could not find cell" + cellId);
+            LOG.warning("Could not find cell" + cellId);
         }
     }
 
@@ -300,7 +300,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             notebookSession.storeCurrentEditable();
             return true;
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed to save notebook", e);
+            LOG.log(Level.SEVERE, "Failed to save notebook", e);
             notifyMessage("Error", "Failed to save notebook: " + e.getLocalizedMessage());
             return false;
         }
@@ -339,7 +339,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     protected boolean doesCellChangeRequireRefresh(CellChangeEvent evt) {
 
         CellInstance cellInstance = findCellInstance();
-        LOGGER.fine("CellChangeEvent received by cell " + cellInstance.getName() + " [" + getCellId() + "]" + ": " + evt);
+        LOG.fine("CellChangeEvent received by cell " + cellInstance.getName() + " [" + getCellId() + "]" + ": " + evt);
         CellInstance changedCell = findCellInstance(evt.getSourceCellId());
         if (cellInstance == null || changedCell == null) {
             return false;
@@ -347,6 +347,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
         // variable values have changed due to cell execution
         if (evt instanceof CellChangeEvent.DataValues) {
+            LOG.fine("  DATA VALUES EVENT");
             CellChangeEvent.DataValues dvevt = (CellChangeEvent.DataValues) evt;
             if (doesJobStatusRequireRefresh(dvevt.getJobStatus())) {
                 for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
@@ -357,7 +358,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                             || CellChangeEvent.SOURCE_ALL_DATA.equals(dvevt.getSourceName())
                             || dvevt.getSourceName().equals(variableInstance.getVariableDefinition().getName()))
                             ) {
-                        LOGGER.fine("  NEEDS DATA REFRESH");
+                        LOG.fine("  NEEDS DATA VALUES REFRESH");
                         return true;
                     }
                 }
@@ -366,20 +367,21 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
         // variable bindings have changed
         if (evt instanceof CellChangeEvent.DataBinding) {
+            LOG.fine("  DATA BINDING EVENT");
             CellChangeEvent.DataBinding dbevt = (CellChangeEvent.DataBinding) evt;
             // check if we were the target
             if (dbevt.getTargetCellId().equals(cellInstance.getId())) {
                 BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(dbevt.getTargetName());
-                LOGGER.fine("  Checking " + bindingInstance);
+                LOG.fine("  Checking " + bindingInstance);
                 if (bindingInstance != null) {
                     VariableInstance variableInstance = bindingInstance.getVariableInstance();
                     if (dbevt.getType() == CellChangeEvent.BindingChangeType.Bind && variableInstance != null
                             && dbevt.getSourceCellId().equals(variableInstance.getCellId())
                             && dbevt.getSourceName().equals(variableInstance.getVariableDefinition().getName())) {
-                        LOGGER.fine("  NEEDS DATA REFRESH");
+                        LOG.fine("  NEEDS DATA BINDING REFRESH");
                         return true;
                     } else if (dbevt.getType() == CellChangeEvent.BindingChangeType.Unbind) {
-                        LOGGER.fine("  NEEDS DATA REFRESH");
+                        LOG.fine("  NEEDS DATA BINDING REFRESH");
                         return true;
                     }
                 }
@@ -388,13 +390,14 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
         // option values have changed
         if (evt instanceof CellChangeEvent.OptionValues) {
+            LOG.fine("  OPTION VALUES EVENT");
             CellChangeEvent.OptionValues ovevt = (CellChangeEvent.OptionValues) evt;
             for (OptionBindingInstance optionBindingInstance : cellInstance.getOptionBindingInstanceMap().values()) {
                 OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
                 if (optionInstance != null
                         && ovevt.getSourceCellId().equals(optionInstance.getCellId())
                         && ovevt.getSourceName().equals(optionInstance.getOptionDescriptor().getKey())) {
-                    LOGGER.fine("  NEEDS OPTION REFRESH");
+                    LOG.fine("  NEEDS OPTION REFRESH");
                     return true;
                 }
             }
@@ -402,6 +405,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
         // option binding has changed
         if (evt instanceof CellChangeEvent.OptionBinding) {
+            LOG.fine("  OPTION BINDING EVENT");
             CellChangeEvent.OptionBinding obevt = (CellChangeEvent.OptionBinding) evt;
             // check if we were the target
             if (obevt.getTargetCellId().equals(cellInstance.getId())) {
@@ -411,16 +415,16 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                         && optionInstance != null
                         && obevt.getSourceCellId().equals(optionInstance.getCellId())
                         && obevt.getSourceName().equals(optionInstance.getOptionDescriptor().getKey())) {
-                    LOGGER.fine("  NEEDS OPTION REFRESH");
+                    LOG.fine("  NEEDS OPTION REFRESH");
                     return true;
                 } else if (obevt.getType() == CellChangeEvent.BindingChangeType.Unbind) {
-                    LOGGER.fine("  NEEDS OPTION REFRESH");
+                    LOG.fine("  NEEDS OPTION REFRESH");
                     return true;
                 }
             }
         }
 
-        LOGGER.fine("  NO REFRESH");
+        LOG.fine("  NO REFRESH");
         return false;
     }
 

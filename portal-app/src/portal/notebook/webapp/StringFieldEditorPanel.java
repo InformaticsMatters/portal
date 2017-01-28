@@ -4,11 +4,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 
-public class StringFieldEditorPanel extends FieldEditorPanel {
+public class StringFieldEditorPanel extends FieldEditorPanel<String> {
 
     private TextField<String> textField;
 
-    public StringFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
+    public StringFieldEditorPanel(String id, FieldEditorModel<String> fieldEditorModel) {
         super(id, fieldEditorModel);
         addComponents();
     }

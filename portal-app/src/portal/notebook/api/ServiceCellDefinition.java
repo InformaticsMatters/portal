@@ -1,10 +1,10 @@
 package portal.notebook.api;
 
 import org.squonk.core.ServiceConfig;
+import org.squonk.dataset.Dataset;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.io.IODescriptor;
-import org.squonk.io.IOMultiplicity;
 import org.squonk.jobdef.JobDefinition;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
@@ -45,28 +45,30 @@ public class ServiceCellDefinition extends CellDefinition {
         // if one of the options is defined as the body then we don't want an input endpoint
         if (findOptionDescriptorForBody() == null) {
             for (IODescriptor input : serviceConfig.getInputDescriptors()) {
-                getBindingDefinitionList().add(new BindingDefinition(input.getName(), determineVariableType(input.getMultiplicity(), input.getPrimaryType())));
+                getBindingDefinitionList().add(new BindingDefinition(input.getName(), determineVariableType(input)));
             }
         }
 
         IODescriptor[] outputs = serviceConfig.getOutputDescriptors();
         if (outputs != null && outputs.length > 0) {
             for (IODescriptor output : serviceConfig.getOutputDescriptors()) {
-                getVariableDefinitionList().add(new VariableDefinition(output.getName(), determineVariableType(output.getMultiplicity(), output.getPrimaryType())));
+                getVariableDefinitionList().add(new VariableDefinition(output.getName(), determineVariableType(output)));
             }
         }
     }
 
-    private VariableType determineVariableType(IOMultiplicity multiplicity, Class cls) {
-        if (multiplicity == IOMultiplicity.ARRAY) {
-            if (cls == MoleculeObject.class) {
+    private VariableType determineVariableType(IODescriptor iod) {
+        if (iod.getPrimaryType() == Dataset.class) {
+            if (iod.getSecondaryType() == MoleculeObject.class) {
                 return VariableType.DATASET_MOLS;
-            } else if (cls == BasicObject.class) {
+            } else if (iod.getSecondaryType() == BasicObject.class) {
                 return VariableType.DATASET_BASIC;
             }
         }
 
         // this shouldn't happen
+        LOG.warning("Unexpected variable defintion: " + iod);
+        Thread.dumpStack();
         return VariableType.DATASET_ANY;
     }
 

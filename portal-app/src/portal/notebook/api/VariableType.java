@@ -29,6 +29,7 @@ public enum VariableType {
     },
     FILE("File", InputStream.class);
 
+
     Class primaryType;
     Class genericType;
     String name;

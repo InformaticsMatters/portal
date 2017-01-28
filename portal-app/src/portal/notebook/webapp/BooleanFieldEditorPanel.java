@@ -4,11 +4,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.Model;
 
-public class BooleanFieldEditorPanel extends FieldEditorPanel {
+public class BooleanFieldEditorPanel extends FieldEditorPanel<Boolean> {
 
     private CheckBox checkBox;
 
-    public BooleanFieldEditorPanel(String id, FieldEditorModel fieldEditorModel) {
+    public BooleanFieldEditorPanel(String id, FieldEditorModel<Boolean> fieldEditorModel) {
         super(id, fieldEditorModel);
         addComponents();
     }

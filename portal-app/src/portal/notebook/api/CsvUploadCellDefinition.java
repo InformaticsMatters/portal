@@ -51,7 +51,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             VariableKey key = new VariableKey(cell.getId(), VAR_NAME_FILECONTENT); // we are the producer
-            IODescriptor[] outputs = IODescriptors.createBasisObjectDatasetArray("output");
+            IODescriptor[] outputs = IODescriptors.createBasicObjectDatasetArray("output");
 
             StepDefinition step1 = new StepDefinition(CsvUpload.CLASSNAME)
                     .withOutputs(outputs)
