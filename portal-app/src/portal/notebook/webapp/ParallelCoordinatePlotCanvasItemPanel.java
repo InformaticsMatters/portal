@@ -39,7 +39,7 @@ import java.util.stream.Stream;
  */
 public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
-    protected enum NullValues { Bottom, Top, Ignore }
+    protected enum NullValues { Ignore, Bottom, Top }
     public static final String OPTION_NULL_VALUES = "nullValues";
     public static final String OPTION_COLOR_DIMENSION = "colorDimension";
     private static final Logger LOG = Logger.getLogger(ParallelCoordinatePlotCanvasItemPanel.class.getName());
