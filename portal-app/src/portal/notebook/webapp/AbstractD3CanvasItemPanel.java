@@ -21,9 +21,9 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
 
     public static final String OPTION_X_AXIS = "xAxis";
     public static final String OPTION_Y_AXIS = "yAxis";
-    public static final String OPTION_FIELDS = "fields";
     public static final String OPTION_EXTENTS ="extents";
     public static final String OPTION_AXES ="axes";
+    public static final String OPTION_FIELDS = "fields";
 
     private static final Logger LOG = Logger.getLogger(AbstractD3CanvasItemPanel.class.getName());
     @Inject

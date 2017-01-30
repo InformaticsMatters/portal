@@ -98,15 +98,6 @@ function fitParallelCoordinatePlot(id) {
 
 function createParallelCoordinatePlot(selection, config, selectionHandler, data) {
 
-    var outerDiv = d3.selectAll(selection);
-
-    outerDiv.selectAll("*").remove();
-
-    var brushExtents = (selectionHandler ? selectionHandler.readExtents() : null) // something like: {"mol_weight":[200.0,400.0]};
-    var axes = (selectionHandler ? selectionHandler.readAxes() : null);
-    var colorDimension = (selectionHandler ? selectionHandler.readColorDimension() : null);
-    if (colorDimension == null) colorDimension = 'idx';
-
     function generateColorScale(data, dimension) {
         var min = d3.min(data, function(d) { return d[dimension]; });
         var max = d3.max(data, function(d) { return d[dimension]; });
@@ -124,28 +115,7 @@ function createParallelCoordinatePlot(selection, config, selectionHandler, data)
         }
     }
 
-    var scale = generateColorScale(data, colorDimension);
-
-    var chart = d3.parcoords()(selection)
-            //.color(function(d) { return scale(d[colorDimension]); })
-            .margin({top: 18, right: 0, bottom: 22, left: 0})
-            .alpha(0.4)
-            .data(data)
-            .composite("darker")
-            .dimensions(axes ? axes : {})
-            .hideAxis(["uuid"])
-            .render()
-            .createAxes()
-            .shadows()
-            .reorderable()
-            .brushMode("1D-axes")  // enable brushing
-            .brushExtents(brushExtents ? brushExtents : {})
-            .on("brushend", brushended);
-
-
-    //chart.state.colorDimension = colorDimension;
-
-    var saveAxes = function() {
+    function saveAxes() {
         var dims = chart.dimensions();
         //console.log("Axes reordered: " + JSON.stringify(dims));
         if (selectionHandler) {
@@ -166,22 +136,6 @@ function createParallelCoordinatePlot(selection, config, selectionHandler, data)
             .render();
     }
 
-    // update color
-    chart.change_color = function(dimension) {
-        doChangeColor(dimension);
-        saveAxes();
-    }
-
-    // set the initial coloring
-    doChangeColor(colorDimension);
-
-    // click label to activate coloring
-    chart.svg.selectAll(".dimension")
-        .on("click", chart.change_color);
-
-
-    chart.on("axesreorder.settings", saveAxes);
-
     function brushended(data) {
         var extents = chart.brushExtents();
         if (Object.keys(extents).length === 0) {
@@ -194,8 +148,61 @@ function createParallelCoordinatePlot(selection, config, selectionHandler, data)
             updateSelection(extents, ids);
         }
     }
-    // example of how to set the extents
-    //chart.brushExtents({"hbd_count":[1.490,2.33],"hba_count":[1.0,3.60]});
+
+    try {
+
+        var outerDiv = d3.selectAll(selection);
+
+        outerDiv.selectAll("*").remove();
+
+        var brushExtents = (selectionHandler ? selectionHandler.readExtents() : null) // something like: {"mol_weight":[200.0,400.0]};
+        var axes = (selectionHandler ? selectionHandler.readAxes() : null);
+        var colorDimension = (selectionHandler ? selectionHandler.readColorDimension() : null);
+        if (colorDimension == null) colorDimension = 'idx';
+
+        var scale = generateColorScale(data, colorDimension);
+
+        var chart = d3.parcoords(config)(selection)
+            //.color(function(d) { return scale(d[colorDimension]); })
+            .margin({top: 18, right: 0, bottom: 22, left: 0})
+            .alpha(0.4)
+            .data(data)
+            .composite("darker")
+            .dimensions(axes ? axes : {})
+            .hideAxis(["uuid"])
+            .render()
+            .createAxes()
+            .shadows()
+            .reorderable()
+            .brushMode("1D-axes")  // enable brushing
+            .brushExtents(brushExtents ? brushExtents : {})
+            .on("brushend", brushended);
+
+
+        // update color
+        chart.change_color = function(dimension) {
+            doChangeColor(dimension);
+                saveAxes();
+            }
+
+        // set the initial coloring
+        doChangeColor(colorDimension);
+
+        // click label to activate coloring
+        chart.svg.selectAll(".dimension")
+            .on("click", chart.change_color);
+
+        chart.on("axesreorder.settings", saveAxes);
+
+        // example of how to set the extents
+        //chart.brushExtents({"hbd_count":[1.490,2.33],"hba_count":[1.0,3.60]});
+
+
+    } catch(err) {
+        console.log("FAILED TO CREATE PARALLELCOORDINATEPLOT: " + err.message);
+        return;
+    }
+
 
     return chart;
 }

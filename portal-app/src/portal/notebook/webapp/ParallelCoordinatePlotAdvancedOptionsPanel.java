@@ -1,5 +1,8 @@
 package portal.notebook.webapp;
 
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import portal.notebook.webapp.ParallelCoordinatePlotCanvasItemPanel.NullValues;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -9,6 +12,8 @@ import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +41,11 @@ public class ParallelCoordinatePlotAdvancedOptionsPanel extends AbstractDatasetA
         CheckBoxMultipleChoice<String> fields = new CheckBoxMultipleChoice<>("fields", fieldNamesModel);
         fields.setMaxRows(10);
         form.add(fields);
+
+        List<NullValues> nullValues = new ArrayList<>();
+        nullValues.addAll(Arrays.asList(NullValues.values()));
+        DropDownChoice<NullValues> p = new DropDownChoice<>("nullValues", nullValues);
+        form.add(p);
 
         add(form);
 
@@ -65,9 +75,19 @@ public class ParallelCoordinatePlotAdvancedOptionsPanel extends AbstractDatasetA
         form.getModelObject().setFields(fields);
     }
 
+    public NullValues getNullValues() {
+        return form.getModelObject().getNullValues();
+    }
+
+    public void setNullValues(NullValues nullValues) {
+        form.getModelObject().setNullValues(nullValues);
+    }
+
+
     private class ModelObject implements Serializable {
 
         private List<String> fields;
+        private NullValues nullValues;
 
         public List<String> getFields() {
             return fields;
@@ -77,5 +97,12 @@ public class ParallelCoordinatePlotAdvancedOptionsPanel extends AbstractDatasetA
             this.fields = fields;
         }
 
+        public NullValues getNullValues() {
+            return nullValues;
+        }
+
+        public void setNullValues(NullValues nullValues) {
+            this.nullValues = nullValues;
+        }
     }
 }

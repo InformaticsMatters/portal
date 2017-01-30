@@ -32,6 +32,11 @@ http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.css
   stroke: #222;
   shape-rendering: crispEdges;
 }
+.parcoords line {
+  fill: none;
+  stroke: #ddd;
+  shape-rendering: crispEdges;
+}
 .parcoords canvas {
   opacity: 1;
   -moz-transition: opacity 0.3s;

@@ -148,6 +148,9 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.OPTION_AXES,
                         "Axes", "Axes configuration", Mode.Advanced));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, ParallelCoordinatePlotCanvasItemPanel.OPTION_NULL_VALUES,
+                        "Null Values", "Where to place null values", Mode.Advanced).withMinMaxValues(0,1));
 
         // outputs
         cellDefinition.getOptionDefinitionList().add(

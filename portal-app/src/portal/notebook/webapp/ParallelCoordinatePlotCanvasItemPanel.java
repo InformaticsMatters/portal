@@ -6,6 +6,7 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -38,9 +39,11 @@ import java.util.stream.Stream;
  */
 public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
+    protected enum NullValues { Bottom, Top, Ignore }
+    public static final String OPTION_NULL_VALUES = "nullValues";
     public static final String OPTION_COLOR_DIMENSION = "colorDimension";
     private static final Logger LOG = Logger.getLogger(ParallelCoordinatePlotCanvasItemPanel.class.getName());
-    private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(':id', {}, :data)";
+    private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(\":id\", {:nullValues}, :data)";
     private final ModelObject model = new ModelObject();
     private Form<ModelObject> form;
     private ParallelCoordinatePlotAdvancedOptionsPanel advancedOptionsPanel;
@@ -68,6 +71,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         CellInstance cellInstance = findCellInstance();
         Map<String, OptionInstance> options = cellInstance.getOptionInstanceMap();
         model.setFields((List<String>) options.get(OPTION_FIELDS).getValue());
+        OptionInstance nullValuesOpt = options.get(OPTION_NULL_VALUES);
+        model.setNullValues(nullValuesOpt.getValue() == null ? NullValues.Ignore : NullValues.valueOf((String)nullValuesOpt.getValue()));
     }
 
     @Override
@@ -111,6 +116,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         };
 
         add(form);
+
         form.add(selection);
         form.add(extents);
         form.add(axes);
@@ -244,8 +250,22 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     }
 
     private String buildPlotJs() throws IOException {
+
+        String nullValuesStr = null;
+        switch (model.getNullValues()) {
+            case Bottom:
+                nullValuesStr = "nullValueSeparator: \"bottom\"";
+                break;
+            case Top:
+                nullValuesStr = "nullValueSeparator: \"top\"";
+                break;
+            default:
+                nullValuesStr = "";
+        }
+
         return BUILD_PLOT_JS
                 .replace(":id", getMarkupId())
+                .replace(":nullValues", nullValuesStr)
                 .replace(":data", model.getPlotDataAsJson());
     }
 
@@ -286,16 +306,22 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
             @Override
             public void onApplyAdvancedOptions() throws Exception {
                 CellInstance cellInstance = findCellInstance();
-                cellInstance.getOptionInstanceMap().get(OPTION_FIELDS).setValue(advancedOptionsPanel.getFields());
+                Map<String,OptionInstance> opts = cellInstance.getOptionInstanceMap();
+                opts.get(OPTION_FIELDS).setValue(advancedOptionsPanel.getFields());
+                NullValues nullValues = advancedOptionsPanel.getNullValues();
+                opts.get(OPTION_NULL_VALUES).setValue(nullValues.toString());
+
                 notebookSession.storeCurrentEditable();
 
                 model.setFields(advancedOptionsPanel.getFields());
+                model.setNullValues(advancedOptionsPanel.getNullValues());
 
                 onExecute();
             }
 
         });
         advancedOptionsPanel.setFields(model.getFields());
+        advancedOptionsPanel.setNullValues(model.getNullValues());
     }
 
     class ModelObject implements Serializable {
@@ -317,6 +343,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         private Integer size = null;
 
         private List<String> fields;
+
+        private NullValues nullValues = NullValues.Ignore;
 
         public List<String> getFields() {
             return fields;
@@ -340,6 +368,14 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
 
         public void setSize(Integer size) {
             this.size = size;
+        }
+
+        public NullValues getNullValues() {
+            return nullValues;
+        }
+
+        public void setNullValues(NullValues nullValues) {
+            this.nullValues = nullValues;
         }
 
         private String getPlotDataAsJson() throws IOException {
