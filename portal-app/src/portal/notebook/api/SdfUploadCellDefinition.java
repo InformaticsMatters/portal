@@ -25,10 +25,10 @@ public class SdfUploadCellDefinition extends CellDefinition {
 
     public SdfUploadCellDefinition() {
         super(CELL_NAME, "SDF upload", "icons/file_upload_molecule.png", new String[]{"file", "upload", "sdf"});
-        VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VariableType.FILE);
-        getVariableDefinitionList().add(variableDefinition);
-        variableDefinition = new VariableDefinition(VAR_NAME_OUTPUT, VariableType.DATASET_MOLS);
-        getVariableDefinitionList().add(variableDefinition);
+        IODescriptor input = IODescriptors.createSDF(VAR_NAME_FILECONTENT);
+        getVariableDefinitionList().add(input);
+        IODescriptor output = IODescriptors.createMoleculeObjectDataset(VAR_NAME_OUTPUT);
+        getVariableDefinitionList().add(output);
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"sdf"}), OPT_FILE_UPLOAD, "SD File", "Upload SD file", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(
                 String.class, OPT_NAME_FIELD_NAME,
@@ -47,7 +47,7 @@ public class SdfUploadCellDefinition extends CellDefinition {
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             VariableKey key = new VariableKey(cellExecutionData.getCellId(), VAR_NAME_FILECONTENT); // we are the producer
-            IODescriptor[] outputs = IODescriptors.createBasicObjectDatasetArray("output");
+            IODescriptor[] outputs = IODescriptors.createBasicObjectDatasetArray(VAR_NAME_OUTPUT);
 
             StepDefinition step1 = new StepDefinition(SdfUpload.CLASSNAME)
                     .withOutputs(outputs)

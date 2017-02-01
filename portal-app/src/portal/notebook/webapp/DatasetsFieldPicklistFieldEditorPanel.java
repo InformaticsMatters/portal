@@ -5,12 +5,14 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.Model;
+import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.io.IODescriptors;
 import org.squonk.types.BasicObject;
+import org.squonk.types.MoleculeObject;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
-import portal.notebook.api.VariableType;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
@@ -49,7 +51,7 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel<Stri
         boolean first = true;
         for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
-            if (variableInstance != null && variableInstance.getVariableDefinition().getVariableType().equals(VariableType.DATASET_MOLS)) {
+            if (variableInstance != null && IODescriptors.isSameType(variableInstance.getVariableDefinition(), Dataset.class, MoleculeObject.class)) {
                 Set<String> fieldNames = extractFieldNames(variableInstance);
                 if (first) {
                     picklistItems.addAll(fieldNames);

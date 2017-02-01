@@ -9,8 +9,10 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.io.IODescriptor;
 import org.squonk.options.*;
 import org.squonk.options.types.Structure;
+import org.squonk.types.AbstractFile;
 import org.squonk.types.NumberRange;
 import portal.notebook.api.*;
 import toolkit.wicket.semantic.NotifierProvider;
@@ -181,8 +183,10 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
     }
 
     private VariableInstance findVariableInstanceForFileOption() {
+        // TODO - modify this so that it asks for a file of the required type
         for (VariableInstance variableInstance : findCellInstance().getVariableInstanceMap().values()) {
-            if (variableInstance.getVariableDefinition().getVariableType().equals(VariableType.FILE)) {
+            IODescriptor iod = variableInstance.getVariableDefinition();
+            if (AbstractFile.class.isAssignableFrom(iod.getPrimaryType())) {
                 return variableInstance;
             }
         }

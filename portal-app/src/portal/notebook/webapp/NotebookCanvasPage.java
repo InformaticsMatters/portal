@@ -23,6 +23,8 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.string.StringValue;
+import org.squonk.io.IODescriptor;
+import org.squonk.io.IODescriptors;
 import org.squonk.jobdef.JobStatus;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.TypeDescriptor;
@@ -789,6 +791,7 @@ public class NotebookCanvasPage extends WebPage {
             String sourceEndpointUuid, String targetEndpointUuid,
             VariableInstance variableInstance, BindingInstance bindingInstance) throws Exception {
 
+        LOGGER.fine("Setting binding of " + bindingInstance.getBindingDefinition().getName() + " to " + (variableInstance == null ? "null" : variableInstance.getVariableDefinition().getName()));
         bindingInstance.setVariableInstance(add ? variableInstance : null);
         notebookSession.storeCurrentEditable();
 
@@ -871,13 +874,19 @@ public class NotebookCanvasPage extends WebPage {
     private String buildEndpointsJS(CellInstance cellInstance) {
         String itemId = CANVAS_ITEM_PREFIX + cellInstance.getId();
         StringBuilder stringBuilder = new StringBuilder();
+        CellDefinition cellDef = cellInstance.getCellDefinition();
+        NotebookInstance notebookInstance = getNotebookSession().getCurrentNotebookInstance();
         for (VariableInstance variableInstance : cellInstance.getVariableInstanceMap().values()) {
-            String endpointId = itemId + "-" + variableInstance.getVariableDefinition().getName();
-            stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + buildDataEndpointText(variableInstance.getVariableDefinition()) + "');");
+            IODescriptor iod = variableInstance.getVariableDefinition();
+            String endpointId = itemId + "-" + iod.getName();
+            Class[] types = cellDef.getOutputVariableRuntimeType(notebookInstance, cellInstance.getId(), variableInstance.getVariableDefinition());
+            String endpointText = iod.getName() + "[" +
+                    (types == null ? "undefined" : (types[1] == null ? types[0].getSimpleName() : types[0].getSimpleName() + ":" +types[1].getSimpleName())) + "]";
+            stringBuilder.append("addSourceEndpoint('" + itemId + "', '" + endpointId + "', '" + endpointText + "');");
         }
         for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
             String endpointId = itemId + "-" + bindingInstance.getName();
-            stringBuilder.append("addTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + buildDataEndpointText(bindingInstance) + "');");
+            stringBuilder.append("addTargetEndpoint('" + itemId + "', '" + endpointId + "', '" + buildTargetEndpointText(bindingInstance) + "');");
         }
         for (OptionInstance optionInstance : cellInstance.getOptionInstanceMap().values()) {
             if (optionInstance.getOptionDescriptor().isMode(OptionDescriptor.Mode.Output)) {
@@ -892,12 +901,12 @@ public class NotebookCanvasPage extends WebPage {
         return stringBuilder.toString();
     }
 
-    private String buildDataEndpointText(BindingInstance bindingInstance) {
-        return String.format("%s[%s]", bindingInstance.getName(), bindingInstance.getBindingDefinition().getAcceptedVariableTypeList().stream().map(t -> buildTypeFromVariableType(t)).collect(Collectors.joining(",")));
-    }
-
-    private String buildDataEndpointText(VariableDefinition variableDefinition) {
-        return String.format("%s[%s]", variableDefinition.getName(), buildTypeFromVariableDefinition(variableDefinition));
+    private String buildTargetEndpointText(BindingInstance bindingInstance) {
+        return String.format("%s[%s]", bindingInstance.getName(),
+                bindingInstance.getBindingDefinition().getAcceptedVariableTypeList()
+                        .stream()
+                        .map(t -> buildTypeFromVariableType(t.getPrimary(), t.getSecondary()))
+                        .collect(Collectors.joining(",")));
     }
 
     private String buildOptionEndpointText(OptionBindingInstance bindingInstance) {
@@ -912,13 +921,15 @@ public class NotebookCanvasPage extends WebPage {
         return td.getType().getSimpleName();
     }
 
-    private String buildTypeFromVariableType(VariableType vt) {
-        return vt.getName();
+    private String buildTypeFromVariableType(Class primary, Class secondary) {
+        if (secondary == null) {
+            return primary.getSimpleName();
+        } else {
+            return primary.getSimpleName() + ":" + secondary.getSimpleName();
+        }
     }
 
-    private String buildTypeFromVariableDefinition(VariableDefinition vd) {
-        return buildTypeFromVariableType(vd.getVariableType());
-    }
+
 
     public void notifyMessage(String title, String message) {
         notifierProvider.getNotifier(getPage()).notify(title, message);

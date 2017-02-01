@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import org.squonk.dataset.Dataset;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.DatasetMerger;
@@ -9,6 +10,7 @@ import org.squonk.jobdef.JobDefinition;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
+import org.squonk.types.BasicObject;
 import org.squonk.util.CommonMimeTypes;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,13 +28,13 @@ public class DatasetMergerCellDefinition extends CellDefinition {
 
     public DatasetMergerCellDefinition() {
         super(CELL_NAME, "Merge datasets into one", "icons/merge.png", new String[]{"merge", "dataset"});
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VariableType.DATASET_ANY));
+        getVariableDefinitionList().add(IODescriptors.createBasicObjectDataset(VAR_NAME_OUTPUT));
         getOptionDefinitionList().add(new DatasetsFieldOptionDescriptor(DatasetMerger.OPTION_MERGE_FIELD_NAME, "Merge field name", "Name of value field which identifies equivalent entries"));
         getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, DatasetMerger.OPTION_KEEP_FIRST, "When duplicate keep first",
                 "When duplicate field name use the existing value rather than the new one", Mode.User)
         .withDefaultValue(true));
         for (int i = 0; i < 5; i++) {
-            getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT + (i + 1), VariableType.DATASET_ANY));
+            getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT + (i + 1), Dataset.class, BasicObject.class));
         }
     }
 
@@ -47,19 +49,19 @@ public class DatasetMergerCellDefinition extends CellDefinition {
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             // TODO - this should be able to handle BasicObjects too
-            IODescriptor[] outputs = new IODescriptor[] {IODescriptors.createMoleculeObjectDataset("output")};
+            IODescriptor[] outputs = new IODescriptor[] {IODescriptors.createMoleculeObjectDataset(VAR_NAME_OUTPUT)};
             List<IODescriptor> inputList = new ArrayList<>();
 
             StepDefinition step = new StepDefinition(StepDefinitionConstants.DatasetMerger.CLASSNAME)
                     .withOutputs(outputs)
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, "output")
+                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cell));
 
             for (int i = 1; i <= 5; i++) {
                 VariableKey key = createVariableKey(cell, StepDefinitionConstants.VARIABLE_INPUT_DATASET + i);
                 if (key != null) {
                     step.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET + i, key);
-                    inputList.add(IODescriptors.createMoleculeObjectDataset("input" + i));
+                    inputList.add(IODescriptors.createMoleculeObjectDataset(VAR_NAME_INPUT + i));
                 } else {
                     break;
                 }

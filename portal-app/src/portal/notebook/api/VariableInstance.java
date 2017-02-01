@@ -1,5 +1,7 @@
 package portal.notebook.api;
 
+import org.squonk.io.IODescriptor;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -8,7 +10,7 @@ public class VariableInstance implements Serializable {
 
     private final static long serialVersionUID = 1L;
     private Long cellId;
-    private VariableDefinition variableDefinition;
+    private IODescriptor variableDefinition;
     private boolean dirty = false;
 
     public Long getCellId() {
@@ -27,11 +29,11 @@ public class VariableInstance implements Serializable {
         dirty = false;
     }
 
-    public VariableDefinition getVariableDefinition() {
+    public IODescriptor getVariableDefinition() {
         return variableDefinition;
     }
 
-    public void setVariableDefinition(VariableDefinition variableDefinition) {
+    public void setVariableDefinition(IODescriptor variableDefinition) {
         this.variableDefinition = variableDefinition;
     }
 

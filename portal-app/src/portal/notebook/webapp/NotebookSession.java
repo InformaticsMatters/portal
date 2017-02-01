@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.squonk.client.NotebookVariableClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
+import org.squonk.io.IODescriptor;
 import org.squonk.notebook.api.*;
+import org.squonk.types.AbstractFile;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 import org.squonk.types.io.JsonHandler;
@@ -221,12 +223,12 @@ public class NotebookSession implements Serializable {
 
 
     public IDatasetDescriptor loadDatasetFromVariable(VariableInstance variableInstance) throws Exception {
-        VariableType variableType = variableInstance.getVariableDefinition().getVariableType();
-        if (variableType.equals(VariableType.DATASET_MOLS) || variableType.equals(VariableType.DATASET_BASIC) || variableType.equals(VariableType.DATASET_ANY)) {
+        IODescriptor iod = variableInstance.getVariableDefinition();
+        if (Dataset.class.isAssignableFrom(iod.getPrimaryType())) {
             return loadDatasetFromDatasetVariable(variableInstance);
-        } else if (variableType.equals(VariableType.FILE)) {
+        } else if (AbstractFile.class.isAssignableFrom(iod.getPrimaryType())) {
             return loadDatasetFromFileVariable(variableInstance);
-        } else if (variableType.equals(VariableType.STRING)) {
+        } else if (iod.getPrimaryType() == String.class) {
             return loadDatasetFromFileVariable(variableInstance);
         } else {
             return null;

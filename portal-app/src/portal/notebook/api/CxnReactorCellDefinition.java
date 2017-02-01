@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import org.squonk.dataset.Dataset;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.CxnReactor;
@@ -8,6 +9,8 @@ import org.squonk.io.IODescriptors;
 import org.squonk.jobdef.JobDefinition;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
+import org.squonk.types.BasicObject;
+import org.squonk.types.MoleculeObject;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -267,10 +270,10 @@ public class CxnReactorCellDefinition extends CellDefinition {
     public CxnReactorCellDefinition() {
         super(CELL_NAME, "Reaction enumeration", "icons/molecule_generator.png", new String[]{"enumeration", "reaction", "library", "dataset"});
 
-        getBindingDefinitionList().add(new BindingDefinition(INPUT_R1, VariableType.DATASET_MOLS));
-        getBindingDefinitionList().add(new BindingDefinition(INPUT_R2, VariableType.DATASET_MOLS));
+        getBindingDefinitionList().add(new BindingDefinition(INPUT_R1, Dataset.class, MoleculeObject.class));
+        getBindingDefinitionList().add(new BindingDefinition(INPUT_R2, Dataset.class, MoleculeObject.class));
 
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VariableType.DATASET_MOLS));
+        getVariableDefinitionList().add(IODescriptors.createMoleculeObjectDataset(VAR_NAME_OUTPUT));
 
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, CxnReactor.OPTION_REACTION, "Reaction", "Reaction from the ChemAxon reaction library", Mode.User)
             .withValues(REACTIONS)

@@ -1,9 +1,12 @@
 package portal.notebook.api;
 
+import org.squonk.dataset.Dataset;
 import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.io.IODescriptors;
 import org.squonk.options.DatasetFieldTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
+import org.squonk.types.MoleculeObject;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -19,8 +22,8 @@ public class SmilesDeduplicatorCellDefinition extends CellDefinition {
 
     public SmilesDeduplicatorCellDefinition() {
         super(CELL_NAME, "Deduplicate structures using canonical smiles field", "icons/program_filter.png", new String[]{"smiles", "deduplicate", "duplicate", "filter", "dataset"});
-        getBindingDefinitionList().add(new BindingDefinition("input", VariableType.DATASET_MOLS));
-        getVariableDefinitionList().add(new VariableDefinition("output", VariableType.DATASET_MOLS));
+        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, Dataset.class, MoleculeObject.class));
+        getVariableDefinitionList().add(IODescriptors.createMoleculeObjectDataset(VAR_NAME_OUTPUT));
         getOptionDefinitionList().add(new OptionDescriptor<>(new DatasetFieldTypeDescriptor(new Class[] {String.class}),
                        StepDefinitionConstants.SmilesDeduplicator.OPTION_CANONICAL_SMILES_FIELD,
                 "Canonical smiles field", "Field with canonical smiles that identifies identical structures", Mode.User)

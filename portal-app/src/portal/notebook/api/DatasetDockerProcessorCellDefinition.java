@@ -1,6 +1,8 @@
 package portal.notebook.api;
 
+import org.squonk.dataset.Dataset;
 import org.squonk.io.IODescriptor;
+import org.squonk.io.IODescriptors;
 import org.squonk.jobdef.JobDefinition;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
@@ -8,6 +10,7 @@ import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
+import org.squonk.types.MoleculeObject;
 import org.squonk.util.CommonMimeTypes;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,8 +35,8 @@ public class DatasetDockerProcessorCellDefinition extends CellDefinition impleme
 
     public DatasetDockerProcessorCellDefinition() {
         super(CELL_NAME, "Process dataset using Docker container", "icons/program.png", new String[]{"program", "code", "dataset", "docker"});
-        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, VariableType.DATASET_MOLS));
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VariableType.DATASET_MOLS));
+        getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, Dataset.class, MoleculeObject.class));
+        getVariableDefinitionList().add(IODescriptors.createMoleculeObjectDataset(VAR_NAME_OUTPUT));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPTION_DOCKER_IMAGE,
                 "Docker image name", "The name of the Docker image to use", Mode.User)
                 .withMinMaxValues(1,1));

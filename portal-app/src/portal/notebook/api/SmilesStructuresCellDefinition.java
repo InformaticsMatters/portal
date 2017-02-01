@@ -1,6 +1,7 @@
 package portal.notebook.api;
 
 import org.squonk.execution.steps.StepDefinitionConstants;
+import org.squonk.io.IODescriptors;
 import org.squonk.options.MultiLineTextTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
@@ -21,7 +22,7 @@ public class SmilesStructuresCellDefinition extends CellDefinition {
 
     public SmilesStructuresCellDefinition() {
         super(CELL_NAME, "Read structures from smiles", "icons/molecules.png", new String[]{"smiles", "dataset"});
-        getVariableDefinitionList().add(new VariableDefinition("output", VariableType.DATASET_MOLS));
+        getVariableDefinitionList().add(IODescriptors.createMoleculeObjectDataset(VAR_NAME_OUTPUT));
         getOptionDefinitionList().add(new OptionDescriptor<>(new MultiLineTextTypeDescriptor(10, 80, MultiLineTextTypeDescriptor.MIME_TYPE_TEXT_PLAIN),
                 OPTION_SMILES, "Smiles",
                 "Smiles as text, with optional name", Mode.User));

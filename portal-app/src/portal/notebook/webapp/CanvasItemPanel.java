@@ -9,7 +9,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 import org.squonk.core.client.StructureIOClient;
+import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetSelection;
+import org.squonk.io.IODescriptor;
 import org.squonk.jobdef.JobStatus.Status;
 import portal.PopupContainerProvider;
 import portal.notebook.api.*;
@@ -66,14 +68,13 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     protected void createResultsHandlers() {
         CellInstance cellInstance = findCellInstance();
         CellDefinition cellDefinition = cellInstance.getCellDefinition();
-        List<VariableDefinition> varDefs = cellDefinition.getVariableDefinitionList();
+        List<IODescriptor> iods = cellDefinition.getVariableDefinitionList();
         // TODO - handle multiple outputs (resultsHandler should become an array and results viewer should handle multiple types)
         // TODO - handle other result types
-        if (varDefs != null && varDefs.size() > 0) {
-            for (VariableDefinition varDef : varDefs) {
-                String name = varDef.getName();
-                VariableType type = varDef.getVariableType();
-                if (VariableType.DATASET_ANY.supports(type)) {
+        if (iods != null && iods.size() > 0) {
+            for (IODescriptor iod : iods) {
+                String name = iod.getName();
+                if (iod.getPrimaryType() == Dataset.class) {
                     LOG.fine("Creating results handler for variable " + name + " in cell " + cellInstance.getName());
                     resultsHandler = new DatasetResultsHandler(name, notebookSession, structureIOClient, cellInstance.getId());
                     return;

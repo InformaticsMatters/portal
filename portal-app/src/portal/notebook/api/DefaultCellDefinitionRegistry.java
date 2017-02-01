@@ -3,10 +3,14 @@ package portal.notebook.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetSelection;
+import org.squonk.io.IODescriptors;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
+import org.squonk.types.BasicObject;
 import org.squonk.types.NumberRange;
+import org.squonk.util.CommonMimeTypes;
 import portal.SessionContext;
 import portal.notebook.webapp.*;
 
@@ -34,13 +38,8 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     private static CellDefinition createTableDisplayCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "icons/visualisation_table.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
         BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
-        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
-        VariableDefinition variableDefinition = new VariableDefinition();
-        variableDefinition.setName("selection");
-        variableDefinition.setVariableType(VariableType.STRING);
-        cellDefinition.getVariableDefinitionList().add(variableDefinition);
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", Dataset.class, BasicObject.class));
+        cellDefinition.getVariableDefinitionList().add(IODescriptors.createString("selection"));
 
         // option inputs
         OptionDescriptor filterOptionDescriptor = new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)", Mode.Input);
@@ -58,10 +57,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         CellDefinition cellDefinition = new SimpleCellDefinition("ScatterPlot", "Scatter plot", "icons/visualisation_chart.png", new String[]{"scatter", "plot", "visualization", "visualisation", "viz"}, false);
 
         // the data bindings
-        BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
-        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", Dataset.class, BasicObject.class));
 
         // these ones are the options that appear in the advanced options dialog
         cellDefinition.getOptionDefinitionList().add(
@@ -98,20 +94,13 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     private static CellDefinition create3DMolCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("3DMol", "3D viewer", "icons/view.png", new String[]{"3d", "viewer", "visualization", "visualisation", "viz"}, false);
-        BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_MOLS);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.STRING);
-        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", Dataset.class, BasicObject.class, String.class, null));
         return cellDefinition;
     }
 
     private static CellDefinition createBoxPlotCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("BoxPlot", "Box plot", "icons/visualisation_chart.png", new String[]{"box", "plot", "visualization", "visualisation", "viz"}, false);
-        BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
-        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", Dataset.class, BasicObject.class));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
                         "x Axis", "Field to use to group values", Mode.Advanced));
@@ -132,10 +121,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     private static CellDefinition createParallelCoordinatePlotCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("ParallelCoordinatePlot", "Parallel coordinate plot", "icons/visualisation_chart.png",
                 new String[]{"parallel", "coordinate", "plot", "visualization", "visualisation", "viz"}, false);
-        BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
-        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", Dataset.class, BasicObject.class));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_X_AXIS,
                         "x Axis", "Field to use to group values", Mode.Advanced));
@@ -177,10 +163,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     private static CellDefinition createHeatmapCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("Heatmap", "Heat map", "icons/visualisation_chart.png", new String[]{"heatmap", "plot", "visualization", "visualisation", "viz"}, false);
-        BindingDefinition bindingDefinition = new BindingDefinition();
-        bindingDefinition.setName(CellDefinition.VAR_NAME_INPUT);
-        bindingDefinition.getAcceptedVariableTypeList().add(VariableType.DATASET_ANY);
-        cellDefinition.getBindingDefinitionList().add(bindingDefinition);
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", Dataset.class, BasicObject.class));
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, HeatmapCanvasItemPanel.OPTION_ROWS_FIELD,
                         "Rows field", "Field to use for the rows", Mode.Advanced));

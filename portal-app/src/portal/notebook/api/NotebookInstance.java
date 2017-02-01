@@ -1,6 +1,7 @@
 package portal.notebook.api;
 
 
+import org.squonk.io.IODescriptor;
 import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.options.OptionDescriptor;
 
@@ -109,11 +110,11 @@ public class NotebookInstance implements Serializable {
 
     private CellInstance configureCellInstance(CellInstance cellInstance) {
         CellDefinition cellDefinition = cellInstance.getCellDefinition();
-        for (VariableDefinition variableDefinition : cellDefinition.getVariableDefinitionList()) {
+        for (IODescriptor iod : cellDefinition.getVariableDefinitionList()) {
             VariableInstance variable = new VariableInstance();
-            variable.setVariableDefinition(variableDefinition);
+            variable.setVariableDefinition(iod);
             variable.setCellId(cellInstance.getId());
-            cellInstance.getVariableInstanceMap().put(variableDefinition.getName(), variable);
+            cellInstance.getVariableInstanceMap().put(iod.getName(), variable);
         }
         for (BindingDefinition bindingDefinition : cellDefinition.getBindingDefinitionList()) {
             BindingInstance binding = new BindingInstance();
@@ -203,8 +204,8 @@ public class NotebookInstance implements Serializable {
             // new notebook - no contents
             return;
         } else {
-            canvasWidth = (Integer)notebookCanvasDTO.getProperty("canvasWidth");
-            canvasHeight = (Integer)notebookCanvasDTO.getProperty("canvasHeight");
+            canvasWidth = (Integer) notebookCanvasDTO.getProperty("canvasWidth");
+            canvasHeight = (Integer) notebookCanvasDTO.getProperty("canvasHeight");
             setLastCellId(notebookCanvasDTO.getLastCellId());
             for (NotebookCanvasDTO.CellDTO cellDTO : notebookCanvasDTO.getCells()) {
                 // TODO - error handling
@@ -242,6 +243,7 @@ public class NotebookInstance implements Serializable {
                         BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(bindingDTO.getVariableKey());
                         if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
                             VariableInstance variableInstance = findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
+                            LOGGER.fine("Initializing binding of " + bindingInstance.getBindingDefinition().getName() + " to " + variableInstance.getVariableDefinition().getName());
                             bindingInstance.setVariableInstance(variableInstance);
                         }
                     }
@@ -298,4 +300,23 @@ public class NotebookInstance implements Serializable {
     public void setCanvasHeight(Integer canvasHeight) {
         this.canvasHeight = canvasHeight;
     }
+
+    /**
+     * Find the cell (if any) bound to the specified cell using the specified variable name
+     *
+     * @param cellInstance
+     * @param varname
+     * @return
+     */
+    public CellInstance findCellBoundToVariable(CellInstance cellInstance, String varname) {
+
+        VariableInstance variableInstance = cellInstance.getBindingInstanceMap().get(varname).getVariableInstance();
+        if (variableInstance != null) {
+            Long upstreamCellId = variableInstance.getCellId();
+            return findCellInstanceById(upstreamCellId);
+        }
+
+        return null;
+    }
+
 }

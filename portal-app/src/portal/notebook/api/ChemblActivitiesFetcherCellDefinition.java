@@ -24,7 +24,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
 
     public ChemblActivitiesFetcherCellDefinition() {
         super(CELL_NAME, "ChEMBL activities fetcher", "icons/import_external_service.png", new String[]{"chembl", "assay", "rest"});
-        getVariableDefinitionList().add(new VariableDefinition(VAR_NAME_OUTPUT, VariableType.DATASET_MOLS));
+        getVariableDefinitionList().add(IODescriptors.createMoleculeObjectDataset(VAR_NAME_OUTPUT));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_ASSAY_ID, "Assay ID", "ChEMBL Asssay ID", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_PREFIX, "Prefix", "Prefix for result fields", Mode.User));
 
@@ -40,7 +40,7 @@ public class ChemblActivitiesFetcherCellDefinition extends CellDefinition {
         @Override
         protected JobDefinition buildJobDefinition(CellInstance cellInstance, CellExecutionData cellExecutionData) {
 
-            IODescriptor[] outputs = IODescriptors.createMoleculeObjectDatasetArray("output");
+            IODescriptor[] outputs = IODescriptors.createMoleculeObjectDatasetArray(VAR_NAME_OUTPUT);
 
             Map<String,Object> options = collectAllOptions(cellInstance);
             StepDefinition step1 = new StepDefinition(StepDefinitionConstants.ChemblActivitiesFetcher.CLASSNAME)

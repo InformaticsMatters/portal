@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import org.squonk.dataset.Dataset;
 import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.execution.steps.StepDefinitionConstants.CsvUpload;
@@ -10,6 +11,7 @@ import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.FileTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
+import org.squonk.types.BasicObject;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -26,10 +28,9 @@ public class CsvUploadCellDefinition extends CellDefinition {
 
     public CsvUploadCellDefinition() {
         super(CELL_NAME, "CSV upload", "icons/file_upload_basic.png", new String[]{"file", "upload", "csv", "tab"});
-        VariableDefinition variableDefinition = new VariableDefinition(VAR_NAME_FILECONTENT, VariableType.FILE);
-        getVariableDefinitionList().add(variableDefinition);
-        variableDefinition  = new VariableDefinition(VAR_NAME_OUTPUT, VariableType.DATASET_BASIC);
-        getVariableDefinitionList().add(variableDefinition);
+
+        getVariableDefinitionList().add(IODescriptors.createCSV(VAR_NAME_FILECONTENT));
+        getVariableDefinitionList().add(IODescriptors.createBasicObjectDataset(VAR_NAME_OUTPUT));
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"csv", "tab", "txt"}),
                 OPT_FILE_UPLOAD, "CSV/TAB File", "Upload comma or tab separated text file", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(String.class, OPT_FILE_TYPE, "File type", "Type of CSV or TAB file", Mode.User)
@@ -51,7 +52,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             VariableKey key = new VariableKey(cell.getId(), VAR_NAME_FILECONTENT); // we are the producer
-            IODescriptor[] outputs = IODescriptors.createBasicObjectDatasetArray("output");
+            IODescriptor[] outputs = IODescriptors.createBasicObjectDatasetArray(VAR_NAME_OUTPUT);
 
             StepDefinition step1 = new StepDefinition(CsvUpload.CLASSNAME)
                     .withOutputs(outputs)

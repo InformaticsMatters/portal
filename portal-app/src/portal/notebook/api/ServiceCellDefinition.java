@@ -45,32 +45,18 @@ public class ServiceCellDefinition extends CellDefinition {
         // if one of the options is defined as the body then we don't want an input endpoint
         if (findOptionDescriptorForBody() == null) {
             for (IODescriptor input : serviceConfig.getInputDescriptors()) {
-                getBindingDefinitionList().add(new BindingDefinition(input.getName(), determineVariableType(input)));
+                getBindingDefinitionList().add(new BindingDefinition(input.getName(), input.getPrimaryType(), input.getSecondaryType()));
             }
         }
 
         IODescriptor[] outputs = serviceConfig.getOutputDescriptors();
         if (outputs != null && outputs.length > 0) {
             for (IODescriptor output : serviceConfig.getOutputDescriptors()) {
-                getVariableDefinitionList().add(new VariableDefinition(output.getName(), determineVariableType(output)));
+                getVariableDefinitionList().add(output);
             }
         }
     }
 
-    private VariableType determineVariableType(IODescriptor iod) {
-        if (iod.getPrimaryType() == Dataset.class) {
-            if (iod.getSecondaryType() == MoleculeObject.class) {
-                return VariableType.DATASET_MOLS;
-            } else if (iod.getSecondaryType() == BasicObject.class) {
-                return VariableType.DATASET_BASIC;
-            }
-        }
-
-        // this shouldn't happen
-        LOG.warning("Unexpected variable defintion: " + iod);
-        Thread.dumpStack();
-        return VariableType.DATASET_ANY;
-    }
 
     private OptionDescriptor findOptionDescriptorForBody() {
         if (serviceConfig.getOptionDescriptors() != null) {
