@@ -1,5 +1,6 @@
 package portal.notebook.webapp.results;
 
+import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -11,6 +12,7 @@ import org.squonk.types.MoleculeObject;
 import org.squonk.types.MoleculeObjectHighlightable;
 import org.squonk.types.Scale;
 
+import javax.inject.Inject;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -22,16 +24,17 @@ public class MoleculeObjectCardPanel extends BasicObjectCardPanel<MoleculeObject
     private static final Logger LOG = Logger.getLogger(MoleculeObjectCardPanel.class.getName());
 
     private final IModel<DatasetMetadata> datasetMetadataModel;
-    private final StructureIOClient client;
     private final Model<String> highlighterModel;
 
+    @Inject
+    private StructureIOClient client;
 
-    MoleculeObjectCardPanel(String id, Map<String, Class> classMappings, MoleculeObject mo, IModel<DatasetMetadata> datasetMetadataModel, StructureIOClient client, Model<String> highlighterModel) {
+
+    MoleculeObjectCardPanel(String id, Map<String, Class> classMappings, MoleculeObject mo, IModel<DatasetMetadata> datasetMetadataModel, Model<String> highlighterModel) {
         super(id, classMappings, mo);
         this.datasetMetadataModel = datasetMetadataModel;
-        this.client = client;
         this.highlighterModel = highlighterModel;
-
+        CdiContainer.get().getNonContextualManager().postConstruct(this);
     }
 
     @Override
@@ -49,6 +52,7 @@ public class MoleculeObjectCardPanel extends BasicObjectCardPanel<MoleculeObject
             @Override
             protected byte[] getImageData(Attributes attributes) {
                 DepictionParameters params = new DepictionParameters(30, 20);
+                params.setMargin(0.5);
                 String highlighterFieldName = highlighterModel.getObject();
                 if (highlighterFieldName != null && !DatasetResultsPanel.HIGHLIGHTER_NONE.equals(highlighterFieldName)) {
                     MoleculeObjectHighlightable highlightable = (MoleculeObjectHighlightable)mo.getValue(highlighterFieldName);

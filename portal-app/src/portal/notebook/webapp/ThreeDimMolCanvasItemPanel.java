@@ -1,9 +1,7 @@
 package portal.notebook.webapp;
 
-import chemaxon.formats.MolExporter;
-import chemaxon.formats.MolImporter;
-import chemaxon.struc.Molecule;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.squonk.dataset.Dataset;
 import org.squonk.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -16,6 +14,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
+import org.squonk.util.IOUtils;
 import portal.PortalWebApplication;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
@@ -27,11 +26,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
 public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
+
+    private static final Logger LOG = Logger.getLogger(ThreeDimMolCanvasItemPanel.class.getName());
 
     private static final String JS_INIT_VIEWER = "init3DMolViewer(':id', ':data', ':format')";
     private static final String JS_SET_VIEWER_DATA = "set3DMolViewerData(':data', ':format')";
@@ -92,8 +96,9 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
                 // TODO - support multiple section - input should be Dataset<MoleculeObject>
                 // It should them be converted to SDF using StructureIOClient (to avoid depenedency on Marvin)
                 // and then set to the 3DMol viewer as SDF.
-                MoleculeObject moleculeObject = notebookSession.readMoleculeValue(variableInstance);
-                String data = convertToFormat(moleculeObject.getSource(), "sdf");
+                MoleculeObject mol = notebookSession.readMoleculeValue(variableInstance);
+                String data = convertToSdf(mol);
+                if (data == null) data = "";
                 ajaxRequestTarget.appendJavaScript(JS_SET_VIEWER_DATA.replace(":data", convertForJavaScript(data)).replace(":format", "sdf"));
             }
         }
@@ -133,24 +138,26 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void loadInitialSampleData(IHeaderResponse response) {
-        // String data = convertForJavaScript(getSampleData("/portal/resources/kinase_inhibs.sdf"));
         String sampleData = getSampleData("/portal/resources/caffeine.mol");
-        String data = convertForJavaScript(convertToFormat(sampleData, "sdf"));
+        String data = convertForJavaScript(sampleData + "\n$$$$");
+        System.out.println("SDF: " + data);
         String js = JS_INIT_VIEWER.replace(":id", webglPanel.getMarkupId()).replace(":data", data).replace(":format", "sdf");
         response.render(OnDomReadyHeaderItem.forScript(js));
     }
 
-    private String convertToFormat(String input, String format) {
+    private String convertToSdf(MoleculeObject mol) {
         try {
-            if (input == null || input.isEmpty()) {
+            if (mol == null || mol.getSource().isEmpty()) {
                 return null;
             } else {
-                // TODO - remove dependency on Marvin
-                Molecule molecule = MolImporter.importMol(input);
-                return MolExporter.exportToFormat(molecule, format);
+                Dataset<MoleculeObject> dataset = new Dataset(MoleculeObject.class, Collections.singletonList(mol));
+                InputStream is = notebookSession.getStructureIOClient().datasetExportToSdf(dataset, false);
+                String sdf = IOUtils.convertStreamToString(is);
+                return sdf;
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            LOG.log(Level.WARNING, "Failed to convert structure", e);
+            return null;
         }
     }
 

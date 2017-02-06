@@ -3,6 +3,7 @@ package portal.notebook.webapp;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.squonk.client.NotebookVariableClient;
+import org.squonk.core.client.StructureIOClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.io.IODescriptor;
@@ -46,6 +47,8 @@ public class NotebookSession implements Serializable {
     private PortalService portalService;
     @Inject
     private Datasets datasets;
+    @Inject
+    private StructureIOClient structureIOClient;
 
     public List<NotebookInfo> listNotebookInfo() throws Exception {
         List<NotebookInfo> list = new ArrayList<>();
@@ -406,6 +409,12 @@ public class NotebookSession implements Serializable {
 
     public boolean hasSavepoints(Long id) throws Exception {
         return !notebookVariableClient.listSavepoints(id).isEmpty();
+    }
+
+    public StructureIOClient getStructureIOClient() {
+        // we might allow which client is used (e.g. CDK vs. ChemAxon) to be customised by the user
+        // for now we just have one
+        return structureIOClient;
     }
 }
 

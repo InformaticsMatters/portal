@@ -92,9 +92,6 @@
         <fileset dir="${basedir}/../lib/jackson/2.7.2">
             <patternset refid="library.patterns"/>
         </fileset>
-        <fileset dir="${basedir}/../lib/jchem/6.2.0_b787">
-            <patternset refid="library.patterns"/>
-        </fileset>
         <fileset dir="${basedir}/../lib/jersey/1.19">
             <patternset refid="library.patterns"/>
         </fileset>
@@ -105,6 +102,9 @@
             <patternset refid="library.patterns"/>
         </fileset>
         <fileset dir="${basedir}/../lib/jsp-api/2.1">
+            <patternset refid="library.patterns"/>
+        </fileset>
+        <fileset dir="${basedir}/../lib/derby/10.10.1.1">
             <patternset refid="library.patterns"/>
         </fileset>
         <fileset dir="${basedir}/../lib/postgresql/9.4.1207.jre7">

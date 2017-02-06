@@ -292,7 +292,7 @@ public class DatasetResultsPanel extends Panel {
                 Map<String, Class> mappings = meta.getValueClassMappings();
 
                 if (o instanceof MoleculeObject) {
-                    listItem.add(new MoleculeObjectCardPanel("column", mappings, (MoleculeObject) o, datasetMetadataModel, cellDatasetProvider.getStructureIOClient(), highlighterModel));
+                    listItem.add(new MoleculeObjectCardPanel("column", mappings, (MoleculeObject) o, datasetMetadataModel, highlighterModel));
                 } else {
                     listItem.add(new BasicObjectCardPanel("column", mappings, o));
                 }

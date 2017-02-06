@@ -1,5 +1,6 @@
 package portal.notebook.webapp;
 
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -48,8 +49,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private Label statusLabel;
     private CellStatusInfo cellStatusInfo;
     private SemanticModalPanel resultsPanel;
-    @Inject
-    private StructureIOClient structureIOClient;
 
     public CanvasItemPanel(String id, Long cellId) {
         super(id);
@@ -76,7 +75,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                 String name = iod.getName();
                 if (iod.getPrimaryType() == Dataset.class) {
                     LOG.fine("Creating results handler for variable " + name + " in cell " + cellInstance.getName());
-                    resultsHandler = new DatasetResultsHandler(name, notebookSession, structureIOClient, cellInstance.getId());
+                    resultsHandler = new DatasetResultsHandler(name, notebookSession, cellInstance.getId());
                     return;
                 }
             }
@@ -308,7 +307,11 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     protected void notifyMessage(String title, String message) {
-        notifierProvider.getNotifier(getPage()).notify(title, message);
+        try {
+            notifierProvider.getNotifier(getPage()).notify(title, message);
+        } catch (Exception ex) {
+            LOG.log(Level.INFO, "Failed to notify message. Title: " + title + " Message: " + message, ex);
+        }
     }
 
     protected Set<UUID> readFilter(String optionBindingName) {

@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import org.squonk.core.client.StructureIOClient;
 import org.squonk.io.IODescriptor;
 import org.squonk.jobdef.ExecuteCellUsingStepsJobDefinition;
 import org.squonk.jobdef.JobDefinition;
@@ -29,6 +30,9 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
 
     private static final Logger LOG = Logger.getLogger(AbstractJobCellExecutor.class.getName());
 
+    private static final JobStatusClient jobStatusClient = createCDIClient(JobStatusClient.class);
+    private static final StructureIOClient structureIOClient = createCDIClient(StructureIOClient.class);
+
     @Override
     public JobStatus execute(CellInstance cell, CellExecutionData data) throws Exception {
         Instance<SessionContext> sessionContextInstance = CDI.current().select(SessionContext.class);
@@ -39,15 +43,16 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         // create the job
         JobDefinition jobdef = buildJobDefinition(cell, data);
         // execute the job
-        JobStatusClient client = createJobStatusClient();
-        LOG.info("Executing job using client " + client);
-        JobStatus status = client.submit(jobdef, username, workunits);
+//        JobStatusClient client = createJobStatusClient();
+//        LOG.info("Executing job using client " + client);
+//        JobStatus status = client.submit(jobdef, username, workunits);
+        JobStatus status = jobStatusClient.submit(jobdef, username, workunits);
         // job is now running. we can either poll the JobStatusRestClient for its status or listen on the message queue for updates
         return status;
     }
 
-    protected JobStatusClient createJobStatusClient() {
-        Instance<JobStatusClient> instance = CDI.current().select(JobStatusClient.class);
+    protected static <T> T createCDIClient(Class<T> cls) {
+        Instance<T> instance = CDI.current().select(cls);
         return instance.get();
     }
 
@@ -60,11 +65,12 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
     protected Map<String, Object> collectAllOptions(CellInstance cell) {
 
         Map<String, Object> result = new HashMap<>();
-        for (Map.Entry<String,OptionInstance> e :cell.getOptionInstanceMap().entrySet()) {
+        for (Map.Entry<String, OptionInstance> e : cell.getOptionInstanceMap().entrySet()) {
             String key = e.getKey();
             OptionInstance i = e.getValue();
-            //LOG.fine("checking option " + key);
+            LOG.fine("checking option " + key);
             if (i != null && i.getValue() != null) {
+                //LOG.info("option: " + key + " value: " + i.getValue());
                 putOptionValue(result, i.getOptionDescriptor().getTypeDescriptor(), key, i.getValue());
             }
         }
@@ -73,26 +79,44 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
 
     @SuppressWarnings("unchecked")
     protected void putOptionValue(Map<String, Object> options, TypeDescriptor td, String key, Object value) {
-        LOG.info("Handling option " + key + " -> " + value);
+        LOG.info("Handling option " + key + " of type " + (value == null ? "null" : value.getClass().getName()));
         // ----- start of huge hack --------------
         // This is a temp workaround until we find a way of asking the sketcher for the molecule in the required format.
         // The MoleculeTypeDescriptor defines what formats the services can handle, but the sketcher knows how to convert
         //   its internal format to the required format.
         // This needs to be generalised to support any cell/option type.
         if (td instanceof MoleculeTypeDescriptor) {
-            MoleculeTypeDescriptor mtd = (MoleculeTypeDescriptor)td;
-            if (value instanceof String) { // is it always a String?
-                String mol = (String)value;
-                Structure converted = StructureFieldEditorPanel.convertMolecule(mol, mtd.getFormats());
-                if (converted != null) {
-                    LOG.info("Converted mol to: " + converted.getFormat());
-                    LOG.info("Putting value " + key + " = " + converted.getSource());
-                    mtd.putOptionValue(options, key, converted);
-                } else {
-                    LOG.info("No converted molecule");
+            MoleculeTypeDescriptor mtd = (MoleculeTypeDescriptor) td;
+            try {
+                if (value instanceof String) {
+                    String mol = (String) value;
+                    Structure converted = structureIOClient.convertMol(mol, mtd.getFormats());
+                    if (converted != null) {
+                        LOG.info("Converted mol to: " + converted.getFormat());
+                        //LOG.info("Putting value " + key + " = " + converted.getSource());
+                        mtd.putOptionValue(options, key, converted);
+                        return;
+                    }
+                } else if (value instanceof Structure) {
+                    Structure struct = (Structure) value;
+                    for (String format : mtd.getFormats()) {
+                        if (struct.getFormat().startsWith(format)) {
+                            // we already have a supported format
+                            mtd.putOptionValue(options, key, struct);
+                            return;
+                        }
+                    }
+                    Structure converted = structureIOClient.convertMol(struct.getSource(), mtd.getFormats());
+                    if (converted != null) {
+                        mtd.putOptionValue(options, key, converted);
+                        return;
+                    }
                 }
-
+            } catch (Exception ex) {
+                throw new IllegalStateException("Unable to generate structure of the required format", ex);
             }
+            throw new IllegalStateException("Value not a String or Structure: " + value.getClass().getName());
+
             // ----- end of huge hack --------------
         } else {
             if (value != null) {
@@ -101,7 +125,8 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         }
     }
 
-    /** Creates a VariableKey for this variable, looking up the producer cell from the notebook
+    /**
+     * Creates a VariableKey for this variable, looking up the producer cell from the notebook
      *
      * @param producer
      * @param varName
@@ -140,7 +165,8 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         return jobdef;
     }
 
-    /** Build the JobDefinition using the specified StepDefinition(s) where there is just one input and one output
+    /**
+     * Build the JobDefinition using the specified StepDefinition(s) where there is just one input and one output
      *
      * @param cellExData
      * @param cell
@@ -152,8 +178,8 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
     protected StepsCellExecutorJobDefinition buildJobDefinition(CellExecutionData cellExData, CellInstance cell, IODescriptor input, IODescriptor output, StepDefinition... steps) {
         StepsCellExecutorJobDefinition jobdef = new ExecuteCellUsingStepsJobDefinition();
         jobdef.configureCellAndSteps(cellExData.getNotebookId(), cellExData.getEditableId(), cell.getId(),
-                input == null ? null :new IODescriptor[] {input},
-                output == null ? null : new IODescriptor[] {output},
+                input == null ? null : new IODescriptor[]{input},
+                output == null ? null : new IODescriptor[]{output},
                 steps);
         return jobdef;
     }

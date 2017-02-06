@@ -1,7 +1,5 @@
 package portal.notebook.webapp;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.squonk.types.MoleculeObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
@@ -9,6 +7,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.squonk.types.MoleculeObject;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;

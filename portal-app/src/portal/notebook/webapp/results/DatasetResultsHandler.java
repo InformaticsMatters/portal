@@ -23,11 +23,11 @@ public class DatasetResultsHandler implements ResultsHandler {
     private final CellDatasetProvider cellDatasetProvider;
     private DatasetDetailsPanel panel;
 
-    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, StructureIOClient structureIOClient, Long cellId) {
+    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, Long cellId) {
         this.variableName = variableName;
         this.notebookSession = notebookSession;
         this.cellId = cellId;
-        this.cellDatasetProvider = new CellDatasetProvider(cellId, notebookSession, structureIOClient, variableName);
+        this.cellDatasetProvider = new CellDatasetProvider(cellId, notebookSession, variableName);
     }
 
     @Override
@@ -64,13 +64,11 @@ public class DatasetResultsHandler implements ResultsHandler {
 
         private final Long cellId;
         private final NotebookSession notebookSession;
-        private final StructureIOClient structureIOClient;
         private final String variable;
 
-        CellDatasetProvider(Long cellId, NotebookSession session, StructureIOClient structureIOClient, String variable) {
+        CellDatasetProvider(Long cellId, NotebookSession session, String variable) {
             this.cellId = cellId;
             this.notebookSession = session;
-            this.structureIOClient = structureIOClient;
             this.variable = variable;
         }
 
@@ -96,7 +94,7 @@ public class DatasetResultsHandler implements ResultsHandler {
         }
 
         public StructureIOClient getStructureIOClient() {
-            return structureIOClient;
+            return notebookSession.getStructureIOClient();
         }
 
         public CellInstance getCellInstance() {

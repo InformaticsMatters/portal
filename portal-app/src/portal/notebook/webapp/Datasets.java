@@ -2,6 +2,7 @@ package portal.notebook.webapp;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.squonk.options.types.Structure;
 import org.squonk.types.MoleculeObject;
 
 import javax.enterprise.context.SessionScoped;
@@ -81,7 +82,7 @@ public class Datasets implements Serializable {
             Row row = new Row();
             row.setUuid(molecule.getUUID());
             row.setDescriptor(rowDescriptor);
-            row.setProperty(structurePropertyDescriptor, molecule.getSource());
+            row.setProperty(structurePropertyDescriptor, new Structure(molecule.getSource(), molecule.getFormat()));
 
             for (IPropertyDescriptor propertyDescriptor : rowDescriptor.listAllPropertyDescriptors()) {
                 if (!propertyDescriptor.getId().equals(structurePropertyDescriptor.getId())) {

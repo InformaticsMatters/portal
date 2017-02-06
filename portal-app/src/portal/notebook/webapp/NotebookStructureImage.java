@@ -30,6 +30,7 @@ public class NotebookStructureImage extends WebComponent {
         CharSequence url = RequestCycle.get().urlFor(resource, pageParameters);
         if (rowId != null && rowId.trim().length() > 0) {
             tag.put("src", url);
+            // TODO - dynamically size the structure based of the table's cell width and height
             String style = "width: :widthpx; height: :heightpx;"
                     .replace(":width", Integer.toString(NotebookStructureImageResource.RECTANGLE.width))
                     .replace(":height", Integer.toString(NotebookStructureImageResource.RECTANGLE.height));

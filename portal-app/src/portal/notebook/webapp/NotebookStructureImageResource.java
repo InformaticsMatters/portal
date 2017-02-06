@@ -1,24 +1,20 @@
 package portal.notebook.webapp;
 
-import chemaxon.formats.MolImporter;
-import chemaxon.marvin.MolPrinter;
-import chemaxon.struc.Molecule;
+
 import org.apache.wicket.cdi.CdiContainer;
 import org.apache.wicket.request.resource.DynamicImageResource;
+import org.squonk.io.DepictionParameters;
+import org.squonk.options.types.Structure;
 
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.*;
-import java.awt.image.*;
-import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 public class NotebookStructureImageResource extends DynamicImageResource {
 
-    // public static final Rectangle RECTANGLE = new Rectangle(200, 130);
-    public static final Rectangle RECTANGLE = new Rectangle(100, 65);
+    public static final Rectangle RECTANGLE = new Rectangle(120, 90);
     public static final String PARAM_DATASET = "dataset";
     public static final String PARAM_ROW = "row";
 
@@ -26,27 +22,36 @@ public class NotebookStructureImageResource extends DynamicImageResource {
     private NotebookSession notebookSession;
 
     public NotebookStructureImageResource() {
+        super("svg");
         CdiContainer.get().getNonContextualManager().postConstruct(this);
     }
 
+//    @Override
+//    protected void setResponseHeaders(ResourceResponse data, Attributes attributes) {
+//        // this disables some unwanted default caching
+//    }
+
     @Override
-    protected void setResponseHeaders(ResourceResponse data, Attributes attributes) {
-        // this disables some unwanted default caching
+    protected void configureResponse(ResourceResponse response, Attributes attributes) {
+        super.configureResponse(response, attributes);
+        response.setContentType("image/svg+xml");
     }
 
     @Override
     protected byte[] getImageData(Attributes attributes) {
+
         String datasetIdAsString = attributes.getParameters().get(PARAM_DATASET).toString();
         String rowIdAsString = attributes.getParameters().get(PARAM_ROW).toString();
-        try {
-            return renderStructure(datasetIdAsString, rowIdAsString);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Structure struct = loadStructureData(datasetIdAsString, rowIdAsString);
+        DepictionParameters params = new DepictionParameters((int)(RECTANGLE.getWidth() / 5.0d), (int)(RECTANGLE.getHeight() / 5.0d));
+        params.setExpandToFit(true);
+        params.setMargin(0.5);
+        byte[] bytes = notebookSession.getStructureIOClient().renderImage(struct.getSource(), struct.getFormat(), DepictionParameters.OutputFormat.svg, params);
+        return bytes;
     }
 
-    protected String loadStructureData(String datasetIdAsString, String rowIdAsString) {
-        String structureData = null;
+    protected Structure loadStructureData(String datasetIdAsString, String rowIdAsString) {
+        Structure structureData = null;
         Long datasetDescriptorId = Long.valueOf(datasetIdAsString);
         UUID rowId = UUID.fromString(rowIdAsString);
 
@@ -56,7 +61,7 @@ public class NotebookStructureImageResource extends DynamicImageResource {
 
         if (row != null) {
             IPropertyDescriptor propertyDescriptor = row.getDescriptor().getStructurePropertyDescriptor();
-            structureData = (String) row.getProperty(propertyDescriptor);
+            structureData = (Structure) row.getProperty(propertyDescriptor);
         }
         return structureData;
     }
@@ -65,64 +70,5 @@ public class NotebookStructureImageResource extends DynamicImageResource {
         return RECTANGLE;
     }
 
-    protected Molecule getMolecule(String datasetIdAsString, String rowIdAsString) throws Exception {
-        String structureAsString = loadStructureData(datasetIdAsString, rowIdAsString);
-        if (structureAsString == null || structureAsString.length() == 0) {
-            return null;
-        }
-        Molecule molecule = MolImporter.importMol(structureAsString);
-        return molecule;
-    }
-
-    private byte[] renderStructure(String datasetIdAsString, String rowIdAsString) throws Exception {
-        MolPrinter molPrinter = new MolPrinter();
-        molPrinter.setMol(getMolecule(datasetIdAsString, rowIdAsString));
-
-        BufferedImage image = new BufferedImage(getRectangle().width, getRectangle().height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics2D = image.createGraphics();
-        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-        graphics2D.setColor(Color.white);
-        graphics2D.fillRect(0, 0, getRectangle().width, getRectangle().height);
-        double scale = molPrinter.maxScale(getRectangle());
-        molPrinter.setScale(scale);
-        molPrinter.paint(graphics2D, getRectangle());
-
-        BufferedImage filteredImage = imageToBufferedImage(makeWhiteTransparent(image));
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(filteredImage, "png", outputStream);
-        return outputStream.toByteArray();
-    }
-
-    public Image makeWhiteTransparent(BufferedImage bufferedImage) {
-        ImageFilter filter = new RGBImageFilter() {
-
-            private int markerRGB = 0xFFFFFFFF;
-
-            @Override
-            public int filterRGB(final int x, final int y, final int rgb) {
-                if ((rgb | 0xFF000000) == markerRGB) {
-                    // mark the alpha bits as zero - transparent
-                    return 0x00FFFFFF & rgb;
-                } else {
-                    // nothing to do
-                    return rgb;
-                }
-            }
-        };
-
-        ImageProducer ip = new FilteredImageSource(bufferedImage.getSource(), filter);
-        return Toolkit.getDefaultToolkit().createImage(ip);
-    }
-
-    private BufferedImage imageToBufferedImage(Image image) {
-        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = bufferedImage.createGraphics();
-        g2.drawImage(image, 0, 0, null);
-        g2.dispose();
-        return bufferedImage;
-    }
 }
 

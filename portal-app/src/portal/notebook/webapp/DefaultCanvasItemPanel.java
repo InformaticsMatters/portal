@@ -153,7 +153,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         } else if (typeDescriptor.getType() == Structure.class) {
             String notebookId = notebookSession.getCurrentNotebookInfo().getId().toString();
             String cellInstanceId = findCellInstance().getId().toString();
-            return new StructureFieldEditorPanel("optionEditor", "marvin" + notebookId + "_" + cellInstanceId, new FieldEditorModel(value, optionDescriptor));
+            return new StructureFieldEditorPanel("optionEditor", "marvin" + notebookId + "_" + cellInstanceId, new FieldEditorModel(value, optionDescriptor), notebookSession.getStructureIOClient());
         } else if (optionDescriptor.getValues() != null && optionDescriptor.getValues().length > 0) {
             Object[] values = optionInstance.getOptionDescriptor().getValues();
             return new PicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor), values == null ? Collections.emptyList() : Arrays.asList(values));

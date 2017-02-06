@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 public class MarvinSketcher extends SemanticModalPanel {
 
+
     private static final int defaultHeight = 600;
     private static final int defaultWidth = 1000;
     private static final String PROMISE_MARVIN_CALL = "MarvinJSUtil.getEditor(':sketcherFrameId').then(function(instance){:javascript})";
@@ -92,7 +93,7 @@ public class MarvinSketcher extends SemanticModalPanel {
             protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
                 super.updateAjaxAttributes(attributes);
                 AjaxCallListener acl = new AjaxCallListener();
-                acl.onBefore("$('#sketcherData').val(window." + uniqueName + ".exportAsMrv())");
+                acl.onBefore("$('#sketcherData').val(window." + uniqueName + ".exportAsMol())");
                 attributes.getAjaxCallListeners().add(acl);
             }
 
