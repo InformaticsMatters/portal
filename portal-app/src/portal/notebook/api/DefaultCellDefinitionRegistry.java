@@ -9,8 +9,8 @@ import org.squonk.io.IODescriptors;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
 import org.squonk.types.BasicObject;
+import org.squonk.types.MoleculeObject;
 import org.squonk.types.NumberRange;
-import org.squonk.util.CommonMimeTypes;
 import portal.SessionContext;
 import portal.notebook.webapp.*;
 
@@ -37,15 +37,12 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     private static CellDefinition createTableDisplayCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("TableDisplay", "Table display", "icons/visualisation_table.png", new String[]{"table", "spreadsheet", "visualization", "visualisation", "viz"}, false);
-        BindingDefinition bindingDefinition = new BindingDefinition();
-        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", Dataset.class, BasicObject.class));
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", Dataset.class, MoleculeObject.class));
         cellDefinition.getVariableDefinitionList().add(IODescriptors.createString("selection"));
 
         // option inputs
         OptionDescriptor filterOptionDescriptor = new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)", Mode.Input);
         cellDefinition.getOptionDefinitionList().add(filterOptionDescriptor);
-        // cellDefinition.getOptionDefinitionList().add(
-        //      new OptionDescriptor<>(String.class, ScatterPlotCanvasItemPanel.OPTION_SELECTED_MARKED_IDS, "Selected marked IDs", "Selected marked IDs"));
 
         // the option bindings
         cellDefinition.getOptionBindingDefinitionList().add(new OptionBindingDefinition(filterOptionDescriptor, CellDefinition.UpdateMode.AUTO));
@@ -225,6 +222,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new TransformValuesCellDefinition());
         registerCellDefinition(new DatasetSelectSliceCellDefinition());
         registerCellDefinition(new DatasetSelectRandomCellDefinition());
+        registerCellDefinition(new DatasetMoleculesFromFieldCellDefinition());
         registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
         registerCellDefinition(new ProcessDatasetUntrustedPythonScriptCellDefinition());
         registerCellDefinition(new SmilesDeduplicatorCellDefinition());

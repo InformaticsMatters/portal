@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class NotebookStructureImageResource extends DynamicImageResource {
 
-    public static final Rectangle RECTANGLE = new Rectangle(120, 90);
+    public static final Rectangle RECTANGLE = new Rectangle(130, 100);
     public static final String PARAM_DATASET = "dataset";
     public static final String PARAM_ROW = "row";
 
@@ -27,7 +27,7 @@ public class NotebookStructureImageResource extends DynamicImageResource {
     }
 
 //    @Override
-//    protected void setResponseHeaders(ResourceResponse data, Attributes attributes) {
+//    protected void setResponseHeaders(ResourceResponse response, Attributes attributes) {
 //        // this disables some unwanted default caching
 //    }
 
@@ -46,12 +46,17 @@ public class NotebookStructureImageResource extends DynamicImageResource {
         DepictionParameters params = new DepictionParameters((int)(RECTANGLE.getWidth() / 5.0d), (int)(RECTANGLE.getHeight() / 5.0d));
         params.setExpandToFit(true);
         params.setMargin(0.5);
-        byte[] bytes = notebookSession.getStructureIOClient().renderImage(struct.getSource(), struct.getFormat(), DepictionParameters.OutputFormat.svg, params);
-        return bytes;
+        String svg;
+        if (struct == null) {
+            svg = notebookSession.getStructureIOClient().renderErrorSVG(params, "No structure");
+        } else {
+            svg = notebookSession.getStructureIOClient().renderSVG(struct.getSource(), struct.getFormat(), params);
+        }
+        return svg.getBytes();
     }
 
     protected Structure loadStructureData(String datasetIdAsString, String rowIdAsString) {
-        Structure structureData = null;
+        Structure structure = null;
         Long datasetDescriptorId = Long.valueOf(datasetIdAsString);
         UUID rowId = UUID.fromString(rowIdAsString);
 
@@ -61,9 +66,9 @@ public class NotebookStructureImageResource extends DynamicImageResource {
 
         if (row != null) {
             IPropertyDescriptor propertyDescriptor = row.getDescriptor().getStructurePropertyDescriptor();
-            structureData = (Structure) row.getProperty(propertyDescriptor);
+            structure = (Structure) row.getProperty(propertyDescriptor);
         }
-        return structureData;
+        return structure;
     }
 
     protected Rectangle getRectangle() {

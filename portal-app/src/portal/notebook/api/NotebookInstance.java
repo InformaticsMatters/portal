@@ -243,15 +243,23 @@ public class NotebookInstance implements Serializable {
                         BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(bindingDTO.getVariableKey());
                         if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
                             VariableInstance variableInstance = findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
-                            LOGGER.fine("Initializing binding of " + bindingInstance.getBindingDefinition().getName() + " to " + variableInstance.getVariableDefinition().getName());
-                            bindingInstance.setVariableInstance(variableInstance);
+                            if (variableInstance != null && variableInstance.getVariableDefinition() != null) {
+                                LOGGER.fine("Initializing variable binding of " + bindingInstance.getBindingDefinition().getName() + " to " + variableInstance.getVariableDefinition().getName());
+                                bindingInstance.setVariableInstance(variableInstance);
+                            } else {
+                                LOGGER.warning("Could not bind variable for " + bindingInstance.getName());
+                            }
                         }
                     }
                     for (NotebookCanvasDTO.OptionBindingDTO bindingDTO : cellDTO.getOptionBindings()) {
                         OptionBindingInstance bindingInstance = cellInstance.getOptionBindingInstanceMap().get(bindingDTO.getOptionKey());
                         if (bindingInstance != null && bindingDTO.getProducerKey() != null) {
                             OptionInstance optionInstance = findOptionByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerKey());
-                            bindingInstance.setOptionInstance(optionInstance);
+                            if (optionInstance != null) {
+                                bindingInstance.setOptionInstance(optionInstance);
+                            } else {
+                                LOGGER.warning("Could not bind option for " + bindingInstance.getName());
+                            }
                         }
                     }
                 }
