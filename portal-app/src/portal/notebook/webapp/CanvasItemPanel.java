@@ -343,6 +343,10 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     protected boolean doesCellChangeRequireRefresh(CellChangeEvent evt) {
 
         CellInstance cellInstance = findCellInstance();
+        if (cellInstance == null) {
+            LOG.warning("Cannot find cell instance. This is not expected");
+            return false;
+        }
         LOG.fine("CellChangeEvent received by cell " + cellInstance.getName() + " [" + getCellId() + "]" + ": " + evt);
         CellInstance changedCell = findCellInstance(evt.getSourceCellId());
         if (cellInstance == null || changedCell == null) {
