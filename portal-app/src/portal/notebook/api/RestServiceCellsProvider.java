@@ -3,9 +3,7 @@ package portal.notebook.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.core.ServiceConfig;
-import org.squonk.core.ServiceDescriptor;
-import org.squonk.core.client.ServicesClient;
-import org.squonk.options.OptionDescriptor;
+import org.squonk.core.client.ServicesRestClient;
 import portal.SessionContext;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -35,7 +33,7 @@ public class RestServiceCellsProvider implements ServiceCellsProvider {
     }
 
     private List<ServiceConfig> listServiceConfigss() {
-        ServicesClient servicesClient = new ServicesClient();
+        ServicesRestClient servicesClient = new ServicesRestClient();
         List<ServiceConfig> serviceConfigs;
         try {
             serviceConfigs = servicesClient.getServiceConfigs(sessionContext.getLoggedInUserDetails().getUserid());
