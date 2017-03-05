@@ -1,6 +1,5 @@
 package portal.notebook.webapp;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -9,7 +8,6 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
-import org.squonk.core.client.StructureIOClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetSelection;
 import org.squonk.io.IODescriptor;
@@ -24,7 +22,9 @@ import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
