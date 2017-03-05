@@ -500,3 +500,11 @@ in styling and added border and padding */
   padding: 2px;
   border: 0px;
 }
+
+table.imxt-tree-content td.imxt-spacer {
+    width: 0px;
+}
+
+table.imxt-tree-content td.imxt-spacer span {
+    width: 0px;
+}
