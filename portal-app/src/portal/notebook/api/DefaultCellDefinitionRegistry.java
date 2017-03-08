@@ -214,6 +214,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new CsvUploadCellDefinition());
         registerCellDefinition(new SdfUploadCellDefinition());
         registerCellDefinition(new SmilesStructuresCellDefinition());
+        registerCellDefinition(new MolfileUploadCellDefinition());
         registerCellDefinition(new DatasetMergerCellDefinition());
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
         registerCellDefinition(new DatasetFilterGroovyCellDefinition());

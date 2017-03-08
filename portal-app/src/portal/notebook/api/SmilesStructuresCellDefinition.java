@@ -21,7 +21,7 @@ public class SmilesStructuresCellDefinition extends CellDefinition {
     private static final String OPTION_SMILES = StepDefinitionConstants.SmilesStructures.OPTION_SMILES;
 
     public SmilesStructuresCellDefinition() {
-        super(CELL_NAME, "Read structures from smiles", "icons/molecules.png", new String[]{"smiles", "dataset"});
+        super(CELL_NAME, "Read structures from smiles", "icons/molecule.png", new String[]{"structure", "smiles", "dataset"});
         getVariableDefinitionList().add(IODescriptors.createMoleculeObjectDataset(VAR_NAME_OUTPUT));
         getOptionDefinitionList().add(new OptionDescriptor<>(new MultiLineTextTypeDescriptor(10, 80, MultiLineTextTypeDescriptor.MIME_TYPE_TEXT_PLAIN),
                 OPTION_SMILES, "Smiles",
