@@ -88,13 +88,14 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     public boolean processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         CellInstance thisCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(this.cellId);
         BindingInstance bindingInstance = thisCellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-        VariableInstance variableInstance = bindingInstance.getVariableInstance();
-        if (variableInstance != null && variableInstance.getCellId().equals(changedCellId)) {
-            loadPicklist();
-            return true;
-        } else {
-            return false;
+        if (bindingInstance != null) {
+            VariableInstance variableInstance = bindingInstance.getVariableInstance();
+            if (variableInstance != null && variableInstance.getCellId().equals(changedCellId)) {
+                loadPicklist();
+                return true;
+            }
         }
+        return false;
     }
 
     @Override
