@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
-    private static final Logger LOGGER = Logger.getLogger(DatasetsFieldPicklistFieldEditorPanel.class.getName());
+    private static final Logger LOG = Logger.getLogger(DatasetsFieldPicklistFieldEditorPanel.class.getName());
     private final Long cellId;
     private List<String> picklistItems;
     @Inject
@@ -33,7 +33,7 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
         try {
             loadPicklist();
         } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error loading picklist", t);
+            LOG.log(Level.WARNING, "Error loading picklist", t);
         }
         addComponents();
     }
@@ -41,27 +41,38 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     private void loadPicklist() throws Exception {
         picklistItems = new ArrayList<>();
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
-        BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
-        VariableInstance variableInstance = bindingInstance.getVariableInstance();
-        if (variableInstance != null) {
-            loadFieldNames(variableInstance);
+        if (cellInstance != null) {
+            loadFieldNames(cellInstance);
         }
     }
 
-    private void loadFieldNames(VariableInstance variableInstance) throws Exception {
-        String string = notebookSession.readTextValue(variableInstance);
-        if (string != null) {
-            DatasetMetadata<?> datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
-            if (getFieldEditorModel().getTypeDescriptor() != null && getFieldEditorModel().getTypeDescriptor() instanceof DatasetFieldTypeDescriptor) {
-                DatasetFieldTypeDescriptor dfod = (DatasetFieldTypeDescriptor)getFieldEditorModel().getTypeDescriptor();
-                for (Map.Entry<String,Class> e: datasetMetadata.getValueClassMappings().entrySet()) {
-                    if (dfod.filter(e.getKey(), e.getValue())) {
-                        picklistItems.add(e.getKey());
+    private void loadFieldNames(CellInstance cellInstance) throws Exception {
+
+        DatasetFieldTypeDescriptor dfod = null;
+        BindingInstance bindingInstance;
+        if (getFieldEditorModel().getTypeDescriptor() != null && getFieldEditorModel().getTypeDescriptor() instanceof DatasetFieldTypeDescriptor) {
+            dfod = (DatasetFieldTypeDescriptor) getFieldEditorModel().getTypeDescriptor();
+            bindingInstance = cellInstance.getBindingInstanceMap().get(dfod.getInputName());
+        } else {
+            LOG.warning("Using a DatasetFieldPicklistFieldEditorPanel without a properly configured DatasetFieldTypeDescriptor. Avoid doing this.");
+            bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
+        }
+        if (bindingInstance != null) {
+            VariableInstance variableInstance = bindingInstance.getVariableInstance();
+            if (variableInstance != null) {
+                String json = notebookSession.readTextValue(variableInstance);
+                if (json != null) {
+                    DatasetMetadata<?> datasetMetadata = new ObjectMapper().readValue(json, DatasetMetadata.class);
+                    if (dfod != null) {
+                        for (Map.Entry<String, Class> e : datasetMetadata.getValueClassMappings().entrySet()) {
+                            if (dfod.filter(e.getKey(), e.getValue())) {
+                                picklistItems.add(e.getKey());
+                            }
+                        }
+                    } else {
+                        picklistItems.addAll(datasetMetadata.getValueClassMappings().keySet());
                     }
                 }
-            } else {
-                // just add all fields
-                picklistItems.addAll(datasetMetadata.getValueClassMappings().keySet());
             }
         }
     }

@@ -210,19 +210,19 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private void registerStandardCellDefinitions() {
+
+        // TODO - move all these to service cell definitions
+        
         registerCellDefinition(new ChemblActivitiesFetcherCellDefinition());
         registerCellDefinition(new CsvUploadCellDefinition());
         registerCellDefinition(new SdfUploadCellDefinition());
         registerCellDefinition(new SmilesStructuresCellDefinition());
         registerCellDefinition(new MolfileUploadCellDefinition());
-        registerCellDefinition(new DatasetMergerCellDefinition());
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
         registerCellDefinition(new DatasetFilterGroovyCellDefinition());
         registerCellDefinition(new DatasetSorterCellDefinition());
         registerCellDefinition(new DataTransformPotionsCellDefinition());
         registerCellDefinition(new TransformValuesCellDefinition());
-        registerCellDefinition(new DatasetSelectSliceCellDefinition());
-        registerCellDefinition(new DatasetSelectRandomCellDefinition());
         registerCellDefinition(new DatasetMoleculesFromFieldCellDefinition());
         registerCellDefinition(new ProcessDatasetUntrustedGroovyScriptCellDefinition());
         registerCellDefinition(new ProcessDatasetUntrustedPythonScriptCellDefinition());
