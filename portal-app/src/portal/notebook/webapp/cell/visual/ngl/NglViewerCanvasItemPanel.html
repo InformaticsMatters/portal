@@ -1,0 +1,43 @@
+<wicket:panel>
+    <div class="notebook-canvas-item-content resizableCellContent nglviewer">
+        <div wicket:id="titleBar" class="headers"></div>
+
+        <form wicket:id="form" style="display: none;" class="ui form content">
+
+        </form>
+
+        <div class="body">
+
+            <div class="controls">
+
+                <div class="ui top attached tabular menu">
+                    <a class="active item" data-tab="first">Input 1</a>
+                    <a class="item" data-tab="second">Input 2</a>
+                </div>
+
+                <div class="ui bottom attached active tab segment input1" data-tab="first">
+                    <span>No data loaded</span>
+                </div>
+                <div class="ui bottom attached tab segment input2" data-tab="second">
+                    <span>No data loaded</span>
+                </div>
+
+            </div>
+
+
+            <div class="viewer"></div>
+
+        </div>
+
+        <div class="extra content line footer">
+            <span wicket:id="cellStatus"></span>
+        </div>
+
+    </div>
+
+    <script>
+    $('.nglviewer.menu .item').tab();
+    $('.nglviewer.ui.accordion').accordion();
+    </script>
+
+</wicket:panel>
