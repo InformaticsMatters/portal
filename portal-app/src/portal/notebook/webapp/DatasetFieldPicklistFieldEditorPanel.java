@@ -49,11 +49,12 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     private void loadFieldNames(CellInstance cellInstance) throws Exception {
 
         DatasetFieldTypeDescriptor dfod = null;
-        BindingInstance bindingInstance;
+        BindingInstance bindingInstance = null;
         if (getFieldEditorModel().getTypeDescriptor() != null && getFieldEditorModel().getTypeDescriptor() instanceof DatasetFieldTypeDescriptor) {
             dfod = (DatasetFieldTypeDescriptor) getFieldEditorModel().getTypeDescriptor();
             bindingInstance = cellInstance.getBindingInstanceMap().get(dfod.getInputName());
-        } else {
+        }
+        if (bindingInstance == null) {
             LOG.warning("Using a DatasetFieldPicklistFieldEditorPanel without a properly configured DatasetFieldTypeDescriptor. Avoid doing this.");
             bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
         }
