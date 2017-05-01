@@ -1,10 +1,8 @@
 .nglviewer {
-    width:400px;
-    height:300px;
-    //position: absolute;
-    resize:both;
-    overflow: auto;
+    width: 100%;
+    height: 100%;
     display: flex;
+    positioning: absolute;
     flex-direction: column;
 }
 
@@ -14,31 +12,33 @@
     border-color: grey;
 }
 
-.nglviewer .header {
+.nglviewer .headers {
     background: #cccccc;
+    border-bottom: none;
+    width: 100%;
 }
 
 .nglviewer .body {
-  flex: 1;
-  overflow: auto;
-  height: 100%;
+    flex: 1;
+    overflow: hidden;
+    height: 100%;
 }
 
 .nglviewer .controls {
-  float: right;
-  width: 175px;
-  height: 100%;
-  background: white;
-  overflow: scroll;
+    float: right;
+    width: 190px;
+    height: 100%;
+    background: white;
+    overflow-y: scroll;
 }
 
 .nglviewer .viewer {
-  height: 100%;
-  background: black;
+    overflow: hidden;
+    height: 100%;
+    background: black;
 }
 
 .nglviewer .footer {
-  background: #cccccc;
-  resize:both;
-  overflow: auto;
+    border-top: none;
+    width: 100%;
 }

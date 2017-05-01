@@ -34,6 +34,7 @@ import portal.PopupContainerProvider;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
 import portal.notebook.webapp.cell.CellDescriptionEditorPanel;
+import portal.notebook.webapp.cell.visual.ngl.NglViewerCanvasItemPanel;
 import portal.notebook.webapp.results.NoResultsPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticResourceReference;
@@ -527,6 +528,8 @@ public class NotebookCanvasPage extends WebPage {
             return new HeatmapCanvasItemPanel("item", cellInstance.getId());
         } else if ("3DMol".equals(cellType.getName())) {
             return new ThreeDimMolCanvasItemPanel("item", cellInstance.getId());
+        } else if ("NGLViewer".equals(cellType.getName())) {
+            return new NglViewerCanvasItemPanel("item", cellInstance.getId());
         } else {
             return new DefaultCanvasItemPanel("item", cellInstance.getId());
         }

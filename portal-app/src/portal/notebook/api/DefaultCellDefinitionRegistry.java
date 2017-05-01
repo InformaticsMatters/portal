@@ -90,8 +90,15 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private static CellDefinition create3DMolCellDefinition() {
-        CellDefinition cellDefinition = new SimpleCellDefinition("3DMol", "3D viewer", "icons/view.png", new String[]{"3d", "viewer", "visualization", "visualisation", "viz"}, false);
+        CellDefinition cellDefinition = new SimpleCellDefinition("3DMol", "3D viewer", "icons/view.png", new String[]{"3d", "3dmol", "viewer", "visualization", "vizualisation", "viz"}, false);
         cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", Dataset.class, BasicObject.class, String.class, null));
+        return cellDefinition;
+    }
+
+    private static CellDefinition createNglViewerCellDefinition() {
+        CellDefinition cellDefinition = new SimpleCellDefinition("NGLViewer", "NGL viewer", "icons/view.png", new String[]{"3d", "nglviewer", "viewer", "visualization", "vizualisation", "viz"}, false);
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input2", Dataset.class, MoleculeObject.class));
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input1", Dataset.class, MoleculeObject.class));
         return cellDefinition;
     }
 
@@ -231,12 +238,16 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
     }
 
     private void registerCustomCellDefinitions() {
+
+        // also add creation of cell in NotebookCanvasPage.java
+
         registerCellDefinition(createTableDisplayCellDefinition());
         registerCellDefinition(createScatterPlotCellDefinition());
         registerCellDefinition(createBoxPlotCellDefinition());
         registerCellDefinition(createParallelCoordinatePlotCellDefinition());
         registerCellDefinition(createHeatmapCellDefinition());
         registerCellDefinition(create3DMolCellDefinition());
+        registerCellDefinition(createNglViewerCellDefinition());
     }
 
     private void registerServiceCellDefinitions() {

@@ -2,6 +2,45 @@ var representationParamsFnMap = {
     "ball+stick" : function(p) { p.multipleBond = true }
 }
 
+
+function resizeNglViewer(divid, width, height) {
+    var outerDiv = $('#' + divid);
+    outerDiv.css("width", width + "px");
+    outerDiv.css("height", height + "px");
+    fitNglViewer(divid);
+}
+
+
+/** Resize the stage */
+function fitNglViewer(divid) {
+
+    var outerDiv = $('#' + divid);
+
+    var headers = outerDiv.find(".headers");
+    var status = outerDiv.find(".footer");
+    var controls = outerDiv.find(".controls");
+    var outerW = outerDiv.width();
+    var outerH = outerDiv.height();
+    var controlsW = controls.width();
+    var headerH = headers.height();
+    var footerH = status.height();
+    var h = outerH - headerH - footerH - 6;
+    var w = outerW - controlsW - 2;
+
+    console.log("Resizing NGLViewer : outerW=" + outerW + " outerH=" + outerH +
+        " innerW=" + w + " innerH=" + h +
+        " headerH=" + headerH + " footerH=" + footerH);
+
+    var viewer = $("#" + divid + '_nglviewer');
+
+    if (viewer.length == 1) {
+        var stage = viewer[0].nglviewer;
+        if (stage) {
+            stage.handleResize();
+        }
+    }
+}
+
 /** Main entry point for setting up the NGL viewer.
 *
 * The data and configs element params are arrays, the first containing the data, the second the configuration
@@ -28,18 +67,13 @@ function buildNglViewer(divid, data, configs) {
     var configBuilders = [];
 
     console.log("Container is " + viewer + " -> " + viewer_id);
-    fixSizes();
 
     var stage = viewer[0].nglviewer;
     if (!stage) {
         console.log("Creating new stage in " + viewer_id);
         stage = new NGL.Stage( viewer_id );
         viewer[0].nglviewer = stage;
-        new ResizeSensor(viewer, function() {
-            console.log('Stage resized');
-            fixSizes();
-            stage.handleResize();
-        });
+
     } else {
         console.log("Clearing out old stage");
         stage.removeAllComponents();
@@ -74,24 +108,6 @@ function buildNglViewer(divid, data, configs) {
         }
     }
 
-
-    function fixSizes() {
-        var headers = outerDiv.find(".headers");
-        var status = outerDiv.find(".footer");
-        var controls = outerDiv.find(".controls");
-        var outerW = outerDiv.width();
-        var controlsW = controls.width();
-        var houter = outerDiv.height();
-        var headerH = headers.height();
-        var footerH = status.height();
-        var h = houter - headerH - footerH - 6;
-        var w = outerW - controlsW - 2;
-
-//        console.log("Resizing NGLViewer : outerW=" + outerW + " innerW=" + w + " outerH=" + houter +
-//            " innerH=" + h + " headerH=" + headerH + " footerH=" + footerH);
-        viewer.css("width", w + "px");
-        viewer.css("height", h + "px");
-    }
 
 // --------------------- SDF related --------------------- //
 
@@ -516,3 +532,8 @@ function buildNglViewer(divid, data, configs) {
     }
 
 }
+
+
+
+
+

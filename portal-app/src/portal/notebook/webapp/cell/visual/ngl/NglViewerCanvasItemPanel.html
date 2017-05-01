@@ -1,5 +1,6 @@
 <wicket:panel>
-    <div class="notebook-canvas-item-content resizableCellContent nglviewer">
+    <div class="notebook-canvas-item-content nglviewer">
+
         <div wicket:id="titleBar" class="headers"></div>
 
         <form wicket:id="form" style="display: none;" class="ui form content">
@@ -36,8 +37,7 @@
     </div>
 
     <script>
-    $('.nglviewer.menu .item').tab();
-    $('.nglviewer.ui.accordion').accordion();
+    $('.nglviewer .ui.menu .item').tab();
     </script>
 
 </wicket:panel>
