@@ -10,6 +10,7 @@ import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.notebook.api.NotebookEditableDTO;
 import org.squonk.reader.SDFReader;
+import org.squonk.types.PDBFile;
 import org.squonk.types.io.JsonHandler;
 import portal.notebook.api.CellDefinition;
 
@@ -51,6 +52,8 @@ public class MockJobStatusService {
             processChemblActivitiesFetcher(jobDefinition);
         } else if (jobDefinition.getSteps()[0].getImplementationClass().equals(StepDefinitionConstants.SdfUpload.CLASSNAME)) {
             processSdfUpload(jobDefinition);
+        } else if (jobDefinition.getSteps()[0].getImplementationClass().equals(StepDefinitionConstants.PdbUpload.CLASSNAME)) {
+            //processPdbUpload(jobDefinition);
         }
     }
 

@@ -10,7 +10,6 @@ function resizeNglViewer(divid, width, height) {
     fitNglViewer(divid);
 }
 
-
 /** Resize the stage */
 function fitNglViewer(divid) {
 
@@ -57,13 +56,14 @@ function fitNglViewer(divid) {
 * @param configs Array of configs, one for each data element. Defaults are used if this is null
 * or any element of the array is null.
 */
-function buildNglViewer(divid, data, configs) {
+function buildNglViewer(divid, data, config) {
     console.log("buildNglViewer in " + divid);
 
     var viewer_id =  divid + "_nglviewer"
     var outerDiv = $("#" + divid);
     var viewer = outerDiv.find('.viewer');
     viewer[0].id = viewer_id;
+    var form = outerDiv.find('form.config');
     var configBuilders = [];
 
     console.log("Container is " + viewer + " -> " + viewer_id);
@@ -78,20 +78,25 @@ function buildNglViewer(divid, data, configs) {
         console.log("Clearing out old stage");
         stage.removeAllComponents();
     }
+//    if (config != undefined && config.orientation != undefined) {
+//        console.log("Orienting: " + JSON.stringify(config.orientation));
+//        stage.viewerControls.orient(config.orientation);
+//    }
 
     var controlsEl = outerDiv.find('.controls');
     var inputsCount = 0
     for (var i=0; i < data.length; i++) {
         var d = data[i];
-        var c = (configs == undefined || configs.length <= i ? null : configs[i]);
+        var c = (config == undefined || config.inputs == undefined || config.inputs.length <= i ? null : config.inputs[i]);
+        var o = (config == undefined ? null : config.orientation);
         if (d) {
             inputsCount++;
             if (d.extension === 'sdf') {
-                var config = sdfConfig(i, d, c);
+                var config = sdfConfig(i, d, c, o);
                 configBuilders.push(config);
                 config.load();
             } else if (d.extension === 'pdb') {
-                var config = pdbConfig(i, d, c);
+                var config = pdbConfig(i, d, c, o);
                 configBuilders.push(config);
                 config.load();
             } else {
@@ -111,7 +116,7 @@ function buildNglViewer(divid, data, configs) {
 
 // --------------------- SDF related --------------------- //
 
-    function sdfConfig(index, data, initialConfig) {
+    function sdfConfig(index, data, initialConfig, orientation) {
 
         // index is zero based, input is 1 based
         var input = index + 1;
@@ -146,42 +151,49 @@ function buildNglViewer(divid, data, configs) {
             setupSdfControls(representationToUse);
 
             var displayFilterEl = controlsEl.find(".molecules" + input);
+            displayFilterEl.find("*").remove();
             //console.log("Using representation " + representationToUse);
 
-            var stringBlob = new Blob( [ data.molecules ], { type: data.mediaType} );
-            stage.loadFile( stringBlob, { ext: data.extension, name: "input" + input} ).then( function( comp ) {
+            if (data.size > 0) {
+                var stringBlob = new Blob( [ data.molecules ], { type: data.mediaType} );
+                stage.loadFile( stringBlob, { ext: data.extension, name: "input" + input} ).then( function( comp ) {
 
-                var mol = 1
-                displayFilterEl.find("*").remove();
-                comp.structure.eachModel(function(model) {
-                    //console.log("Setting up model " + mol + " " + model.index);
-                    var visible = false;
-                    if (config == null || config.molecules == null) {
-                        visible = true;
-                    } else if (config.molecules.indexOf(mol) > -1) {
-                        visible = true;
+                    var mol = 1
+
+                    comp.structure.eachModel(function(model) {
+                        //console.log("Setting up model " + mol + " " + model.index);
+                        var visible = false;
+                        if (config == null || config.molecules == null) {
+                            visible = true;
+                        } else if (config.molecules.indexOf(mol) > -1) {
+                            visible = true;
+                        }
+
+                        createSdfRepresentation(comp, mol - 1, representationToUse, visible);
+
+                        var added = displayFilterEl.append(
+                          '<div class="field"><div class="ui checkbox"><input type="checkbox" ' +
+                          (visible ? 'checked ' : '') + 'name="mol' + mol + '">' +
+                          '<label>Molecule ' + mol + '</label></div></div>');
+
+                        mol++;
+                    });
+
+                    // add change listeners that react to molecule selection
+                    displayFilterEl.find('input').each(function(x) {
+                      $(this).change(function() {
+                          toggleDisplay(this, x+1);
+                          return false;
+                      });
+                    });
+
+                    comp.autoView();
+                    if (orientation) {
+                      console.log("Orienting SDF");
+                      stage.viewerControls.orient(orientation);
                     }
-
-                    createSdfRepresentation(comp, mol - 1, representationToUse, visible);
-
-                    var added = displayFilterEl.append(
-                      '<div class="field"><div class="ui checkbox"><input type="checkbox" ' +
-                      (visible ? 'checked ' : '') + 'name="mol' + mol + '">' +
-                      '<label>Molecule ' + mol + '</label></div></div>');
-
-                    mol++;
-              });
-
-              // add change listeners that react to molecule selection
-              displayFilterEl.find('input').each(function(x) {
-                  $(this).change(function() {
-                      toggleDisplay(this, x+1);
-                      return false;
-                  });
-              });
-
-              comp.autoView();
-            });
+                });
+            }
           }
 
         function setupSdfControls(defaultRepresentation) {
@@ -289,7 +301,7 @@ function buildNglViewer(divid, data, configs) {
 
     // --------------------- PDB related --------------------- //
 
-    function pdbConfig(index, data, initialConfig) {
+    function pdbConfig(index, data, initialConfig, orientation) {
 
         // index is zero based, input is 1 based
         var input = index + 1;
@@ -335,6 +347,9 @@ function buildNglViewer(divid, data, configs) {
 
                 comp.addRepresentation(representationToUse);
                 comp.autoView();
+                if (orientation) {
+                    stage.viewerControls.orient(orientation);
+                }
 
                 displayFilterEl.find("*").remove();
                 displayFilterEl.append(
@@ -517,18 +532,29 @@ function buildNglViewer(divid, data, configs) {
 
     function configChanged() {
         var config = buildConfig();
+        saveConfig(config);
     }
 
     function buildConfig() {
         var config = {};
-        config.config1 = configBuilders[0].config();
-        config.config2 = configBuilders[1].config();
-        var rep1 = getRepresentation(1);
-        var rep2 = getRepresentation(2);
-        //console.log("Config1: " + JSON.stringify(config.config1));
-        //console.log("Config2: " + JSON.stringify(config.config2));
+        var inputs = [];
+        inputs.push(configBuilders[0].config());
+        inputs.push(configBuilders[1].config());
+        config.inputs = inputs;
+        config.orientation = stage.viewerControls.getOrientation();
 
         return config;
+    }
+
+
+    function saveConfig(config) {
+
+        if (form.length == 1) {
+            var json =  JSON.stringify(config);
+            console.log("Config: " + json);
+            form.find('.config').attr('value', json);
+            form.find('.updateConfig').click();
+        }
     }
 
 }

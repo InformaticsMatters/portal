@@ -75,9 +75,9 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
             try {
                 Stream<UUID> stream = JsonHandler.getInstance().streamFromJson(json, UUID.class);
                 List<UUID> list = stream.collect(Collectors.toList());
-                if (list.size() > 0) {
+                //if (list.size() > 0) {
                     return new DatasetSelection(list);
-                }
+                //}
             } catch (Exception e) {
                 notifyMessage("Error", "Invalid selection");
                 LOG.log(Level.WARNING, "Invalid selection", e);

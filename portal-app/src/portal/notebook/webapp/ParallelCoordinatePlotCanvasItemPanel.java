@@ -128,9 +128,9 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 String selectedIdsJson = selection.getValue();
                 String extentsValue = extents.getValue();
-                if (selectedIdsJson != null && selectedIdsJson.isEmpty()) {
-                    selectedIdsJson = null;
-                }
+//                if (selectedIdsJson != null && selectedIdsJson.isEmpty()) {
+//                    selectedIdsJson = null;
+//                }
                 if (extentsValue != null && extentsValue.isEmpty()) {
                     extentsValue = null;
                 }

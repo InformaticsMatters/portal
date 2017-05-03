@@ -16,6 +16,7 @@ import portal.PopupContainerProvider;
 import portal.notebook.api.*;
 import portal.notebook.service.Execution;
 import portal.notebook.webapp.results.DatasetResultsHandler;
+import portal.notebook.webapp.results.NullResultsHandler;
 import portal.notebook.webapp.results.ResultsHandler;
 import portal.notebook.webapp.results.ResultsViewerPanel;
 import toolkit.wicket.semantic.NotifierProvider;
@@ -30,6 +31,7 @@ import java.util.logging.Logger;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
+    public static final String OPTION_CONFIG = "configuration";
     public static final String OPTION_SELECTED_IDS = "selectionSelected";
     public static final String OPTION_MARKED_IDS = "selectionMarked";
     public static final String OPTION_FILTER_IDS = "filteredIDs";
@@ -77,6 +79,8 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                     LOG.fine("Creating results handler for variable " + name + " in cell " + cellInstance.getName());
                     resultsHandler = new DatasetResultsHandler(name, notebookSession, cellInstance.getId());
                     return;
+                } else {
+                    resultsHandler = new DatasetResultsHandler(name, notebookSession, cellInstance.getId());
                 }
             }
         }

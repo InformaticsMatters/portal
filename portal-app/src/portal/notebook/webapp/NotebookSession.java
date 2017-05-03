@@ -23,9 +23,12 @@ import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SessionScoped
@@ -314,7 +317,6 @@ public class NotebookSession implements Serializable {
         return new Dataset<>(meta.getType(), gunzippedInputStream, meta);
     }
 
-
     public List<UUID> listAllDatasetUuids(IDatasetDescriptor datasetDescriptor) {
         return datasets.listAllDatasetUuids(datasetDescriptor);
     }
@@ -342,6 +344,23 @@ public class NotebookSession implements Serializable {
             notebookVariableClient.writeStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), inputStream);
         }
     }
+
+    public InputStream readStreamValue(VariableInstance variableInstance) throws Exception {
+        return notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
+    }
+
+    public <T> T readStreamValueAs(VariableInstance variableInstance, Class<T> type) throws Exception {
+        try {
+            Constructor<T> constr = type.getConstructor(InputStream.class);
+            InputStream is = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName());
+            return constr.newInstance(is);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException| IllegalArgumentException| InvocationTargetException e) {
+            LOG.log(Level.WARNING, "Failed to instantiate " + type.getSimpleName(), e);
+        }
+        return null;
+    }
+
+
 
     public void resetCurrentNotebook() {
         setCurrentNotebookVersionId(null);

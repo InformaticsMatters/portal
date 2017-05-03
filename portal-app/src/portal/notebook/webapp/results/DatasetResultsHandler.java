@@ -15,29 +15,14 @@ import java.io.Serializable;
 /**
  * Created by timbo on 28/08/2016.
  */
-public class DatasetResultsHandler implements ResultsHandler {
+public class DatasetResultsHandler extends DefaultResultsHandler {
 
-    private final String variableName;
-    private final NotebookSession notebookSession;
-    private final Long cellId;
     private final CellDatasetProvider cellDatasetProvider;
     private DatasetDetailsPanel panel;
 
     public DatasetResultsHandler(String variableName, NotebookSession notebookSession, Long cellId) {
-        this.variableName = variableName;
-        this.notebookSession = notebookSession;
-        this.cellId = cellId;
+        super(variableName, notebookSession, cellId);
         this.cellDatasetProvider = new CellDatasetProvider(cellId, notebookSession, variableName);
-    }
-
-    @Override
-    public String getVariableName() {
-        return variableName;
-    }
-
-    @Override
-    public CellInstance getCellInstance() {
-        return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
     }
 
     @Override

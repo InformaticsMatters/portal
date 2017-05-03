@@ -11,6 +11,7 @@ import org.squonk.options.OptionDescriptor.Mode;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 import org.squonk.types.NumberRange;
+import org.squonk.types.PDBFile;
 import portal.SessionContext;
 import portal.notebook.webapp.*;
 
@@ -97,8 +98,15 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     private static CellDefinition createNglViewerCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("NGLViewer", "NGL viewer", "icons/view.png", new String[]{"3d", "nglviewer", "viewer", "visualization", "vizualisation", "viz"}, false);
-        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input2", Dataset.class, MoleculeObject.class));
-        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input1", Dataset.class, MoleculeObject.class));
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input2", Dataset.class, MoleculeObject.class, PDBFile.class, null));
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input1", Dataset.class, MoleculeObject.class, PDBFile.class, null));
+
+        addFilterOption(cellDefinition, CanvasItemPanel.OPTION_FILTER_IDS + "2", "Filter2", "Filter2 (IDs to include)");
+        addFilterOption(cellDefinition, CanvasItemPanel.OPTION_FILTER_IDS + "1", "Filter1", "Filter1 (IDs to include)");
+
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, CanvasItemPanel.OPTION_CONFIG, "Config", "Viewer configuration", Mode.User));
+
         return cellDefinition;
     }
 
@@ -112,12 +120,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
                 new OptionDescriptor<>(String.class, AbstractD3CanvasItemPanel.OPTION_Y_AXIS,
                         "y Axis", "Field for values", Mode.Advanced));
 
-        // option inputs
-        OptionDescriptor filterOptionDescriptor = new OptionDescriptor<>(DatasetSelection.class, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)", Mode.Input);
-        cellDefinition.getOptionDefinitionList().add(filterOptionDescriptor);
-
-        // the option bindings
-        cellDefinition.getOptionBindingDefinitionList().add(new OptionBindingDefinition(filterOptionDescriptor, CellDefinition.UpdateMode.AUTO));
+        addFilterOption(cellDefinition);
 
         return cellDefinition;
     }
@@ -193,6 +196,19 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         return cellDefinition;
     }
 
+    private static void addFilterOption(CellDefinition cellDefinition) {
+        addFilterOption(cellDefinition, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)");
+    }
+
+    private static void addFilterOption(CellDefinition cellDefinition, String key, String label, String description) {
+        // option inputs
+        OptionDescriptor filterOptionDescriptor = new OptionDescriptor<>(DatasetSelection.class, key, label, description, Mode.Input);
+        cellDefinition.getOptionDefinitionList().add(filterOptionDescriptor);
+
+        // the option bindings
+        cellDefinition.getOptionBindingDefinitionList().add(new OptionBindingDefinition(filterOptionDescriptor, CellDefinition.UpdateMode.AUTO));
+    }
+
     @PostConstruct
     public void init() {
         registerStandardCellDefinitions();
@@ -225,6 +241,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new SdfUploadCellDefinition());
         registerCellDefinition(new SmilesStructuresCellDefinition());
         registerCellDefinition(new MolfileUploadCellDefinition());
+        registerCellDefinition(new PdbUploadCellDefinition());
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
         registerCellDefinition(new DatasetFilterGroovyCellDefinition());
         registerCellDefinition(new DatasetSorterCellDefinition());

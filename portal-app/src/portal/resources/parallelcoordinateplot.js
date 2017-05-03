@@ -67,6 +67,7 @@ function buildParallelCoordinatePlot(id, config, data) {
     selectionHandler.updateSelection = function(extents, selected) {
         var extentsJson = (selected == null ? null : JSON.stringify(extents));
         var selectedJson = (selected == null ? null : JSON.stringify(selected));
+        console.log("Selection: " + selectedJson);
 
         form.select('.extents').attr('value', extentsJson);
         form.select('.selection').attr('value', selectedJson);
