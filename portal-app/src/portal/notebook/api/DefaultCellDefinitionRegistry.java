@@ -14,6 +14,7 @@ import org.squonk.types.NumberRange;
 import org.squonk.types.PDBFile;
 import portal.SessionContext;
 import portal.notebook.webapp.*;
+import portal.notebook.webapp.cell.visual.ngl.NglViewerCanvasItemPanel;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -106,6 +107,10 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
         cellDefinition.getOptionDefinitionList().add(
                 new OptionDescriptor<>(String.class, CanvasItemPanel.OPTION_CONFIG, "Config", "Viewer configuration", Mode.User));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, NglViewerCanvasItemPanel.OPTION_DISPLAY1, "Display1", "Viewer display 1", Mode.User));
+        cellDefinition.getOptionDefinitionList().add(
+                new OptionDescriptor<>(String.class, NglViewerCanvasItemPanel.OPTION_DISPLAY2, "Display2", "Viewer display 2", Mode.User));
 
         return cellDefinition;
     }

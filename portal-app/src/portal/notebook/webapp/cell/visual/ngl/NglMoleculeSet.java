@@ -1,6 +1,7 @@
 package portal.notebook.webapp.cell.visual.ngl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.squonk.util.Utils;
 
 import java.io.Serializable;
 
@@ -19,7 +20,7 @@ public class NglMoleculeSet implements Serializable {
             @JsonProperty("extension") String extension,
             @JsonProperty("molecules") String molecules,
             @JsonProperty("size") Integer size
-            ) {
+    ) {
         this.mediaType = mediaType;
         this.extension = extension;
         this.molecules = molecules;
@@ -40,5 +41,16 @@ public class NglMoleculeSet implements Serializable {
 
     public Integer getSize() {
         return size;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof NglMoleculeSet)) {
+            return false;
+        }
+        NglMoleculeSet other = (NglMoleculeSet) obj;
+        return Utils.safeEquals(this.mediaType, other.getMediaType()) &&
+                Utils.safeEquals(this.extension, other.getExtension()) &&
+                Utils.safeEquals(this.molecules, other.getMolecules());
     }
 }

@@ -344,6 +344,11 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
          return jobStatus == null || Status.COMPLETED == jobStatus || Status.ERROR == jobStatus;
     }
 
+    protected <T> T getOptionValue(CellInstance cellInstance, String name, Class<T> type) {
+        OptionInstance instance = cellInstance.getOptionInstanceMap().get(name);
+        return  instance == null ? null : (T) instance.getValue();
+    }
+
     protected boolean doesCellChangeRequireRefresh(CellChangeEvent evt) {
 
         CellInstance cellInstance = findCellInstance();

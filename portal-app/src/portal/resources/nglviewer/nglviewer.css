@@ -42,3 +42,10 @@
     border-top: none;
     width: 100%;
 }
+
+.nglviewer .accordion .active {
+    border-bottom-style: none;
+    border-top-style: none;
+    border-left-style: none;
+    border-right-style: none;
+}

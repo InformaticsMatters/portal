@@ -20,10 +20,10 @@ import org.squonk.types.MoleculeObject;
 import org.squonk.types.io.JsonHandler;
 import org.squonk.util.CommonMimeTypes;
 import org.squonk.util.IOUtils;
+import org.squonk.util.Utils;
 import portal.PortalWebApplication;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
-import portal.notebook.api.OptionInstance;
 import portal.notebook.api.VariableInstance;
 import portal.notebook.webapp.CanvasItemPanel;
 import portal.notebook.webapp.CellChangeEvent;
@@ -33,7 +33,6 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,6 +47,10 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
 
     private static final Logger LOG = Logger.getLogger(NglViewerCanvasItemPanel.class.getName());
     private static final int MAX_MOLS = 100;
+
+    public static final String OPTION_DISPLAY1 = "display1";
+    public static final String OPTION_DISPLAY2 = "display2";
+
 
     private final ModelObject model = new ModelObject();
     private Form<ModelObject> form;
@@ -104,7 +107,7 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
     public void processCellChanged(CellChangeEvent evt, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         super.processCellChanged(evt, ajaxRequestTarget);
         if (doesCellChangeRequireRefresh(evt)) {
-            LOG.info("processCellChanged: " + evt);
+            LOG.fine("processCellChanged: " + evt);
             invalidatePlotData();
             onExecute();
         }
@@ -124,25 +127,39 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
     private void addForm() {
 
         TextField<String> config = new HiddenField<>("config", new Model<>(""));
+        TextField<String> display1 = new HiddenField<>("display1", new Model<>(""));
+        TextField<String> display2 = new HiddenField<>("display2", new Model<>(""));
 
         form = new Form<>("form");
         form.setOutputMarkupId(true);
         add(form);
         form.add(config);
+        form.add(display1);
+        form.add(display2);
 
         AjaxButton updateConfigButton = new AjaxButton("updateConfig") {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 String configJson = config.getValue();
-                LOG.info("Configuration: " + configJson);
+                //LOG.info("Config: " + configJson);
+
+                String displayJson1 = display1.getValue();
+                String displayJson2 = display2.getValue();
+                //LOG.info("Display1: " + displayJson1);
+                //LOG.info("Display2: " + displayJson2);
+
 
                 CellInstance cell = findCellInstance();
                 cell.getOptionInstanceMap().get(OPTION_CONFIG).setValue(configJson);
+                cell.getOptionInstanceMap().get(OPTION_DISPLAY1).setValue(displayJson1);
+                cell.getOptionInstanceMap().get(OPTION_DISPLAY2).setValue(displayJson2);
 
                 saveNotebook();
 
                 notifyOptionValuesChanged(OPTION_CONFIG, target);
+                notifyOptionValuesChanged(OPTION_DISPLAY1, target);
+                notifyOptionValuesChanged(OPTION_DISPLAY2, target);
                 updateAndNotifyCellStatus(target);
             }
         };
@@ -152,7 +169,7 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void invalidatePlotData() {
-        model.setData(null, null);
+        //model.setData(null, null);
     }
 
     private void refreshPlotData(boolean readDataset) throws Exception {
@@ -163,9 +180,6 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
         BindingInstance bindingInstance2 = cellInstance.getBindingInstanceMap().get("input2");
         VariableInstance variableInstance2 = bindingInstance2.getVariableInstance();
 
-        String configJson = (String) cellInstance.getOptionInstanceMap().get(OPTION_CONFIG).getValue();
-        model.setConfig(configJson);
-
         Set<UUID> selectionFilter1 = readFilter(OPTION_FILTER_IDS + 1);
         Set<UUID> selectionFilter2 = readFilter(OPTION_FILTER_IDS + 2);
 
@@ -175,11 +189,32 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
         if (readDataset) {
             mols1 = generateData(variableInstance1, 1, selectionFilter1);
             mols2 = generateData(variableInstance2, 2, selectionFilter2);
-        }
 
-        model.setData(mols1, mols2);
-        if ((mols1 != null && mols1.getSize() >= MAX_MOLS) || (mols2 != null && mols2.getSize() >= MAX_MOLS)) {
-            model.setError("WARN: " + MAX_MOLS + " mol limit reached");
+            model.setData(mols1, mols2);
+            if ((mols1 != null && mols1.getSize() >= MAX_MOLS) || (mols2 != null && mols2.getSize() >= MAX_MOLS)) {
+                model.setError("WARN: " + MAX_MOLS + " mol limit reached");
+            }
+
+            String configJson = getOptionValue(cellInstance, OPTION_CONFIG, String.class);
+            model.setConfig(configJson);
+
+            String displayJson1 = null;
+            String displayJson2 = null;
+            if (!model.data1IsNew) {
+                displayJson1 = getOptionValue(cellInstance, OPTION_DISPLAY1, String.class);
+            } else {
+                cellInstance.getOptionInstanceMap().get(OPTION_DISPLAY1).setValue(null);
+            }
+            if (!model.data2IsNew) {
+                displayJson2 = getOptionValue(cellInstance, OPTION_DISPLAY2, String.class);
+            } else {
+                cellInstance.getOptionInstanceMap().get(OPTION_DISPLAY2).setValue(null);
+            }
+
+            //LOG.info("Display1: " + displayJson1);
+            //LOG.info("Display2: " + displayJson2);
+
+            model.setDisplays(displayJson1, displayJson2);
         }
     }
 
@@ -240,15 +275,19 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
 
     private String buildPlotJs() {
 
-        StringBuilder b = new StringBuilder("buildNglViewer('");
         String data = model.getDataAsJson();
-        String config = model.getConfig();
-        //LOG.info("JSON: " + json);
+        String config = model.getConfigAsJson();
+        String displays = model.getDisplaysAsJson();
+
+        StringBuilder b = new StringBuilder("buildNglViewer('");
         b.append(getMarkupId()).append("',")
                 .append(data).append(",")
-                .append(config).append(")");
+                .append(config).append(",")
+                .append(displays).append(")");
 
-        return b.toString();
+        String s = b.toString();
+        //LOG.info("JSON: " + s);
+        return s;
     }
 
     public String getStatusString() {
@@ -305,11 +344,17 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
 //        });
 //    }
 
+    private static final String DATA__UNCHANGED = "DATA__UNCHANGED";
+
     class ModelObject implements Serializable {
 
         NglMoleculeSet data1;
         NglMoleculeSet data2;
+        Boolean data1IsNew;
+        Boolean data2IsNew;
         String config;
+        String display1;
+        String display2;
         String error;
 
         NglMoleculeSet getData1() {
@@ -321,8 +366,25 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
         }
 
         void setData(NglMoleculeSet data1, NglMoleculeSet data2) {
+
+            if (data1IsNew == null) {
+                data1IsNew = false;
+            } else if (!Utils.safeEqualsIncludeNull(this.data1, data1)) {
+                data1IsNew = true;
+            } else {
+                data1IsNew = false;
+            }
             this.data1 = data1;
+
+            if (data2IsNew == null) {
+                data2IsNew = false;
+            } else if (!Utils.safeEqualsIncludeNull(this.data2, data2)) {
+                data2IsNew = true;
+            } else {
+                data2IsNew = false;
+            }
             this.data2 = data2;
+
             this.error = null;
         }
 
@@ -335,15 +397,7 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
         }
 
         private String getDataAsJson() {
-            try {
-                NglMoleculeSet[] arr = new NglMoleculeSet[2];
-                arr[0] = data1;
-                arr[1] = data2;
-                return JsonHandler.getInstance().objectToJson(arr);
-            } catch (JsonProcessingException e) {
-                LOG.log(Level.WARNING, "Failed to geenrate JSON for NGL Viewer", e);
-                return null;
-            }
+            return generateJsonArray(data1, data2);
         }
 
         private void setConfig(String config) {
@@ -354,8 +408,47 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
             return config;
         }
 
+        private String getConfigAsJson() {
+            // config is already JSON
+            return config;
+        }
 
+        private void setDisplays(String display1, String display2) {
+            this.display1 = display1;
+            this.display2 = display2;
+        }
+
+        private String getDisplaysAsJson() {
+            // display values are already JSON
+            // only provide display values if the data has not changed
+            String d1 = (data1IsNew ? null : display1);
+            String d2 = (data2IsNew ? null : display2);
+            if (d1 == null && d2 == null) {
+                return null;
+            } else {
+                return "[" + (d1 == null ? "null" : d1) + "," + (d2 == null ? "null" : d2) + "]";
+            }
+        }
+
+        private String getDisplay1() {
+            return display1;
+        }
+
+        private String getDisplay2() {
+            return display2;
+        }
+
+        private String generateJsonArray(Object item1, Object item2) {
+            if (item1 == null && item2 == null) {
+                return null;
+            }
+            try {
+                return JsonHandler.getInstance().objectToJson(new Object[] {item1, item2});
+            } catch (JsonProcessingException e) {
+                LOG.log(Level.WARNING, "Failed to generate JSON for NGL Viewer", e);
+                return null;
+            }
+        }
     }
-
 
 }
