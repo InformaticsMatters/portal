@@ -158,7 +158,7 @@ function buildNglViewer(divid, data, config, display) {
             displayFilterEl.find("*").remove();
             //console.log("Using representation " + representationToUse);
 
-            if (data.size > 0) {
+            if (data.size === undefined || data.size > 0) {
                 var stringBlob = new Blob( [ data.molecules ], { type: data.mediaType} );
                 stage.loadFile( stringBlob, { ext: data.extension, name: "input" + input} ).then( function( comp ) {
 
