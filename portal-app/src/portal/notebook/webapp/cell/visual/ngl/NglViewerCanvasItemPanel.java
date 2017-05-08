@@ -255,7 +255,7 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
             String format = mo.getFormat();
             if (format.equals("mol") || format.startsWith("mol:")) {
                 b.append(mo.getSource());
-                b.append("\n$$$$$\n");
+                b.append("\n$$$$\n");
                 count.incrementAndGet();
             } else {
                 LOG.warning("Invalid molecule format for NGL Viewer: " + format);
