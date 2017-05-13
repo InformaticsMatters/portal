@@ -1,7 +1,8 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual.parallelcoordinateplot;
 
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import portal.notebook.webapp.ParallelCoordinatePlotCanvasItemPanel.NullValues;
+import portal.notebook.webapp.AbstractDatasetAdvancedOptionsPanel;
+import portal.notebook.webapp.cell.visual.parallelcoordinateplot.ParallelCoordinatePlotCanvasItemPanel.NullValues;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
@@ -27,8 +28,8 @@ public class ParallelCoordinatePlotAdvancedOptionsPanel extends AbstractDatasetA
     @Inject
     private PopupContainerProvider popupContainerProvider;
 
-    public ParallelCoordinatePlotAdvancedOptionsPanel(String id, Long cellId) {
-        super(id, cellId);
+    public ParallelCoordinatePlotAdvancedOptionsPanel(String id, Long cellId, CallbackHandler callbackHandler) {
+        super(id, cellId, callbackHandler);
         setOutputMarkupId(true);
         addComponents();
     }

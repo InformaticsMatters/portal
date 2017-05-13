@@ -1,4 +1,4 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual.scatterplot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +24,8 @@ import org.squonk.types.NumberRange;
 import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
+import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
+import portal.notebook.webapp.CellChangeEvent;
 
 import java.io.Serializable;
 import java.util.*;
@@ -243,7 +245,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
                 Set<UUID> marked = readFilter(OPTION_MARKED_IDS);
                 model.setMarked(marked);
-                
+
                 Dataset<? extends BasicObject> filteredDataset = generateFilteredData(variableInstance, OPTION_FILTER_IDS);
                 if (filteredDataset == null) {
                     return;
@@ -382,8 +384,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private void createAdvancedOptionsPanel() {
-        advancedOptionsPanel = new ScatterPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new DefaultCallbackHandler() {
+        advancedOptionsPanel = new ScatterPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId(), new DefaultCallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() throws Exception {

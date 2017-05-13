@@ -1,4 +1,4 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual.heatmap;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -6,7 +6,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.PopupContainerProvider;
-import portal.notebook.webapp.HeatmapCanvasItemPanel.ValueCollector;
+import portal.notebook.webapp.AbstractDatasetAdvancedOptionsPanel;
+import portal.notebook.webapp.cell.visual.heatmap.HeatmapCanvasItemPanel.ValueCollector;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -26,8 +27,8 @@ public class HeatmapAdvancedOptionsPanel extends AbstractDatasetAdvancedOptionsP
     @Inject
     private PopupContainerProvider popupContainerProvider;
 
-    public HeatmapAdvancedOptionsPanel(String id, Long cellId) {
-        super(id, cellId);
+    public HeatmapAdvancedOptionsPanel(String id, Long cellId, CallbackHandler callbackHandler) {
+        super(id, cellId, callbackHandler);
         setOutputMarkupId(true);
         addComponents();
     }

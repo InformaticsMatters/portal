@@ -1,4 +1,4 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual.threedimmol;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.squonk.dataset.Dataset;
@@ -20,6 +20,9 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
+import portal.notebook.webapp.CanvasItemPanel;
+import portal.notebook.webapp.CellChangeEvent;
+import portal.notebook.webapp.NotebookSession;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -183,8 +186,7 @@ public class ThreeDimMolCanvasItemPanel extends CanvasItemPanel {
     }
 
     private void createAdvancedOptionsPanel() {
-        advancedOptionsPanel = new ThreeDimMolAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new ThreeDimMolAdvancedOptionsPanel.CallbackHandler() {
+        advancedOptionsPanel = new ThreeDimMolAdvancedOptionsPanel("advancedOptionsPanel", getCellId(), new ThreeDimMolAdvancedOptionsPanel.CallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() {

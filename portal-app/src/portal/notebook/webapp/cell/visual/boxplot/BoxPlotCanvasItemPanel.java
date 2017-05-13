@@ -1,4 +1,4 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual.boxplot;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -20,13 +20,14 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
+import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
+import portal.notebook.webapp.CellChangeEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -174,8 +175,7 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     }
 
     private void createAdvancedOptionsPanel() {
-        advancedOptionsPanel = new BoxPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new DefaultCallbackHandler() {
+        advancedOptionsPanel = new BoxPlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId(), new DefaultCallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() throws Exception {

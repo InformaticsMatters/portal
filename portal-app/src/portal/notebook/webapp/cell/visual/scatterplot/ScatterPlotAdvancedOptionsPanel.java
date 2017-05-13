@@ -1,4 +1,4 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual.scatterplot;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -7,6 +7,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import portal.PopupContainerProvider;
+import portal.notebook.webapp.AbstractDatasetAdvancedOptionsPanel;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -31,8 +32,8 @@ public class ScatterPlotAdvancedOptionsPanel extends AbstractDatasetAdvancedOpti
 
     private FieldModelWrapper xyFields;
 
-    public ScatterPlotAdvancedOptionsPanel(String id, Long cellId) {
-        super(id, cellId);
+    public ScatterPlotAdvancedOptionsPanel(String id, Long cellId, CallbackHandler callbackHandler) {
+        super(id, cellId, callbackHandler);
         setOutputMarkupId(true);
         addComponents();
     }

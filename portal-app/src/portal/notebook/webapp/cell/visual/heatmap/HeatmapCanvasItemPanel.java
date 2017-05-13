@@ -1,4 +1,4 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual.heatmap;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -21,6 +21,7 @@ import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellDefinition;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
+import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,6 +58,9 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
             "}, _data_)";
     private Form<ModelObject> form;
     private Label statusLabel;
+    private HeatmapAdvancedOptionsPanel advancedOptionsPanel;
+
+
     public HeatmapCanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
 
@@ -186,12 +190,14 @@ public class HeatmapCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
     @Override
     public Panel getAdvancedOptionsPanel() {
-        return createAdvancedOptionsPanel();
+        if (advancedOptionsPanel == null) {
+            createAdvancedOptionsPanel();
+        }
+        return advancedOptionsPanel;
     }
 
     private HeatmapAdvancedOptionsPanel createAdvancedOptionsPanel() {
-        HeatmapAdvancedOptionsPanel advancedOptionsPanel = new HeatmapAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new DefaultCallbackHandler() {
+        advancedOptionsPanel = new HeatmapAdvancedOptionsPanel("advancedOptionsPanel", getCellId(), new DefaultCallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() throws Exception {

@@ -1,12 +1,12 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual;
 
 import org.squonk.dataset.DatasetSelection;
 import org.squonk.types.io.JsonHandler;
-import portal.notebook.api.CellInstance;
+import portal.notebook.webapp.AbstractDatasetAdvancedOptionsPanel;
+import portal.notebook.webapp.CanvasItemPanel;
+import portal.notebook.webapp.NotebookSession;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -86,7 +86,7 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
         return null;
     }
 
-    abstract class DefaultCallbackHandler implements AbstractDatasetAdvancedOptionsPanel.CallbackHandler {
+    public abstract class DefaultCallbackHandler implements AbstractDatasetAdvancedOptionsPanel.CallbackHandler {
 
 
         @Override

@@ -14,7 +14,11 @@ import org.squonk.types.NumberRange;
 import org.squonk.types.PDBFile;
 import portal.SessionContext;
 import portal.notebook.webapp.*;
+import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
+import portal.notebook.webapp.cell.visual.heatmap.HeatmapCanvasItemPanel;
 import portal.notebook.webapp.cell.visual.ngl.NglViewerCanvasItemPanel;
+import portal.notebook.webapp.cell.visual.parallelcoordinateplot.ParallelCoordinatePlotCanvasItemPanel;
+import portal.notebook.webapp.cell.visual.scatterplot.ScatterPlotCanvasItemPanel;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;

@@ -1,4 +1,4 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual.threedimmol;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import portal.PopupContainerProvider;
+import portal.notebook.webapp.NotebookSession;
 import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 
 import javax.inject.Inject;
@@ -26,8 +27,9 @@ public class ThreeDimMolAdvancedOptionsPanel extends Panel {
     @Inject
     private PopupContainerProvider popupContainerProvider;
 
-    public ThreeDimMolAdvancedOptionsPanel(String id, Long cellId) {
+    public ThreeDimMolAdvancedOptionsPanel(String id, Long cellId, ThreeDimMolAdvancedOptionsPanel.CallbackHandler callbackHandler) {
         super(id);
+        this.callbackHandler = callbackHandler;
         setOutputMarkupId(true);
         this.cellId = cellId;
         addComponents();
@@ -50,10 +52,6 @@ public class ThreeDimMolAdvancedOptionsPanel extends Panel {
             }
         });
         add(form);
-    }
-
-    public void setCallbackHandler(CallbackHandler callbackHandler) {
-        this.callbackHandler = callbackHandler;
     }
 
     public String getPdbId() {

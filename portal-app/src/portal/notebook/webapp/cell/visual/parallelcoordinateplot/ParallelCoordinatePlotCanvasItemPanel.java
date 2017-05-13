@@ -1,4 +1,4 @@
-package portal.notebook.webapp;
+package portal.notebook.webapp.cell.visual.parallelcoordinateplot;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -6,7 +6,6 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -17,12 +16,13 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.IOUtils;
 import org.squonk.dataset.Dataset;
-import org.squonk.dataset.DatasetMetadata;
 import org.squonk.dataset.DatasetSelection;
 import org.squonk.types.BasicObject;
 import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
+import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
+import portal.notebook.webapp.CellChangeEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -297,8 +297,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     }
 
     private void createAdvancedOptionsPanel() {
-        advancedOptionsPanel = new ParallelCoordinatePlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId());
-        advancedOptionsPanel.setCallbackHandler(new DefaultCallbackHandler() {
+        advancedOptionsPanel = new ParallelCoordinatePlotAdvancedOptionsPanel("advancedOptionsPanel", getCellId(), new DefaultCallbackHandler() {
 
             @Override
             public void onApplyAdvancedOptions() throws Exception {

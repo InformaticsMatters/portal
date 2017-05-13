@@ -24,14 +24,11 @@ public class AbstractDatasetAdvancedOptionsPanel extends Panel {
     protected final IModel<List<String>> fieldNamesModel = new Model();
     protected CallbackHandler callbackHandler;
 
-    public AbstractDatasetAdvancedOptionsPanel(String id, Long cellId) {
+    public AbstractDatasetAdvancedOptionsPanel(String id, Long cellId, CallbackHandler callbackHandler) {
         super(id);
         this.cellId = cellId;
-        fieldNamesModel.setObject(Collections.emptyList());
-    }
-
-    protected void setCallbackHandler(CallbackHandler callbackHandler) {
         this.callbackHandler = callbackHandler;
+        fieldNamesModel.setObject(Collections.emptyList());
     }
 
     @Override
