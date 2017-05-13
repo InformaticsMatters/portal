@@ -17,6 +17,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.io.IOUtils;
 import org.squonk.dataset.Dataset;
+import org.squonk.dataset.DatasetMetadata;
 import org.squonk.dataset.DatasetSelection;
 import org.squonk.types.BasicObject;
 import org.squonk.types.io.JsonHandler;
@@ -39,7 +40,8 @@ import java.util.stream.Stream;
  */
 public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
-    protected enum NullValues { Ignore, Bottom, Top }
+    protected enum NullValues {Ignore, Bottom, Top}
+
     public static final String OPTION_NULL_VALUES = "nullValues";
     public static final String OPTION_COLOR_DIMENSION = "colorDimension";
     private static final Logger LOG = Logger.getLogger(ParallelCoordinatePlotCanvasItemPanel.class.getName());
@@ -72,7 +74,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         Map<String, OptionInstance> options = cellInstance.getOptionInstanceMap();
         model.setFields((List<String>) options.get(OPTION_FIELDS).getValue());
         OptionInstance nullValuesOpt = options.get(OPTION_NULL_VALUES);
-        model.setNullValues(nullValuesOpt.getValue() == null ? NullValues.Ignore : NullValues.valueOf((String)nullValuesOpt.getValue()));
+        model.setNullValues(nullValuesOpt.getValue() == null ? NullValues.Ignore : NullValues.valueOf((String) nullValuesOpt.getValue()));
     }
 
     @Override
@@ -109,9 +111,9 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                 CellInstance cell = findCellInstance();
                 Map<String, OptionInstance> options = cell.getOptionInstanceMap();
                 selection.getModel().setObject(""); // never read
-                axes.getModel().setObject((String)options.get(OPTION_AXES).getValue());
-                extents.getModel().setObject((String)options.get(OPTION_EXTENTS).getValue());
-                colorDimension.getModel().setObject((String)options.get(OPTION_COLOR_DIMENSION).getValue());
+                axes.getModel().setObject((String) options.get(OPTION_AXES).getValue());
+                extents.getModel().setObject((String) options.get(OPTION_EXTENTS).getValue());
+                colorDimension.getModel().setObject((String) options.get(OPTION_COLOR_DIMENSION).getValue());
             }
         };
 
@@ -216,36 +218,31 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         if (variableInstance == null) {
             return;
         }
-        Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
-        if (dataset != null) {
+
+        Dataset<? extends BasicObject> dataset = generateFilteredData(variableInstance, OPTION_FILTER_IDS);
+        if (dataset == null) {
+            return;
+        }
+
+        try (Stream<? extends BasicObject> input = dataset.getStream()) {
+            // convert to data that the plot needs
             final AtomicInteger idx = new AtomicInteger(0);
-            try (Stream<? extends BasicObject> stream = dataset.getStream()) {
-
-                Stream<? extends BasicObject> input = stream;
-                // apply the selection filter, if any
-                Set<UUID> selectionFilter = readFilter(OPTION_FILTER_IDS);
-                if (selectionFilter != null && selectionFilter.size() > 0) {
-                    input = input.filter((o) -> selectionFilter.contains(o.getUUID()));
-                }
-
-                // convert to data
-                List<Map<String, Object>> items = input.sequential().map((o) -> {
-                    Map<String, Object> data = new LinkedHashMap<>();
-                    data.put("uuid", o.getUUID());
-                    data.put("idx", idx.incrementAndGet());
-                    for (String field : fields) {
-                        Object val = o.getValue(field);
-                        if (val != null) {
-                            data.put(field, o.getValue(field));
-                        }
+            List<Map<String, Object>> items = input.sequential().map((o) -> {
+                Map<String, Object> data = new LinkedHashMap<>();
+                data.put("uuid", o.getUUID());
+                data.put("idx", idx.incrementAndGet());
+                for (String field : fields) {
+                    Object val = o.getValue(field);
+                    if (val != null) {
+                        data.put(field, o.getValue(field));
                     }
-                    return data;
-                }).collect(Collectors.toList());
+                }
+                return data;
+            }).collect(Collectors.toList());
 
-                // set data
-                model.setPlotData(items);
-                model.setSize(idx.get());
-            }
+            // set data
+            model.setPlotData(items);
+            model.setSize(idx.get());
         }
     }
 
@@ -306,7 +303,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
             @Override
             public void onApplyAdvancedOptions() throws Exception {
                 CellInstance cellInstance = findCellInstance();
-                Map<String,OptionInstance> opts = cellInstance.getOptionInstanceMap();
+                Map<String, OptionInstance> opts = cellInstance.getOptionInstanceMap();
                 opts.get(OPTION_FIELDS).setValue(advancedOptionsPanel.getFields());
                 NullValues nullValues = advancedOptionsPanel.getNullValues();
                 opts.get(OPTION_NULL_VALUES).setValue(nullValues.toString());

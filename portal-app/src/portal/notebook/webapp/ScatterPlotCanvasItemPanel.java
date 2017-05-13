@@ -219,78 +219,77 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
 
-            if (variableInstance != null) {
-                Dataset<? extends BasicObject> dataset = readDataset ? notebookSession.squonkDataset(variableInstance) : null;
-                DatasetMetadata meta = dataset == null ? notebookSession.squonkDatasetMetadata(variableInstance) : dataset.getMetadata();
-                String colorMode = null;
-                // TODO - improve how the color mode is determined as some types could be handled as categorical or continuous.
-                // Allow user to specify?
-                if (colorFieldName != null) {
-                    Class colorFieldType = (Class) meta.getValueClassMappings().get(colorFieldName);
-                    if (colorFieldType != null) {
-                        if (Number.class.isAssignableFrom(colorFieldType)) {
-                            colorMode = "steelblue-brown";
+            if (variableInstance == null) {
+                return;
+            }
+            Dataset<? extends BasicObject> dataset = readDataset ? notebookSession.squonkDataset(variableInstance) : null;
+            DatasetMetadata meta = dataset == null ? notebookSession.squonkDatasetMetadata(variableInstance) : dataset.getMetadata();
+            String colorMode = null;
+            // TODO - improve how the color mode is determined as some types could be handled as categorical or continuous.
+            // Allow user to specify?
+            if (colorFieldName != null) {
+                Class colorFieldType = (Class) meta.getValueClassMappings().get(colorFieldName);
+                if (colorFieldType != null) {
+                    if (Number.class.isAssignableFrom(colorFieldType)) {
+                        colorMode = "steelblue-brown";
+                    } else {
+                        colorMode = "categorical";
+                    }
+                }
+            }
+            model.setColorMode(colorMode);
+
+            if (readDataset) {
+
+                Set<UUID> marked = readFilter(OPTION_MARKED_IDS);
+                model.setMarked(marked);
+                
+                Dataset<? extends BasicObject> filteredDataset = generateFilteredData(variableInstance, OPTION_FILTER_IDS);
+                if (filteredDataset == null) {
+                    return;
+                }
+
+                AtomicInteger counter = new AtomicInteger(0);
+                try (Stream<? extends BasicObject> input = filteredDataset.getStream()) {
+
+                    // convert to DataItems
+                    Stream<DataItem> items = input.map((o) -> {
+                        int count = counter.incrementAndGet();
+                        Float x;
+                        if (ScatterPlotAdvancedOptionsPanel.FIELD_RECORD_NUMBER.equals(xFieldName)) {
+                            x = (float) count;
                         } else {
-                            colorMode = "categorical";
+                            x = safeConvertToFloat(o.getValue(xFieldName));
                         }
-                    }
-                }
-                model.setColorMode(colorMode);
-
-                if (readDataset) {
-
-                    Set<UUID> marked = readFilter(OPTION_MARKED_IDS);
-                    model.setMarked(marked);
-
-                    AtomicInteger counter = new AtomicInteger(0);
-                    try (Stream<? extends BasicObject> stream = dataset.getStream()) {
-
-                        Stream<? extends BasicObject> input = stream;
-                        // apply the selection filter, if any
-                        Set<UUID> selectionFilter = readFilter(OPTION_FILTER_IDS);
-                        if (selectionFilter != null && selectionFilter.size() > 0) {
-                            input = input.filter((o) -> selectionFilter.contains(o.getUUID()));
+                        Float y;
+                        if (ScatterPlotAdvancedOptionsPanel.FIELD_RECORD_NUMBER.equals(yFieldName)) {
+                            y = (float) count;
+                        } else {
+                            y = safeConvertToFloat(o.getValue(yFieldName));
                         }
+                        Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
+                        if (x != null && y != null) {
+                            DataItem dataItem = new DataItem();
+                            dataItem.setUuid(o.getUUID().toString());
+                            dataItem.setX(x);
+                            dataItem.setY(y);
+                            if (color != null) {
+                                dataItem.setColor(color);
+                            }
+                            dataItem.setSize(size);
+                            return dataItem;
+                        } else {
+                            // TODO - should we record how many records are not handled?
+                            return null;
+                        }
+                    }).filter((d) -> d != null);
 
-                        // convert to DataItems
-                        Stream<DataItem> items = input.map((o) -> {
-                            int count = counter.incrementAndGet();
-                            Float x;
-                            if (ScatterPlotAdvancedOptionsPanel.FIELD_RECORD_NUMBER.equals(xFieldName)) {
-                                x = (float) count;
-                            } else {
-                                x = safeConvertToFloat(o.getValue(xFieldName));
-                            }
-                            Float y;
-                            if (ScatterPlotAdvancedOptionsPanel.FIELD_RECORD_NUMBER.equals(yFieldName)) {
-                                y = (float) count;
-                            } else {
-                                y = safeConvertToFloat(o.getValue(yFieldName));
-                            }
-                            Object color = (colorFieldName == null ? null : o.getValue(colorFieldName));
-                            if (x != null && y != null) {
-                                DataItem dataItem = new DataItem();
-                                dataItem.setUuid(o.getUUID().toString());
-                                dataItem.setX(x);
-                                dataItem.setY(y);
-                                if (color != null) {
-                                    dataItem.setColor(color);
-                                }
-                                dataItem.setSize(size);
-                                return dataItem;
-                            } else {
-                                // TODO - should we record how many records are not handled?
-                                return null;
-                            }
-                        }).filter((d) -> d != null);
-
-                        // set result
-                        List<DataItem> data = items.collect(Collectors.toList());
-                        model.setData(data.toArray(new DataItem[data.size()]));
-                    }
-                } else {
-                    model.setData(new DataItem[0]);
+                    // set result
+                    List<DataItem> data = items.collect(Collectors.toList());
+                    model.setData(data.toArray(new DataItem[data.size()]));
                 }
+            } else {
+                model.setData(new DataItem[0]);
             }
         }
     }

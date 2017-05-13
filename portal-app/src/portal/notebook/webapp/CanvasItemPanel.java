@@ -9,9 +9,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 import org.squonk.dataset.Dataset;
+import org.squonk.dataset.DatasetMetadata;
 import org.squonk.dataset.DatasetSelection;
 import org.squonk.io.IODescriptor;
 import org.squonk.jobdef.JobStatus.Status;
+import org.squonk.types.BasicObject;
 import portal.PopupContainerProvider;
 import portal.notebook.api.*;
 import portal.notebook.service.Execution;
@@ -26,8 +28,10 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel.CallbackHandler {
 
@@ -80,6 +84,9 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                     resultsHandler = new DatasetResultsHandler(name, notebookSession, cellInstance.getId());
                     return;
                 } else {
+                    // TODO this needs changing. It relates to the PDB Upload cell that has an output variable that is
+                    // not a dataset. We need a PDBResultsHandler that allows the raw PDB content to be viewed and for it
+                    // to be shown in Alex Rose's NGL viewer
                     resultsHandler = new DatasetResultsHandler(name, notebookSession, cellInstance.getId());
                 }
             }
@@ -443,6 +450,41 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
         LOG.fine("  NO REFRESH");
         return false;
+    }
+
+    /** Read the dataset fo the variable and apply a filter based on the UUIDs that might be present in the option named filterOption
+     *
+     * @param variableInstance The variable instance for the dataset
+     * @param filterOption The name of the option containing the filter
+     * @return
+     * @throws Exception
+     */
+    protected Dataset<? extends BasicObject> generateFilteredData(VariableInstance variableInstance, String filterOption) throws Exception {
+
+        Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
+        if (dataset == null) {
+            return null;
+        }
+        if (filterOption == null) {
+            return dataset;
+        }
+
+        // apply the selection filter
+        Set<UUID> selectionFilter = readFilter(filterOption);
+        if (selectionFilter == null || selectionFilter.size() == 0) {
+            return dataset;
+        } else {
+            DatasetMetadata meta = dataset.getMetadata().clone();
+            meta.setSize(0);
+            final AtomicInteger counter = new AtomicInteger(0);
+            Stream<? extends BasicObject> filtered = dataset.getStream()
+                    .filter((o) -> selectionFilter.contains(o.getUUID()))
+                    .peek((o) -> counter.incrementAndGet())
+                    .onClose(() -> meta.setSize(counter.get()));
+
+            Dataset<? extends BasicObject> result = new Dataset(meta.getType(), filtered, meta);
+            return result;
+        }
     }
 
 }

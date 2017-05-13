@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -123,33 +124,33 @@ public class BoxPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             CellInstance cellInstance = findCellInstance();
             BindingInstance bindingInstance = cellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
-            if (variableInstance != null) {
-                Dataset<? extends BasicObject> dataset = notebookSession.squonkDataset(variableInstance);
-                try (Stream<? extends BasicObject> stream = dataset.getStream()) {
+            if (variableInstance == null) {
+                return;
+            }
 
-                    Stream<? extends BasicObject> input = stream;
-                    // apply the selection filter, if any
-                    Set<UUID> selectionFilter = readFilter(OPTION_FILTER_IDS);
-                    if (selectionFilter != null && selectionFilter.size() > 0) {
-                        input = input.filter((o) -> selectionFilter.contains(o.getUUID()));
+            Dataset<? extends BasicObject> dataset = generateFilteredData(variableInstance, OPTION_FILTER_IDS);
+            if (dataset == null) {
+                return;
+            }
+
+            try (Stream<? extends BasicObject> input = dataset.getStream()) {
+                // convert to data that the plot needs
+
+                Map<Comparable, List<Float>> groupedData = input.map((o) -> {
+                    Object group = o.getValue(groupsFieldName);
+                    Float value = safeConvertToFloat(o.getValue(valuesFieldName));
+                    if (group != null && value != null && group instanceof Comparable) {
+                        return new Datum((Comparable) group, value);
+                    } else {
+                        return null;
                     }
+                }).filter((Datum d) -> d != null)
+                        .collect(Collectors.groupingBy(Datum::getGroup, TreeMap::new,
+                                Collectors.mapping(Datum::getValue, toList())));
 
-                    Map<Comparable, List<Float>> groupedData = input.map((o) -> {
-                        Object group = o.getValue(groupsFieldName);
-                        Float value = safeConvertToFloat(o.getValue(valuesFieldName));
-                        if (group != null && value != null && group instanceof Comparable) {
-                            return new Datum((Comparable) group, value);
-                        } else {
-                            return null;
-                        }
-                    }).filter((Datum d) -> d != null)
-                            .collect(Collectors.groupingBy(Datum::getGroup, TreeMap::new,
-                                    Collectors.mapping(Datum::getValue, toList())));
-
-                    model.setGroupsFieldName(groupsFieldName);
-                    model.setValuesFieldName(valuesFieldName);
-                    model.setPlotData(groupedData);
-                }
+                model.setGroupsFieldName(groupsFieldName);
+                model.setValuesFieldName(valuesFieldName);
+                model.setPlotData(groupedData);
             }
         }
     }
