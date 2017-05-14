@@ -79,13 +79,13 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                 String name = iod.getName();
                 if (iod.getPrimaryType() == Dataset.class) {
                     LOG.fine("Creating results handler for variable " + name + " in cell " + cellInstance.getName());
-                    resultsHandler = new DatasetResultsHandler(name, notebookSession, cellInstance.getId());
+                    resultsHandler = new DatasetResultsHandler(name, notebookSession, this);
                     return;
                 } else {
                     // TODO this needs changing. It relates to the PDB Upload cell that has an output variable that is
                     // not a dataset. We need a PDBResultsHandler that allows the raw PDB content to be viewed and for it
                     // to be shown in Alex Rose's NGL viewer
-                    resultsHandler = new DatasetResultsHandler(name, notebookSession, cellInstance.getId());
+                    resultsHandler = new DatasetResultsHandler(name, notebookSession, this);
                 }
             }
         }
@@ -471,6 +471,10 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
 
     protected DefaultCellDatasetProvider generateCellDatasetProvider(String variableBindingName, String filterOptionBindingName, String selectionOptionName) {
         return new DefaultCellDatasetProvider(notebookSession, getCellId(), variableBindingName, filterOptionBindingName, selectionOptionName);
+    }
+
+    public List<Panel> collectExpandedPanels(List<Panel> panels) {
+        return panels;
     }
 
 }

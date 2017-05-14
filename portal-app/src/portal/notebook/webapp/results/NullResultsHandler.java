@@ -2,6 +2,7 @@ package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.notebook.webapp.CanvasItemPanel;
 import portal.notebook.webapp.NotebookSession;
 
 /**
@@ -10,8 +11,8 @@ import portal.notebook.webapp.NotebookSession;
 public class NullResultsHandler extends DefaultResultsHandler {
 
 
-    public NullResultsHandler(String variableName, NotebookSession notebookSession, Long cellId) {
-        super(variableName, notebookSession, cellId);
+    public NullResultsHandler(String variableName, NotebookSession notebookSession, CanvasItemPanel sourcePanel) {
+        super(variableName, notebookSession, sourcePanel);
     }
 
 

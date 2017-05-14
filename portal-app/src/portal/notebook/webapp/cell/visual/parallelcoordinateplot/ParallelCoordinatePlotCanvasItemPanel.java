@@ -21,16 +21,19 @@ import org.squonk.types.BasicObject;
 import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
+import portal.notebook.webapp.CellChangeEvent;
 import portal.notebook.webapp.DefaultCellDatasetProvider;
 import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
-import portal.notebook.webapp.CellChangeEvent;
 import portal.notebook.webapp.results.DatasetResultsHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +51,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     public static final String OPTION_COLOR_DIMENSION = "colorDimension";
     private static final Logger LOG = Logger.getLogger(ParallelCoordinatePlotCanvasItemPanel.class.getName());
     private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(\":id\", {:nullValues}, :data)";
-    private DefaultCellDatasetProvider filteredInputDatasetProvider;
+    private DefaultCellDatasetProvider cellDatasetProvider;
     private final ModelObject model = new ModelObject();
     private Form<ModelObject> form;
     private ParallelCoordinatePlotAdvancedOptionsPanel advancedOptionsPanel;
@@ -74,9 +77,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     @Override
     protected void createResultsHandlers() {
         LOG.info("Creating results handler");
-        this.filteredInputDatasetProvider = generateCellDatasetProvider(CellDefinition.VAR_NAME_INPUT, OPTION_FILTER_IDS, OPTION_SELECTED_IDS);
-        CellInstance cellInstance = findCellInstance();
-        resultsHandler = new DatasetResultsHandler("filtered", notebookSession, cellInstance.getId(), filteredInputDatasetProvider);
+        this.cellDatasetProvider = generateCellDatasetProvider(CellDefinition.VAR_NAME_INPUT, OPTION_FILTER_IDS, OPTION_SELECTED_IDS);
+        resultsHandler = new DatasetResultsHandler("filtered", notebookSession, this, cellDatasetProvider);
     }
 
     @SuppressWarnings("unchecked")
@@ -233,7 +235,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         }
 
 
-        Dataset<? extends BasicObject> dataset = filteredInputDatasetProvider.getFilteredDataset();
+        Dataset<? extends BasicObject> dataset = cellDatasetProvider.getFilteredDataset();
         if (dataset == null) {
             return;
         }
@@ -332,6 +334,17 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         });
         advancedOptionsPanel.setFields(model.getFields());
         advancedOptionsPanel.setNullValues(model.getNullValues());
+    }
+
+    @Override
+    public List<Panel> collectExpandedPanels(List<Panel> panels) {
+        //panels.add(new ParallelCoordinatePlotCanvasItemPanel("expanded", getCellId()));
+
+//        Panel p = new Panel("expanded") {
+//
+//        };
+//        panels.add(p);
+        return panels;
     }
 
     class ModelObject implements Serializable {

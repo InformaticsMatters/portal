@@ -1,8 +1,11 @@
 package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.notebook.webapp.CanvasItemPanel;
 import portal.notebook.webapp.DefaultCellDatasetProvider;
 import portal.notebook.webapp.NotebookSession;
+
+import java.util.ArrayList;
 
 /**
  * Created by timbo on 28/08/2016.
@@ -12,20 +15,20 @@ public class DatasetResultsHandler extends DefaultResultsHandler {
     private final DefaultCellDatasetProvider cellDatasetProvider;
     private DatasetDetailsPanel panel;
 
-    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, Long cellId) {
-        super(variableName, notebookSession, cellId);
-        this.cellDatasetProvider = new DefaultCellDatasetProvider(notebookSession, cellId, variableName, null, null);
+    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, CanvasItemPanel sourcePanel) {
+        this(variableName, notebookSession, sourcePanel, new DefaultCellDatasetProvider(notebookSession, sourcePanel.getCellId(), variableName, null, null));
     }
 
-    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, Long cellId, DefaultCellDatasetProvider cellDatasetProvider) {
-        super(variableName, notebookSession, cellId);
+    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, CanvasItemPanel sourcePanel, DefaultCellDatasetProvider cellDatasetProvider) {
+        super(variableName, notebookSession, sourcePanel);
         this.cellDatasetProvider = cellDatasetProvider;
     }
 
     @Override
     public Panel getPanel() {
         if (panel == null) {
-            panel = new DatasetDetailsPanel("viewer", cellDatasetProvider);
+
+            panel = new DatasetDetailsPanel("viewer", cellDatasetProvider, sourcePanel.collectExpandedPanels(new ArrayList<>()));
         }
         return panel;
     }

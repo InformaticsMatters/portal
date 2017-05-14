@@ -9,6 +9,9 @@ import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 import portal.notebook.webapp.DefaultCellDatasetProvider;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by timbo on 27/08/2016.
  */
@@ -19,9 +22,15 @@ public class DatasetDetailsPanel extends Panel {
     private Class<? extends BasicObject> datasetType;
 
     public DatasetDetailsPanel(String id, DefaultCellDatasetProvider cellDatasetProvider) {
+        this(id, cellDatasetProvider, Collections.emptyList());
+    }
+
+    public DatasetDetailsPanel(String id, DefaultCellDatasetProvider cellDatasetProvider, List<Panel> firstPanels) {
         super(id);
         this.cellDatasetProvider = cellDatasetProvider;
         this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata) null);
+
+        firstPanels.forEach((p) -> add(p));
 
         addDummyContent();
     }
