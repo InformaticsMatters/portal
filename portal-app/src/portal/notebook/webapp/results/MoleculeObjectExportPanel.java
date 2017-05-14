@@ -10,6 +10,7 @@ import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.io.JsonHandler;
 import org.squonk.util.CommonMimeTypes;
 import org.squonk.util.IOUtils;
+import portal.notebook.webapp.DefaultCellDatasetProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,9 +25,9 @@ import java.util.zip.GZIPOutputStream;
 public class MoleculeObjectExportPanel extends Panel {
 
 
-    private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
+    private final DefaultCellDatasetProvider cellDatasetProvider;
 
-    public MoleculeObjectExportPanel(String id, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
+    public MoleculeObjectExportPanel(String id, DefaultCellDatasetProvider cellDatasetProvider) {
         super(id);
         this.cellDatasetProvider = cellDatasetProvider;
 
@@ -126,7 +127,7 @@ public class MoleculeObjectExportPanel extends Panel {
         }
 
         InputStream fetchResults(boolean gzip) throws Exception {
-            return cellDatasetProvider.getDataset().getInputStream(gzip);
+            return cellDatasetProvider.getSelectedDataset().getInputStream(gzip);
         }
     }
 
@@ -138,7 +139,7 @@ public class MoleculeObjectExportPanel extends Panel {
 
         @Override
         InputStream fetchResults(boolean gzip) throws Exception {
-            DatasetMetadata meta = cellDatasetProvider.getMetadata();
+            DatasetMetadata meta = cellDatasetProvider.getSelectedMetadata();
             String json = JsonHandler.getInstance().objectToJson(meta);
             InputStream is = new ByteArrayInputStream(json.getBytes());
             return gzip ? new GZIPInputStream(is) : is;
@@ -154,7 +155,7 @@ public class MoleculeObjectExportPanel extends Panel {
         @Override
         @SuppressWarnings("unchecked")
         InputStream fetchResults(boolean gzip) throws Exception {
-            InputStream sdf = cellDatasetProvider.getStructureIOClient().datasetExportToSdf(cellDatasetProvider.getDataset(), false);
+            InputStream sdf = cellDatasetProvider.getStructureIOClient().datasetExportToSdf(cellDatasetProvider.getSelectedDataset(), false);
             return gzip ? new GZIPInputStream(sdf) : sdf;
         }
     }

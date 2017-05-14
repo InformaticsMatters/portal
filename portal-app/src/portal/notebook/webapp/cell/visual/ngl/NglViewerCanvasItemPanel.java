@@ -180,8 +180,8 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
         BindingInstance bindingInstance2 = cellInstance.getBindingInstanceMap().get("input2");
         VariableInstance variableInstance2 = bindingInstance2.getVariableInstance();
 
-        Set<UUID> selectionFilter1 = readFilter(OPTION_FILTER_IDS + 1);
-        Set<UUID> selectionFilter2 = readFilter(OPTION_FILTER_IDS + 2);
+        Set<UUID> selectionFilter1 = cellInstance.readOptionBindingFilter(OPTION_FILTER_IDS + 1);
+        Set<UUID> selectionFilter2 = cellInstance.readOptionBindingFilter(OPTION_FILTER_IDS + 2);
 
         NglMoleculeSet mols1 = null;
         NglMoleculeSet mols2 = null;

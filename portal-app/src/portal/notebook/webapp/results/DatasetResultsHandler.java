@@ -1,28 +1,25 @@
 package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.panel.Panel;
-import org.squonk.core.client.StructureIOClient;
-import org.squonk.dataset.Dataset;
-import org.squonk.dataset.DatasetMetadata;
-import org.squonk.dataset.DatasetProvider;
-import org.squonk.types.BasicObject;
-import portal.notebook.api.CellInstance;
-import portal.notebook.api.VariableInstance;
+import portal.notebook.webapp.DefaultCellDatasetProvider;
 import portal.notebook.webapp.NotebookSession;
-
-import java.io.Serializable;
 
 /**
  * Created by timbo on 28/08/2016.
  */
 public class DatasetResultsHandler extends DefaultResultsHandler {
 
-    private final CellDatasetProvider cellDatasetProvider;
+    private final DefaultCellDatasetProvider cellDatasetProvider;
     private DatasetDetailsPanel panel;
 
     public DatasetResultsHandler(String variableName, NotebookSession notebookSession, Long cellId) {
         super(variableName, notebookSession, cellId);
-        this.cellDatasetProvider = new CellDatasetProvider(cellId, notebookSession, variableName);
+        this.cellDatasetProvider = new DefaultCellDatasetProvider(notebookSession, cellId, variableName, null, null);
+    }
+
+    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, Long cellId, DefaultCellDatasetProvider cellDatasetProvider) {
+        super(variableName, notebookSession, cellId);
+        this.cellDatasetProvider = cellDatasetProvider;
     }
 
     @Override
@@ -38,62 +35,11 @@ public class DatasetResultsHandler extends DefaultResultsHandler {
     }
 
     public boolean preparePanelForDisplay() throws Exception {
-        return getPanelImpl().prepare(cellDatasetProvider.getMetadata());
+        return getPanelImpl().prepare(cellDatasetProvider.getSelectedMetadata());
     }
 
     public String getExtraJavascriptForResultsViewer() {
         return "$('#:modalElement .menu .item').tab();\n$('#:modalElement .ui.accordion').accordion();\n";
-    }
-
-    static class CellDatasetProvider implements DatasetProvider, Serializable {
-
-        private final Long cellId;
-        private final NotebookSession notebookSession;
-        private final String variable;
-
-        CellDatasetProvider(Long cellId, NotebookSession session, String variable) {
-            this.cellId = cellId;
-            this.notebookSession = session;
-            this.variable = variable;
-        }
-
-        @Override
-        public Dataset getDataset() throws Exception {
-            VariableInstance variableInstance = getCellInstance().getVariableInstanceMap().get(variable);
-            Dataset<? extends BasicObject> data = null;
-            if (variableInstance != null) {
-                data = notebookSession.squonkDataset(variableInstance);
-            }
-            return data;
-        }
-
-        @Override
-        public DatasetMetadata getMetadata() throws Exception {
-
-            VariableInstance variableInstance = getCellInstance().getVariableInstanceMap().get(variable);
-            DatasetMetadata<? extends BasicObject> meta = null;
-            if (variableInstance != null) {
-                meta = notebookSession.squonkDatasetMetadata(variableInstance);
-            }
-            return meta;
-        }
-
-        public StructureIOClient getStructureIOClient() {
-            return notebookSession.getStructureIOClient();
-        }
-
-        public CellInstance getCellInstance() {
-            return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
-        }
-
-        public void saveNotebook() {
-            try {
-                notebookSession.storeCurrentEditable();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
     }
 
 

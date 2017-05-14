@@ -10,7 +10,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
-import org.squonk.dataset.DatasetSelection;
 import org.squonk.io.IODescriptor;
 import org.squonk.jobdef.JobStatus.Status;
 import org.squonk.types.BasicObject;
@@ -18,7 +17,6 @@ import portal.PopupContainerProvider;
 import portal.notebook.api.*;
 import portal.notebook.service.Execution;
 import portal.notebook.webapp.results.DatasetResultsHandler;
-import portal.notebook.webapp.results.NullResultsHandler;
 import portal.notebook.webapp.results.ResultsHandler;
 import portal.notebook.webapp.results.ResultsViewerPanel;
 import toolkit.wicket.semantic.NotifierProvider;
@@ -325,22 +323,6 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         }
     }
 
-    protected Set<UUID> readFilter(String optionBindingName) {
-        CellInstance cellInstance = findCellInstance();
-        OptionBindingInstance optionBindingInstance = cellInstance.getOptionBindingInstanceMap().get(optionBindingName);
-        Set<UUID> result = null;
-        if (optionBindingInstance != null) {
-            OptionInstance optionInstance = optionBindingInstance.getOptionInstance();
-            if (optionInstance != null) {
-                DatasetSelection datasetSelection = (DatasetSelection) optionInstance.getValue();
-                if (datasetSelection != null) {
-                    result = datasetSelection.getUuids();
-                }
-            }
-        }
-        return result;
-    }
-
     /** Allows cells to specify what jobs statuses cause data to be refreshed.
      * Default is to update when jobStatus is null, COMPLETED or ERROR.
      *
@@ -470,7 +452,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         }
 
         // apply the selection filter
-        Set<UUID> selectionFilter = readFilter(filterOption);
+        Set<UUID> selectionFilter = findCellInstance().readOptionBindingFilter(filterOption);
         if (selectionFilter == null || selectionFilter.size() == 0) {
             return dataset;
         } else {
@@ -485,6 +467,10 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             Dataset<? extends BasicObject> result = new Dataset(meta.getType(), filtered, meta);
             return result;
         }
+    }
+
+    protected DefaultCellDatasetProvider generateCellDatasetProvider(String variableBindingName, String filterOptionBindingName, String selectionOptionName) {
+        return new DefaultCellDatasetProvider(notebookSession, getCellId(), variableBindingName, filterOptionBindingName, selectionOptionName);
     }
 
 }

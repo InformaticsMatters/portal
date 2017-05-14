@@ -12,6 +12,7 @@ import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.eclipse.jetty.io.RuntimeIOException;
@@ -20,8 +21,10 @@ import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 import org.squonk.types.MoleculeObjectHighlightable;
+import portal.notebook.webapp.DefaultCellDatasetProvider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -43,20 +46,22 @@ public class DatasetResultsPanel extends Panel {
     private static final String SETTING_HIGHLIGHTER = "resultsviewer.results.highlighter";
     private static final String[] NUMBERS = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen"};
     protected static final String HIGHLIGHTER_NONE = "None";
-    private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
-    private IModel<DatasetMetadata> datasetMetadataModel;
-    private IModel<List<? extends BasicObject>> resultsModel;
-    private Model<String> highlighterModel = new Model<>();
+    private final DefaultCellDatasetProvider cellDatasetProvider;
+    private final IModel<DatasetMetadata> datasetMetadataModel;
+    private final IModel<List<? extends BasicObject>> resultsModel;
+    private final Model<String> highlighterModel = new Model<>();
     private IModel<List<String>> highlighterChoicesModel;
-    private IModel<String> gridModel = new Model<>(generateGridClass(DEFAULT_COLS));
+    private final IModel<String> gridModel = new Model<>(generateGridClass(DEFAULT_COLS));
     private int limit = DEFAULT_NUM_RECORDS;
     private int offset = 0;
+    private final IModel<Integer> limitModel = new Model<>(DEFAULT_NUM_RECORDS);
+    private final IModel<Integer> offsetModel = new Model<>(0);
 
 
-    public DatasetResultsPanel(String id, IModel<DatasetMetadata> datasetMetadataModel, IModel<List<? extends BasicObject>> resultsModel, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
+    public DatasetResultsPanel(String id, IModel<DatasetMetadata> datasetMetadataModel, DefaultCellDatasetProvider cellDatasetProvider) {
         super(id);
         this.datasetMetadataModel = datasetMetadataModel;
-        this.resultsModel = resultsModel;
+        this.resultsModel = new CompoundPropertyModel<>(Collections.singletonList(null));;
         this.cellDatasetProvider = cellDatasetProvider;
         setOutputMarkupId(true);
 
@@ -131,9 +136,6 @@ public class DatasetResultsPanel extends Panel {
                     }
                 })
         );
-
-        IModel<Integer> limitModel = new Model<>(DEFAULT_NUM_RECORDS);
-        IModel<Integer> offsetModel = new Model<>(0);
 
         form.add(new NumberTextField<>("limit", limitModel)
                         .setMinimum(0)
@@ -315,9 +317,19 @@ public class DatasetResultsPanel extends Panel {
         return "ui " + NUMBERS[cols] + " column grid";
     }
 
-    private synchronized <T extends BasicObject> void updateData() throws Exception {
+    /** Causes the data to be reloaded, and the offset and limit settings to be reset to defaults.
+     *
+     * @throws Exception
+     */
+    protected void reload() throws Exception {
+        limitModel.setObject(DEFAULT_NUM_RECORDS);
+        offsetModel.setObject(0);
+        updateData();
+    }
 
-        Dataset<T> dataset = cellDatasetProvider.getDataset();
+    protected synchronized <T extends BasicObject> void updateData() throws Exception {
+
+        Dataset<T> dataset = cellDatasetProvider.getSelectedDataset();
         if (limit < 1 || limit > MAX_RECORDS) {
             limit = MAX_RECORDS;
         }

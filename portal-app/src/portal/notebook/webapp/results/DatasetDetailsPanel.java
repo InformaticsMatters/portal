@@ -4,13 +4,10 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
-
-import java.util.Collections;
-import java.util.List;
+import portal.notebook.webapp.DefaultCellDatasetProvider;
 
 /**
  * Created by timbo on 27/08/2016.
@@ -18,15 +15,13 @@ import java.util.List;
 public class DatasetDetailsPanel extends Panel {
 
     private final IModel<DatasetMetadata> datasetMetadataModel;
-    private final DatasetResultsHandler.CellDatasetProvider cellDatasetProvider;
-    private final IModel<List<? extends BasicObject>> resultsModel;
+    private final DefaultCellDatasetProvider cellDatasetProvider;
     private Class<? extends BasicObject> datasetType;
 
-    public DatasetDetailsPanel(String id, DatasetResultsHandler.CellDatasetProvider cellDatasetProvider) {
+    public DatasetDetailsPanel(String id, DefaultCellDatasetProvider cellDatasetProvider) {
         super(id);
         this.cellDatasetProvider = cellDatasetProvider;
         this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata) null);
-        this.resultsModel = new CompoundPropertyModel<>(Collections.singletonList(null));
 
         addDummyContent();
     }
@@ -38,9 +33,16 @@ public class DatasetDetailsPanel extends Panel {
             datasetType = null;
             return false;
         }
+        datasetMetadataModel.setObject(meta);
         if (datasetType == null || datasetType != meta.getType()) {
+            // first time through or when the dataset type has changed
             datasetType = meta.getType();
             addRealContent();
+        } else {
+            // called when the viewer is re-opened so we need to reload the data in case it has changed
+            DatasetResultsPanel rp = (DatasetResultsPanel)get("results");
+
+            rp.reload();
         }
         datasetMetadataModel.setObject(meta);
         return true;
@@ -48,7 +50,7 @@ public class DatasetDetailsPanel extends Panel {
 
     private void addRealContent() {
 
-        addOrReplace(new DatasetResultsPanel("results", datasetMetadataModel, resultsModel, cellDatasetProvider));
+        addOrReplace(new DatasetResultsPanel("results", datasetMetadataModel, cellDatasetProvider));
         addOrReplace(new DatasetMetadataPanel("metadata", datasetMetadataModel));
         if (datasetType == MoleculeObject.class) {
             addOrReplace(new MoleculeObjectExportPanel("export", cellDatasetProvider));

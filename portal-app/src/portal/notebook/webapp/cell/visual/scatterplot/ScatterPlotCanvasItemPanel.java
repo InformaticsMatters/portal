@@ -243,7 +243,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
 
             if (readDataset) {
 
-                Set<UUID> marked = readFilter(OPTION_MARKED_IDS);
+                Set<UUID> marked = cellInstance.readOptionBindingFilter(OPTION_MARKED_IDS);
                 model.setMarked(marked);
 
                 Dataset<? extends BasicObject> filteredDataset = generateFilteredData(variableInstance, OPTION_FILTER_IDS);

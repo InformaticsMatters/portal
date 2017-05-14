@@ -21,8 +21,10 @@ import org.squonk.types.BasicObject;
 import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
+import portal.notebook.webapp.DefaultCellDatasetProvider;
 import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
 import portal.notebook.webapp.CellChangeEvent;
+import portal.notebook.webapp.results.DatasetResultsHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +48,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     public static final String OPTION_COLOR_DIMENSION = "colorDimension";
     private static final Logger LOG = Logger.getLogger(ParallelCoordinatePlotCanvasItemPanel.class.getName());
     private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(\":id\", {:nullValues}, :data)";
+    private DefaultCellDatasetProvider filteredInputDatasetProvider;
     private final ModelObject model = new ModelObject();
     private Form<ModelObject> form;
     private ParallelCoordinatePlotAdvancedOptionsPanel advancedOptionsPanel;
@@ -59,13 +62,21 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
         }
         addForm();
         loadModelFromPersistentData();
-        addTitleBar();
+        addTitleBarAndResultsViewer();
         addStatus();
         try {
             refreshPlotData();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void createResultsHandlers() {
+        LOG.info("Creating results handler");
+        this.filteredInputDatasetProvider = generateCellDatasetProvider(CellDefinition.VAR_NAME_INPUT, OPTION_FILTER_IDS, OPTION_SELECTED_IDS);
+        CellInstance cellInstance = findCellInstance();
+        resultsHandler = new DatasetResultsHandler("filtered", notebookSession, cellInstance.getId(), filteredInputDatasetProvider);
     }
 
     @SuppressWarnings("unchecked")
@@ -144,6 +155,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                 DatasetSelection selection = readSelectionJson(selectedIdsJson);
                 cell.getOptionInstanceMap().get(OPTION_SELECTED_IDS).setValue(selection);
 
+                //cell.getOptionBindingInstance(OPTION_SELECTED_IDS).getOptionInstance();
+
                 saveNotebook();
 
                 notifyOptionValuesChanged(OPTION_SELECTED_IDS, target);
@@ -219,7 +232,8 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
             return;
         }
 
-        Dataset<? extends BasicObject> dataset = generateFilteredData(variableInstance, OPTION_FILTER_IDS);
+
+        Dataset<? extends BasicObject> dataset = filteredInputDatasetProvider.getFilteredDataset();
         if (dataset == null) {
             return;
         }
