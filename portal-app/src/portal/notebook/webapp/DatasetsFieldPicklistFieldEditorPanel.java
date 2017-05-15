@@ -1,15 +1,13 @@
 package portal.notebook.webapp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.Model;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
-import org.squonk.io.IODescriptors;
 import org.squonk.types.BasicObject;
-import org.squonk.types.MoleculeObject;
+import org.squonk.types.io.JsonHandler;
 import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
@@ -22,11 +20,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel<String> {
-    private static final Logger LOGGER = Logger.getLogger(DatasetsFieldPicklistFieldEditorPanel.class.getName());
+    private static final Logger LOG = Logger.getLogger(DatasetsFieldPicklistFieldEditorPanel.class.getName());
     private final Long cellId;
-    private List<String> picklistItems;
+    private final List<String> picklistItems = new ArrayList<>();
+    private Class secondaryType;
     @Inject
     private NotebookSession notebookSession;
     @Inject
@@ -39,35 +39,46 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel<Stri
         try {
             loadPicklist();
         } catch (Throwable t) {
-            LOGGER.log(Level.WARNING, "Error loading picklist", t);
+            LOG.log(Level.WARNING, "Error loading picklist", t);
             // TODO
         }
         addComponents();
     }
 
     private void loadPicklist() throws Exception {
-        picklistItems = new ArrayList<>();
+        picklistItems.clear();
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
         boolean first = true;
         for (BindingInstance bindingInstance : cellInstance.getBindingInstanceMap().values()) {
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
-            if (variableInstance != null && IODescriptors.isSameType(variableInstance.getVariableDefinition(), Dataset.class, MoleculeObject.class)) {
-                Set<String> fieldNames = extractFieldNames(variableInstance);
-                if (first) {
-                    picklistItems.addAll(fieldNames);
-                    first = false;
+            if (variableInstance != null) {
+                LOG.fine("variable: " + variableInstance.getCellId() + "/" + variableInstance.getVariableDefinition().getName());
+                if (variableInstance.getVariableDefinition().getPrimaryType() == Dataset.class) {
+                    Set<String> fieldNames = extractFieldNames(variableInstance);
+                    if (first) {
+                        LOG.finer("adding: " + fieldNames.stream().collect(Collectors.joining(",")));
+                        secondaryType = variableInstance.getVariableDefinition().getSecondaryType();
+                        picklistItems.addAll(fieldNames);
+                        first = false;
+                    } else if (variableInstance.getVariableDefinition().getSecondaryType() == secondaryType) {
+                        LOG.finer("keeping: " + fieldNames.stream().collect(Collectors.joining(",")));
+                        picklistItems.retainAll(fieldNames);
+                    } else {
+                        LOG.info("Skipping " + variableInstance.getVariableDefinition().getName() + " from cell " + variableInstance.getCellId() + " as not of type " + secondaryType);
+                    }
                 } else {
-                    picklistItems.retainAll(fieldNames);
+                    LOG.info("Skipping " + variableInstance.getVariableDefinition().getName() + " from cell " + variableInstance.getCellId() + " as not a Dataset");
                 }
             }
         }
+        LOG.fine("Final items: " + picklistItems.stream().collect(Collectors.joining(",")));
     }
 
 
     private Set<String> extractFieldNames(VariableInstance variableInstance) throws Exception {
         String string = notebookSession.readTextValue(variableInstance);
         if (string != null) {
-            DatasetMetadata<? extends BasicObject> datasetMetadata = new ObjectMapper().readValue(string, DatasetMetadata.class);
+            DatasetMetadata<? extends BasicObject> datasetMetadata = JsonHandler.getInstance().objectFromJson(string, DatasetMetadata.class);
             return datasetMetadata.getValueClassMappings().keySet();
         } else {
             return new HashSet<>();
@@ -101,7 +112,7 @@ public class DatasetsFieldPicklistFieldEditorPanel extends FieldEditorPanel<Stri
                 try {
                     loadPicklist();
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Error loading picklist for " + bindingInstance.getName(), t);
+                    LOG.log(Level.WARNING, "Error loading picklist for " + bindingInstance.getName(), t);
                     notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                 }
                 refresh = true;

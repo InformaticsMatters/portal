@@ -1,13 +1,16 @@
 package portal.notebook.webapp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.Model;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.options.DatasetFieldTypeDescriptor;
-import portal.notebook.api.*;
+import org.squonk.types.io.JsonHandler;
+import portal.notebook.api.BindingInstance;
+import portal.notebook.api.CellDefinition;
+import portal.notebook.api.CellInstance;
+import portal.notebook.api.VariableInstance;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
@@ -16,11 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     private static final Logger LOG = Logger.getLogger(DatasetsFieldPicklistFieldEditorPanel.class.getName());
     private final Long cellId;
-    private List<String> picklistItems;
+    private final List<String> picklistItems = new ArrayList<>();
     @Inject
     private NotebookSession notebookSession;
     @Inject
@@ -39,7 +43,6 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     }
 
     private void loadPicklist() throws Exception {
-        picklistItems = new ArrayList<>();
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
         if (cellInstance != null) {
             loadFieldNames(cellInstance);
@@ -47,6 +50,8 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     }
 
     private void loadFieldNames(CellInstance cellInstance) throws Exception {
+
+        picklistItems.clear();
 
         DatasetFieldTypeDescriptor dfod = null;
         BindingInstance bindingInstance = null;
@@ -63,19 +68,22 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
             if (variableInstance != null) {
                 String json = notebookSession.readTextValue(variableInstance);
                 if (json != null) {
-                    DatasetMetadata<?> datasetMetadata = new ObjectMapper().readValue(json, DatasetMetadata.class);
+                    DatasetMetadata<?> datasetMetadata = JsonHandler.getInstance().objectFromJson(json, DatasetMetadata.class);
                     if (dfod != null) {
                         for (Map.Entry<String, Class> e : datasetMetadata.getValueClassMappings().entrySet()) {
                             if (dfod.filter(e.getKey(), e.getValue())) {
+                                LOG.finer("Adding field: " + e.getKey());
                                 picklistItems.add(e.getKey());
                             }
                         }
                     } else {
+                        LOG.finer("Adding all: " + datasetMetadata.getValueClassMappings().keySet().stream().collect(Collectors.joining(",")));
                         picklistItems.addAll(datasetMetadata.getValueClassMappings().keySet());
                     }
                 }
             }
         }
+        LOG.fine("Final items: " + picklistItems.stream().collect(Collectors.joining(",")));
     }
 
     private void addComponents() {

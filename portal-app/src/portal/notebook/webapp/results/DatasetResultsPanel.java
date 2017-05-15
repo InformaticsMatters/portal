@@ -21,7 +21,7 @@ import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 import org.squonk.types.MoleculeObjectHighlightable;
-import portal.notebook.webapp.DefaultCellDatasetProvider;
+import portal.notebook.webapp.AbstractCellDatasetProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +46,7 @@ public class DatasetResultsPanel extends Panel {
     private static final String SETTING_HIGHLIGHTER = "resultsviewer.results.highlighter";
     private static final String[] NUMBERS = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen"};
     protected static final String HIGHLIGHTER_NONE = "None";
-    private final DefaultCellDatasetProvider cellDatasetProvider;
+    private final AbstractCellDatasetProvider cellDatasetProvider;
     private final IModel<DatasetMetadata> datasetMetadataModel;
     private final IModel<List<? extends BasicObject>> resultsModel;
     private final Model<String> highlighterModel = new Model<>();
@@ -58,7 +58,7 @@ public class DatasetResultsPanel extends Panel {
     private final IModel<Integer> offsetModel = new Model<>(0);
 
 
-    public DatasetResultsPanel(String id, IModel<DatasetMetadata> datasetMetadataModel, DefaultCellDatasetProvider cellDatasetProvider) {
+    public DatasetResultsPanel(String id, IModel<DatasetMetadata> datasetMetadataModel, AbstractCellDatasetProvider cellDatasetProvider) {
         super(id);
         this.datasetMetadataModel = datasetMetadataModel;
         this.resultsModel = new CompoundPropertyModel<>(Collections.singletonList(null));;

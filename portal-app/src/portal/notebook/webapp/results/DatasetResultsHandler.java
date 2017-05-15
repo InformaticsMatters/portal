@@ -1,8 +1,9 @@
 package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import portal.notebook.webapp.AbstractCellDatasetProvider;
 import portal.notebook.webapp.CanvasItemPanel;
-import portal.notebook.webapp.DefaultCellDatasetProvider;
+import portal.notebook.webapp.OutputVariableCellDatasetProvider;
 import portal.notebook.webapp.NotebookSession;
 
 import java.util.ArrayList;
@@ -12,14 +13,10 @@ import java.util.ArrayList;
  */
 public class DatasetResultsHandler extends DefaultResultsHandler {
 
-    private final DefaultCellDatasetProvider cellDatasetProvider;
+    private final AbstractCellDatasetProvider cellDatasetProvider;
     private DatasetDetailsPanel panel;
 
-    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, CanvasItemPanel sourcePanel) {
-        this(variableName, notebookSession, sourcePanel, new DefaultCellDatasetProvider(notebookSession, sourcePanel.getCellId(), variableName, null, null));
-    }
-
-    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, CanvasItemPanel sourcePanel, DefaultCellDatasetProvider cellDatasetProvider) {
+    public DatasetResultsHandler(String variableName, NotebookSession notebookSession, CanvasItemPanel sourcePanel, AbstractCellDatasetProvider cellDatasetProvider) {
         super(variableName, notebookSession, sourcePanel);
         this.cellDatasetProvider = cellDatasetProvider;
     }

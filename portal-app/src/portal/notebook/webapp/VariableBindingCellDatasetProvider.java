@@ -1,57 +1,42 @@
 package portal.notebook.webapp;
 
-import org.squonk.core.client.StructureIOClient;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
+import portal.notebook.api.BindingInstance;
 import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 
-import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-/**
+/** CellDatasetProvider that provides its Dataset from a bound variable and optionally filters the data based on a selection.
  * Created by timbo on 13/05/17.
  */
-public class DefaultCellDatasetProvider implements Serializable {
+public class VariableBindingCellDatasetProvider extends AbstractCellDatasetProvider {
 
-    protected final Long cellId;
-    protected final NotebookSession notebookSession;
     protected final String variableBindingName;
     private final String filterOptionBindingName;
     private final String selectionOptionName;
 
-    public DefaultCellDatasetProvider(NotebookSession notebookSession, Long cellId, String variableBindingName, String filterOptionBindingName, String selectionOptionName) {
-        this.notebookSession = notebookSession;
-        this.cellId = cellId;
+    public VariableBindingCellDatasetProvider(NotebookSession notebookSession, Long cellId, String variableBindingName, String filterOptionBindingName, String selectionOptionName) {
+        super(notebookSession, cellId);
         this.variableBindingName = variableBindingName;
         this.filterOptionBindingName = filterOptionBindingName;
         this.selectionOptionName = selectionOptionName;
     }
 
-    protected VariableInstance getBoundVariableInstance(CellInstance cellInstance) {
-        return cellInstance.getBoundVariableInstance(variableBindingName);
+    @Override
+    protected VariableInstance getVariableInstance() {
+        BindingInstance bindingInstance = getCellInstance().getBindingInstance(variableBindingName);
+        return bindingInstance == null ? null : bindingInstance.getVariableInstance();
     }
 
-    protected VariableInstance getBoundVariableInstance() {
-        return getBoundVariableInstance(getCellInstance());
-    }
-
-    public CellInstance getSourceCellInstance() {
-
-        VariableInstance boundVariableInstance = getBoundVariableInstance();
-        if (boundVariableInstance == null) {
-            return null;
-        }
-        return notebookSession.getCurrentNotebookInstance().findCellInstanceById(boundVariableInstance.getCellId());
-    }
-
-    public Dataset getFilteredDataset() throws Exception {
-        CellInstance cellInstance = getCellInstance();
-        VariableInstance boundVariable = getBoundVariableInstance(cellInstance);
+    @Override
+    public Dataset getInputDataset() throws Exception {
+        VariableInstance boundVariable = getVariableInstance();
         if (boundVariable == null) {
             return null;
         }
@@ -65,7 +50,7 @@ public class DefaultCellDatasetProvider implements Serializable {
         }
 
         // apply the selection filter
-        Set<UUID> selectionFilter = cellInstance.readOptionBindingFilter(filterOptionBindingName);
+        Set<UUID> selectionFilter = getCellInstance().readOptionBindingFilter(filterOptionBindingName);
         if (selectionFilter == null || selectionFilter.size() == 0) {
             return dataset;
         } else {
@@ -82,11 +67,10 @@ public class DefaultCellDatasetProvider implements Serializable {
         }
     }
 
+    @Override
     public Dataset getSelectedDataset() throws Exception {
 
-        CellInstance cellInstance = getCellInstance();
-
-        Dataset<? extends BasicObject> dataset = getFilteredDataset();
+        Dataset<? extends BasicObject> dataset = getInputDataset();
         if (dataset == null) {
             return null;
         }
@@ -95,7 +79,7 @@ public class DefaultCellDatasetProvider implements Serializable {
         }
 
         // apply the selection filter
-        Set<UUID> selectionFilter = cellInstance.readOptionFilter(selectionOptionName);
+        Set<UUID> selectionFilter = getCellInstance().readOptionFilter(selectionOptionName);
         if (selectionFilter == null || selectionFilter.size() == 0) {
             return dataset;
         } else {
@@ -110,13 +94,12 @@ public class DefaultCellDatasetProvider implements Serializable {
             Dataset<? extends BasicObject> result = new Dataset(meta.getType(), filtered, meta);
             return result;
         }
-
     }
 
+    @Override
+    public DatasetMetadata getInputMetadata() throws Exception {
 
-    public DatasetMetadata getFilteredMetadata() throws Exception {
-
-        VariableInstance boundVariable = getBoundVariableInstance();
+        VariableInstance boundVariable = getVariableInstance();
         if (boundVariable == null) {
             return null;
         }
@@ -130,9 +113,10 @@ public class DefaultCellDatasetProvider implements Serializable {
         return clone;
     }
 
+    @Override
     public DatasetMetadata getSelectedMetadata() throws Exception {
 
-        DatasetMetadata meta = getFilteredMetadata();
+        DatasetMetadata meta = getInputMetadata();
         if (meta == null) {
             return null;
         }
@@ -141,29 +125,11 @@ public class DefaultCellDatasetProvider implements Serializable {
         }
 
         // get the selection filter because we need to know its size
-        CellInstance cellInstance = getCellInstance();
-        Set<UUID> selectionFilter = cellInstance.readOptionFilter(selectionOptionName);
+        Set<UUID> selectionFilter = getCellInstance().readOptionFilter(selectionOptionName);
 
         DatasetMetadata clone = meta.clone();
         clone.setSize(selectionFilter == null ? meta.getSize() : selectionFilter.size());
         return clone;
     }
 
-    public StructureIOClient getStructureIOClient() {
-        return notebookSession.getStructureIOClient();
-    }
-
-    public CellInstance getCellInstance() {
-        return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
-    }
-
-
-    public void saveNotebook() {
-        try {
-            notebookSession.storeCurrentEditable();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 }

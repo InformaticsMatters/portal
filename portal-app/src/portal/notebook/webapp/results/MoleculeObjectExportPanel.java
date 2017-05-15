@@ -10,7 +10,7 @@ import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.io.JsonHandler;
 import org.squonk.util.CommonMimeTypes;
 import org.squonk.util.IOUtils;
-import portal.notebook.webapp.DefaultCellDatasetProvider;
+import portal.notebook.webapp.AbstractCellDatasetProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,9 +25,9 @@ import java.util.zip.GZIPOutputStream;
 public class MoleculeObjectExportPanel extends Panel {
 
 
-    private final DefaultCellDatasetProvider cellDatasetProvider;
+    private final AbstractCellDatasetProvider cellDatasetProvider;
 
-    public MoleculeObjectExportPanel(String id, DefaultCellDatasetProvider cellDatasetProvider) {
+    public MoleculeObjectExportPanel(String id, AbstractCellDatasetProvider cellDatasetProvider) {
         super(id);
         this.cellDatasetProvider = cellDatasetProvider;
 

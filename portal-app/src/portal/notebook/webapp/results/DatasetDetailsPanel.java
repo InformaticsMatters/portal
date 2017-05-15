@@ -7,7 +7,8 @@ import org.apache.wicket.model.IModel;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
-import portal.notebook.webapp.DefaultCellDatasetProvider;
+import portal.notebook.webapp.AbstractCellDatasetProvider;
+import portal.notebook.webapp.OutputVariableCellDatasetProvider;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,14 +19,14 @@ import java.util.List;
 public class DatasetDetailsPanel extends Panel {
 
     private final IModel<DatasetMetadata> datasetMetadataModel;
-    private final DefaultCellDatasetProvider cellDatasetProvider;
+    private final AbstractCellDatasetProvider cellDatasetProvider;
     private Class<? extends BasicObject> datasetType;
 
-    public DatasetDetailsPanel(String id, DefaultCellDatasetProvider cellDatasetProvider) {
+    public DatasetDetailsPanel(String id, OutputVariableCellDatasetProvider cellDatasetProvider) {
         this(id, cellDatasetProvider, Collections.emptyList());
     }
 
-    public DatasetDetailsPanel(String id, DefaultCellDatasetProvider cellDatasetProvider, List<Panel> firstPanels) {
+    public DatasetDetailsPanel(String id, AbstractCellDatasetProvider cellDatasetProvider, List<Panel> firstPanels) {
         super(id);
         this.cellDatasetProvider = cellDatasetProvider;
         this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata) null);
