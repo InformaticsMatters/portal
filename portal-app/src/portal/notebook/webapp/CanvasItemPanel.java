@@ -151,7 +151,12 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             @Override
             protected void onTimer(AjaxRequestTarget ajaxRequestTarget) {
                 try {
-                    Execution lastExecution = notebookSession.findExecution(findCellInstance().getId());
+                    CellInstance cellInstance = findCellInstance();
+                    if (cellInstance == null) {
+                        LOG.warning("Can't find cell instance");
+                        return;
+                    }
+                    Execution lastExecution = notebookSession.findExecution(cellInstance.getId());
                     boolean executionChanged = executionChanged(lastExecution);
                     if (executionChanged) {
                         notifyExecutionChanged(ajaxRequestTarget, lastExecution);
