@@ -24,8 +24,10 @@ import org.squonk.types.NumberRange;
 import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
+import portal.notebook.webapp.VariableBindingCellDatasetProvider;
 import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
 import portal.notebook.webapp.CellChangeEvent;
+import portal.notebook.webapp.results.DatasetResultsHandler;
 
 import java.io.Serializable;
 import java.util.*;
@@ -59,6 +61,8 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         POINT_SIZES.put("Largest", 12);
     }
 
+    private VariableBindingCellDatasetProvider cellDatasetProvider;
+
     private final ModelObject model = new ModelObject();
     private Form<ModelObject> form;
     private ScatterPlotAdvancedOptionsPanel advancedOptionsPanel;
@@ -72,7 +76,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         }
         addForm();
         loadModelFromPersistentData();
-        addTitleBar();
+        addTitleBarAndResultsViewer();
         addStatus();
         try {
             refreshPlotData(false);
@@ -80,6 +84,13 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             LOG.log(Level.WARNING, "Error refreshing data", t);
             notifyMessage("Error", "Failed to refresh data" + t.getLocalizedMessage());
         }
+    }
+
+    @Override
+    protected void createResultsHandlers() {
+        LOG.info("Creating results handler");
+        this.cellDatasetProvider = new VariableBindingCellDatasetProvider(notebookSession, getCellId(), CellDefinition.VAR_NAME_INPUT, OPTION_FILTER_IDS, OPTION_SELECTED_IDS);
+        resultsHandler = new DatasetResultsHandler("filtered", notebookSession, this, cellDatasetProvider);
     }
 
     private void addStatus() {
@@ -224,7 +235,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             if (variableInstance == null) {
                 return;
             }
-            Dataset<? extends BasicObject> dataset = readDataset ? notebookSession.squonkDataset(variableInstance) : null;
+            Dataset<? extends BasicObject> dataset = readDataset ? cellDatasetProvider.getInputDataset() : null;
             DatasetMetadata meta = dataset == null ? notebookSession.squonkDatasetMetadata(variableInstance) : dataset.getMetadata();
             String colorMode = null;
             // TODO - improve how the color mode is determined as some types could be handled as categorical or continuous.
@@ -241,18 +252,19 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
             }
             model.setColorMode(colorMode);
 
-            if (readDataset) {
+            if (readDataset && dataset != null) {
+
 
                 Set<UUID> marked = cellInstance.readOptionBindingFilter(OPTION_MARKED_IDS);
                 model.setMarked(marked);
 
-                Dataset<? extends BasicObject> filteredDataset = generateFilteredData(variableInstance, OPTION_FILTER_IDS);
-                if (filteredDataset == null) {
-                    return;
-                }
+//                Dataset<? extends BasicObject> filteredDataset = generateFilteredData(variableInstance, OPTION_FILTER_IDS);
+//                if (filteredDataset == null) {
+//                    return;
+//                }
 
                 AtomicInteger counter = new AtomicInteger(0);
-                try (Stream<? extends BasicObject> input = filteredDataset.getStream()) {
+                try (Stream<? extends BasicObject> input = dataset.getStream()) {
 
                     // convert to DataItems
                     Stream<DataItem> items = input.map((o) -> {
