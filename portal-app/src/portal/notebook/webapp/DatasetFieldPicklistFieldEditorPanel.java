@@ -107,6 +107,10 @@ public class DatasetFieldPicklistFieldEditorPanel extends FieldEditorPanel {
     @Override
     public boolean processCellChanged(Long changedCellId, AjaxRequestTarget ajaxRequestTarget) throws Exception {
         CellInstance thisCellInstance = notebookSession.getCurrentNotebookInstance().findCellInstanceById(this.cellId);
+        if (thisCellInstance == null) {
+            LOG.warning("Can't find cell instance for cell " + this.cellId);
+            return false;
+        }
         BindingInstance bindingInstance = thisCellInstance.getBindingInstanceMap().get(CellDefinition.VAR_NAME_INPUT);
         if (bindingInstance != null) {
             VariableInstance variableInstance = bindingInstance.getVariableInstance();
