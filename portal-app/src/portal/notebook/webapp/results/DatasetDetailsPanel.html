@@ -1,31 +1,37 @@
 <wicket:panel>
 
+    <!--
+   <div class="ui top attached tabular menu">
+       <a class="active item" data-tab="results">Results</a>
+       <a class="item" data-tab="metadata">Metadata</a>
+       <a class="item" data-tab="export">Export</a>
+   </div>
+
+   <div wicket:id="results" class="ui bottom attached active tab segment" data-tab="results">
+
+       Results viewer goes here
+
+   </div>
+
+   <div wicket:id="metadata" class="ui bottom attached tab segment" data-tab="metadata">
+
+       Metadata viewer goes here
+
+   </div>
+
+   <div wicket:id="export" class="ui bottom attached tab segment" data-tab="export">
+
+       <p>No export is possible yet for this type of results.</p>
+
+   </div>
+   -->
+
     <div class="ui top attached tabular menu">
-        <a class="active item" data-tab="results">Results</a>
-        <a class="item" data-tab="metadata">Metadata</a>
-        <a class="item" data-tab="export">Export</a>
-
-
+        <a wicket:id="tabs" class="active item" ><span wicket:id="title">Tab goes here</span></a>
     </div>
 
-
-    <div wicket:id="results" class="ui bottom attached active tab segment" data-tab="results">
-
-        Results viewer goes here
-
+    <div>
+        <div wicket:id="viewers" class="ui bottom attached tab segment">Viewer not defined</div>
     </div>
-
-    <div wicket:id="metadata" class="ui bottom attached tab segment" data-tab="metadata">
-
-        Metadata viewer goes here
-
-    </div>
-
-    <div wicket:id="export" class="ui bottom attached tab segment" data-tab="export">
-
-        <p>No export is possible yet for this type of results.</p>
-
-    </div>
-
 
 </wicket:panel>

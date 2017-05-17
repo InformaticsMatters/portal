@@ -24,7 +24,6 @@ public class DatasetResultsHandler extends DefaultResultsHandler {
     @Override
     public Panel getPanel() {
         if (panel == null) {
-
             panel = new DatasetDetailsPanel("viewer", cellDatasetProvider, sourcePanel.collectExpandedPanels(new ArrayList<>()));
         }
         return panel;

@@ -1,0 +1,14 @@
+<wicket:panel>
+    <form wicket:id="form" style="display: none;" class="parallelcoordinateplot ui form content">
+        <input wicket:id="selection" class="selection" type="hidden"/>
+        <input wicket:id="extents" class="extents" type="hidden"/>
+        <input wicket:id="axes" class="axes" type="hidden"/>
+        <input wicket:id="colorDimension" class="colorDimension" type="hidden"/>
+
+        <button wicket:id="updateSelection" class="updateSelection">selections</button>
+        <button wicket:id="updateAxes" class="updateAxes">axes</button>
+
+    </form>
+
+    <div class="main svg-container parcoords"></div>
+</wicket:panel>

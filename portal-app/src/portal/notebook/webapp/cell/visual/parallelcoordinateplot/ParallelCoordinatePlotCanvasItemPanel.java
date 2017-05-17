@@ -1,5 +1,6 @@
 package portal.notebook.webapp.cell.visual.parallelcoordinateplot;
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -25,6 +26,7 @@ import portal.notebook.webapp.CellChangeEvent;
 import portal.notebook.webapp.VariableBindingCellDatasetProvider;
 import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
 import portal.notebook.webapp.results.DatasetResultsHandler;
+import portal.notebook.webapp.results.ResultsPanelProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -338,13 +340,13 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     }
 
     @Override
-    public List<Panel> collectExpandedPanels(List<Panel> panels) {
-        //panels.add(new ParallelCoordinatePlotCanvasItemPanel("expanded", getCellId()));
-
-//        Panel p = new Panel("expanded") {
-//
-//        };
-//        panels.add(p);
+    public List<ResultsPanelProvider> collectExpandedPanels(List<ResultsPanelProvider> panels) {
+//        panels.add(new ResultsPanelProvider("viz", "Visual") {
+//            @Override
+//            public MarkupContainer createPanel(int tabIndex, Class dataType) {
+//                return new ParallelCoordinatePlotPanel(String.valueOf(tabIndex));
+//            }
+//        });
         return panels;
     }
 

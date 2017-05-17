@@ -61,16 +61,16 @@ public class DatasetResultsPanel extends Panel {
     public DatasetResultsPanel(String id, IModel<DatasetMetadata> datasetMetadataModel, AbstractCellDatasetProvider cellDatasetProvider) {
         super(id);
         this.datasetMetadataModel = datasetMetadataModel;
-        this.resultsModel = new CompoundPropertyModel<>(Collections.singletonList(null));;
+        this.resultsModel = new CompoundPropertyModel<>(Collections.emptyList());;
         this.cellDatasetProvider = cellDatasetProvider;
         setOutputMarkupId(true);
 
-        try {
-            updateData();
-        } catch (Exception e) {
-            // TODO - better notification of errors
-            throw new RuntimeIOException("Failed to load data", e);
-        }
+//        try {
+//            updateData();
+//        } catch (Exception e) {
+//            // TODO - better notification of errors
+//            throw new RuntimeIOException("Failed to load data", e);
+//        }
 
         addComponents();
     }
@@ -242,6 +242,11 @@ public class DatasetResultsPanel extends Panel {
             @Override
             public List<String> getObject() {
                 DatasetMetadata<? extends BasicObject> meta = datasetMetadataModel.getObject();
+                if (meta == null) {
+                    return Collections.emptyList();
+                }
+
+
                 Map<String, Class> typesMapppings = meta.getValueClassMappings();
                 List<String> results = new ArrayList<>();
                 results.add(HIGHLIGHTER_NONE);
@@ -330,6 +335,10 @@ public class DatasetResultsPanel extends Panel {
     protected synchronized <T extends BasicObject> void updateData() throws Exception {
 
         Dataset<T> dataset = cellDatasetProvider.getSelectedDataset();
+        if (dataset == null) {
+            resultsModel.setObject(Collections.emptyList());
+            return;
+        }
         if (limit < 1 || limit > MAX_RECORDS) {
             limit = MAX_RECORDS;
         }

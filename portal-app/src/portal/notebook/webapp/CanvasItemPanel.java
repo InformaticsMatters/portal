@@ -18,6 +18,7 @@ import portal.notebook.api.*;
 import portal.notebook.service.Execution;
 import portal.notebook.webapp.results.DatasetResultsHandler;
 import portal.notebook.webapp.results.ResultsHandler;
+import portal.notebook.webapp.results.ResultsPanelProvider;
 import portal.notebook.webapp.results.ResultsViewerPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticModalPanel;
@@ -475,7 +476,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         }
     }
 
-    public List<Panel> collectExpandedPanels(List<Panel> panels) {
+    public List<ResultsPanelProvider> collectExpandedPanels(List<ResultsPanelProvider> panels) {
         return panels;
     }
 

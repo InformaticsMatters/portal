@@ -1,7 +1,12 @@
 package portal.notebook.webapp.results;
 
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.squonk.dataset.DatasetMetadata;
@@ -10,6 +15,7 @@ import org.squonk.types.MoleculeObject;
 import portal.notebook.webapp.AbstractCellDatasetProvider;
 import portal.notebook.webapp.OutputVariableCellDatasetProvider;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,20 +25,55 @@ import java.util.List;
 public class DatasetDetailsPanel extends Panel {
 
     private final IModel<DatasetMetadata> datasetMetadataModel;
-    private final AbstractCellDatasetProvider cellDatasetProvider;
     private Class<? extends BasicObject> datasetType;
+
+    private final List<ResultsPanelProvider> panelProviders = new ArrayList<>();
+    private final RepeatingView tabsRepeater;
+    private final RepeatingView viewersRepeater;
+
 
     public DatasetDetailsPanel(String id, OutputVariableCellDatasetProvider cellDatasetProvider) {
         this(id, cellDatasetProvider, Collections.emptyList());
     }
 
-    public DatasetDetailsPanel(String id, AbstractCellDatasetProvider cellDatasetProvider, List<Panel> firstPanels) {
+    public DatasetDetailsPanel(String id, AbstractCellDatasetProvider cellDatasetProvider, List<ResultsPanelProvider> firstPanels) {
         super(id);
-        this.cellDatasetProvider = cellDatasetProvider;
         this.datasetMetadataModel = new CompoundPropertyModel<>((DatasetMetadata) null);
 
-        firstPanels.forEach((p) -> add(p));
+        // first add the externally specified panels
+        panelProviders.addAll(firstPanels);
+        // now add the results panel
+        panelProviders.add(new ResultsPanelProvider("results", "Results") {
+            @Override
+            public MarkupContainer createPanel(int index, Class dataType) {
+                return new DatasetResultsPanel(String.valueOf(index), datasetMetadataModel, cellDatasetProvider);
+            }
+        });
+        // now add the metadata panel
+        panelProviders.add(new ResultsPanelProvider("metadata", "Metadata") {
+            @Override
+            public MarkupContainer createPanel(int index, Class dataType) {
+                return new DatasetMetadataPanel(String.valueOf(index), datasetMetadataModel);
+            }
+        });
+        // and finally the export panel
+        panelProviders.add(new ResultsPanelProvider("export", "Export") {
+            @Override
+            public MarkupContainer createPanel(int index, Class dataType) {
+                if (dataType == MoleculeObject.class) {
+                    return new MoleculeObjectExportPanel(String.valueOf(index), cellDatasetProvider);
+                } else {
+                    return new WebMarkupContainer(String.valueOf(index));
+                }
+            }
+        });
 
+        tabsRepeater = new RepeatingView("tabs");
+        viewersRepeater = new RepeatingView("viewers");
+        add(tabsRepeater);
+        add(viewersRepeater);
+
+        createTabs();
         addDummyContent();
     }
 
@@ -48,31 +89,55 @@ public class DatasetDetailsPanel extends Panel {
             // first time through or when the dataset type has changed
             datasetType = meta.getType();
             addRealContent();
-        } else {
-            // called when the viewer is re-opened so we need to reload the data in case it has changed
-            DatasetResultsPanel rp = (DatasetResultsPanel)get("results");
-
+        }
+        Component c = viewersRepeater.get("0");
+        if (c != null && c instanceof DatasetResultsPanel) {
+            DatasetResultsPanel rp = (DatasetResultsPanel) c;
             rp.reload();
         }
-        datasetMetadataModel.setObject(meta);
         return true;
+    }
+
+    private void createTabs() {
+        // <a class="active item" data-tab="results">Results</a>
+        for (int i=0; i<panelProviders.size(); i++) {
+            ResultsPanelProvider pp = panelProviders.get(i);
+            Component c = new WebMarkupContainer(tabsRepeater.newChildId())
+                    .add(new Label("title", pp.getName()))
+                    .add(new AttributeModifier("data-tab", pp.getId()));
+            if (i == 0) {
+                c.add(AttributeModifier.append("class", "active"));
+            }
+            tabsRepeater.add(c);
+        }
     }
 
     private void addRealContent() {
 
-        addOrReplace(new DatasetResultsPanel("results", datasetMetadataModel, cellDatasetProvider));
-        addOrReplace(new DatasetMetadataPanel("metadata", datasetMetadataModel));
-        if (datasetType == MoleculeObject.class) {
-            addOrReplace(new MoleculeObjectExportPanel("export", cellDatasetProvider));
-        } else {
-            addOrReplace(new WebMarkupContainer("export"));
+        viewersRepeater.removeAll();
+        // <div wicket:id="results" class="ui bottom attached active tab segment" data-tab="results">
+        for (int i=0; i<panelProviders.size(); i++) {
+            ResultsPanelProvider pp = panelProviders.get(i);
+            Component c = pp.createPanel(i, datasetType)
+                    .add(new AttributeModifier("data-tab", pp.getId()));
+            if (i == 0) {
+                c.add(AttributeModifier.append("class", "active"));
+            }
+
+            viewersRepeater.add(c);
         }
     }
 
     private void addDummyContent() {
-        addOrReplace(new WebMarkupContainer("results"));
-        addOrReplace(new WebMarkupContainer("metadata"));
-        addOrReplace(new WebMarkupContainer("export"));
+
+        viewersRepeater.removeAll();
+        // <div wicket:id="results" class="ui bottom attached active tab segment" data-tab="results">
+        for (int i=0; i<panelProviders.size(); i++) {
+            ResultsPanelProvider pp = panelProviders.get(i);
+            viewersRepeater.add(new WebMarkupContainer(String.valueOf(i))
+                    .add(new AttributeModifier("data-tab", pp.getId())));
+        }
+
     }
 
 }
