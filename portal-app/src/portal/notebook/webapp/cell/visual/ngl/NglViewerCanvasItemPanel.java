@@ -175,6 +175,10 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
     private void refreshPlotData(boolean readDataset) throws Exception {
 
         CellInstance cellInstance = findCellInstance();
+        if (cellInstance == null) {
+            LOG.warning("No cell isntance - can't refresh plot");
+            return;
+        }
         BindingInstance bindingInstance1 = cellInstance.getBindingInstanceMap().get("input1");
         VariableInstance variableInstance1 = bindingInstance1.getVariableInstance();
         BindingInstance bindingInstance2 = cellInstance.getBindingInstanceMap().get("input2");
