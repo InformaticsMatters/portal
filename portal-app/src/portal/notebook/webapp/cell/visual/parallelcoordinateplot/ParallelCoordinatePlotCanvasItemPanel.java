@@ -127,9 +127,12 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                 CellInstance cell = findCellInstance();
                 Map<String, OptionInstance> options = cell.getOptionInstanceMap();
                 selection.getModel().setObject(""); // never read
-                axes.getModel().setObject((String) options.get(OPTION_AXES).getValue());
-                extents.getModel().setObject((String) options.get(OPTION_EXTENTS).getValue());
-                colorDimension.getModel().setObject((String) options.get(OPTION_COLOR_DIMENSION).getValue());
+                OptionInstance axesOpt = options.get(OPTION_AXES);
+                axes.getModel().setObject(axesOpt == null ? null : (String)axesOpt.getValue());
+                OptionInstance extentsOpt = options.get(OPTION_EXTENTS);
+                extents.getModel().setObject(extentsOpt == null ? null : (String)extentsOpt.getValue());
+                OptionInstance colorDimOpt = options.get(OPTION_COLOR_DIMENSION);
+                colorDimension.getModel().setObject(colorDimOpt == null ? null : (String)colorDimOpt.getValue());
             }
         };
 

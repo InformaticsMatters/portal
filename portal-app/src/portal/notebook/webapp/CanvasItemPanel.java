@@ -20,6 +20,7 @@ import portal.notebook.webapp.results.DatasetResultsHandler;
 import portal.notebook.webapp.results.ResultsHandler;
 import portal.notebook.webapp.results.ResultsPanelProvider;
 import portal.notebook.webapp.results.ResultsViewerPanel;
+import toolkit.wicket.semantic.NotifierPanel;
 import toolkit.wicket.semantic.NotifierProvider;
 import toolkit.wicket.semantic.SemanticModalPanel;
 
@@ -121,7 +122,8 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     }
 
     public CellInstance findCellInstance(Long cellId) {
-        return notebookSession.getCurrentNotebookInstance().findCellInstanceById(cellId);
+        NotebookInstance notebookInstance =  notebookSession.getCurrentNotebookInstance();
+        return notebookInstance == null ? null : notebookInstance.findCellInstanceById(cellId);
     }
 
     public void fireContentChanged() throws Exception {
@@ -166,7 +168,10 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                     oldExecution = lastExecution;
                 } catch (Throwable t) {
                     LOG.log(Level.WARNING, "Error refreshing status", t);
-                    notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
+                    NotifierPanel notifierPanel = notifierProvider.getNotifier(getPage());
+                    if (notifierPanel != null) {
+                        notifierPanel.notify("Error", t.getMessage());
+                    }
                 }
             }
         });
