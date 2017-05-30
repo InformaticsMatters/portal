@@ -34,7 +34,8 @@ public class DatasetResultsHandler extends DefaultResultsHandler {
     }
 
     public boolean preparePanelForDisplay() throws Exception {
-        return getPanelImpl().prepare(cellDatasetProvider.getSelectedMetadata());
+        DatasetDetailsPanel panel = getPanelImpl();
+        return panel.prepare(cellDatasetProvider.getSelectedMetadata());
     }
 
     public String getExtraJavascriptForResultsViewer() {
