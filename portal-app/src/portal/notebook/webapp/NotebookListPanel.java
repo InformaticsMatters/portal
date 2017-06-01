@@ -2,32 +2,44 @@ package portal.notebook.webapp;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
+import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.wicket.util.time.Duration;
 import portal.SessionContext;
+import toolkit.wicket.semantic.IndicatingAjaxSubmitLink;
 import toolkit.wicket.semantic.NotifierProvider;
 
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
 public class NotebookListPanel extends Panel {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotebookListPanel.class);
+    private static final Logger LOG = Logger.getLogger(NotebookListPanel.class.getName());
+    private Form<FilterNotebookData> searchForm;
     private final EditNotebookPanel editNotebookPanel;
+    private WebMarkupContainer notebooks;
     private ListView<NotebookInfo> listView;
     private String selectedMarkupId;
     @Inject
@@ -40,7 +52,40 @@ public class NotebookListPanel extends Panel {
     public NotebookListPanel(String id, EditNotebookPanel editNotebookPanel) {
         super(id);
         this.editNotebookPanel = editNotebookPanel;
+        addSearchForm();
         addNotebookList();
+    }
+
+    private void addSearchForm() {
+        searchForm = new Form<>("form");
+        searchForm.setModel(new CompoundPropertyModel<>(new FilterNotebookData()));
+        searchForm.setOutputMarkupId(true);
+        add(searchForm);
+
+        TextField<String> patternField = new TextField<>("pattern");
+        patternField.add(new AjaxFormSubmitBehavior(searchForm, "keyup") {
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                getRequestCycle().find(AjaxRequestTarget.class).add(notebooks);;
+            }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setThrottlingSettings(new ThrottlingSettings(patternField.getMarkupId(), Duration.milliseconds(500), true));
+            }
+        });
+        searchForm.add(patternField);
+
+        AjaxSubmitLink searchAction = new IndicatingAjaxSubmitLink("search") {
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
+                getRequestCycle().find(AjaxRequestTarget.class).add(notebooks);;
+            }
+        };
+        searchForm.add(searchAction);
     }
 
     @Override
@@ -56,7 +101,7 @@ public class NotebookListPanel extends Panel {
         try {
             return notebookSession.listNotebookInfo();
         } catch (Throwable t) {
-            LOGGER.warn("Error listing notebooks", t);
+            LOG.log(Level.WARNING, "Error listing notebooks", t);
             return new ArrayList<>();
         }
     }
@@ -77,7 +122,9 @@ public class NotebookListPanel extends Panel {
                 if (items == null) {
                     return Collections.emptyList();
                 } else {
-                    return items;
+                    FilterNotebookData searchCellData = searchForm.getModelObject();
+                    String pattern = searchCellData.getPattern();
+                    return filterNotebooks(items, pattern);
                 }
             }
 
@@ -117,7 +164,7 @@ public class NotebookListPanel extends Panel {
                             editNotebookPanel.configureForEdit(notebookInfo.getId());
                             editNotebookPanel.showModal();
                         } catch (Throwable t) {
-                            LOGGER.warn("Error configuring for edit", t);
+                            LOG.log(Level.WARNING, "Error configuring for edit", t);
                             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                         }
                     }
@@ -138,7 +185,7 @@ public class NotebookListPanel extends Panel {
                                 refreshNotebookList();
                             }
                         } catch (Throwable t) {
-                            LOGGER.warn("Error updating notebook", t);
+                            LOG.log(Level.WARNING, "Error updating notebook", t);
                             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                         }
                     }
@@ -170,7 +217,7 @@ public class NotebookListPanel extends Panel {
                             editNotebookPanel.configureForRemove(notebookInfo.getId());
                             editNotebookPanel.showModal();
                         } catch (Throwable t) {
-                            LOGGER.warn("Error configuring for remove", t);
+                            LOG.log(Level.WARNING, "Error configuring for remove", t);
                             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                         }
                     }
@@ -187,7 +234,7 @@ public class NotebookListPanel extends Panel {
                             selectedMarkupId = listItem.getMarkupId();
                             target.add(getPage());
                         } catch (Throwable t) {
-                            LOGGER.warn("Error loading notebook", t);
+                            LOG.log(Level.WARNING, "Error loading notebook", t);
                             notifierProvider.getNotifier(getPage()).notify("Error", t.getMessage());
                         }
                     }
@@ -199,13 +246,58 @@ public class NotebookListPanel extends Panel {
 
             }
         };
-        add(listView);
+
+        // we need a WebMarkupContainer here for the AJAX target when filtering
+        notebooks = new WebMarkupContainer("notebooks");
+        notebooks.setOutputMarkupId(true);
+        notebooks.add(listView);
+        add(notebooks);
     }
 
+    /** Update the list of notebooks from the service
+     *
+     * @throws Exception
+     */
     public void refreshNotebookList() throws Exception {
-        LOGGER.info("refresh...");
-        listView.setList(notebookSession.listNotebookInfo());
-        getRequestCycle().find(AjaxRequestTarget.class).add(this);
+        LOG.info("refresh notebooks...");
+        FilterNotebookData searchCellData = searchForm.getModelObject();
+        List<NotebookInfo> notebookInfos = notebookSession.listNotebookInfo();
+        listView.setList(notebookInfos);
+        getRequestCycle().find(AjaxRequestTarget.class).add(notebooks);
+    }
+
+    /** Apply the filter to the notebooks
+     *
+     * @param notebooks
+     * @param pattern
+     * @return
+     */
+    private List<NotebookInfo> filterNotebooks(List<NotebookInfo> notebooks, String pattern) {
+        if (pattern != null && pattern.length() > 0) {
+            pattern = pattern.toLowerCase();
+            List<NotebookInfo> filtered = new ArrayList<>();
+            for (NotebookInfo ni : notebooks) {
+                if (ni.getName().toLowerCase().contains(pattern) || ni.getOwner().toLowerCase().contains(pattern)) {
+                    filtered.add(ni);
+                }
+            }
+            return filtered;
+        } else {
+            return notebooks;
+        }
+    }
+
+    class FilterNotebookData implements Serializable {
+
+        private String pattern;
+
+        public String getPattern() {
+            return pattern;
+        }
+
+        public void setPattern(String pattern) {
+            this.pattern = pattern;
+        }
     }
 
 }

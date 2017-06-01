@@ -1,5 +1,17 @@
 <wicket:panel>
 
+    <form class="ui form" wicket:id="form">
+        <div class="field" style="width: 250px;">
+            <div class="ui action small input">
+                <input type="text" wicket:id="pattern">
+
+                <div class="ui small icon button" wicket:id="search">
+                    <i class="search icon"></i>
+                </div>
+            </div>
+        </div>
+    </form>
+
     <table class="ui small very compact table nbListTable">
         <col width="25"/>
         <col width="25"/>
@@ -15,7 +27,7 @@
             <th>Owner</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody wicket:id="notebooks">
         <tr wicket:id="notebook" class="nbTr top aligned">
             <td class="collapsing center aligned iconTd">
                 <a href="" wicket:id="changeStatus">
