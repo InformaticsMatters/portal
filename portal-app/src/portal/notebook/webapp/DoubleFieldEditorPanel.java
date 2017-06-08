@@ -44,7 +44,6 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel<Double> {
                 } catch (Throwable e) {
                     String msg = "Error converting " + getFieldEditorModel().getValue();
                     LOG.log(Level.WARNING, msg, e);
-                    DoubleFieldEditorPanel.this.notify("Error", msg);
                     return null;
                 }
             }

@@ -48,7 +48,6 @@ public class IntegerFieldEditorPanel extends FieldEditorPanel<Integer> {
                 // can occur in rare case when datatype definitions change
                 String msg = "Value datatype is incompatible. Defaulting to null";
                 LOG.log(Level.WARNING, msg, e);
-                IntegerFieldEditorPanel.this.notify("Error", msg);
                 return null;
             }
         }
