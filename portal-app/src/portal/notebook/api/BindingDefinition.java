@@ -63,6 +63,16 @@ public class BindingDefinition implements Serializable {
         this.acceptedVariableTypeList.add(new Type(primary2, secondary2));
     }
 
+    public BindingDefinition(String name,
+                             Class primary1, Class secondary1,
+                             Class primary2, Class secondary2,
+                             Class primary3, Class secondary3) {
+        this(name);
+        this.acceptedVariableTypeList.add(new Type(primary1, secondary1));
+        this.acceptedVariableTypeList.add(new Type(primary2, secondary2));
+        this.acceptedVariableTypeList.add(new Type(primary3, secondary3));
+    }
+
     public String getName() {
         return this.name;
     }

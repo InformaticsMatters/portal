@@ -8,10 +8,7 @@ import org.squonk.dataset.DatasetSelection;
 import org.squonk.io.IODescriptors;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
-import org.squonk.types.BasicObject;
-import org.squonk.types.MoleculeObject;
-import org.squonk.types.NumberRange;
-import org.squonk.types.PDBFile;
+import org.squonk.types.*;
 import portal.SessionContext;
 import portal.notebook.webapp.*;
 import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
@@ -103,8 +100,8 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     private static CellDefinition createNglViewerCellDefinition() {
         CellDefinition cellDefinition = new SimpleCellDefinition("NGLViewer", "NGL viewer", "icons/view.png", new String[]{"3d", "nglviewer", "viewer", "visualization", "vizualisation", "viz"}, false);
-        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input2", Dataset.class, MoleculeObject.class, PDBFile.class, null));
-        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input1", Dataset.class, MoleculeObject.class, PDBFile.class, null));
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input2", Dataset.class, MoleculeObject.class, PDBFile.class, null, Mol2File.class, null));
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input1", Dataset.class, MoleculeObject.class, PDBFile.class, null, Mol2File.class, null));
 
         addFilterOption(cellDefinition, CanvasItemPanel.OPTION_FILTER_IDS + "2", "Filter2", "Filter2 (IDs to include)");
         addFilterOption(cellDefinition, CanvasItemPanel.OPTION_FILTER_IDS + "1", "Filter1", "Filter1 (IDs to include)");
@@ -251,6 +248,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new SmilesStructuresCellDefinition());
         registerCellDefinition(new MolfileUploadCellDefinition());
         registerCellDefinition(new PdbUploadCellDefinition());
+        registerCellDefinition(new Mol2UploadCellDefinition());
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
         registerCellDefinition(new DatasetFilterGroovyCellDefinition());
         registerCellDefinition(new DatasetSorterCellDefinition());

@@ -4,9 +4,7 @@ package portal.notebook.webapp;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
-import toolkit.wicket.semantic.NotifierProvider;
 
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -14,10 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DoubleFieldEditorPanel extends FieldEditorPanel<Double> {
-    private static final Logger LOGGER = Logger.getLogger(DoubleFieldEditorPanel.class.getName());
+    private static final Logger LOG = Logger.getLogger(DoubleFieldEditorPanel.class.getName());
     private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
-    @Inject
-    private NotifierProvider notifierProvider;
     private TextField<String> textField;
 
 
@@ -46,8 +42,9 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel<Double> {
                         return decimalFormat.format(value);
                     }
                 } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Error converting " + getFieldEditorModel().getValue(), e);
-                    notifierProvider.getNotifier(getPage()).notify("Error", e.getMessage());
+                    String msg = "Error converting " + getFieldEditorModel().getValue();
+                    LOG.log(Level.WARNING, msg, e);
+                    DoubleFieldEditorPanel.this.notify("Error", msg);
                     return null;
                 }
             }
@@ -61,8 +58,8 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel<Double> {
                         getFieldEditorModel().setValue(decimalFormat.parse(object).doubleValue());
                     }
                 } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Error converting " + object, e);
-                    notifierProvider.getNotifier(getPage()).notify("Error", e.getMessage());
+                    LOG.log(Level.WARNING, "Error converting " + object, e);
+                    DoubleFieldEditorPanel.this.notify("Error", e.getMessage());
                 }
             }
         };
@@ -85,7 +82,10 @@ public class DoubleFieldEditorPanel extends FieldEditorPanel<Double> {
         } else if (value.getClass().equals(BigDecimal.class)) {
             return ((BigDecimal)value).doubleValue();
         } else {
-            throw new Exception("Unsupported conversion from " + value.getClass());
+            String msg = "Unsupported conversion from " + value.getClass();
+            LOG.warning(msg);
+            notify("Error", msg);
+            return null;
         }
     }
 

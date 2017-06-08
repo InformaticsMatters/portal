@@ -241,6 +241,13 @@ public class NglViewerCanvasItemPanel extends CanvasItemPanel {
                     //LOG.info("PDB:\n" + pdb);
                     return new NglMoleculeSet("text/plain", "pdb", pdb, 1);
                 }
+            } else if (CommonMimeTypes.MIME_TYPE_TRIPOS_MOL2.equalsIgnoreCase(variableInstance.getVariableDefinition().getMediaType())) {
+                InputStream is = notebookSession.readStreamValue(variableInstance);
+                if (is != null) {
+                    String mol2 = IOUtils.convertStreamToString(IOUtils.getGunzippedInputStream(is));
+                    //LOG.info("Mol2:\n" + mol2);
+                    return new NglMoleculeSet("text/plain", "mol2", mol2, 1);
+                }
             }
         }
         return null;

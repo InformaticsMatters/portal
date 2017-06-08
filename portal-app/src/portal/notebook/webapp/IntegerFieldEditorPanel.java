@@ -6,11 +6,15 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author simetrias
  */
 public class IntegerFieldEditorPanel extends FieldEditorPanel<Integer> {
+
+    private static final Logger LOG = Logger.getLogger(IntegerFieldEditorPanel.class.getName());
 
 
     private final FieldEditorModel<Integer> fieldEditorModel;
@@ -38,7 +42,15 @@ public class IntegerFieldEditorPanel extends FieldEditorPanel<Integer> {
     class IntegerModelObject implements Serializable {
 
         public Integer getValue() {
-            return (Integer)getFieldEditorModel().getValue();
+            try {
+                return getFieldEditorModel().getValue();
+            } catch (ClassCastException e) {
+                // can occur in rare case when datatype definitions change
+                String msg = "Value datatype is incompatible. Defaulting to null";
+                LOG.log(Level.WARNING, msg, e);
+                IntegerFieldEditorPanel.this.notify("Error", msg);
+                return null;
+            }
         }
 
         public void setValue(Integer value) {

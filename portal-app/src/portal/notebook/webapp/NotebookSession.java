@@ -8,7 +8,7 @@ import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.io.IODescriptor;
 import org.squonk.notebook.api.*;
-import org.squonk.types.AbstractFile;
+import org.squonk.types.AbstractStreamType;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 import org.squonk.types.io.JsonHandler;
@@ -232,7 +232,7 @@ public class NotebookSession implements Serializable {
         IODescriptor iod = variableInstance.getVariableDefinition();
         if (Dataset.class.isAssignableFrom(iod.getPrimaryType())) {
             return loadDatasetFromDatasetVariable(variableInstance);
-        } else if (AbstractFile.class.isAssignableFrom(iod.getPrimaryType())) {
+        } else if (AbstractStreamType.class.isAssignableFrom(iod.getPrimaryType())) {
             return loadDatasetFromFileVariable(variableInstance);
         } else if (iod.getPrimaryType() == String.class) {
             return loadDatasetFromFileVariable(variableInstance);

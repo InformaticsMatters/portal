@@ -4,7 +4,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.Model;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class BooleanFieldEditorPanel extends FieldEditorPanel<Boolean> {
+
+    private static final Logger LOG = Logger.getLogger(BooleanFieldEditorPanel.class.getName());
 
     private CheckBox checkBox;
 
@@ -22,7 +27,13 @@ public class BooleanFieldEditorPanel extends FieldEditorPanel<Boolean> {
         Model<Boolean> model = new Model<Boolean>() {
             @Override
             public Boolean getObject() {
-                return (Boolean)getFieldEditorModel().getValue();
+                try {
+                    return getFieldEditorModel().getValue();
+                } catch (ClassCastException e) {
+                    // can occur in rare case when datatype definitions change
+                    LOG.log(Level.WARNING, "Value datatype is incompatible. Defaulting to null", e);
+                    return null;
+                }
             }
 
             @Override

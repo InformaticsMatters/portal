@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.squonk.io.IODescriptor;
 import org.squonk.options.*;
 import org.squonk.options.types.Structure;
-import org.squonk.types.AbstractFile;
+import org.squonk.types.AbstractStreamType;
 import org.squonk.types.NumberRange;
 import portal.notebook.api.*;
 import toolkit.wicket.semantic.NotifierProvider;
@@ -186,7 +186,7 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
         // TODO - modify this so that it asks for a file of the required type
         for (VariableInstance variableInstance : findCellInstance().getVariableInstanceMap().values()) {
             IODescriptor iod = variableInstance.getVariableDefinition();
-            if (AbstractFile.class.isAssignableFrom(iod.getPrimaryType())) {
+            if (AbstractStreamType.class.isAssignableFrom(iod.getPrimaryType())) {
                 return variableInstance;
             }
         }

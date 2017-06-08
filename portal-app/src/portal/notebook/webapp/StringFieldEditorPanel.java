@@ -4,7 +4,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class StringFieldEditorPanel extends FieldEditorPanel<String> {
+
+    private static final Logger LOG = Logger.getLogger(StringFieldEditorPanel.class.getName());
 
     private TextField<String> textField;
 
@@ -22,7 +27,15 @@ public class StringFieldEditorPanel extends FieldEditorPanel<String> {
         Model<String> model = new Model<String>() {
             @Override
             public String getObject() {
-                return (String)getFieldEditorModel().getValue();
+                try {
+                    return getFieldEditorModel().getValue();
+                } catch (ClassCastException e) {
+                    // can occur in rare case when datatype definitions change
+                    String msg = "Value datatype is incompatible. Defaulting to null";
+                    LOG.log(Level.WARNING, msg, e);
+                    StringFieldEditorPanel.this.notify("Error", msg);
+                    return null;
+                }
             }
 
             @Override
