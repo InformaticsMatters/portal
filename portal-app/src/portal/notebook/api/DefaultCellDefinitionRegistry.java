@@ -249,6 +249,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new MolfileUploadCellDefinition());
         registerCellDefinition(new PdbUploadCellDefinition());
         registerCellDefinition(new Mol2UploadCellDefinition());
+        registerCellDefinition(new ZipFileUploadCellDefinition());
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
         registerCellDefinition(new DatasetFilterGroovyCellDefinition());
         registerCellDefinition(new DatasetSorterCellDefinition());

@@ -476,7 +476,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                     .peek((o) -> counter.incrementAndGet())
                     .onClose(() -> meta.setSize(counter.get()));
 
-            Dataset<? extends BasicObject> result = new Dataset(meta.getType(), filtered, meta);
+            Dataset<? extends BasicObject> result = new Dataset(filtered, meta);
             return result;
         }
     }

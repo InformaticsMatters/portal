@@ -108,10 +108,11 @@ public class ServiceCellDefinition extends CellDefinition {
         @Override
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
-
             LOG.info("Building JobDefinition for service " + serviceConfig.getId());
 
             StepDefinition step = new StepDefinition(serviceConfig.getExecutorClassName(), serviceConfig.getId());
+            step.withInputs(serviceConfig.getInputDescriptors())
+                    .withOutputs(serviceConfig.getOutputDescriptors());
 
             Map<String, Object> options = collectAllOptions(cell);
 
@@ -122,14 +123,7 @@ public class ServiceCellDefinition extends CellDefinition {
                 LOG.info("Setting body option: " + body);
                 step = step.withOption(OPTION_BODY, body);
             } else {
-                // only define an input binding if one of the options is not specified as the body
-//                VariableKey key = createVariableKey(cell, VAR_NAME_INPUT);
-//                if (key != null) {
-//                    LOG.info("Using input variable " + key.getCellId() + ":" + key.getVariableName() + " as variable " + VAR_NAME_INPUT);
-//                } else {
-//                    LOG.info("Input variable " + VAR_NAME_INPUT + " not found");
-//                }
-                //step = step.withInputVariableMapping(StepDefinitionConstants.VARIABLE_INPUT_DATASET, key);
+
                 for (IODescriptor iod : serviceConfig.getInputDescriptors()) {
                     VariableKey key = createVariableKey(cell, iod.getName());
                     if (key != null) {
@@ -140,10 +134,6 @@ public class ServiceCellDefinition extends CellDefinition {
                     step.withInputVariableMapping(iod.getName(), key);
                 }
             }
-
-//            for (IODescriptor iod : serviceConfig.getOutputDescriptors()) {
-//                step.withOutputVariableMapping(iod.getName(), iod.getName());
-//            }
 
             for (Map.Entry<String, Object> e : options.entrySet()) {
                 String key = e.getKey();
