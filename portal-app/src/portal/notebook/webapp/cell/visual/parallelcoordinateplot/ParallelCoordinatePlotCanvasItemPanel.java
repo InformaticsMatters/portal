@@ -327,7 +327,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
                 Map<String, OptionInstance> opts = cellInstance.getOptionInstanceMap();
                 opts.get(OPTION_FIELDS).setValue(advancedOptionsPanel.getFields());
                 NullValues nullValues = advancedOptionsPanel.getNullValues();
-                opts.get(OPTION_NULL_VALUES).setValue(nullValues.toString());
+                opts.get(OPTION_NULL_VALUES).setValue(nullValues == null ? null : nullValues.toString());
 
                 notebookSession.storeCurrentEditable();
 
