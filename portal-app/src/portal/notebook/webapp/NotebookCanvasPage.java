@@ -519,7 +519,7 @@ public class NotebookCanvasPage extends WebPage {
 
     private Panel createCanvasItemPanel(CellInstance cellInstance) {
         CellDefinition cellType = cellInstance.getCellDefinition();
-        LOGGER.info("createCanvasItemPanel for cell type " + cellType.getName());
+        LOGGER.fine("createCanvasItemPanel for cell type " + cellType.getName());
         if ("TableDisplay".equals(cellType.getName())) {
             return new TableDisplayCanvasItemPanel("item", cellInstance.getId());
         } else if ("ScatterPlot".equals(cellType.getName())) {

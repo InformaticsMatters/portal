@@ -79,7 +79,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
 
     @SuppressWarnings("unchecked")
     protected void putOptionValue(Map<String, Object> options, TypeDescriptor td, String key, Object value) {
-        LOG.info("Handling option " + key + " of type " + (value == null ? "null" : value.getClass().getName()));
+        LOG.fine("Handling option " + key + " of type " + (value == null ? "null" : value.getClass().getName()));
         // ----- start of huge hack --------------
         // This is a temp workaround until we find a way of asking the sketcher for the molecule in the required format.
         // The MoleculeTypeDescriptor defines what formats the services can handle, but the sketcher knows how to convert
