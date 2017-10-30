@@ -13,7 +13,7 @@ import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import org.squonk.types.MoleculeObject;
 import portal.notebook.webapp.AbstractCellDatasetProvider;
-import portal.notebook.webapp.OutputVariableCellDatasetProvider;
+import portal.notebook.webapp.CellOutputDatasetProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,7 @@ public class DatasetDetailsPanel extends Panel {
     private final RepeatingView viewersRepeater;
 
 
-    public DatasetDetailsPanel(String id, OutputVariableCellDatasetProvider cellDatasetProvider) {
+    public DatasetDetailsPanel(String id, CellOutputDatasetProvider cellDatasetProvider) {
         this(id, cellDatasetProvider, Collections.emptyList());
     }
 

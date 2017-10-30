@@ -11,17 +11,17 @@ import portal.notebook.api.VariableInstance;
  *
  * Created by timbo on 13/05/17.
  */
-public class OutputVariableCellDatasetProvider extends AbstractCellDatasetProvider {
+public class CellOutputDatasetProvider extends AbstractCellDatasetProvider {
 
     protected final String variableName;
 
-    public OutputVariableCellDatasetProvider(NotebookSession notebookSession, Long cellId, String variableName) {
+    public CellOutputDatasetProvider(NotebookSession notebookSession, Long cellId, String variableName) {
         super(notebookSession, cellId);
         this.variableName = variableName;
     }
 
     @Override
-    protected VariableInstance getVariableInstance() {
+    public VariableInstance getVariableInstance() {
         CellInstance sourceCell = getCellInstance();
         return sourceCell == null ? null : sourceCell.getVariableInstance(variableName);
     }

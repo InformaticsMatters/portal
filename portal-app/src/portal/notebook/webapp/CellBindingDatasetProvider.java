@@ -4,7 +4,6 @@ import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
 import portal.notebook.api.BindingInstance;
-import portal.notebook.api.CellInstance;
 import portal.notebook.api.VariableInstance;
 
 import java.util.Set;
@@ -15,13 +14,13 @@ import java.util.stream.Stream;
 /** CellDatasetProvider that provides its Dataset from a bound variable and optionally filters the data based on a selection.
  * Created by timbo on 13/05/17.
  */
-public class VariableBindingCellDatasetProvider extends AbstractCellDatasetProvider {
+public class CellBindingDatasetProvider extends AbstractCellDatasetProvider {
 
     protected final String variableBindingName;
     private final String filterOptionBindingName;
     private final String selectionOptionName;
 
-    public VariableBindingCellDatasetProvider(NotebookSession notebookSession, Long cellId, String variableBindingName, String filterOptionBindingName, String selectionOptionName) {
+    public CellBindingDatasetProvider(NotebookSession notebookSession, Long cellId, String variableBindingName, String filterOptionBindingName, String selectionOptionName) {
         super(notebookSession, cellId);
         this.variableBindingName = variableBindingName;
         this.filterOptionBindingName = filterOptionBindingName;
@@ -29,7 +28,7 @@ public class VariableBindingCellDatasetProvider extends AbstractCellDatasetProvi
     }
 
     @Override
-    protected VariableInstance getVariableInstance() {
+    public VariableInstance getVariableInstance() {
         BindingInstance bindingInstance = getCellInstance().getBindingInstance(variableBindingName);
         return bindingInstance == null ? null : bindingInstance.getVariableInstance();
     }

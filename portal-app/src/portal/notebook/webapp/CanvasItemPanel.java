@@ -43,7 +43,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
     private final Long cellId;
     protected ResultsHandler resultsHandler;
     @Inject
-    private NotebookSession notebookSession;
+    protected NotebookSession notebookSession;
     @Inject
     private PopupContainerProvider popupContainerProvider;
     @Inject
@@ -69,6 +69,9 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
         }
     }
 
+    protected NotebookSession getNotebookSession() {
+        return notebookSession;
+    }
 
     protected void createResultsHandlers() {
         CellInstance cellInstance = findCellInstance();
@@ -81,7 +84,7 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                 String name = iod.getName();
                 if (iod.getPrimaryType() == Dataset.class) {
                     LOG.fine("Creating results handler for variable " + name + " in cell " + cellInstance.getName());
-                    AbstractCellDatasetProvider datasetProvider = new OutputVariableCellDatasetProvider(notebookSession, getCellId(), name);
+                    AbstractCellDatasetProvider datasetProvider = new CellOutputDatasetProvider(notebookSession, getCellId(), name);
                     resultsHandler = new DatasetResultsHandler(name, notebookSession, this, datasetProvider);
                     return;
                 } else {

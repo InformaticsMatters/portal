@@ -1,6 +1,5 @@
 package portal.notebook.webapp.cell.visual.parallelcoordinateplot;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -23,7 +22,7 @@ import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
 import portal.notebook.webapp.CellChangeEvent;
-import portal.notebook.webapp.VariableBindingCellDatasetProvider;
+import portal.notebook.webapp.CellBindingDatasetProvider;
 import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
 import portal.notebook.webapp.results.DatasetResultsHandler;
 import portal.notebook.webapp.results.ResultsPanelProvider;
@@ -53,7 +52,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     public static final String OPTION_COLOR_DIMENSION = "colorDimension";
     private static final Logger LOG = Logger.getLogger(ParallelCoordinatePlotCanvasItemPanel.class.getName());
     private static final String BUILD_PLOT_JS = "buildParallelCoordinatePlot(\":id\", {:nullValues}, :data)";
-    private VariableBindingCellDatasetProvider cellDatasetProvider;
+    private CellBindingDatasetProvider cellDatasetProvider;
     private final ModelObject model = new ModelObject();
     private Form<ModelObject> form;
     private ParallelCoordinatePlotAdvancedOptionsPanel advancedOptionsPanel;
@@ -79,7 +78,7 @@ public class ParallelCoordinatePlotCanvasItemPanel extends AbstractD3CanvasItemP
     @Override
     protected void createResultsHandlers() {
         LOG.info("Creating results handler");
-        this.cellDatasetProvider = new VariableBindingCellDatasetProvider(notebookSession, getCellId(), CellDefinition.VAR_NAME_INPUT, OPTION_FILTER_IDS, OPTION_SELECTED_IDS);
+        this.cellDatasetProvider = new CellBindingDatasetProvider(notebookSession, getCellId(), CellDefinition.VAR_NAME_INPUT, OPTION_FILTER_IDS, OPTION_SELECTED_IDS);
 
         resultsHandler = new DatasetResultsHandler("filtered", notebookSession, this, cellDatasetProvider);
     }

@@ -24,7 +24,7 @@ import org.squonk.types.NumberRange;
 import org.squonk.types.io.JsonHandler;
 import portal.PortalWebApplication;
 import portal.notebook.api.*;
-import portal.notebook.webapp.VariableBindingCellDatasetProvider;
+import portal.notebook.webapp.CellBindingDatasetProvider;
 import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
 import portal.notebook.webapp.CellChangeEvent;
 import portal.notebook.webapp.results.DatasetResultsHandler;
@@ -61,7 +61,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
         POINT_SIZES.put("Largest", 12);
     }
 
-    private VariableBindingCellDatasetProvider cellDatasetProvider;
+    private CellBindingDatasetProvider cellDatasetProvider;
 
     private final ModelObject model = new ModelObject();
     private Form<ModelObject> form;
@@ -89,7 +89,7 @@ public class ScatterPlotCanvasItemPanel extends AbstractD3CanvasItemPanel {
     @Override
     protected void createResultsHandlers() {
         LOG.info("Creating results handler");
-        this.cellDatasetProvider = new VariableBindingCellDatasetProvider(notebookSession, getCellId(), CellDefinition.VAR_NAME_INPUT, OPTION_FILTER_IDS, OPTION_SELECTED_IDS);
+        this.cellDatasetProvider = new CellBindingDatasetProvider(notebookSession, getCellId(), CellDefinition.VAR_NAME_INPUT, OPTION_FILTER_IDS, OPTION_SELECTED_IDS);
         resultsHandler = new DatasetResultsHandler("filtered", notebookSession, this, cellDatasetProvider);
     }
 

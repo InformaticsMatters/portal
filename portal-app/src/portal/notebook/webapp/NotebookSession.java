@@ -281,7 +281,7 @@ public class NotebookSession implements Serializable {
         DatasetMetadata<MoleculeObject> meta = JsonHandler.getInstance().objectFromJson(metaJson, new TypeReference<DatasetMetadata<MoleculeObject>>() {});
         try (InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null)) {
             InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
-            Dataset<MoleculeObject> dataset = new Dataset<>(MoleculeObject.class, gunzippedInputStream, meta);
+            Dataset<MoleculeObject> dataset = new Dataset<>(gunzippedInputStream, meta);
             return dataset.getItems();
         }
     }
@@ -314,7 +314,7 @@ public class NotebookSession implements Serializable {
         DatasetMetadata meta = JsonHandler.getInstance().objectFromJson(metaJson, DatasetMetadata.class);
         InputStream inputStream = notebookVariableClient.readStreamValue(currentNotebookInfo.getId(), getCurrentNotebookVersionId(), variableInstance.getCellId(), variableInstance.getVariableDefinition().getName(), null);
         InputStream gunzippedInputStream = IOUtils.getGunzippedInputStream(inputStream);
-        return new Dataset<>(meta.getType(), gunzippedInputStream, meta);
+        return new Dataset<>(gunzippedInputStream, meta);
     }
 
     public List<UUID> listAllDatasetUuids(IDatasetDescriptor datasetDescriptor) {
@@ -359,8 +359,6 @@ public class NotebookSession implements Serializable {
         }
         return null;
     }
-
-
 
     public void resetCurrentNotebook() {
         setCurrentNotebookVersionId(null);

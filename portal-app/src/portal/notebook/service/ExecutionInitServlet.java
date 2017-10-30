@@ -41,7 +41,7 @@ public class ExecutionInitServlet extends HttpServlet {
         GenericType<List<Execution>> genericType = new GenericType<List<Execution>>(){};
         List<Execution> list = resource.get(genericType);
         for (Execution execution : list) {
-            LOGGER.log(Level.INFO, "Processng execution id " + execution.getId());
+            LOGGER.log(Level.INFO, "Processing execution id " + execution.getId());
             try {
                 client.resource(portalClientConfig.getBaseUri() + "/updateExecutionStatus").queryParam("id", execution.getId().toString()).post();
             } catch (Throwable t) {

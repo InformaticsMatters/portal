@@ -4,7 +4,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.squonk.dataset.DatasetMetadata;
 import portal.notebook.webapp.AbstractCellDatasetProvider;
 import portal.notebook.webapp.CanvasItemPanel;
-import portal.notebook.webapp.OutputVariableCellDatasetProvider;
 import portal.notebook.webapp.NotebookSession;
 
 import java.util.ArrayList;

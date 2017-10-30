@@ -34,6 +34,7 @@ import portal.notebook.api.*;
 import portal.notebook.webapp.cell.CellDescriptionEditorPanel;
 import portal.notebook.webapp.cell.visual.boxplot.BoxPlotCanvasItemPanel;
 import portal.notebook.webapp.cell.visual.heatmap.HeatmapCanvasItemPanel;
+import portal.notebook.webapp.cell.visual.image.ImageCanvasItemPanel;
 import portal.notebook.webapp.cell.visual.ngl.NglViewerCanvasItemPanel;
 import portal.notebook.webapp.cell.visual.parallelcoordinateplot.ParallelCoordinatePlotCanvasItemPanel;
 import portal.notebook.webapp.cell.visual.scatterplot.ScatterPlotCanvasItemPanel;
@@ -533,6 +534,8 @@ public class NotebookCanvasPage extends WebPage {
             return new ThreeDimMolCanvasItemPanel("item", cellInstance.getId());
         } else if ("NGLViewer".equals(cellType.getName())) {
             return new NglViewerCanvasItemPanel("item", cellInstance.getId());
+        } else if ("ImageViewer".equals(cellType.getName())) {
+            return new ImageCanvasItemPanel("item", cellInstance.getId());
         } else {
             return new DefaultCanvasItemPanel("item", cellInstance.getId());
         }

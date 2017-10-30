@@ -25,6 +25,10 @@ public class PortalEntityManagerProducer {
             if (properties == null) {
                 emf = Persistence.createEntityManagerFactory(PortalConstants.PU_NAME);
             } else {
+                String pw = System.getenv("POSTGRES_SQUONK_PASSWORD");
+                if (pw != null) {
+                    properties.put("javax.persistence.jdbc.password", pw);
+                }
                 emf = Persistence.createEntityManagerFactory(PortalConstants.PU_NAME, properties);
             }
         }

@@ -44,8 +44,10 @@ public class ServiceCellDefinition extends CellDefinition {
         // TODO - this check should be unnecessary once all services are defined correctly
         // if one of the options is defined as the body then we don't want an input endpoint
         if (findOptionDescriptorForBody() == null) {
-            for (IODescriptor input : serviceConfig.getInputDescriptors()) {
-                getBindingDefinitionList().add(new BindingDefinition(input.getName(), input.getPrimaryType(), input.getSecondaryType()));
+            if (serviceConfig.getInputDescriptors() != null) {
+                for (IODescriptor input : serviceConfig.getInputDescriptors()) {
+                    getBindingDefinitionList().add(new BindingDefinition(input.getName(), input.getPrimaryType(), input.getSecondaryType()));
+                }
             }
         }
 
@@ -117,21 +119,22 @@ public class ServiceCellDefinition extends CellDefinition {
             Map<String, Object> options = collectAllOptions(cell);
 
             OptionDescriptor<?> optDesc = findOptionDescriptorForBody();
-            LOG.info("Body OptionDescriptor: " + optDesc);
+            LOG.fine("Body OptionDescriptor: " + optDesc);
             if (optDesc != null) {
                 Object body = options.remove(OPTION_BODY);
-                LOG.info("Setting body option: " + body);
+                LOG.fine("Setting body option: " + body);
                 step = step.withOption(OPTION_BODY, body);
             } else {
-
-                for (IODescriptor iod : serviceConfig.getInputDescriptors()) {
-                    VariableKey key = createVariableKey(cell, iod.getName());
-                    if (key != null) {
-                        LOG.info("Using input variable " + key.getCellId() + ":" + key.getVariableName() + " as variable " + iod.getName());
-                    } else {
-                        LOG.info("Input variable " + iod.getName() + " not found");
+                if (serviceConfig.getInputDescriptors() != null) {
+                    for (IODescriptor iod : serviceConfig.getInputDescriptors()) {
+                        VariableKey key = createVariableKey(cell, iod.getName());
+                        if (key != null) {
+                            LOG.fine("Using input variable " + key.getCellId() + ":" + key.getVariableName() + " as variable " + iod.getName());
+                        } else {
+                            LOG.info("Input variable " + iod.getName() + " not found");
+                        }
+                        step.withInputVariableMapping(iod.getName(), key);
                     }
-                    step.withInputVariableMapping(iod.getName(), key);
                 }
             }
 
@@ -139,7 +142,7 @@ public class ServiceCellDefinition extends CellDefinition {
                 String key = e.getKey();
                 Object value = e.getValue();
                 if (value != null) {
-                    LOG.info("Writing option: " + key + " [" + value.getClass().getName() + "] -> " + value);
+                    LOG.fine("Writing option: " + key + " [" + value.getClass().getName() + "] -> " + value);
                     step.withOption(key, value);
                 }
             }

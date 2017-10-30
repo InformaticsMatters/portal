@@ -26,8 +26,6 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
     public static final String OPTION_FIELDS = "fields";
 
     private static final Logger LOG = Logger.getLogger(AbstractD3CanvasItemPanel.class.getName());
-    @Inject
-    protected NotebookSession notebookSession;
 
     public AbstractD3CanvasItemPanel(String id, Long cellId) {
         super(id, cellId);
@@ -96,7 +94,7 @@ public abstract class AbstractD3CanvasItemPanel extends CanvasItemPanel {
 
         @Override
         public NotebookSession getNotebookSesion() {
-            return AbstractD3CanvasItemPanel.this.notebookSession;
+            return AbstractD3CanvasItemPanel.this.getNotebookSession();
         }
 
     }

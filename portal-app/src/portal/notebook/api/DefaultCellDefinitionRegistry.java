@@ -10,7 +10,7 @@ import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
 import org.squonk.types.*;
 import portal.SessionContext;
-import portal.notebook.webapp.*;
+import portal.notebook.webapp.CanvasItemPanel;
 import portal.notebook.webapp.cell.visual.AbstractD3CanvasItemPanel;
 import portal.notebook.webapp.cell.visual.heatmap.HeatmapCanvasItemPanel;
 import portal.notebook.webapp.cell.visual.ngl.NglViewerCanvasItemPanel;
@@ -202,6 +202,13 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         return cellDefinition;
     }
 
+    private static CellDefinition createImageCellDefinition() {
+        CellDefinition cellDefinition = new SimpleCellDefinition("ImageViewer", "Image viewer", "icons/visualisation_chart.png",
+                new String[]{"image", "png", "visualization", "visualisation", "viz"}, false);
+        cellDefinition.getBindingDefinitionList().add(new BindingDefinition("input", ImageFile.class, null));
+        return cellDefinition;
+    }
+
     private static void addFilterOption(CellDefinition cellDefinition) {
         addFilterOption(cellDefinition, CanvasItemPanel.OPTION_FILTER_IDS, "Filter", "Filter (IDs to include)");
     }
@@ -273,6 +280,7 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(createHeatmapCellDefinition());
         registerCellDefinition(create3DMolCellDefinition());
         registerCellDefinition(createNglViewerCellDefinition());
+        registerCellDefinition(createImageCellDefinition());
     }
 
     private void registerServiceCellDefinitions() {
