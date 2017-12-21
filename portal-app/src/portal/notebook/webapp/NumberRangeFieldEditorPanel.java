@@ -16,7 +16,7 @@ public class NumberRangeFieldEditorPanel<T extends Number & Comparable<T>> exten
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NumberRangeFieldEditorPanel.class.getName());
 
-    private final FieldEditorModel<? extends NumberRange<T>> fieldEditorModel;
+    private final FieldEditorModel<NumberRange<T>> fieldEditorModel;
     private NumberTextField<T> minField;
     private NumberTextField<T> maxField;
 
@@ -32,14 +32,15 @@ public class NumberRangeFieldEditorPanel<T extends Number & Comparable<T>> exten
         maxField.setEnabled(editable);
     }
 
-    @SuppressWarnings("unchecked")
+
     private void addComponents() {
 
-        OptionDescriptor<? extends NumberRange> optionDescriptor = fieldEditorModel.getOptionDescriptor();
-        Class cls = optionDescriptor.getTypeDescriptor().getType();
+        OptionDescriptor<NumberRange<T>> optionDescriptor = fieldEditorModel.getOptionDescriptor();
+        Class<NumberRange<T>> cls = optionDescriptor.getTypeDescriptor().getType();
         NumberRange<T> range = fieldEditorModel.getValue();
         if (range == null) {
-            range = NumberRange.create(cls);
+            range = (NumberRange<T>)NumberRange.create(cls);
+            fieldEditorModel.setValue(range);
         }
 
         CompoundPropertyModel<NumberRange> model = new CompoundPropertyModel<>(range);
@@ -47,8 +48,8 @@ public class NumberRangeFieldEditorPanel<T extends Number & Comparable<T>> exten
         // TODO - allow the OptionDescriptor to specify min and max bounds
         Label label = new Label("label", fieldEditorModel.getDisplayName());
         label.add(new AttributeModifier("title", optionDescriptor.getDescription()));
-        minField = new NumberTextField<T>("minValue", model.bind("minValue"), range.getType());
-        maxField = new NumberTextField<T>("maxValue", model.bind("maxValue"), range.getType());
+        minField = new NumberTextField<>("minValue", model.bind("minValue"), range.getType());
+        maxField = new NumberTextField<>("maxValue", model.bind("maxValue"), range.getType());
         add(label);
         add(minField);
         add(maxField);
