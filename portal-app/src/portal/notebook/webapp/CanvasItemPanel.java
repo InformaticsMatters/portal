@@ -163,12 +163,14 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
                         return;
                     }
                     Execution lastExecution = notebookSession.findExecution(cellInstance.getId());
-                    boolean executionChanged = executionChanged(lastExecution);
-                    if (executionChanged) {
-                        notifyExecutionChanged(ajaxRequestTarget, lastExecution);
-                        updateAndNotifyCellStatus(ajaxRequestTarget);
+                    if (lastExecution != null) {
+                        boolean executionChanged = executionChanged(lastExecution);
+                        if (executionChanged) {
+                            notifyExecutionChanged(ajaxRequestTarget, lastExecution);
+                            updateAndNotifyCellStatus(ajaxRequestTarget);
+                        }
+                        oldExecution = lastExecution;
                     }
-                    oldExecution = lastExecution;
                 } catch (Throwable t) {
                     LOG.log(Level.WARNING, "Error refreshing status", t);
                     NotifierPanel notifierPanel = notifierProvider.getNotifier(getPage());

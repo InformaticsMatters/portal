@@ -71,7 +71,7 @@ public class StructureFieldEditorPanel extends FieldEditorPanel<Structure> {
             protected void onEvent(AjaxRequestTarget ajaxRequestTarget) {
                 Structure struct = model.getObject();
                 String mol = struct.getSource();
-                LOG.info("Setting mol to sketcher: " + mol);
+                LOG.fine("Setting mol to sketcher: " + mol);
                 if (mol != null && !mol.isEmpty()) {
                     marvinSketcherPanel.setSketchData(ajaxRequestTarget, mol, struct.getFormat());
                 }
