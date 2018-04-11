@@ -62,6 +62,8 @@ public class DatasetDetailsPanel extends Panel {
             public MarkupContainer createPanel(int index, Class dataType) {
                 if (dataType == MoleculeObject.class) {
                     return new MoleculeObjectExportPanel(String.valueOf(index), cellDatasetProvider);
+                } else if (dataType == BasicObject.class) {
+                    return new BasicObjectExportPanel(String.valueOf(index), cellDatasetProvider);
                 } else {
                     return new WebMarkupContainer(String.valueOf(index));
                 }
