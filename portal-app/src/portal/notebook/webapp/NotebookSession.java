@@ -39,7 +39,7 @@ public class NotebookSession implements Serializable {
     private NotebookInstance currentNotebookInstance;
     private NotebookInfo currentNotebookInfo;
     private Long currentNotebookVersionId;
-    private List<CellDefinition> cellDefinitionList;
+    private Collection<CellDefinition> cellDefinitionList;
     @Inject
     private NotebookVariableClient notebookVariableClient;
     @Inject
@@ -116,7 +116,8 @@ public class NotebookSession implements Serializable {
         if (versionDTO instanceof NotebookSavepointDTO) {
             versionDTO = notebookVariableClient.createEditable(currentNotebookInfo.getId(), versionId, sessionContext.getLoggedInUserDetails().getUserid());
         }
-        currentNotebookInstance = new NotebookInstance();
+        LOG.info("Loading notebook instance " + versionDTO.getNotebookId() + "/" + versionId);
+        currentNotebookInstance = new NotebookInstance(this);
         currentNotebookInstance.loadNotebookCanvasDTO(versionDTO.getCanvasDTO(), cellDefinitionRegistry);
         currentNotebookInstance.setEditable(versionDTO instanceof NotebookEditableDTO);
         currentNotebookInstance.setVersionDescription(buildVersionDescription(versionDTO));
@@ -159,16 +160,19 @@ public class NotebookSession implements Serializable {
     }
 
     public List<CellDefinition> listCellDefinition(CellDefinitionFilterData cellDefinitionFilterData) {
-        List<CellDefinition> list = new ArrayList<>();
+        if (cellDefinitionList == null) {
+            // first time in the session we need to load the list of cells
+            cellDefinitionList = cellDefinitionRegistry.getCellDefinitions();
+        }
         Collection<CellDefinition> filteredCellDefinitions = listFilteredCellDefinition(cellDefinitionFilterData);
-        list.addAll(filteredCellDefinitions);
-        this.cellDefinitionList = list;
-        return list;
+        List<CellDefinition> results = new ArrayList<>();
+        results.addAll(filteredCellDefinitions);
+        return results;
     }
 
     private Collection<CellDefinition> listFilteredCellDefinition(CellDefinitionFilterData filter) {
         Collection<CellDefinition> filteredList = new ArrayList<>();
-        for (CellDefinition cellDefinition : cellDefinitionRegistry.listCellDefinition()) {
+        for (CellDefinition cellDefinition : cellDefinitionList) {
             if (filter != null && filter.getPattern() != null) {
                 if (cellDefinitionMatchesAllPatterns(cellDefinition, filter)) {
                     filteredList.add(cellDefinition);
@@ -212,7 +216,13 @@ public class NotebookSession implements Serializable {
         }
     }
 
-    public CellDefinition findCellType(String cellName) {
+    /** Find the cell by its 'name' property. This name is the name associated with the cell definition, not the display name
+     * that has been assigned to a cell instance.
+     *
+     * @param cellName
+     * @return
+     */
+    public CellDefinition findCellByName(String cellName) {
         CellDefinition result = null;
         for (CellDefinition cellDefinition : cellDefinitionList) {
             if (cellDefinition.getName().equals(cellName)) {

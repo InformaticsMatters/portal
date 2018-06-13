@@ -4,6 +4,7 @@ package portal.notebook.api;
 import org.squonk.io.IODescriptor;
 import org.squonk.notebook.api.NotebookCanvasDTO;
 import org.squonk.options.OptionDescriptor;
+import portal.notebook.webapp.NotebookSession;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import java.util.logging.Level;
 public class NotebookInstance implements Serializable {
     private final static long serialVersionUID = 1l;
 
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(NotebookInstance.class.getName());
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(NotebookInstance.class.getName());
     private final List<Long> removedCellIdList = new ArrayList<>();
     private final List<CellInstance> cellInstanceList = new ArrayList<>();
     private Long lastCellId;
@@ -22,6 +23,11 @@ public class NotebookInstance implements Serializable {
     private String versionDescription;
     private Integer canvasWidth;
     private Integer canvasHeight;
+    private final NotebookSession notebookSession;
+
+    public NotebookInstance(NotebookSession notebookSession) {
+        this.notebookSession = notebookSession;
+    }
 
     public List<CellInstance> getCellInstanceList() {
         return cellInstanceList;
@@ -211,9 +217,12 @@ public class NotebookInstance implements Serializable {
                 // TODO - error handling
                 // if cell can't be created for any reason replace it with a "error" cell that contains
                 // as much info as is reasonable so that user can try to remedy the problem
-                CellDefinition cellDefinition = cellDefinitionRegistry.findCellDefinition(cellDTO.getKey());
+                LOG.fine("Restoring cell " + cellDTO.getKey() + "/" + cellDTO.getName());
+                // cellDTO.getKey() is the name that identifies the cell e.g. RDKitConformers
+                // cellDTO.getName() is the display name that has been given to that cell instance e.g. RDKitConformers1
+                CellDefinition cellDefinition = notebookSession.findCellByName(cellDTO.getKey());
                 if (cellDefinition == null) {
-                    LOGGER.log(Level.WARNING, "Unknown cell definition: " + cellDTO.getKey());
+                    LOG.log(Level.WARNING, "Unknown cell definition: " + cellDTO.getKey());
                 } else {
                     CellInstance cellInstance = new CellInstance();
                     cellInstance.setCellDefinition(cellDefinition);
@@ -244,10 +253,10 @@ public class NotebookInstance implements Serializable {
                         if (bindingInstance != null && bindingDTO.getProducerVariableName() != null) {
                             VariableInstance variableInstance = findVariableByCellId(bindingDTO.getProducerId(), bindingDTO.getProducerVariableName());
                             if (variableInstance != null && variableInstance.getVariableDefinition() != null) {
-                                LOGGER.fine("Initializing variable binding of " + bindingInstance.getBindingDefinition().getName() + " to " + variableInstance.getVariableDefinition().getName());
+                                LOG.fine("Initializing variable binding of " + bindingInstance.getBindingDefinition().getName() + " to " + variableInstance.getVariableDefinition().getName());
                                 bindingInstance.setVariableInstance(variableInstance);
                             } else {
-                                LOGGER.warning("Could not bind variable for " + bindingInstance.getName());
+                                LOG.warning("Could not bind variable for " + bindingInstance.getName());
                             }
                         }
                     }
@@ -258,7 +267,7 @@ public class NotebookInstance implements Serializable {
                             if (optionInstance != null) {
                                 bindingInstance.setOptionInstance(optionInstance);
                             } else {
-                                LOGGER.warning("Could not bind option for " + bindingInstance.getName());
+                                LOG.warning("Could not bind option for " + bindingInstance.getName());
                             }
                         }
                     }

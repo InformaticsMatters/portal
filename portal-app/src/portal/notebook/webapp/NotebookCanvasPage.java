@@ -483,7 +483,7 @@ public class NotebookCanvasPage extends WebPage {
 
         LOGGER.info("Type: " + dropDataType + " ID: " + dropDataId + " at " + POSITION_LEFT + ": " + x + " " + POSITION_TOP + ": " + y);
 
-        CellDefinition cellDefinition = notebookSession.findCellType(dropDataId);
+        CellDefinition cellDefinition = notebookSession.findCellByName(dropDataId);
         CellInstance cellInstance = notebookSession.getCurrentNotebookInstance().addCellInstance(cellDefinition);
         cellInstance.setPositionLeft(Integer.parseInt(x));
         cellInstance.setPositionTop(Integer.parseInt(y));

@@ -29,7 +29,7 @@ public class ServiceCellDefinition extends CellDefinition {
     private static final String OPTION_BODY = StepDefinitionConstants.OPTION_BODY;
 
     public ServiceCellDefinition(ServiceConfig serviceConfig) {
-        LOG.info("Creating service cell " + serviceConfig.getName() + " with icon " + serviceConfig.getIcon());
+        LOG.fine("Creating service cell " + serviceConfig.getName() + " with icon " + serviceConfig.getIcon());
         this.serviceConfig = serviceConfig;
         setExecutable(Boolean.TRUE);
         OptionDescriptor[] options = serviceConfig.getOptionDescriptors();

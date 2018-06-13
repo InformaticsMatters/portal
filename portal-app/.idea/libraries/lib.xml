@@ -21,6 +21,7 @@
       <root url="file://$PROJECT_DIR$/../lib/postgresql/9.4.1207.jre7" />
       <root url="file://$PROJECT_DIR$/../lib/jackson/2.7.2" />
       <root url="file://$PROJECT_DIR$/../lib/derby/10.10.1.1" />
+      <root url="file://$PROJECT_DIR$/../lib/core-services" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

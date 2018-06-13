@@ -1,8 +1,6 @@
 package portal.notebook.api;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetSelection;
 import org.squonk.io.IODescriptors;
@@ -21,18 +19,16 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Logger;
 
 @Default
 @ApplicationScoped
 public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultCellDefinitionRegistry.class);
-    private final Map<String, CellDefinition> cellDefinitionMap = new LinkedHashMap<>();
-    private boolean serviceCellsRegistered = false;
+    private static final Logger LOG = Logger.getLogger(DefaultCellDefinitionRegistry.class.getName());
+    private final Map<String, CellDefinition> staticCellDefinitions = new LinkedHashMap<>();
+
     @Inject
     private SessionContext sessionContext;
     @Inject
@@ -224,25 +220,19 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
 
     @PostConstruct
     public void init() {
+        // define the cells that will always be present (the non-service cells)
         registerStandardCellDefinitions();
         registerCustomCellDefinitions();
-        registerServiceCellDefinitions();
     }
 
-    public CellDefinition findCellDefinition(String name) {
-        return cellDefinitionMap.get(name);
-    }
+    public Collection<CellDefinition> getCellDefinitions() {
+        LOG.fine("Listing Cell definitions");
+        List<ServiceCellDefinition> serviceCells = fetchServiceCellDefinitions();
+        List<CellDefinition> allCells = new ArrayList<>();
+        allCells.addAll(staticCellDefinitions.values());
+        allCells.addAll(serviceCells);
 
-    public Collection<CellDefinition> listCellDefinition() {
-        if (cellDefinitionMap.isEmpty()) {
-            registerStandardCellDefinitions();
-            registerCustomCellDefinitions();
-            registerServiceCellDefinitions();
-        }
-        if (!serviceCellsRegistered) {
-            registerServiceCellDefinitions();
-        }
-       return cellDefinitionMap.values();
+       return allCells;
     }
 
     private void registerStandardCellDefinitions() {
@@ -283,15 +273,12 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(createImageCellDefinition());
     }
 
-    private void registerServiceCellDefinitions() {
+    private List<ServiceCellDefinition> fetchServiceCellDefinitions() {
         List<ServiceCellDefinition> serviceCellDefinitions = serviceCellsProvider.listServiceCellDefinition();
-        for (CellDefinition cellDefinition : serviceCellDefinitions) {
-            registerCellDefinition(cellDefinition);
-        }
-        serviceCellsRegistered = serviceCellDefinitions.size() > 0;
+        return serviceCellDefinitions;
     }
 
-    public void registerCellDefinition(CellDefinition cellDefinition) {
-        cellDefinitionMap.put(cellDefinition.getName(), cellDefinition);
+    private void registerCellDefinition(CellDefinition cellDefinition) {
+        staticCellDefinitions.put(cellDefinition.getName(), cellDefinition);
     }
 }

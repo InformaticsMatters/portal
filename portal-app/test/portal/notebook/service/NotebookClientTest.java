@@ -64,7 +64,7 @@ public class NotebookClientTest extends AbstractTestCase {
         if (!canvas1.getLastCellId().equals(canvas2.getLastCellId())) {
             throw new RuntimeException("Different content");
         }
-        NotebookInstance notebookInstance = new NotebookInstance();
+        NotebookInstance notebookInstance = new NotebookInstance(null);
         notebookInstance.loadNotebookCanvasDTO(canvas2, cellDefinitionRegistry);
         CellInstance cellInstance = notebookInstance.addCellInstance(new ChemblActivitiesFetcherCellDefinition());
         cellInstance.setSizeWidth(267);
@@ -75,7 +75,7 @@ public class NotebookClientTest extends AbstractTestCase {
         notebookInstance.storeNotebookCanvasDTO(notebookCanvasDTO);
         notebookClient.updateEditable(notebookEditable.getNotebookId(), notebookEditable.getId(), notebookCanvasDTO);
         notebookEditable = notebookClient.listEditables(notebookDescriptor.getId(), USER_NAME).get(0);
-        notebookInstance = new NotebookInstance();
+        notebookInstance = new NotebookInstance(null);
         notebookInstance.loadNotebookCanvasDTO(notebookEditable.getCanvasDTO(), cellDefinitionRegistry);
         cellInstance = notebookInstance.getCellInstanceList().get(0);
         VariableInstance outputVariableInstance = cellInstance.getVariableInstanceMap().values().iterator().next();
