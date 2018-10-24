@@ -28,6 +28,7 @@ public class RestServiceCellsProvider implements ServiceCellsProvider {
         ArrayList<ServiceCellDefinition> result = new ArrayList<>();
         for (ServiceConfig serviceConfig : listServiceConfigss()) {
             result.add(buildCellDefinitionForServiceDescriptor(serviceConfig));
+            logger.info("Adding service cell " + serviceConfig.getId() + " -> " + serviceConfig.getName());
         }
         return result;
     }

@@ -281,6 +281,10 @@ public class CxnReactorCellDefinition extends CellDefinition {
         getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, CxnReactor.OPTION_IGNORE_REACTIVITY, "Ignore reactivity rules", "Ignore reactivity rules when reacting", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, CxnReactor.OPTION_IGNORE_SELECTIVITY, "Ignore selectivity rules", "Ignore selectivity rules when reacting", Mode.User));
         getOptionDefinitionList().add(new OptionDescriptor<>(Boolean.class, CxnReactor.OPTION_IGNORE_TOLERANCE, "Ignore tolerance rules", "Ignore tolerance rules when reacting", Mode.User));
+        getOptionDefinitionList().add(new OptionDescriptor<>(String.class, "outputFormat", "Output format", "Molecules format for products (smiles or mol)", Mode.User)
+                .withValues(new String[]{"smiles", "mol"})
+                .withDefaultValue("smiles")
+                .withMinMaxValues(1, 1));
 
     }
 
