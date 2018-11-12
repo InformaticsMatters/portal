@@ -4,6 +4,7 @@ import org.squonk.execution.steps.StepDefinition;
 import org.squonk.io.IODescriptor;
 import org.squonk.io.IODescriptors;
 import org.squonk.jobdef.JobDefinition;
+import org.squonk.jobdef.CellExecutorJobDefinition;
 import org.squonk.notebook.api.VariableKey;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,7 +24,7 @@ class ZeroInputOneOutputJobCellExecutor extends AbstractJobCellExecutor {
 
 
     @Override
-    protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
+    protected CellExecutorJobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
         VariableKey key = createVariableKey(cell, "input");
         IODescriptor[] outputs = IODescriptors.createMoleculeObjectDatasetArray("output");

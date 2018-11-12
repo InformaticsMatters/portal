@@ -7,6 +7,7 @@ import org.squonk.execution.steps.StepDefinitionConstants.CxnReactor;
 import org.squonk.io.IODescriptor;
 import org.squonk.io.IODescriptors;
 import org.squonk.jobdef.JobDefinition;
+import org.squonk.jobdef.CellExecutorJobDefinition;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.options.OptionDescriptor.Mode;
 import org.squonk.types.BasicObject;
@@ -296,7 +297,7 @@ public class CxnReactorCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
+        protected CellExecutorJobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             IODescriptor[] inputs = new IODescriptor[] {
                     IODescriptors.createMoleculeObjectDataset(INPUT_R1),

@@ -3,6 +3,8 @@ package portal.notebook.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.squonk.jobdef.ExecuteCellUsingStepsJobDefinition;
 import org.squonk.jobdef.JobDefinition;
+import org.squonk.jobdef.CellExecutorJobDefinition;
+import org.squonk.jobdef.ExternalJobDefinition;
 import org.squonk.jobdef.JobQuery;
 import org.squonk.jobdef.JobStatus;
 import com.sun.jersey.api.client.Client;
@@ -31,7 +33,7 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
     private final Map<String, JobDefinition> jobDefinitionMap = new HashMap<>();
 
     @Override
-    public JobStatus submit(JobDefinition jobDefinition, String username, Integer integer) throws IOException {
+    public JobStatus submit(CellExecutorJobDefinition jobDefinition, String username, Integer integer) throws IOException {
         new JobThread(jobDefinition, "http://localhost:8080/ws/mockJobs").start();
         JobStatus<JobDefinition> jobStatus = JobStatus.create(jobDefinition, username, new Date(), 1);
         String jobId = jobStatus.getJobId();
@@ -39,6 +41,10 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
         jobStatusMap.put(jobId, jobStatus);
         jobDefinitionMap.put(jobId, jobDefinition);
         return jobStatus;
+    }
+
+    public JobStatus create(ExternalJobDefinition jobdef, String username, Integer totalCount) throws IOException {
+        throw new IllegalStateException("NYI");
     }
 
     @Override
@@ -110,10 +116,10 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
 
     class JobThread extends Thread {
 
-        private final JobDefinition jobDefinition;
+        private final CellExecutorJobDefinition jobDefinition;
         private final String baseUri;
 
-        JobThread(JobDefinition jobDefinition, String baseUri) {
+        JobThread(CellExecutorJobDefinition jobDefinition, String baseUri) {
             this.jobDefinition = jobDefinition;
             this.baseUri = baseUri;
         }

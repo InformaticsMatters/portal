@@ -4,6 +4,7 @@ import org.squonk.core.client.StructureIOClient;
 import org.squonk.io.IODescriptor;
 import org.squonk.jobdef.ExecuteCellUsingStepsJobDefinition;
 import org.squonk.jobdef.JobDefinition;
+import org.squonk.jobdef.CellExecutorJobDefinition;
 import org.squonk.jobdef.JobStatus;
 import org.squonk.jobdef.StepsCellExecutorJobDefinition;
 import org.squonk.client.JobStatusClient;
@@ -41,7 +42,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         Integer workunits = null; // null means "I don't know", but we can probably get the number from the dataset metadata
 
         // create the job
-        JobDefinition jobdef = buildJobDefinition(cell, data);
+        CellExecutorJobDefinition jobdef = buildJobDefinition(cell, data);
         // execute the job
 //        JobStatusClient client = createJobStatusClient();
 //        LOG.info("Executing job using client " + client);
@@ -59,7 +60,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
     /**
      * Build the JobDefinition that will be submitted for execution.
      */
-    protected abstract JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData);
+    protected abstract CellExecutorJobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData);
 
 
     protected Map<String, Object> collectAllOptions(CellInstance cell) {

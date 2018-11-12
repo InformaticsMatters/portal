@@ -5,6 +5,7 @@ import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.io.IODescriptor;
 import org.squonk.io.IODescriptors;
 import org.squonk.jobdef.JobDefinition;
+import org.squonk.jobdef.CellExecutorJobDefinition;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.FileTypeDescriptor;
 import org.squonk.options.OptionDescriptor;
@@ -37,7 +38,7 @@ public class MolfileUploadCellDefinition extends CellDefinition {
     static class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
+        protected CellExecutorJobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             VariableKey key = new VariableKey(cellExecutionData.getCellId(), VAR_NAME_INPUT); // we are the producer
             IODescriptor[] inputs = new IODescriptor[] {IODescriptors.createMolfile(VAR_NAME_INPUT)};

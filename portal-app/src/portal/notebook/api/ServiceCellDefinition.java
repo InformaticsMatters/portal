@@ -6,6 +6,7 @@ import org.squonk.execution.steps.StepDefinition;
 import org.squonk.execution.steps.StepDefinitionConstants;
 import org.squonk.io.IODescriptor;
 import org.squonk.jobdef.JobDefinition;
+import org.squonk.jobdef.CellExecutorJobDefinition;
 import org.squonk.notebook.api.VariableKey;
 import org.squonk.options.OptionDescriptor;
 import org.squonk.types.BasicObject;
@@ -108,7 +109,7 @@ public class ServiceCellDefinition extends CellDefinition {
     class Executor extends AbstractJobCellExecutor {
 
         @Override
-        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
+        protected CellExecutorJobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             LOG.info("Building JobDefinition for service " + serviceConfig.getId());
 
