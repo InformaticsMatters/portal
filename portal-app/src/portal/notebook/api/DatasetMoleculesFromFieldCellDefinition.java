@@ -25,7 +25,8 @@ public class DatasetMoleculesFromFieldCellDefinition extends CellDefinition {
 
 
     public DatasetMoleculesFromFieldCellDefinition() {
-        super(CELL_NAME, "New datset from molecules from a field", "icons/molecule_generator.png", new String[]{"molecule", "extractor", "flatmap"});
+        super(CELL_NAME, "New datset from molecules from a field", "icons/molecule_generator.png",
+                new String[]{"molecule", "extractor", "flatmap"});
         getBindingDefinitionList().add(new BindingDefinition(VAR_NAME_INPUT, Dataset.class, BasicObject.class));
         getVariableDefinitionList().add(IODescriptors.createMoleculeObjectDataset(VAR_NAME_OUTPUT));
         getOptionDefinitionList().add(new OptionDescriptor<>(new DatasetFieldTypeDescriptor(new Class[] {MoleculeObject[].class}),

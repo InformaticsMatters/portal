@@ -95,7 +95,10 @@ public class PortalService {
             }
             execution.setJobId(jobStatus.getJobId());
             execution.setJobStatus(jobStatus.getStatus());
-            execution.setJobActive(Boolean.TRUE);
+            execution.setJobActive(jobStatus.getStatus() != JobStatus.Status.COMPLETED && jobStatus.getStatus() != JobStatus.Status.ERROR);
+            if (jobStatus.getStatus() == JobStatus.Status.COMPLETED) {
+                execution.setJobSuccessful(true);
+            }
             execution.setLastEventMessage(jobStatus.getEvents().isEmpty() ? null : jobStatus.getEvents().get(0).toString());
             return execution;
         } catch (Exception e) {

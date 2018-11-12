@@ -26,35 +26,36 @@ public class Mol2UploadCellDefinition extends CellDefinition {
     private static final String MOL2_OUTPUT = "mol2";
 
     public Mol2UploadCellDefinition() {
-        super(CELL_NAME, "Mol2 upload", "icons/file_upload_molecule.png", new String[]{"file", "upload", "mol2"});
-        IODescriptor input = IODescriptors.createMol2(VAR_NAME_FILECONTENT);
-        getVariableDefinitionList().add(input);
+        super(CELL_NAME, "Mol2 upload", "icons/file_upload_molecule.png", new String[]{"file", "upload", "mol2"}, false);
+        IODescriptor output = IODescriptors.createMol2(VAR_NAME_OUTPUT);
+        getVariableDefinitionList().add(output);
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"mol2file"}), OPT_FILE_UPLOAD, "Mol2 file", "Upload Mol2 file", Mode.User));
     }
 
     @Override
     public CellExecutor getCellExecutor() {
-        return new Executor();
+        return null;
     }
 
-    static class Executor extends AbstractJobCellExecutor {
-
-        @Override
-        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
-
-            VariableKey key = new VariableKey(cellExecutionData.getCellId(), VAR_NAME_FILECONTENT); // we are the producer
-            IODescriptor[] outputs = new IODescriptor[] {IODescriptors.createMol2(MOL2_OUTPUT)};
-
-            Map<String,Object> opts = collectAllOptions(cell);
-
-            StepDefinition step1 = new StepDefinition(Mol2Upload.CLASSNAME)
-                    .withOutputs(outputs)
-                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, key) // maps the input to our own file contents
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
-                    .withOptions(opts);
-
-            return buildJobDefinition(cellExecutionData, cell, null, outputs, step1);
-        }
-    }
+//    static class Executor extends AbstractJobCellExecutor {
+//
+//        @Override
+//        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
+//
+//            VariableKey key = new VariableKey(cellExecutionData.getCellId(), VAR_NAME_FILECONTENT); // we are the producer
+//            IODescriptor[] inputs = new IODescriptor[] {IODescriptors.createMol2(MOL2_OUTPUT)};
+//            IODescriptor[] outputs = new IODescriptor[] {IODescriptors.createMol2(MOL2_OUTPUT)};
+//
+//            Map<String,Object> opts = collectAllOptions(cell);
+//
+//            StepDefinition step1 = new StepDefinition(Mol2Upload.CLASSNAME)
+//                    .withOutputs(outputs)
+//                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, key) // maps the input to our own file contents
+//                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
+//                    .withOptions(opts);
+//
+//            return buildJobDefinition(cellExecutionData, cell, null, outputs, step1);
+//        }
+//    }
 
 }

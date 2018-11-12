@@ -32,7 +32,7 @@ public class SmilesStructuresCellDefinition extends CellDefinition {
 
     @Override
     public CellExecutor getCellExecutor() {
-        return new SimpleJobCellExecutor(StepDefinitionConstants.SmilesStructures.CLASSNAME);
+        return new ZeroInputOneOutputJobCellExecutor(StepDefinitionConstants.SmilesStructures.CLASSNAME);
     }
 
 }

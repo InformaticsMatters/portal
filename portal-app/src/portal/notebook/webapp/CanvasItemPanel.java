@@ -245,7 +245,9 @@ public abstract class CanvasItemPanel extends Panel implements CellTitleBarPanel
             return lastExecution != null;
         } else if (lastExecution == null) {
             return true;
-        } else if (oldExecution.getJobId().equals(lastExecution.getJobId())) {
+        } else if (lastExecution.getJobId() == null
+                || oldExecution.getJobId() == null
+                || oldExecution.getJobId().equals(lastExecution.getJobId())) {
             return !oldExecution.getJobActive().equals(lastExecution.getJobActive())
                     || !oldExecution.getJobStatus().equals(lastExecution.getJobStatus());
         } else if (!oldExecution.getJobId().equals(lastExecution.getJobId())) {

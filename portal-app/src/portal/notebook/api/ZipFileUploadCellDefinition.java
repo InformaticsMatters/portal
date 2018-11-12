@@ -26,7 +26,7 @@ public class ZipFileUploadCellDefinition extends CellDefinition {
     private static final String ZIP_OUTPUT = ZipFileUpload.VARIABLE_ZIP;
 
     public ZipFileUploadCellDefinition() {
-        super(CELL_NAME, "ZIP file upload", "icons/file_upload_basic.png", new String[]{"file", "upload", "zip"});
+        super(CELL_NAME, "ZIP file upload", "icons/file_upload_basic.png", new String[]{"file", "upload", "zip"}, false);
         IODescriptor input = IODescriptors.createZipFile(VAR_NAME_FILECONTENT);
         getVariableDefinitionList().add(input);
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"zipfile"}), OPT_FILE_UPLOAD, "ZIP file", "Upload ZIP file", Mode.User));
@@ -34,27 +34,27 @@ public class ZipFileUploadCellDefinition extends CellDefinition {
 
     @Override
     public CellExecutor getCellExecutor() {
-        return new Executor();
+        return null;
     }
 
-    static class Executor extends AbstractJobCellExecutor {
-
-        @Override
-        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
-
-            VariableKey key = new VariableKey(cellExecutionData.getCellId(), VAR_NAME_FILECONTENT); // we are the producer
-            IODescriptor[] outputs = new IODescriptor[] {IODescriptors.createZipFile(ZIP_OUTPUT)};
-
-            Map<String,Object> opts = collectAllOptions(cell);
-
-            StepDefinition step1 = new StepDefinition(ZipFileUpload.CLASSNAME)
-                    .withOutputs(outputs)
-                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, key) // maps the input to our own file contents
-                    .withOutputVariableMapping(VAR_NAME_OUTPUT, VAR_NAME_OUTPUT)
-                    .withOptions(opts);
-
-            return buildJobDefinition(cellExecutionData, cell, null, outputs, step1);
-        }
-    }
+//    static class Executor extends AbstractJobCellExecutor {
+//
+//        @Override
+//        protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
+//
+//            VariableKey key = new VariableKey(cellExecutionData.getCellId(), VAR_NAME_FILECONTENT); // we are the producer
+//            IODescriptor[] outputs = new IODescriptor[] {IODescriptors.createZipFile(ZIP_OUTPUT)};
+//
+//            Map<String,Object> opts = collectAllOptions(cell);
+//
+//            StepDefinition step1 = new StepDefinition(ZipFileUpload.CLASSNAME)
+//                    .withOutputs(outputs)
+//                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, key) // maps the input to our own file contents
+//                    .withOutputVariableMapping(VAR_NAME_OUTPUT, VAR_NAME_OUTPUT)
+//                    .withOptions(opts);
+//
+//            return buildJobDefinition(cellExecutionData, cell, null, outputs, step1);
+//        }
+//    }
 
 }

@@ -47,15 +47,17 @@ public class SdfUploadCellDefinition extends CellDefinition {
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
             VariableKey key = new VariableKey(cellExecutionData.getCellId(), VAR_NAME_FILECONTENT); // we are the producer
+            IODescriptor[] inputs = IODescriptors.createSDFArray(VAR_NAME_FILECONTENT);
             IODescriptor[] outputs = IODescriptors.createMoleculeObjectDatasetArray(VAR_NAME_OUTPUT);
 
             StepDefinition step1 = new StepDefinition(SdfUpload.CLASSNAME)
+                    .withInputs(inputs)
                     .withOutputs(outputs)
                     .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, key) // maps the input to our own file contents
                     .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
                     .withOptions(collectAllOptions(cell));
 
-            return buildJobDefinition(cellExecutionData, cell, null, outputs, step1);
+            return buildJobDefinition(cellExecutionData, cell, inputs, outputs, step1);
         }
     }
 

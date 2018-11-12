@@ -29,7 +29,7 @@ public class CsvUploadCellDefinition extends CellDefinition {
     public CsvUploadCellDefinition() {
         super(CELL_NAME, "CSV upload", "icons/file_upload_basic.png", new String[]{"file", "upload", "csv", "tab"});
 
-        getVariableDefinitionList().add(IODescriptors.createCSV(VAR_NAME_FILECONTENT));
+        getVariableDefinitionList().add(IODescriptors.createCSV(VAR_NAME_INPUT));
         getVariableDefinitionList().add(IODescriptors.createBasicObjectDataset(VAR_NAME_OUTPUT));
         getOptionDefinitionList().add(new OptionDescriptor<>(new FileTypeDescriptor(new String[] {"csv", "tab", "txt"}),
                 OPT_FILE_UPLOAD, "CSV/TAB File", "Upload comma or tab separated text file", Mode.User));
@@ -51,16 +51,17 @@ public class CsvUploadCellDefinition extends CellDefinition {
         @Override
         protected JobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
-            VariableKey key = new VariableKey(cell.getId(), VAR_NAME_FILECONTENT); // we are the producer
+            VariableKey key = new VariableKey(cell.getId(), VAR_NAME_INPUT); // we are the producer
+            IODescriptor[] inputs = IODescriptors.createCSVArray(VAR_NAME_INPUT);
             IODescriptor[] outputs = IODescriptors.createBasicObjectDatasetArray(VAR_NAME_OUTPUT);
 
-            StepDefinition step1 = new StepDefinition(CsvUpload.CLASSNAME)
+            StepDefinition step = new StepDefinition(CsvUpload.CLASSNAME)
+                    .withInputs(inputs)
                     .withOutputs(outputs)
-                    .withInputVariableMapping(StepDefinitionConstants.VARIABLE_FILE_INPUT, key) // maps the input to our own file contents
-                    .withOutputVariableMapping(StepDefinitionConstants.VARIABLE_OUTPUT_DATASET, VAR_NAME_OUTPUT)
+                    .withInputVariableMapping(VAR_NAME_INPUT, key) // maps the input to our own file contents
                     .withOptions(collectAllOptions(cell));
 
-            return buildJobDefinition(cellExecutionData, cell, null, outputs, step1);
+            return buildJobDefinition(cellExecutionData, cell, inputs, outputs, step);
         }
     }
 
