@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="squonk-security">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../lib/squonk-security" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/squonk-security" recursive="false" />
+  </library>
+</component>

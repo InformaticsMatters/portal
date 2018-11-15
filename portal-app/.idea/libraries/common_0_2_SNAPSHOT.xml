@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="common-0.2-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../lib/core-services-client/common-0.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/core-services-client/common-utils-0.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/core-services-client/commons-codec-1.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/core-services-client/commons-logging-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/core-services-client/core-services-client-0.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/core-services-client/core-services-common-0.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/core-services-client/httpclient-4.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/core-services-client/httpcore-4.4.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

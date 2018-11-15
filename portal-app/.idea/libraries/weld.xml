@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="weld">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../lib/weld" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../lib/weld" recursive="false" />
+  </library>
+</component>

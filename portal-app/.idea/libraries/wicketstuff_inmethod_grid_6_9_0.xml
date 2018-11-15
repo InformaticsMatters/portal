@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="wicketstuff-inmethod-grid-6.9.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../lib/inmethod/6.9.0/wicketstuff-inmethod-grid-6.9.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
