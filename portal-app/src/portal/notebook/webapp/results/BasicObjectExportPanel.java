@@ -17,16 +17,20 @@ import portal.notebook.webapp.AbstractCellDatasetProvider;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-/** Export panel for BasicObjects.
+/**
+ * Export panel for BasicObjects.
  * Types that extend BasicObject can extend this class and specify custom formats
- *
+ * <p>
  * Created by timbo on 10/04/18.
  */
 public class BasicObjectExportPanel extends Panel {
+
+    private static final Logger LOG = Logger.getLogger(BasicObjectExportPanel.class.getName());
 
 
     protected final AbstractCellDatasetProvider cellDatasetProvider;
@@ -120,21 +124,26 @@ public class BasicObjectExportPanel extends Panel {
                 public void writeData(Attributes attributes) throws IOException {
 
                     OutputStream out = null;
-                    try (InputStream results = fetchResults(false)) {
+                    try (InputStream results = fetchResults(gzip)) {
+
+                        LOG.fine("Fetched results: gzip:" + gzip + " " + results);
 
                         Response response = attributes.getResponse();
                         out = response.getOutputStream();
-                        if (gzip) {
-                            out = new GZIPOutputStream(out);
-                        }
 
-                        byte[] buffer = new byte[1024];
+                        byte[] buffer = new byte[4096];
+                        int count = 0;
                         while (true) {
+                            count++;
+                            LOG.finer("Reading " + count);
                             int rsz = results.read(buffer);
                             if (rsz < 0) {
+                                LOG.fine("Reading complete");
                                 break;
                             }
+                            LOG.finer("Writing response " + count + " " + rsz);
                             out.write(buffer, 0, rsz);
+                            out.flush();
                         }
                     } catch (IOException ioe) {
                         throw ioe;

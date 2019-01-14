@@ -5,7 +5,7 @@ import org.apache.wicket.markup.html.link.ResourceLink;
 import portal.notebook.webapp.AbstractCellDatasetProvider;
 
 import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
+import java.util.logging.Logger;
 
 /** Export panel for MoleculeObjects.
  * This adds SDF export to the standaard formats provided by BasicObject
@@ -13,6 +13,8 @@ import java.util.zip.GZIPInputStream;
  * Created by timbo on 02/09/16.
  */
 public class MoleculeObjectExportPanel extends BasicObjectExportPanel {
+
+    private static final Logger LOG = Logger.getLogger(MoleculeObjectExportPanel.class.getName());
 
 
     public MoleculeObjectExportPanel(String id, AbstractCellDatasetProvider cellDatasetProvider) {
@@ -41,8 +43,8 @@ public class MoleculeObjectExportPanel extends BasicObjectExportPanel {
         @Override
         @SuppressWarnings("unchecked")
         InputStream fetchResults(boolean gzip) throws Exception {
-            InputStream sdf = cellDatasetProvider.getStructureIOClient().datasetExportToSdf(cellDatasetProvider.getSelectedDataset(), false);
-            return gzip ? new GZIPInputStream(sdf) : sdf;
+            InputStream sdf = cellDatasetProvider.getStructureIOClient().datasetExportToSdf(cellDatasetProvider.getSelectedDataset(), gzip);
+            return sdf;
         }
     }
 }

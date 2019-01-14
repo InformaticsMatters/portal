@@ -9,6 +9,7 @@
       <root url="jar://$PROJECT_DIR$/../lib/core-services-client/core-services-common-0.2-SNAPSHOT.jar!/" />
       <root url="jar://$PROJECT_DIR$/../lib/core-services-client/httpclient-4.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/../lib/core-services-client/httpcore-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/core-services-client/httpasyncclient-4.1.4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
