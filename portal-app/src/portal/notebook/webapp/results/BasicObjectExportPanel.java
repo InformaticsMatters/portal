@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.ContentDisposition;
+import org.apache.wicket.request.resource.IResource;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
@@ -100,6 +101,12 @@ public class BasicObjectExportPanel extends Panel {
             return cellDatasetProvider.getSelectedDataset();
         }
 
+
+        @Override
+        protected void configureCache(ResourceResponse data, Attributes attributes) {
+            data.disableCaching();
+            super.configureCache(data, attributes);
+        }
     }
 
 
