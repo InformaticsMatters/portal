@@ -6,7 +6,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.ContentDisposition;
-import org.apache.wicket.request.resource.IResource;
 import org.squonk.dataset.Dataset;
 import org.squonk.dataset.DatasetMetadata;
 import org.squonk.types.BasicObject;
@@ -90,10 +89,12 @@ public class BasicObjectExportPanel extends Panel {
     abstract class AbstractDatasetExportResource extends AbstractResource {
 
         String filename;
+        String contentType;
         boolean gzip;
 
-        AbstractDatasetExportResource(String filename, boolean gzip) {
+        AbstractDatasetExportResource(String filename, String contentType, boolean gzip) {
             this.filename = filename;
+            this.contentType = contentType;
             this.gzip = gzip;
         }
 
@@ -112,8 +113,8 @@ public class BasicObjectExportPanel extends Panel {
 
     abstract class AbstractDatasetJsonExportResource extends AbstractDatasetExportResource {
 
-        AbstractDatasetJsonExportResource(String filename, boolean gzip) {
-            super(filename, gzip);
+        AbstractDatasetJsonExportResource(String filename, String contentType, boolean gzip) {
+            super(filename, contentType, gzip);
         }
 
         abstract InputStream fetchResults(boolean gzip) throws Exception;
@@ -122,7 +123,7 @@ public class BasicObjectExportPanel extends Panel {
         protected ResourceResponse newResourceResponse(Attributes attributes) {
 
             ResourceResponse resp = new ResourceResponse();
-            resp.setContentType(CommonMimeTypes.MIME_TYPE_MDL_SDF);
+            resp.setContentType(contentType);
             resp.setContentDisposition(ContentDisposition.ATTACHMENT);
             resp.setFileName(filename);
 
@@ -170,7 +171,7 @@ public class BasicObjectExportPanel extends Panel {
     class ResultsJsonExportResource extends AbstractDatasetJsonExportResource {
 
         ResultsJsonExportResource(String filename, boolean gzip) {
-            super(filename, gzip);
+            super(filename, CommonMimeTypes.MIME_TYPE_JSON, gzip);
         }
 
         InputStream fetchResults(boolean gzip) throws Exception {
@@ -181,7 +182,7 @@ public class BasicObjectExportPanel extends Panel {
     class MetadataJsonExportResource extends AbstractDatasetJsonExportResource {
 
         MetadataJsonExportResource(String filename, boolean gzip) {
-            super(filename, gzip);
+            super(filename, CommonMimeTypes.MIME_TYPE_JSON, gzip);
         }
 
         @Override
@@ -198,7 +199,7 @@ public class BasicObjectExportPanel extends Panel {
         private final ResultsUtils.ExportFormat format;
 
         CSVExportResource(String filename, boolean gzip, ResultsUtils.ExportFormat format) {
-            super(filename, gzip);
+            super(filename, CommonMimeTypes.MIME_TYPE_TEXT_CSV, gzip);
             this.format = format;
         }
 
@@ -206,7 +207,7 @@ public class BasicObjectExportPanel extends Panel {
         protected ResourceResponse newResourceResponse(Attributes attributes) {
 
             ResourceResponse resp = new ResourceResponse();
-            resp.setContentType(CommonMimeTypes.MIME_TYPE_MDL_SDF);
+            resp.setContentType(contentType);
             resp.setContentDisposition(ContentDisposition.ATTACHMENT);
             resp.setFileName(filename);
 

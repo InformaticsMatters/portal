@@ -2,6 +2,8 @@ package portal.notebook.webapp.results;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
+import org.squonk.dataset.Dataset;
+import org.squonk.util.CommonMimeTypes;
 import portal.notebook.webapp.AbstractCellDatasetProvider;
 
 import java.io.InputStream;
@@ -37,13 +39,14 @@ public class MoleculeObjectExportPanel extends BasicObjectExportPanel {
     class SDFJsonExportResource extends AbstractDatasetJsonExportResource {
 
         SDFJsonExportResource(String filename, boolean gzip) {
-            super(filename, gzip);
+            super(filename, CommonMimeTypes.MIME_TYPE_MDL_SDF, gzip);
         }
 
         @Override
         @SuppressWarnings("unchecked")
         InputStream fetchResults(boolean gzip) throws Exception {
-            InputStream sdf = cellDatasetProvider.getStructureIOClient().datasetExportToSdf(cellDatasetProvider.getSelectedDataset(), gzip);
+            Dataset data = cellDatasetProvider.getSelectedDataset();
+            InputStream sdf = cellDatasetProvider.getStructureIOClient().datasetExportToSdf(data, gzip);
             return sdf;
         }
     }
