@@ -1,5 +1,6 @@
 package portal.notebook.api;
 
+import org.keycloak.representations.AccessToken;
 import org.squonk.core.client.StructureIOClient;
 import org.squonk.io.IODescriptor;
 import org.squonk.jobdef.ExecuteCellUsingStepsJobDefinition;
@@ -22,6 +23,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -39,6 +41,8 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         Instance<SessionContext> sessionContextInstance = CDI.current().select(SessionContext.class);
         SessionContext sessionContext = sessionContextInstance.get();
         String username = sessionContext.getLoggedInUserDetails().getUserid();
+        String authHeader = sessionContext.getAuthorizationHeader();
+
         Integer workunits = null; // null means "I don't know", but we can probably get the number from the dataset metadata
 
         // create the job
@@ -46,8 +50,7 @@ public abstract class AbstractJobCellExecutor extends CellExecutor implements Se
         // execute the job
 //        JobStatusClient client = createJobStatusClient();
 //        LOG.info("Executing job using client " + client);
-//        JobStatus status = client.submit(jobdef, username, workunits);
-        JobStatus status = jobStatusClient.submit(jobdef, username, workunits);
+        JobStatus status = jobStatusClient.submit(jobdef, username, authHeader, workunits);
         // job is now running. we can either poll the JobStatusRestClient for its status or listen on the message queue for updates
         return status;
     }

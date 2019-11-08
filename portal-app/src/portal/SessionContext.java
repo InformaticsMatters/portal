@@ -1,6 +1,7 @@
 package portal;
 
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squonk.client.UserClient;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Map;
 
 /**
  * @author simetrias
@@ -41,6 +43,19 @@ public class SessionContext implements Serializable {
             firstTime = false;
         }
         return result;
+    }
+
+    private HttpServletRequest getRequest() {
+        return (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+    }
+
+    public AccessToken getAccessToken() {
+        AccessToken token = defaultUserDetailsManager.getAccessToken(getRequest());
+        return token;
+    }
+
+    public String getAuthorizationHeader() {
+        return defaultUserDetailsManager.getAuthorizationHeader(getRequest());
     }
 
     public void clearLoginSession(HttpSession session) {

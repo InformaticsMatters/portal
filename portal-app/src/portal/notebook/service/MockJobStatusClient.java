@@ -33,7 +33,7 @@ public class MockJobStatusClient implements JobStatusClient, Serializable {
     private final Map<String, JobDefinition> jobDefinitionMap = new HashMap<>();
 
     @Override
-    public JobStatus submit(CellExecutorJobDefinition jobDefinition, String username, Integer integer) throws IOException {
+    public JobStatus submit(CellExecutorJobDefinition jobDefinition, String username, String accessToken, Integer integer) throws IOException {
         new JobThread(jobDefinition, "http://localhost:8080/ws/mockJobs").start();
         JobStatus<JobDefinition> jobStatus = JobStatus.create(jobDefinition, username, new Date(), 1);
         String jobId = jobStatus.getJobId();
