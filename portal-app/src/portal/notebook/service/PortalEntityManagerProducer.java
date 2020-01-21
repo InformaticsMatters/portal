@@ -12,6 +12,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.Properties;
 
+import org.squonk.util.IOUtils;
+
 @ApplicationScoped
 public class PortalEntityManagerProducer {
 
@@ -25,13 +27,18 @@ public class PortalEntityManagerProducer {
             if (properties == null) {
                 emf = Persistence.createEntityManagerFactory(PortalConstants.PU_NAME);
             } else {
-                String hostname = System.getenv("POSTGRES_HOSTNAME");
+                String hostname = IOUtils.getConfiguration("POSTGRES_HOSTNAME", null);
                 if (hostname != null) {
-                    properties.put("javax.persistence.jdbc.url", "jdbc:postgresql://" + hostname + "/squonk");
+                    String database = IOUtils.getConfiguration("POSTGRES_SQUONK_DATABASE", "squonk");
+                    properties.put("javax.persistence.jdbc.url", "jdbc:postgresql://" + hostname + "/" + database);
                 }
-                String pw = System.getenv("POSTGRES_SQUONK_PASSWORD");
+                String pw = IOUtils.getConfiguration("POSTGRES_SQUONK_PASSWORD", null);
                 if (pw != null) {
                     properties.put("javax.persistence.jdbc.password", pw);
+                }
+                String usr = IOUtils.getConfiguration("POSTGRES_SQUONK_USER", null);
+                if (usr != null) {
+                    properties.put("javax.persistence.jdbc.user", usr);
                 }
                 emf = Persistence.createEntityManagerFactory(PortalConstants.PU_NAME, properties);
             }
