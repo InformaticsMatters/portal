@@ -76,5 +76,6 @@ jobs:
     name: Docker Push (stable)
     script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin docker.io
-    - docker tag squonk/portal:latest squonk/portal:stable
+    - docker pull squonk/portal:${TRAVIS_TAG}
+    - docker tag squonk/portal:${TRAVIS_TAG} squonk/portal:stable
     - docker push squonk/portal:stable
