@@ -6,7 +6,9 @@
 #
 # PUBLISH_IMAGES    Should be 'yes' to enable publishing to Docker Hub.
 #
-# DOCKER_USERNAME   A username for Docker account that can push to squonk
+# The following are required if PUBLISH_IMAGES is 'yes'...
+#
+# DOCKER_USERNAME   A username for Docker account that can push to Docker Hub
 # DOCKER_PASSWORD   The Docker account password
 
 os: linux
@@ -23,21 +25,23 @@ services:
 
 stages:
 
-# The published the 'latest' image if on master
+# Publish the 'latest' image if on master
 - name: publish latest
-  if: env(PUBLISH_IMAGES) = yes
-# The published the 'latest' image and a tagged image
+  if: |
+    branch = master \
+    AND env(PUBLISH_IMAGES) = yes
+# Published the 'latest' image and a tagged image
 # if the commit has been tagged.
 - name: publish tag
   if: |
     tag IS present \
     AND env(PUBLISH_IMAGES) = yes
-# The published a 'stable' image if the tag is 'official',
+# Publish a 'stable' image if the tag is 'official',
 # i.e. it's of the form 'N.N[.N]'
 - name: publish stable
   if: |
     tag IS present \
-    AND env(PUBLISH_IMAGES) = yes
+    AND env(PUBLISH_IMAGES) = yes \
     AND tag =~ ^([0-9]+\.){1,2}[0-9]+$
 
 before_script:
@@ -58,7 +62,7 @@ jobs:
     name: Docker Push (master/latest)
     script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin docker.io
-#    - docker push squonk/portal:latest
+    - docker push squonk/portal:latest
 
   - stage: publish tag
     name: Docker Push (tag and latest)
