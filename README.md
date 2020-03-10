@@ -1,7 +1,7 @@
 # Portal
 
 [![Build Status](https://travis-ci.com/InformaticsMatters/portal.svg?branch=master)](https://travis-ci.com/InformaticsMatters/portal)
-![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/informaticsmatters/portal)
+![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/informaticsmatters/portal?include_prereleases)
 
 The Squonk Portal
 
