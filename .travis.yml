@@ -1,0 +1,80 @@
+---
+
+# The Portal Travis CI build script.
+#
+# Control variables, required to be defined in your Travis settings: -
+#
+# PUBLISH_IMAGES    Should be 'yes' to enable publishing to Docker Hub.
+#
+# The following are required if PUBLISH_IMAGES is 'yes'...
+#
+# DOCKER_USERNAME   A username for Docker account that can push to Docker Hub
+# DOCKER_PASSWORD   The Docker account password
+
+os: linux
+language: java
+jdk: openjdk8
+# Add extra packages...
+addons:
+  apt:
+    packages:
+      ant
+
+services:
+- docker
+
+stages:
+
+# Publish the 'latest' image if on master
+- name: publish latest
+  if: |
+    branch = master \
+    AND env(PUBLISH_IMAGES) = yes
+# Published the 'latest' image and a tagged image
+# if the commit has been tagged.
+- name: publish tag
+  if: |
+    tag IS present \
+    AND env(PUBLISH_IMAGES) = yes
+# Publish a 'stable' image if the tag is 'official',
+# i.e. it's of the form 'N.N[.N]'
+- name: publish stable
+  if: |
+    tag IS present \
+    AND env(PUBLISH_IMAGES) = yes \
+    AND tag =~ ^([0-9]+\.){1,2}[0-9]+$
+
+before_script:
+# Common actions for each stage ... compile the app code
+# and build the 'latest' image
+- pushd portal-app || exit
+- ant -f portal.xml build-prod
+- mv dist/portal.war ../portal/ROOT.war
+- popd || exit
+- docker build -t squonk/portal:latest .
+
+jobs:
+  include:
+
+  # Publish-stage jobs...
+
+  - stage: publish latest
+    name: Docker Push (master/latest)
+    script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin docker.io
+    - docker push squonk/portal:latest
+
+  - stage: publish tag
+    name: Docker Push (tag and latest)
+    script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin docker.io
+    - docker push squonk/portal:latest
+    - docker tag squonk/portal:latest squonk/portal:${TRAVIS_TAG}
+    - docker push squonk/portal:${TRAVIS_TAG}
+
+  - stage: publish stable
+    name: Docker Push (stable)
+    script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin docker.io
+    - docker tag squonk/portal:latest squonk/portal:stable
+    - docker push squonk/portal:stable
