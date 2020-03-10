@@ -25,9 +25,7 @@ stages:
 
 # The published the 'latest' image if on master
 - name: publish latest
-  if: |
-    branch = master \
-    AND env(PUBLISH_IMAGES) = yes
+  if: env(PUBLISH_IMAGES) = yes
 # The published the 'latest' image and a tagged image
 # if the commit has been tagged.
 - name: publish tag
@@ -60,7 +58,7 @@ jobs:
     name: Docker Push (master/latest)
     script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin docker.io
-    - docker push squonk/portal:latest
+#    - docker push squonk/portal:latest
 
   - stage: publish tag
     name: Docker Push (tag and latest)
