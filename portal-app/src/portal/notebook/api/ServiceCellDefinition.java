@@ -47,6 +47,7 @@ public class ServiceCellDefinition extends CellDefinition {
         if (findOptionDescriptorForBody() == null) {
             if (serviceConfig.getInputDescriptors() != null) {
                 for (IODescriptor input : serviceConfig.getInputDescriptors()) {
+                    LOG.fine("Input found: " + input.getName());
                     getBindingDefinitionList().add(new BindingDefinition(input.getName(), input.getPrimaryType(), input.getSecondaryType()));
                 }
             }
@@ -55,6 +56,7 @@ public class ServiceCellDefinition extends CellDefinition {
         IODescriptor[] outputs = serviceConfig.getOutputDescriptors();
         if (outputs != null && outputs.length > 0) {
             for (IODescriptor output : serviceConfig.getOutputDescriptors()) {
+                LOG.fine("Output found: " + output.getName());
                 getVariableDefinitionList().add(output);
             }
         }

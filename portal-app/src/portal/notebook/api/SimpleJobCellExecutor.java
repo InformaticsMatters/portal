@@ -18,18 +18,36 @@ import javax.xml.bind.annotation.XmlRootElement;
 class SimpleJobCellExecutor extends AbstractJobCellExecutor {
 
     private final String stepClassName;
+    private final IODescriptor[] inputs;
+    private final IODescriptor[] outputs;
 
-    SimpleJobCellExecutor( String stepClassName) {
+    /** Basic constructor that assume one input called "input" and one output named "output" both being of type
+     * Dataset&lt;MoleculeObject&gt;
+     *
+     * @param stepClassName
+     */
+    SimpleJobCellExecutor(String stepClassName) {
         this.stepClassName = stepClassName;
+        this.inputs = IODescriptors.createMoleculeObjectDatasetArray("input");
+        this.outputs = IODescriptors.createMoleculeObjectDatasetArray("output");
     }
 
+    /** Constructor allowing to specify the inputs and outputs
+     *
+     * @param stepClassName
+     * @param inputs
+     * @param outputs
+     */
+    SimpleJobCellExecutor(String stepClassName, IODescriptor[] inputs, IODescriptor[] outputs) {
+        this.stepClassName = stepClassName;
+        this.inputs = inputs;
+        this.outputs = outputs;
+    }
 
     @Override
     protected CellExecutorJobDefinition buildJobDefinition(CellInstance cell, CellExecutionData cellExecutionData) {
 
         VariableKey key = createVariableKey(cell, "input");
-        IODescriptor[] inputs = IODescriptors.createMoleculeObjectDatasetArray("input");
-        IODescriptor[] outputs = IODescriptors.createMoleculeObjectDatasetArray("output");
 
         StepDefinition step = new StepDefinition(stepClassName)
                 .withInputs(inputs)
