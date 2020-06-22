@@ -249,9 +249,6 @@ public class DefaultCellDefinitionRegistry implements CellDefinitionRegistry {
         registerCellDefinition(new ZipFileUploadCellDefinition());
         registerCellDefinition(new ConvertToMoleculesCellDefinition());
         registerCellDefinition(new DatasetFilterGroovyCellDefinition());
-        registerCellDefinition(new DatasetSorterCellDefinition());
-        registerCellDefinition(new SimpleSorterCellDefinition());
-        registerCellDefinition(new DatasetSplitOnNullCellDefinition());
         registerCellDefinition(new DataTransformPotionsCellDefinition());
         registerCellDefinition(new TransformValuesCellDefinition());
         registerCellDefinition(new DatasetMoleculesFromFieldCellDefinition());
