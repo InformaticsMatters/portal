@@ -116,7 +116,7 @@ public class NotebookSession implements Serializable {
         if (versionDTO instanceof NotebookSavepointDTO) {
             versionDTO = notebookVariableClient.createEditable(currentNotebookInfo.getId(), versionId, sessionContext.getLoggedInUserDetails().getUserid());
         }
-        LOG.info("Loading notebook instance " + versionDTO.getNotebookId() + "/" + versionId);
+        LOG.fine("Loading notebook instance " + versionDTO.getNotebookId() + "/" + versionId);
         currentNotebookInstance = new NotebookInstance(this);
         currentNotebookInstance.loadNotebookCanvasDTO(versionDTO.getCanvasDTO(), cellDefinitionRegistry);
         currentNotebookInstance.setEditable(versionDTO instanceof NotebookEditableDTO);

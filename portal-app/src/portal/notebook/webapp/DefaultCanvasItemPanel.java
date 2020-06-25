@@ -161,7 +161,12 @@ public class DefaultCanvasItemPanel extends CanvasItemPanel {
             // TODO - this needs a new editor. For now we put the multi-line text there.
             return new MultilineFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor));
         } else if (typeDescriptor instanceof DatasetFieldTypeDescriptor) {
-            return new DatasetFieldPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor), getCellId());
+            DatasetFieldTypeDescriptor dfTypeDescriptor = (DatasetFieldTypeDescriptor)typeDescriptor;
+            if (dfTypeDescriptor.isMultiple()) {
+                return new DatasetFieldMultiSelectFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor), getCellId());
+            } else {
+                return new DatasetFieldPicklistFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor), getCellId());
+            }
         } else if (typeDescriptor instanceof MultiLineTextTypeDescriptor) {
             return new MultilineFieldEditorPanel("optionEditor", new FieldEditorModel(value, optionDescriptor));
         } else if (typeDescriptor.getType() == String.class) {
