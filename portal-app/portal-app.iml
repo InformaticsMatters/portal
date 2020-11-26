@@ -25,5 +25,6 @@
     <orderEntry type="library" name="cdi-api" level="project" />
     <orderEntry type="library" name="squonk-security" level="project" />
     <orderEntry type="module" module-name="toolkit" />
+    <orderEntry type="module" module-name="toolkit" />
   </component>
 </module>

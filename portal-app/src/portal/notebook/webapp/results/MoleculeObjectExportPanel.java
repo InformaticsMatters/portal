@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 
 /** Export panel for MoleculeObjects.
- * This adds SDF export to the standaard formats provided by BasicObject
+ * This adds SDF export to the standard formats provided by BasicObject
  *
  * Created by timbo on 02/09/16.
  */
