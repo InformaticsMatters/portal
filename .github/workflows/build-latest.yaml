@@ -38,7 +38,12 @@ jobs:
       working-directory: ./portal-app
       run: |
         ant -f portal.xml build-prod
+        ls -l dist
         mv dist/portal.war ../portal/ROOT.war
+        ls -l ../portal
+    - name: List
+      run: |
+        ls -l portal
     - name: Login to DockerHub
       uses: docker/login-action@v1
       with:
