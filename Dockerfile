@@ -10,8 +10,7 @@ RUN apt-get update -y &&\
 
 # copy the keycloak jars to the tomcat lib folder
 COPY keycloak-jars-tomcat8/* /usr/local/tomcat/lib/
-
-ADD portal/*.war /usr/local/tomcat/webapps/
+COPY portal/*.war /usr/local/tomcat/webapps/
 
 RUN unzip -q -d /usr/local/tomcat/webapps/portal /usr/local/tomcat/webapps/ROOT.war &&\
  rm -f /usr/local/tomcat/webapps/ROOT.war &&\
