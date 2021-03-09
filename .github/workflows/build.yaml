@@ -41,7 +41,7 @@ jobs:
       run: |
         ant -f portal.xml build-prod
         mv dist/portal.war ../portal/ROOT.war
+        ls -l ../portal
     - name: Build
-      uses: docker/build-push-action@v2
-      with:
-        tags: squonk/portal:latest
+      run: |
+        docker build . -t squonk/portal:latest
